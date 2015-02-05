@@ -8,5 +8,4 @@ System/*.u
 *.nam
 *.log
 *.til
-*/Autoplay.s4m
-*/autosave_*.s4m
+*.s4m
