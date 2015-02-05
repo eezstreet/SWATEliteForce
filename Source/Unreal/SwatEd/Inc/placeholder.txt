@@ -1,0 +1,1 @@
+This file is here so that when you build the SwatEd unrealscript classes, there will be a perforce directory into which UCC can write SwatEdClasses.h

@@ -1,0 +1,9 @@
+[GUIDualSelectionLists]
+LeftCaption=<<<
+RightCaption=>>>
+UpCaption=^^^
+DownCaption=vvv
+
+[GUIController]
+PleaseWaitString=Please Wait ...
+

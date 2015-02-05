@@ -1,0 +1,35 @@
+///////////////////////////////////////////////////////////////////////////////
+// HostageReactionToOfficersGoal.uc - ReactionToOfficersGoal class
+// this goal causes the hostage to play an 
+
+class HostageReactionToOfficersGoal extends SwatCharacterGoal;
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Variables
+
+// copied to our action
+var(parameters) Pawn Officer;
+var(parameters) bool bWasInDanger;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Constructor
+
+overloaded function construct( AI_Resource r, Pawn inOfficer, bool inWasInDanger)
+{
+    Super.construct(r, priority);
+	
+	assert(inOfficer != None);
+	Officer = inOfficer;
+
+	bWasInDanger = inWasInDanger;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+defaultproperties
+{
+    priority         = 75
+    goalName         = "HostageReactionToOfficers"
+}

@@ -1,0 +1,30 @@
+///////////////////////////////////////////////////////////////////////////////
+
+class DeployGrenadeLauncherGoal extends SwatCharacterGoal;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Variables
+
+var(parameters) Actor TargetActor;		// takes precedence unless None
+var(parameters) vector TargetLocation;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Constructor
+
+overloaded function construct(AI_Resource r, Actor inTargetActor, vector inTargetLocation)
+{
+	super.construct(r);
+
+	TargetActor = inTargetActor;
+	TargetLocation = inTargetLocation;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+defaultproperties
+{
+	priority = 80
+	goalName = "DeployGrenadeLauncher"
+}

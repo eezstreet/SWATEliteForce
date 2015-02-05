@@ -1,0 +1,2 @@
+class CommandInterfaceStaticCommands_SP extends CommandInterfaceStaticCommands
+    config(PlayerInterface_Command_SP);

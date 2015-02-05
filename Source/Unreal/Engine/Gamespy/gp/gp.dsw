@@ -1,0 +1,85 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "GP"=.\GP.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/GP", YPGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gpstress"=.\gpstress\gpstress.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/GP/gpstress", TGWAAAAA
+    .\gpstress
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gptest"=.\gptest\gptest.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/GP/gptest", WFHAAAAA
+    .\gptest
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gptestc"=.\gptestc\gptestc.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/GP/gptestc", ZHJAAAAA
+    .\gptestc
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/GP", YPGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

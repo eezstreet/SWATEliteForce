@@ -1,0 +1,5 @@
+[General]
+Start=MyMod (Starting)
+Exit=MyMod (Exiting)
+Run=MyMod (Running)
+Product=MyMod

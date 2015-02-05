@@ -1,0 +1,2 @@
+class RiotHelmetBase extends Engine.ProtectiveEquipment
+	implements SwatGame.IProtectFromPepperSpray;

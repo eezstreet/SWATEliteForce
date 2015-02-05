@@ -1,0 +1,261 @@
+[Public]
+;Object=(Name=Engine.Console,Class=Class,MetaClass=Engine.Console)
+Object=(Name=Engine.ServerCommandlet,Class=Class,MetaClass=Core.Commandlet)
+Object=(Name=Engine.MasterMD5Commandlet,Class=Class,MetaClass=Core.Commandlet)
+Preferences=(Caption="Game Engine Settings",Parent="Advanced",Class=Engine.GameEngine,Category=Settings,Immediate=True)
+Preferences=(Caption="Key Aliases",Parent="Advanced",Class=Engine.Input,Immediate=True,Category=Aliases)
+Preferences=(Caption="Raw Key Bindings",Parent="Advanced",Class=Engine.Input,Immediate=True,Category=RawKeys)
+Preferences=(Caption="Drivers",Parent="Advanced Options",Class=Engine.Engine,Immediate=False,Category=Drivers)
+Preferences=(Caption="Public Server Information",Parent="Networking",Class=Engine.GameReplicationInfo,Immediate=True)
+Preferences=(Caption="Game Settings",Parent="Advanced Options",Class=Engine.GameInfo,Immediate=True)
+
+[Errors]
+NetOpen=Error opening file
+NetWrite=Error writing to file
+NetRefused=Server refused to send '%s'
+NetClose=Error closing file
+NetSize=File size mismatch
+NetMove=Error moving file
+NetInvalid=Received invalid file request
+NoDownload=Package '%s' is not downloadable
+DownloadFailed=Downloading package '%s' failed: %s
+RequestDenied=Server requested file from pending level: Denied
+ConnectionFailed=Connection failed
+ChAllocate=Couldn't allocate channel
+NetAlready=Already networking
+NetListen=Listen failed: No linker context available
+LoadEntry=Can't load Entry: %s
+InvalidUrl=Invalid URL: %s
+InvalidLink=Invalid Link: %s
+FailedBrowse=Failed to enter %s: %s
+Listen=Listen failed: %s
+AbortToEntry=Failed; returning to Entry
+ServerOpen=Servers can't open network URLs
+ServerListen=Dedicated server can't listen: %s
+Pending=Pending connect to '%s' failed; %s
+LoadPlayerClass=Failed to load player class
+ServerOutdated=Server's version is outdated
+
+[Progress]
+CancelledConnect=Cancelled Connect Attempt
+RunningNet=%s: %s (%i players)
+NetReceiving=Receiving '%s': %i/%i
+NetReceiveOk=Successfully received '%s'
+NetSend=Sending '%s'
+NetSending=Sending '%s': %i/%i
+Connecting=Connecting...
+Listening=Listening for clients...
+Loading=Loading
+Saving=Saving
+Paused=Paused by %s
+ReceiveFile=Receiving '%s' (F10 Cancels)
+ReceiveOptionalFile=Receiving optional file '%s' (Press F10 to Skip)
+ReceiveSize=Size %iK, Complete %3.1f%%
+ConnectingText=Connecting (F10 Cancels):
+ConnectingURL=swat://%s/%s
+
+[Console]
+ClassCaption=Standard Unreal Console
+LoadingMessage=LOADING
+SavingMessage=SAVING
+ConnectingMessage=CONNECTING
+PausedMessage=PAUSED
+PrecachingMessage=PRECACHING
+ChatChannel=(CHAT) 
+TeamChannel=(TEAM) 
+
+[MasterMD5Commandlet]
+HelpCmd=mastermd5
+HelpOneLiner=Manipulate the Master MD5 database
+HelpUsage=mastermd5 [-option..] <params>
+HelpWebLink=http://www.swat.sierra.com
+HelpParm[0]=-c
+HelpDesc[0]=Creates a new MD5 database
+HelpParm[1]=-a 
+HelpDesc[1]=Adds new packages to the database
+HelpParm[2]=-s
+HelpDesc[2]=Show the current database.
+HelpParm[3]=-r
+HelpDesc[3]=Force the revision of all entries to <param>
+[General]
+Upgrade=To enter this server, you need the latest free update to Unreal available from Epic's Web site:
+UpgradeURL=http://www.swat.sierra.com
+UpgradeQuestion=Do you want to launch your web browser and go to the upgrade page now?
+Version=Version %i
+
+[Menu]
+HelpMessage=
+MenuList=
+LeftString=Left
+RightString=Right
+CenterString=Center
+EnabledString=Enabled
+DisabledString=Disabled
+HelpMessage[1]="This menu has not yet been implemented."
+YesString=yes
+NoString=no
+
+[Inventory]
+PickupMessage=Snagged an item
+M_Activated=" activated"
+M_Selected=" selected"
+M_Deactivated=" deactivated"
+ItemArticle=a
+
+[WarpZoneInfo]
+OtherSideURL=
+
+[GameInfo]
+SwitchLevelMessage=Switching Levels
+DefaultPlayerName=Player
+LeftMessage=" left the game."
+FailedSpawnMessage=Failed to spawn player actor
+FailedPlaceMessage=Could not find starting spot (level might need a 'PlayerStart' actor)
+NameChangedMessage=Name changed to 
+EnteredMessage=" entered the game."
+GameName="Game"
+MaxedOutMessage=Server is already at capacity.
+WrongPassword=The password you entered is incorrect.
+NeedPassword=You need to enter a password to join this game.
+FailedTeamMessage=Could not find team for player
+
+[LevelInfo]
+Title=Untitled
+
+[Weapon]
+MessageNoAmmo=" has no ammo."
+PickupMessage=You got a weapon
+DeathMessage=%o was killed by %k's %w.
+ItemName=Weapon
+DeathMessage[0]=%o was killed by %k's %w.
+DeathMessage[1]=%o was killed by %k's %w.
+DeathMessage[2]=%o was killed by %k's %w.
+DeathMessage[3]=%o was killed by %k's %w.
+
+[Counter]
+CountMessage=Only %i more to go...
+CompleteMessage=Completed!
+
+[Ammo]
+PickupMessage=You picked up some ammo.
+
+[Pickup]
+ExpireMessage=
+
+[SpecialEvent]
+DamageString=
+
+[DamageType]
+Name=killed
+AltName=killed
+
+[PlayerPawn]
+QuickSaveString=Quick Saving
+NoPauseMessage=Game is not pauseable
+ViewingFrom=Now viewing from 
+OwnCamera=own camera
+FailedView=Failed to change view.
+CantChangeNameMsg=You can't change your name during a global logged game.
+
+[Pawn]
+NameArticle=" a "
+
+[Spectator]
+MenuName=Spectator
+
+[ServerCommandlet]
+HelpCmd=server
+HelpOneLiner=Network game server
+HelpUsage=server map.unr[?game=gametype] [-option...] [parm=value]...
+HelpWebLink=http://www.swat.sierra.com
+HelpParm[0]=Log
+HelpDesc[0]=Specify the log file to generate
+HelpParm[1]=AllAdmin
+HelpDesc[1]=Give all players admin privelages
+
+[KeyNames]
+LeftMouse=Left Mouse
+RightMouse=Right Mouse
+MiddleMouse=Middle Mouse
+Tab=Tab
+Enter=Enter
+Shift=Shift
+Ctrl=Ctrl
+Alt=Alt
+Pause=Pause
+CapsLock=Caps Lock
+Escape=Escape
+Space=Space
+PageDown=Page Down
+End=End
+Left=Left Arrow
+Up=Up Arrow
+Right=Right Arrow
+Down=Down Arrow
+Insert=Insert
+Delete=Delete
+Equals=Equals
+Comma=Comma
+Backspace=Backspace
+PageUp=Page Up
+home=Home
+Select=Select
+Print=Print
+Execute=Execute
+PrintScrn=PrintScrn
+Help=Help
+GreyStar=Numpad *
+GreyMinus=Numpad -
+GreyPlus=Numpad +
+Separator=Seperator
+NumPadPeriod=NumPad Period
+GreySlash=NumPad Slash
+NumLock=NumLock
+ScrollLock=Scroll Lock
+LShift=Left Shift
+RShift=Right Shift
+LControl=Left Control
+RControl=Right Control
+Attn=Attn
+MouseWheelDown=Mouse Wheel Down
+MouseWheelUp=Mouse Wheel Up
+Joy1=Joy 1
+Joy2=Joy 2
+Joy3=Joy 3
+Joy4=Joy 4
+Joy5=Joy 5
+Joy6=Joy 6
+Joy7=Joy 7
+Joy8=Joy 8
+Joy9=Joy 9
+Joy10=Joy 10
+Joy11=Joy 11
+Joy12=Joy 12
+Joy13=Joy 13
+Joy14=Joy 14
+Joy15=Joy 15
+Joy16=Joy 16
+JoyX=Joy X
+JoyY=Joy Y
+JoyZ=Joy Z
+JoyR=Joy R
+JoyU=Joy U 
+JoyV=Joy V
+JoySlider1=Joy Slider 1
+JoySlider2=Joy Slider 2
+NumPad1=NumPad 1
+NumPad2=NumPad 2
+NumPad3=NumPad 3
+NumPad4=NumPad 4
+NumPad5=NumPad 5
+NumPad6=NumPad 6
+NumPad7=NumPad 7
+NumPad8=NumPad 8
+NumPad9=NumPad 9
+NumPad0=NumPad 0
+UNKNOWN5B=Left Windows
+UNKNOWN5C=Right Windows
+UNKNOWN5D=Applications
+F15=Mouse Button 5 / F15
+Mouse5=Mouse Button 5 / F15
+Mouse4=Mouse Button 4

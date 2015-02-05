@@ -1,0 +1,1 @@
+class VIPGoalRoster extends MPRoster;

@@ -1,0 +1,14 @@
+[NVGoggles]
+Description=NVGs work by amplifying available light and allow the wearer to see in dark areas. Due to their lack of color and limited field of vision, the goggles can make it more difficult to distinguish friend from foe.
+FriendlyName=NIGHT VISION
+GUIImage=Texture'gui_tex2.equip_nightVision'
+
+[EnemygasMaskmobster]
+Description=If you can read this enter a bug that you can see this gas mask description!
+FriendlyName=Gas Mask
+
+[NoBodyArmor]
+Description="This option allows for more rapid movement, but obviously results in greater vulnerability to injury from enemy fire. It also allows the user to perform actions such as restraining and locking picking faster than would otherwise be able to. "
+FriendlyName=No Armor
+GUIImage=Texture'gui_tex2.equip_noArmour'
+

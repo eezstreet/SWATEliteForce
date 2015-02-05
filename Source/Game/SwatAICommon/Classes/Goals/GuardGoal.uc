@@ -1,0 +1,38 @@
+///////////////////////////////////////////////////////////////////////////////
+// GuardGoal.uc - the GuardGoal class
+// behavior that causes the Officer AI to move within a radius of an actor and stay there
+
+class GuardGoal extends SwatCharacterGoal;
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// 
+// Variables
+
+// copied to our action
+var(parameters) Actor		Target;
+
+///////////////////////////////////////////////////////////////////////////////
+// 
+// Constructors
+
+overloaded function construct( AI_Resource r )
+{
+    // don't use this constructor
+	assert(false);
+}
+
+overloaded function construct( AI_Resource r, Actor inTarget )
+{
+    Super.construct(r);
+
+    assert(inTarget != None);
+    Target = inTarget;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+defaultproperties
+{
+    Priority = 60
+    GoalName = "Guard"
+}

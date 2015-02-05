@@ -1,0 +1,48 @@
+[HK69GL_Ammo]
+GUIImage=Texture'Engine_res.DefaultTexture'
+
+[HK69GL_StingerGrenadeAmmo]
+Description=Stinger grenade ammunition for the 40mm Grenade Launcher. The effects are identical to the hand-deployed variety.
+FriendlyName=Stinger
+GUIImage=Texture'gui_tex2.ammo_HK69stinger'
+
+[HK69GL_CSGasGrenadeAmmo]
+Description=CS gas grenade ammo for the 40mm Grenade Launcher. The effects are identical to the hand-deployed variety.
+FriendlyName=CS Gas
+GUIImage=Texture'gui_tex2.ammo_HK69gas'
+
+[HK69GL_FlashbangGrenadeAmmo]
+Description=Flashbang grenade ammunition for the 40mm Grenade Launcher. The effects are identical to the hand-deployed variety.
+FriendlyName=Flashbang
+GUIImage=Texture'gui_tex2.ammo_HK69flashbang'
+
+[HK69GL_TripleBatonAmmo]
+Description=A 40mm grenade launcher round that ejects three interlocking batons constructed of polymerised rubber. Each baton weighs 20 grams and is capable of delivering a severe blunt-force trauma to its target, causing distraction, disorientation and intense pain.
+FriendlyName=Baton
+GUIImage=Texture'gui_tex2.ammo_HK69baton'
+
+[ColtAR_FMJ]
+FriendlyName=.223 FMJ
+GUIImage=Texture'gui_tex.ammo_223cal_FMJ'
+
+[FNP90SMG_FMJ]
+GUIImage=Texture'gui_tex2.ammo_SS190_FMJ'
+
+[FNP90SMG_JHP]
+GUIImage=Texture'gui_tex2.ammo_SS190_SoftTip'
+
+[TEC9SMG_FMJ]
+FriendlyName=9mm FMJ
+GUIImage=Texture'gui_tex.ammo_9mm_FMJ'
+
+[DEHG_FMJ]
+FriendlyName=.50 AE FMJ
+GUIImage=Texture'gui_tex2.ammo_05AE_FMJ'
+
+[DEHG_JHP]
+FriendlyName=.50 AE JHP
+GUIImage=Texture'gui_tex2.ammo_05AE_JHP'
+
+[StingrayAmmo]
+Description=Insert Stingry ammo description here.
+

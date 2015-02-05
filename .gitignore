@@ -1,0 +1,12 @@
+System/*.u
+*.bmp
+*.jpg
+*.png
+*.idb
+*.id0
+*.id1
+*.nam
+*.log
+*.til
+*/Autoplay.s4m
+*/autosave_*.s4m

@@ -1,0 +1,6 @@
+[Public]
+Object=(Name=DXAudio.DXAudioSubsystem,Class=Class,MetaClass=Engine.AudioSubsystem)
+Preferences=(Caption="Audio",Parent="Advanced Options",Class=DXAudio.DXAudioSubsystem,Immediate=True)
+
+[DXAudioSubsystem]
+ClassCaption="DirectX Audio for Windows"

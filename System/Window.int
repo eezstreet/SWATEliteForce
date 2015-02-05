@@ -1,0 +1,92 @@
+[Errors]
+Critical=Critical Error
+FailedConfigLoad=%s (failed load)
+NoWritePermissionTitle=File write error
+NoWritePermission=SWAT 4 requires the permission to write to Swat4.exe's folder. Please run SWAT 4 under a user account that has the appropriate permissions.
+AnotherUserAlreadyRunningGameTitle=SWAT 4 Already Running
+AnotherUserAlreadyRunningGame=SWAT 4 is already running on this machine under a different Windows user.
+AlreadyRunningGame=SWAT 4 is already running on this machine.
+
+[MinSpecRequirements]
+DoesNotMeetMinSpecTitle=Insufficient System Resources
+MeetsMinSpec=This machine meets or exceeds the minimum requirements for this game.
+MinSpecInformation=The minimum system requirements can be found in the game packaging and manual.
+UnsupportedOperatingSystem=This game is not supported on the operating system that is installed on this computer.
+InsufficientSystemMemory=This computer has only %d MB of system memory. This game requires at least %d MB of system memory.
+InsufficientDirectXVersion=This game requires DirectX 9.0c or later. To play this game you must install DirectX 9.0c or later (see Release Notes for instructions on how to obtain it).
+InsufficientTL=This video card in this computer does not have sufficient Transformation and Lighting support in hardware or software. This game requires either hardware or advanced software Transformation and Lighting support.
+InsufficientVideoMemory=The video card in this computer has insufficient onboard video memory. This game requires graphics card with at least %d MB of onboard video memory.
+VideoCardUnsupported=The video card in this computer does not meet the minimum video requirements for this game.
+NoHardwareAcceleration=This game requires that video hardware acceleration is enabled.  1. In Control Panel->Display->Advanced->Trouble Shooting, ensure that the Hardware Acceleration slider is on full.  2. Run dxdiag and in the Display tab, ensure that Direct3d and DirectDraw acceleration are enabled.
+QueryContinueOnNonMinSpec=Playing the game on this hardware is COMPLETELY UNSUPPORTED, UNSTABLE, AND NOT RECOMMENDED. Do you wish to Continue anyway?
+NoSoundDeviceInstalled=No sound device was found.  This game requires a compatible sound card.
+
+[General]
+BrowseButton=...
+UseButton=Use
+ClearButton=Clear
+ColorButton=Color
+PickButton=Pick
+FindButton=Find
+OkButton=Ok
+AddButton=Add
+EmptyButton=Empty
+InsertButton=Insert
+DeleteButton=Delete
+DefaultsButton=Reset To Defaults
+BackButton=< &Back
+NextButton=&Next >
+FinishButton=&Finish
+CancelButton=Cancel
+InstallButton=&Install
+YesButton=&Yes
+NoButton=&No
+AgreeButton=I &Agree
+LanguagePrompt=Language:
+LanguageWindow=Language Selection
+LogWindow=%s Log Window
+PropNone=Nothing Selected
+PropSingle=%s Properties
+PropMulti=%s Properties (%i selected)
+InsertCdText=Please insert the SWAT 4 CD-Rom into your drive and press OK to continue, or Cancel to exit.
+InsertCdTitle=Cd Required At Startup
+AdvancedOptionsTitle=Advanced Options
+Low=Low
+High=High
+New=New
+
+[FirstRun]
+Caption=Initial Configuration
+LowMemory=SWAT 4 has detected that you have %i megabytes of memory available. To improve performance, the "Low Detail Textures" and "Low Sound Quality" options have been enabled.  You may change this settings in the "Performance Settings" menu.
+NonMMX=SWAT 4 has detected that you're using a non-MMX PC. Based on this, the sound playback rate has been set to use the least CPU power. You may change this settings in the "Advanced Options / Audio" menu.
+Starting=SWAT 4 is starting up with new settings. If you experience any problems, please read the Troubleshooting section of the Release Notes in the "Start" menu.
+
+[IDDIALOG_Directory]
+IDC_Directory=Installation Folder
+IDC_ChoosePrompt=Please choose the installation folder.
+IDC_PathTitle=&Path:
+IDC_DirectoryTitle=&Directories:
+IDC_DrivesTitle=Dri&ves:
+IDC_NetworkButton=&Network
+
+[IDDIALOG_Password]
+IDC_Password=Password Check
+IDC_Prompt=Please enter your name and password.
+IDC_Name=&Name:
+IDC_Password=&Password:
+
+[IDMENU_NotifyIcon]
+ID_NotifyIcon=Menu
+ID_NotifyShowLog=&SWAT4Server Console
+ID_NotifyAdvancedOptions=&Advanced Options
+ID_NotifyExit=E&xit SWAT4Server
+
+[IDMENU_Log]
+ID_LogFile=&File
+ID_LogAdvancedOptions=&Advanced Options
+ID_LogFileExit=E&xit
+
+[IDDIALOG_CrashBox]
+IDC_Copy=Copy
+IDC_BugReport=Submit Bug Report
+BugReportURL=http://support.sierra.com

@@ -1,0 +1,50 @@
+Changelog for: GameSpy CDKey SDK
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+05-26-2005  1.05.00  BED  RELEASE  Releasing to developer site.
+05-17-2005  1.05.00  BED  FEATURE  Added challenge proof to "ison" messages.
+05-05-2005  1.04.19  BED  OTHER    Updated projects to use new common folder
+05-29-2005  1.04.18  SN   OTHER    Created Visual Studio .NET projects
+04-28-2005  1.04.18  SN   RELEASE  Releasing to developer site.
+04-04-2005  1.04.18  SN   RELEASE  Releasing to developer site.
+11-25-2004  1.04.18  SN   FIX      Added const qualifiers to function parameters not modified 
+11-19-2004  1.04.17  SN   RELEASE  Releasing to developer site.
+11-18-2004  1.04.17  BED  FIX      Fixed buffer overflow vulnerability in gcdkeys.c
+09-16-2004  1.04.16  SN   RELEASE  Releasing to developer site.
+08-27-2004  1.04.16  DES  CLEANUP  Removed MacOS style includes
+                     DES  CLEANUP  Updated Win32 project configurations
+                     DES  CLEANUP  Fixed warnings under OSX
+                     DES  CLEANUP  Removed legacy QRCDKEY_INTEGRATION code and sample
+                     DES  CLEANUP  Updated OSX Makefiles
+08-24-2004  1.04.15  DES  CLEANUP  Removed references to MacOS.
+08-05-2004  1.04.14  SN   RELEASE  Releasing to developer site.
+02-03-2003  1.04.14  BED  RELEASE  Releasing to developer site.
+02-02-2004  1.04.13  DES  FIX      Fixed code that assumed there was a second backslash if a first was found.
+11-10-2003  1.04.12  DES  RELEASE  Releasing to developer site.
+11-07-2003  1.04.12  DES  FIX      Updated the linux Makefile.
+11-04-2003  1.04.11  DES  FEATURE  Added availability check code.
+10-21-2003  1.04.10  BED  RELEASE  Releasing to developer site.  (UNIQUE NICK AND UNICODE SUPPORT)
+09-30-2003  1.04.10  BED  FIX      Parameters named "productid" are now called "gameid" to avoid confusion.
+08-21-2003  1.04.09  DES  RELEASE  Releasing to developer site.
+07-25-2003  1.04.09  DES  FIX      Removed usage of gets in the clienttext to get rid of Linux warnings.
+07-24-2003  1.04.08  DES  RELEASE  Releasing to developer site.
+07-23-2003  1.04.08  BED  CLEANUP  General cleanup to remove "no newline at end of file" warnings.
+07-16-2003  1.04.07  DES  FEATURE  The server sample will try a range of ports until it gets a successful bind.
+                          FEATURE  The client can specify which port to connect to on the server.
+05-20-2003  1.04.06  DES  FIX      Fixed gcd_shutdown to not close the socket if using CDKey integration.
+04-22-2003  1.04.05  DES  RELEASE  Releasing to developer site.
+                          FIX      Updated to use the new name of the global QR2 structure.
+                          FIX      Metrowerks for Win32 is no longer falsely identified as MacOS.
+03-03-2003  1.04.04  DES  CLEANUP  General cleanup to remove warnings.
+01-06-2003  1.04.03  DES  FEATURE  Added integration with QR2, including a new test project, gcdkeyserver_qr2.
+12-19-2002  1.04.02  DES  RELEASE  Releasing to developer site.
+12-19-2002  1.04.02  DES  CLEANUP  Removed assert.h include.
+12-16-2002  1.04.01  DES  FIX      Set listen calls in samples to use SOMAXCONN for the backlog paramter.
+10-24-2002  1.04.00  DES  RELEASE  Release on developer site with updated documentation
+10-22-2002  1.04.00  DES  RELEASE  Release on developer site
+10-21-2002  1.04.00  DDW  FEATURE  Added ability to support multiple products simultaneously
+                                   Games must now pass productID to the authenticate and disconnect functions
+                                   The productID is now passed in the authentication callback
+09-25-2002  1.03.00  DDW  OTHER    Changelog started
