@@ -1225,7 +1225,7 @@ function StartCommand()
     GotoState('');
 	
 	// FIXME: I'm 100% positive that there's a better way to do this, but until now I don't really know any better! --eez
-	for(OfficerIter = PendingCommandTeam.pawns; OfficerIter != None; OfficerIter = OfficerIter.nextPawn)
+	for(OfficerIter = Level.pawnList; OfficerIter != None; OfficerIter = OfficerIter.nextPawn)
 	{
 	    if (OfficerIter.IsA('SwatOfficer'))
 	    {  

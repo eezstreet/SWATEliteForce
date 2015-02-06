@@ -1758,10 +1758,13 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 
 // returns true if any character that we are yelling at had a weapon equipped
 // returns false otherwise
-simulated function bool IssueCompliance()
+simulated function bool IssueCompliance(optional out int checkIfCuffed, optional out int isSuspect)
 {
 	local Pawn Iter;
 	local bool ACharacterHasAWeaponEquipped;
+	
+	checkIfCuffed = 0;
+	isSuspect = 0;
 
 	for(Iter = Level.pawnList; Iter != None; Iter = Iter.nextPawn)
 	{
@@ -1774,6 +1777,19 @@ simulated function bool IssueCompliance()
 				if (SwatPawn(Iter).HasFiredWeaponEquipped())
 				{
 					ACharacterHasAWeaponEquipped = true;
+					checkIfCuffed = 0;
+					break;
+				}
+				if (SwatPawn(Iter).bArrested) {
+					checkIfCuffed = 1;
+				}
+				if (SwatPawn(Iter).IsA('SwatEnemy')) 
+				{
+					isSuspect = 1;
+				}
+				if (SwatPawn(Iter).IsA('SwatHostage')) 
+				{
+					isSuspect = 0;
 				}
 			}
 		}

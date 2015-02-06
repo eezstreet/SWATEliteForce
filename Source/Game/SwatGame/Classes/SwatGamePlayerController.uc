@@ -5225,6 +5225,8 @@ function ServerIssueCompliance( string VoiceTag )
 {
 	local bool ACharacterHasAWeaponEquipped;
     local NetPlayer theNetPlayer;
+	local int bTargetArrested;
+	local int bTargetSuspect;
     
     if( CanIssueCompliance() )
     {
@@ -5243,12 +5245,20 @@ function ServerIssueCompliance( string VoiceTag )
         }
 
 	    // IssueCompliance returns true if any character that listens to us has a weapon equipped
-	    ACharacterHasAWeaponEquipped = SwatPawn(Pawn).IssueCompliance();
+	    ACharacterHasAWeaponEquipped = SwatPawn(Pawn).IssueCompliance(bTargetArrested, bTargetSuspect);
 
 	    if (ACharacterHasAWeaponEquipped)
 	    {
 		        Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
 	    }
+		else if(bTargetArrested == 1)
+		{
+			if(bTargetSuspect == 1) {
+				Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
+			} else {
+				Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag)); // TODO: check for aggressiveness
+			}
+		}
 	    else
 	    {
 	            Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
