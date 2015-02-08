@@ -747,8 +747,12 @@ enum ECommand
 	 Command_Open            =52,
 	 Command_Breach          =53,
 	 Command_Investigate     =54,
-	 Command_Static          =55,
-	 Command_MAX             =56,
+	 Command_Response_Positive=55,
+	 Command_Response_NegativePage=56,
+	 Command_Response_Moving =57,
+	 Command_Response_Mirror =58,
+	 Command_Static          =59,
+	 Command_MAX             =60,
 };
 // Enum MenuPadStatus is declared in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
 enum MenuPadStatus
@@ -764,14 +768,17 @@ enum CommandInterfacePage
 	 Page_None               =0,
 	 Page_Command            =1,
 	 Page_Deploy             =2,
-	 Page_Investigate        =3,
-	 Page_Open               =4,
-	 Page_Breach             =5,
-	 Page_Response           =6,
-	 Page_RapidDeployment    =7,
-	 Page_VIPEscort          =8,
-	 Page_General            =9,
-	 Page_MAX                =10,
+	 Page_Response           =3,
+	 Page_RapidDeployment    =4,
+	 Page_VIPEscort          =5,
+	 Page_General            =6,
+	 Page_Response_Positive  =7,
+	 Page_Response_Negative  =8,
+	 Page_Response_Mirror    =9,
+	 Page_Investigate        =10,
+	 Page_Open               =11,
+	 Page_Breach             =12,
+	 Page_MAX                =13,
 };
 
 // "event"	function whose parameters correspond to	"struct ACommandInterface_eventColorizeExpectedCommand_Parms"	is declared	in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
