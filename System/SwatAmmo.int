@@ -27,7 +27,7 @@ GUIImage=Texture'gui_tex.ammo_sabot'
 [M4Super90SG000Ammo]
 Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are larger in diameter, 000 shells disperse fewer pellets for less overall damage.
 FriendlyName=000 Buck
-GUIImage=Texture'gui_tex.ammo_000buckshotgun'
+GUIImage=Texture'gui_tex3.ammo_000buckshotgun'
 
 [M4A1MG_FMJ]
 FriendlyName=.223 FMJ
@@ -50,7 +50,7 @@ GUIImage=Texture'gui_tex.ammo_sabot'
 [NovaPumpSG000Ammo]
 Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are larger in diameter, 000 shells disperse fewer pellets for less overall damage.
 FriendlyName=000 Buck
-GUIImage=Texture'gui_tex.ammo_000buckshotgun'
+GUIImage=Texture'gui_tex3.ammo_000buckshotgun'
 
 [CSBallLauncherAmmo]
 Description=The OC-Ball ammo is a hard plastic ball filled with Oleoresin Capsicum, the active ingredient in pepper spray.  The ball breaks on impact releasing the chemical agent affecting anyone within a small radius of where the ball broke.
