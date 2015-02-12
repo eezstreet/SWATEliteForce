@@ -450,6 +450,7 @@ simulated function InitializeProbes(int cartridge)
 		probes[i].Active     = true;
 		probes[i].ProbeState = PROBE_Traveling;
 		probes[i].WireState  = WIRE_AttachedToGun;
+		probes[i].DidDamageAlready = false;
 
 		// Make the TargetBoneOffset be in local coordinates of the bone,
 		// so that the target will move correctly with the bone
@@ -798,7 +799,7 @@ simulated function Tick(float dTime)
 		else // else done moving to target
 		{
 			// Check for cardiac arrest -- eez
-			if(probes[i].Victim != None && probes[i].Victim.IsA('SwatAICharacter')) {
+			if(probes[i].Victim != None && probes[i].Victim.IsA('SwatAICharacter') && !probes[i].Victim.IsA('SwatOfficer')) {
 				ptCharacter = SwatAICharacter(probes[i].Victim);
 				if(ptCharacter.TaserKillsMe() && !probes[i].DidDamageAlready) {
 					// Do damage to them.
@@ -806,6 +807,12 @@ simulated function Tick(float dTime)
 					probes[i].DidDamageAlready = true;
 				}
 			}
+			// Check for unauthorized tasering
+			if(probes[i].Victim != None && (probes[i].Victim.IsA('SwatOfficer') || probes[i].Victim.IsA('SwatPlayer')) && !probes[0].DidDamageAlready) {
+				SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(Pawn(probes[i].Victim), owner);
+				probes[0].DidDamageAlready = true;
+			}
+			
 			if (probes[i].StickToTarget) 
 			{
                 //log("Probe["$i$"] sticking to target "$(probes[i].Victim.Name));
