@@ -35,17 +35,19 @@ var private Rotator                DesiredViewRotation;// Desired rotation for t
 var private Rotator                BoneRotation;       // Actual rotation of the camera lens bone
 var private Vector                 LastViewLocation;   // Used for contorlling
 var private float                  TimerFreq;          // How often in seconds to update the screen
-var private bool                   bMirroring;
+var private bool                   bMirroring;			// This is deceptively named..
 var private SwatDoor               MirroringDoor;
 var private bool                   CompletedUsing;     // If we've finished the current DoUsing latent code
 var private float                  LastDeltaTime;
+var private bool					bInUse;				// Are we using it right now?
 
 const kOptiwandLength = 90.0;
 
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    Disable('Tick');
+    //Disable('Tick');
+	bMirroring = false;
 }
 
 // Helper function, this should really be in Object or something
@@ -75,7 +77,8 @@ simulated function OnGivenToOwner()
         assert( FirstPersonModel != None );  
 
         FirstPersonModel.Skins[0] = GunShader;
-        FirstPersonModel.Skins[1] = BlankScreen;
+        //FirstPersonModel.Skins[1] = BlankScreen;
+		FirstPersonModel.Skins[1] = LCDShader;
 
         TimerFreq = 1.0/RefreshRate;
     }
@@ -112,6 +115,7 @@ simulated function bool   CanIssueCommands()
 simulated function OnBeginControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
+	bInUse = true;
 }
 
 simulated function OnEndControlling()
@@ -119,8 +123,9 @@ simulated function OnEndControlling()
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
 
     // Use the blank screen texture now
-    FirstPersonModel.Skins[1] = BlankScreen;
-    FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,0,1 );       
+    //FirstPersonModel.Skins[1] = BlankScreen;
+    FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,0,1 );      
+	bInUse = false;
 }
 
 
@@ -283,7 +288,7 @@ simulated function InterruptUsing()
 		// Stop playing any sounds from looping...
         SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).StopMySchemas(Pawn(Owner).GetHands());
         Pawn(Owner).GetHands().PlayAnim(EndAnim);   
-        Disable('Tick');
+        //Disable('Tick');
     }
 }
 
@@ -334,7 +339,7 @@ simulated latent protected function DoUsingHook()
         return;
     } 
 
-    Enable('Tick');
+    //Enable('Tick');
     mplog( Self$" DoUsingHook() Latent function 3" );
     if ( PlayerOwner != None )
     {
@@ -380,11 +385,11 @@ simulated latent protected function DoUsingHook()
         LCDScreen.Revision++;
     }
     
-    if ( PlayerOwner != None )
-    {
+    //if ( PlayerOwner != None )
+    //{
         // Use the blank screen texture now
-        FirstPersonModel.Skins[1] = BlankScreen;
-    }
+    //    FirstPersonModel.Skins[1] = BlankScreen;
+    //}
 
     mplog( Self$" DoUsingHook() Latent function 7" );
     ViewRot = Pawn(Owner).GetViewRotation();
@@ -408,7 +413,7 @@ simulated latent protected function DoUsingHook()
     bMirroring = false;
     MirroringDoor = None;
     CompletedUsing = true;
-    Disable('Tick');
+    //Disable('Tick');
 }
 
 
@@ -430,6 +435,10 @@ simulated event RenderTexture(ScriptedTexture inTexture)
 simulated function Tick(float DeltaTime)
 {
     LastDeltaTime = DeltaTime;
+	if(!bInUse) {
+		FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation(),,, 1);
+		LCDScreen.Revision++;
+	}
 }
 
 defaultproperties
