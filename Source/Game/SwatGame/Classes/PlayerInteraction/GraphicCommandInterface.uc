@@ -94,7 +94,6 @@ simulated function ClearCommands(bool PageChange)
 
 simulated function SetCommand(Command Command, MenuPadStatus Status)
 {
-	log("[eezstreet] GraphicCommandInterface::SetCommand: activating command " $Command.Text);
     if (View != None)
         View.SetCommand(Command, Status);
 }
