@@ -56,17 +56,11 @@ enum CommandInterfacePage
 
     Page_Command,
     Page_Deploy,
-	Page_Investigate,
-	Page_Open,
-	Page_Breach,
     //MP-only
     Page_Response,
     Page_RapidDeployment,
     Page_VIPEscort,
-    Page_General,
-	Page_Response_Positive,
-	Page_Response_Negative,
-	Page_Response_Mirror,
+    Page_General
 };
 var protected CommandInterfacePage          CurrentPage;                    //which page of the command interface is currently selected
                                                                             //PLEASE only access thru Set/GetCurrentPage
