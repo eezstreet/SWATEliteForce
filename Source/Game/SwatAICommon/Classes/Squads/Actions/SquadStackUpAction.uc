@@ -656,7 +656,7 @@ private function TestForAlreadyStackedUpOfficers()
 	}
 }
 
-private function bool AreOfficersAlreadyStackedUp()
+protected function bool AreOfficersAlreadyStackedUp()
 {
 	local int i;
 

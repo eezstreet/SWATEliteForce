@@ -6,6 +6,7 @@ class Campaign extends Core.Object
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
 
 var config localized string StringName;
+var config int CampaignPath;
 
 var config array<Name> MissionResultNames;
 var array<MissionResults> MissionResults;

@@ -731,23 +731,28 @@ enum ECommand
 	 Command_MirrorRoom      =36,
 	 Command_MirrorUnderDoor =37,
 	 Command_MirrorCorner    =38,
-	 Command_Deploy_Wedge    =39,
-	 Command_Deploy_BreachingShotgun=40,
-	 Command_Deploy_LessLethalShotgun=41,
-	 Command_Deploy_GrenadeLauncher=42,
-	 Command_Deploy_Taser    =43,
-	 Command_Deploy_Flashbang=44,
-	 Command_Deploy_CSGas    =45,
-	 Command_Deploy_StingGrenade=46,
-	 Command_Deploy_PepperSpray=47,
-	 Command_Deploy_C2Charge =48,
-	 Command_Deploy_CSBallLauncher=49,
-	 Command_Deploy_Lightstick=50,
-	 Command_Open            =51,
-	 Command_Breach          =52,
-	 Command_Investigate     =53,
-	 Command_Static          =54,
-	 Command_MAX             =55,
+	 Command_Padding         =39,
+	 Command_Deploy_Wedge    =40,
+	 Command_Deploy_BreachingShotgun=41,
+	 Command_Deploy_LessLethalShotgun=42,
+	 Command_Deploy_GrenadeLauncher=43,
+	 Command_Deploy_Taser    =44,
+	 Command_Deploy_Flashbang=45,
+	 Command_Deploy_CSGas    =46,
+	 Command_Deploy_StingGrenade=47,
+	 Command_Deploy_PepperSpray=48,
+	 Command_Deploy_C2Charge =49,
+	 Command_Deploy_CSBallLauncher=50,
+	 Command_Deploy_Lightstick=51,
+	 Command_Open            =52,
+	 Command_Breach          =53,
+	 Command_Investigate     =54,
+	 Command_Response_Positive=55,
+	 Command_Response_NegativePage=56,
+	 Command_Response_Moving =57,
+	 Command_Response_Mirror =58,
+	 Command_Static          =59,
+	 Command_MAX             =60,
 };
 // Enum MenuPadStatus is declared in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
 enum MenuPadStatus
@@ -763,14 +768,11 @@ enum CommandInterfacePage
 	 Page_None               =0,
 	 Page_Command            =1,
 	 Page_Deploy             =2,
-	 Page_Investigate        =3,
-	 Page_Open               =4,
-	 Page_Breach             =5,
-	 Page_Response           =6,
-	 Page_RapidDeployment    =7,
-	 Page_VIPEscort          =8,
-	 Page_General            =9,
-	 Page_MAX                =10,
+	 Page_Response           =3,
+	 Page_RapidDeployment    =4,
+	 Page_VIPEscort          =5,
+	 Page_General            =6,
+	 Page_MAX                =7,
 };
 
 // "event"	function whose parameters correspond to	"struct ACommandInterface_eventColorizeExpectedCommand_Parms"	is declared	in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
@@ -3266,6 +3268,8 @@ public:
     class USwatMission* CurrentMission;
     TArrayNoInit<FName> MissionName;
     TArrayNoInit<FString> FriendlyName;
+    TArrayNoInit<FName> ExtraMissionName;
+    TArrayNoInit<FString> ExtraFriendlyName;
     TArrayNoInit<class UClass*> MissionEquipment;
     FName LastMissionPlayedName;
     FStringNoInit LastMissionPlayedFriendlyName;

@@ -46,8 +46,7 @@ const kOptiwandLength = 90.0;
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    //Disable('Tick');
-	bMirroring = false;
+    Disable('Tick');
 }
 
 // Helper function, this should really be in Object or something
@@ -184,6 +183,7 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
     local Object.Range YawRange, PitchRange;
 
     // Most of the time this is all we need to take care of
+	FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation(),,, 1);
     ResolveInitialLocationAndRotation( CameraLocation, PlayerViewRot );
 
     // Only handle this stuff when we're actually moving the mouse.  
@@ -288,7 +288,7 @@ simulated function InterruptUsing()
 		// Stop playing any sounds from looping...
         SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).StopMySchemas(Pawn(Owner).GetHands());
         Pawn(Owner).GetHands().PlayAnim(EndAnim);   
-        //Disable('Tick');
+        Disable('Tick');
     }
 }
 
@@ -339,7 +339,7 @@ simulated latent protected function DoUsingHook()
         return;
     } 
 
-    //Enable('Tick');
+    Enable('Tick');
     mplog( Self$" DoUsingHook() Latent function 3" );
     if ( PlayerOwner != None )
     {
@@ -371,12 +371,12 @@ simulated latent protected function DoUsingHook()
 
     mplog( Self$" DoUsingHook() Latent function 5" );
     // Make sure the screen only starts rendering when going after we've played the animation to bring the optiwand screen up
-    if ( PlayerOwner != None )
+    /*if ( PlayerOwner != None )
     {
         LCDScreen.Revision++;
         // Use the scripted texture now...
         FirstPersonModel.Skins[1] = LCDShader;
-    }
+    }*/
 
     mplog( Self$" DoUsingHook() Latent function 6" );
     while( ShouldControlViewport() )
@@ -385,11 +385,11 @@ simulated latent protected function DoUsingHook()
         LCDScreen.Revision++;
     }
     
-    //if ( PlayerOwner != None )
-    //{
+    /*if ( PlayerOwner != None )
+    {
         // Use the blank screen texture now
-    //    FirstPersonModel.Skins[1] = BlankScreen;
-    //}
+        FirstPersonModel.Skins[1] = BlankScreen;
+    }*/
 
     mplog( Self$" DoUsingHook() Latent function 7" );
     ViewRot = Pawn(Owner).GetViewRotation();
@@ -413,7 +413,7 @@ simulated latent protected function DoUsingHook()
     bMirroring = false;
     MirroringDoor = None;
     CompletedUsing = true;
-    //Disable('Tick');
+    Disable('Tick');
 }
 
 
@@ -435,10 +435,6 @@ simulated event RenderTexture(ScriptedTexture inTexture)
 simulated function Tick(float DeltaTime)
 {
     LastDeltaTime = DeltaTime;
-	if(!bInUse) {
-		FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation(),,, 1);
-		LCDScreen.Revision++;
-	}
 }
 
 defaultproperties
@@ -448,14 +444,14 @@ defaultproperties
     LCDShader=Shader'scripted_tex.lcd_shader'
     GunShader=Shader'SWAT1stPersonTex.Optiwand1stPersonShader'
     DrawType=DT_Mesh
-    RefreshRate=60
-    SizeX=256
-    SizeY=256
+    RefreshRate=100
+    SizeX=2048
+    SizeY=2048
     BoneName=lens
     FOV=60
     ReticleTexture=Material'HUD.ToolReticle'
     BlankScreen=Material'Hotel.hot_blueroll_panner'
-    LensTurnSpeed=0.05
+    LensTurnSpeed=0.3
     ClampYawAngle=60
     ClampPitchAngle=45
     LensFinishSpeed=0.1

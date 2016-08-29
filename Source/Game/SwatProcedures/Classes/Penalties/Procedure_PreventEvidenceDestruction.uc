@@ -31,6 +31,7 @@ function OnEvidenceDestroyed(IEvidence What)
             return;
 
 	DestroyedEvidence[DestroyedEvidence.length] = What;
+	//SwatGame.SwatGameInfo(Level.Game).GameEvents.EvidenceSecured.Triggered(What);	// This should fix the issue with CO-OP on Funtime Amusements.
 }
 
 defaultproperties

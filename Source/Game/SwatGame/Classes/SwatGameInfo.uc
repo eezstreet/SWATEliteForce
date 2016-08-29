@@ -1,9 +1,8 @@
-
 class SwatGameInfo extends Engine.GameInfo
     implements IInterested_GameEvent_EvidenceSecured,
                IInterested_GameEvent_ReportableReportedToTOC
     config(SwatGame)
-    dependsOn(SwatStartPointBase) 
+    dependsOn(SwatStartPointBase)
 	dependsOn(SwatOfficerStart)
     dependsOn(SwatGUIConfig)
     native;
@@ -498,6 +497,13 @@ function OnEvidenceSecured(IEvidence Secured)
 {
     if( bAlreadyCompleted || bAlreadyFailed )
         OnCriticalMoment();
+}
+
+//interface IInterested_GameEvent_EvidenceDestroyed implementation
+function OnEvidenceDestroyed(IEvidence Destroyed)
+{
+	if( bAlreadyCompleted || bAlreadyFailed )
+		OnCriticalMoment();
 }
 
 // IInterested_GameEvent_ReportableReportedToTOC implementation

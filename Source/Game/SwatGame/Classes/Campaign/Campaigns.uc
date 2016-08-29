@@ -55,7 +55,7 @@ final function bool CampaignExists(string inCampaign)
 //call CampaignExists() first to find out.
 //note that more than one string may map to the same name.
 //returns the newly added Campaign
-final function Campaign AddCampaign(string inCampaign)
+final function Campaign AddCampaign(string inCampaign, int campPath)
 {
     local name CampaignName;
     local int i;
@@ -75,6 +75,7 @@ final function Campaign AddCampaign(string inCampaign)
 
     Campaigns[i] = new(None, string(CampaignName)) class'SwatGame.Campaign';
     Campaigns[i].StringName = inCampaign;
+	Campaigns[i].CampaignPath = campPath;
 
     SaveConfig();
     Campaigns[i].SaveConfig();

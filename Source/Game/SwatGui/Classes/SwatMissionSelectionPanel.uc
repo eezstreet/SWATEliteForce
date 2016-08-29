@@ -6,7 +6,7 @@
 // ====================================================================
 
 class SwatMissionSelectionPanel extends SwatGUIPanel
-     ;
+     config(SwatMissionSelectionPanel);
 
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
 import enum eSwatGameRole from SwatGame.SwatGUIConfig;
@@ -20,6 +20,9 @@ var(SWATGui) private EditInline Config GUILabel          MyDifficultyLabel;
 var(SWATGui) private EditInline Config GUILabel          MyMissionNameLabel;
 var(SWATGui) private EditInline Config GUIImage          MyThumbnail;
 var(SWATGui) private EditInline Config GUIScrollTextBox  MyMissionInfo;
+
+var config array<Name> ExtraMissionName "Name used for this mission (extra missions)";
+var config array<String> ExtraFriendlyName "Friendly name used for this mission (extra missions)";
 
 var(DEBUG) private EditConst bool bAddingMissions;
 var(DEBUG) private Campaign theCampaign;
@@ -57,7 +60,7 @@ function InternalOnActivate()
     }
     else
     {
-        Assert( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Campaign );
+        //Assert( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Campaign );	// ok seriously? seriously?
 
         theCampaign = SwatGUIController(Controller).GetCampaign();
         MyCampaignNameLabel.SetCaption(theCampaign.StringName);
@@ -233,10 +236,18 @@ private function PopulateCampaignMissionList()
     bAddingMissions=true;
 
     MyMissionSelectionBox.List.Clear();
-	for(index = 0;index < GC.MissionName.length;index++)
-	{
-	    if( index <= theCampaign.GetAvailableIndex() )
-    		MyMissionSelectionBox.List.Add(string(GC.MissionName[index]),,GC.FriendlyName[index],index,,true);
+	if(theCampaign.CampaignPath == 0) {
+		for(index = 0;index < GC.MissionName.length;index++)
+		{
+			if( index <= theCampaign.GetAvailableIndex() )
+				MyMissionSelectionBox.List.Add(string(GC.MissionName[index]),,GC.FriendlyName[index],index,,true);
+		}
+	} else if(theCampaign.CampaignPath == 1) {
+		for(index = 0; index < ExtraMissionName.length; index++) {
+			if(index <= theCampaign.GetAvailableIndex() ) {
+				MyMissionSelectionBox.List.Add(string(ExtraMissionName[index]),,ExtraFriendlyName[index],index,,true);
+			}
+		}
 	}
 
 	MyMissionSelectionBox.List.bSortForward=true;

@@ -220,17 +220,20 @@ function bool CheckCampaignValid( class EquipmentClass )
 {
 	local int MissionIndex;
 	local int i;
+	local int CampaignPath;
 
 	assert(SwatGUIControllerBase(Controller) != None);
 	assertWithDescription(SwatGUIControllerBase(Controller).GetCampaign() != None, "GetCampaign() returned None. Campaign progression for equipment access wont work correctly.");
 
 	MissionIndex = SwatGUIControllerBase(Controller).GetCampaign().GetAvailableIndex();
+	CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
 
 	// Any equipment above the MissionIndex is currently unavailable
-	for (i = MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
-		if (GC.MissionEquipment[i] == EquipmentClass)
-			return false;
-
+	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
+		for (i = MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
+			if (GC.MissionEquipment[i] == EquipmentClass)
+				return false;
+	}
 	return true;
 }
 

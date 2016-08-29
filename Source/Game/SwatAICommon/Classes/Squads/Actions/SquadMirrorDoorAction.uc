@@ -17,6 +17,9 @@ var private Pawn						OfficerWithMirror;
 // behaviors we use
 var private MirrorDoorGoal				CurrentMirrorDoorGoal;
 
+// did we execute this when the officers weren't stacked up?
+var private bool						bOfficersWerentStacked;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Cleanup
@@ -41,15 +44,22 @@ function Pawn GetFirstOfficerWithMirror()
 	local int i;
 	local Pawn Officer;
 
-	for(i=0; i<OfficersInStackUpOrder.Length; ++i)
+	if(AreOfficersAlreadyStackedUp())
 	{
-		Officer = OfficersInStackUpOrder[i];
-
-		if(class'Pawn'.static.checkConscious(Officer) &&
-		   (ISwatOfficer(Officer).GetItemAtSlot(Slot_Optiwand) != None))
+		bOfficersWerentStacked = false;
+		for(i=0; i<OfficersInStackUpOrder.Length; ++i)
 		{
-			return Officer;
+			Officer = OfficersInStackUpOrder[i];
+
+			if(class'Pawn'.static.checkConscious(Officer) &&
+			   (ISwatOfficer(Officer).GetItemAtSlot(Slot_Optiwand) != None))
+			{
+				return Officer;
+			}
 		}
+	} else {
+		bOfficersWerentStacked = true;
+		return GetClosestOfficerWithEquipment(TargetDoor.Location, Slot_Optiwand);
 	}
 
 	// it's ok to get here
@@ -71,11 +81,15 @@ latent function MirrorDoor()
 	}
 	else
 	{
-		if (OfficerWithMirror != GetFirstOfficer())
+		if (AreOfficersAlreadyStackedUp() && OfficerWithMirror != GetFirstOfficer())
 		{
 			ISwatOfficer(OfficerWithMirror).GetOfficerSpeechManagerAction().TriggerGenericMoveUpSpeech();
 
 			SwapStackUpPositions(OfficerWithMirror, GetFirstOfficer());
+		}
+		else
+		{
+			ISwatOfficer(OfficerWithMirror).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
 		}
 
 		CurrentMirrorDoorGoal = new class'MirrorDoorGoal'(AI_CharacterResource(OfficerWithMirror.characterAI), TargetDoor);
@@ -94,13 +108,16 @@ latent function MirrorDoor()
 state Running
 {
  Begin:
-	StackUpSquad(true);
+//	StackUpSquad(true);
 
 	WaitForZulu();
 
 	MirrorDoor();
 
-	StackUpOfficer(OfficerWithMirror, StackUpPoints[0]);
+	if(!bOfficersWerentStacked)
+	{
+		StackUpOfficer(OfficerWithMirror, StackUpPoints[0]);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 class Procedure_SecureAllWeapons extends SwatGame.Procedure
-    implements IInterested_GameEvent_EvidenceSecured;
+    implements IInterested_GameEvent_EvidenceSecured, IInterested_GameEvent_EvidenceDestroyed;
 
 var config int Bonus;
 var int NumSecured;
@@ -23,6 +23,16 @@ function OnEvidenceSecured(IEvidence Secured)
             $" because EvidenceSecured.");
 }
 
+//interface IInterested_GameEvent_EvidenceDestroyed implementation
+function OnEvidenceDestroyed(IEvidence Destroyed)
+{
+	NumSecured++;
+	
+	if (GetGame().DebugLeadership)
+        log("[LEADERSHIP] "$class.name
+            $" incremented NumSecured to "$NumSecured
+            $" because EvidenceDestroyed.");
+}
 
 //currently returns remaining weapons to be secured
 function string Status()

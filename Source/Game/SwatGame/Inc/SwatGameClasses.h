@@ -772,13 +772,7 @@ enum CommandInterfacePage
 	 Page_RapidDeployment    =4,
 	 Page_VIPEscort          =5,
 	 Page_General            =6,
-	 Page_Response_Positive  =7,
-	 Page_Response_Negative  =8,
-	 Page_Response_Mirror    =9,
-	 Page_Investigate        =10,
-	 Page_Open               =11,
-	 Page_Breach             =12,
-	 Page_MAX                =13,
+	 Page_MAX                =7,
 };
 
 // "event"	function whose parameters correspond to	"struct ACommandInterface_eventColorizeExpectedCommand_Parms"	is declared	in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"

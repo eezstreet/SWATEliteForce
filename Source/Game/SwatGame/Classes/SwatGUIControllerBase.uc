@@ -161,9 +161,9 @@ final function bool CampaignExists(string inCampaign)
     return Campaigns.CampaignExists(inCampaign);
 }
 
-final function Campaign AddCampaign(string inCampaign)
+final function Campaign AddCampaign(string inCampaign, int campPath)
 {
-    return Campaigns.AddCampaign(inCampaign);
+    return Campaigns.AddCampaign(inCampaign, campPath);
 }
 
 final function DeleteCampaign(string inCampaign)

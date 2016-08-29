@@ -23,6 +23,7 @@ var(SWATGui) private EditInline Config GUIButton		    StartButton;
 //new campaign panel
 var(SWATGui) private EditInline Config GUIEditbox		    MyNameEntry;
 var(SWATGui) private EditInline Config GUIButton		    MyCreateCampaignButton;
+var(SWATGui) private EditInline Config GUIComboBox			MyCampaignPathBox;
 
 //load campaign panel
 var(SWATGui) private EditInline Config GUIComboBox          MyCampaignSelectionBox;
@@ -35,6 +36,9 @@ var() private config localized string StringC;
 var() private config localized string StringE;
 var() private config localized string StringJ;
 var() private config localized string StringK;
+var() private config localized string StringL;
+var() private config localized string StringM;
+var() private config localized string StringN;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -43,6 +47,7 @@ function InitComponent(GUIComponent MyOwner)
 
  	Super.InitComponent(MyOwner);
 
+	// Campaign selection box
     TheCampaigns = SwatGUIController(Controller).GetCampaigns().GetCampaigns();
     MyCampaignSelectionBox.Clear();
 	for(index = 0;index < TheCampaigns.length;index++)
@@ -50,8 +55,15 @@ function InitComponent(GUIComponent MyOwner)
    		MyCampaignSelectionBox.List.Add(TheCampaigns[index].StringName,TheCampaigns[index]);
 	}
     MyCampaignSelectionBox.List.Sort();
+	
+	// Campaign path selection box
+	MyCampaignPathBox.Clear();
+	MyCampaignPathBox.List.Add(StringM, , , 0);	// SWAT 4 campaign
+	MyCampaignPathBox.List.Add(StringN, , , 1);	// Custom missions
+	MyCampaignPathBox.List.Sort();
 
     MyCampaignSelectionBox.OnChange=InternalOnChange;
+	MyCampaignPathBox.OnChange=InternalOnChange;
 
     MyNameEntry.OnEntryCompleted=InternalOnClick;
     MyNameEntry.OnChange=InternalOnChange;
@@ -78,6 +90,8 @@ private function InternalOnActivate()
     LoadoutTabButton.DisableComponent();
     StartButton.DisableComponent();
     
+	MyCampaignPathBox.SetIndex(0);	// Use SWAT 4 missions as the default
+	
 	if( MyCampaignSelectionBox.Find(SwatGUIController(Controller).GetCampaigns().CurCampaignName) == "" )
     	MyCampaignSelectionBox.SetIndex(0);
 
@@ -118,7 +132,7 @@ private function InternalOnClick(GUIComponent Sender)
             break;
 		case MyNameEntry:
 		case MyCreateCampaignButton:
-		    AttemptCreateCampaign( MyNameEntry.GetText() );
+		    AttemptCreateCampaign( MyNameEntry.GetText(), MyCampaignPathBox.GetInt() );
 			break;
 		case MyUseCampaignButton:
 		    //unset the pak for campaigns
@@ -142,6 +156,7 @@ private function InternalEntryCancelled(GUIComponent Sender)
 private function InternalOnDlgReturned( int Selection, String passback )
 {
     local string campName;
+	local int campPath;
     
     switch (passback)
     {
@@ -160,8 +175,9 @@ private function InternalOnDlgReturned( int Selection, String passback )
             if( Selection == QBTN_Yes )
             {
                 campName = MyNameEntry.GetText();
+				campPath = MyCampaignPathBox.GetInt();
                 DeleteCampaign(campName);
-                CreateCampaign(campName);
+                CreateCampaign(campName, campPath);
             }
             break;
     }
@@ -177,7 +193,7 @@ private function SetCampaign( Campaign theCampaign )
     SwatGuiController(Controller).UseCampaign( theCampaign.StringName );
 }
 
-private function AttemptCreateCampaign( string campName )
+private function AttemptCreateCampaign( string campName, int campPath )
 {
     if( !IsCampaignNameValid( campName ) )
     {
@@ -190,15 +206,15 @@ private function AttemptCreateCampaign( string campName )
         OpenDlg( StringC$campName$StringE, QBTN_YesNo, "OverwriteCampaign" );
     }
     else
-        CreateCampaign( campName );
+        CreateCampaign( campName, campPath );
 }
 
-private function CreateCampaign( string campName )
+private function CreateCampaign( string campName, int campPath )
 {
     local Campaign NewCampaign;
 
     //create the new campaign
-    NewCampaign=SwatGuiController(Controller).AddCampaign(campName);
+    NewCampaign=SwatGuiController(Controller).AddCampaign(campName, campPath);
     AssertWithDescription( NewCampaign != None, "Could not create campaign with name: " $ campName );
 
     //... and add it to the campaign selection box
@@ -247,4 +263,7 @@ defaultproperties
 	StringE=" already exists.  Do you wish to overwrite it?"
 	StringJ="Are you sure that you want to delete campaign "
 	StringK="Officer Default"
+	StringL="Mission Set:"
+	StringM="SWAT 4 + Expansion"
+	StringN="Extra Missions"
 }
