@@ -9,19 +9,25 @@ class ReportAction extends SwatCharacterAction;
 // Variables
 
 // copied from our goal
-//var(parameters) SwatGame.SwatAI			ReportTarget;
+var(parameters) ISwatAI			ReportTarget;
 var(parameters)	Controller				ThisController;
+
+latent function Report() {
+	// If the AI has been reported to TOC, we shouldn't bother with it
+	if(!ReportTarget.CanBeUsedNow())
+	{
+		succeed();
+		return;
+	}
+	ThisController.ServerRequestInteract(ICanBeUsed(ReportTarget), "");
+
+	succeed();
+}
 
 state Running
 {
 Begin:
-	// If the AI has been reported to TOC already, we don't want to bother with it
-	/*if(!ReportTarget.CanBeUsedNow())
-	{
-		succeed();
-	}*/
-	//ThisController.ServerRequestInteract(ReportTarget, ReportTarget.UniqueID());
-	succeed();
+	Report();
 }
 
 defaultproperties

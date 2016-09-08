@@ -31,6 +31,12 @@ Description=All evidence secured
 [Procedure_EvacuateDownedOfficers]
 Description=Failed to report a downed officer
 
+[Procedure_EvacuateDownedCivilians]
+Description=Failed to report a downed civilian
+
+[Proedure_EvacuateDownedSuspects]
+Description=Failed to report a downed suspect
+
 [Procedure_NoHostageIncapacitated]
 Description=Incapacitated a hostage
 
@@ -49,9 +55,8 @@ Description=Unauthorized use of deadly force
 [Procedure_NoUnauthorizedUseOfForce]
 Description=Unauthorized use of force
 
-[Procedure_PreventEvidenceDestruction]
-Description=Failed to prevent destruction of evidence.
-
 [Procedure_PreventSuspectEscape]
-Description=Failed to apprehend fleeing suspect.
+Description=Failed to apprehend fleeing suspect
 
+[Procedure_NoTrapsTriggered]
+Description=Tripped a trap

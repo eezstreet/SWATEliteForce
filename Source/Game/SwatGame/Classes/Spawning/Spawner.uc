@@ -31,7 +31,7 @@ enum EStartPointDependent
 };
 var() EStartPointDependent StartPointDependent "This Spawner will be ignored if StartPointDependent doesn't match the selected EntryPoint.  For example, if StartPointDependent is set to StartPoint_OnlySecondary, then the Spawner will be ignored unless the Secondary Start Point is used.";
 
-var() editinline array<Archetype.ChanceArchetypePair> Archetypes;    //named for clarity in the Editor 
+var() editinline array<Archetype.ChanceArchetypePair> Archetypes;    //named for clarity in the Editor
 
 var() int Priority;
 
@@ -51,15 +51,15 @@ var bool Disabled;
 
 function PreBeginPlay()
 {
-//	local int i;
+	local int i;
 
     Super.PreBeginPlay();
 
     Game = SwatGameInfo(Level.Game);
 
 	// useful debugging info, but terry thinks it'll confuse the designers more. [crombie]
-/*
-	if (Game.DebugSpawning && (Archetypes.Length > 0))
+
+	if ((Archetypes.Length > 0))
 	{
 		log("[SPAWNING] - Logging all possible *local* archetypes for " $ Name);
 
@@ -68,12 +68,12 @@ function PreBeginPlay()
 			log("           " $ Archetypes[i].Archetype $ " (Chance: " $ Archetypes[i].Chance $ ")");
 		}
 	}
-*/
+
 }
 
 function actor SpawnArchetype(
-        name ArchetypeName, 
-        optional bool bTesting, 
+        name ArchetypeName,
+        optional bool bTesting,
         optional CustomScenario CustomScenario)
 {
     local class<Actor> ClassToSpawn;
@@ -109,8 +109,7 @@ function actor SpawnArchetype(
         AssertWithDescription(Spawned != None,
                 "[tcohen] "$name$" tried to spawn an instance of class "$ClassToSpawn$", but couldn't.");
 
-        if (Game.DebugSpawning) 
-        {
+
             log("[SPAWNING] ... ... "$name
                     $" in SpawnerGroup "$SpawnerGroup
                     $" spawned "$Spawned
@@ -121,12 +120,10 @@ function actor SpawnArchetype(
                     $"), "$Spawned.name
                     $".Location=("$Spawned.Location
                     $")");
-        }
 
         if (CustomScenario == None)
             DisableAntiSlaves();
 
-        if (Game.DebugSpawning) 
             log("[SPAWNING] ... ... Spawner "$name$" (SpawnerGroup "$SpawnerGroup$") is calling Archetype "$Archetype.name$" to InitializeSpawned "$Spawned.name);
 
         Archetype.InitializeSpawned(IUseArchetype(Spawned), self);
@@ -153,7 +150,6 @@ function actor SpawnArchetype(
 
                 if (Slave.Disabled)
                 {
-                    if (Game.DebugSpawning) 
                         log("[SPAWNER]  "$name
                                 $" (Tag="$tag
                                 $") would tell its Slave "$Slave.name
@@ -163,7 +159,6 @@ function actor SpawnArchetype(
                 }
                 else
                 {
-                    if (Game.DebugSpawning) 
                         log("[SPAWNER]  "$name
                                 $" (Tag="$tag
                                 $") is telling its Slave "$Slave.name
@@ -185,7 +180,6 @@ function actor SpawnFromLocalProperties(optional bool bTesting)
     //we don't expect any Spawner to ever spawn more than once (unless we're testing)
     assert(!HasSpawned || bTesting);
 
-    if (Game.DebugSpawning) 
         log("[SPAWNER]  "$name$" (Tag="$tag$") is picking an Archetype to spawn");
 
     return SpawnArchetype(class'Archetype'.static.PickArchetype(Archetypes), bTesting);
@@ -221,14 +215,14 @@ function DisableAntiSlaves()
 
     for (i=0; i<AntiSlaves.length; ++i)
     {
-        //we won't use findStaticByLabel here, because we want to disable 
+        //we won't use findStaticByLabel here, because we want to disable
         //  *all* spawners labeled AntiSlaves[i], not just the first one found
         Found = false;
         foreach AllActors(class'Spawner', AntiSlave)
         {
             if (AntiSlaves[i] == AntiSlave.label)
             {
-                //if campaign objectives are in effect, then 
+                //if campaign objectives are in effect, then
                 //  the AntiSlave should not have already spawned
                 AssertWithDescription(!Level.Game.CampaignObjectivesAreInEffect() || !AntiSlave.HasSpawned,
                     "[tcohen] Spawner::DisableAntiSlaves() "$name
@@ -237,11 +231,10 @@ function DisableAntiSlaves()
                     $" has already spawned, so its too late to disable it.");
                 AntiSlave.Disabled = true;
 
-                if (Game.DebugSpawning) 
                     log("[SPAWNING] ... AntiSlave "$AntiSlave$" is now Disabled.");
 
                 Found = true;
-                
+
                 //this AntiSlave is no longer available to spawn
                 Level.SpawningManager.SpawnerAllocated(AntiSlave);
             }

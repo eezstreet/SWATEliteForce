@@ -722,8 +722,8 @@ enum ECommand
 	 Command_MoveTo          =27,
 	 Command_Cover           =28,
 	 Command_Disable         =29,
-	 Command_DisableBomb     =30,
-	 Command_DisableBoobyTrap=31,
+	 Command_Drop_Lightstick =30,
+	 Command_Padding         =31,
 	 Command_CloseDoor       =32,
 	 Command_RemoveWedge     =33,
 	 Command_SecureEvidence  =34,
@@ -731,7 +731,7 @@ enum ECommand
 	 Command_MirrorRoom      =36,
 	 Command_MirrorUnderDoor =37,
 	 Command_MirrorCorner    =38,
-	 Command_Padding         =39,
+	 Command_CheckForTraps   =39,
 	 Command_Deploy_Wedge    =40,
 	 Command_Deploy_BreachingShotgun=41,
 	 Command_Deploy_LessLethalShotgun=42,
@@ -747,12 +747,14 @@ enum ECommand
 	 Command_Open            =52,
 	 Command_Breach          =53,
 	 Command_Investigate     =54,
-	 Command_Response_Positive=55,
-	 Command_Response_NegativePage=56,
-	 Command_Response_Moving =57,
-	 Command_Response_Mirror =58,
-	 Command_Static          =59,
-	 Command_MAX             =60,
+	 Command_Move            =55,
+	 Command_Response_Positive=56,
+	 Command_Response_NegativePage=57,
+	 Command_Response_Moving =58,
+	 Command_Response_Mirror =59,
+	 Command_Preferences     =60,
+	 Command_Static          =61,
+	 Command_MAX             =62,
 };
 // Enum MenuPadStatus is declared in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
 enum MenuPadStatus
@@ -772,7 +774,8 @@ enum CommandInterfacePage
 	 Page_RapidDeployment    =4,
 	 Page_VIPEscort          =5,
 	 Page_General            =6,
-	 Page_MAX                =7,
+	 Page_Preferences        =7,
+	 Page_MAX                =8,
 };
 
 // "event"	function whose parameters correspond to	"struct ACommandInterface_eventColorizeExpectedCommand_Parms"	is declared	in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
@@ -861,7 +864,7 @@ struct SWATGAME_API FScreenLocation
 };
 
 // Constant MAX_COMMANDS_PER_PAGE is declared in "..\SwatGame\Classes\HUD\GUIGraphicCommandInterface.uc"
-#define UCONST_MAX_COMMANDS_PER_PAGE 13
+#define UCONST_MAX_COMMANDS_PER_PAGE 20
 
 
 // Constant MAX_COMMANDS_PER_PAGE is declared in "..\SwatGame\Classes\HUD\GUIGraphicCommandInterfaceMenu.uc"
@@ -1430,6 +1433,7 @@ public:
     BITFIELD bIsPushable:1;
     BITFIELD bPlayerCanUse:1;
     BITFIELD bIsBoobyTrapped:1;
+    BITFIELD bBoobyTrapTripped:1;
     class ABoobyTrap* BoobyTrap;
     TArrayNoInit<FDoorAttachmentSpec> Attachments;
     class UStaticMesh* BrokenStaticMesh;

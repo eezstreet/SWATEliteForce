@@ -101,7 +101,7 @@ log("[dkaplan] >>> InitializeController of (SwatGUIController) "$self);
     else if( GuiConfig.SwatGameState==GAMESTATE_None )
     {
         OpenMenu( "SwatGui.SwatMainMenu", "SwatMainMenu" );
-        
+
         if( !Repo.InitWithoutIntroMenu )
             OpenMenu( "SwatGui.SwatIntroMenu", "SwatIntroMenu" );
     }
@@ -137,7 +137,7 @@ log("[dkaplan] >>> OnRoleChange of (SwatGUIController) "$self);
     switch ( newRole )
     {
         case GAMEROLE_None:
-        
+
         GSM = ViewportOwner.Actor.Level.GetGameSpyManager();
         if ( GSM != None )
         {
@@ -172,7 +172,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                 OpenEntryStack();
             break;
         case GAMESTATE_ClientTravel:
-            if( oldState != GAMESTATE_None && 
+            if( oldState != GAMESTATE_None &&
                 ( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                   GuiConfig.SwatGameRole == GAMEROLE_MP_Client ) )
             {
@@ -186,23 +186,23 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
 	            HUDPage(GetHudPage()).OnGameOver(); //ensure the hud gets its OnGameOver
 
             CloseAll();
-            InternalOpenMenu(MissionLoadingMenu); 
+            InternalOpenMenu(MissionLoadingMenu);
             break;
         case GAMESTATE_PreGame:
 			// pre-cache the popup menus
 			GetCurrentPopupMenu();
-			
+
 			//precache the server setup menu if host
 			if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
 			    GetServerSetupMenu();
 
             RemoveNonChatMessagesFromHistory();
-            
+
             //get rid of MissionLoadingMenu
-            CloseAll(); 
+            CloseAll();
             InternalOpenMenu( GetHudPage() );
             HUDPage(GetHudPage()).OnGameInit();
-            
+
         log( "      FirstTimeThrough="$GuiConfig.FirstTimeThrough );
         log( "      SwatGameRole="$GuiConfig.SwatGameRole );
             if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
@@ -225,13 +225,13 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     InternalOpenMenu( GetHudPage() );
                     break;
                 }
-                
+
                 if( SwatGuiPage(TopPage()) != None )
                     SwatGuiPage(TopPage()).PerformClose();
                 else
                     CloseMenu();
             };
-            
+
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].ClearDisplay();
             HUDPage(GetHudPage()).OnGameStarted();
 
@@ -247,7 +247,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             else
             {
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
-                
+
                 if( GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
                     Campaign != None )
                 {
@@ -265,7 +265,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             break;
         case GAMESTATE_ConnectionFailed:
             CloseAll();
-            OpenMenu( "SwatGui.SwatConnectionFailureMenu", "SwatConnectionFailureMenu", CurrentFailureMessage1, CurrentFailureMessage2 ); 
+            OpenMenu( "SwatGui.SwatConnectionFailureMenu", "SwatConnectionFailureMenu", CurrentFailureMessage1, CurrentFailureMessage2 );
             break;
     }
 }
@@ -320,7 +320,7 @@ log( self$"::LogStorageStack() ... StorageStack["$i$"] = "$StorageStack[i]);
 private function SendMessageToChat( String Msg, Name Type, optional bool bStopScrolling )
 {
     local int i;
-    
+
     for( i = 0; i < ChatPanel.Length; i++ )
     {
     //log("[dkaplan] sending message "$Msg$" to "$ChatPanel[i]);
@@ -331,7 +331,7 @@ private function SendMessageToChat( String Msg, Name Type, optional bool bStopSc
 private function RemoveNonChatMessagesFromHistory()
 {
     local int i;
-    
+
     for( i = 0; i < ChatPanel.Length; i++ )
     {
         ChatPanel[i].RemoveNonChatMessagesFromHistory();
@@ -341,7 +341,7 @@ private function RemoveNonChatMessagesFromHistory()
 private function ClearChatHistory()
 {
     local int i;
-    
+
     for( i = 0; i < ChatPanel.Length; i++ )
     {
         ChatPanel[i].ClearChatHistory();
@@ -351,7 +351,7 @@ private function ClearChatHistory()
 function bool OnMessageRecieved( String Msg, Name Type )
 {
 //log( "[dkaplan]: >>>OnMessageRecieved: Msg = "$Msg$", Type = "$Type$", ViewportOwner.Actor = "$ViewportOwner.Actor);
-    
+
     switch (Type)
     {
         case 'Connected':
@@ -414,6 +414,11 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'MissionEnded':
             //do nothing
             break;
+        case 'PenaltyIssued':
+        case 'ObjectiveCompleted':
+            SendMessageToChat(Msg, Type, true);
+            ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( Msg );
+            break;
         case 'MissionCompleted':
             SendMessageToChat( Msg, Type, true );
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( MissionCompleted );
@@ -448,7 +453,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'SuspectsWin':
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( SuspectsWin, -1.0 );
             break;
-            
+
         case 'SwatWinSmashAndGrab':
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( SwatWinSmashAndGrab, -1.0 );
             break;
@@ -462,7 +467,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'BombExploded':
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( SuspectsWinRD, -1.0 );
             break;
-            
+
         case 'GameTied':
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( GameTied, -1.0 );
             break;
@@ -523,7 +528,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
 			// This causes the "Viewing from" text to disappear but still display the respawn timer
             ImportantMessageDisplays[eIMDType.IMD_RespawnMessages].MessageRecieved( ViewingFromNone );
             break;
-        case 'ViewingFromVIPEvent': 
+        case 'ViewingFromVIPEvent':
             ImportantMessageDisplays[eIMDType.IMD_RespawnMessages].MessageRecieved( ViewingFromVIP$Msg );
             break;
 
@@ -534,7 +539,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
             return true;
             break;
     }
-    
+
     return true;
 }
 
@@ -571,7 +576,7 @@ function UpdateVOIPSpeakers()
 
 	LocalPlayerTeamNumber = NetTeam(ViewportOwner.Actor.PlayerReplicationInfo.Team).GetTeamNumber();
 	SGRI = SwatGameReplicationInfo(SwatGamePlayerController(ViewportOwner.Actor).GameReplicationInfo);
-    
+
     if( SGRI == None )
         return;
 
@@ -597,7 +602,7 @@ function UpdateVOIPSpeakers()
     {
         PlayerInfo = SGRI.PRIStaticArray[i];
 
-        if (PlayerInfo != None && NetTeam(PlayerInfo.Team) != None && 
+        if (PlayerInfo != None && NetTeam(PlayerInfo.Team) != None &&
 			( ViewportOwner.Actor.Level.IsPlayingCOOP || // display all teams in co-op
 			 NetTeam(PlayerInfo.Team).GetTeamNumber() == LocalPlayerTeamNumber))
         {
@@ -660,7 +665,7 @@ final private function UpdateSpecialTimerLabel()
 
     Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
     SGRI = SwatGameReplicationInfo(SwatGamePlayerController(ViewportOwner.Actor).GameReplicationInfo);
-    
+
     if( SGRI == None )
         return;
 
@@ -686,8 +691,8 @@ final private function UpdateSpecialTimerLabel()
                 TimeDisplays[eTimeType.TIMER_Special].TimerLabel.SetCaption( SmashAndGrabTimerText );
                 return;
         }
-    }    
-    
+    }
+
     if( SGRI.TimedObjectiveIndex >= 0 && Repo.MissionObjectives != None )
         TimeDisplays[eTimeType.TIMER_Special].TimerLabel.SetCaption( Repo.MissionObjectives.Objectives[SGRI.TimedObjectiveIndex].TimerCaption );
 }
@@ -711,7 +716,7 @@ final private function UpdateMissionTimerLabel()
             default:
                 TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.Hide();
         }
-    }    
+    }
 }
 
 final private function UpdateReferendumTimerLabel()
@@ -722,7 +727,7 @@ final private function UpdateReferendumTimerLabel()
 	local String VoteNoKey;
 
 	SGRI = SwatGameReplicationInfo(SwatGamePlayerController(ViewportOwner.Actor).GameReplicationInfo);
-    
+
     if( SGRI == None )
         return;
 
@@ -835,7 +840,7 @@ function ShowGamePopup( bool bSticky )
           Repo.GuiConfig.SwatGameState != GAMESTATE_MidGame ) ||
         GetHudPage() != TopPage() )
         return;
-        
+
     PopupPage = GetCurrentPopupMenu();
 //log( "dkaplan .......... "$self$"::ShowGamePopup()... PopupPage = "$PopupPage );
 
@@ -1031,7 +1036,7 @@ defaultproperties
 	MissionFailed="You have [c=ff0000]FAILED[\\c] the mission!"
     MissionCompleted="You have [c=00ff00]COMPLETED[\\c] the mission!"
     ObjectiveShown="You have received a new objective!"
-    
+
     PreGameText="Time before round begins:"
     MidGameText="Round time remaining:"
     PostGameText="Time before next round:"
@@ -1040,4 +1045,3 @@ defaultproperties
 
     CaptureScriptExec=true
 }
-

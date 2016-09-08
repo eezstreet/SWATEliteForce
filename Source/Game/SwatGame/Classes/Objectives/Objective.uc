@@ -83,15 +83,17 @@ function protected SetStatus(ObjectiveStatus newStatus)
         $".  But it was already set to status "$ObjectiveStatusToString(CurrentStatus)
         $".  An Objective should only change from InProgress.");
     */
-
+    if(newStatus == CurrentStatus) {
+      return;
+    }
     CurrentStatus = newStatus;
 
     switch newStatus
     {
         case ObjectiveStatus_Completed:
-            Game.OnMissionObjectiveCompleted(self);
-            if (Time > 0)
-                StopTimer();
+              Game.OnMissionObjectiveCompleted(self);
+              if (Time > 0)
+                  StopTimer();
             break;
 
         case ObjectiveStatus_Failed:
@@ -99,7 +101,7 @@ function protected SetStatus(ObjectiveStatus newStatus)
             if (Time > 0)
                 StopTimer();
 
-            //unhide the objective if it was failed and 
+            //unhide the objective if it was failed and
             //   should be shown on the mission debriefing
             if( UnhideIfFailed )
                 IsHidden = false;
@@ -148,13 +150,13 @@ function OnMissionEnded()
 {
     if( CurrentStatus == ObjectiveStatus_InProgress )
     {
-        if (Game.DebugObjectives) 
+        if (Game.DebugObjectives)
             log("[OBJECTIVES] OnMissionEnded(), "$name
                 $" is going to its default status: "$GetEnum(ObjectiveStatus, DefaultStatus));
 
         CurrentStatus = DefaultStatus;
     }
-    // for proper GC, ensure the timer delegate gets reset and the reference to the game is cleared 
+    // for proper GC, ensure the timer delegate gets reset and the reference to the game is cleared
     if (Time > 0)
         StopTimer();
 
@@ -174,7 +176,7 @@ function SetVisibility(bool Visible)
 
     if (IsHidden && Visible)    //being unhidden
     {
-        Game.Broadcast(Game, "", 'ObjectiveShown');    
+        Game.Broadcast(Game, "", 'ObjectiveShown');
 
         if (Time > 0)           //has a time limit
             StartTimer();

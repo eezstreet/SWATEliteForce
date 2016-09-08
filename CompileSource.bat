@@ -2,8 +2,8 @@
 
 REM Tell the user that we are compiling the mod
 
-echo Compiling source code for MyMod
-REM Run UCC.exe from inside MyMod\System, so that the
+echo Compiling source code for SEF
+REM Run UCC.exe from inside SEFMod\System, so that the
 REM compiler uses the mod's initialisation files and settings
 REM and stores the compiled output in the MyMod\System
 REM directory
@@ -13,5 +13,5 @@ cd .\System\
 
 REM Tell the user that the game has exited, and wait for a keypress
 cd ..
-echo Finished compiling MyMod
+echo Finished compiling SEF
 PAUSE

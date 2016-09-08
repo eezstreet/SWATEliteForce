@@ -17,9 +17,6 @@ var(SWATGui) private EditInline Config GUIEditBox MyMPNameBox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyAlwaysRunCheck;
 var(SWATGui) private EditInline Config GUIComboBox MyNetSpeedBox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyHelpTextCheck;
-#if IG_CAPTIONS 
-var(SWATGui) private EditInline Config GUICheckBoxButton MyShowSubtitlesCheck;
-#endif
 var(SWATGui) private EditInline Config GUICheckBoxButton MyCustomSkinsCheck;
 var(SWATGui) private EditInline Config GUIRadioButton MyGraphicCICheck;
 var(SWATGui) private EditInline Config GUIRadioButton MyClassicCICheck;
@@ -64,7 +61,7 @@ function InitComponent(GUIComponent MyOwner)
 {
     local int i;
 	Super.InitComponent(MyOwner);
-	
+
     MyMPNameBox.MaxWidth = GC.MPNameLength;
     MyMPNameBox.AllowedCharSet = GC.MPNameAllowableCharSet;
 
@@ -82,15 +79,15 @@ function InitComponent(GUIComponent MyOwner)
 
     MyMouseSensitivity.OnChange=OnMouseSensitivityChanged;
     MyInvertMouseCheck.OnChange=OnInvertMouseClicked;
-    MyHelpTextCheck.OnChange=OnHelpTextClicked; 
-    
+    MyHelpTextCheck.OnChange=OnHelpTextClicked;
+
     MyGraphicCICheck.OnChange=OnCISelectionChanged;
 }
 
 event Show()
 {
     Super.Show();
-    
+
     MyGCIOptionS1P1Label.SetCaption( ReplaceKeybindingCodes( GCIOptionS1P1String, "[k=", "]" ) );
     MyGCIOptionS1P2Label.SetCaption( ReplaceKeybindingCodes( GCIOptionS1P2String, "[k=", "]" ) );
     MyGCIOptionS1P3Label.SetCaption( ReplaceKeybindingCodes( GCIOptionS1P3String, "[k=", "]" ) );
@@ -103,7 +100,7 @@ event Show()
     MyGCIOptionS4P1Label.SetCaption( ReplaceKeybindingCodes( GCIOptionS4P1String, "[k=", "]" ) );
     MyGCIOptionS4P2Label.SetCaption( ReplaceKeybindingCodes( GCIOptionS4P2String, "[k=", "]" ) );
     MyGCIOptionS4P3Label.SetCaption( ReplaceKeybindingCodes( GCIOptionS4P3String, "[k=", "]" ) );
-    
+
     MyGCIOptions.SetActive( MyGraphicCICheck.bChecked );
     MyGCIOptions.SetVisibility( MyGraphicCICheck.bChecked );
 }
@@ -111,17 +108,17 @@ event Show()
 function SaveSettings()
 {
     local int NewNetSpeed;
-    
+
     //TODO
     SwatPlayerController(PlayerOwner()).SetName( MyMPNameBox.GetText() );
-    
+
     GC.PreferredVoiceType = eVoiceType( MyVoiceTypeBox.GetIndex() );
 
 // dbeswick: integrated 20/6/05
     if (GC.PreferredVoiceType != eVoiceType.VOICETYPE_Random)
     {
         // User is using a non-random voice type. Invalidate the random
-        // voice cache so that next time the user switches to a random 
+        // voice cache so that next time the user switches to a random
         // voice type, a new random voice will be cached.
         GC.CachedRandomVoice = eVoiceType.VOICETYPE_Random;
     }
@@ -130,10 +127,10 @@ function SaveSettings()
     class'Player'.static.StaticSaveConfig();
     PlayerOwner().SetNetSpeed( NewNetSpeed );
     GC.NetSpeedSelection = MyNetSpeedBox.GetIndex();
-    
+
     GC.bShowHelp = MyHelpTextCheck.bChecked;
     GC.bUseExitMenu = MyGCIExitMenuOptionCheck.bChecked;
-    
+
     if( MyGCIOption1Check.bChecked )
         GC.GCIButtonMode = 1;
     else if( MyGCIOption2Check.bChecked )
@@ -144,12 +141,12 @@ function SaveSettings()
         GC.GCIButtonMode = 4;
     else
         GC.GCIButtonMode = 0;
-    
+
     if (MyGraphicCICheck.bChecked)
         GC.CommandInterfaceStyle = ECommandInterfaceStyle.CommandInterface_Graphic;
     else
         GC.CommandInterfaceStyle = ECommandInterfaceStyle.CommandInterface_Classic;
-    
+
     GC.SetCurrentCommandInterfaceStyle( GC.CommandInterfaceStyle );
 
     if( SwatGamePlayerController(PlayerOwner()) != None )
@@ -158,10 +155,6 @@ function SaveSettings()
     GC.bAlwaysRun = MyAlwaysRunCheck.bChecked;
     if( SwatGamePlayerController(PlayerOwner()) != None )
         SwatGamePlayerController(PlayerOwner()).SetAlwaysRun( GC.bAlwaysRun );
-    
-#if IG_CAPTIONS 
-    GC.bShowSubtitles = MyShowSubtitlesCheck.bChecked;
-#endif
 
 	GC.bShowCustomSkins = MyCustomSkinsCheck.bChecked;
 	//log("Saving, GC.bShowCustomSkins now"@GC.bShowCustomSkins);
@@ -201,14 +194,14 @@ function LoadSettings()
             MyGCIOptions.SetRadioGroup(None);
             break;
     }
-        
+
     MyGCIExitMenuOptionCheck.SetChecked( GC.bUseExitMenu );
-        
+
     MyHelpTextCheck.SetChecked( GC.bShowHelp );
     MyAlwaysRunCheck.SetChecked( GC.bAlwaysRun );
 	MyCustomSkinsCheck.SetChecked( GC.bShowCustomSkins );
 	//log("GC.bShowCustomSkins is "$GC.bShowCustomSkins);
-    
+
     MouseXMultiplier = float(PlayerOwner().ConsoleCommand("Get WinDrv.WindowsClient MouseXMultiplier"));
     MouseYMultiplier = float(PlayerOwner().ConsoleCommand("Get WinDrv.WindowsClient MouseYMultiplier"));
     //Log("Mouse Multipliers Are: X="$MouseXMultiplier$" Y="$MouseYMultiplier);
@@ -217,22 +210,18 @@ function LoadSettings()
     IsMouseInverted = bool(PlayerOwner().ConsoleCommand("Get PlayerInput bInvertMouse"));
     //Log("Mouse Inverted Is: "$IsMouseInverted);
     MyInvertMouseCheck.SetChecked( IsMouseInverted );
-    
-#if IG_CAPTIONS 
-    MyShowSubtitlesCheck.SetChecked( GC.bShowSubtitles );
-#endif
 }
 
 private function OnMouseSensitivityChanged( GUIComponent Sender )
 {
     local float Multiplier;
     Multiplier = GUISlider(Sender).Value;
-    
+
     // clamp to 0.01...1.0 range, because unreal treats 0.0 as 1.0 for mouse sensitivity
     Multiplier = FClamp(Multiplier, 0.01, 1.0);
-    
+
     //Log("Setting mouse sensitivity multiplier to "$Multiplier);
-	
+
 	Controller.StaticExec("Set WinDrv.WindowsClient MouseXMultiplier"@Multiplier);
 	Controller.StaticExec("Set WinDrv.WindowsClient MouseYMultiplier"@Multiplier);
 }
@@ -272,9 +261,9 @@ protected function ResetToDefaults()
 defaultproperties
 {
     ConfirmResetString="Are you sure that you wish to reset all game settings to their defaults?"
-    
+
     DefaultMouseSensitivity=0.5
-    
+
     GCIOptionS1P1String="Hold [k=OpenGraphicCommandInterface | RightMouseAlias] to open menu"
     GCIOptionS1P2String="Click [k=Fire] to select"
     GCIOptionS1P3String="Release [k=OpenGraphicCommandInterface | RightMouseAlias] to cancel"

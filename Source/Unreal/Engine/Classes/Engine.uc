@@ -10,7 +10,7 @@ class Engine extends Core.Subsystem
 // Drivers.
 var(Drivers) config class<AudioSubsystem> AudioDevice;
 var(Drivers) config class<Interaction>    Console;				// The default system console
-var(Drivers) config class<Interaction>	  DefaultMenu;			// The default system menu 
+var(Drivers) config class<Interaction>	  DefaultMenu;			// The default system menu
 var(Drivers) config class<Interaction>	  DefaultPlayerMenu;	// The default player menu
 var(Drivers) config class<NetDriver>      NetworkDevice;
 var(Drivers) config class<Core.Language>  Language;
@@ -31,7 +31,7 @@ var config string RepoClassName;
 #endif
 
 #if IG_SHARED	// rowan: exec hook
-var transient const int	GameExecHook;	
+var transient const int	GameExecHook;
 #endif
 
 
@@ -143,7 +143,7 @@ defaultproperties
 {
 	CacheSizeMegs=2
 	UseSound=True
-	EnableDevTools=False
+	EnableDevTools=True
 	UsePerforce=0
 	UseStaticMeshBatching=True
 	C_WorldBox=(R=0,G=0,B=107,A=255)

@@ -3,12 +3,12 @@
 // Base class for non-officer (i.e., enemy and hostage) AIs in SWAT.
 class SwatAICharacter extends SwatAI
     implements ISwatAICharacter,
-               IReactToFlashbangGrenade, 
-               IReactToCSGas, 
-               IReactToStingGrenade, 
+               IReactToFlashbangGrenade,
+               IReactToCSGas,
+               IReactToStingGrenade,
                IReactToDazingWeapon,
-               IReactToC2Detonation, 
-               Engine.ICanBeTased, 
+               IReactToC2Detonation,
+               Engine.ICanBeTased,
                Engine.ICanBePepperSprayed, Engine.IReactToThrownGrenades
     abstract
     native;
@@ -161,7 +161,7 @@ function SetDesiredAIEquipment( AIEquipment NewValue )
 simulated event Destroyed()
 {
     Super.Destroyed();
-    
+
     // * SERVER ONLY
     if ( Level.NetMode != NM_Client )
         TermAwareness();
@@ -171,7 +171,7 @@ simulated event Destroyed()
 simulated function DestroyEquipment()
 {
     local int i;
-    
+
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SwatAICharacter::DestroyEquipment()." );
 
@@ -180,7 +180,7 @@ simulated function DestroyEquipment()
         if( NetEquipment[i] != None )
             NetEquipment[i].Destroy();
     }
-    
+
     NetEquipment.Remove( 0, NetEquipment.Length );
 
     // We create the handcuffs separately from the rest of the equipment, so
@@ -199,7 +199,7 @@ protected function ConstructCharacterAI()
     local AI_Resource characterResource;
     characterResource = AI_Resource(characterAI);
     assert(characterAI != None);
-        
+
     // Create SwatAICharacter specific abilities
     if (ShouldReactToNonLethals())
     {
@@ -422,9 +422,9 @@ function InitializeFromArchetypeInstance()
     SwitchToMesh(Instance.Mesh);
     ReplicatedMesh = Instance.Mesh;
 
-    // Some hostages/enemies use the SWAT officer skeleton with different clothing and skin. 
-    // We need to handle this case separately because that skeleton has a different number of 
-    // materials than the other enemy/hostage meshes. 
+    // Some hostages/enemies use the SWAT officer skeleton with different clothing and skin.
+    // We need to handle this case separately because that skeleton has a different number of
+    // materials than the other enemy/hostage meshes.
     if (Mesh == OfficerMesh)
     {
         Skins[0] = Instance.PantsMaterial;
@@ -467,7 +467,7 @@ private function SetVoiceType(CharacterArchetypeInstance Instance)
 
 	SwatAIRepo = SwatAIRepository(Level.AIRepo);
 	assert(SwatAIRepo != None);
-	
+
 	CharacterType = Instance.CharacterType;
 	assert(CharacterType != '');
 
@@ -480,7 +480,7 @@ private function SetVoiceType(CharacterArchetypeInstance Instance)
 	else
 	{
 		assertWithDescription(SwatAIRepo.VerifyCharacterTypeExists(Instance.CharacterType), "SwatAICharacter::SetVoiceType - CharacterType ("$Instance.CharacterType$") specified in archetype instance " $ Instance.Name $" not found!  Check your spelling in the Archetype .ini file!");
-				
+
 		VoiceType = SwatAIRepo.GetVoiceTypeForCharacterType(Instance.CharacterType);
 	}
 
@@ -516,6 +516,33 @@ function bool TaserKillsMe() {
 
 function bool PepperKillsMe() {
 	return bPepperKillsMe;
+}
+
+simulated function bool IsFearless()
+{
+  local CharacterArchetypeInstance OurArchetypeInstance;
+
+  OurArchetypeInstance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  return OurArchetypeInstance.Fearless;
+}
+
+simulated function bool IsPolite()
+{
+  local CharacterArchetypeInstance OurArchetypeInstance;
+
+  OurArchetypeInstance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  return OurArchetypeInstance.Polite;
+}
+
+simulated function bool IsInsane()
+{
+  local CharacterArchetypeInstance OurArchetypeInstance;
+
+  OurArchetypeInstance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  return OurArchetypeInstance.Insane;
 }
 
 simulated function bool IsFemale()
@@ -604,7 +631,7 @@ private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation,
 {
 	LastTimeStung = Level.TimeSeconds;
 	StungDuration = AIStingDuration;
-	
+
 	GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
 }
 
@@ -639,7 +666,7 @@ function ReactToLessLeathalShotgun(
 // Triple baton rounds are launched from the grenade launcher but are handle differently than a direct hit from a launched grenade
 function ReactToGLTripleBaton(
 	Pawn  Instigator,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -651,7 +678,7 @@ function ReactToGLTripleBaton(
 // React to a direct hit from a grenade launched from the grenade launcher
 function ReactToGLDirectGrenadeHit(
 	Pawn  Instigator,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -663,7 +690,7 @@ function ReactToGLDirectGrenadeHit(
 function ReactToMeleeAttack(
 	class<DamageType> MeleeDamageType,
 	Pawn  Instigator,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -684,12 +711,12 @@ function ReactToMeleeAttack(
 // IReactToFlashbangGrenade implementation
 
 function ReactToFlashbangGrenade(
-    SwatGrenadeProjectile Grenade, 
+    SwatGrenadeProjectile Grenade,
 	Pawn  Instigator,
-    float Damage, 
-    float DamageRadius, 
-    Range KarmaImpulse, 
-    float KarmaImpulseRadius, 
+    float Damage,
+    float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
     float StunRadius,
     float PlayerStunDuration,
     float AIStunDuration,
@@ -700,7 +727,7 @@ function ReactToFlashbangGrenade(
     local float Magnitude;
 
     if ( HasProtection( 'IProtectFromFlashbang' ) )
-    {        
+    {
         return;
     }
 
@@ -769,7 +796,7 @@ function ReactToFlashbangGrenade(
 function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
     if ( HasProtection( 'IProtectFromCSGas' ) )
-    {        
+    {
         return;
     }
 
@@ -787,12 +814,12 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 // IReactToStingGrenade implementation
 
 function ReactToStingGrenade(
-    SwatProjectile Grenade, 
+    SwatProjectile Grenade,
 	Pawn  Instigator,
-    float Damage, 
-    float DamageRadius, 
-    Range KarmaImpulse, 
-    float KarmaImpulseRadius, 
+    float Damage,
+    float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
     float StingRadius,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
@@ -830,12 +857,12 @@ function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, floa
     {
         return;
     }
-    
+
 	if (IsConscious())
 	{
 	    LastTimePepperSprayed = Level.TimeSeconds;
 		PepperSprayedDuration = AIDuration;
-    
+
 		GetCommanderAction().NotifyPepperSprayed(PepperSpray.Location, AIDuration);
 	}
 }

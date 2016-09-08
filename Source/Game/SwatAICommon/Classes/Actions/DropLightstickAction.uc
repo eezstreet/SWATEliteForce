@@ -19,7 +19,7 @@ var private MoveToLocationGoal			CurrentMoveToLocationGoal;
 var private HandheldEquipment			Lightstick;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -86,6 +86,7 @@ latent function DropLightstick()
 	}
 
 	log("[eezstreet] droplightstick() successful");
+	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLightstickSpeech();
 	Lightstick.LatentUse();
 }
 

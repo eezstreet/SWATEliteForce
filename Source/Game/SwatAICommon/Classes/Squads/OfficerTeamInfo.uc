@@ -22,7 +22,7 @@ var bool						bHoldCommand;			// wait for "zulu" command before completing actio
 
 event PostBeginPlay()
 {
-	// have to call this before calling InitAbilities because the SquadAI 
+	// have to call this before calling InitAbilities because the SquadAI
 	// is created in a parent class
 	Super.PostBeginPlay();
 
@@ -38,6 +38,7 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadFallInAction' );
 	SquadAI.addAbility( new class'SquadStackUpAction' );
 	SquadAI.addAbility( new class'SquadStackUpAndTryDoorAction' );
+	SquadAI.addAbility( new class'SquadCheckForTrapsAction' );
 	SquadAI.addAbility( new class'SquadMoveAndClearAction' );
 	SquadAI.addAbility( new class'SquadBangAndClearAction' );
 	SquadAI.addAbility( new class'SquadGasAndClearAction' );
@@ -65,6 +66,7 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadDeployThrownItemThroughDoorAction' );
 	SquadAI.addAbility( new class'SquadDeployPepperBallAction' );
 	SquadAI.addAbility( new class'SquadDeployLightstickAction' );
+	SquadAI.addAbility( new class'SquadDropLightstickAction' );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -486,7 +488,7 @@ event function bool CanDeployLessLethalShotgun()
 
 event function bool CanDeployGrenadeLauncher()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'HK69GrenadeLauncher');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'HK69GrenadeLauncher') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'HK69GrenadeLauncher');
 }
 
 event function bool CanDeployPepperBallGun()
@@ -596,7 +598,7 @@ function bool HoldingStatusDiffers()
 function bool IsOtherSubElementUsingDoor(Door TestDoor)
 {
 	local Door DoorOtherTeamIsUsing;
-	
+
 	assert(TestDoor != None);
 
 	DoorOtherTeamIsUsing = GetOtherTeam().GetDoorBeingUsed();
@@ -708,7 +710,7 @@ function bool FallIn(Pawn CommandGiver, vector CommandOrigin)
 		}
 		return true;	// command issued
 	}
-	
+
 	return false;
 }
 
@@ -733,7 +735,7 @@ function bool StackUpAt(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor
 			TriggerOtherTeamDoingBehaviorSpeech();
 		}
 	}
-	
+
 	return false;
 }
 
@@ -750,6 +752,30 @@ function bool StackUpAndTryDoorAt(Pawn CommandGiver, vector CommandOrigin, Door 
 			assert(SquadStackUpAndTryDoorGoal != None);
 
 			PostCommandGoal(SquadStackUpAndTryDoorGoal);
+			return true;	// command issued
+		}
+		else
+		{
+			TriggerOtherTeamDoingBehaviorSpeech();
+		}
+	}
+
+	return false;
+}
+
+function bool CheckForTrapsAt(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
+{
+	local SquadCheckForTrapsGoal SquadCheckForTrapsGoal;
+
+	// only post the goal if we are allowed
+	if (CanExecuteCommand())
+	{
+		if (!IsSubElement() || !IsOtherSubElementUsingDoor(TargetDoor))
+		{
+			SquadCheckForTrapsGoal = new class'SquadCheckForTrapsGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor);
+			assert(SquadCheckForTrapsGoal != None);
+
+			PostCommandGoal(SquadCheckForTrapsGoal);
 			return true;	// command issued
 		}
 		else
@@ -924,7 +950,7 @@ function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door Targe
 			{
 				if (ISwatDoor(TargetDoor).IsLocked())
 				{
-					// if it's locked, and we don't believe it's locked, stack up and try the door 
+					// if it's locked, and we don't believe it's locked, stack up and try the door
 					// (and therefore report the status of the door)
 					StackUpAndTryDoorAt(CommandGiver, CommandOrigin, TargetDoor, true);
 				}
@@ -984,7 +1010,7 @@ function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door T
 			{
 				if (ISwatDoor(TargetDoor).IsLocked())
 				{
-					// if it's locked, and we don't believe it's locked, stack up and try the door 
+					// if it's locked, and we don't believe it's locked, stack up and try the door
 					// (and therefore report the status of the door)
 					StackUpAndTryDoorAt(CommandGiver, CommandOrigin, TargetDoor, true);
 				}
@@ -1040,7 +1066,7 @@ function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door Ta
 			{
 				if (ISwatDoor(TargetDoor).IsLocked())
 				{
-					// if it's locked, and we don't believe it's locked, stack up and try the door 
+					// if it's locked, and we don't believe it's locked, stack up and try the door
 					// (and therefore report the status of the door)
 					StackUpAndTryDoorAt(CommandGiver, CommandOrigin, TargetDoor, true);
 				}
@@ -1096,7 +1122,7 @@ function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 			{
 				if (ISwatDoor(TargetDoor).IsLocked())
 				{
-					// if it's locked, and we don't believe it's locked, stack up and try the door 
+					// if it's locked, and we don't believe it's locked, stack up and try the door
 					// (and therefore report the status of the door)
 					StackUpAndTryDoorAt(CommandGiver, CommandOrigin, TargetDoor, true);
 				}
@@ -1134,7 +1160,7 @@ function bool DeployThrownItemAt(Pawn CommandGiver, vector CommandOrigin, Equipm
 				{
 					if (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !TargetDoor.IsBroken() && TargetDoor.IsLocked())
 					{
-						// if it's locked, regardless of whether we believe it's locked, stack up and try the door 
+						// if it's locked, regardless of whether we believe it's locked, stack up and try the door
 						// (and therefore report the status of the door)
 						StackUpAndTryDoorAt(CommandGiver, CommandOrigin, TargetDoor, true);
 					}
@@ -1142,7 +1168,7 @@ function bool DeployThrownItemAt(Pawn CommandGiver, vector CommandOrigin, Equipm
 					{
 						SquadDeployThrownItemThroughDoorGoal = new class'SquadDeployThrownItemThroughDoorGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, ThrownItemSlot);
 						assert(SquadDeployThrownItemThroughDoorGoal != None);
-		
+
 						PostCommandGoal(SquadDeployThrownItemThroughDoorGoal);
 					}
 					return true;	// command issued
@@ -1343,7 +1369,7 @@ function bool DeployC2(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 
 			if (! TargetDoor.IsClosed())
 			{
-				// respond that the door isn't closed 
+				// respond that the door isn't closed
 				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorNotClosedSpeech();
 			}
 			else if (CanDeployC2(TargetDoor, SwatDoorTarget.PointIsToMyLeft(CommandOrigin)))
@@ -1659,10 +1685,10 @@ function bool DeployShotgun(Pawn CommandGiver, vector CommandOrigin, Door Target
 			{
 				SwatDoorTarget = ISwatDoor(TargetDoor);
 				assert(SwatDoorTarget != None);
-			
+
 				if (! TargetDoor.IsClosed())
 				{
-					// respond that the door isn't closed 
+					// respond that the door isn't closed
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorNotClosedSpeech();
 				}
 				else
@@ -1783,6 +1809,20 @@ function bool DeployLightstick(Pawn CommandGiver, vector CommandOrigin, vector T
 		}
 	}
 
+	return false;
+}
+
+function bool DropLightstick(Pawn CommandGiver, vector CommandOrigin)
+{
+	local SquadDropLightstickGoal CurrentSquadDropLightstickGoal;
+
+	if(CanExecuteCommand()) {
+		CurrentSquadDropLightstickGoal = new class'SquadDropLightstickGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin);
+		assert(CurrentSquadDropLightstickGoal != None);
+
+		PostCommandGoal(CurrentSquadDropLightstickGoal);
+		return true;
+	}
 	return false;
 }
 

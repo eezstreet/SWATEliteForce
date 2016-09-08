@@ -179,7 +179,7 @@ simulated function CreateModels()
     if (ShouldHaveFirstPersonModel && GetHands() != None )
     {
         FirstPersonModel = Spawn(
-							SelectedFirstPersonModelClass, 
+							SelectedFirstPersonModelClass,
 							Pawn(Owner).GetHands(),		//owned by Hands
 							/*default tag*/,
 							/*default location*/,
@@ -189,7 +189,7 @@ simulated function CreateModels()
         //mplog( "......FirstPersonModel="$FirstPersonModel );
         assertWithDescription(FirstPersonModel != None,
                               "[tcohen] "$name$" failed to spawn its FirstPersonModel of class "$SelectedFirstPersonModelClass$".");
-        
+
 		FirstPersonModel.SetHandHeldEquipment(self);
         FirstPersonModel.Show();
         FirstPersonModel.OnUnequipKeyFrame();
@@ -208,10 +208,10 @@ simulated function CreateModels()
             $", please specify a valid ThirdPersonModelClass, or set ShouldHaveThirdPersonModel=false.");
 
         ThirdPersonModel = Spawn(
-								SelectedThirdPersonModelClass, 
+								SelectedThirdPersonModelClass,
 								Owner,					//owned by Pawn
 								/*default tag*/,
-								/*default location*/,  
+								/*default location*/,
 								/*default rotation*/,
 								true					//no fail
 								);
@@ -302,25 +302,25 @@ simulated function bool IsEquipped()
 //Returns true iff this item's UsingStatus is not idle
 simulated final function bool IsBeingUsed()
 {
-	return (UsingStatus != ActionStatus_Idle); 
+	return (UsingStatus != ActionStatus_Idle);
 }
 
 //Returns true iff this item's EquippingStatus is not idle
 simulated final function bool IsBeingEquipped()
 {
-	return (EquippingStatus != ActionStatus_Idle); 
+	return (EquippingStatus != ActionStatus_Idle);
 }
 
 //Returns true iff this item has hit the equip keyframe
 simulated final function bool HasPlayedEquip()
 {
-	return (EquippingStatus == ActionStatus_HitKeyFrame); 
+	return (EquippingStatus == ActionStatus_HitKeyFrame);
 }
 
 //Returns true iff this item's UnequippingStatus is not idle
 simulated final function bool IsBeingUnequipped()
 {
-	return (UnequippingStatus != ActionStatus_Idle); 
+	return (UnequippingStatus != ActionStatus_Idle);
 }
 
 //Returns true iff this is not busy performing some action,
@@ -330,7 +330,7 @@ simulated final function bool IsIdle()
     local bool Result;
 
     //LogIdleInfo();
- 
+
     // When an object is in the global state, the state name is the same as
     // class.name, rather than being ''.
     //Result =     IsInState( class.name )
@@ -385,10 +385,10 @@ simulated final latent function LatentEquip()
     DoEquipping();
 }
 
-// This is a latent version of Equip that the AIs use so they 
+// This is a latent version of Equip that the AIs use so they
 // interrupt any equipment
 simulated final latent function LatentWaitForIdleAndEquip()
-{   
+{
 	Pawn(Owner).AIInterruptEquipment();
 
 	if (! IsIdle())
@@ -460,7 +460,7 @@ simulated latent private function DoEquipping()
     }
 
     Pawn(Owner).SetPendingItem(self);
-    
+
     OnPreEquipped();
 
     //if owner currently has something else equipped, then unequip that first
@@ -509,7 +509,7 @@ simulated latent private function DoEquipping()
 //    log( self$"In HandheldEquipment::DoEquipping. Set EquippingStatus="$EquippingStatus );
 
     Pawn(Owner).SetPendingItem(none);
-    
+
     if (GetHands() != None)
         GetHands().IdleHoldingEquipment();
 
@@ -553,7 +553,7 @@ simulated final function OnEquipKeyFrame()
             if ( Pawn(Owner).HasEquippedFirstItemYet )
                 ThirdPersonModel.TriggerEffectEvent('Equipped');
         }
-        
+
         if (GetHands() != None)
         {
             FirstPersonModel.OnEquipKeyFrame();
@@ -565,7 +565,7 @@ simulated final function OnEquipKeyFrame()
         }
 
         EquippedHook();
-        
+
         EquippingStatus = ActionStatus_HitKeyFrame;
 //        log( self$"In HandheldEquipment::OnEquipKeyFrame. Set EquippingStatus="$EquippingStatus );
     }
@@ -640,12 +640,12 @@ simulated final function OnUnequipKeyFrame()
     {
         ThirdPersonModel.OnUnequipKeyFrame();
         ThirdPersonModel.TriggerEffectEvent('UnEquipped');
-        
+
         if (GetHands() != None)
         {
             FirstPersonModel.OnUnequipKeyFrame();
             FirstPersonModel.TriggerEffectEvent('UnEquipped');
-            
+
             // This will actually stop both pre- and post-render callbacks
             // from being called on the first person model
             FirstPersonModel.bNeedPostRenderCallback = false;
@@ -659,7 +659,7 @@ simulated final function OnUnequipKeyFrame()
 simulated function UnequippedHook();  //for subclasses
 
 // This function is a total hack. It allows an AI to 'unequip' its weapon
-// and make it 'unavailable' without going through the normal 
+// and make it 'unavailable' without going through the normal
 // Unequip()/SetAvailable() process (i.e., without playing animations, etc).
 // I have encapsulated it in this function so that all the hacky code
 // is in one place.
@@ -685,7 +685,7 @@ simulated function HACK_QuickUnequipForAIDropWeapon()
 // equipment's owner changes. For example, when the player's pawn dies the
 // view is switched from 1st person to 3rd person view of the pawn. This also
 // get's called whenever the Controller of the HandheldEquipment's Owner
-// changes. 
+// changes.
 simulated function OnPlayerViewChanged();
 
 //called by the PlayerController when the player instigates Use of this HandheldEquipment
@@ -783,9 +783,9 @@ Begin:
 simulated latent final private function DoUsing()
 {
     Pawn(Owner).OnUsingBegan();
-    
+
 	PreUsed();
-    
+
 	DoUsingHook();
 
 	OnUsingFinished();
@@ -833,7 +833,7 @@ simulated final function OnUseKeyFrame( optional bool ForceUse )
     {
         ThirdPersonModel.OnUseKeyFrame();
         ThirdPersonModel.TriggerEffectEvent('Used');
-        
+
         if (GetHands() != None)
         {
             FirstPersonModel.OnUseKeyFrame();
@@ -861,7 +861,7 @@ simulated function UpdateAvailability()
 simulated final protected function OnUsingFinished()
 {
 	UsingStatus = ActionStatus_Idle;
-    
+
 	if (GetHands() != None)
 		GetHands().IdleHoldingEquipment();
 
@@ -985,16 +985,16 @@ simulated final private function bool GetMeleeTarget(out Actor Victim, out vecto
 	local vector StartTrace;
 	local vector EndTrace;
 	local rotator TraceDirection;
-	
+
 	GetPerfectFireStart(StartTrace, TraceDirection);
 
 	EndTrace = StartTrace + vector(TraceDirection) * MeleeRange;
 
 	foreach TraceActors(class'Actor', Victim, HitLocation, HitNormal, HitMaterial, EndTrace, StartTrace, /*Extent*/, /*bSkeletalBoxTest*/, /*SkeletalRegionHit*/, true)
     {
-		// You shouldn't be able to hit hidden actors that block zero-extent 
-		// traces (i.e., projectors, blocking volumes). However, the 'Victim' 
-		// when you hit BSP is LevelInfo, which is hidden, so we have to 
+		// You shouldn't be able to hit hidden actors that block zero-extent
+		// traces (i.e., projectors, blocking volumes). However, the 'Victim'
+		// when you hit BSP is LevelInfo, which is hidden, so we have to
 		// handle that as a special case.
 		if ((Victim.bHidden || Victim.DrawType == DT_None) && !(Victim.IsA('LevelInfo')))
 			continue;
@@ -1019,8 +1019,8 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
     local Actor Junk;   //we don't care about this, it's just a required param to PlayerCalcView
 	local Coords WeaponCoords;
 	local bool InstigatorIsConscious;
-	
-    if (Instigator.IsA('SwatPlayer')) 
+
+    if (Instigator.IsA('SwatPlayer'))
     {
 		InstigatorIsConscious = class'Pawn'.static.checkConscious(Instigator);
 
@@ -1034,7 +1034,7 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
 			else // it's a remote player's pawn in MP
 			{
 				// use the apparent location of the 3rd person Pawn model's eyes
-				outLocation = Instigator.GetThirdPersonEyesLocation(); 
+				outLocation = Instigator.GetThirdPersonEyesLocation();
 				outDirection = Instigator.GetAimRotation();
 			}
         }
@@ -1045,7 +1045,7 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
 			// dead, the bullets will shoot from the weapon rather than
 			// from the 3rd person eye position.
 			WeaponCoords = Pawn(Owner).GetBoneCoords('GripRHand', true);
-			outLocation = WeaponCoords.Origin; 
+			outLocation = WeaponCoords.Origin;
 			outDirection = Rotator(-WeaponCoords.YAxis); // this gets the vector in the direction the weapon is aiming
         }
     }
@@ -1055,7 +1055,7 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
 		outDirection = Instigator.GetAimRotation();
     }
     else
-		assertWithDescription(false, 
+		assertWithDescription(false,
             "[tcohen] "$class.name
             $" was called to GetFireStart(), but Instigator ("$Instigator
             $") is not a SwatAI nor a SwatPlayer.  \"Wha happened?\"");
@@ -1248,7 +1248,7 @@ simulated function EquipmentSlot GetSlotForReequip()
 // For example, when calling Equip(), the Equipment System normally
 //  guarantees that the HandheldEquipment will be equipped (unless
 //  the Owner dies).  However, if AIInterrupt() is called, then
-//  the Equipment System cannot guarantee that.  In fact, in that case, 
+//  the Equipment System cannot guarantee that.  In fact, in that case,
 //  the EquipmentSystem cannot even guarantee that any ActiveItem
 //  is Unequipped.
 // Also, if Latent forms of the Equipment Actions are used
@@ -1301,7 +1301,7 @@ simulated function bool ShouldDisplayReticle()
 
 cpptext
 {
-    // Automatically updates the correct value of bOwnerNoSee based on 
+    // Automatically updates the correct value of bOwnerNoSee based on
     // the current view and what this equipment is attached to.
     virtual UBOOL Tick( FLOAT DeltaSeconds, ELevelTick TickType );
 

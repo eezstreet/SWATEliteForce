@@ -18,7 +18,7 @@ var private config float				MinTimeToShootHostage;
 var private config float				MaxTimeToShootHostage;
 
 // the minimum distance between us and the closest officer to be able to threaten a hostage
-var config private float				MinRequiredDistanceToOfficer;	
+var config private float				MinRequiredDistanceToOfficer;
 var config private float				MinRequiredDistanceToHostage;
 var config private float				MaxDistanceOfficerCanComeCloser;
 
@@ -43,13 +43,13 @@ var private config float				RequiredHearingDistance;
 const kWaitForOfficerAbleToHearUpdateTime = 0.25;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
 {
 	super.cleanup();
-	
+
 	// in case we weren't unregistered
 	Level.UnRegisterNotifyPawnDied(self);
 
@@ -122,19 +122,27 @@ function OnOtherPawnDied(Pawn DeadPawn)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 private function bool CanThreatenHostage()
 {
 	local FiredWeapon CurrentWeapon;
 
+	if(ISwatAICharacter(m_Pawn).IsPolite())
+			return false;
+
 	Officer = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
 	Hostage = None;
-	
+
 	CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
 
-	if ((CurrentWeapon != None) && (Officer != None) && HasLineOfSightToAPlayer() && !IsWithinDistanceOfOfficers())
+	if(ISwatAICharacter(m_Pawn).IsInsane()) {
+		// insane people don't think like normal people do ;)
+		if(CurrentWeapon != None && Officer != None)
+			Hostage = GetClosestUsableHostageInRoom(Officer);
+	}
+	else if ((CurrentWeapon != None) && (Officer != None) && HasLineOfSightToAPlayer() && !IsWithinDistanceOfOfficers())
 	{
 		Hostage = GetClosestUsableHostageInRoom(Officer);
 	}
@@ -161,7 +169,7 @@ private function bool HasLineOfSightToAPlayer()
 	if (Level.NetMode == NM_Standalone)
 	{
 		Player = Level.GetLocalPlayerController().Pawn;
-	
+
 		return Player.LineOfSightTo(m_Pawn);
 	}
 	else
@@ -205,7 +213,10 @@ function float selectionHeuristic( AI_Goal goal )
 
 	if (CanThreatenHostage())
 	{
-		if (ISwatAI(m_Pawn).IsAggressive())
+		if (ISwatAICharacter(m_Pawn).IsInsane()) {
+			return 0.8;
+		}
+		else if (ISwatAI(m_Pawn).IsAggressive())
 		{
 			// return a random value that is at least the minimum chance
 			return FClamp(FRand(), MinAgressiveThreatenHostageChance, MaxAgressiveThreatenHostageChance);
@@ -234,11 +245,11 @@ function Pawn GetClosestUsableHostageInRoom(Pawn Officer)
 {
 	local Pawn PawnIter, ClosestHostage;
 	local float IterDistance, ClosestDistance;
-	
+
 	for(PawnIter = m_Pawn.Level.PawnList; PawnIter != None; PawnIter = PawnIter.nextPawn)
 	{
 		// if PawnIter is in the same room, is alive, and is a swat hostage
-		if (PawnIter.IsA('SwatHostage') && 
+		if (PawnIter.IsA('SwatHostage') &&
 			class'Pawn'.static.checkConscious(PawnIter) &&
 			m_Pawn.IsInRoom(PawnIter.GetRoomName()) &&
 			IsHostageInUsableLocation(Officer, PawnIter))
@@ -256,7 +267,7 @@ function Pawn GetClosestUsableHostageInRoom(Pawn Officer)
 			}
 		}
 	}
-	
+
 	return ClosestHostage;
 }
 
@@ -326,7 +337,7 @@ latent function AimAtHostage()
 	CurrentAimAtTargetGoal = new class'AimAtTargetGoal'(weaponResource(), achievingGoal.priority, Hostage);
 	assert(CurrentAimAtTargetGoal != None);
 	CurrentAimAtTargetGoal.AddRef();
-	
+
 	// post the aim at target goal
 	CurrentAimAtTargetGoal.postGoal(self);
 }
@@ -346,7 +357,7 @@ latent function ShootHostage()
 }
 
 latent function TriggerThreatenHostageSpeech(bool bCreateDistanceSensor)
-{	
+{
 	ISwatAI(m_Pawn).LatentAITriggerEffectEvent(ThreatenHostageTriggerEffectEvent,,,,,,true);
 
 	if (bCreateDistanceSensor)
@@ -439,7 +450,8 @@ state Running
 
 	AimAtHostage();
 
-	WaitToKillHostage();
+	if(!ISwatAICharacter(m_Pawn).IsInsane())
+		WaitToKillHostage();
 
 	// remove the aim goal, cause we're going to shoot the hostage.
 	CurrentAimAtTargetGoal.unPostGoal(self);

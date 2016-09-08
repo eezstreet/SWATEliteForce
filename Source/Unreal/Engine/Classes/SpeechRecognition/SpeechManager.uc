@@ -62,7 +62,7 @@ final function UnRegisterInterest(ISpeechClient Client)
         }
         ++i;
     }
-    
+
     if (ClientInterests.length == 0)
         StopRecognition();  //nobody interested
 }
@@ -94,7 +94,7 @@ final function UnRegisterAudioLevelInterest(ISpeechClient Client)
         }
         ++i;
     }
-    
+
     if (AudioLevelClientInterests.length == 0)
         DeactivateAudioLevelNotify();  //nobody interested
 }
@@ -121,6 +121,7 @@ event OnPhraseStart()
 {
 	local int i;
 
+    log("[SPEECH] Phrase start");
     for (i=0; i<ClientInterests.length; ++i)
 		ClientInterests[i].Client.OnSpeechPhraseStart();
 }
@@ -129,6 +130,7 @@ event OnCommandRecognized(name Rule, Array<name> Value, SpeechRecognitionConfide
 {
     local int i;
 
+    log("[SPEECH] Command recognized "$Rule);
     //assertWithDescription(ClientInterests.length > 0,
     //    "[tcohen] The SpeechManager was called OnCommandRecognized(), but nobody is interested.");
 
@@ -139,6 +141,7 @@ event OnCommandRecognized(name Rule, Array<name> Value, SpeechRecognitionConfide
 event OnFalseRecognition()
 {
     local int i;
+    log("[SPEECH] False recognition");
 
     for (i=0; i<ClientInterests.length; ++i)
 		ClientInterests[i].Client.OnSpeechFalseRecognition();

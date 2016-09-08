@@ -7,7 +7,7 @@ import enum CommandInterfacePage from CommandInterface;
 import enum EInputKey from Engine.Interactions;
 import enum EInputAction from Engine.Interactions;
 
-const MAX_COMMANDS_PER_PAGE = 13;
+const MAX_COMMANDS_PER_PAGE = 20;
 
 var GUIGraphicCommandInterfaceMenu MenuPages[CommandInterfacePage.EnumCount];
 var Command CurrentCommand;
@@ -85,7 +85,7 @@ function SetLogic(GraphicCommandInterface inLogic)
 
     if( Logic == None )
         return;
-        
+
     for (i=0; i<CommandInterfacePage.EnumCount; ++i)
         if( MenuPages[i] != None && Logic.MenuInfo[i] != None )
             MenuPages[i].IsAMainMenu = (Logic.MenuInfo[i].AnchorCommand == Command_None);
@@ -296,10 +296,10 @@ Delegate bool OnCapturedMouseMove(float dX, float dY)
         GestureDistanceX = 0;
         GestureDistanceY = 0;
     }
-    
+
     GestureDistanceX += dX;
     GestureDistanceY += dY;
-    
+
     while (GestureDistanceX >= MouseDistanceBetweenMenus)
     {
         OnMouseMovedRight();
@@ -323,7 +323,7 @@ Delegate bool OnCapturedMouseMove(float dX, float dY)
         OnMouseMovedDown();
         GestureDistanceY += MouseDistanceBetweenMenuPads;
     }
-    
+
     return true;    //mouse movement was consumed
 }
 
@@ -349,19 +349,19 @@ Delegate bool OnKeyEvent(out byte Key, out byte State, float delta)
         if( State==EInputAction.IST_Press )
             return false;
     }
-    
-    if  ( 
+
+    if  (
             KeyMatchesBinding( Key, "ScrollCommand Up")
         &&  State == EInputAction.IST_Press
         )
         Scroll('Up');
-    
-    if  ( 
+
+    if  (
             KeyMatchesBinding( Key, "ScrollCommand Down")
         &&  State == EInputAction.IST_Press
         )
         Scroll('Down');
-    
+
     if( State==EInputAction.IST_Release || KeyMatchesBinding( Key, "HoldCommandForZulu" ))
         return false;
 
@@ -371,9 +371,9 @@ Delegate bool OnKeyEvent(out byte Key, out byte State, float delta)
 function bool OnRightMousePressed()
 {
     local int ButtonMode;
-    
+
     ButtonMode = SwatGUIControllerBase(Controller).GuiConfig.GCIButtonMode;
-    
+
     Switch (ButtonMode)
     {
     case 1:                         //!Modal, !LMBCancel
@@ -396,9 +396,9 @@ function bool OnRightMousePressed()
 function bool OnRightMouseReleased()
 {
     local int ButtonMode;
-    
+
     ButtonMode = SwatGUIControllerBase(Controller).GuiConfig.GCIButtonMode;
-    
+
     Switch (ButtonMode)
     {
     case 1:                         //!Modal, !LMBCancel
@@ -424,9 +424,9 @@ function bool OnRightMouseReleased()
 function bool OnLeftMousePressed()
 {
     local int ButtonMode;
-    
+
     ButtonMode = SwatGUIControllerBase(Controller).GuiConfig.GCIButtonMode;
-    
+
     Switch (ButtonMode)
     {
     case 1:                         //!Modal, !LMBCancel
@@ -513,7 +513,7 @@ function Scroll(name UpOrDown)
 {
     if (!MenuOwner.bActiveInput)
         return;                 //GCI isn't active (visible)
-    
+
     //scrolling represents a complete gesture; reset the mouse gesture
     LastMouseMoveTime = Logic.Level.TimeSeconds;
     GestureDistanceX = 0;
@@ -542,7 +542,7 @@ protected function GiveCommand()
     if (CurrentCommand == None) return;     //this can happen if the interface is closing
 
     Logic.GiveCommand(CurrentCommand, Logic.Level.GetLocalPlayerController().bHoldCommand > 0);
-    
+
     TriggerEffectEvent('GaveCommand');
 }
 
@@ -587,10 +587,10 @@ defaultproperties
     MouseDistanceBetweenMenus=10.0
     bNeverFocus=false
     bCaptureMouse=true
-    
+
     //we want to manage the visibility of all subcomponents
-    PropagateVisibility=false 
-    PropagateState=false 
+    PropagateVisibility=false
+    PropagateState=false
     ScrollTime=0.0
 
     bPersistent=True

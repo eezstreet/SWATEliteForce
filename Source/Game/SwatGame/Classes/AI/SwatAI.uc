@@ -4,9 +4,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 class SwatAI extends SwatRagdollPawn
-    implements  SwatAICommon.ISwatAI, 
-                IUseArchetype, 
-                SwatAIAwareness.IAwarenessOuter, 
+    implements  SwatAICommon.ISwatAI,
+                IUseArchetype,
+                SwatAIAwareness.IAwarenessOuter,
                 ICanThrowWeapons,
                 IEffectObserver,
                 IAmReportableCharacter // For reporting to TOC when AI is dead/incapacitated/restrained
@@ -43,7 +43,7 @@ var private const rotator				CurrentViewDirection;
 var private const float					LastViewUpdateTime;
 
 // the current type of idles we want to use (specified by the artist)
-var private name						IdleCategory;	
+var private name						IdleCategory;
 
 // the last time we updated the idle
 var private float						LastIdleUpdateTime;
@@ -326,7 +326,7 @@ simulated event PostBeginPlay()
 
     // * SERVER & CLIENT
 	InitAimPoses();
-	
+
 	// just set aim urgency to fast for now
 	SetAimUrgency(false);
 
@@ -417,7 +417,7 @@ protected function ConstructCharacterAI()
     local AI_Resource characterResource;
     characterResource = AI_Resource(characterAI);
     assert(characterAI != None);
-        
+
     // Create Swat specific abilities
 	characterResource.addAbility(new class'SwatAICommon.TakeCoverAction');
 	characterResource.addAbility(new class'SwatAICommon.MoveToAction');				// this could be officer only, but other types might want to use it
@@ -478,11 +478,11 @@ protected function ConstructWeaponAI()
 
     // Create Tyrion abilities
     weaponResource.addAbility(new class'Tyrion.AI_DummyWeapon');
-    
+
     // Create Swat specific abilities
     weaponResource.addAbility(new class'SwatAICommon.AimAroundAction');
     weaponResource.addAbility(new class'SwatAICommon.AimBetweenPointsAction');
-    weaponResource.addAbility(new class'SwatAICommon.AttackTargetAction');    
+    weaponResource.addAbility(new class'SwatAICommon.AttackTargetAction');
 	weaponResource.addAbility(new class'SwatAICommon.AimAtTargetAction');
 	weaponResource.addAbility(new class'SwatAICommon.AimAtPointAction');
 	weaponResource.addAbility(new class'SwatAICommon.IdleAimAroundAction');
@@ -496,7 +496,7 @@ private function CleanupSensing()
 		Vision.Release();
 		Vision = None;
 	}
-	
+
 	if (Hearing != None)
 	{
 		Hearing.Release();
@@ -518,7 +518,7 @@ private function CreateHearingNotifier()
 	Hearing = new(self) class'HearingNotifier';
 	assert(Hearing != None);
 	Hearing.AddRef();
-	
+
 	Hearing.InitializeHearingNotifier(self);
 }
 
@@ -569,8 +569,8 @@ private function SetupIdling()
 }
 
 
-// CanUseIdle - 
-// * We return true if we can use the Idle  at any point, this only does a type check based on the Pawn's class 
+// CanUseIdle -
+// * We return true if we can use the Idle  at any point, this only does a type check based on the Pawn's class
 //   and the Enum specified in the IdleDefinition
 // * We return false if the Pawn class is not the correct type
 private function bool CanUseIdle(IdleDefinition Idle)
@@ -625,7 +625,7 @@ private function AddIdleActions()
 		assertWithDescription((AnimatorIdleDefinition(DefinitionIter).AnimationName != ''), "DefinitionIter: " $ DefinitionIter $ " has no AnimationName ! ");
 
         if (CanUseIdle(DefinitionIter))
-        { 
+        {
             // create the new action and push it onto the character resource
             NewAnimatorIdleAction = new class'SwatAICommon.AnimatorIdleAction'(DefinitionIter);
             assert(NewAnimatorIdleAction != None);
@@ -640,7 +640,7 @@ private function AddIdleActions()
         DefinitionIter = IdleActionsList.ProceduralIdleDefinitions[i];
 
         if (CanUseIdle(DefinitionIter))
-        { 
+        {
             ProceduralIdleActionClassName = "SwatAICommon." $ ProceduralIdleDefinition(DefinitionIter).ProceduralClassName;
             ProceduralIdleActionClass     = class<ProceduralIdleAction>(DynamicLoadObject(ProceduralIdleActionClassName,class'Class'));
             assertWithDescription((ProceduralIdleActionClass != None), "Could not find procedural idle action class named: "@ProceduralIdleActionClassName);
@@ -654,7 +654,7 @@ private function AddIdleActions()
     }
 }
 
-// Sets the IdleCategory variable, which lets the Idle behavior know we're only 
+// Sets the IdleCategory variable, which lets the Idle behavior know we're only
 // interested in a particular type of idles
 // the value passed in can be '' (that's why there's no asserts)
 function SetIdleCategory(name inIdleCategory)
@@ -792,7 +792,7 @@ function ChooseIdle()
 
 	TotalIdleWeight = 0.0;
 
-	// go through each base idle action on the pawn and find the total weight 
+	// go through each base idle action on the pawn and find the total weight
 	//  as well as all the usable Idle Actions
 	for(i=0; i<characterAI.abilities.length; ++i)
 	{
@@ -809,7 +809,7 @@ function ChooseIdle()
 			if (IdleAction.CanUseIdleAction())
 			{
 				TotalIdleWeight += IdleAction.GetIdleWeight();
-				UsableIdleActions[UsableIdleActions.Length] = IdleAction; 
+				UsableIdleActions[UsableIdleActions.Length] = IdleAction;
 			}
 		}
 	}
@@ -871,7 +871,7 @@ function float GetAwarenessCostForPoint(NavigationPoint Point)
     local AwarenessPoint ClosestAwarenessPoint;
     local AwarenessProxy.AwarenessKnowledge KnowledgeOfPoint;
     local float Cost;
-    
+
     if (bUsesAwarenessForPathfindingCost)
     {
         ClosestAwarenessPoint = Point.GetClosestAwarenessPoint();
@@ -888,7 +888,7 @@ function float GetAwarenessCostForPoint(NavigationPoint Point)
         log("cost for "@Point.Name@" is "@Cost@" Threat is:"@KnowledgeOfPoint.Threat@" Confidence is:"@KnowledgeOfPoint.Confidence);
     }
     */
- 
+
     return Cost;
 }
 
@@ -939,7 +939,7 @@ function SetPendingDoor(Door inPendingDoor)
 	assert(inPendingDoor != None);
 	assert(inPendingDoor.IsA('SwatDoor'));
 
-	PendingDoor = SwatDoor(inPendingDoor); 
+	PendingDoor = SwatDoor(inPendingDoor);
 }
 
 function ClearPendingDoor()
@@ -996,7 +996,7 @@ function SwapInRestrainedAnimSet()
 function name GetFBReactionAnimation()
 {
 	local int RandomIndex;
-	
+
 	// return a reaction based on whether we're standing, restrained, or compliant
 	if (IsArrested())
 	{
@@ -1128,7 +1128,7 @@ function name GetFBRecoveryAnimation()
 function name GetGasReactionAnimation()
 {
 	local int RandomIndex;
-	
+
 	// return a reaction based on whether we're restrained, compliant, crouching, or standing
 	if (IsArrested())
 	{
@@ -1260,7 +1260,7 @@ function name GetGasRecoveryAnimation()
 function name GetStungReactionAnimation()
 {
 	local int RandomIndex;
-	
+
 	// return a reaction based on whether we're restrained, compliant, crouching, or standing
 	if (IsArrested())
 	{
@@ -1392,7 +1392,7 @@ function name GetStungRecoveryAnimation()
 function name GetTasedReactionAnimation()
 {
 	local int RandomIndex;
-	
+
 	// return a reaction based on whether we're restrained, compliant, crouching, or standing
 	if (IsArrested())
 	{
@@ -1978,7 +1978,7 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
     Grav              = - PhysicsVolume.Gravity.Z * 0.5;            // multiplied by 0.5 cause unreal's use of gravity in UnPhysic.cpp is real strange
 	ProjectileSpeed   = FiredWeapon(ActiveItem).MuzzleVelocity;
 	Angle             = asin((Distance * Grav) / (ProjectileSpeed * ProjectileSpeed)) / 2.0;
-	
+
 	OriginalAim       = TargetLocation - AimOrigin;
 
 //	log("ProjectileSpeed:"@ProjectileSpeed@" Grav:"@Grav@" Angle:"@Angle);
@@ -2163,8 +2163,8 @@ simulated function bool WantsToContinueAutoFiring()
     return bWantsToContinueAutoFiring && (Level.TimeSeconds < EndTimeToStopFiringFullAuto) && CanHitCurrentTarget();
 }
 
-simulated private function bool CanHitCurrentTarget() 
-{ 
+simulated private function bool CanHitCurrentTarget()
+{
 	if (CurrentWeaponTarget != None)
 	{
 		return CanHit(CurrentWeaponTarget);
@@ -2244,7 +2244,7 @@ function BecomeIncapacitated(optional name IncapaciatedIdleCategoryOverride, opt
 // override me
 function NotifyBecameIncapacitated(Pawn Incapacitator);
 
-simulated function PostTakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, 
+simulated function PostTakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation,
                                   Vector momentum, class<DamageType> damageType)
 {
 //	log("PostTakeDamage on " $ Name $ " Damage: " $ Damage $ " InstigatedBy: " $ InstigatedBy);
@@ -2274,7 +2274,7 @@ function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vect
 {
 	local Pawn Attacker;
 	local bool bIsLessLethalHit;
-	
+
 	log("OnSkeletalRegionHit on " $ Name $ " Damage type: " $ DamageType);
 
 	Attacker = Pawn(Instigator);
@@ -2338,8 +2338,8 @@ function CharacterSpeechManagerAction GetSpeechManagerAction()
 
 function DrawVisionCone(HUD DrawTarget)
 {
-	DrawTarget.Draw3DCone(GetViewPoint(), GetViewDirection(), SightRadius, 
-						  Acos(PeripheralVision) * 180.0f / PI, 
+	DrawTarget.Draw3DCone(GetViewPoint(), GetViewDirection(), SightRadius,
+						  Acos(PeripheralVision) * 180.0f / PI,
 						  class'Canvas'.Static.MakeColor(0,255,0), 8);
 }
 
@@ -2355,9 +2355,9 @@ function DrawDebugAIMovement(HUD DrawTarget)
 		{
 			DrawTarget.Draw3DLine(Location, Controller.MoveTarget.Location, class'Canvas'.Static.MakeColor(0,255,0));
 			LineOrigin = Controller.MoveTarget.Location;
-			
+
 			if (Controller.MoveTarget == Controller.RouteCache[0])
-			{		
+			{
 				for(i=1; i<16; ++i)
 				{
 					if (Controller.RouteCache[i] != None)
@@ -2594,7 +2594,7 @@ function SetIncapacitated(bool bInIsIncapacitated)
 function bool IsDisabled()
 {
 	// bit of a hacky test but it will do in lieu of an AI lodding system
-	return !bCollideActors && !bBlockActors && !bBlockPlayers;  
+	return !bCollideActors && !bBlockActors && !bBlockPlayers;
 }
 
 native function bool IsOtherActorAThreat(Actor otherActor);
@@ -2698,7 +2698,7 @@ private function UseGrenadeAction GetUseGrenadeBehavior()
 {
 	local UseGrenadeGoal CurrentUseGrenadeGoal;
 	local UseGrenadeAction CurrentUseGrenadeAction;
-	
+
 	CurrentUseGrenadeGoal = UseGrenadeGoal(AI_Resource(weaponAI).findGoalByName("UseGrenade"));
 	assert(CurrentUseGrenadeGoal != None);
 
@@ -2875,7 +2875,7 @@ latent function LatentAITriggerEffectEvent(
 #if 1 //dkaplan
     //force timeout after XX seconds to ensure AI doesn't get stuck on a server if nobody hears the sound
     MaxTime = Level.TimeSeconds + MaxAIWaitForEffectEventToFinish;
-    
+
     while( bEffectEventStillPlaying && MaxTime > Level.TimeSeconds )
     {
         Sleep( 0.03 );
@@ -2890,8 +2890,8 @@ latent function LatentAITriggerEffectEvent(
     //sleep until the sound starts
     Sleep(LatentSound.Delay);
 
-    // Carlos: The sound could have potentially been stopped during the above sleep delay, making LatentSound invalid, and possibly 
-    // triggering  assertions in the sound code 
+    // Carlos: The sound could have potentially been stopped during the above sleep delay, making LatentSound invalid, and possibly
+    // triggering  assertions in the sound code
     if (LatentSound == None || LatentSound.ActualSound == None)
     {
         Warn("[tcohen] SwatAI::LatentAITriggerEffectEvent() it seems like no sound was played in response to TriggerEffectEvent()");
@@ -2919,13 +2919,13 @@ simulated function AITriggerEffectEvent(
     local SwatGamePlayerController current;
 
     MoveMouthDuringEffect = MoveMouth;
-    
+
     CurrentEffectEventName = EffectEvent;
     CurrentSeed = Seed;
-    
+
     SetSeedForNextEffectEvent( CurrentSeed );
-    
-    TriggerEffectEvent(EffectEvent, Other, TargetMaterial, HitLocation, HitNormal, PlayOnOther, 
+
+    TriggerEffectEvent(EffectEvent, Other, TargetMaterial, HitLocation, HitNormal, PlayOnOther,
         false,          //QueryOnly wouldn't make sense in the context of LatentAITriggerEffectEvent
         self,	        //we are the EffectObserver
 		ReferenceTag);
@@ -2960,7 +2960,7 @@ function ServerOnEffectStopped( string EffectName, int Seed )
     if( name(EffectName) == CurrentEffectEventName && Seed == CurrentSeed )
         bEffectEventStillPlaying = false;
 
-    RestartInterruptedActionSpeech( name(EffectName) );        
+    RestartInterruptedActionSpeech( name(EffectName) );
 }
 
 function RestartInterruptedActionSpeech( name PreviousEffectEvent )
@@ -2978,7 +2978,7 @@ function RestartInterruptedActionSpeech( name PreviousEffectEvent )
     if( PreviousEffectEvent != 'ReactedBreach' )
         RestartStunnedActionSpeech( AI_Resource(characterAI).findGoalByName( "StunnedByC2" ) );
 }
-	
+
 function RestartStunnedActionSpeech(AI_Goal goal)
 {
 	if( goal != None && goal.achievingAction != None && StunnedAction(goal.achievingAction) != None )
@@ -3017,7 +3017,7 @@ simulated function OnEffectStopped(Actor inStoppedEffect, bool Completed)
 	{
 		//LatentSound = None;
 		StopMouthMovement();
-    
+
 //log( self$"::OnEffectStopped() ... CurrentEffectEventName = "$CurrentEffectEventName$", CurrentSeed = "$CurrentSeed );
 		if( Level.NetMode != NM_DedicatedServer )
 		    SwatGamePlayerController(Level.GetLocalPlayerController()).ServerOnEffectStopped( self, UniqueID(), string(CurrentEffectEventName), CurrentSeed );
@@ -3131,4 +3131,3 @@ defaultproperties
 
 	bAlwaysTestPathReachability = false
 }
-

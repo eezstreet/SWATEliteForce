@@ -3,7 +3,7 @@
 class SquadDeployPepperBallAction extends OfficerSquadAction;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 var private DeployPepperBallGoal CurrentDeployPepperBallGoal;
@@ -34,7 +34,11 @@ latent function DeployPepperBallOnTarget()
 {
 	local Pawn Officer;
 
+	// Get officers that have pepperball equipped in primary slot first
 	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_PrimaryWeapon, 'CSBallLauncher');
+	if(Officer == None) {
+		Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_SecondaryWeapon, 'CSBallLauncher');
+	}
 
 	CurrentDeployPepperBallGoal = new class'DeployPepperBallGoal'(AI_Resource(Officer.characterAI), TargetPawn);
 	assert(CurrentDeployPepperBallGoal != None);

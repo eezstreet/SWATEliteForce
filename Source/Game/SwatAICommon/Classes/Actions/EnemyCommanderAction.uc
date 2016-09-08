@@ -154,7 +154,7 @@ function cleanup()
 	{
 		CurrentInitialReactionGoal.release();
 		CurrentInitialReactionGoal = None;
-	}	
+	}
 
 	if (CurrentInvestigateGoal != None)
 	{
@@ -200,7 +200,7 @@ function RemoveNonDeathGoals()
 		CurrentInitialReactionGoal.Release();
 		CurrentInitialReactionGoal = None;
 	}
-	
+
 	if (CurrentInvestigateGoal != None)
 	{
 		CurrentInvestigateGoal.unPostGoal(self);
@@ -252,7 +252,7 @@ function DisableAI()
 //
 // Sub-Behavior Messages
 
-// TODO: verify this is the correct way to make the compliance behavior the only 
+// TODO: verify this is the correct way to make the compliance behavior the only
 // exclusive-like character behavior running
 function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorCode )
 {
@@ -321,8 +321,8 @@ private function SetupHostageConversing()
 //
 // Stunning functions
 
-function float GetFlashbangedMoraleModification() 
-{ 
+function float GetFlashbangedMoraleModification()
+{
 	if (ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High)
 	{
 		return HighSkillFlashbangedMoraleModification;
@@ -337,8 +337,8 @@ function float GetFlashbangedMoraleModification()
 	}
 }
 
-function float GetGassedMoraleModification() 
-{ 
+function float GetGassedMoraleModification()
+{
 	if (ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High)
 	{
 		return HighSkillGassedMoraleModification;
@@ -353,8 +353,8 @@ function float GetGassedMoraleModification()
 	}
 }
 
-function float GetPepperSprayedMoraleModification() 
-{ 
+function float GetPepperSprayedMoraleModification()
+{
 	if (ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High)
 	{
 		return HighSkillPepperSprayedMoraleModification;
@@ -369,8 +369,8 @@ function float GetPepperSprayedMoraleModification()
 	}
 }
 
-function float GetStungMoraleModification() 
-{ 
+function float GetStungMoraleModification()
+{
 	if (ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High)
 	{
 		return HighSkillStungMoraleModification;
@@ -385,8 +385,8 @@ function float GetStungMoraleModification()
 	}
 }
 
-function float GetTasedMoraleModification() 
-{ 
+function float GetTasedMoraleModification()
+{
 	if (ISwatEnemy(m_Pawn).GetEnemySkill() == EnemySkill_High)
 	{
 		return HighSkillTasedMoraleModification;
@@ -562,7 +562,7 @@ protected function DisableSensingSystems()
 {
 	// we don't need awareness
 	ISwatAI(m_Pawn).DisableAwareness();
-	
+
 	// disable vision permanently
 	ISwatAI(m_Pawn).DisableVision(true);
 }
@@ -585,9 +585,9 @@ function OnPawnEncounteredVisionNotification()
 	{
 		assert(VisionSensor.LastPawnLost != none);
 
-		Enemy = VisionSensor.LastPawnSeen;		
+		Enemy = VisionSensor.LastPawnSeen;
 	}
-	
+
 	DeactivateLostPawnTimer();
 
 	if (m_Pawn.logAI)
@@ -710,7 +710,7 @@ function OnHeardNoise()
 	}
 	else
 	{
-		// 
+		//
 		if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn) && m_Pawn.LineOfSightTo(HeardPawn) &&
 			(DoesSoundCauseUsToKnowAboutPawn(SoundCategory) || DoWeKnowAboutPawn(HeardPawn)))
 		{
@@ -728,7 +728,7 @@ function OnHeardNoise()
 		else if (SoundCategory == 'DoorInteraction')
 		{
 			assertWithDescription((HeardActor.IsA('SwatDoor')), "EnemyCommanderAction::OnHeardNoise - sound played by " $ HeardActor $ " with the Sound category 'DoorInteraction' is not a door!");
-		
+
 			LastDoorInteractor = ISwatDoor(HeardActor).GetLastInteractor();
 
 			// if the other actor isn't a threat to us, ignore the door sound
@@ -797,7 +797,7 @@ private function HandleFootstepNoise(Pawn HeardPawn, vector FootstepSoundOrigin)
 	{
 //		log("distance to footstep noise: " $ VSize(HeardPawn.Location - m_Pawn.Location) $ " GetMinHeardOfficerFootstepsDistance: " $ GetMinHeardOfficerFootstepsDistance());
 
-		if (CurrentEnemy != None) 
+		if (CurrentEnemy != None)
 		{
 			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
 
@@ -904,7 +904,7 @@ function PreComplianceCheck(Pawn ComplianceIssuer)
 
     // we only do this check if we are unaware or suspicious
     // and if we're within the maximum distance to be surprised
-    if (ISwatEnemy(m_Pawn).GetCurrentState() < EnemyState_Aware) 
+    if (ISwatEnemy(m_Pawn).GetCurrentState() < EnemyState_Aware)
     {
         // we are now aware
         ISwatEnemy(m_Pawn).SetCurrentState(EnemyState_Aware);
@@ -1012,14 +1012,14 @@ protected function bool WillReactToGrenadeBeingThrown()
 
 protected function bool IsTakingCover()
 {
-	return ((CurrentEngageOfficerGoal != None) && 
-			(CurrentEngageOfficerGoal.achievingAction != None) && 
+	return ((CurrentEngageOfficerGoal != None) &&
+			(CurrentEngageOfficerGoal.achievingAction != None) &&
 			CurrentEngageOfficerGoal.achievingAction.IsA('TakeCoverAction'));
-}	
+}
 
 protected function bool IsRunningAway()
 {
-	if ((CurrentEngageOfficerGoal != None) && 
+	if ((CurrentEngageOfficerGoal != None) &&
 		(CurrentEngageOfficerGoal.achievingAction != None))
 	{
 		return CurrentEngageOfficerGoal.achievingAction.IsA('FleeAction') || CurrentEngageOfficerGoal.achievingAction.IsA('RegroupAction');
@@ -1030,8 +1030,8 @@ protected function bool IsRunningAway()
 
 protected function bool IsThreateningHostage()
 {
-	return ((CurrentEngageOfficerGoal != None) && 
-			(CurrentEngageOfficerGoal.achievingAction != None) && 
+	return ((CurrentEngageOfficerGoal != None) &&
+			(CurrentEngageOfficerGoal.achievingAction != None) &&
 			CurrentEngageOfficerGoal.achievingAction.IsA('ThreatenHostageAction'));
 }
 
@@ -1073,7 +1073,7 @@ private function bool ShouldEncounterEnemy(Pawn Enemy)
 		}
 	}
 
-	// returns true if the Enemy is concious, and we're not dealing with someone else, 
+	// returns true if the Enemy is concious, and we're not dealing with someone else,
 	// or if the new enemy is close enough that we should take another enemy
 	return (class'Pawn'.static.checkConscious(Enemy) && !m_Pawn.IsCompliant() && !m_Pawn.IsArrested() &&
 			((CurrentEnemy == None) ||
@@ -1404,7 +1404,7 @@ latent function RespondToSeeingEnemy()
 		ReactInitiallyToEnemy();
 	}
 
-	// we now have had the chance to have an initial reaction, 
+	// we now have had the chance to have an initial reaction,
 	// we'll never have that chance again
 	bHasHadInitialReactionChance = true;
 
@@ -1419,7 +1419,7 @@ function Pawn GetBetterEnemy()
 	local Pawn BetterEnemy;
 
 	BetterEnemy = VisionSensor.GetVisibleConsciousPawnClosestTo(m_Pawn.Location);
-	
+
 	return BetterEnemy;
 }
 
@@ -1431,7 +1431,7 @@ function FindBetterEnemy()
 		if (! m_Pawn.CanHit(CurrentEnemy))
 		{
 			NewEnemy = VisionSensor.GetVisibleConsciousPawnClosestTo(m_Pawn.Location);
-			
+
 			if ((NewEnemy != None) && (NewEnemy != CurrentEnemy))
 			{
 				EncounterEnemy(NewEnemy);
@@ -1450,12 +1450,12 @@ latent function FinishedEngagingEnemies()
 	local AIKnowledge.KnowledgeAboutPawn OldEnemyKnowledge;
 	local vector LastKnownLocation;
 
-	// no visible enemies, 
+	// no visible enemies,
 	assert(CurrentEnemy == None);
 
 	if (ISwatAI(m_pawn).GetKnowledge().GetLastKnownKnowledgeAboutPawn(OldEnemy, OldEnemyKnowledge))
-	{	
-		LastKnownLocation = OldEnemyKnowledge.Location;	
+	{
+		LastKnownLocation = OldEnemyKnowledge.Location;
 	}
 	else
 	{
@@ -1488,7 +1488,7 @@ latent function DecideToStayCompliant()
 	while (class'Pawn'.static.checkConscious(m_Pawn) &&
 			(GetCurrentMorale() < LeaveCompliantStateMoraleThreshold || FoundWeaponModel == None))
 	{
-		Sleep(0.2f);
+		Sleep(0.8f);
 
 		// Increase moral when not being guarded (unobserved)
 		if (ISwatAI(m_Pawn).IsUnobservedByOfficers())
@@ -1623,7 +1623,7 @@ private function string GetEnemySkillName()
     {
         case EnemySkill_Low:
             return "Low";
-    
+
         case EnemySkill_Medium:
             return "Medium";
 
@@ -1643,7 +1643,7 @@ function SetSpecificDebugInfo()
     m_Pawn.AddDebugMessage("Enemy Responds As a:"@GetStimuliResponseTypeName(), class'Canvas'.Static.MakeColor(255,255,128));
 	m_Pawn.AddDebugMessage("Is A Threat:        "@ISwatEnemy(m_Pawn).IsAThreat(), class'Canvas'.Static.MakeColor(255,255,128));
     m_Pawn.AddDebugMessage("Enemy State:        "@GetEnemyStateName(), class'Canvas'.Static.MakeColor(255,255,128));
-    m_Pawn.AddDebugMessage("Enemy Skill:        "@GetEnemySkillName(), class'Canvas'.Static.MakeColor(255,255,128));  
+    m_Pawn.AddDebugMessage("Enemy Skill:        "@GetEnemySkillName(), class'Canvas'.Static.MakeColor(255,255,128));
 
     m_Pawn.AddDebugMessage(" ");
 

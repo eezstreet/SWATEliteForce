@@ -2,7 +2,7 @@ class EnemySpawner extends Spawner
     native
     placeable;
 
-// the Patrol List for the Enemy, defined by the designer in UnrealEd and 
+// the Patrol List for the Enemy, defined by the designer in UnrealEd and
 // passed to the Enemy at spawning
 var() editinline nocopy PatrolList EnemyPatrol;
 

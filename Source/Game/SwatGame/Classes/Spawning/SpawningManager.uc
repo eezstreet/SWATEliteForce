@@ -89,14 +89,14 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         //obey the spawner's "MissionSpawn" wishes
         if (Spawner.MissionSpawn > MissionSpawn_Any)
         {
-            if  (   
+            if  (
                     Spawner.MissionSpawn == MissionSpawn_CampaignOnly
                 &&  UsingCustomScenario
                 &&  !CustomScenario.UseCampaignObjectives
                 )
                 continue;
 
-            if  (   
+            if  (
                     !UsingCustomScenario
                 &&  Spawner.MissionSpawn == MissionSpawn_CustomOnly
                 )
@@ -122,7 +122,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
                 )
                 continue;
         }
-        
+
         //okay, its qualified
         UnallocatedSpawners[UnallocatedSpawners.length] = Spawner;
     }
@@ -136,7 +136,6 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     {
         CurrentRoster = Rosters[i];
 
-        if (Game.DebugSpawning) 
             log("[SPAWNING] SpawningManager is selecting "$CurrentRoster.Count.Min
                     $" to "$CurrentRoster.Count.Max
                     $" Spawner(s) to spawn CurrentRoster index "$i
@@ -149,7 +148,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
                 $", it determined that the Roster's SpawnerGroup is the SpawnerGroup for the Mission Objective "$ObjectiveFromRoster
                 $", but the Roster's Count Min is zero.  If zero were to be selected, then the player wouldn't need to do anything to complete the Objective!");
 
-        if (Game.DebugSpawning) 
+        if (Game.DebugSpawning)
         {
             if (ObjectiveFromRoster == None)
                 log("[SPAWNING] ... this Roster does not represent the Targets for any Objective");
@@ -160,8 +159,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         //empty candidate spawners
         CandidateSpawners.Remove(0, CandidateSpawners.length);
 
-        if (Game.DebugSpawning) 
-            log("[SPAWNING] ... candidate Spawners for SpawnerGroup="$CurrentRoster.SpawnerGroup$" are:");
+        log("[SPAWNING] ... candidate Spawners for SpawnerGroup="$CurrentRoster.SpawnerGroup$" are:");
 
         //build a list of spawners - from the list of unallocated spawners - that can spawn this roster
         for (j=0; j<UnallocatedSpawners.length; ++j)
@@ -187,7 +185,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
                     continue;
             }
 
-            if (Game.DebugSpawning) 
+            if (Game.DebugSpawning)
                 log("[SPAWNING] ... - "$Spawner$": SpawnerGroup="$Spawner.GetSpawnerGroup()$", Tag="$Spawner.Tag);
             CandidateSpawners[CandidateSpawners.length] = Spawner;
         }
@@ -211,7 +209,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         //how many will we spawn from this roster?
         Count = Rand(CurrentRoster.Count.Max - CurrentRoster.Count.Min + 1) + CurrentRoster.Count.Min;
 
-        if (Game.DebugSpawning) 
+        if (Game.DebugSpawning)
             log("[SPAWNING] ... decided to spawn "$Count
                     $" from "$CurrentRoster.name$":");
 
@@ -238,7 +236,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             Archetype = CurrentRoster.PickArchetype();
 
-            if (Game.DebugSpawning) 
+            if (Game.DebugSpawning)
                 log("[SPAWNING] ... "$j+1
                         $") selected "$Spawner
                         $" (Tag="$Spawner.Tag
@@ -247,8 +245,8 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             //tell the spawner to spawn (it will call SpawnerAlocated() to remove itself from the unallocated spawners list)
             Spawned = Spawner.SpawnArchetype(
-                    Archetype, 
-                    bTesting, 
+                    Archetype,
+                    bTesting,
                     CustomScenario);
 
             //for testing, record counts of each type of spawned Actor
@@ -257,7 +255,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             //the Label of the Spawned is the SpawnerGroup of the Roster
             Spawned.Label = CurrentRoster.SpawnerGroup;
-            
+
             //its no longer a candidate since it has been allocated
             CandidateSpawners.Remove(SelectedIndex, 1);
         }
@@ -265,12 +263,12 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
     CurrentRoster = None;
 
-    if (Game.DebugSpawning) 
+    if (Game.DebugSpawning)
         log("[SPAWNING] SpawningManager is done spawning Rosters.");
 
     if (!UsingCustomScenario)
     {
-        if (Game.DebugSpawning) 
+        if (Game.DebugSpawning)
             log("[SPAWNING] Now telling remaining unallocated Spawners to spawn from local properties.");
 
         //for any remaining unallocated spawners, let them spawn from their local properties
@@ -289,7 +287,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         }
     }
 
-    if (Game.DebugSpawning) 
+    if (Game.DebugSpawning)
     {
         log("[SPAWNING] Summary:");
         if (SpawnedCounts.length > 0)
@@ -362,7 +360,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
 		if (!FoundRoster)
 			continue;
 
-        if (Game.DebugSpawning) 
+        if (Game.DebugSpawning)
             log("[SPAWNING] SpawningManager is selecting "$CurrentRoster.Count.Min
                     $" to "$CurrentRoster.Count.Max
                     $" Spawner(s) to spawn Roster index "$i
@@ -377,7 +375,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
         //empty candidate spawners
         CandidateSpawners.Remove(0, CandidateSpawners.length);
 
-        if (Game.DebugSpawning) 
+        if (Game.DebugSpawning)
             log("[SPAWNING] ... candidate Spawners for SpawnerGroup="$CurrentRoster.SpawnerGroup$" are:");
 
         //build a list of spawners - from the list of unallocated spawners - that can spawn this roster
@@ -393,7 +391,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
             if (CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup())     //different spawner group
                 continue;
 
-            if (Game.DebugSpawning) 
+            if (Game.DebugSpawning)
                 log("[SPAWNING] ... - "$Spawner$" (Tag="$Spawner.Tag$")");
             CandidateSpawners[CandidateSpawners.length] = Spawner;
         }
@@ -416,7 +414,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
         //how many will we spawn from this roster?
         Count = Rand(CurrentRoster.Count.Max - CurrentRoster.Count.Min + 1) + CurrentRoster.Count.Min;
 
-        if (Game.DebugSpawning) 
+        if (Game.DebugSpawning)
             log("[SPAWNING] ... decided to spawn "$Count
                     $" from "$CurrentRoster.name$":");
 
@@ -431,7 +429,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
 
             Archetype = CurrentRoster.PickArchetype();
 
-            if (Game.DebugSpawning) 
+            if (Game.DebugSpawning)
                 log("[SPAWNING] ... "$j+1
                         $") selected "$Spawner
                         $" (Tag="$Spawner.Tag
@@ -451,7 +449,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
 
     CurrentRoster = None;
 
-    if (Game.DebugSpawning) 
+    if (Game.DebugSpawning)
     {
         log("[SPAWNING] SwatLevelInfo is done spawning Rosters.");
 
@@ -615,7 +613,7 @@ function ResetForMPQuickRestart( LevelInfo inLevel )
     HasSpawned = false;
     UnallocatedSpawners.Remove(0,UnallocatedSpawners.Length);
     CurrentRoster = None;
-        
+
     foreach Level.AllActors(class'Spawner', Spawner)
     {
         Spawner.ResetForMPQuickRestart();

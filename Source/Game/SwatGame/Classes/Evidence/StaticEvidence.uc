@@ -20,7 +20,7 @@ replication
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Static Evidence does not get destroyed, 
+// Static Evidence does not get destroyed,
 // it only gets hidden
 simulated function DestroyRWO()
 {
@@ -57,6 +57,9 @@ function InitializeFromSpawner(Spawner Spawner)
 {
     SpawnedFrom = InanimateSpawner(Spawner);
     SpawnedFromName = Spawner.Name;
+    SetPhysics(PHYS_Falling);
+  	bCollideWorld=true;
+  	SetCollision(true,true,true);
 }
 
 function Internal_InitializeFromArchetypeInstance(ArchetypeInstance inInstance)  //FINAL!

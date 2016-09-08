@@ -18,7 +18,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 {
     if (!Pawn.IsA('SwatHostage')) return;
 
-    if( !Killer.IsA('SwatPlayer') && !Killer.IsA('SwatOfficer') )
+    if( !Killer.IsA('SwatPlayer') && Pawn(Killer).GetActiveItem().GetSlot() != Slot_Detonator && !Killer.IsA('SniperPawn') )
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name
@@ -30,6 +30,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 
     AssertNotInArray( Pawn, KilledHostages, 'KilledHostages' );
     Add( Pawn, KilledHostages );
+    ChatMessageEvent('PenaltyIssued');
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

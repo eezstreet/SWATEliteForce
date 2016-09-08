@@ -18,6 +18,9 @@ var bool IsAggressive;
 
 var bool TaserKillsMe;	// Will a taser hit kill me?
 var bool PepperKillsMe; // Will pepper spray kill me?
+var bool Fearless;  // Will I scream if I'm in a room with a suspect?
+var bool Polite;  // Will I forgo shooting hostages?
+var bool Insane; // Will I kill basically everyone?
 
 var class<Equipment> SelectedEquipment1Class;
 var class<Equipment> SelectedEquipment2Class;
@@ -40,13 +43,13 @@ function DestroyEquipment()
 function UpdateInstancePrecachables()
 {
     local SwatGameInfo SGI;
-    
+
     if( !Owner.Level.IsCOOPServer )
         return;
-        
+
     SGI = SwatGameInfo( Owner.Level.Game );
     Assert( SGI != None );
-    
+
     SGI.AddMesh( Mesh );
     SGI.AddMaterial( FleshMaterial );
     SGI.AddMaterial( ClothesMaterial );
@@ -58,7 +61,7 @@ function UpdateInstancePrecachables()
     SGI.AddStaticMesh( SelectedEquipment2Class.default.StaticMesh );
     SGI.AddStaticMesh( SelectedEquipment3Class.default.StaticMesh );
     SGI.AddStaticMesh( SelectedEquipment4Class.default.StaticMesh );
-    
+
 	if( IsFemale() )
 	    SGI.SetLevelHasFemaleCharacters();
 }
@@ -67,4 +70,19 @@ function UpdateInstancePrecachables()
 function bool IsFemale()
 {
     return (CharacterType != '') && ( SwatAIRepository(Owner.Level.AIRepo).IsAFemaleCharacterType( CharacterType ) );
+}
+
+function bool IsFearless()
+{
+  return Fearless;
+}
+
+function bool IsPolite()
+{
+  return Polite;
+}
+
+function bool IsInsane()
+{
+  return Insane;
 }

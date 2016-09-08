@@ -20,7 +20,7 @@ var private AttackTargetGoal	CurrentAttackTargetGoal;
 var private FiredWeapon			GrenadeLauncher;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -30,7 +30,7 @@ function cleanup()
         CurrentMoveToOpponentGoal.Release();
         CurrentMoveToOpponentGoal = None;
     }
-	
+
 	if (CurrentAttackTargetGoal != None)
     {
         CurrentAttackTargetGoal.Release();
@@ -41,7 +41,7 @@ function cleanup()
 	{
 		GrenadeLauncher.AIInterrupt();
 	}
-	
+
 	// make sure the fired weapon is re-equipped
 	ISwatOfficer(m_Pawn).InstantReEquipFiredWeapon();
 
@@ -70,6 +70,10 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 latent function EquipGrenadeLauncher()
 {
     GrenadeLauncher = FiredWeapon(ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_PrimaryWeapon));
+    if(!GrenadeLauncher.IsA('HK69GrenadeLauncher'))
+      GrenadeLauncher = FiredWeapon(ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_SecondaryWeapon));
+    if(GrenadeLauncher == None)
+      return;
     assert(GrenadeLauncher != None && GrenadeLauncher.IsA('HK69GrenadeLauncher'));
     GrenadeLauncher.LatentWaitForIdleAndEquip();
 }
@@ -109,7 +113,7 @@ latent function AttackWithGrenadeLauncher()
 		// wait for one shot to go off
 		// (the problem is with the grenade launcher that it's hard to tell when the target has been hit so this logic is based on ammo)
 
-		// wait for weapon to be reloaded if initially 
+		// wait for weapon to be reloaded if initially
 		while ( GrenadeLauncher.NeedsReload() )
 			yield();
 		// wait for one shot to be fired

@@ -23,6 +23,24 @@ var(SWATGui) protected EditInline Config GUIButton         MyScrollRightButton;
 var(SWATGui) protected EditInline Config GUIButton         MyScrollAmmoLeftButton;
 var(SWATGui) protected EditInline Config GUIButton         MyScrollAmmoRightButton;
 
+// Advanced Information panel
+// tabs
+var(SWATGui) protected EditInline Config GUILabel          MyAdvManufacturerTab;
+var(SWATGui) protected EditInline Config GUILabel          MyAdvCartridgeTab;
+var(SWATGui) protected EditInline Config GUILabel          MyAdvFiringTab;
+// Manufacturer Information
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentManufacturerLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentCountryOfOriginLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentProductionStartLabel;
+// Ammunition Information
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentCaliberLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentMagazineSizeLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentTotalAmmoLabel;
+// Firing Information
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentFireModesLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentMuzzleVelocityLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentRateOfFireLabel;
+
 
 var(SWATGui) protected EditInline EditConst DynamicLoadOutSpec   MyCurrentLoadOut "Holds all current loadout info";
 
@@ -40,8 +58,8 @@ struct sPocketTab
 var(SWATGui) protected EditInline config array<sPocketTab> PocketTabs "These are the tabs of selectable equipment";
 
 var(SWATGui) protected EditInline array<GUIList> EquipmentList "these are the lists of equipment";
-var(SWATGui) protected EditInline array<GUILabel> EquipmentLabel "These go next to the paperdoll figure"; 
-var(SWATGui) protected EditInline array<GUIButton> EquipmentSelectionButton "These go next to the paperdoll figure"; 
+var(SWATGui) protected EditInline array<GUILabel> EquipmentLabel "These go next to the paperdoll figure";
+var(SWATGui) protected EditInline array<GUIButton> EquipmentSelectionButton "These go next to the paperdoll figure";
 
 var private int     ActiveTab;
 var private Pocket  ActivePocket;
@@ -66,7 +84,7 @@ function InitComponent(GUIComponent MyOwner)
     MyScrollAmmoLeftButton.OnClick=InternalOnScrollClick;
     MyScrollAmmoRightButton.OnClick=InternalOnScrollClick;
 
-    //equipment lists	
+    //equipment lists
 	for( i = 0; i < Pocket.EnumCount; i++ )
 	{
 	    //ensure this category is supposed to be displayed
@@ -77,7 +95,7 @@ function InitComponent(GUIComponent MyOwner)
         PocketName = string(GetEnum(Pocket,i));
 
         EquipmentLabel[i] = GUILabel(AddComponent( "GUI.GUILabel", self.Name$"_"$PocketName$"_Label", true ));
-        
+
         EquipmentList[i] = GUIList(AddComponent( "GUI.GUIList", self.Name$"_"$PocketName$"_EquipmentList", true ));
         EquipmentList[i].bAcceptsInput=False;
         EquipmentList[i].bCanBeShown=False;
@@ -99,10 +117,10 @@ function InitComponent(GUIComponent MyOwner)
 	{
 	    PocketTabs[i].TabPanel = GUIPanel(AddComponent( "GUI.GUIPanel", self.Name$"_"$i$"_TabPanel", true ));
 	    PocketTabs[i].TabButton = GUIButton(AddComponent( "GUI.GUIButton", self.Name$"_"$i$"_TabButton", true ));
-	
+
         PocketTabs[i].TabButton.OnClick=InternalTabButtonOnClick;
         PocketTabs[i].CurrentPocket = PocketTabs[i].DefaultPocket;
-        
+
         for( j = 0; j < PocketTabs[i].SelectablePockets.Length; j++ )
         {
             PocketID = PocketTabs[i].SelectablePockets[j];
@@ -114,7 +132,7 @@ function InitComponent(GUIComponent MyOwner)
             EquipmentSelectionButton[PocketID].OnClick=InternalSelectorButtonOnClick;
         }
     }
-    
+
     ActiveTab = 0;
 }
 
@@ -149,10 +167,10 @@ function InitialDisplay()
 		ValidatePocketForSelection( Pocket(i) );
 
         UpdateIndex( Pocket(i) );
-        
-        DisplayEquipment( Pocket(i) );    
+
+        DisplayEquipment( Pocket(i) );
     }
-    
+
     DisplayTab(ActiveTab);
 }
 
@@ -173,13 +191,11 @@ function ValidatePocketForSelection( Pocket thePocket )
 ///////////////////////////
 function LoadLoadOut( String loadOutName, optional bool bForceSpawn )
 {
-//log( "[dkaplan] Loading loadout with name: "$loadOutName$", bForceSpawn = "$bForceSpawn );
-    //destroy previous before creating the new
     if( MyCurrentLoadOut != None && bForceSpawn )
     {
         MyCurrentLoadOut.destroy();
     }
-    
+
     if( MyCurrentLoadOut == None || bForceSpawn )
     {
         MyCurrentLoadOut = PlayerOwner().Spawn( class'DynamicLoadOutSpec', None, name( loadOutName ) );
@@ -193,9 +209,6 @@ function LoadLoadOut( String loadOutName, optional bool bForceSpawn )
 
 function SaveLoadOut( String loadOutName )
 {
-//log( "[dkaplan] Saveing loadout with name: "$loadOutName );
-//MyCurrentLoadOut.PrintLoadOutSpecToMPLog();
-
     MyCurrentLoadOut.SaveConfig( loadOutName );
 }
 
@@ -220,7 +233,7 @@ function eTeamValidity GetTeamValidity(Pocket pock, class<Actor> CheckClass)
 	local class<Actor> DLOClass;
 	local int i;
 	local ServerSettings Settings;
-	
+
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 
 	// Custom skins always need to be team checked. All other team specific stuff can be disabled
@@ -248,24 +261,24 @@ function eTeamValidity GetTeamValidity(Pocket pock, class<Actor> CheckClass)
 
 
 
-//set the available ammo for the current weapon 
+//set the available ammo for the current weapon
 function LoadAmmoForWeapon( Pocket thePocket, class<FiredWeapon> WeaponClass )
 {
     local Pocket OtherPocket;
     local string str;
-   
+
     OtherPocket = GC.AvailableEquipmentPockets[thePocket].DependentPocket;
 
     AssertWithDescription( WeaponClass.default.PlayerAmmoOption.Length > 0, "The weapon class "$WeaponClass.Name$" must have at least one PlayerAmmoOption specified in SwatEquipment.ini." );
 
     MyScrollAmmoLeftButton.SetActive( WeaponClass.default.PlayerAmmoOption.Length > 1 );
     MyScrollAmmoRightButton.SetActive( WeaponClass.default.PlayerAmmoOption.Length > 1 );
-    
+
     //set the current ammo for this loadout
     str = String(MyCurrentLoadOut.LoadOutSpec[OtherPocket].Name);
     EquipmentList[OtherPocket].Find( Str );
 
-    // if the current ammo is invalid, 
+    // if the current ammo is invalid,
     // set the default ammo for this weapon
     //
     // if the item that would be selected is invalid given other items in the loadout, select the next item
@@ -279,11 +292,11 @@ function LoadAmmoForWeapon( Pocket thePocket, class<FiredWeapon> WeaponClass )
 function ChangeLoadOut( Pocket thePocket )
 {
     local class<actor> theItem;
-    
+
     theItem = class<actor>(EquipmentList[thePocket].GetObject());
 
     MyCurrentLoadOut.LoadOutSpec[thePocket] = theItem;
-    
+
     //load out updated with selection from equipment list
     switch (thePocket)
     {
@@ -302,7 +315,7 @@ function ChangeLoadOut( Pocket thePocket )
                 MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] = None;
                 MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] = None;
             }
-            break; 
+            break;
     }
 }
 
@@ -310,10 +323,12 @@ function ChangeLoadOut( Pocket thePocket )
 function DisplayEquipment( Pocket thePocket )
 {
     local class<ICanBeSelectedInTheGUI> Equipment;
-    
+    local class<SwatWeapon> EquipmentWeaponClass;
+
+
     if( EquipmentList[thePocket] == None )
         return;
-        
+
     Equipment = class<ICanBeSelectedInTheGUI>(EquipmentList[thePocket].GetObject());
 
     EquipmentLabel[thePocket].SetCaption( Equipment.static.GetFriendlyName() );
@@ -330,7 +345,35 @@ function DisplayEquipment( Pocket thePocket )
     switch(thePocket)
     {
         case Pocket_PrimaryWeapon:
+        case Pocket_PrimaryAmmo:
+            EquipmentWeaponClass = class<SwatWeapon>(EquipmentList[0].GetObject());
+            break;
         case Pocket_SecondaryWeapon:
+        case Pocket_SecondaryAmmo:
+            EquipmentWeaponClass = class<SwatWeapon>(EquipmentList[2].GetObject());
+            break;
+        default:
+            EquipmentWeaponClass = None;
+    }
+
+    if(EquipmentWeaponClass != None)
+    {
+      MyEquipmentManufacturerLabel.SetCaption(EquipmentWeaponClass.static.GetManufacturer());
+      MyEquipmentCountryOfOriginLabel.SetCaption(EquipmentWeaponClass.static.GetCountryOfOrigin());
+      MyEquipmentProductionStartLabel.SetCaption(EquipmentWeaponClass.static.GetProductionStart());
+      MyEquipmentCaliberLabel.SetCaption(EquipmentWeaponClass.static.GetCaliber());
+      MyEquipmentMagazineSizeLabel.SetCaption(EquipmentWeaponClass.static.GetMagSize());
+      MyEquipmentTotalAmmoLabel.SetCaption(EquipmentWeaponClass.static.GetTotalAmmoString());
+      MyEquipmentFireModesLabel.SetCaption(EquipmentWeaponClass.static.GetFireModes());
+      MyEquipmentMuzzleVelocityLabel.SetCaption(EquipmentWeaponClass.static.GetMuzzleVelocityString());
+      MyEquipmentRateOfFireLabel.SetCaption(EquipmentWeaponClass.static.GetRateOfFire());
+    }
+
+    switch(thePocket)
+    {
+        case Pocket_PrimaryWeapon:
+        case Pocket_SecondaryWeapon:
+            //MyEquipmentNameLabel.SetCaption(EquipmentWeaponClass.static.GetManufacturer());
             MyEquipmentNameLabel.SetCaption( Equipment.static.GetFriendlyName() );
             MyEquipmentImage.Image = Equipment.static.GetGUIImage();
             MyWeaponInfoBox.SetContent( Equipment.static.GetDescription() );
@@ -356,7 +399,7 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
         EquipmentList[thePocket].SetIndex( EquipmentList[thePocket].GetIndex()+1 );
     else
         EquipmentList[thePocket].SetIndex( EquipmentList[thePocket].GetIndex()-1 );
-    
+
     //if the sepcified index is invalid, wrap around
     if( EquipmentList[thePocket].GetIndex() < 0 )
     {
@@ -365,7 +408,7 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
         else
             EquipmentList[thePocket].SetIndex( EquipmentList[thePocket].Elements.length-1 );
     }
-       
+
     //if the item that would be selected is invalid given other items in the loadout and the players team, select the next item
     if( !MyCurrentLoadOut.ValidForLoadoutSpec( class<actor>(EquipmentList[thePocket].GetObject()), thePocket ) ||
 		!CheckTeamValidity( GetTeamValidity(thePocket, class<actor>(EquipmentList[thePocket].GetObject()) ) ) ||
@@ -390,7 +433,7 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
 
 	FailedToValidate=-1;
 
-    ChangeLoadOut( thePocket );    
+    ChangeLoadOut( thePocket );
 	DisplayEquipment( thePocket );
 }
 
@@ -402,7 +445,7 @@ function UpdateIndex( Pocket thePocket )
 
     if( EquipmentList[thePocket] == None )
         return;
-        
+
     str = String(MyCurrentLoadOut.LoadOutSpec[thePocket].Name);
 
     EquipmentList[thePocket].Find( Str );
@@ -419,9 +462,9 @@ function UpdateIndex( Pocket thePocket )
 ///////////////////////////
 private function InternalOnScrollClick(GUIComponent Sender)
 {
-    local bool bLeftScrollUsed; //scrolling left? 
+    local bool bLeftScrollUsed; //scrolling left?
     bLeftScrollUsed = false;
-    
+
 	switch (Sender)
 	{
 		case MyScrollLeftButton:
@@ -430,7 +473,7 @@ private function InternalOnScrollClick(GUIComponent Sender)
             UpdateIndex(ActivePocket);
             Scrolled( ActivePocket, bLeftScrollUsed );
             break;
-            
+
 		case MyScrollAmmoLeftButton:
 		    bLeftScrollUsed = true;
 		case MyScrollAmmoRightButton:
@@ -444,12 +487,12 @@ private function InternalOnScrollClick(GUIComponent Sender)
 private function InternalSelectorButtonOnClick(GUIComponent Sender)
 {
     local int i;
-    
+
     for( i = 0; i < EquipmentSelectionButton.Length; i++ )
     {
         if( EquipmentSelectionButton[i] == None )
             continue;
-            
+
         if( EquipmentSelectionButton[i] == Sender )
         {
             ActivePocket = Pocket(i);
@@ -468,7 +511,7 @@ private function InternalSelectorButtonOnClick(GUIComponent Sender)
 private function InternalTabButtonOnClick(GUIComponent Sender)
 {
     local int i;
-    
+
     for( i = 0; i < PocketTabs.Length; i++ )
     {
         if( PocketTabs[i].TabButton == Sender )
@@ -483,7 +526,7 @@ private function InternalTabButtonOnClick(GUIComponent Sender)
 private function DisplayTab(int tabNum)
 {
     local int i;
-    
+
     for( i = 0; i < PocketTabs.Length; i++ )
     {
         if( i == tabNum )
@@ -503,6 +546,20 @@ private function DisplayTab(int tabNum)
             MyWeaponInfoBox.SetVisibility( ActiveAmmoPocket != Pocket.Pocket_Invalid );
             MyEquipmentInfoBox.SetVisibility( ActiveAmmoPocket == Pocket.Pocket_Invalid );
 
+            //Advanced info is only for weapons
+            MyAdvManufacturerTab.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyAdvCartridgeTab.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyAdvFiringTab.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentManufacturerLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentCountryOfOriginLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentProductionStartLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentCaliberLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentMagazineSizeLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentTotalAmmoLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentFireModesLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentMuzzleVelocityLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyEquipmentRateOfFireLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+
             MyAmmoImage.SetVisibility( ActiveAmmoPocket != Pocket.Pocket_Invalid );
             MyAmmoNameLabel.SetVisibility( ActiveAmmoPocket != Pocket.Pocket_Invalid );
 
@@ -513,12 +570,12 @@ private function DisplayTab(int tabNum)
                 MyScrollRightButton.RePosition( 'Weapon', true );
             }
             else
-            {            
+            {
                 MyEquipmentImage.RePosition( 'Equipment', true );
                 MyEquipmentNameLabel.RePosition( 'Equipment', true );
                 MyScrollRightButton.RePosition( 'Equipment', true );
             }
-            
+
             if( EquipmentSelectionButton[ActivePocket] != None )
             {
                 InternalSelectorButtonOnClick( EquipmentSelectionButton[ActivePocket] );
@@ -545,13 +602,13 @@ function DynamicLoadOutSpec GetCurrentLoadout()
 private function bool IsPocketDisplayedInActiveTab( Pocket pock )
 {
     local int i;
-    
+
     for( i = 0; i < PocketTabs[ActiveTab].DisplayablePockets.Length; i++ )
     {
         if( PocketTabs[ActiveTab].DisplayablePockets[i] == pock )
             return true;
     }
-    
+
     return false;
 }
 

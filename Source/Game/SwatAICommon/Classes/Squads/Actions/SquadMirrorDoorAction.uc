@@ -27,7 +27,7 @@ var private bool						bOfficersWerentStacked;
 function cleanup()
 {
 	super.cleanup();
-	
+
 	if (CurrentMirrorDoorGoal != None)
 	{
 		CurrentMirrorDoorGoal.Release();
@@ -108,7 +108,7 @@ latent function MirrorDoor()
 state Running
 {
  Begin:
-//	StackUpSquad(true);
+	StackUpSquad(true);
 
 	WaitForZulu();
 

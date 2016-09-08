@@ -40,6 +40,7 @@ AUTOGENERATE_NAME(BecomeAThreat)
 AUTOGENERATE_NAME(BecomeAware)
 AUTOGENERATE_NAME(CanAssignOfficerToTarget)
 AUTOGENERATE_NAME(CanBangAndClear)
+AUTOGENERATE_NAME(CanBeUsedNow)
 AUTOGENERATE_NAME(CanBreachAndClear)
 AUTOGENERATE_NAME(CanBreachAndClearLockedDoor)
 AUTOGENERATE_NAME(CanBreachBangAndClear)
@@ -166,6 +167,7 @@ AUTOGENERATE_NAME(OnTouchedStaircaseAimVolume)
 AUTOGENERATE_NAME(OnUntouchedStaircaseAimVolume)
 AUTOGENERATE_NAME(PickUpWeaponModel)
 AUTOGENERATE_NAME(PlayTurnAwayAnimation)
+AUTOGENERATE_NAME(PocketSlotContains)
 AUTOGENERATE_NAME(ReEquipFiredWeapon)
 AUTOGENERATE_NAME(RegisterHearingNotification)
 AUTOGENERATE_NAME(RegisterVisionNotification)
@@ -948,6 +950,11 @@ struct IISwatAI_IsCompliant_Parms
 {
 	  BITFIELD ReturnValue;
 };
+// "event"	function whose parameters correspond to	"struct IISwatAI_eventCanBeUsedNow_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatAI.uc"
+struct IISwatAI_CanBeUsedNow_Parms
+{
+	  BITFIELD ReturnValue;
+};
 // "event"	function whose parameters correspond to	"struct IISwatAI_eventGetArrester_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatAI.uc"
 struct IISwatAI_GetArrester_Parms
 {
@@ -1234,6 +1241,13 @@ struct IISwatOfficer_InstantReEquipFiredWeapon_Parms
 // "event"	function whose parameters correspond to	"struct IISwatOfficer_eventReEquipFiredWeapon_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatOfficer.uc"
 struct IISwatOfficer_ReEquipFiredWeapon_Parms
 {
+};
+// "event"	function whose parameters correspond to	"struct IISwatOfficer_eventPocketSlotContains_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatOfficer.uc"
+struct IISwatOfficer_PocketSlotContains_Parms
+{
+	  BYTE Slot;
+	  FName Equipment;
+	  BITFIELD ReturnValue;
 };
 // "event"	function whose parameters correspond to	"struct IISwatOfficer_eventGetBackupWeapon_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatOfficer.uc"
 struct IISwatOfficer_GetBackupWeapon_Parms
@@ -2462,6 +2476,13 @@ public:
         ProcessFunction(FindFunctionChecked(SWATAICOMMON_IsCompliant),&Parms);
 		   return Parms.ReturnValue;
 	  }
+	  BITFIELD CanBeUsedNow()
+	  {
+        IISwatAI_CanBeUsedNow_Parms Parms;
+		   Parms.ReturnValue=0;
+        ProcessFunction(FindFunctionChecked(SWATAICOMMON_CanBeUsedNow),&Parms);
+		   return Parms.ReturnValue;
+	  }
 	  class APawn* GetArrester()
 	  {
         IISwatAI_GetArrester_Parms Parms;
@@ -2811,6 +2832,15 @@ public:
 	  void ReEquipFiredWeapon()
 	  {
 		   ProcessEvent(FindFunctionChecked(SWATAICOMMON_ReEquipFiredWeapon),NULL);
+	  }
+	  BITFIELD PocketSlotContains(BYTE Slot, FName Equipment)
+	  {
+        IISwatOfficer_PocketSlotContains_Parms Parms;
+		   Parms.ReturnValue=0;
+		   Parms.Slot=Slot;
+		   Parms.Equipment=Equipment;
+        ProcessFunction(FindFunctionChecked(SWATAICOMMON_PocketSlotContains),&Parms);
+		   return Parms.ReturnValue;
 	  }
 	  class AFiredWeapon* GetBackupWeapon()
 	  {

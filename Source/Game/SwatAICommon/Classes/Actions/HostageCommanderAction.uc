@@ -124,7 +124,7 @@ protected function DisableSensingSystems()
 {
 	// we don't need awareness
 	ISwatAI(m_Pawn).DisableAwareness();
-	
+
 	// disable vision permanently
 	ISwatAI(m_Pawn).DisableVision(true);
 }
@@ -167,7 +167,7 @@ function OnPawnLostVisionNotification()
 //
 // Damage
 
-// 
+//
 function float GetShotMoraleModification()
 {
 	return ShotMoraleModification;
@@ -269,7 +269,7 @@ function OnHeardNoise()
 			RotateToFaceNoise(HeardPawn);
 		}
 		else if (HeardActor.IsA('Ammunition') && (VSize(HeardActor.Location - m_Pawn.Location) < MinReactToGunshotDistance) && m_Pawn.LineOfSightTo(HeardActor))
-		{	
+		{
 			ReactToNearbyGunshot(HeardActor);
 		}
 	}
@@ -295,7 +295,7 @@ private function ReactToNearbyGunshot(Actor HeardActor)
 
 	if (m_Pawn.IsCompliant() || m_Pawn.IsArrested())
 	{
-		PlayFlinch();	
+		PlayFlinch();
 	}
 	else
 	{
@@ -341,7 +341,7 @@ private function OnHeardDeadlyNoise()
 
 		if (FRand() < GetHeardDeadlyNoiseCrouchChance())
 		{
-			m_Pawn.ShouldCrouch(true);	
+			m_Pawn.ShouldCrouch(true);
 		}
 
 		if (IsIdle())
@@ -361,9 +361,9 @@ private function RotateToFaceNoise(Pawn HeardPawn)
 	}
 }
 
-protected function bool WillReactToGrenadeBeingThrown() 
-{ 
-	return (FRand() < ReactToThrownGrenadeChance); 
+protected function bool WillReactToGrenadeBeingThrown()
+{
+	return (FRand() < ReactToThrownGrenadeChance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -385,11 +385,11 @@ function OnThreatened()
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Queries
-
 // returns true if we are currently threatened, if we can see an enemy, or there is an enemy in the same room as us
 function bool IsInDanger()
 {
 	local Pawn VisibleEnemy;
+
 	assert(m_Pawn != None);
 	assert(ThreatenedSensorAction(ThreatenedSensor.sensorAction) != None);
 
@@ -397,7 +397,7 @@ function bool IsInDanger()
 	{
 		return true;
 	}
-	else
+	else if(!ISwatAICharacter(m_Pawn).IsFearless())
 	{
 		VisibleEnemy = VisionSensor.GetVisibleConsciousPawnClosestTo(m_Pawn.Location, 'SwatEnemy');
 
@@ -405,7 +405,7 @@ function bool IsInDanger()
 		{
 			return true;
 		}
-	
+
 		return SwatAIRepository(m_Pawn.Level.AIRepo).DoesRoomContainAIs(m_Pawn.GetRoomName(), 'SwatEnemy', true);
 	}
 }
@@ -459,7 +459,7 @@ state Running
 
 			Cower();
 		}
-		
+
 		// if we're still in danger, don't do anything
 		while (IsInDanger())
 		{
@@ -486,7 +486,7 @@ state Running
 			CurrentCowerGoal = None;
 		}
 
-		// if our situation changes 
+		// if our situation changes
 		if (Rescuer != None)
 		{
 			while (! m_Pawn.LineOfSightTo(Rescuer))

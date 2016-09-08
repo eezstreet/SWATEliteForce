@@ -3,7 +3,7 @@
 class SquadDeployGrenadeLauncherAction extends OfficerSquadAction;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 var private DeployGrenadeLauncherGoal CurrentDeployGrenadeLauncherGoal;
@@ -36,6 +36,8 @@ latent function DeployGrenadeLauncherOnTarget()
 	local Pawn Officer;
 
 	Officer = GetClosestOfficerWithEquipment(TargetLocation, Slot_PrimaryWeapon, 'HK69GrenadeLauncher');
+	if(Officer == None)
+		Officer = GetClosestOfficerWithEquipment(TargetLocation, Slot_SecondaryWeapon, 'HK69GrenadeLauncher');
 
 	CurrentDeployGrenadeLauncherGoal = new class'DeployGrenadeLauncherGoal'(AI_Resource(Officer.characterAI), TargetActor, TargetLocation);
 	assert(CurrentDeployGrenadeLauncherGoal != None);

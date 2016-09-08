@@ -51,7 +51,7 @@ var String ObjectiveNames[MAX_OBJECTIVES];
 var ObjectiveStatus ObjectiveStatus[MAX_OBJECTIVES];
 
 //Procedures
-const MAX_PROCEDURES = 20;
+const MAX_PROCEDURES = 30;
 var String ProcedureCalculations[MAX_PROCEDURES];
 var int ProcedureValue[MAX_PROCEDURES];
 
@@ -63,7 +63,7 @@ replication
 {
 	reliable if ( bNetDirty && (Role == ROLE_Authority) )
 		ServerCountdownTime, ShowTeammateNames, ShowEnemyNames,
-        TotalNumberOfBombs, DiffusedBombs, 
+        TotalNumberOfBombs, DiffusedBombs,
         ObjectiveHidden, ObjectiveNames, ObjectiveStatus, ProcedureCalculations, ProcedureValue,
         RoundTime, SpecialTime, TimedObjectiveIndex, bWaitingForPlayers,
 		RefMgr, PlayerWithItem;
@@ -77,7 +77,7 @@ simulated function PostNetBeginPlay()
 
     // The repo needs to know what the game replication info is.
     SwatRepo(Level.GetRepo()).SetSGRI( self );
-    
+
     ClearScoring();
 
 	if (RefMgr == None && Level.NetMode != NM_Client)
@@ -90,7 +90,7 @@ simulated function PostBeginPlay()
 
     // The repo needs to know what the game replication info is.
     SwatRepo(Level.GetRepo()).SetSGRI( self );
-    
+
     ClearScoring();
 }
 
@@ -130,13 +130,13 @@ simulated function RemovePRI(PlayerReplicationInfo PRI)
 simulated function int NumPlayers()
 {
     local int i, total;
-    
+
     for(i = 0; i < ArrayCount(PRIStaticArray); ++i)
     {
         if (PRIStaticArray[i] != None)
             total++;
     }
-    
+
     return total;
 }
 
@@ -199,17 +199,17 @@ function ResetPlayerScoresForMPQuickRestart()
 simulated function LogScoring( SwatRepo Repo )
 {
     local int i;
-    
+
     log( "SCORING: >>> Objectives" );
     for( i = 0; i < MAX_OBJECTIVES && i < Repo.MissionObjectives.Objectives.Length; i++ )
-    {   
+    {
         if( Repo.MissionObjectives.Objectives[i] != None )
             log( "SCORING: ... "$Repo.MissionObjectives.Objectives[i].Description$", Status = "$ObjectiveStatus[i] );
     }
-    
+
     log( "\nSCORING: >>> Procedures" );
     for( i = 0; i < MAX_PROCEDURES && i < Repo.Procedures.Procedures.Length; i++ )
-    {   
+    {
         if( Repo.Procedures.Procedures[i] != None )
             log( "SCORING: ... "$Repo.Procedures.Procedures[i].Description$", Calculations = "$ProcedureCalculations[i]$", Value = "$ProcedureValue[i] );
     }
@@ -218,14 +218,14 @@ simulated function LogScoring( SwatRepo Repo )
 function ClearScoring()
 {
     local int i;
-    
+
     for( i = 0; i < MAX_OBJECTIVES; i++ )
-    {   
+    {
         ObjectiveStatus[i] = ObjectiveStatus_InProgress;
     }
-    
+
     for( i = 0; i < MAX_PROCEDURES; i++ )
-    {   
+    {
         ProcedureCalculations[i] = "";
         ProcedureValue[i] = 0;
     }
@@ -286,7 +286,7 @@ function NotifyClientsToInterruptState( Pawn ThePlayer, name Reason )
 function ServerTriggerDynamicMusic()
 {
     local Controller Itr;
-    
+
     Itr = Level.ControllerList;
     for ( Itr = Level.ControllerList; Itr != None; Itr = Itr.NextController )
     {
@@ -300,9 +300,9 @@ function SetObjectiveVisibility( name ObjectiveName, bool Visible )
 {
     local Controller Itr;
     local PlayerController LPC;
-    
+
     SwatRepo(Level.GetRepo()).SetObjectiveVisibility( ObjectiveName, Visible );
-    
+
     LPC = Level.GetLocalPlayerController();
     Itr = Level.ControllerList;
     for ( Itr = Level.ControllerList; Itr != None; Itr = Itr.NextController )
@@ -316,13 +316,13 @@ function SetObjectiveVisibility( name ObjectiveName, bool Visible )
 function OnMissionEnded()
 {
     local int i;
-    
+
     for( i = 0; i < MAX_PLAYERS; i++ )
     {
         if( PRIStaticArray[i] != None )
             PRIStaticArray[i].OnMissionEnded();
     }
-    
+
     RoundTime = 0;
     SpecialTime = 0;
 }

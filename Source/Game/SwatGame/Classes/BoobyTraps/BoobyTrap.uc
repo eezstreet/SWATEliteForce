@@ -1,10 +1,10 @@
-class BoobyTrap extends RWOSupport.ReactiveStaticMesh 
+class BoobyTrap extends RWOSupport.ReactiveStaticMesh
       implements IUseArchetype, ICanBeDisabled;
 
-var SwatDoor                    BoobyTrapDoor;
+var() SwatDoor                    BoobyTrapDoor;
 var config float                QualifyTime;
-var bool                        bActive;
-var name                        AttachSocket;
+var() bool                        bActive;
+var() name                        AttachSocket;
 
 function PostBeginPlay()
 {
@@ -76,9 +76,12 @@ function ReactToDamaged(int Damage, Pawn EventInstigator, vector HitLocation, ve
 
 function ReactToTriggered(Actor Other)
 {
-    if ( bActive )  
+    if ( bActive )
     {
         Super.ReactToTriggered(BoobyTrapDoor);
+        BoobyTrapDoor.BoobyTrapTriggered();
+        SwatGameInfo(Level.Game).GameEvents.BoobyTrapTriggered.Triggered(self, Other);
+        dispatchMessage(new class'MessageBoobyTrapTriggered');
         Deactivate();
     }
 }
@@ -88,7 +91,7 @@ function OnTriggeredByDoor()
     ReactToTriggered(BoobyTrapDoor);
 }
 
-// Make these final, as we want to control flow directly from here 
+// Make these final, as we want to control flow directly from here
 final function InitializeFromSpawner(Spawner Spawner)
 {
     local BoobyTrapSpawner BoobySpawner;
@@ -96,7 +99,7 @@ final function InitializeFromSpawner(Spawner Spawner)
 
     BoobySpawner = BoobyTrapSpawner(Spawner);
     assert(BoobySpawner != None);
-   
+
     foreach DynamicActors(class'SwatDoor', Door, BoobySpawner.DoorTag)
     {
         BoobyTrapDoor = Door;
@@ -106,9 +109,9 @@ final function InitializeFromSpawner(Spawner Spawner)
     bActive = true;
     AttachSocket = BoobySpawner.DoorAttachmentBone;
 
-    OnBoobyTrapInitialize();    
+    OnBoobyTrapInitialize();
 }
 
 
-final function Internal_InitializeFromArchetypeInstance(ArchetypeInstance Instance);  
+final function Internal_InitializeFromArchetypeInstance(ArchetypeInstance Instance);
 final function InitializeFromArchetypeInstance();

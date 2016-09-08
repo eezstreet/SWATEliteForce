@@ -156,7 +156,7 @@ var Timer GiveCommandTimer;             //manage delay from the time bGCIOpen is
 //the delay (in seconds) after the GiveCommand button is pressed, before the GraphicCommandInterface opens...
 //if the GiveCommand button is released before this time elapses, then the Default command is given,
 // and the GCI does not open.
-var config float GraphicCommandInterfaceDelay;  
+var config float GraphicCommandInterfaceDelay;
 */
 
 // GUI HUD
@@ -214,7 +214,7 @@ var bool bAuditFocus;
 //constants
 //
 
-const HALF_PI = 1.5707963268; 
+const HALF_PI = 1.5707963268;
 
 
 /////////////////////////////////////
@@ -288,14 +288,14 @@ replication
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
         ClientBroadcastStopAllSounds,
-        ClientSetEndRoundTarget, ClientStartEndRoundSequence, 
+        ClientSetEndRoundTarget, ClientStartEndRoundSequence,
         ClientOnLoggedIn, ClientRoundStarted, ClientMeleeForPawn, ClientReloadForPawn,
         ClientThrowPrep, ClientEndThrow, ClientPlayDoorBlocked, ClientDestroyPawnsForRespawn, ClientDestroyAllPawns,
         ClientPlayDoorBreached, ClientViewportChange, ClientSkeletalRegionHit,
-        ClientBeginFiringWeapon, ClientEndFiringWeapon, 
-		ClientPreQuickRoundRestart, 
+        ClientBeginFiringWeapon, ClientEndFiringWeapon,
+		ClientPreQuickRoundRestart,
 		ClientStartConversation, ClientSetTrainingText, ClientTriggerDynamicMusic,
-        ClientReceiveCommand, ClientOnTargetUsed,
+        ClientReceiveCommand, /*ClientOnTargetUsed,*/
         ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedAllEvidence,
         ClientInterruptAndGotoState, ClientInterruptState, ClientSetObjectiveVisibility, ClientReportableReportedToTOC,
         ClientAddPrecacheableMaterial, ClientAddPrecacheableMesh, ClientAddPrecacheableStaticMesh, ClientPrecacheAll,
@@ -305,7 +305,7 @@ replication
     reliable if( Role < ROLE_Authority )
         ServerSetPlayerTeam, ServerAutoSetPlayerTeam, ServerSetPlayerReady, ServerSetPlayerNotReady,
         ServerSetMPLoadOutPocketItem, ServerSetMPLoadOutPocketWeapon, ServerSetMPLoadOutPocketCustomSkin, ServerSetMPLoadOutSpecComplete, ServerChangePlayerTeam,
-        ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, ServerRequestInteract,
+        ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
 		ServerRetryStatsAuth;
@@ -324,7 +324,7 @@ simulated function PreBeginPlay()
     //TMC moved MCJ's code up to Engine.PlayerController for shared codebase purposes
 
     // Create camera effects for later use
-    // 
+    //
     // NOTE: these are cleaned up in native PostScriptDestroyed().
     // If you add any more you must also clean them up in there or
     // risk crashes during GC.
@@ -345,7 +345,7 @@ simulated function PostBeginPlay()
     Super.PostBeginPlay();
 
     SPBombExploded=false;
-    
+
     if ( self == Level.GetLocalPlayerController() )
     {
         InitializePlayerHUD();
@@ -395,7 +395,7 @@ simulated function PostNetBeginPlay()
     {
         // On the server, we don't want to use our value for other players'
         // playercontrollers.
-        SetAlwaysRun( Repo.GuiConfig.bAlwaysRun ); 
+        SetAlwaysRun( Repo.GuiConfig.bAlwaysRun );
 
         UpdateVoiceType();
     }
@@ -427,8 +427,8 @@ simulated function InitializePlayerHUD()
     // create player focus interfaces
     for ( ct = 0; ct < FocusInterfaceInfos.Length; ct ++ )
     {
-        if ( FocusInterfaceInfos[ct].ValidNetMode == FNET_All 
-             || (FocusInterfaceInfos[ct].ValidNetMode == FNET_StandaloneOnly && ( Level.NetMode == NM_Standalone ) ) 
+        if ( FocusInterfaceInfos[ct].ValidNetMode == FNET_All
+             || (FocusInterfaceInfos[ct].ValidNetMode == FNET_StandaloneOnly && ( Level.NetMode == NM_Standalone ) )
              || (FocusInterfaceInfos[ct].ValidNetMode == FNET_MultiplayerOnly && Level.NetMode > NM_Standalone) )
         {
             CurrentFocusInterface = Spawn(FocusInterfaceInfos[ct].FocusClass, Self);
@@ -442,11 +442,11 @@ simulated function InitializePlayerHUD()
     SetCommandInterface(Repo.GUIConfig.CurrentCommandInterfaceStyle);
 
 	//add speech recognition interface if required
-	
+
 
 #if IG_BATTLEROOM
-    BattleRoomManager = Spawn(class'BattleRoomManager', Self); 
-#endif 
+    BattleRoomManager = Spawn(class'BattleRoomManager', Self);
+#endif
 }
 
 
@@ -487,7 +487,7 @@ simulated function SetCommandInterface(ECommandInterfaceStyle Style)
 
     //dkaplan: this assertion is invalid- CurrentCommandInterface may be None in multiplayer if gametype != CO-OP
     //Assert( CurrentCommandInterface != None );
-    
+
     log("CommandInterface set to "$GetCommandInterface());
 
     if (CurrentCommandInterface != LastCommandInterface)
@@ -570,7 +570,7 @@ function Restart()
 
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SGPC::Restart()." );
-    
+
 	bChangingTeams=false;
 
     Super.Restart();
@@ -584,7 +584,7 @@ function Restart()
 }
 
 
-// The player controller is guaranteed to have it's new pawn assigned and 
+// The player controller is guaranteed to have it's new pawn assigned and
 // set as its viewtarget after Super.ClientRestart() returns.
 // MCJ: Actually, I'm not sure that this is correct. We had a bug where
 // the camera effects didn't reset correctly when a player respawned, and I
@@ -601,16 +601,16 @@ function ClientRestart()
     // Reset things on the HUD.
 	if( self == Level.GetLocalPlayerController() && HasHudPage() )
 		GetHUDPage().OnPlayerRespawned();
-		
+
 	// Tell the HUD to hide the "viewing from" text and the respawn timer,
 	// because we just respawned
     ClientMessage( "", 'ViewingFromEvent' );
-    
+
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"...ClientRestart is calling SwatPlayer.RemoveAllCameraEffects()." );
 
     RemoveAllCameraEffects();
-    
+
     //dkaplan - ugly ugly ugly HACK HACK Hack
     if( self == Level.GetLocalPlayerController() )
         UpdateVoiceType();
@@ -768,7 +768,7 @@ simulated function UpdateFocus()
         {
             FocusInterfaceWantsUpdate[ct] = 1;
             FocusInterfaces[ct].ResetFocus(self, LocalHUDPage);
-        }	
+        }
     }
 
     FocusTraceOrigin = CameraLocation;
@@ -803,12 +803,12 @@ simulated function UpdateFocus()
 
         if (class'PlayerFocusInterface'.static.StaticRejectFocus(
                     self,
-                    Candidate, 
-                    HitLocation, 
-                    HitNormal, 
-                    HitMaterial, 
-                    SkeletalRegionHit, 
-                    Distance, 
+                    Candidate,
+                    HitLocation,
+                    HitNormal,
+                    HitMaterial,
+                    SkeletalRegionHit,
+                    Distance,
                     Transparent,
                     bAuditFocus))
             continue;
@@ -831,11 +831,11 @@ simulated function UpdateFocus()
             //does it care about the candidate?
             if (FocusInterfaces[ct].RejectFocus(
                         self,
-                        Candidate, 
-                        HitLocation, 
-                        HitNormal, 
-                        HitMaterial, 
-                        SkeletalRegionhit, 
+                        Candidate,
+                        HitLocation,
+                        HitNormal,
+                        HitMaterial,
+                        SkeletalRegionhit,
                         Distance,
                         Transparent))
             {
@@ -859,19 +859,19 @@ simulated function UpdateFocus()
 #endif
 
             FocusInterfaces[ct].ConsiderNewFocus(
-                    SwatPlayer(Pawn), 
-                    Candidate, 
-                    Distance, 
-                    HitLocation, 
-                    HitNormal, 
-                    HitMaterial, 
+                    SwatPlayer(Pawn),
+                    Candidate,
+                    Distance,
+                    HitLocation,
+                    HitNormal,
+                    HitMaterial,
                     SkeletalRegionHit,
                     Transparent );
         }
     }
 
     for ( ct = 0; ct < FocusInterfaces.Length; ct++ )
-        if (FocusInterfaceWantsUpdate[ct] == 1 || (FocusInterfaces[ct] != None && 
+        if (FocusInterfaceWantsUpdate[ct] == 1 || (FocusInterfaces[ct] != None &&
 			FocusInterfaces[ct].AlwaysPostUpdate))
             FocusInterfaces[ct].PostUpdate(self);
 
@@ -941,7 +941,7 @@ function ServerActivateOfficerViewport( bool ShouldActivate )
     {
         if( Pawn == None || NetPlayer(Pawn) == None )
             return;
-            
+
         ServerOfficerViewport = ViewportManager;
 
         // Should call initialize every time the viewport is brought up to catch any players that join the game since the last time initialization was done
@@ -1020,7 +1020,7 @@ function ServerRequestViewportChange( bool ActivateActiveItemViewport )
             ClientViewportChange( ActivateActiveItemViewport );
         }
 
-    } 
+    }
 	else
     {
         ServerItemViewport = None;
@@ -1060,7 +1060,7 @@ simulated function ClientViewportChange( bool ActivateActiveItemViewport )
 simulated event ActivateViewport(IControllableViewport inNewViewport)
 {
     ActiveViewport = inNewViewport;
-    
+
     //log ( "ActiveViewport actor is: "$Actor(ActiveViewport) );
     //log ( "IControllableViewport of Actor is: "$IControllableViewport(Actor(ActiveViewport)) );
 
@@ -1076,7 +1076,7 @@ exec function EnableMirrors( bool bInEnabledMirrors )
     class'Mirror'.Static.SetMirrorsEnabled( bInEnabledMirrors );
 }
 
-// Called when the player is holding down the button to Control the viewport.  
+// Called when the player is holding down the button to Control the viewport.
 exec function ControlOfficerViewport()
 {
     local string ViewportFilter;
@@ -1088,7 +1088,7 @@ exec function ControlOfficerViewport()
             TeamSelectedBeforeControllingOfficerViewport = GetCommandInterface().GetCurrentTeam();
 
             ViewportFilter = ViewportManager.GetFilter();
-            
+
             if (ViewportFilter == "Red")
                 SetPlayerCommandInterfaceTeam('RedTeam');
             else
@@ -1129,7 +1129,7 @@ simulated function ClientBeginFiringWeapon( Pawn PawnWhoFired, EquipmentSlot Ite
 {
     local NetPlayer theNetPlayer;
     local FiredWeapon theFiredWeapon;
-    
+
     // temp, for testing.
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SGPC::ClientBeginFiringWeapon(). PawnWhoFired="$PawnWhoFired$", ItemSlot="$ItemSlot );
@@ -1304,7 +1304,7 @@ simulated function ClientAIDroppedWeapon( string WeaponUniqueID,
             //		log("WeaponModel: " $ WeaponModel.Name $ " WeaponModel.StaticMesh: " $ WeaponModel.StaticMesh);
             if (WeaponModel.StaticMesh == None)
             {
-    
+
                 if (Level.GetEngine().EnableDevTools)
                 {
                     assertWithDescription((WeaponModel.DroppedStaticMesh != None), "WeaponModel " $ WeaponModel.Name $ " does not have a Dropped static mesh set for it.  It must!  Bug Shawn!!!");
@@ -1316,7 +1316,7 @@ simulated function ClientAIDroppedWeapon( string WeaponUniqueID,
             }
 
             WeaponModel.HavokSetBlocking(true);
-            WeaponModel.SetPhysics(PHYS_Havok);	
+            WeaponModel.SetPhysics(PHYS_Havok);
 
             // Drop the weapon with the impulse specified by the server
             WeaponModel.HavokImpartCOMImpulse( ThrowDirectionImpulse );
@@ -1447,13 +1447,13 @@ simulated function bool DoorInWay()
 //ignore in states to prevent opening the GCI while in those states
 simulated function bool CanOpenGCI() { return true; }
 
-// State ControllingViewport takes the player's control away from the playerpawn and onto the active 
-// viewport.  The actual implementation the instances of IControllableViewport handle all implementation 
+// State ControllingViewport takes the player's control away from the playerpawn and onto the active
+// viewport.  The actual implementation the instances of IControllableViewport handle all implementation
 // details.
 state ControllingViewport
 {
 ignores ActivateViewport;
-          
+
     exec function ToggleFlashLight()
     {
     }
@@ -1524,7 +1524,7 @@ ignores ActivateViewport;
         Pawn.SetPhysics(PHYS_Walking);
         ActiveViewport.OnEndControlling();
         Global.ActivateViewport( None );
-        bControlViewport = 0;    
+        bControlViewport = 0;
 
         SetPlayerCommandInterfaceTeam(TeamSelectedBeforeControllingOfficerViewport);
     }
@@ -1568,7 +1568,7 @@ simulated state ControllingOptiwandViewport
     simulated function EndState()
     {
         if (Level.GetEngine().EnableDevTools)
-            mplog( "ControllingOptiwandViewport::EndState()");     
+            mplog( "ControllingOptiwandViewport::EndState()");
 
         CleanupOptiwandingState();
     }
@@ -1590,7 +1590,7 @@ simulated state ControllingOptiwandViewport
     simulated function CleanupOptiwandingState()
     {
         if (Level.GetEngine().EnableDevTools)
-            mplog( "ControllingOptiwandViewport::CleanupOptiwandingState()");     
+            mplog( "ControllingOptiwandViewport::CleanupOptiwandingState()");
 
         if ( !bHaveAlreadyInterruptedOptiwand )
         {
@@ -1611,7 +1611,7 @@ simulated state ControllingOptiwandViewport
     	Super.PlayerTick(DeltaTime);
         ActiveViewport.SetInput(aTurn, aLookUp);
     }
-    
+
     exec function GiveCommand(int CommandIndex)
     {
         if ( ActiveViewport.CanIssueCommands() )
@@ -1654,7 +1654,7 @@ Begin:
 
     // Use the optiwand...
     Pawn.GetActiveItem().LatentUse();
-    
+
     // Go out of crouching in case we were in a doorway
     SwatPlayer.SetForceCrouchWhileOptiwanding(false);
 
@@ -1666,62 +1666,6 @@ Begin:
 
 
 ///////////////////////////////////////////////////////////////////////
-
-
-function ServerRequestInteract( ICanBeUsed Target, String UniqueID )
-{
-    local Controller i;
-    local SwatGamePlayerController current;
-
-    if (Level.GetEngine().EnableDevTools)
-        mplog( self$"---SGPC::ServerRequestInteract(). Target="$Target$", UniqueID = "$UniqueID  );
-
-    //target can be none when it is torn off, in which case, use the unique ID to find the actor
-    if( Target == None && UniqueID != "" )
-        Target = ICanBeUsed(FindByUniqueID( None, UniqueID ));
-        
-    if (Level.GetEngine().EnableDevTools)
-    {
-        mplog( self$"---SGPC::ServerRequestInteract()... Target="$Target$", UniqueID = "$UniqueID  );
-        mplog( "...target's owner="$Actor(Target).Owner );
-    }
-
-    if ( Target != None && Target.CanBeUsedNow() )
-    {
-        if (Level.GetEngine().EnableDevTools)
-            mplog( "...1" );
-
-        Target.OnUsed(Pawn);
-        Target.PostUsed();
-
-        // Walk the controller list here to notify all clients 
-        for ( i = Level.ControllerList; i != None; i = i.NextController )
-        {
-            current = SwatGamePlayerController( i );
-            if ( current != None )
-            {
-                current.ClientOnTargetUsed( Target, UniqueID );
-            }
-        }
-    }
-    else
-    {
-        if (Level.GetEngine().EnableDevTools)
-            mplog( "...Interact request ignored." );
-    }
-}
-
-function ClientOnTargetUsed( ICanBeUsed Target, String UniqueID )
-{
-    //target can be none when it is torn off, in which case, use the unique ID to find the actor
-    if( Target == None && UniqueID != "" )
-        Target = ICanBeUsed(FindByUniqueID( None, UniqueID ));
-        
-    if (Level.GetEngine().EnableDevTools)
-        mplog( self$"---SGPC::ClientOnTargetUsed(). Target="$Target );
-
-    Target.PostUsed();
-}
 
 simulated function ClientPlayDoorBlocked( SwatDoor TheDoor, bool OpeningBlocked, DoorPosition NewPendingPosition )
 {
@@ -1884,7 +1828,7 @@ state QualifyingForUse
                               $") is no longer a QualifiedUseEquipment.");
 
         HaveCalledInterruptYet = true;
-        
+
         if (Level.GetEngine().EnableDevTools)
             mplog( self$"......Calling Interrupt() on Item: "$QualifiedUseEquipment(Pawn.GetActiveItem()) );
 
@@ -1923,7 +1867,7 @@ state QualifyingForUse
         assertWithDescription(Pawn.GetActiveItem().IsA('QualifiedUseEquipment'),
                             "[tcohen] While QualifyingForUse, SwatGamePlayerController found that the Fire button was released.  But the ActiveItem ("$Pawn.GetActiveItem()
                             $") is no longer a QualifiedUseEquipment.");
-        
+
         HaveCalledInterruptYet = true;
         QualifiedUseEquipment(Pawn.GetActiveItem()).DoInterrupt();
     }
@@ -2036,7 +1980,7 @@ simulated private function HideViewportInternal()
     ViewportManager.SetFilter("");
     ViewportManager.HideViewport();
     GetHUDPage().ExternalViewport.Hide();
-    bControlViewport = 0;   
+    bControlViewport = 0;
     ActivateViewport(None);
 }
 
@@ -2065,8 +2009,14 @@ function OnSniperAlerted(SniperPawn AssociatedSniper)
     SniperAlertTimer.TimerDelegate = OnSniperTimerEnded;
     SniperAlertTimer.StartTimer( SniperAlertTime );
     SniperAlertFilter = string(AssociatedSniper.Name);
-    
+
     ClientMessage("",'SniperAlerted');
+}
+
+function IssueMessage(string Message, name Type)
+{
+    Log("IssueMessage: "$Message);
+    ClientMessage(Message, Type);
 }
 // ----------------------
 
@@ -2163,7 +2113,7 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     // If we have no Pawn, or our Pawn is dead, then we can't Equip
     if ( SwatPlayer == None || class'Pawn'.static.CheckDead( SwatPlayer ))
         return;
-    
+
     // We don't want the player to be able to equip if he's currently under
     // the influence of nonlethals.
     if ( SwatPlayer.IsNonlethaled() )
@@ -2181,7 +2131,7 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     PendingItem = SwatPlayer.GetPendingItem();
     if ( PendingItem != None && PendingItem.GetSlot() == Slot)
         return;     //already in the process of equipping that
-    
+
     // If the player has none of the requested item then
     //  show a message on the HUD
     if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None )
@@ -2250,11 +2200,11 @@ simulated function InternalReload()
     Weapon = FiredWeapon(Pawn.GetActiveItem());
 
     if (Weapon.Ammo.IsFull()) return;   //can't reload a weapon when it is full
-    
+
     if  (
             Weapon == None
         ||  (   //can't reload round-based weapons that are full
-                Weapon.IsA('RoundBasedWeapon')  
+                Weapon.IsA('RoundBasedWeapon')
             &&  Weapon.Ammo.IsFull()
             )
         )
@@ -2289,7 +2239,7 @@ simulated exec function EquipSlot(int Slot)
     // This function is not called when you are arrested (OnArrestedBegan() uses
     // a different mechanism for equipping the IAmCuffed), only when you switch
     // equipment manually by using the "EquipSlot XXX" console command (which is
-    // is bound to various keys in User.ini). 
+    // is bound to various keys in User.ini).
     if (EquipmentSlot(Slot) == Slot_IAmCuffed)
     {
         mplog( self$"---SGPC::EquipSlot(). Player tried to manually equip IAmCuffed; preventing this" );
@@ -2541,14 +2491,14 @@ function ClientOnLoggedIn(optional EMPMode CurrentGameMode)
 //    log( "   Repo="$Level.GetRepo() );
 //    log( "   SwatRepo="$Repo );
 
-    Repo.PostPlayerLogin( self, CurrentGameMode );    
+    Repo.PostPlayerLogin( self, CurrentGameMode );
 }
 
 
 simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
 {
     local int i;
-    
+
     // This just walks the LoadOut and sends the contents of each pocket to
     // the server.
     //mplog( self$"---SGPC::SetMPLoadOut(). LoadOut="$LoadOut );
@@ -2564,9 +2514,9 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
 		else
 			SetMPLoadOutPocketItem( Pocket(i), LoadOut.LoadOutSpec[i] );
     }
-    
+
     ServerSetMPLoadOutSpecComplete();
-    
+
     //dkaplan - ugly ugly ugly HACK HACK Hack
     if( self == Level.GetLocalPlayerController() )
         UpdateVoiceType();
@@ -2618,12 +2568,12 @@ function ServerSetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem,
     {
         SwatRepoPlayerItem.SetPocketItemClass( Pocket_PrimaryWeapon, WeaponItem );
         SwatRepoPlayerItem.SetPocketItemClass( Pocket_PrimaryAmmo, AmmoItem );
-    }        
+    }
     else
     {
         SwatRepoPlayerItem.SetPocketItemClass( Pocket_SecondaryWeapon, WeaponItem );
         SwatRepoPlayerItem.SetPocketItemClass( Pocket_SecondaryAmmo, AmmoItem );
-    }        
+    }
 }
 
 
@@ -2671,8 +2621,8 @@ function ServerSetVoiceType( eVoiceType inVoiceType )
 {
 //log( self$"::ServerSetVoiceType() .. inVoiceType = "$inVoiceType );
     VoiceType = inVoiceType;
-    
-    //update the voice type of the current NetPlayer, if applicable 
+
+    //update the voice type of the current NetPlayer, if applicable
     if( Pawn != None && Pawn.IsA('NetPlayer') )
         NetPlayer(Pawn).VoiceType = VoiceType;
 }
@@ -2722,9 +2672,9 @@ simulated function ClientAITriggerEffectEvent(
     }
 }
 
-function ServerOnEffectStopped( SwatAI SourceActor, 
+function ServerOnEffectStopped( SwatAI SourceActor,
                                 String UniqueIdentifier,
-                                string EffectName, 
+                                string EffectName,
                                 int Seed )
 {
     if (SourceActor == None)
@@ -2796,7 +2746,7 @@ state Dead
     function BeginState()
     {
         Super.BeginState();
-        
+
         // Make sure the officerviewports are invisible if the pawn
         // that died was the player
         if (self == Level.GetLocalPlayerController())
@@ -2814,7 +2764,7 @@ state Dead
 
 	    if( self == Level.GetLocalPlayerController() && HasHudPage() )
 		    GetHUDPage().OnPlayerDied();
-		    
+
         if( ForceObserverTimer != None )
         {
             ForceObserverTimer.StartTimer(ForceObserverTime);
@@ -2912,7 +2862,7 @@ state Dead
             }
         }
     }
-    
+
     simulated function ForceObserverTimerCallback()
     {
         if (Level.GetEngine().EnableDevTools)
@@ -2954,11 +2904,11 @@ state Dead
             // Simple linear equation
             LinearAlpha = (Level.TimeSeconds - DeathCamStartTimeSeconds) / kDeathCamDurationSeconds;
             LinearAlpha = FClamp(LinearAlpha, 0.0, 1.0);
-    
+
             // Take the linear alpha, and put it through a cubic equation that
             // ends the alpha smoothly as LinearAlpha approaches 1.0
             CubicAlpha = (-2.0 * LinearAlpha * LinearAlpha * LinearAlpha) + (3.0 * LinearAlpha * LinearAlpha);
-    
+
             return CubicAlpha;
         }
         else
@@ -3152,17 +3102,17 @@ state GameEnded
     {
         local Rotator FinalTargetRotation;
         local float ViewDist;
-        
+
         if (ViewTarget != None)
         {
             EndGameCamYaw += GetEndGameCamYawDelta();
 
             FinalTargetRotation.Pitch = kEndGameCamRotationPitch;
             FinalTargetRotation.Yaw   = int(EndGameCamYaw);
-        
+
             ViewActor      = ViewTarget;
             ViewDist  = ViewTarget.Default.CollisionRadius * kEndGameCamDesiredDistScale;
-            
+
             if( Pawn(ViewTarget) != None )
             {
                 CameraRotation = TargetViewRotation + FinalTargetRotation;
@@ -3174,10 +3124,10 @@ state GameEnded
                 CameraRotation = ViewTarget.Rotation + FinalTargetRotation;
                 CameraLocation = ViewTarget.Location;
             }
-            
+
             //CameraLocation = TargetViewLocation - (ViewTarget.Default.CollisionRadius * kEndGameCamDesiredDistScale) * vector(CameraRotation);
             //log( "dkaplan: PlayerCalcView: ViewTarget = "$ViewTarget$", TargetViewRotation = "$TargetViewRotation$", TargetViewLocation = "$TargetViewLocation$", vector(CameraRotation) = "$vector(CameraRotation)$", CameraLocation = "$CameraLocation );
-            
+
             CalcBehindView(CameraLocation, CameraRotation, ViewDist);
         }
         else
@@ -3198,11 +3148,11 @@ state GameEnded
 		    ViewDist = FMin( (CameraLocation - HitLocation) Dot View, Dist );
 	    else
 		    ViewDist = Dist;
-        
+
         CameraLocation = CameraLocation - ViewDist * View;
         EndGameCamLastDist = ViewDist;
     }
-    
+
     simulated function float GetEndGameCamYawDelta()
     {
         local float LastDistScale;
@@ -3234,7 +3184,7 @@ state GameEnded
 private simulated function ViewFromPlayer(Pawn PlayerPawn)
 {
 	local SwatPlayer SwatPlayerPawn;
-	
+
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SGPC::ViewFromPlayer(). PlayerPawn="$PlayerPawn );
 
@@ -3258,7 +3208,7 @@ private simulated function ViewFromPlayer(Pawn PlayerPawn)
                 ClientMessage(PlayerPawn.GetHumanReadableName(),'ViewingFromEvent');
 		    }
         }
-        
+
         GotoState('ObserveTeam');
     }
 }
@@ -3413,7 +3363,7 @@ private simulated function SetEndRoundTarget( Actor Target, string TargetName, b
     //set the end of round player tag
     if( self == Level.GetLocalPlayerController() )
         UpdatePlayerTag( TargetName, TargetIsOnSWAT );
-    
+
     GotoState('GameEnded');
 
     if( Target != None )
@@ -3433,9 +3383,9 @@ simulated function UpdatePlayerTag( string TargetPlayerTag, bool TargetIsOnSWAT 
     local HudPageBase CachedHUDPage;
 
     CachedHUDPage = GetHudPage();
-    
+
     AssertWithDescription( CachedHUDPage != None, "Could not find the Hud Page in UpdatePlayerTag." );
-    
+
     // Determine style...
     if( TargetIsOnSWAT )
         CachedHUDPage.PlayerTag.Style = CachedHUDPage.Controller.GetStyle(class'PlayerTagInterface'.default.FriendlyTagStyle);
@@ -3453,7 +3403,7 @@ simulated function UpdatePlayerTag( string TargetPlayerTag, bool TargetIsOnSWAT 
 simulated function ClientDestroyAllPawns()
 {
     local Pawn P;
-    
+
     foreach AllActors( class'Pawn', P )
     {
         P.Destroy();
@@ -3482,7 +3432,7 @@ private simulated function ClientStartEndRoundSequence()
 
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SGPC::ClientStartEndRoundSequence()." );
-    
+
     StartEndRoundSequence();
 }
 
@@ -3553,9 +3503,9 @@ private function PlayerController FindNextOtherPlayerOnTeam()
 
 private function bool IsOtherControllerObservable(Controller Other)
 {
-    return Other.bIsPlayer 
-        && SwatGamePlayerController(Other) != None 
-        && SwatGamePlayerController(Other).SwatPlayer != None 
+    return Other.bIsPlayer
+        && SwatGamePlayerController(Other) != None
+        && SwatGamePlayerController(Other).SwatPlayer != None
         && !SwatGamePlayerController(Other).SwatPlayer.IsTheVIP()                                 //dkaplan: do not view through VIP's helmet cam
         && Other != Self
         && PlayerController(Other).IsDead() == false
@@ -3599,12 +3549,12 @@ state BeingCuffed
 
         bPlayerIsCuffed = true;
     }
-    
+
     simulated function PostArrested()
     {
         if (Level.GetEngine().EnableDevTools)
             mplog( self$"---SGPC::PostArrested() in state 'BeingCuffed'." );
-        
+
         if ( SwatPlayer.IsTheVIP() )
         {
             SwatPlayer.SetForceCrouchState(true);
@@ -3662,7 +3612,7 @@ state BeingCuffed
         bBlockCloseCamera = true;
 		bValidBehindCamera = false;
 		FindGoodView();
-        //SetTimer(1.0, false); 
+        //SetTimer(1.0, false);
 		StopForceFeedback();
 		//ClientPlayForceFeedback("Damage");  // jdf
 		CleanOutSavedMoves();
@@ -3692,7 +3642,7 @@ state BeingCuffed
         Pawn.SetPhysics(PHYS_Walking);
         if( self == level.GetlocalPlayerController() )
             GetHudPage().Overlay.Show();
-        
+
         if ( !SwatPlayer.IsTheVIP() )
         {
             if ( bPlayerIsCuffed )
@@ -3738,7 +3688,7 @@ state BeingCuffed
 
         AssertWithDescription(SwatPlayer(Pawn).LastArrester != None,
             "[tcohen] SwatGamePlayerController@BeingCuffed::InterruptState() BeingCuffed is interrupted, but we don't know who's Arresting us.");
-        
+
         if ( Level.NetMode != NM_Client )
             SwatPlayer(Pawn).LastArrester.AuthorizedInterruptQualification();
     }
@@ -3766,7 +3716,7 @@ state BeingUncuffed
 		local float bestdist, newdist;
 		local int startYaw;
 		local actor ViewActor;
-		
+
 		////log("Find good death scene view");
 		ViewRotation = Rotation;
 		ViewRotation.Pitch = 56000;
@@ -3774,7 +3724,7 @@ state BeingUncuffed
 		besttry = 0;
 		bestdist = 0.0;
 		startYaw = ViewRotation.Yaw;
-		
+
 		for (tries=0; tries<16; tries++)
 		{
 			cameraLoc = ViewTarget.Location;
@@ -3783,12 +3733,12 @@ state BeingUncuffed
 			newdist = VSize(cameraLoc - ViewTarget.Location);
 			if (newdist > bestdist)
 			{
-				bestdist = newdist;	
+				bestdist = newdist;
 				besttry = tries;
 			}
 			ViewRotation.Yaw += 4096;
 		}
-			
+
 		ViewRotation.Yaw = startYaw + besttry * 4096;
 		SetRotation(ViewRotation);
 	}
@@ -3835,7 +3785,7 @@ state BeingUncuffed
         bBlockCloseCamera = true;
 		bValidBehindCamera = false;
 		FindGoodView();
-        //SetTimer(1.0, false); 
+        //SetTimer(1.0, false);
 		StopForceFeedback();
 		//ClientPlayForceFeedback("Damage");  // jdf
 		CleanOutSavedMoves();
@@ -3860,7 +3810,7 @@ state BeingUncuffed
 			bBehindView = false;
 		bPressedJump = false;
 		//myHUD.bShowScores = false;
-        
+
         Pawn.SetPhysics(PHYS_Walking);
         if( self == level.GetlocalPlayerController() )
             GetHudPage().Overlay.Show();
@@ -3914,7 +3864,7 @@ state BattleRooming extends BaseSpectating
     function InputOffset(out float aForward, out float aStrafe)
     {
     }
-    
+
     simulated function UpdateLooking(float dTime)
     {
     }
@@ -3949,7 +3899,7 @@ state BattleRooming extends BaseSpectating
         SetCollisionSize(32,32);
 
         BattleRoomZ = Pawn.Location.Z + 200;
-        
+
         SetLocation(Pawn.Location);
 
         Rot = Rotation;
@@ -3972,7 +3922,7 @@ state BattleRooming extends BaseSpectating
     event PlayerCalcView(out actor ViewActor, out vector CameraLocation, out rotator CameraRotation)
     {
         CameraLocation = Location;
-        CameraRotation = Rotation;      
+        CameraRotation = Rotation;
         CameraLocation.Z = BattleRoomZ;
 
         SetLocation(CameraLocation);
@@ -3990,7 +3940,7 @@ state BattleRooming extends BaseSpectating
 
 	    ViewRotation = Rotation;
 	    DesiredRotation = ViewRotation; //save old rotation
-	
+
 		TurnTarget = None;
 		bRotateToDesired = false;
 		bSetTurnRot = false;
@@ -3999,7 +3949,7 @@ state BattleRooming extends BaseSpectating
         {
             ViewRotation.Yaw += 32.0 * DeltaTime * aTurn;
 		    ViewRotation.Pitch += 32.0 * DeltaTime * aLookUp;
-            
+
             if ( ViewRotation.Pitch != Rotation.Pitch )
                 ViewRotation.Pitch = Clamp(ViewRotation.Pitch, -80 * DEGREES_TO_TWOBYTE, 20 * DEGREES_TO_TWOBYTE);
 
@@ -4040,7 +3990,7 @@ state BattleRooming extends BaseSpectating
         bBehindView = false;
         Level.bPlayersOnly = false;
         bGodMode = false;
-        log("Ending battleroom!!"); 
+        log("Ending battleroom!!");
     }
 }
 #endif // IG_BATTLEROOM
@@ -4131,7 +4081,7 @@ function ServerChangePlayerTeam()
 
     // To prevent degenerate game playing strategies, we prevent changing
     // teams during the round while non-lethaled or being arrested
-    if( SwatPlayer != None && 
+    if( SwatPlayer != None &&
         ( SwatPlayer.IsNonlethaled() || SwatPlayer.IsBeingArrestedNow() ) )
     {
         return;
@@ -4260,9 +4210,9 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
 
     // GUI gets first crack
     //
-    // Note: Player.GUIController can be None at early stage of some single-player 
+    // Note: Player.GUIController can be None at early stage of some single-player
     // levels (like when launching from UnrealEd)
-    if( Player == None || Player.GUIController == None || 
+    if( Player == None || Player.GUIController == None ||
         SwatGUIControllerBase(Player.GUIController).OnMessageRecieved( S, Type ) )
         return;
 
@@ -4377,7 +4327,7 @@ exec function LogScores()
         log("=====================================");
         log(" Mapping of names to playercontrollers:" );
         log("");
-        
+
         foreach AllActors( class 'SwatGamePlayerController', SGPC )
         {
             log( SGPC$" has name: "$SGPC.PlayerReplicationInfo.PlayerName );
@@ -4442,7 +4392,7 @@ event PlayerTick(float dTime)
     UpdateLooking(dTime);
 
     UpdateRecoil();
-    
+
 /*  TMC 1/23/2004 disabled support for GCIOpen & GiveCommand on the same button (GCIOpen after delay)
     if (CommandInterface == GraphicCommandInterface)
     {
@@ -4465,7 +4415,7 @@ event PlayerTick(float dTime)
     // don't get accessed None's.
     if (Pawn == None)
         return;
-    
+
     //we should continue auto-firing until the fire button is released
     if ( SwatPawn(Pawn).bWantsToContinueAutoFiring )
     {
@@ -4522,20 +4472,20 @@ simulated function RefreshCameraEffects(SwatPlayer Victim)
     {
         //mplog(self$" adding FB CameraEffect because "$victim$" is affected");
         AddCameraEffect(FlashbangCameraEffect, true, true, false);   //enforce unique class and object, and don't replace if already exists
-    }   
-        
+    }
+
     if (Victim.IsPepperSprayed())
     {
         //mplog(self$" adding Pepper CameraEffect because "$victim$" is affected");
         AddCameraEffect(PepperSprayCameraEffect, true, true, false);   //enforce unique class and object, and don't replace if already exists
     }
-        
+
     if (Victim.IsGassed())
     {
         //mplog(self$" adding Gassed CameraEffect because "$victim$" is affected");
         AddCameraEffect(CSGasCameraEffect, true, true, false);   //enforce unique class and object, and don't replace if already exists
     }
-        
+
     if (Victim.IsStung())
     {
         //mplog(self$" adding Stung CameraEffect because "$victim$" is affected");
@@ -4562,7 +4512,7 @@ event RenderTexture(ScriptedTexture inTexture)
 simulated function UpdateLooking(float dTime)
 {
     local float LastMouseDistance;
-    
+
     LastMouseDistance = Square(aMouseX - LastMouseX) + Square(aMouseY - LastMouseY);
     MouseDistancePerSecond = LastMouseDistance * dTime;
 
@@ -4599,7 +4549,7 @@ simulated function FinishRecoiling()
     Time = RecoilStartTime + RecoilBackDuration + RecoilForeDuration;
 
     UpdateRecoilFore(Time);
-    
+
     Recoiling = false;
 }
 
@@ -4609,11 +4559,11 @@ simulated function UpdateRecoilBack(float Time)
     local float CurrentValue;    //value of the recoil function
     local float DeltaPitch;
     local rotator NewRotation;
-    
+
     ElapsedRecoilBackTime = Time - RecoilStartTime;
 
     CurrentValue = Sin(ScaleRecoilDuration(ElapsedRecoilBackTime, RecoilBackDuration)) * RecoilMagnitude;
-    
+
     DeltaPitch = CurrentValue - LastRecoilFunctionValue;
 
     //apply delta pitch to our rotation
@@ -4644,11 +4594,11 @@ simulated function UpdateRecoilFore(float Time)
     local float CurrentValue;    //value of the recoil function
     local float DeltaPitch;
     local rotator NewRotation;
-    
+
     ElapsedRecoilForeTime = Time - RecoilStartTime - RecoilBackDuration;
 
     CurrentValue = Cos(ScaleRecoilDuration(ElapsedRecoilForeTime, RecoilForeDuration)) * RecoilMagnitude;
-    
+
     DeltaPitch = CurrentValue - LastRecoilFunctionValue;
 
     //apply delta pitch to our rotation
@@ -4681,14 +4631,14 @@ simulated function float ScaleRecoilDuration(float ElapsedTime, float Duration)
 
 function AddRecoil(float inRecoilBackDuration, float inRecoilForeDuration, float inRecoilMagnitude, optional float AutoFireRecoilMagnitudeIncrement, optional int AutoFireShotIndex)
 {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (!DebugShouldRecoil) return;
 #endif
 
     //we're starting a new recoil
     //it doesn't matter if there's already a recoil in effect... we're just starting over from where we are
 
-    RecoilStartTime = Level.TimeSeconds;    
+    RecoilStartTime = Level.TimeSeconds;
     RecoilBackDuration = inRecoilBackDuration;
     RecoilForeDuration = inRecoilForeDuration;
     RecoilMagnitude = inRecoilMagnitude + AutoFireRecoilMagnitudeIncrement * AutoFireShotIndex;
@@ -4761,10 +4711,10 @@ function bool HandsShouldIdle()
     Item = Pawn.GetActiveItem();
 
     return  (
-                Item != None 
-            && Item.IsIdle() 
-            && Item.IsAvailable() 
-            && SwatPlayer.HandsShouldIdle() 
+                Item != None
+            && Item.IsIdle()
+            && Item.IsAvailable()
+            && SwatPlayer.HandsShouldIdle()
             );
 }
 
@@ -4915,7 +4865,7 @@ function ServerGiveCommand(
             {
                 if (Level.GetEngine().EnableDevTools)
                     mplog("... skipping ClientReceiveCommand() for PC="$PC$" because the PC doesnt have a pawn.");
-                
+
                 continue;
             }
 
@@ -4927,7 +4877,7 @@ function ServerGiveCommand(
             {
                 if (Level.GetEngine().EnableDevTools)
                     mplog("... skipping ClientReceiveCommand() for PC="$PC$" because the command is not a Taunt, and PC is on a different team.");
-                
+
                 continue;
             }
 
@@ -4935,11 +4885,11 @@ function ServerGiveCommand(
                 mplog("... calling ClientReceiveCommand() on PC="$PC);
 
             PC.ClientReceiveCommand(
-                    CommandIndex, 
+                    CommandIndex,
                     Source,
                     SourceID,
                     SourceActorName,
-                    TargetActor, 
+                    TargetActor,
                     TargetID,
                     TargetLocation,
                     VoiceType );
@@ -4948,21 +4898,21 @@ function ServerGiveCommand(
 }
 
 simulated function ClientReceiveCommand(
-        int CommandIndex, 
+        int CommandIndex,
         Actor Source,
         string SourceID,
         String SourceActorName,
-        Actor TargetActor, 
+        Actor TargetActor,
         string TargetID,
         Vector TargetLocation,
         eVoiceType VoiceType )
 {
     GetCommandInterface().ReceiveCommandMP(
-            CommandIndex, 
+            CommandIndex,
             Source,
             SourceID,
             SourceActorName,
-            TargetActor, 
+            TargetActor,
             TargetID,
             TargetLocation,
             VoiceType);
@@ -4988,9 +4938,9 @@ private function OnOfficerIncapacitated()
 function OnGiveCommandPressed()
 {
     GiveCommandIsDown = true;
-    
+
     if (CommandInterface != GraphicCommandInterface) return;    //default command only applies to GraphicCommandInterface
-    
+
     if (GiveCommandTimer == None)
     {
         GiveCommandTimer = new class'Timer';
@@ -5217,17 +5167,20 @@ exec function IssueCompliance()
         else
             PlayerTag = Repo.GuiConfig.GetTagForVoiceType( NetPlayer(Pawn).VoiceType );
     }
-        
+
 	ServerIssueCompliance( string(PlayerTag) );
 }
 
 function ServerIssueCompliance( string VoiceTag )
 {
-	local bool ACharacterHasAWeaponEquipped;
-    local NetPlayer theNetPlayer;
-	local int bTargetArrested;
-	local int bTargetSuspect;
-    
+	   local bool ACharacterHasAWeaponEquipped;
+     local NetPlayer theNetPlayer;
+	   local int bTargetArrested;
+	   local int bTargetSuspect;
+
+     if(ViewTarget != Pawn) {
+       log("ServerIssueCompliance: ViewTarget ("$ViewTarget$") != Pawn ("$Pawn$")");
+     }
     if( CanIssueCompliance() )
     {
         StartIssueComplianceTimer();
@@ -5239,7 +5192,7 @@ function ServerIssueCompliance( string VoiceTag )
             {
                 //dkaplan: note, the voice tag should always be 'VIP' in this case
                 Assert( name(VoiceTag) == 'VIP' );
-                Pawn.BroadcastEffectEvent('VIPHelp',,,,,,,,name(VoiceTag));  
+                Pawn.BroadcastEffectEvent('VIPHelp',,,,,,,,name(VoiceTag));
             }
             return;
         }
@@ -5318,7 +5271,7 @@ simulated function OnStateChange( eSwatGameState oldState, eSwatGameState newSta
 
 log("[dkaplan] >>> OnStateChange of (SwatGamePlayerController) "$self$" from state "$GetEnum(eSwatGameState,oldState)$" to state "$GetEnum(eSwatGameState, newState));
     if( newState == GAMESTATE_PreGame &&
-       (Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Client || 
+       (Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Client ||
         Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host) )
     {
         CurrentMultiplayerLoadOut = Spawn(class'SwatGame.DynamicLoadOutSpec', , name("CurrentMultiplayerLoadOut"));
@@ -5327,7 +5280,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGamePlayerController) "$self$" from sta
 
         ViewFromLocation( 'InitialPositionMarker' );
     }
-    
+
     //set the game to paused if not actually playing the round, SP only
 
     //if( newState == GAMESTATE_PreGame &&
@@ -5348,10 +5301,10 @@ log("[dkaplan] >>> OnStateChange of (SwatGamePlayerController) "$self$" from sta
     {
         // Mark ourselves as observing, so that AHands::Tick will know
         // not to render the first person hands if we can see ourselves from
-        // the in the splash camera viewpoint (e.g., if we abort the 
+        // the in the splash camera viewpoint (e.g., if we abort the
         // mission and happen to be standing in the splash camera's view --
         // the camera position is set in SwatGUIPage.Show() when the
-        // mission is aborted). 
+        // mission is aborted).
         bIsObserving = true;
 
         SetPause(!SPBombExploded);
@@ -5396,13 +5349,13 @@ exec function Loc()
     local Actor Act;
     local vector Loc;
     local rotator Rot;
-    
+
     PlayerCalcView( Act, Loc, Rot );
-    
+
     log( "Player == "$Act$", Location == "$Loc$", Rotation == "$Rot );
 }
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
 exec function TestDoorBlocking(int Times)
 {
     GetCommandInterface().TestDoorBlocking(Pawn, Times);
@@ -5430,7 +5383,7 @@ function ServerSetAlwaysRun( bool NewValue )
 
 
 // Override HandleWalking in Engine.PlayerController so that the player
-// is running when the 'bRun' button is down, instead of when it is up 
+// is running when the 'bRun' button is down, instead of when it is up
 function HandleWalking()
 {
     local bool WantsToWalk; //versus run
@@ -5450,9 +5403,9 @@ function HandleWalking()
 
 	if ( Pawn != None )
     {
-        //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version. 
+        //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version.
         WantsToWalk = bool(bRun) == bAlwaysRun;
-		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') ); 
+		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') );
 
         if (aForward == 0 && aStrafe == 0)
         {
@@ -5538,7 +5491,7 @@ simulated function OnBombExploded()
     {
 		p.Died(None, class'GenericDamageType', Vect(0,0,0)
 #if IG_SWAT
-            , Vect(0,0,0) 
+            , Vect(0,0,0)
 #endif
             );
     }
@@ -5627,7 +5580,7 @@ function OnPlayerDamaged( Pawn Pawn )
     {
         SPRI = SwatPlayerReplicationInfo(SwatGamePlayerController(Pawn.Controller).PlayerReplicationInfo);
 
-        if( SPRI != None && 
+        if( SPRI != None &&
             SPRI.COOPPlayerStatus != STATUS_Incapacitated )
             SPRI.COOPPlayerStatus = STATUS_Injured;
     }
@@ -5635,7 +5588,7 @@ function OnPlayerDamaged( Pawn Pawn )
 
 // RPC on the client that triggers the given effect event on the given source actor.
 // If the SourceActor is not relevant and cannont be referenced by uniqueID, the call is ignored.
-simulated function ClientBroadcastStopAllSounds(  SwatPawn SourceActor, 
+simulated function ClientBroadcastStopAllSounds(  SwatPawn SourceActor,
                                                   String UniqueIdentifier )
 {
     if( SourceActor == None )
@@ -5678,7 +5631,7 @@ exec function TestClientMessage( name type, string Msg )
 //causes an audit of the PlayerFocusInterfaces for one call to UpdateFocus()
 exec function AuditFocus()
 {
-    bAuditFocus = true;     
+    bAuditFocus = true;
 }
 #endif
 
@@ -5804,7 +5757,7 @@ exec function ScrollChatToEnd()
 simulated function ClientAddPrecacheableMaterial( string MaterialName )
 {
     local Material Precacheable;
-    
+
     Precacheable = Material( DynamicLoadObject( MaterialName, class'Material' ) );
 
     if( Precacheable != None )
@@ -5850,7 +5803,7 @@ native simulated function bool IsNetRelevant( Pawn PawnInQuestion );
 
 // Render the blur that appears when you are zoomed in with your weapon.
 simulated event RenderOverlays( canvas Canvas )
-{	
+{
 	local HandheldEquipment ActiveItem;
 
 	if (ZoomAlpha > 0 && ZoomBlurFader != None)
@@ -5863,10 +5816,10 @@ simulated event RenderOverlays( canvas Canvas )
 		{
 			//log("ZoomAlpha = "$ZoomAlpha$" ZoomAlpha*255="$ZoomAlpha * 255$" ActiveItem.ZoomedFOV = "$ActiveItem.ZoomedFOV$" BaseFOV = "$BaseFOV);
 			//log("ZoomBlurFader = "$ZoomBlurFader);
-			
+
 			ColorModifier(ZoomBlurFader).Material = ActiveItem.ZoomBlurOverlay;
 			ColorModifier(ZoomBlurFader).Color.A = ZoomAlpha * 255;
-			
+
 			// Draw the texture, starting at the top left corner of screen
 			Canvas.SetPos(0, 0); // top-left
 			// Note: have to hardcode size of material to 512x512 because there's no
@@ -5899,9 +5852,9 @@ defaultproperties
     EquipmentSlotForQualify=SLOT_Invalid
     FlashbangRetinaImageTextureWidth=800
     FlashbangRetinaImageTextureHeight=600
-    
+
     ForceObserverTime=5.0
-    
+
     CommandTime=1.0
     ComplianceTime=1.5
 }

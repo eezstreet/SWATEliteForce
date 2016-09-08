@@ -32,6 +32,7 @@ function OnPawnDamaged(Pawn Pawn, Actor Damager)
     }
 
     Add( Pawn, InjuredOfficers );
+    ChatMessageEvent('PenaltyIssued');
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name
@@ -55,5 +56,3 @@ function int GetCurrentValue()
 
     return PenaltyPerOfficer * InjuredOfficers.length;
 }
-
-

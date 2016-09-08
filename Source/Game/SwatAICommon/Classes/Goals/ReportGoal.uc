@@ -6,15 +6,15 @@ class ReportGoal extends SwatCharacterGoal;
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 // copied to our action
-//var(parameters) SwatGame.SwatAI			ReportTarget;
+var(parameters) ISwatAI			ReportTarget;
 var(parameters)	Controller				ThisController;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Constructors
 
 overloaded function construct( AI_Resource r )
@@ -23,11 +23,11 @@ overloaded function construct( AI_Resource r )
 	assert(false);
 }
 
-overloaded function construct( AI_Resource r, /*SwatGame.SwatAI ptReportTarget,*/ Controller ourController )
+overloaded function construct( AI_Resource r, ISwatAI ptReportTarget, Controller ourController )
 {
     Super.construct(r);
 
-   // ReportTarget = ptReportTarget;
+    ReportTarget = ptReportTarget;
 	ThisController = ourController;
 }
 

@@ -55,12 +55,11 @@ function InitComponent(GUIComponent MyOwner)
    		MyCampaignSelectionBox.List.Add(TheCampaigns[index].StringName,TheCampaigns[index]);
 	}
     MyCampaignSelectionBox.List.Sort();
-	
+
 	// Campaign path selection box
 	MyCampaignPathBox.Clear();
-	MyCampaignPathBox.List.Add(StringM, , , 0);	// SWAT 4 campaign
-	MyCampaignPathBox.List.Add(StringN, , , 1);	// Custom missions
-	MyCampaignPathBox.List.Sort();
+  MyCampaignPathBox.List.Add(StringM, , , 0);	// Original Missions
+	MyCampaignPathBox.List.Add(StringN, , , 1);	// SWAT 4 campaign
 
     MyCampaignSelectionBox.OnChange=InternalOnChange;
 	MyCampaignPathBox.OnChange=InternalOnChange;
@@ -68,7 +67,7 @@ function InitComponent(GUIComponent MyOwner)
     MyNameEntry.OnEntryCompleted=InternalOnClick;
     MyNameEntry.OnChange=InternalOnChange;
     MyNameEntry.OnEntryCancelled=InternalEntryCancelled;
-    
+
     MyCreateCampaignButton.OnClick=InternalOnClick;
     MyUseCampaignButton.OnClick=InternalOnClick;
     MyDeleteCampaignButton.OnClick=InternalOnClick;
@@ -89,13 +88,13 @@ private function InternalOnActivate()
     BriefingTabButton.DisableComponent();
     LoadoutTabButton.DisableComponent();
     StartButton.DisableComponent();
-    
-	MyCampaignPathBox.SetIndex(0);	// Use SWAT 4 missions as the default
-	
+
+	MyCampaignPathBox.SetIndex(1);	// Use SWAT 4 missions as the default
+
 	if( MyCampaignSelectionBox.Find(SwatGUIController(Controller).GetCampaigns().CurCampaignName) == "" )
     	MyCampaignSelectionBox.SetIndex(0);
 
-    //can only load if one already exists    
+    //can only load if one already exists
     MyCampaignSelectionBox.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
     MyUseCampaignButton.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
     MyDeleteCampaignButton.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
@@ -128,7 +127,7 @@ private function InternalOnClick(GUIComponent Sender)
 	switch (Sender)
 	{
 	    case MyQuitButton:
-            Quit(); 
+            Quit();
             break;
 		case MyNameEntry:
 		case MyCreateCampaignButton:
@@ -137,7 +136,7 @@ private function InternalOnClick(GUIComponent Sender)
 		case MyUseCampaignButton:
 		    //unset the pak for campaigns
 		    GC.SetCustomScenarioPackData( None );
-			Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu"); 
+			Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
 			break;
 		case MyMainMenuButton:
             PerformClose(); break;
@@ -150,14 +149,14 @@ private function InternalOnClick(GUIComponent Sender)
 
 private function InternalEntryCancelled(GUIComponent Sender)
 {
-    PerformClose(); 
+    PerformClose();
 }
 
 private function InternalOnDlgReturned( int Selection, String passback )
 {
     local string campName;
 	local int campPath;
-    
+
     switch (passback)
     {
         case "DeleteCampaign":
@@ -165,7 +164,7 @@ private function InternalOnDlgReturned( int Selection, String passback )
             {
                 campName = MyCampaignSelectionBox.Get();
                 DeleteCampaign(campName);
-                
+
                 MyCampaignSelectionBox.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
                 MyUseCampaignButton.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
                 MyDeleteCampaignButton.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
@@ -224,8 +223,8 @@ private function CreateCampaign( string campName, int campPath )
 
     //clear the campaign name entry box
     MyNameEntry.SetText("");
-    
-    Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu"); 
+
+    Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
 }
 
 private function DeleteCampaign( string campName )
@@ -237,18 +236,18 @@ private function DeleteCampaign( string campName )
 private function bool IsCampaignNameValid( string Campaign )
 {
     local int i;
-    
+
     // 0 - length names are invalid
     if( Campaign == "" )
         return false;
-        
+
     for( i = Len(Campaign) - 1; i >= 0; i-- )
     {
         // any non-space characters make the name valid
         if( Mid( Campaign, i, 1 ) != " " )
             return true;
     }
-    
+
     return false;
 }
 
@@ -256,7 +255,7 @@ defaultproperties
 {
     OnFocused=InternalOnFocused
 	OnActivate=InternalOnActivate
-	
+
 	StringA=" is not a valid campaign name."
 	StringB="Campaign: "
 	StringC="A campaign with the name "

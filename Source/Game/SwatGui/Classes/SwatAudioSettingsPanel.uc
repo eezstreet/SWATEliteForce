@@ -16,6 +16,9 @@ var(SWATGui) private EditInline Config GUISlider			MyVoiceVolumeSlider;
 var(SWATGui) private EditInline Config GUISlider			MyVOIPVolumeSlider;
 var(SWATGui) private EditInline Config GUICheckBoxButton	RecognitionEnabled;
 var(SWATGui) private EditInline Config GUICheckBoxButton	VOIPEnabled;
+#if IG_CAPTIONS
+var(SWATGui) private EditInline Config GUICheckBoxButton MyShowSubtitlesCheck;
+#endif
 
 var() private float DefaultMusicVolume;
 var() private float DefaultSoundVolume;
@@ -46,6 +49,9 @@ function InitComponent(GUIComponent MyOwner)
 function SaveSettings()
 {
     //log("SwatAudioSettingsPanel SaveSettings()");
+    #if IG_CAPTIONS
+        GC.bShowSubtitles = MyShowSubtitlesCheck.bChecked;
+    #endif
 
     GC.SaveConfig();
 	class'SpeechManager'.static.StaticSaveConfig();
@@ -63,6 +69,10 @@ function LoadSettings()
 	RecognitionEnabled.SetEnabled(PlayerOwner().Level.GetEngine().SpeechManager.IsInitialized());
 	RecognitionEnabled.SetChecked(PlayerOwner().Level.GetEngine().SpeechManager.IsInitialized() && PlayerOwner().Level.GetEngine().SpeechManager.IsEnabled());
 
+  #if IG_CAPTIONS
+      MyShowSubtitlesCheck.SetChecked( GC.bShowSubtitles );
+  #endif
+
 	VOIPEnabled.SetEnabled(true);
 	VOIPEnabled.SetChecked(bool(PlayerOwner().ConsoleCommand("get alaudio.alaudiosubsystem UseVoIP")));
 }
@@ -71,9 +81,9 @@ private function OnMusicVolumeChanged( GUIComponent Sender )
 {
     local float Multiplier;
     Multiplier = GUISlider(Sender).Value;
-    
+
 	//Log("Setting Music Volume to "$Multiplier);
-	
+
     Controller.StaticExec("set alaudio.alaudiosubsystem musicvolume "$Multiplier);
 }
 
@@ -81,9 +91,9 @@ private function OnSoundVolumeChanged( GUIComponent Sender )
 {
     local float Multiplier;
     Multiplier = GUISlider(Sender).Value;
-    
+
 	//Log("Setting Sound Volume to "$Multiplier);
-	
+
     Controller.StaticExec("set alaudio.alaudiosubsystem soundvolume "$Multiplier);
     Controller.StaticExec("set alaudio.alaudiosubsystem Ambientvolume "$Multiplier);
 }
@@ -94,7 +104,7 @@ private function OnVoiceVolumeChanged( GUIComponent Sender )
     Multiplier = GUISlider(Sender).Value;
 
     //Log("Setting Voice Volume to "$Multiplier);
-	
+
     Controller.StaticExec("set alaudio.alaudiosubsystem Voicevolume "$Multiplier);
 }
 
@@ -104,7 +114,7 @@ private function OnVOIPVolumeChanged( GUIComponent Sender )
     Multiplier = GUISlider(Sender).Value;
 
 	//Log("Setting VOIP Volume to "$Multiplier);
-	
+
     Controller.StaticExec("set alaudio.alaudiosubsystem VOIPvolume "$Multiplier);
 }
 

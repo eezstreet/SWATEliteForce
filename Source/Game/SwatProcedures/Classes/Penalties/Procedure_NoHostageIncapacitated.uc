@@ -20,7 +20,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 {
     if (!Pawn.IsA('SwatHostage')) return; //we don't care
 
-    if (GetGame().DebugLeadership && 
+    if (GetGame().DebugLeadership &&
         IsInArray( Pawn, IncapacitatedHostages ) )
         log("[LEADERSHIP] "$class.name
             $" removed "$Pawn.name
@@ -34,7 +34,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 {
     if (!Pawn.IsA('SwatHostage')) return;
 
-    if( !Incapacitator.IsA('SwatPlayer') && !Incapacitator.IsA('SwatOfficer') )
+    if( !Incapacitator.IsA('SwatPlayer') && Pawn(Incapacitator).GetActiveItem().GetSlot() != Slot_Detonator && !Incapacitator.IsA('SniperPawn') )
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name
@@ -46,6 +46,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 
     AssertNotInArray( Pawn, IncapacitatedHostages, 'IncapacitatedHostages' );
     Add( Pawn, IncapacitatedHostages );
+    ChatMessageEvent('PenaltyIssued');
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

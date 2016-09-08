@@ -490,7 +490,7 @@ Hint=Customize a single player mission.
 
 [SwatMainMenu_CampaignButton]
 Caption=CAREER
-Hint=Play the single player campaign.
+Hint=Play the single player campaign, or custom missions.
 
 [SwatMainMenu_InstantActionButton]
 Caption=INSTANT ACTION
@@ -506,7 +506,7 @@ Hint=Create a multiplayer game.
 
 [SwatMainMenu_TrainingButton]
 Caption=NEW FEATURES
-Hint=Read about the new features of the expansion pack.
+Hint=This should probably be removed.
 
 [SwatMainMenu_bottomblack]
 Hint=Campaign
@@ -4317,6 +4317,36 @@ Hint=Play the selected campaign.
 Caption=DELETE CAREER
 Hint=Delete the selected campaign.
 
+[SwatCampaignMenu_CampaignPathBox_ComboB]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_EditBox]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox_List]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox_SBar_Grip]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox_SBar_Down]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox_SBar_Up]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox_SBar_SZone]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox_SBar]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox_LBox]
+Hint=Choose which set of missions to have in your campaign.
+
+[SwatCampaignMenu_CampaignPathBox]
+Hint=Choose which set of missions to have in your campaign.
+
 [SwatCampaignMenu_CampaignSelectBox_ComboB]
 Hint=Choose the campaign you wish to play.
 
@@ -4362,47 +4392,6 @@ Caption=CAREER
 
 [SwatCampaignMenu]
 StringJ="Delete the career named: "
-
-[SP-Casino]
-PrimarySpawnPoint=Back Door
-CampaignObjectiveEnemySpawn=("Louie Baccus","Simon Grover","Allen Kruse")
-CampaignObjectiveHostageSpawn=("Jeremy Walsh")
-MissionDescription=("High Risk Warrant Service","1092 Westfield Road","February 24 - 17:32")
-BriefingText=("This one's a little sticky.  Vice has been keeping an eye on Northside Vending and Amusements for the last three or four weeks.  They've been  building a case against an alleged bookmaking operation going on in the basement of the business.  Undercover detective Jeremy Walsh has been working closely with the suspects, and today received an invitation to enter the bookmaking area.","|All went smoothly until Walsh was out of sight. Walsh's wire reported that he was still talking to the suspects, who showed no evidence of suspecting him.  Less than ten minutes later, there was a sudden burst of static, and then Walsh's wire went dead.  If everything was going as expected, Walsh would already be back, since he was supposed to go in, place one bet, and come right back out.  With no way to determine Walsh's actual state, we're assuming he's in danger and it's time to go in after him.   ","|We know at least three individuals are present.  The first, Louie Baccus, is the owner of the business.  The other two are Allen Kruse and Simon Gowan.  Kruse and Gowan are believed to be the movers behind the bookie operation, with Baccus providing cover and space.  Vice believes there are additional suspects inside, acting as bookies and runners.  Numbers are unknown, but could go as high as ten suspects total. That's one reason Walsh was sent in, to determine the exact number of players.    ","|Kruse and Gowan have extensive records, ranging from petty larceny to assault with a deadly weapon.  Assume both are armed and dangerous.  Baccus is an unknown, but given his compatriot's histories, better to assume he is armed as well.  Note that Walsh's last recorded statement was one of surprise at ''the size of your setup.''  Sounded like he was impressed, which can't mean anything too good for us. ","|We have a layout for the shop, but we don't have anything on the basement.  We know it's accessed through the storage areas, but we don't know anything about the bookie's territory.  Keep your eyes open; there could be any number of surprises.  Time to get Detective Walsh out, and get the suspects under control.   Choose your gear carefully and move out. ")
-LocationInfoText=("Northside Vending and Amusements, 1092 Westfield Road","|Sierra One has coverage on Side 3, Level 1; they report a large warehouse-type room.")
-HostageName=("Jeremy Walsh","Louie Baccus")
-HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Brown|Height: 5' 10''|Weight: 180|DOB: 12/08/70|Age: 38","Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 5' 11''|Weight: 190|DOB: 10/15/1968|Age: 40")
-HostageDescription=("Detective Walsh has been working undercover in the Mafia for quite some time and is a reliable source of information about mob operations.","Owner of Northside Vending and Amusements.  Baccus has never been arrested, but is suspected to have ties to organized crime.")
-SuspectName=("Allen Kruse","Simon Gowan")
-SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Blue|Height: 5' 10''|Weight: 150|DOB: 01/02/1964|Age: 44","Sex: Male|Descent: Caucasian|Hair: Light Brown|Eyes: Blue|Height: 6' 2''|Weight: 210|DOB: 07/29/1979|Age: 29")
-SuspectDescription=("Appears almost daily at the Northside Vending. Has been convicted of illegal possession of firearms and simple assault.  Arrested for racketeering, but not convicted.  ","A regular at the Northside Vending. Has been convicted of assault with a deadly weapon and robbery.")
-EntryOptionTitle=("Side 3, Level 1")
-EntryDescription=("Back door into the establishment.")
-TimeLinePlot=(0,42,71,88,98,100)
-TimeLineTime=("14:03","15:30","16:30","17:05","17:28","17:32")
-TimeLineShortDescription=("Walsh checks in","Walsh's wire signal lost","Walsh's Lieutenant briefed","Warrants issued","SWAT arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Detective Walsh checks in with his handler and notifies him that he will be entering the shop at 12:45."," - Walsh's wire suddenly goes to static with no clear indication of what the malfunction is."," - Lieutenant Collins is briefed of the situation and the missed call.  All officers involved believe Walsh has been made.  DA is notified."," - Arrest warrants are issued.  SWAT dispatched to scene."," - Containment perimeter and high ground established."," - Decision made to go tactical. Entry team assembled.")
-LoadingText=1092 Westfield Road, Northside Vending
-
-[SP-ABomb]
-PrimarySpawnPoint=Front Entrance
-SecondarySpawnPoint=Service Entrance
-MissionDescription=("Rapid Deployment","1536 Adelaide Avenue","December 12 - 23:42")
-BriefingText=("We're being called up for a rapid deployment at an ongoing shots fired situation at the A-Bomb nightclub.  At least four gunmen, likely more, are exchanging shots with each other.  They don't appear to be actively attacking civilians, or attempting to hold hostages, although we have reports that there are multiple wounded victims from crossfire.  Witness reports are confused, and in some cases conflicting.","|We have both Caucasian and Hispanic shooters, shooting along racial lines.  All of them appear to be young adult males.","|We have two possible entries: the front door, past the ticket booth, and a back alley loading zone.  We have a rough sketch of the layout from an off-duty bartender; give it a once over, but don't trust it too much.","|Most of the patrons made it out; however, there are still civilians holed up in there.   We know some of them are wounded from witness reports. The perimeter is still reporting sporadic gunfire inside, and the paramedics won't go in until we've cleared the building.  You need to get in there and bring order to chaos by locating and arresting the gunmen.  In addition, you need to locate and secure for evacuation all remaining civilians, especially the wounded.  Review the information, choose your entry, and get your gear together.  It's time to go to work.")
-LocationInfoText=("1536 Adelaide Avenue","There is both a main and a secondary stage on the first floor, and both stages have an attached bar area. There is a second floor with a manager's office and an additional lounge. The map is sketchy at best, but it is the only information about layout available. ")
-HostageName=("Unknown")
-HostageVitals=("Information Unavailable")
-HostageDescription=("")
-SuspectName=("Unknown Latinos","Unknown Caucasians")
-SuspectVitals=("Vitals unknown","Vitals unknown")
-SuspectDescription=("Members of a gang. Latin descent.","Members of a gang.  Caucasian descent.")
-EntryOptionTitle=("Side 2, Level 1","Side 1, Level 1")
-EntryDescription=("Service Entrance, off of side alley","Front Entrance")
-TimeLinePlot=(0,20,100)
-TimeLineTime=("23:27","23:30","23:42")
-TimeLineShortDescription=("Shots fired; 911 Calls","Perimeter established","SWAT arrives")
-TimeLineLongDescription=(" - First 911 calls logged reporting shooting at the club.  SWAT notified."," - Patrol Units arrive on scene and begin to set up a perimeter and perform first aid on initial victims.  Patrol radios for ambulances."," - SWAT arrives on scene.  Due to ongoing live fire, SWAT immediately goes tactical to neutralize the situation.")
-LoadingText=1536 Adelaide Ave, A-Bomb Nightclub
 
 [SwatCustomMenu_usecustompakbutton]
 Caption=LOAD MISSION PACK
@@ -4676,16 +4665,19 @@ FireFeedbackText=(Hold) Restrain Civilian
 FireFeedbackText=(Hold) Restrain Suspect
 
 [ToolkitOnArrestedVIP]
-FireFeedbackText=Release VIP
+FireFeedbackText=(Hold) Release VIP
 
 [ToolkitOnBomb]
-FireFeedbackText=Disable Bomb
+FireFeedbackText=(Hold) Disable Bomb
+
+[ToolkitOnBoobyTrap]
+FireFeedbackText=(Hold) Disable Trap
 
 [ToolkitOnC2Charge]
-FireFeedbackText=Remove C2 Charge
+FireFeedbackText=(Hold) Remove C2 Charge
 
 [ToolkitOnWedge]
-FireFeedbackText=Remove Wedge
+FireFeedbackText=(Hold) Remove Wedge
 
 [Command_Zulu]
 Text=INITIATE
@@ -4724,6 +4716,9 @@ Text=DEPLOY TASER
 Text=DEPLOY GRENADE LAUNCHER
 
 [Command_Deploy_Lightstick]
+Text=MARK WITH LIGHTSTICK
+
+[Command_Drop_Lightstick]
 Text=DROP LIGHTSTICK
 
 [Command_Deploy_Wedge]
@@ -4731,6 +4726,9 @@ Text=DEPLOY WEDGE
 
 [Command_Deploy]
 Text=DEPLOY >>
+
+[Command_Move]
+Text=MOVE >>
 
 [Command_MirrorCorner]
 Text=MIRROR CORNER
@@ -4796,7 +4794,10 @@ Text=MOVE & CLEAR
 Text=PICK LOCK
 
 [Command_StackUpAndTryDoor]
-Text=STACK UP
+Text=TRY LOCK
+
+[Command_CheckForTraps]
+Text=CHECK FOR TRAPS
 
 [Command_OpenGasAndMakeEntry]
 Text=OPEN, GAS, & MAKE ENTRY
@@ -4957,355 +4958,6 @@ Text=Response
 [Page_Command]
 Text=Command
 
-[SP-Warehouse]
-PrimarySpawnPoint=Main Entrance
-SecondarySpawnPoint=Side Dock Entrance
-CampaignObjectiveEnemySpawn=("Kiril Stetchkov","Todor Stetchkov")
-MissionDescription=("High-Risk Warrant Service","2770 Harrington Rd.","September 13 - 19:47")
-BriefingText=("Okay, listen up. I know you're tired but we have one more job to do tonight. Following the incident on the subway, Judge Rainer issued an arrest warrant for Kiril Stetchkov, the head of the Stetchkov clan.","|The Stetchkov's own a Warehouse on Harrington road and it's reportedly used as a place for clan members to lie low. Undercover surveillance has been watching the building for several days, and they believe Stetchkov and his brother may be there right now. He's likely been hiding out since the attempt on his life two weeks ago. ","|Our job is to arrest or neutralize all the Stetchkov gang members in the building and to arrest Kiril Stetchkov. With Kiril under wraps, we can restore some order to the city.","|The Stetchkovs have already shown that they're willing to take it to the next level. You can expect well-armed, well equipped suspects, and since they'll be fighting on their own turf they'll be less likely to surrender.","|Just one more thing. Remember; we're professionals. Check your targets, watch out for your partner and keep your eyes and ears open.","|Let's get it right and get it done.")
-LocationInfoText=("2770 Harrington Rd.","|The warehouse is registered as belonging to a company called Tertiary Exports Limited, and likely contains both legitimate and illicit merchandise. The upper floor has access to the office space from street level, while the main area of the warehouse is accessed through the lower floor, level with the wharf on the opposite side of the building.")
-HostageName=("Unknown")
-HostageVitals=("Information Unavailable")
-HostageDescription=("")
-SuspectName=("Kiril Stetchkov ","Todor Stetchkov ")
-SuspectVitals=("Sex:Male |Descent:Caucasian |Height:5'11'' |Weight:190 |Hair:Black |Eyes:Brown |DOB:05/01/1971 |Age:35","Sex:Male|Descent:Caucasian|Height:6'0''|Weight:210|Hair:Black|Eyes:Brown|DOB:08/04/1972|Age:34")
-SuspectDescription=("The head of the Stetchkov crime syndicate. The older of two brothers, Kiril has ruled the Stetchkov clan for many years. He is considered intelligent and cautious. He disappeared from public view several weeks ago after an attempt on his life. Intelligence suggests the attempt harmed him more psychologically than physically.","Todor Stetchkov is the younger of two brothers who run the Stetchkov clan. Todor has been in charge since his older brother disappeared following an assassination attempt. Todor is reportedly a strong, powerful man with a short temper, fiercely protective of his brother and the family.")
-EntryOptionTitle=("Side 4, Level 1","Side 1, Level 1")
-EntryDescription=("Main Entrance","Side Dock Entrance")
-TimeLinePlot=(0,80,90,100)
-TimeLineTime=("19:04","19:27","19:35","19:47")
-TimeLineShortDescription=(" Arrest Warrant Issued.","First units arrive.","Perimeter Established.","SWAT Entry.")
-TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
-NewEquipmentName=Mark 19 Semi-Automatic Pistol
-NewEquipmentDescription=This semiautomatic pistol holds eight .50 Action Express rounds, providing the greatest stopping power of any handgun outside a revolver.
-LoadingText=" The Stetchkov Warehouse, 2770 Harrington Rd."
-
-[SP-Subway]
-PrimarySpawnPoint="Fresnal Street Entrance "
-SecondarySpawnPoint="Maxwell Street Entrance "
-CampaignObjectiveEnemySpawn=("Anton Georgiev")
-MissionDescription=("Rapid Deployment","Fresnal St. Station","September 12 - 17:33")
-BriefingText=("The shit has really hit the fan. Two gangs, one of them definitely the Stetchkovs, are going toe-to-toe in the Fresnal Street Subway Station. We have reports of multiple suspects, heavily armed and a large number of civilian casualties.","|A transit cop named Wilkins called in the incident. He counted at least ten individuals, some armed with assault rifles and wearing body armor. Dispatch lost contact with him shortly after he made the call - he may have been injured.","|Witnesses say two groups of men opened fire on one another on the platforms during peak hour. Most of the commuters fled but some were caught in the crossfire. It's likely others are hiding.","|After the initial skirmish the suspects split up and moved into the areas surrounding the platforms - maintenance tunnels, restrooms, it's like a maze down there. Spotters are still reporting hearing gunfire, so the fight is still going on.","|This has already gone too far. We can't let this go on any longer and risk more civilian casualties, or sit by while innocent people bleed to death. Our task is to shut this thing down; neutralize the suspects, rescue the civvies and help an injured officer. Get your gear together and be ready to go in three minutes.")
-LocationInfoText=("Fresnal St. Station","|The current Fresnal Street station is a modern subway station built on top of the original station from the 1930s. The station is undergoing refurbishment so there's likely to be a lot of clutter. The upper level layout is fairly straightforward - ticket booths, turnstiles, offices and platforms entrance. The lower levels are more complex with access to the platforms, maintenance areas and employee locker room.")
-HostageName=("Unknown")
-HostageVitals=("Information Unavailable")
-HostageDescription=("")
-SuspectName=("Anton Georgiev"," Unknown")
-SuspectVitals=("Sex:Male|Descent:Caucasian|Height:5'8''|Weight:200|Hair:Black|Eyes:Brown|DOB:1968|Age:38","Information Unavailable")
-SuspectDescription=("Georgiev is a known member of the Stetchkov clan, and was spotted by Wilkins before we lost comms. Georgiev has escaped prosecution for a number of offenses including ADW, Arson and Kidnapping. Detectives would love to pin this mess on him.","")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
-EntryDescription=("Fresnal Street Entrance ","Maxwell Street Entrance ")
-TimeLinePlot=(0,44,100)
-TimeLineTime=("17:04","17:16","17:33")
-TimeLineShortDescription=("911 Call"," First Units Arive"," SWAT Enter")
-TimeLineLongDescription=(" - 911 Call received and SWAT notified"," - First units arive and perimeter established and confirmed."," - SWAT goes tactical ")
-NewEquipmentName=Colt Accurized Rifle
-NewEquipmentDescription=The Colt Accurized Rifle occupies the mid ground between an assault rifle and a dedicated sniper rifle. The CAR combines accurate fire at range with the large ammo capacity required for urban field use, plus mounting points for a variety of scopes. Firing a 5.56mm round from a 20 round magazine, the CAR is only capable of firing in semiautomatic mode. Its length can make it a difficult weapon to wield in close quarters.
-LoadingText=Fresnal St. Station
-
-[SP-DrugLab]
-PrimarySpawnPoint=Front Door
-SecondarySpawnPoint=Rear Alley
-MissionDescription=("High-Risk Warrant Service","653 Tovanen St.","September 6 - 19:08")
-BriefingText=("Okay men, this one's tricky so pay attention. Three hours ago dispatch received an anonymous tip-off that a new drug lab is operating on Tovanen street. Surveillance has revealed a sophisticated set up - hydroponics, large-scale cooking and drying equipment, this one's got it all.","|The anonymous caller claimed that the Stetchkov clan is running the lab. It's likely the caller is a member of an opposing gang and if so, it's a real breach of the unwritten law that says criminals don't snitch on one another. The Stetchkovs must have really ruffled some feathers. Detectives have been trying to locate the head of the clan, one Kiril Stetchkov, but he seems to have disappeared off the map after someone tried to kill him by blowing up his car. Seems he's a popular guy.","|Our goal is to shut the lab down and arrest anyone who might help the detectives build a case against the Stetchkovs. Surveillance reports seeing numerous suspects armed with machine pistols and shotguns. Most of the lab isn't visible from outside so we can't be sure of numbers, but be aware that the lab is likely to contain a number of unarmed workers.","|The lab has some seriously hazardous substances lying around, so watch your fire. You don't want to breathe in any of this crap, and we sure don't want a fire.")
-LocationInfoText=("653 Tovanen St.","|The lab is a suburban residence built some time in the 60s. According to city records the house has been held in public trust after the original owner's death in 1991. Since then it's been home to squatters. It's a fairly standard house layout - ground level kitchen, bathrooms, lounge areas, bedrooms upstairs. The Stetchkov's set up their lab about six months ago, and may have made modifications to the inside of the house. Study the map carefully.")
-HostageName=("Unknown")
-HostageVitals=("Information Unavailable")
-HostageDescription=("")
-SuspectName=(" Unknown")
-SuspectVitals=("Information Unavailable")
-SuspectDescription=("")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
-EntryDescription=("Front Door","Rear Alley")
-TimeLinePlot=(0,75,85,100)
-TimeLineTime=("15:00","18:17","18:41","19:08")
-TimeLineShortDescription=("Search Warrant Issued.","Perimeter Established.","SWAT Arrives","SWAT Enter")
-TimeLineLongDescription=(" - Search Warrant Issued."," - Perimeter established."," - SWAT arrives on scene and makes initial assessment. "," - Swat officers make tactical entry ")
-NewEquipmentName=5.7x28 mm Submachine Gun
-NewEquipmentDescription=Designed by a leading European arms manufacturer, this ''personal defense weapon'' was originally intended for use by troops who did not use full-sized rifles, but for whom pistols were ineffective against targets with modern body armor. Since its introduction law enforcement and military personnel throughout Europe and the Middle East have adopted it. It's high reliability, large ammunition capacity, and excellent balance makes it a desirable weapon.
-LoadingText=Stetchkov Drug Lab, 653 Tovanen St.
-
-[SP-Office]
-PrimarySpawnPoint=Main Entrance
-SecondarySpawnPoint=Rear Entrance
-CampaignObjectiveHostageSpawn=("Rita Winston")
-MissionDescription=("Barricaded Suspects","Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue","August 31 - 18:05")
-BriefingText=("|Okay, quiet down and listen.   ","|The Department of Agriculture has its local offices in the Government Plaza on Geddy Avenue. Approximately 50 minutes ago the building was entered by a group of suspects armed with assault rifles and Improvised Explosive Devices, IEDs.","|It appears their plan was to raid the office, plant the bomb and then escape, but someone messed up. The bomb detonated prematurely causing a fire on the lower floor. The fire department attended and tried to contain the fire, but they didn't realize the bad guys were holding hostages on the upper floors. When the fire crew were shot at, they retreated and called the local precinct who called the negotiation team.","|It seems these guys are local farmers who have a beef with the government's policies on genetically-modified crops. They appear far better armed than your average farmer. Spotters have reported seeing them carrying M1s and wearing body armor - somebody has sold them their gear, probably the same somebody who sold them the explosives they used.","|The negotiators haven't made much headway here. They've traded two hostages for two gas masks, but other than the occasional anti-government rant, contact with the suspects has been minimal.","|They haven't made any direct threats against the hostages but we're assuming their intent was to empty the building and then destroy it. But considering the clumsiness of their actions so far, we're not waiting for them to make another mistake and get someone killed.","|Choose your gear and get ready to deploy.")
-LocationInfoText=("Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue","The Department of Agriculture office is part of the Government Plaza. The building dates from the nineteen-fifties and has been retro-fitted several times. Offices dominate the top and middle floors, while the basement houses parking and utilities areas.")
-HostageName=("Rita Winston","Unknown")
-HostageVitals=("Sex:Female|Descent:Caucasian|Height:5'6''|Weight:160|Hair:Blonde|Eyes:Blue|DOB:1969|Age:37","Information Unavailable")
-HostageDescription=("Rita Winston is a section supervisor with the Department of Agriculture. Our concern is that if the terrorists realize she holds some departmental power, they may single her out for retribution.","")
-SuspectName=("Unknown")
-SuspectVitals=("Information Unavailable")
-SuspectDescription=(" ")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
-EntryDescription=("Main Entrance","Rear Entrance")
-TimeLinePlot=(0,10,30,20,70,100)
-TimeLineTime=("17:12","17:19","17:26","17:41","17:48","17:59")
-TimeLineShortDescription=("Suspects Enter Building."," Bomb Detonates.","Police Units Arrive.","Fire Crews Arrive.","Rescue Crew Fired Upon, SWAT Called.","Tactical entry begun")
-TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire Crews Arrive."," - Fire under control, rescue crew fired upon."," - Swat officers make tactical entry ")
-NewEquipmentName=Night Vision Goggles
-NewEquipmentDescription=NVGs work by amplifying available light and allow the wearer to see in  dark areas. Due to their lack of colour and limited field of vision, the goggles can make it more difficult to distinguish friend from foe.|The NVG are used instead of the flashlight and are turned on and off using the same key (default V).
-LoadingText=Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue
-
-[SP-Backstage]
-PrimarySpawnPoint=Main Entrance
-SecondarySpawnPoint=Rear Loading Dock
-CampaignObjectiveEnemySpawn=("Andrew Norman")
-MissionDescription=("Hostage Rescue","The Sellers Street Auditorium, 1801 Sellers St","August 26 - 20:49")
-BriefingText=("Listen up. Approximately 45 minutes ago a group known as Citizens Against Satanic Music or 'CASM' stormed a rock concert at the Sellers Street Auditorium. They fired a barrage of shots injuring several audience members and creating a panic. The band, called ''Devil's Playthings'', fled the stage but was closely followed by the suspects. They claim to now have the band hostage.   ","|CASM have long been a vocal opponent of rock music, occasionally clashing with police during protests, but they've never resorted to this level of violence before. They've been sending the band hate mail for some time, and it looks like the band's latest album ''Die For The Devil'' pushed them over the edge. They want it taken off store shelves.","|These guys aren't hardened criminals - they're sloppy and badly organized, but they're also extremely well equipped. Looks like somebody sold them some guns and they got delusions of grandeur.","|Witnesses report seeing at least four suspects armed with automatic weapons and wearing disguises. We're guessing there are several civilians inside either injured or hiding. We're taking the suspects claim that they're holding the band hostage seriously. These guys are nervous amateurs and that makes them more likely to hurt or kill an innocent civilian, either deliberately or accidentally.","|Choose your equipment and be ready to move out.")
-LocationInfoText=("The Sellers Street Auditorium, 1801 Sellers St","|The Seller's Street Auditorium was built in 1983 to cater for local bands and theater groups. The lower level consists of the front-of-house area with ticket booths, the stage and audience pit. The upper level contains dressing rooms, storage areas and stage access and maintenance spaces, as well as offices and the auditorium's bar/restaurant.")
-HostageName=("Unknown")
-HostageVitals=("Information Unavailable")
-HostageDescription=("")
-SuspectName=("Andrew Norman","Unknown")
-SuspectVitals=("Sex:Male|Descent:Caucasian|Height:5'6''|Weight:200|Hair:Blonde|Eyes:Brown|DOB:1962|Age:44","Vitals Unavailable")
-SuspectDescription=("Norman is a known member of CASM and has misdemeanor convictions for mail fraud. He has frequently singled out Devil's Playthings on CASM's internet site. We believe he's a member of the gunmen."," ")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
-EntryDescription=("Main Entrance","Rear Loading Dock")
-TimeLinePlot=(0,15,30,50,60,100)
-TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
-TimeLineShortDescription=("Suspects Enter Auditorium","Patrol Cars Arrive","Perimeter Established"," CNT Arrive","Suspect Demands"," Shots Fired.")
-TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enter.")
-NewEquipmentName=Ammo Pouch
-NewEquipmentDescription=The ammo pouch clips to the back of the belt in place of a grenade. It allows the wearer to carry two additional clips of ammunition for their primary weapon.|The ammo pouch can be selected under the Tactical tab in the Equipment section.|Note that the ammo pouch does not provide extra ammunition for the pepper-ball gun.
-LoadingText=The Sellers Street Auditorium, 1801 Sellers St
-
-[SP-HalfwayHouse]
-PrimarySpawnPoint=Front Entrance
-SecondarySpawnPoint=Delivery Entrance
-CampaignObjectiveHostageSpawn=("Lionel Macarthur")
-MissionDescription=("Barricaded Suspects","Our Sisters of Mercy Halfway House: 796 Newbury St.","August 15 - 11:32")
-BriefingText=("Let me have your attention team. About two hours ago a group of armed men attempted to rob the post office at the corner of Watts and Lonsdale. They were confronted by an armed security guard and when he opened fire, they ran.  ","|The guard called 911 and a nearby patrol car responded, spotting the suspects on foot on Newbury St. Seems their getaway driver panicked and drove off without them. When the officer ordered them to surrender they opened fire and retreated into a halfway house, Our Sisters of Mercy.","|The halfway house provides temporary accommodation for older men, often just out of prison or recently released from mental care. A few of the residents fled once the gunmen entered, but one of the sisters who runs the house says at least six people are unaccounted for. That means any civilians inside may be confused, scared and uncooperative. Check your targets carefully.","|The suspects appear well armed but disorganized. The security guard reported seeing at least five individuals carrying automatic rifles and shotguns, and says they may have been wearing body armor. The word on the street is that it's the Stetchkov clan who've provided the guns, but they don't normally handle firearms.","|The police negotiator has been trying to communicate with the suspects, but as yet they haven't responded. There's been some sporadic gunfire from within the building, which is why we're going in.","|Suit up and get ready.")
-LocationInfoText=("Our Sisters of Mercy Halfway House ","|Our Sisters of Mercy have been running the halfway house on Newbury for more than 40 years. The building was originally a small brewery constructed in the 1920s. Following the depression the building sat unused until the 1960s when it was donated to the local convent. The sisters converted the downstairs into kitchen and recreation areas, and the upstairs into temporary accommodation for homeless men. The original brewing floor was turned into a chapel.")
-HostageName=("Lionel Macarthur")
-HostageVitals=("Sex:Male|Descent:Caucasian|Height:5'7''|Weight:165|Hair:Grey|Eyes:Brown|DOB:1931|Age:75")
-HostageDescription=("Macarthur is a long-term senior resident in the halfway house. The sisters who run the house are particularly worried about him as he needs frequent medication and monitoring.")
-SuspectName=("Unknown")
-SuspectVitals=("Information unavailable")
-SuspectDescription=("The security guard reported seeing at least five individuals carrying automatic rifles and shotguns, and says they may have been wearing body armor. ")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
-EntryDescription=("Front Entrance","Delivery Entrance")
-TimeLinePlot=(0,18,35,100)
-TimeLineTime=("9:04","9:22","9:47","11:32")
-TimeLineShortDescription=("911 Call","First Units Arrive"," CNT Attempts Contact ","Shots Heard - Tactical entry begun")
-TimeLineLongDescription=(" - 911 emergency call received from post office guard."," - Patrol officers arrive and establish containment perimeter.  SWAT and CNT notified."," - CNT (Crisis Negotiation Team) attempts contact without response.","  - Shots fired. Decision made to go tactical.")
-NewEquipmentName=40mm Grenade Launcher
-NewEquipmentDescription=The grenade launcher has become a standard piece of police equipment for use in unusual situations such as hostage rescue or riot control. It's ability to fire a wide range of direct and indirect less-lethal ammunitions has proved it to be extremely versatile.
-LoadingText=Our Sisters of Mercy Halfway House,796 Newbury St.
-
-[SP-Arcade]
-PrimarySpawnPoint=Service Entrance
-SecondarySpawnPoint=Fire Escape Door
-CampaignObjectiveEnemySpawn=("Javier Arias")
-CampaignObjectiveHostageSpawn=("Oscar Bogard")
-MissionDescription=("Barricaded Suspects","1401 Gower Street","August 9 - 16:50")
-BriefingText=("Okay, listen up. We've got a shots fired situation. 911 received a call from the owner of the FunTime Amusement Arcade on Gower Street. Detectives from the 12th precinct tell us that the arcade is a known haunt for drug dealers. Witnesses say an argument broke out between Javier Arias, a local dealer and a group of unidentified men. It quickly escalated into violence when Arias' offsiders drew their guns. Looks like we could have a turf war on our hands.  ","|Most of the civilians fled as soon as the shooting started, but some may still be inside. This is a busy arcade at this time of the day, so check your targets. The police are also pretty unpopular in this neighbourhood, so be prepared for resistance from any civilians you encounter.","|We've been unable to locate the owner, Oscar Bogard. He may still be trapped inside. His 911 call was cut off abruptly.","|We have to put a stop to the shooting, but this is also a chance to put away a lot of bad guys. To do that we need to gain as much evidence as we can. We don't want any of them to flush the drugs they're carrying, particularly Arias.","|Choose your equipment and get going.")
-LocationInfoText=("1401 Gower Street. FunTime Amusement Arcade","|Oscar Bogard has been running the arcade out of these premises for some twenty-odd years. The arcade takes up the front part of the ground floor and parts of the upper floor. Repair and storage are in back, along with Bogard's apartment. He could be holed up anywhere inside.")
-HostageName=("Name:Oscar Bogard")
-HostageVitals=("Sex:Male|Descent:Caucasian|Height:5'6''|Weight:240|Hair:Brown|Eyes:Brown|DOB:1958|Age:48")
-HostageDescription=("Bogard is the owner of the arcade and he lives on the floor above. He made the 911 emergency call and it's believed he's trapped inside with the suspects.")
-SuspectName=("Name:Javier Arias")
-SuspectVitals=("Sex:Male|Descent:Caucasian|Height:5'7''|Weight:165|Hair:Grey|Eyes:Brown|DOB:1977|Age:29")
-SuspectDescription=("A notorious local drug dealer. Arias has a lengthy rap sheet including assault, burglary, firearm and drug offenses. It's believed he's had the monopoly on dealing in this area for some time, and so far no one has challenged his position as top dog.")
-EntryOptionTitle=("Side 3, Level 1 ","Side 4, Level 2 ")
-EntryDescription=("Service Entrance","Fire Escape Door")
-TimeLinePlot=(0,20,100)
-TimeLineTime=("16:26 ","16:33 ","16:51")
-TimeLineShortDescription=("911 Call","First units arrive","Tactical entry begun")
-TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol Units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
-NewEquipmentName=Cobra Stun Gun
-NewEquipmentDescription=The Cobra is a dual-purpose less-lethal weapon. It fires small electrodes into the target and then sends a powerful electric charge down thin wires still connected to the hand unit. The electrical discharge causes involuntary contraction of the target's muscle tissue regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. It has a longer range than its Taser forbearer, and can fire darts in groups of four or two separate groups of two. It can also be used in ''touch-stun'' mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors.
-
-[SP-DNA]
-PrimarySpawnPoint=Front Door
-SecondarySpawnPoint=Service Entrance
-CampaignObjectiveEnemySpawn=("Jean Trouffant")
-CampaignObjectiveHostageSpawn=("Dr. Theodore Sterling")
-MissionDescription=("Barricaded Suspects / Hostage Rescue","72 Mt. Threshold Avenue","May 21 - 00:45")
-BriefingText=("If you haven't heard of the Army of Faith, here's your introduction.  A bit after 20 hundred hours a group of them broke into the Hologen research facility at Mount Threshold, closely affiliated with Mount Threshold University.   A couple of patrol cars responded quickly to the initial alarm, and the activists were trapped inside.   Unfortunately, trapped along with them are the building's late working scientists and graduate students.   The suspects have already released a statement declaring their willingness to become martyrs, and we have evidence of their willingness to make martyrs out of others.   It's a very touchy situation, with the potential to get worse.","|About the ''Army of Faith.''  They've been around for about two years, and have claimed credit for bombing research facilities doing work with stem cells and cloning technology.  Don't make the mistake of thinking of them as kooks.  Whatever they believe, they are also well armed, well trained, and dedicated to their cause. They've sent - and acted on - death threats to leading researchers in both fields, and this is not the first institution they've invaded.     ","|We think they intended the same sort of high damage, high speed raid at Hologen.  However, university police were nearby, and acted quickly to contain them.  Things are still confused enough that we don't know how many civilians are still in there, and we only have rough estimates on the number of suspects.  ","|Hologen is active in DNA cloning research, and we believe that is why they were targeted.  Our suspects are led by Jean Trouffant.   He is one of the major operatives in the Army of Faith.  Trouffant was wanted for bombing abortion clinics, before going underground and reappearing with the Army of Faith.   We don't have an accurate count of how many gunmen he has with him, but it's at least seven or eight, from eyewitness reports.","|One of the first things the Army of Faith did was take down the security system, so we don't know how many civilians are inside.  The suspects have named so far only Dr. Theodore Sturgeon as a hostage.   We believe he is in imminent danger from the suspects, as one of Hologen's key researchers.  As always, your first priority is to rescue him and get any other civilians out of there safely.  However, you should also keep your eyes open for Sturgeon's briefcase, which has contacts for other researchers around the world.  In the Army of Faith's hands, those documents become an open season list.   Study the location and your opponents, choose your gear carefully, and get in there.  There's a lot riding on this one. ")
-LocationInfoText=("72 Mount Threshold Ave.  The building has a main foyer and many large and intricately connected laboratory spaces.","There are no good vantage points for sniper teams outside of the foyer area.")
-HostageName=("Theodore Sturgeon")
-HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Grey|Eyes: Brown|Height: 5' 11''|Weight: 190|DOB: 9/23/48|Age: 60")
-HostageDescription=("Professor of Biochemistry at Mount Threshold University.  No relation to the popular science fiction author.")
-SuspectName=("Jean Trouffant","Unknown Accomplices")
-SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Light Brown|Eyes: Blue|Height: 5' 11''|Weight: 175|DOB: 04/19/73|Age: 35","Vitals unknown")
-SuspectDescription=("Of French descent, Trouffant is dedicated to the Army of Faith cause.  He has been arrested multiple times for misdemeanors such as disorderly conduct, and disturbing the peace, mainly in conjunction with vocal protests.","Masked Gunmen")
-EntryOptionTitle=("Side 1, Level 1","Side 2, Level 2")
-EntryDescription=("Entry through the front doors and foyer.","Service Entrance.")
-TimeLinePlot=(0,3,6,60,76,92,100)
-TimeLineTime=("20:12","20:19","20:28","22:43","23:27","00:12","00:45")
-TimeLineShortDescription=("Alarm wires cut","Cruiser arrives","SWAT arrives","Negotiations begun ","CNT IDs Trouffant","Suspects make demands","Tactical entry approved")
-TimeLineLongDescription=(" - The security system connection to University Police is lost.  Patrol car is dispatched to investigate."," - University Police arrive and investigate, finding wires cut.  Shots are fired at Police from inside the building.  Dispatch is notified.  SWAT is requested."," - Containment perimeter and high ground are established."," - CNT contacts suspects."," - CNT contacts suspects and is able to identify Jean Trouffant.  Army of Faith manifesto is read to CNT over the phone, confirming connection to the group."," - Suspects demand additional supplies including food and ammunition.  CNT agrees to food, but not to ammunition.  Suspects unsatisfied and verbally threaten hostages."," - Repeated attempts to contact Trouffant fail.  CNT believes that the hostages may be in danger based on the last contact.  CNT suggests that it is time for a tactical entry.")
-LoadingText=72 Mt. Threshold Ave, Mt. Threshold Research Center
-
-[SP-Hotel]
-PrimarySpawnPoint=Elevator Shaft
-SecondarySpawnPoint=Stairwell
-CampaignObjectiveHostageSpawn=("Lawrence Adams","James Bettencourt")
-MissionDescription=("Hostage Rescue","1700 West 7th Ave.","May 1 - 18:12")
-BriefingText=("Ok, men, this one's a zoo, and it isn't going to get any better.   The self declared militia group America Now has taken real estate heir James Betincourt Junior and Lawrence Adams, his general contractor, hostage.  Apparently they were touring a current project, the Old Granite Hotel, and were taken while inspecting Adams' work.  Now the suspects are holed up on the top two floors of the hotel, demanding twelve million dollars ransom by midnight.   They claim that Betincourt Investments owes this as a ''downpayment on their debt to the American People.''","|America Now is a small but active domestic militia group.  They are fiercely isolationist, opposing immigration, free trade, and foreign owned interests.   Most of their previous actions have been against foreign owned properties, either sabotaging them in the building stage or engaging in serious vandalism, making the properties too expensive to maintain.  This is their first kidnapping, and it may indicate a shift in the group's tactics.  Given the public nature of the incident, the group is clearly looking for publicity as well.  We've spoken with the media, and received some co-operation; however, it's not clear how long that will last.","|Expect the America Now suspects to be well equipped, and to act as a group, but their inexperience with hostages may make them even more dangerous to the civilians.  Take extra care.","|Now...on to the victims.  James Betincourt Junior is the son of the CEO and majority owner of Betincourt Investments, a French based property development company.  Six months ago, they purchased the Granite out of bankruptcy for twelve million dollars, and have been renovating it ever since.  Junior has been in charge of the renovations, and was doing an inspection of the renovation work when he was captured.  Lawrence Adams is the general contractor and the architect in charge of doing the renovation work. ","|The suspects are on the top two floors of the hotel, the sixth and the seventh.   You'll find the blueprints on the board.  We've cut power to the elevators, and one of them is trapped between the fifth and sixth floor.  You can either go up the stairs, or down the elevator shaft.  Recent gunshots were reported coming from the seventh floor, so it's time to go in.  ")
-LocationInfoText=("The Old Granite Hotel, 1700 West 7th Ave.","|","Sierra One is covering Side 1, Level 7 -- the exposed construction area.")
-HostageName=("James Betincourt, Jr.","Lawrence Adams")
-HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Brown|Height: 6' 1''|Weight: 160|DOB: 01/04/75|Age: 33","Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 5' 11''|Weight: 190|DOB: 04/19/66|Age: 42")
-HostageDescription=("Son of James Betincourt, CEO and president of Betincourt Investments.  Betincourt Investments is the owner of the Old Granite.","Lawrence Adams is the general contractor for the remodeling of the Old Granite Hotel.  ")
-SuspectName=("Unknown")
-SuspectVitals=("")
-SuspectDescription=("Wearing bulletproof vests and masks, equipped with machine guns.")
-EntryOptionTitle=("Elevator Shaft","Stairwell")
-EntryDescription=("Entry from on top of the elevator car stopped on level 5.","Stairwell entry from Level 5.")
-TimeLinePlot=(0,31,38,42,48,58,96,100)
-TimeLineTime=("12:30","14:17","14:40","14:53","15:12","15:47","17:57","18:12")
-TimeLineShortDescription=("Arranged meeting","Lost contact","Ransom demand","SWAT arrives","Additional demands","Additional demands","Negotiations fail","Tactical entry begun")
-TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - Charles Betincourt, owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 milllion dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
-LoadingText=1700 West 7th Ave, Old Granite Hotel
-
-[SP-ArmsDeal]
-PrimarySpawnPoint=Front yard
-SecondarySpawnPoint=Side Alley
-CampaignObjectiveEnemySpawn=("Hadeon Koshka","Clark Jennings")
-MissionDescription=("High Risk Warrant Service","1302 Blakestone Avenue","April 25 - 23:47")
-BriefingText=("OCCB (Organized Crime Control Bureau) has a job for us.   They've been pursuing a flow of illegal arms into the city for about a year, and they've got something solid to move on.  Our suspect is Hadeon Koshka, a Ukrainian citizen who travels to the States frequently.  His visits often overlap with the appearance of new Russian arms on the streets.","|Tonight's our lucky night.  Undercover detective Clark Jennings has spent the last two months infiltrating Koshka's operation.  He contacted OCCB earlier today with the time and place for the meet.  There's a major deal going down today, in the abandoned tenement at 1302 Blakestone Avenue.  Detective Jennings notified his contact as soon as he could, but because the notice is so short, we don't have time to call in the ATF for this bust.  Strictly speaking, arms dealing is their territory, but in this case, we're in the right place at the right time to stop it, and they aren't.","|A bit of background.  The Soviet Union maintained weapons caches and military bases in many locations.  When it collapsed, many of those caches either 'disappeared' or were abandoned.  Arms trading, both legitimate and black market, is a significant source of income in the region, and the local governments are ambivalent about stopping it.  So it's up to us to stop these guns from reaching our streets.","|The meet is at 1302 Blakestone, an abandoned HUD building.  We don't have a layout, but we do have outlines of the area, thanks to Jennings.  Koskha should be in the room with the weapons cache, along with his buyer.  Since there's a lot at stake in this, we expect both groups to bring backup.  Expect armed and dangerous suspects both in the building and on the grounds.  Detective Jennings will be present undercover.  He won't be able to break cover safely until you're in control of the situation, so keep your eyes out for him.  Study your targets carefully, choose your gear, and get ready.")
-LocationInfoText=("1302 Blakestone Ave, former Wolcott Housing Project","|The condemned project had some demolition work begun before it was bought by Koshka and his associates.  Koshka will probably be in the back room, but expect secondary suspects to be scattered throughout the structure.  There are multiple possible entries into the building from the entry point.  They include the front door, a basement entrance on Side 4, Level 0, and through the demolished back portion of the building on Side 3, Level 1.","|We have high ground coverage in two places. Sierra One is covering the weapons deal room on Side 3, Level 1, and Sierra Two is covering Side 4, Level 2.")
-HostageName=("Clark Jennings")
-HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 6' 0''|Weight: 195|DOB: 08/20/72|Age: 36")
-HostageDescription=("Detective Jennings is currently undercover as one of Koshka's thugs.  He will have a weapon and may get spooked, so be careful.  ")
-SuspectName=("Hadeon Koshka")
-SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Blue|Height: 5' 11''|Weight: 180|DOB: 03/22/63|Age: 45")
-SuspectDescription=("Hadeon Koshka is a Ukranian citizen.  He is suspected of being the key member of a group of black market profiteers, selling old Soviet Union arms to American gangs.")
-EntryOptionTitle=("Side 1, Level 1","Side 2, Level 1")
-EntryDescription=("Front yard.","Side alley.")
-TimeLinePlot=(0,83,100)
-TimeLineTime=("13:12","22:00","23:47")
-TimeLineShortDescription=("Tip delivered","SWAT arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Detective Jennings reports expected arms deal exchange to occur tonight at 23:45. OCCB authorizes arrests.  SWAT notified."," - SWAT arrives. Concealed containment perimeter and high ground put in place."," - The deal begins.  Entry team dispatched.")
-LoadingText=1302 Blakestone Avenue, Wolcott Projects
-
-[SP-Hospital]
-PrimarySpawnPoint=Approach to main foyer
-SecondarySpawnPoint=Access Hallway
-CampaignObjectiveHostageSpawn=("Hyun-Jun Park")
-MissionDescription=("Rapid Deployment","691 87th Street","April 12 - 00:34")
-BriefingText=("Alright, men, we have an international incident on our hands.  Hyun-Jun Park is a South Korean diplomat.  Earlier today he was attacked by six gunmen while exiting a restaurant.  Mr. Park was injured in the attack, although his personal security got him to safety.  The gunmen escaped after the initial attack.  Mr. Park was routed to St. Michael's Medical Center for emergency treatment.   Since there wasn't time to secure the hospital,  Mr. Park's security accompanied him into the patient ward.  ","|Mr. Park is one of the senior officials attached to the South Korean embassy; he has been addressing the United Nations for the last two days during the current round of reunification talks.  Mr. Park is a major advocate in favor of reunification; he is one of the primary voices in the South Korean delegation.  We assume this attack is related to his political intentions, but we don't know who was behind it.  Whoever they were, they were very well equipped and well organized, ambushing Mr. Park in a location not on his official travel itinerary.","|Now St. Michael's has been rushed by a group of gunmen; presumably the same ones who attacked Mr. Park earlier.  They are well armed, and are moving straight through the hospital in an attempt to locate their target.  They are not interested in taking hostages, and they've been brutal in their attack on the hospital.  Choose your entry, get your gear together, and get in there.")
-LocationInfoText=("691 87th Street","St. Michael's Memorial Hospital.  A hospital of older construction it has recently been renovated and updated.  St. Mike's has been a fixture in the community for years.","|There is no vantage point for a sniper team.")
-HostageName=("Hyun-Jun Park")
-HostageVitals=("Sex: Male|Descent: Asian|Hair: Black|Eyes:Brown|Height: 5' 8''|Weight: 160|DOB: 08/22/1947|Age: 61")
-HostageDescription=("High profile South Korean diplomat.  Wounded in an earlier attack.")
-SuspectName=("Unknown")
-SuspectVitals=("Vitals unknown")
-SuspectDescription=("An unknown number of heavily armed gunmen have assaulted the hospital.")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
-EntryDescription=("Approach to main foyer","Access hallway from research wing")
-TimeLinePlot=(0,10,90,92,100)
-TimeLineTime=("22:20","22:33","00:20","00:23","00:34")
-TimeLineShortDescription=("Initial Attack","Hyun-Jun Park at hospital","Hospital attacked","SWAT dispatched","Tactical entry begun")
-TimeLineLongDescription=(" - Initial attack on the diplomat and security personnel; Hyun-Jun Park injured, sent to St. Michael's Medical Center."," - Hyun-Jun Park admitted to the hospital."," - Gunmen attack the hospital; Alarm tripped."," - SWAT is sent to the scene instructed to follow rapid deployment tactics.  "," - SWAT arrives and immediately enters the building to bring order to chaos.")
-LoadingText=691 87th Street, St. Michael's
-
-[SP-Tenement]
-PrimarySpawnPoint=Front Door
-SecondarySpawnPoint=Fire Escape
-CampaignObjectiveEnemySpawn=("Andrew Taronne")
-MissionDescription=("High Risk Warrant Service","2189 Carrols Road","April 2 - 16:45")
-BriefingText=("Ok, men, what we have here are some dangerous headcases, to themselves and to their neighbors.  Approximately an hour ago we got a tip from a public phone that some cultist nut-jobs calling themselves the Taronnians intend to blow their house sky high, taking a chunk of the neighborhood with them.","|The detectives ran the paper trail, which uncovered disturbing deliveries to the Taronnians.  Recent purchases included several suspicious chemicals, as well as an ominous amount of fertilizer; we're taking this one very seriously.  Our caller didn't give a time or date, and hung up before we could get anything else from them.  We assume our leak is a recent break from the cult; we are checking relatives to see if an ex-cultist has returned home, but that hasn't panned out yet.   Since our best information indicates there's imminent danger, we're not waiting.  Detectives attempted to serve the warrant by surrounding the location and calling the suspects out. They received no response whatsoever. ","|About the Taronnians.  They broke off from a separatist group up in Idaho, and followed their leader, Andrew Taronne, out here.  Their official name is something like the Children of Taronne; they view Taronne as a combination all-knowing guru and prophet.  They showed up here about three years ago, used cash to purchase an old apartment building needing serious rehab, and moved into it en masse.   They only leave the building in groups of three or more, and they refuse entrance to any outsiders.   ","|Anything they're doing was ordered by Taronne, which means he's the one we need to talk to.  However, Taronne never leaves the house, so we'll be going in after him.  The group they split from believes in strong self defense, and there's no reason to think the Taronnians have changed that tenet.  Expect armed resistance, and don't be surprised if even the unarmed cultists are stubborn about surrendering.  Keep your eyes out for any children belonging to members of the cult.","|The building was a standard apartment building before the Taronnians moved in, but they may have altered it.  The floor plans are a guideline.  Expect to be surprised. Assume they have taken no precautions with their explosives. A careless bullet might cause some unwanted casualties, so put some thought into your gear choices for this assignment.")
-LocationInfoText=("2189 Carrols Road","|No one has been able to gain access to the building.  Property records indicate the cultists have owned this entire building for about ten years.  Surveillance through windows and available openings indicates significant changes have been made to the internal structure, although no permits have ever been filed for this building since the Taronne and his group took up residency.","|Sierra One is covering Side 2, Level 2 from a nearby rooftop.  Sierra Two is covering Side 1, Level 2.")
-HostageName=("Unknown")
-HostageVitals=("Vitals unknown")
-HostageDescription=("Information unavailable")
-SuspectName=("Andrew Taronne")
-SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Black, greying|Eyes: Brown|Height: 6' 0''|Weight: 220|DOB: 03/12/59|Age: 49")
-SuspectDescription=("Leader of the Children of Taronne.  A charismatic leader whose brainwashing has caused his believers to blindly follow his crackpot notions.   ")
-EntryOptionTitle=("Side 1, Level 1","Side 2, Level 2")
-EntryDescription=("Front door","Fire escape")
-TimeLinePlot=(0,6,10,100)
-TimeLineTime=("11:30","11:49","12:00","16:45")
-TimeLineShortDescription=("Warrant acquired","SWAT Arrives","Call out","Tactical entry begun")
-TimeLineLongDescription=(" - Warrant acquired for Andrew Taronne."," - SWAT Arrives. Containment perimeter and high ground established."," - Surround and call out.  No response."," - After hours with no response from inhabitants, the decision is made to go tactical. Entry team assembled.")
-LoadingText=2189 Carrols Road, Taronne Tenement
-
-[SP-JewelryHeist]
-PrimarySpawnPoint=Front Door, Main Lobby
-SecondarySpawnPoint=Service Entrance
-MissionDescription=("Barricaded Suspects","1725 Broadway","March 8 - 17:11")
-BriefingText=("We have another tough one.  Just before closing time, the DuPlessis Diamond Center was broken into.  The suspects drove a truck through the main security doors into the lobby.  The building's alarm was triggered immediately.  Witnesses report multiple suspects, armed with machine guns and wearing body armor, entering the building.  Witnesses also report they have not seen any of the wholesaler's employees exit the building, although it was still open and security personnel were on duty.","|The DuPlessis office building is built much like a small fort.  Most areas are under constant video surveillance.  A separate security system and metal detector guards access to the vault.  The vault door has a time lock; it locks at 1800 every night, and can't be reopened until office hours start the next day at 0900.  Note that the alarm company has disabled the time lock on the door for us, in case the gunmen are hiding inside of it.  The building's phone lines were disabled by the suspects.      ","|DuPlessis is a wholesaler; they deal mainly in raw stones.  This means they haven't been cleaned or cut, and they also aren't registered.  However, they're harder to move; you can't take these down to the local pawnshop.  This week, DuPlessis was holding a shipment of finished jewels.  I don't think the timing is a coincidence.  Our suspects probably have ties to black market purchasers outside of the country, since even the finished gems are a lot of gems to move.","|Our suspects have automatic weapons and body armor, so they're ready for a fight.   We don't know how they intended to breach the vault, which should have locked automatically when the alarm went off.  One possibility is inside help, so stay on your toes.  Most, if not all, of DuPlessis employees are still inside.  We don't know their current condition.  Study the floor plans, choose your entry and plan your assault: but don't take too long.")
-LocationInfoText=("1725 Broadway, DuPlessis Wholesale","|DuPlessis Wholesale keeps its floorplan on record with the police department for security reasons.  The cameras are nonfunctional at this time. The alarm company disabled the timelock on the vault door to prevent the suspects from barricading themselves within it.","|Sierra One and Two are both observing rooms on Side 1, Level 2.")
-HostageName=("Unknown")
-HostageVitals=("Vitals unknown")
-HostageDescription=("An unknown number of hostages are inside the building.")
-SuspectName=("Unknown")
-SuspectVitals=("Vitals unknown")
-SuspectDescription=("An unknown number of well armed gunmen are inside.")
-EntryOptionTitle=("Side 1, Level 1","Side 3, Level 2")
-EntryDescription=("Main Lobby Entry","Service Entrance")
-TimeLinePlot=(0,14,57,100)
-TimeLineTime=("16:57","16:59","17:05","17:11")
-TimeLineShortDescription=("Alarm triggers","SWAT notified","SWAT Arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Alarm triggered at DuPlessis Wholesale. Dispatch notified patrol."," - 911 Call comes in. Dispatch notified emergency services; SWAT notified."," - SWAT Arrives. Containment perimeter and high ground established."," - Decision made to go tactical.")
-LoadingText=1725 Broadway, DuPlessis Diamonds
-
-[SP-RedLibrary]
-PrimarySpawnPoint=Front Entrance
-SecondarySpawnPoint=Garage Entrance
-CampaignObjectiveHostageSpawn=("Warren Rooney")
-MissionDescription=("Barricaded Suspects / Hostage Rescue","732 Gridley Street","January 25 - 18:05")
-BriefingText=("Just after 1400 this afternoon, multiple gunmen stormed the offices at the Wainwright Mill Center building.  They shot their way through several of the businesses, until getting pinned down by patrol in one of the offices.","|This started with an attempted bank robbery at the Community Savings and Loan.  However, the suspects tripped the alarms early in their attempt, alerting both the bank's security and local police.  Instead of attempting to flee, they seem to have tried to continue to break into the bank, but were foiled by the vault security.","|When confronted by security, the suspects shot two of them, and then fled.  After a brief vehicle pursuit with patrol officers, the gunmen crashed into the offices at Wainwright Mill Center and took refuge in the Red Library office.  Patrol pulled back and established a perimeter. ","|Red Library is a software company, specializing in data storage.  Its employees often work on Saturdays, and so we suspect that that was the first unlocked office the gunmen found.  Unfortunately, that also means the office was occupied when they went in.","|Negotiators have been talking with them since about 1530.  Overall estimation is that while these guys are heavily armed, they don't really know what they are doing.  So far, the suspects have demanded an escape route and five million dollars, in exchange for their ''multiple prisoners''.  Negotiators have managed to get four hostages freed, in exchange for two gas masks and two armored vests.  The freed hostages can't give us an accurate count of employees, since no one knows how many employees were working today.  The recent spate of gunfire means it's time to go in and rescue the rest of the hostages. ")
-LocationInfoText=("732 Gridley Street, Red Library Inc.","|The long standoff allowed us to get the plans for the building.  Thanks to the released hostages, we have a pretty good idea for the layout of some of the cubicle dividers. ","|Sierra One is covering Side 2, Level 3; looks to be an employee break area.  Sierra Two is covering Side 4, Level 3. ")
-HostageName=("Warren Rooney")
-HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Hazel|Height: approx. 6'0''|Weight: approx. 180|DOB: Unknown|Age: Approx. 45")
-HostageDescription=("CEO of Red Library Inc.  Described by coworkers as a stern but fair employer.")
-SuspectName=("Unknown")
-SuspectVitals=("Vitals unknown")
-SuspectDescription=("Multiple well armed suspects.")
-EntryOptionTitle=("Side 1, Level 1","Side 4, Level 0")
-EntryDescription=("The reception area has a shielded side entrance.","Entrance through the parking garage, coming up from below the main offices.")
-TimeLinePlot=(0,9,11,13,17,24,57,98,100)
-TimeLineTime=("14:02","14:24","14:30","14:34","14:45","15:03","16:22","18:03","18:05")
-TimeLineShortDescription=("Gunmen sighted","SWAT Arrives","CNT contacts suspects","First demand issued","Hostages exchanged","Deadline passes","Hostages exchanged","Shots fired","Entry begun")
-TimeLineLongDescription=(" - Gunmen enter building."," - SWAT Arrives. Containment perimeter and high ground established."," - CNT makes first contact with suspects; no names given, no progress made."," - Demand for 5 million dollars and a helicopter made; deadline of 15:00."," - As a concession two hostages are exchanged for bulletproof vests."," - CNT convinces suspects that the first demand was unreasonable.  New demand for armored vehicle.  New deadline set at 18:00."," - In an effort to buy more time, CNT agrees to trade gas masks for the release of more hostages.  Suspects showing signs of fatigue and are becoming agitated."," - Suspect threatened hostage while on phone with CNT.  Civilian injuries are expected.  Phone went dead, gunfire continued.  Decision made to go tactical."," - Due to ongoing fire tactical entry begun.")
-LoadingText=732 Gridley Street, Red Library Inc.
-
-[SP-AutoGarage]
-PrimarySpawnPoint=Parking Garage Entrance
-SecondarySpawnPoint=Roof
-CampaignObjectiveHostageSpawn=("Gary Altman")
-MissionDescription=("Barricaded Suspects / Hostage Rescue","487 29th Avenue","January 5 - 03:45")
-BriefingText=("Here's what we've got.  We are needed for rapid deployment at 29th and Arlington, the Victory Imports Auto Garage.  Looks like a botched vehicle theft has turned into a barricaded situation.","|32 Adam, responding to a 911 call, interrupted two individuals in the process of stealing a car.  Upon being ordered to surrender, they fired upon the officers and retreated into the main building.  Precise numbers are unknown, but patrol reports seeing at least 4 individuals, all male.  They're armed, and we believe some of them have machine guns.  In addition, they have a hostage in there with them: Gary Altman.  Altman is a mechanic for Victory Imports, and was apparently working late.  He's the one who placed the initial 911 call, which was cut off short.  Further attempts to contact him have failed.","|We don't have a positive ID on the suspects at this time.  Patrol reports seeing young men, late teens to early twenties, light skinned, wearing street clothes; jeans and shirts -- but we don't have sufficient evidence to confirm any specifics.  As far as M.O. goes, this particular theft is a new one.  No local garages have reported similar raids.  Looks like we get to nip this one in the bud.","|Patrol attempted to call them out, and got no response other than scattered gunfire.  However, once the negotiators contacted them, they were more willing to talk.  They've requested food and body armor; both requests have been denied since they're either unwilling or unable to free Altman.  At 0330, the suspects issued an ultimatum demanding to be allowed to go free.  Further communications with the suspects have gotten shorter and more strident.  Negotiations are at an impasse, and they're concerned for Altman's safety, since it looks like the suspects are getting desperate.  Time for us to end the standoff.")
-LocationInfoText=("487 29th Avenue","|The lower level is repair and parking facilities.  We believe the second floor to be primarily office space.  Entries are either from above, through the roof, or from below, through the underground parking area.","|High ground is observing the roof.")
-HostageName=("Gary Altman")
-HostageVitals=("Sex: Male|Descent: Caucasian|Height: 5' 11''|Weight: 210|Hair: N/A|Eyes: Brown|DOB: 03/12/1972|Age: 36")
-HostageDescription=("Mechanic at Victory Imports. Called 911 to report attempted auto theft; presumed to be inside the shop's offices.")
-SuspectName=("Unknown")
-SuspectVitals=("Information unavailable")
-SuspectDescription=("")
-EntryOptionTitle=("Side 1, Level 0","Roof")
-EntryDescription=("Parking Area North Entrance","Roof Access Door")
-TimeLinePlot=(0,2,4,9,14,19,27,73,87,100)
-TimeLineTime=("01:19","01:23","01:27","01:35","01:42","01:50","02:02","03:10","03:30","03:45")
-TimeLineShortDescription=("911 Call","Multiple suspects seen","CP established","SWAT arrives","Surround & Call Out","CNT contacts","Demand: Allow escape","Demand: Kevlar vests","Threat to hostages","Tactical action taken")
-TimeLineLongDescription=(" - 911 reporting attempted auto theft at Victory Imports Auto Center.  32 Adam dispatched to investigate."," - 32 Adam reports multiple armed suspects."," - Patrol officers establish containment perimeter.  SWAT notified."," - SWAT arrives on site.  High ground and containment teams put in place."," - Suspects were ordered to leave the building.  No response."," - CNT makes contact with suspects by phone."," - Suspects demand to be allowed to go free by 0400."," - Suspects demand kevlar vests.  Request is denied."," - Suspects repeat demand to be freed by 0400.  Threaten hostage."," - Decision made to go tactical to ensure the safety of the hostage.  Entry team is assembled.")
-LoadingText=487 29th Avenue, Victory Imports
-
-[SP-ConvenienceStore]
-PrimarySpawnPoint=Side Entrance
-CampaignObjectiveEnemySpawn=("Alice Jenkins")
-CampaignObjectiveHostageSpawn=("Willis Fillinger","Heidi Rosenstein","Kim Dong Yin")
-MissionDescription=("Barricaded Suspects","3721 Pitkin Avenue","November 18 - 07:15")
-BriefingText=("We're looking at a barricade/hostage situation, with at least three hostages.  Dispatch received a 911 call at around 0600.  A commuter pulled in to get gas and pulled out again when she noticed an armed woman coming out the front door.  She called 911 on her cell phone.  The first officers on the scene observed multiple gunmen, number unclear, and at least one unarmed civilian inside.  When the gunmen threatened the civilian, they backed off and set up a perimeter.","|So far we have one likely ID: Alice Jenkins. She's been in rehab for oxycodone addiction.  Oxycodone is an opiate similar to heroin, equally addictive.  It's prescribed legally as a Schedule II drug, making it possible for any idiot with a falsely obtained prescription to turn dealer.  It sells for up to eighty dollars a pop on the street.","|Knowing Jenkins, this is probably a bungled robbery for drug money, possibly related to a rash of recent convenience store hits.  She and her cronies didn't intend to take any hostages, and they don't know what to do with them.   That makes them more dangerous, since we can't predict what they might do, and they've stopped talking to the negotiator.  Given their erratic behavior, at least some of the suspects may be high.  They are armed with handguns, and we have visual confirmation of three suspects so far.  There may be more. ","|As far as the hostages go, we believe there are three: Kim Dong Yin, Heidi Rosenstein, and Willis Fischer, employees at the station.  There might be additional customers, but it's unlikely.  Be extremely careful when you go in.    You will have high ground support at your two entry options.  Given the recent spate of gunfire, we can't wait any longer; it's time for a tactical solution.  Study the situation, gear up, and let's move.")
-LocationInfoText=("3721 Pitkin Avenue, Qwik Fuel","|The front entry opens to the store, but is too dangerous to access directly for entry. There appears to be an office behind the counter, which we believe leads to storage areas. There are two entrances that can be accessed from the entry location. There is a side door leading to the storage areas and the loading dock, as well as the back door on side 3 as well.","|High ground has coverage in two locations: Sierra 1 is covering Side 1 Level 1, with a view of the front store area. Sierra 2 is covering your approach on Side 3 Level 1, along the back door.")
-HostageName=("Heidi Rosenstein","Willis Fischer","Kim Dong Yin")
-HostageVitals=("Sex: Female|Descent: Caucasian|Height: 5'7''|Weight: Unknown|Hair:Brown|Eyes: Brown|DOB: Unknown|Age: Unknown","Sex: Male|Descent: Caucasian|Height: 5'11''|Weight: Unknown|Hair: Brown|Eyes: Brown|DOB: Unknown|Age: Unknown","Sex: Male|Descent: Asian|Height: Unknown|Weight: Unknown|Hair: Brown|Eyes: Brown|DOB: Unknown|Age: Unknown")
-HostageDescription=("Heidi Rosenstein is the day shift clerk, on duty from 06:00 to 14:00.","Day manager; left for work at approximately 05:30; expected to arrive before 06:00.","Night shift clerk at the QwikFuel. He is believed to still be in the building, although he has not been seen.")
-SuspectName=("Alice Jenkins","Unknown Gunmen")
-SuspectVitals=("Sex: Female|Descent: Caucasian|Height: 5' 7''|Weight: 140|Hair: Brown|Eyes: Brown|DOB: 09/04/1977|Age: 31","Vitals unknown")
-SuspectDescription=("Alice Jenkins is a repeat offender, currently on parole for a possession offence. She has been implicated in multiple robberies, and has a history of resisting arrest.  She is violent and unstable.","Officers on the scene have reported that there are 2 additional gunmen, possibly more. The 911 call reported that the suspects are armed with handguns.")
-EntryOptionTitle=("Side 2 Level 1 ")
-EntryDescription=("Side Entrance")
-TimeLinePlot=(0,33,66,100)
-TimeLineTime=("06:15","06:30","06:45","07:15")
-TimeLineShortDescription=("911 Call","SWAT Arrives","CNT contacts suspects","Tactical entry begun")
-TimeLineLongDescription=(" - 911 call by customer, reporting a gunman and a potential hostage situation at the Qwik Fuel. Dispatch notifies emergency services. SWAT notified."," - SWAT arrives on scene. High ground established; containment perimeter confirmed."," - CNT (Crisis Negotiation Team) confirms presence of three hostages and at least 3 armed suspects. Entry team assembled."," - Shots fired. Decision made to go tactical.")
-LoadingText=3721 Pitkin Avenue, Qwik Fuel
-
 [SP-FairfaxResidence]
 PrimarySpawnPoint=Backyard
 SecondarySpawnPoint=Driveway
@@ -5313,7 +4965,7 @@ CampaignObjectiveEnemySpawn=("Lawrence Fairfax")
 CampaignObjectiveHostageSpawn=("Melinda Kline")
 MissionDescription=("High Risk Warrant / Hostage Rescue","25 Glendive Lane","October 23 - 04:43")
 BriefingText=("Get ready, men, this is a tough one.  Our target Lawrence Fairfax is the number one suspect in a string of grisly homicides.  A bit of review: over the last year and a half, seven women, all of them studying at the state university, disappeared.  Their remains, showing signs of torture and dismemberment, reappeared anywhere from a week to three weeks later.  The killer was careful; the task force forensic team was unable to get a useful DNA match from any of the bodies.","|That changed with the most recent find.  Another victim was located earlier this morning by a local laborer.  Some of the DNA scrapings from her nails match one of the men being investigated by the task force: Lawrence Fairfax.","|There's a complication: another student, Melinda Kline, went missing sometime around 2000 on October 18th.  That was six days ago.  If Fairfax has her, and if he's following the profile, chances are good she's still alive.  Rescuing her is your first priority, which is why we're going in with no warning.","|About our suspect.  Fairfax is employed as a temporary carpenter and works off and on at the University.  No police record, but court records show a pair of expired restraining orders against him.  He's been suspended from a recent jobsite for stealing supplies.  Fairfax's coworkers don't say much about him; he keeps to himself.  He's been at the law library multiple times, most notably on the days before the disappearance of three of our victims, including Melinda Kline.  A police interview with him was inconclusive; but the detective responsible did acquire a DNA sample from a used tissue. ","|Fairfax was seeing a psychiatrist when he was laid off; we've been unable to access his records.  The psych warned us that Fairfax may have fortified his living areas.  Be alert for traps, especially in spaces only Fairfax uses. He lives with his mother, Gladys Fairfax.   She's a recluse, and due to health problems rarely leaves the house.    We don't have reason to believe she's involved, but stay on your toes.","|Fellas, seconds may be the difference between life and death for Melinda Kline.  Study the layout, choose your gear, get moving.")
-LocationInfoText=("25 Glendive Lane","|This house is a 2 bedroom, 1 bath, split level residence.  Many of the houses in this neighborhood are of this same type.  Our layout is based on neighboring houses of the same style and should be accurate for level 1.  The basement level of these houses are usually customized and may or may not be finished.  Information is specualtive regarding the basement.")
+LocationInfoText=("25 Glendive Lane","|This house is a 2 bedroom, 1 bath, split level residence.  Many of the houses in this neighborhood are of this same type.  Our layout is based on neighboring houses of the same style and should be accurate for level 1.  The basement level of these houses are usually customized and may or may not be finished.  Information is speculative regarding the basement.")
 HostageName=("Melinda Kline","Gladys Fairfax")
 HostageVitals=("Sex: Female|Descent: Caucasian|Height: 5' 5''|Weight: 125|Hair: Black|Eyes: Brown|DOB: 02/04/1988|Age: 20","Sex: Female|Descent: Caucasian|Height: 5' 3''|Weight: 165|Hair: Grey|Eyes: Brown|DOB: 05/29/1940|Age: 68")
 HostageDescription=("Melinda Kline is a second year law student at City College.  She was reported missing 18 Oct; last known sighting was after her last class let out at 19:45 on 17 Oct.  Her disappearence is both unexplained and out of character, according to friends and family.","Gladys Fairfax is the owner on record of 25 Glendive Lane.  She receives a disability pension from Social Security and is in generally bad health.")
@@ -5345,8 +4997,399 @@ EntryDescription=("Corner of alley")
 TimeLinePlot=(0,80,86,100)
 TimeLineTime=("23 Sept","19:42","19:55","20:24")
 TimeLineShortDescription=("Warrant issued","Suspect spotted","SWAT arrives","Tactical Entry")
-TimeLineLongDescription=(" - Food Wall placed under surveillance."," - Alex Jimenez is observed entering Food Wall Restauraunt by Detective Carl Sheary. Sheary then notifies TCC."," - SWAT arrives on scene. High ground and Containment teams put in place."," - Decision is made to go tactical. Entry team is assembled.")
+TimeLineLongDescription=(" - Food Wall placed under surveillance."," - Alex Jimenez is observed entering Food Wall Restaurant by Detective Carl Sheary. Sheary then notifies TCC."," - SWAT arrives on scene. High ground and Containment teams put in place."," - Decision is made to go tactical. Entry team is assembled.")
 LoadingText=1572 Norman St., Food Wall Restaurant
+
+[SP-ConvenienceStore]
+PrimarySpawnPoint=Side Entrance
+CampaignObjectiveEnemySpawn=("Alice Jenkins")
+CampaignObjectiveHostageSpawn=("Willis Fillinger","Heidi Rosenstein","Kim Dong Yin")
+MissionDescription=("Barricaded Suspects","3721 Pitkin Avenue","November 18 - 07:15")
+BriefingText=("We're looking at a barricade/hostage situation, with at least three hostages.  Dispatch received a 911 call at around 0600.  A commuter pulled in to get gas and pulled out again when she noticed an armed woman coming out the front door.  She called 911 on her cell phone.  The first officers on the scene observed multiple gunmen, number unclear, and at least one unarmed civilian inside.  When the gunmen threatened the civilian, they backed off and set up a perimeter.","|So far we have one likely ID: Alice Jenkins. She's been in rehab for oxycodone addiction.  Oxycodone is an opiate similar to heroin, equally addictive.  It's prescribed legally as a Schedule II drug, making it possible for any idiot with a falsely obtained prescription to turn dealer.  It sells for up to eighty dollars a pop on the street.","|Knowing Jenkins, this is probably a bungled robbery for drug money, possibly related to a rash of recent convenience store hits.  She and her cronies didn't intend to take any hostages, and they don't know what to do with them.   That makes them more dangerous, since we can't predict what they might do, and they've stopped talking to the negotiator.  Given their erratic behavior, at least some of the suspects may be high.  They are armed with handguns, and we have visual confirmation of three suspects so far.  There may be more. ","|As far as the hostages go, we believe there are three: Kim Dong Yin, Heidi Rosenstein, and Willis Fischer, employees at the station.  There might be additional customers, but it's unlikely.  Be extremely careful when you go in.    You will have high ground support at your two entry options.  Given the recent spate of gunfire, we can't wait any longer; it's time for a tactical solution.  Study the situation, gear up, and let's move.")
+LocationInfoText=("3721 Pitkin Avenue, Qwik Fuel","|The front entry opens to the store, but is too dangerous to access directly for entry. There appears to be an office behind the counter, which we believe leads to storage areas. There are two entrances that can be accessed from the entry location. There is a side door leading to the storage areas and the loading dock, as well as the back door on side 3 as well.","|High ground has coverage in two locations: Sierra 1 is covering Side 1 Level 1, with a view of the front store area. Sierra 2 is covering your approach on Side 3 Level 1, along the back door.")
+HostageName=("Heidi Rosenstein","Willis Fischer","Kim Dong Yin")
+HostageVitals=("Sex: Female|Descent: Caucasian|Height: 5'7''|Weight: Unknown|Hair:Brown|Eyes: Brown|DOB: Unknown|Age: Unknown","Sex: Male|Descent: Caucasian|Height: 5'11''|Weight: Unknown|Hair: Brown|Eyes: Brown|DOB: Unknown|Age: Unknown","Sex: Male|Descent: Asian|Height: Unknown|Weight: Unknown|Hair: Brown|Eyes: Brown|DOB: Unknown|Age: Unknown")
+HostageDescription=("Heidi Rosenstein is the day shift clerk, on duty from 06:00 to 14:00.","Day manager; left for work at approximately 05:30; expected to arrive before 06:00.","Night shift clerk at the QwikFuel. He is believed to still be in the building, although he has not been seen.")
+SuspectName=("Alice Jenkins","Unknown Gunmen")
+SuspectVitals=("Sex: Female|Descent: Caucasian|Height: 5' 7''|Weight: 140|Hair: Brown|Eyes: Brown|DOB: 09/04/1977|Age: 31","Vitals unknown")
+SuspectDescription=("Alice Jenkins is a repeat offender, currently on parole for a possession offence. She has been implicated in multiple robberies, and has a history of resisting arrest.  She is violent and unstable.","Officers on the scene have reported that there are 2 additional gunmen, possibly more. The 911 call reported that the suspects are armed with handguns.")
+EntryOptionTitle=("Side 2 Level 1 ")
+EntryDescription=("Side Entrance")
+TimeLinePlot=(0,33,66,100)
+TimeLineTime=("06:15","06:30","06:45","07:15")
+TimeLineShortDescription=("911 Call","SWAT Arrives","CNT contacts suspects","Tactical entry begun")
+TimeLineLongDescription=(" - 911 call by customer, reporting a gunman and a potential hostage situation at the Qwik Fuel. Dispatch notifies emergency services. SWAT notified."," - SWAT arrives on scene. High ground established; containment perimeter confirmed."," - CNT (Crisis Negotiation Team) confirms presence of three hostages and at least 3 armed suspects. Entry team assembled."," - Shots fired. Decision made to go tactical.")
+LoadingText=3721 Pitkin Ave., Qwik Fuel
+
+[SP-Arcade]
+PrimarySpawnPoint=Service Entrance
+SecondarySpawnPoint=Fire Escape Door
+CampaignObjectiveEnemySpawn=("Javier Arias")
+CampaignObjectiveHostageSpawn=("Oscar Bogard")
+MissionDescription=("Barricaded Suspects","1401 Gower Street","August 9 - 16:50")
+BriefingText=("Okay, listen up. We've got a shots fired situation. 911 received a call from the owner of the FunTime Amusement Arcade on Gower Street. Detectives from the 12th precinct tell us that the arcade is a known haunt for drug dealers. Witnesses say an argument broke out between Javier Arias, a local dealer and a group of unidentified men. It quickly escalated into violence when Arias' offsiders drew their guns. Looks like we could have a turf war on our hands.  ","|Most of the civilians fled as soon as the shooting started, but some may still be inside. This is a busy arcade at this time of the day, so check your targets. The police are also pretty unpopular in this neighborhood, so be prepared for resistance from any civilians you encounter.","|We've been unable to locate the owner, Oscar Bogard. He may still be trapped inside. His 911 call was cut off abruptly.","|We have to put a stop to the shooting, but this is also a chance to put away a lot of bad guys. To do that we need to gain as much evidence as we can. We don't want any of them to flush the drugs they're carrying, particularly Arias.","|Choose your equipment and get going.")
+LocationInfoText=("1401 Gower Street. FunTime Amusement Arcade","|Oscar Bogard has been running the arcade out of these premises for some twenty-odd years. The arcade takes up the front part of the ground floor and parts of the upper floor. Repair and storage are in back, along with Bogard's apartment. He could be holed up anywhere inside.")
+HostageName=("Name:Oscar Bogard")
+HostageVitals=("Sex:Male|Descent:Caucasian|Height:5'6''|Weight:240|Hair:Brown|Eyes:Brown|DOB:1958|Age:48")
+HostageDescription=("Bogard is the owner of the arcade and he lives on the floor above. He made the 911 emergency call and it's believed he's trapped inside with the suspects.")
+SuspectName=("Name:Javier Arias")
+SuspectVitals=("Sex:Male|Descent:Caucasian|Height:5'7''|Weight:165|Hair:Grey|Eyes:Brown|DOB:1977|Age:29")
+SuspectDescription=("A notorious local drug dealer. Arias has a lengthy rap sheet including assault, burglary, firearm and drug offenses. It's believed he's had the monopoly on dealing in this area for some time, and so far no one has challenged his position as top dog.")
+EntryOptionTitle=("Side 3, Level 1 ","Side 4, Level 2 ")
+EntryDescription=("Service Entrance","Fire Escape Door")
+TimeLinePlot=(0,20,100)
+TimeLineTime=("16:26 ","16:33 ","16:51")
+TimeLineShortDescription=("911 Call","First units arrive","Tactical entry begun")
+TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol Units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
+LoadingText=1401 Gower St., FunTime Amusement Arcade
+NewEquipmentName=Cobra Stun Gun
+NewEquipmentDescription=The Cobra is a dual-purpose less-lethal weapon. It fires small electrodes into the target and then sends a powerful electric charge down thin wires still connected to the hand unit. The electrical discharge causes involuntary contraction of the target's muscle tissue regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. It has a longer range than its Taser forbearer, and can fire darts in groups of four or two separate groups of two. It can also be used in ''touch-stun'' mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors.
+
+[SP-AutoGarage]
+PrimarySpawnPoint=Parking Garage Entrance
+SecondarySpawnPoint=Roof
+CampaignObjectiveHostageSpawn=("Gary Altman")
+MissionDescription=("Barricaded Suspects / Hostage Rescue","487 29th Avenue","January 5 - 03:45")
+BriefingText=("Here's what we've got.  We are needed for rapid deployment at 29th and Arlington, the Victory Imports Auto Garage.  Looks like a botched vehicle theft has turned into a barricaded situation.","|32 Adam, responding to a 911 call, interrupted two individuals in the process of stealing a car.  Upon being ordered to surrender, they fired upon the officers and retreated into the main building.  Precise numbers are unknown, but patrol reports seeing at least 4 individuals, all male.  They're armed, and we believe some of them have machine guns.  In addition, they have a hostage in there with them: Gary Altman.  Altman is a mechanic for Victory Imports, and was apparently working late.  He's the one who placed the initial 911 call, which was cut off short.  Further attempts to contact him have failed.","|We don't have a positive ID on the suspects at this time.  Patrol reports seeing young men, late teens to early twenties, light skinned, wearing street clothes; jeans and shirts -- but we don't have sufficient evidence to confirm any specifics.  As far as M.O. goes, this particular theft is a new one.  No local garages have reported similar raids.  Looks like we get to nip this one in the bud.","|Patrol attempted to call them out, and got no response other than scattered gunfire.  However, once the negotiators contacted them, they were more willing to talk.  They've requested food and body armor; both requests have been denied since they're either unwilling or unable to free Altman.  At 0330, the suspects issued an ultimatum demanding to be allowed to go free.  Further communications with the suspects have gotten shorter and more strident.  Negotiations are at an impasse, and they're concerned for Altman's safety, since it looks like the suspects are getting desperate.  Time for us to end the standoff.")
+LocationInfoText=("487 29th Avenue","|The lower level is repair and parking facilities.  We believe the second floor to be primarily office space.  Entries are either from above, through the roof, or from below, through the underground parking area.","|High ground is observing the roof.")
+HostageName=("Gary Altman")
+HostageVitals=("Sex: Male|Descent: Caucasian|Height: 5' 11''|Weight: 210|Hair: N/A|Eyes: Brown|DOB: 03/12/1972|Age: 36")
+HostageDescription=("Mechanic at Victory Imports. Called 911 to report attempted auto theft; presumed to be inside the shop's offices.")
+SuspectName=("Unknown")
+SuspectVitals=("Information unavailable")
+SuspectDescription=("")
+EntryOptionTitle=("Side 1, Level 0","Roof")
+EntryDescription=("Parking Area North Entrance","Roof Access Door")
+TimeLinePlot=(0,2,4,9,14,19,27,73,87,100)
+TimeLineTime=("01:19","01:23","01:27","01:35","01:42","01:50","02:02","03:10","03:30","03:45")
+TimeLineShortDescription=("911 Call","Multiple suspects seen","CP established","SWAT arrives","Surround & Call Out","CNT contacts","Demand: Allow escape","Demand: Kevlar vests","Threat to hostages","Tactical action taken")
+TimeLineLongDescription=(" - 911 reporting attempted auto theft at Victory Imports Auto Center.  32 Adam dispatched to investigate."," - 32 Adam reports multiple armed suspects."," - Patrol officers establish containment perimeter.  SWAT notified."," - SWAT arrives on site.  High ground and containment teams put in place."," - Suspects were ordered to leave the building.  No response."," - CNT makes contact with suspects by phone."," - Suspects demand to be allowed to go free by 0400."," - Suspects demand kevlar vests.  Request is denied."," - Suspects repeat demand to be freed by 0400.  Threaten hostage."," - Decision made to go tactical to ensure the safety of the hostage.  Entry team is assembled.")
+LoadingText=487 29th Ave., Victory Imports
+
+[SP-HalfwayHouse]
+PrimarySpawnPoint=Front Entrance
+SecondarySpawnPoint=Delivery Entrance
+CampaignObjectiveHostageSpawn=("Lionel Macarthur")
+MissionDescription=("Barricaded Suspects","Our Sisters of Mercy Halfway House: 796 Newbury St.","August 15 - 11:32")
+BriefingText=("Let me have your attention team. About two hours ago a group of armed men attempted to rob the post office at the corner of Watts and Lonsdale. They were confronted by an armed security guard and when he opened fire, they ran.  ","|The guard called 911 and a nearby patrol car responded, spotting the suspects on foot on Newbury St. Seems their getaway driver panicked and drove off without them. When the officer ordered them to surrender they opened fire and retreated into a halfway house, Our Sisters of Mercy.","|The halfway house provides temporary accommodation for older men, often just out of prison or recently released from mental care. A few of the residents fled once the gunmen entered, but one of the sisters who runs the house says at least six people are unaccounted for. That means any civilians inside may be confused, scared and uncooperative. Check your targets carefully.","|The suspects appear well armed but disorganized. The security guard reported seeing at least five individuals carrying automatic rifles and shotguns, and says they may have been wearing body armor. The word on the street is that it's the Stetchkov clan who've provided the guns, but they don't normally handle firearms.","|The police negotiator has been trying to communicate with the suspects, but as yet they haven't responded. There's been some sporadic gunfire from within the building, which is why we're going in.","|Suit up and get ready.")
+LocationInfoText=("Our Sisters of Mercy Halfway House ","|Our Sisters of Mercy have been running the halfway house on Newbury for more than 40 years. The building was originally a small brewery constructed in the 1920s. Following the depression the building sat unused until the 1960s when it was donated to the local convent. The sisters converted the downstairs into kitchen and recreation areas, and the upstairs into temporary accommodation for homeless men. The original brewing floor was turned into a chapel.")
+HostageName=("Lionel Macarthur")
+HostageVitals=("Sex:Male|Descent:Caucasian|Height:5'7''|Weight:165|Hair:Grey|Eyes:Brown|DOB:1931|Age:75")
+HostageDescription=("Macarthur is a long-term senior resident in the halfway house. The sisters who run the house are particularly worried about him as he needs frequent medication and monitoring.")
+SuspectName=("Unknown")
+SuspectVitals=("Information unavailable")
+SuspectDescription=("The security guard reported seeing at least five individuals carrying automatic rifles and shotguns, and says they may have been wearing body armor. ")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
+EntryDescription=("Front Entrance","Delivery Entrance")
+TimeLinePlot=(0,18,35,100)
+TimeLineTime=("9:04","9:22","9:47","11:32")
+TimeLineShortDescription=("911 Call","First Units Arrive"," CNT Attempts Contact ","Shots Heard - Tactical entry begun")
+TimeLineLongDescription=(" - 911 emergency call received from post office guard."," - Patrol officers arrive and establish containment perimeter.  SWAT and CNT notified."," - CNT (Crisis Negotiation Team) attempts contact without response.","  - Shots fired. Decision made to go tactical.")
+NewEquipmentName=40mm Grenade Launcher
+NewEquipmentDescription=The grenade launcher has become a standard piece of police equipment for use in unusual situations such as hostage rescue or riot control. It's ability to fire a wide range of direct and indirect less-lethal ammunitions has proved it to be extremely versatile.
+LoadingText=796 Newbury St., Our Sisters of Mercy
+
+[SP-Hotel]
+PrimarySpawnPoint=Elevator Shaft
+SecondarySpawnPoint=Stairwell
+CampaignObjectiveHostageSpawn=("Lawrence Adams","James Bettencourt")
+MissionDescription=("Hostage Rescue","1700 West 7th Ave.","May 1 - 18:12")
+BriefingText=("Ok, men, this one's a zoo, and it isn't going to get any better.   The self declared militia group America Now has taken real estate heir James Betincourt Junior and Lawrence Adams, his general contractor, hostage.  Apparently they were touring a current project, the Old Granite Hotel, and were taken while inspecting Adams' work.  Now the suspects are holed up on the top two floors of the hotel, demanding twelve million dollars ransom by midnight.   They claim that Betincourt Investments owes this as a ''downpayment on their debt to the American People.''","|America Now is a small but active domestic militia group.  They are fiercely isolationist, opposing immigration, free trade, and foreign owned interests.   Most of their previous actions have been against foreign owned properties, either sabotaging them in the building stage or engaging in serious vandalism, making the properties too expensive to maintain.  This is their first kidnapping, and it may indicate a shift in the group's tactics.  Given the public nature of the incident, the group is clearly looking for publicity as well.  We've spoken with the media, and received some co-operation; however, it's not clear how long that will last.","|Expect the America Now suspects to be well equipped, and to act as a group, but their inexperience with hostages may make them even more dangerous to the civilians.  Take extra care.","|Now...on to the victims.  James Betincourt Junior is the son of the CEO and majority owner of Betincourt Investments, a French based property development company.  Six months ago, they purchased the Granite out of bankruptcy for twelve million dollars, and have been renovating it ever since.  Junior has been in charge of the renovations, and was doing an inspection of the renovation work when he was captured.  Lawrence Adams is the general contractor and the architect in charge of doing the renovation work. ","|The suspects are on the top two floors of the hotel, the sixth and the seventh.   You'll find the blueprints on the board.  We've cut power to the elevators, and one of them is trapped between the fifth and sixth floor.  You can either go up the stairs, or down the elevator shaft.  Recent gunshots were reported coming from the seventh floor, so it's time to go in.  ")
+LocationInfoText=("The Old Granite Hotel, 1700 West 7th Ave.","|","Sierra One is covering Side 1, Level 7 -- the exposed construction area.")
+HostageName=("James Betincourt, Jr.","Lawrence Adams")
+HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Brown|Height: 6' 1''|Weight: 160|DOB: 01/04/75|Age: 33","Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 5' 11''|Weight: 190|DOB: 04/19/66|Age: 42")
+HostageDescription=("Son of James Betincourt, CEO and president of Betincourt Investments.  Betincourt Investments is the owner of the Old Granite.","Lawrence Adams is the general contractor for the remodeling of the Old Granite Hotel.  ")
+SuspectName=("Unknown")
+SuspectVitals=("")
+SuspectDescription=("Wearing bulletproof vests and masks, equipped with machine guns.")
+EntryOptionTitle=("Elevator Shaft","Stairwell")
+EntryDescription=("Entry from on top of the elevator car stopped on level 5.","Stairwell entry from Level 5.")
+TimeLinePlot=(0,31,38,42,48,58,96,100)
+TimeLineTime=("12:30","14:17","14:40","14:53","15:12","15:47","17:57","18:12")
+TimeLineShortDescription=("Arranged meeting","Lost contact","Ransom demand","SWAT arrives","Additional demands","Additional demands","Negotiations fail","Tactical entry begun")
+TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - Charles Betincourt, owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 milllion dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
+LoadingText=1700 West 7th Ave., Old Granite Hotel
+
+[SP-ABomb]
+PrimarySpawnPoint=Front Entrance
+SecondarySpawnPoint=Service Entrance
+MissionDescription=("Rapid Deployment","1536 Adelaide Avenue","December 12 - 23:42")
+BriefingText=("We're being called up for a rapid deployment at an ongoing shots fired situation at the A-Bomb nightclub.  At least four gunmen, likely more, are exchanging shots with each other.  They don't appear to be actively attacking civilians, or attempting to hold hostages, although we have reports that there are multiple wounded victims from crossfire.  Witness reports are confused, and in some cases conflicting.","|We have both Caucasian and Hispanic shooters, shooting along racial lines.  All of them appear to be young adult males.","|We have two possible entries: the front door, past the ticket booth, and a back alley loading zone.  We have a rough sketch of the layout from an off-duty bartender; give it a once over, but don't trust it too much.","|Most of the patrons made it out; however, there are still civilians holed up in there.   We know some of them are wounded from witness reports. The perimeter is still reporting sporadic gunfire inside, and the paramedics won't go in until we've cleared the building.  You need to get in there and bring order to chaos by locating and arresting the gunmen.  In addition, you need to locate and secure for evacuation all remaining civilians, especially the wounded.  Review the information, choose your entry, and get your gear together.  It's time to go to work.")
+LocationInfoText=("1536 Adelaide Avenue","There is both a main and a secondary stage on the first floor, and both stages have an attached bar area. There is a second floor with a manager's office and an additional lounge. The map is sketchy at best, but it is the only information about layout available. ")
+HostageName=("Unknown")
+HostageVitals=("Information Unavailable")
+HostageDescription=("")
+SuspectName=("Unknown Latinos","Unknown Caucasians")
+SuspectVitals=("Vitals unknown","Vitals unknown")
+SuspectDescription=("Members of a gang. Latin descent.","Members of a gang.  Caucasian descent.")
+EntryOptionTitle=("Side 2, Level 1","Side 1, Level 1")
+EntryDescription=("Service Entrance, off of side alley","Front Entrance")
+TimeLinePlot=(0,20,100)
+TimeLineTime=("23:27","23:30","23:42")
+TimeLineShortDescription=("Shots fired; 911 Calls","Perimeter established","SWAT arrives")
+TimeLineLongDescription=(" - First 911 calls logged reporting shooting at the club.  SWAT notified."," - Patrol Units arrive on scene and begin to set up a perimeter and perform first aid on initial victims.  Patrol radios for ambulances."," - SWAT arrives on scene.  Due to ongoing live fire, SWAT immediately goes tactical to neutralize the situation.")
+LoadingText=1536 Adelaide Ave., The A-Bomb
+
+[SP-Casino]
+PrimarySpawnPoint=Back Door
+CampaignObjectiveEnemySpawn=("Louie Baccus","Simon Grover","Allen Kruse")
+CampaignObjectiveHostageSpawn=("Jeremy Walsh")
+MissionDescription=("High Risk Warrant Service","1092 Westfield Road","February 24 - 17:32")
+BriefingText=("This one's a little sticky.  Vice has been keeping an eye on Northside Vending and Amusements for the last three or four weeks.  They've been  building a case against an alleged bookmaking operation going on in the basement of the business.  Undercover detective Jeremy Walsh has been working closely with the suspects, and today received an invitation to enter the bookmaking area.","|All went smoothly until Walsh was out of sight. Walsh's wire reported that he was still talking to the suspects, who showed no evidence of suspecting him.  Less than ten minutes later, there was a sudden burst of static, and then Walsh's wire went dead.  If everything was going as expected, Walsh would already be back, since he was supposed to go in, place one bet, and come right back out.  With no way to determine Walsh's actual state, we're assuming he's in danger and it's time to go in after him.   ","|We know at least three individuals are present.  The first, Louie Baccus, is the owner of the business.  The other two are Allen Kruse and Simon Gowan.  Kruse and Gowan are believed to be the movers behind the bookie operation, with Baccus providing cover and space.  Vice believes there are additional suspects inside, acting as bookies and runners.  Numbers are unknown, but could go as high as ten suspects total. That's one reason Walsh was sent in, to determine the exact number of players.    ","|Kruse and Gowan have extensive records, ranging from petty larceny to assault with a deadly weapon.  Assume both are armed and dangerous.  Baccus is an unknown, but given his compatriot's histories, better to assume he is armed as well.  Note that Walsh's last recorded statement was one of surprise at ''the size of your setup.''  Sounded like he was impressed, which can't mean anything too good for us. ","|We have a layout for the shop, but we don't have anything on the basement.  We know it's accessed through the storage areas, but we don't know anything about the bookie's territory.  Keep your eyes open; there could be any number of surprises.  Time to get Detective Walsh out, and get the suspects under control.   Choose your gear carefully and move out. ")
+LocationInfoText=("Northside Vending and Amusements, 1092 Westfield Road","|Sierra One has coverage on Side 3, Level 1; they report a large warehouse-type room.")
+HostageName=("Jeremy Walsh","Louie Baccus")
+HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Brown|Height: 5' 10''|Weight: 180|DOB: 12/08/70|Age: 38","Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 5' 11''|Weight: 190|DOB: 10/15/1968|Age: 40")
+HostageDescription=("Detective Walsh has been working undercover in the Mafia for quite some time and is a reliable source of information about mob operations.","Owner of Northside Vending and Amusements.  Baccus has never been arrested, but is suspected to have ties to organized crime.")
+SuspectName=("Allen Kruse","Simon Gowan")
+SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Blue|Height: 5' 10''|Weight: 150|DOB: 01/02/1964|Age: 44","Sex: Male|Descent: Caucasian|Hair: Light Brown|Eyes: Blue|Height: 6' 2''|Weight: 210|DOB: 07/29/1979|Age: 29")
+SuspectDescription=("Appears almost daily at the Northside Vending. Has been convicted of illegal possession of firearms and simple assault.  Arrested for racketeering, but not convicted.  ","A regular at the Northside Vending. Has been convicted of assault with a deadly weapon and robbery.")
+EntryOptionTitle=("Side 3, Level 1")
+EntryDescription=("Back door into the establishment.")
+TimeLinePlot=(0,42,71,88,98,100)
+TimeLineTime=("14:03","15:30","16:30","17:05","17:28","17:32")
+TimeLineShortDescription=("Walsh checks in","Walsh's wire signal lost","Walsh's Lieutenant briefed","Warrants issued","SWAT arrives","Tactical entry begun")
+TimeLineLongDescription=(" - Detective Walsh checks in with his handler and notifies him that he will be entering the shop at 12:45."," - Walsh's wire suddenly goes to static with no clear indication of what the malfunction is."," - Lieutenant Collins is briefed of the situation and the missed call.  All officers involved believe Walsh has been made.  DA is notified."," - Arrest warrants are issued.  SWAT dispatched to scene."," - Containment perimeter and high ground established."," - Decision made to go tactical. Entry team assembled.")
+LoadingText=1092 Westfield Rd., Northside Vending and Amusements
+
+[SP-RedLibrary]
+PrimarySpawnPoint=Front Entrance
+SecondarySpawnPoint=Garage Entrance
+CampaignObjectiveHostageSpawn=("Warren Rooney")
+MissionDescription=("Barricaded Suspects / Hostage Rescue","732 Gridley Street","January 25 - 18:05")
+BriefingText=("Just after 1400 this afternoon, multiple gunmen stormed the offices at the Wainwright Mill Center building.  They shot their way through several of the businesses, until getting pinned down by patrol in one of the offices.","|This started with an attempted bank robbery at the Community Savings and Loan.  However, the suspects tripped the alarms early in their attempt, alerting both the bank's security and local police.  Instead of attempting to flee, they seem to have tried to continue to break into the bank, but were foiled by the vault security.","|When confronted by security, the suspects shot two of them, and then fled.  After a brief vehicle pursuit with patrol officers, the gunmen crashed into the offices at Wainwright Mill Center and took refuge in the Red Library office.  Patrol pulled back and established a perimeter. ","|Red Library is a software company, specializing in data storage.  Its employees often work on Saturdays, and so we suspect that that was the first unlocked office the gunmen found.  Unfortunately, that also means the office was occupied when they went in.","|Negotiators have been talking with them since about 1530.  Overall estimation is that while these guys are heavily armed, they don't really know what they are doing.  So far, the suspects have demanded an escape route and five million dollars, in exchange for their ''multiple prisoners''.  Negotiators have managed to get four hostages freed, in exchange for two gas masks and two armored vests.  The freed hostages can't give us an accurate count of employees, since no one knows how many employees were working today.  The recent spate of gunfire means it's time to go in and rescue the rest of the hostages. ")
+LocationInfoText=("732 Gridley Street, Red Library Inc.","|The long standoff allowed us to get the plans for the building.  Thanks to the released hostages, we have a pretty good idea for the layout of some of the cubicle dividers. ","|Sierra One is covering Side 2, Level 3; looks to be an employee break area.  Sierra Two is covering Side 4, Level 3. ")
+HostageName=("Warren Rooney")
+HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Hazel|Height: approx. 6'0''|Weight: approx. 180|DOB: Unknown|Age: Approx. 45")
+HostageDescription=("CEO of Red Library Inc.  Described by coworkers as a stern but fair employer.")
+SuspectName=("Unknown")
+SuspectVitals=("Vitals unknown")
+SuspectDescription=("Multiple well armed suspects.")
+EntryOptionTitle=("Side 1, Level 1","Side 4, Level 0")
+EntryDescription=("The reception area has a shielded side entrance.","Entrance through the parking garage, coming up from below the main offices.")
+TimeLinePlot=(0,9,11,13,17,24,57,98,100)
+TimeLineTime=("14:02","14:24","14:30","14:34","14:45","15:03","16:22","18:03","18:05")
+TimeLineShortDescription=("Gunmen sighted","SWAT Arrives","CNT contacts suspects","First demand issued","Hostages exchanged","Deadline passes","Hostages exchanged","Shots fired","Entry begun")
+TimeLineLongDescription=(" - Gunmen enter building."," - SWAT Arrives. Containment perimeter and high ground established."," - CNT makes first contact with suspects; no names given, no progress made."," - Demand for 5 million dollars and a helicopter made; deadline of 15:00."," - As a concession two hostages are exchanged for bulletproof vests."," - CNT convinces suspects that the first demand was unreasonable.  New demand for armored vehicle.  New deadline set at 18:00."," - In an effort to buy more time, CNT agrees to trade gas masks for the release of more hostages.  Suspects showing signs of fatigue and are becoming agitated."," - Suspect threatened hostage while on phone with CNT.  Civilian injuries are expected.  Phone went dead, gunfire continued.  Decision made to go tactical."," - Due to ongoing fire tactical entry begun.")
+LoadingText=732 Gridley St., Red Library Inc.
+
+[SP-Backstage]
+PrimarySpawnPoint=Main Entrance
+SecondarySpawnPoint=Rear Loading Dock
+CampaignObjectiveEnemySpawn=("Andrew Norman")
+MissionDescription=("Hostage Rescue","The Sellers Street Auditorium, 1801 Sellers St","August 26 - 20:49")
+BriefingText=("Listen up. Approximately 45 minutes ago a group known as Citizens Against Satanic Music or 'CASM' stormed a rock concert at the Sellers Street Auditorium. They fired a barrage of shots injuring several audience members and creating a panic. The band, called ''Devil's Playthings'', fled the stage but was closely followed by the suspects. They claim to now have the band hostage.   ","|CASM have long been a vocal opponent of rock music, occasionally clashing with police during protests, but they've never resorted to this level of violence before. They've been sending the band hate mail for some time, and it looks like the band's latest album ''Die For The Devil'' pushed them over the edge. They want it taken off store shelves.","|These guys aren't hardened criminals - they're sloppy and badly organized, but they're also extremely well equipped. Looks like somebody sold them some guns and they got delusions of grandeur.","|Witnesses report seeing at least four suspects armed with automatic weapons and wearing disguises. We're guessing there are several civilians inside either injured or hiding. We're taking the suspects claim that they're holding the band hostage seriously. These guys are nervous amateurs and that makes them more likely to hurt or kill an innocent civilian, either deliberately or accidentally.","|Choose your equipment and be ready to move out.")
+LocationInfoText=("The Sellers Street Auditorium, 1801 Sellers St","|The Seller's Street Auditorium was built in 1983 to cater for local bands and theater groups. The lower level consists of the front-of-house area with ticket booths, the stage and audience pit. The upper level contains dressing rooms, storage areas and stage access and maintenance spaces, as well as offices and the auditorium's bar/restaurant.")
+HostageName=("Unknown")
+HostageVitals=("Information Unavailable")
+HostageDescription=("")
+SuspectName=("Andrew Norman","Unknown")
+SuspectVitals=("Sex:Male|Descent:Caucasian|Height:5'6''|Weight:200|Hair:Blonde|Eyes:Brown|DOB:1962|Age:44","Vitals Unavailable")
+SuspectDescription=("Norman is a known member of CASM and has misdemeanor convictions for mail fraud. He has frequently singled out Devil's Playthings on CASM's internet site. We believe he's a member of the gunmen."," ")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
+EntryDescription=("Main Entrance","Rear Loading Dock")
+TimeLinePlot=(0,15,30,50,60,100)
+TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
+TimeLineShortDescription=("Suspects Enter Auditorium","Patrol Cars Arrive","Perimeter Established"," CNT Arrive","Suspect Demands"," Shots Fired.")
+TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enter.")
+NewEquipmentName=Ammo Pouch
+NewEquipmentDescription=The ammo pouch clips to the back of the belt in place of a grenade. It allows the wearer to carry two additional clips of ammunition for their primary weapon.|The ammo pouch can be selected under the Tactical tab in the Equipment section.|Note that the ammo pouch does not provide extra ammunition for the pepper-ball gun.
+LoadingText=1801 Sellers St., The Sellers Street Auditorium
+
+[SP-JewelryHeist]
+PrimarySpawnPoint=Front Door, Main Lobby
+SecondarySpawnPoint=Service Entrance
+MissionDescription=("Barricaded Suspects","1725 Broadway","March 8 - 17:11")
+BriefingText=("We have another tough one.  Just before closing time, the DuPlessis Diamond Center was broken into.  The suspects drove a truck through the main security doors into the lobby.  The building's alarm was triggered immediately.  Witnesses report multiple suspects, armed with machine guns and wearing body armor, entering the building.  Witnesses also report they have not seen any of the wholesaler's employees exit the building, although it was still open and security personnel were on duty.","|The DuPlessis office building is built much like a small fort.  Most areas are under constant video surveillance.  A separate security system and metal detector guards access to the vault.  The vault door has a time lock; it locks at 1800 every night, and can't be reopened until office hours start the next day at 0900.  Note that the alarm company has disabled the time lock on the door for us, in case the gunmen are hiding inside of it.  The building's phone lines were disabled by the suspects.      ","|DuPlessis is a wholesaler; they deal mainly in raw stones.  This means they haven't been cleaned or cut, and they also aren't registered.  However, they're harder to move; you can't take these down to the local pawnshop.  This week, DuPlessis was holding a shipment of finished jewels.  I don't think the timing is a coincidence.  Our suspects probably have ties to black market purchasers outside of the country, since even the finished gems are a lot of gems to move.","|Our suspects have automatic weapons and body armor, so they're ready for a fight.   We don't know how they intended to breach the vault, which should have locked automatically when the alarm went off.  One possibility is inside help, so stay on your toes.  Most, if not all, of DuPlessis employees are still inside.  We don't know their current condition.  Study the floor plans, choose your entry and plan your assault: but don't take too long.")
+LocationInfoText=("1725 Broadway, DuPlessis Wholesale","|DuPlessis Wholesale keeps its floorplan on record with the police department for security reasons.  The cameras are nonfunctional at this time. The alarm company disabled the timelock on the vault door to prevent the suspects from barricading themselves within it.","|Sierra One and Two are both observing rooms on Side 1, Level 2.")
+HostageName=("Unknown")
+HostageVitals=("Vitals unknown")
+HostageDescription=("An unknown number of hostages are inside the building.")
+SuspectName=("Unknown")
+SuspectVitals=("Vitals unknown")
+SuspectDescription=("An unknown number of well armed gunmen are inside.")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 2")
+EntryDescription=("Main Lobby Entry","Service Entrance")
+TimeLinePlot=(0,14,57,100)
+TimeLineTime=("16:57","16:59","17:05","17:11")
+TimeLineShortDescription=("Alarm triggers","SWAT notified","SWAT Arrives","Tactical entry begun")
+TimeLineLongDescription=(" - Alarm triggered at DuPlessis Wholesale. Dispatch notified patrol."," - 911 Call comes in. Dispatch notified emergency services; SWAT notified."," - SWAT Arrives. Containment perimeter and high ground established."," - Decision made to go tactical.")
+LoadingText=1725 Broadway, DuPlessis Wholesale Diamonds
+
+[SP-Tenement]
+PrimarySpawnPoint=Front Door
+SecondarySpawnPoint=Fire Escape
+CampaignObjectiveEnemySpawn=("Andrew Taronne")
+MissionDescription=("High Risk Warrant Service","2189 Carrols Road","April 2 - 16:45")
+BriefingText=("Ok, men, what we have here are some dangerous headcases, to themselves and to their neighbors.  Approximately an hour ago we got a tip from a public phone that some cultist nut-jobs calling themselves the Taronnians intend to blow their house sky high, taking a chunk of the neighborhood with them.","|The detectives ran the paper trail, which uncovered disturbing deliveries to the Taronnians.  Recent purchases included several suspicious chemicals, as well as an ominous amount of fertilizer; we're taking this one very seriously.  Our caller didn't give a time or date, and hung up before we could get anything else from them.  We assume our leak is a recent break from the cult; we are checking relatives to see if an ex-cultist has returned home, but that hasn't panned out yet.   Since our best information indicates there's imminent danger, we're not waiting.  Detectives attempted to serve the warrant by surrounding the location and calling the suspects out. They received no response whatsoever. ","|About the Taronnians.  They broke off from a separatist group up in Idaho, and followed their leader, Andrew Taronne, out here.  Their official name is something like the Children of Taronne; they view Taronne as a combination all-knowing guru and prophet.  They showed up here about three years ago, used cash to purchase an old apartment building needing serious rehab, and moved into it en masse.   They only leave the building in groups of three or more, and they refuse entrance to any outsiders.   ","|Anything they're doing was ordered by Taronne, which means he's the one we need to talk to.  However, Taronne never leaves the house, so we'll be going in after him.  The group they split from believes in strong self defense, and there's no reason to think the Taronnians have changed that tenet.  Expect armed resistance, and don't be surprised if even the unarmed cultists are stubborn about surrendering.  Keep your eyes out for any children belonging to members of the cult.","|The building was a standard apartment building before the Taronnians moved in, but they may have altered it.  The floor plans are a guideline.  Expect to be surprised. Assume they have taken no precautions with their explosives. A careless bullet might cause some unwanted casualties, so put some thought into your gear choices for this assignment.")
+LocationInfoText=("2189 Carrols Road","|No one has been able to gain access to the building.  Property records indicate the cultists have owned this entire building for about ten years.  Surveillance through windows and available openings indicates significant changes have been made to the internal structure, although no permits have ever been filed for this building since the Taronne and his group took up residency.","|Sierra One is covering Side 2, Level 2 from a nearby rooftop.  Sierra Two is covering Side 1, Level 2.")
+HostageName=("Unknown")
+HostageVitals=("Vitals unknown")
+HostageDescription=("Information unavailable")
+SuspectName=("Andrew Taronne")
+SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Black, greying|Eyes: Brown|Height: 6' 0''|Weight: 220|DOB: 03/12/59|Age: 49")
+SuspectDescription=("Leader of the Children of Taronne.  A charismatic leader whose brainwashing has caused his believers to blindly follow his crackpot notions.   ")
+EntryOptionTitle=("Side 1, Level 1","Side 2, Level 2")
+EntryDescription=("Front door","Fire escape")
+TimeLinePlot=(0,6,10,100)
+TimeLineTime=("11:30","11:49","12:00","16:45")
+TimeLineShortDescription=("Warrant acquired","SWAT Arrives","Call out","Tactical entry begun")
+TimeLineLongDescription=(" - Warrant acquired for Andrew Taronne."," - SWAT Arrives. Containment perimeter and high ground established."," - Surround and call out.  No response."," - After hours with no response from inhabitants, the decision is made to go tactical. Entry team assembled.")
+LoadingText=2189 Carrols Rd., Taronne Tenement
+
+[SP-Office]
+PrimarySpawnPoint=Main Entrance
+SecondarySpawnPoint=Rear Entrance
+CampaignObjectiveHostageSpawn=("Rita Winston")
+MissionDescription=("Barricaded Suspects","Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue","August 31 - 18:05")
+BriefingText=("|Okay, quiet down and listen.   ","|The Department of Agriculture has its local offices in the Government Plaza on Geddy Avenue. Approximately 50 minutes ago the building was entered by a group of suspects armed with assault rifles and Improvised Explosive Devices, IEDs.","|It appears their plan was to raid the office, plant the bomb and then escape, but someone messed up. The bomb detonated prematurely causing a fire on the lower floor. The fire department attended and tried to contain the fire, but they didn't realize the bad guys were holding hostages on the upper floors. When the fire crew were shot at, they retreated and called the local precinct who called the negotiation team.","|It seems these guys are local farmers who have a beef with the government's policies on genetically-modified crops. They appear far better armed than your average farmer. Spotters have reported seeing them carrying M1s and wearing body armor - somebody has sold them their gear, probably the same somebody who sold them the explosives they used.","|The negotiators haven't made much headway here. They've traded two hostages for two gas masks, but other than the occasional anti-government rant, contact with the suspects has been minimal.","|They haven't made any direct threats against the hostages but we're assuming their intent was to empty the building and then destroy it. But considering the clumsiness of their actions so far, we're not waiting for them to make another mistake and get someone killed.","|Choose your gear and get ready to deploy.")
+LocationInfoText=("Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue","The Department of Agriculture office is part of the Government Plaza. The building dates from the nineteen-fifties and has been retro-fitted several times. Offices dominate the top and middle floors, while the basement houses parking and utilities areas.")
+HostageName=("Rita Winston","Unknown")
+HostageVitals=("Sex:Female|Descent:Caucasian|Height:5'6''|Weight:160|Hair:Blonde|Eyes:Blue|DOB:1969|Age:37","Information Unavailable")
+HostageDescription=("Rita Winston is a section supervisor with the Department of Agriculture. Our concern is that if the terrorists realize she holds some departmental power, they may single her out for retribution.","")
+SuspectName=("Unknown")
+SuspectVitals=("Information Unavailable")
+SuspectDescription=(" ")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
+EntryDescription=("Main Entrance","Rear Entrance")
+TimeLinePlot=(0,10,30,20,70,100)
+TimeLineTime=("17:12","17:19","17:26","17:41","17:48","17:59")
+TimeLineShortDescription=("Suspects Enter Building."," Bomb Detonates.","Police Units Arrive.","Fire Crews Arrive.","Rescue Crew Fired Upon, SWAT Called.","Tactical entry begun")
+TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire Crews Arrive."," - Fire under control, rescue crew fired upon."," - Swat officers make tactical entry ")
+NewEquipmentName=Night Vision Goggles
+NewEquipmentDescription=NVGs work by amplifying available light and allow the wearer to see in  dark areas. Due to their lack of colour and limited field of vision, the goggles can make it more difficult to distinguish friend from foe.|The NVG are used instead of the flashlight and are turned on and off using the same key (default V).
+LoadingText=2112 Geddy Ave., The Department of Agriculture
+
+[SP-Hospital]
+PrimarySpawnPoint=Approach to main foyer
+SecondarySpawnPoint=Access Hallway
+CampaignObjectiveHostageSpawn=("Hyun-Jun Park")
+MissionDescription=("Rapid Deployment","691 87th Street","April 12 - 00:34")
+BriefingText=("Alright, men, we have an international incident on our hands.  Hyun-Jun Park is a South Korean diplomat.  Earlier today he was attacked by six gunmen while exiting a restaurant.  Mr. Park was injured in the attack, although his personal security got him to safety.  The gunmen escaped after the initial attack.  Mr. Park was routed to St. Michael's Medical Center for emergency treatment.   Since there wasn't time to secure the hospital,  Mr. Park's security accompanied him into the patient ward.  ","|Mr. Park is one of the senior officials attached to the South Korean embassy; he has been addressing the United Nations for the last two days during the current round of reunification talks.  Mr. Park is a major advocate in favor of reunification; he is one of the primary voices in the South Korean delegation.  We assume this attack is related to his political intentions, but we don't know who was behind it.  Whoever they were, they were very well equipped and well organized, ambushing Mr. Park in a location not on his official travel itinerary.","|Now St. Michael's has been rushed by a group of gunmen; presumably the same ones who attacked Mr. Park earlier.  They are well armed, and are moving straight through the hospital in an attempt to locate their target.  They are not interested in taking hostages, and they've been brutal in their attack on the hospital.  Choose your entry, get your gear together, and get in there.")
+LocationInfoText=("691 87th Street","St. Michael's Medical Center.  A hospital of older construction it has recently been renovated and updated.  St. Mike's has been a fixture in the community for years.","|There is no vantage point for a sniper team.")
+HostageName=("Hyun-Jun Park")
+HostageVitals=("Sex: Male|Descent: Asian|Hair: Black|Eyes:Brown|Height: 5' 8''|Weight: 160|DOB: 08/22/1947|Age: 61")
+HostageDescription=("High profile South Korean diplomat.  Wounded in an earlier attack.")
+SuspectName=("Unknown")
+SuspectVitals=("Vitals unknown")
+SuspectDescription=("An unknown number of heavily armed gunmen have assaulted the hospital.")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
+EntryDescription=("Approach to main foyer","Access hallway from research wing")
+TimeLinePlot=(0,10,90,92,100)
+TimeLineTime=("22:20","22:33","00:20","00:23","00:34")
+TimeLineShortDescription=("Initial Attack","Hyun-Jun Park at hospital","Hospital attacked","SWAT dispatched","Tactical entry begun")
+TimeLineLongDescription=(" - Initial attack on the diplomat and security personnel; Hyun-Jun Park injured, sent to St. Michael's Medical Center."," - Hyun-Jun Park admitted to the hospital."," - Gunmen attack the hospital; Alarm tripped."," - SWAT is sent to the scene instructed to follow rapid deployment tactics.  "," - SWAT arrives and immediately enters the building to bring order to chaos.")
+LoadingText=691 87th St., St. Michael's Medical Center
+
+[SP-ArmsDeal]
+PrimarySpawnPoint=Front yard
+SecondarySpawnPoint=Side Alley
+CampaignObjectiveEnemySpawn=("Hadeon Koshka","Clark Jennings")
+MissionDescription=("High Risk Warrant Service","1210 Canopy Road","April 25 - 23:47")
+BriefingText=("OCCB (Organized Crime Control Bureau) has a job for us.   They've been pursuing a flow of illegal arms into the city for about a year, and they've got something solid to move on.  Our suspect is Hadeon Koshka, a Ukrainian citizen who travels to the States frequently.  His visits often overlap with the appearance of new Russian arms on the streets.","|Tonight's our lucky night.  Undercover detective Clark Jennings has spent the last two months infiltrating Koshka's operation.  He contacted OCCB earlier today with the time and place for the meet.  There's a major deal going down today, in the abandoned tenement at 1302 Blakestone Avenue.  Detective Jennings notified his contact as soon as he could, but because the notice is so short, we don't have time to call in the ATF for this bust.  Strictly speaking, arms dealing is their territory, but in this case, we're in the right place at the right time to stop it, and they aren't.","|A bit of background.  The Soviet Union maintained weapons caches and military bases in many locations.  When it collapsed, many of those caches either 'disappeared' or were abandoned.  Arms trading, both legitimate and black market, is a significant source of income in the region, and the local governments are ambivalent about stopping it.  So it's up to us to stop these guns from reaching our streets.","|The meet is at 1302 Blakestone, an abandoned HUD building.  We don't have a layout, but we do have outlines of the area, thanks to Jennings.  Koskha should be in the room with the weapons cache, along with his buyer.  Since there's a lot at stake in this, we expect both groups to bring backup.  Expect armed and dangerous suspects both in the building and on the grounds.  Detective Jennings will be present undercover.  He won't be able to break cover safely until you're in control of the situation, so keep your eyes out for him.  Study your targets carefully, choose your gear, and get ready.")
+LocationInfoText=("1210 Canopy Road, former Wolcott Housing Project","|The condemned project had some demolition work begun before it was bought by Koshka and his associates.  Koshka will probably be in the back room, but expect secondary suspects to be scattered throughout the structure.  There are multiple possible entries into the building from the entry point.  They include the front door, a basement entrance on Side 4, Level 0, and through the demolished back portion of the building on Side 3, Level 1.","|We have high ground coverage in two places. Sierra One is covering the weapons deal room on Side 3, Level 1, and Sierra Two is covering Side 4, Level 2.")
+HostageName=("Clark Jennings")
+HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 6' 0''|Weight: 195|DOB: 08/20/72|Age: 36")
+HostageDescription=("Detective Jennings is currently undercover as one of Koshka's thugs.  He will have a weapon and may get spooked, so be careful.  ")
+SuspectName=("Hadeon Koshka")
+SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Blue|Height: 5' 11''|Weight: 180|DOB: 03/22/63|Age: 45")
+SuspectDescription=("Hadeon Koshka is a Ukranian citizen.  He is suspected of being the key member of a group of black market profiteers, selling old Soviet Union arms to American gangs.")
+EntryOptionTitle=("Side 1, Level 1","Side 2, Level 1")
+EntryDescription=("Front yard.","Side alley.")
+TimeLinePlot=(0,83,100)
+TimeLineTime=("13:12","22:00","23:47")
+TimeLineShortDescription=("Tip delivered","SWAT arrives","Tactical entry begun")
+TimeLineLongDescription=(" - Detective Jennings reports expected arms deal exchange to occur tonight at 23:45. OCCB authorizes arrests.  SWAT notified."," - SWAT arrives. Concealed containment perimeter and high ground put in place."," - The deal begins.  Entry team dispatched.")
+LoadingText=1210 Canopy Rd., The Wolcott Projects
+
+[SP-DrugLab]
+PrimarySpawnPoint=Front Door
+SecondarySpawnPoint=Rear Alley
+MissionDescription=("High-Risk Warrant Service","653 Tovanen St.","September 6 - 19:08")
+BriefingText=("Okay men, this one's tricky so pay attention. Three hours ago dispatch received an anonymous tip-off that a new drug lab is operating on Tovanen street. Surveillance has revealed a sophisticated set up - hydroponics, large-scale cooking and drying equipment, this one's got it all.","|The anonymous caller claimed that the Stetchkov clan is running the lab. It's likely the caller is a member of an opposing gang and if so, it's a real breach of the unwritten law that says criminals don't snitch on one another. The Stetchkovs must have really ruffled some feathers. Detectives have been trying to locate the head of the clan, one Kiril Stetchkov, but he seems to have disappeared off the map after someone tried to kill him by blowing up his car. Seems he's a popular guy.","|Our goal is to shut the lab down and arrest anyone who might help the detectives build a case against the Stetchkovs. Surveillance reports seeing numerous suspects armed with machine pistols and shotguns. Most of the lab isn't visible from outside so we can't be sure of numbers, but be aware that the lab is likely to contain a number of unarmed workers.","|The lab has some seriously hazardous substances lying around, so watch your fire. You don't want to breathe in any of this crap, and we sure don't want a fire.")
+LocationInfoText=("653 Tovanen St.","|The lab is a suburban residence built some time in the 60s. According to city records the house has been held in public trust after the original owner's death in 1991. Since then it's been home to squatters. It's a fairly standard house layout - ground level kitchen, bathrooms, lounge areas, bedrooms upstairs. The Stetchkov's set up their lab about six months ago, and may have made modifications to the inside of the house. Study the map carefully.")
+HostageName=("Unknown")
+HostageVitals=("Information Unavailable")
+HostageDescription=("")
+SuspectName=(" Unknown")
+SuspectVitals=("Information Unavailable")
+SuspectDescription=("")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
+EntryDescription=("Front Door","Rear Alley")
+TimeLinePlot=(0,75,85,100)
+TimeLineTime=("15:00","18:17","18:41","19:08")
+TimeLineShortDescription=("Search Warrant Issued.","Perimeter Established.","SWAT Arrives","SWAT Enter")
+TimeLineLongDescription=(" - Search Warrant Issued."," - Perimeter established."," - SWAT arrives on scene and makes initial assessment. "," - Swat officers make tactical entry ")
+NewEquipmentName=5.7x28 mm Submachine Gun
+NewEquipmentDescription=Designed by a leading European arms manufacturer, this ''personal defense weapon'' was originally intended for use by troops who did not use full-sized rifles, but for whom pistols were ineffective against targets with modern body armor. Since its introduction law enforcement and military personnel throughout Europe and the Middle East have adopted it. It's high reliability, large ammunition capacity, and excellent balance makes it a desirable weapon.
+LoadingText=653 Tovanen St., Stetchkov Drug Lab
+
+[SP-Subway]
+PrimarySpawnPoint="Fresnal Street Entrance "
+SecondarySpawnPoint="Maxwell Street Entrance "
+CampaignObjectiveEnemySpawn=("Anton Georgiev")
+MissionDescription=("Rapid Deployment","Fresnal St. Station","September 12 - 17:33")
+BriefingText=("The shit has really hit the fan. Two gangs, one of them definitely the Stetchkovs, are going toe-to-toe in the Fresnal Street Subway Station. We have reports of multiple suspects, heavily armed and a large number of civilian casualties.","|A transit cop named Wilkins called in the incident. He counted at least ten individuals, some armed with assault rifles and wearing body armor. Dispatch lost contact with him shortly after he made the call - he may have been injured.","|Witnesses say two groups of men opened fire on one another on the platforms during peak hour. Most of the commuters fled but some were caught in the crossfire. It's likely others are hiding.","|After the initial skirmish the suspects split up and moved into the areas surrounding the platforms - maintenance tunnels, restrooms, it's like a maze down there. Spotters are still reporting hearing gunfire, so the fight is still going on.","|This has already gone too far. We can't let this go on any longer and risk more civilian casualties, or sit by while innocent people bleed to death. Our task is to shut this thing down; neutralize the suspects, rescue the civvies and help an injured officer. Get your gear together and be ready to go in three minutes.")
+LocationInfoText=("Fresnal St. Station","|The current Fresnal Street station is a modern subway station built on top of the original station from the 1930s. The station is undergoing refurbishment so there's likely to be a lot of clutter. The upper level layout is fairly straightforward - ticket booths, turnstiles, offices and platforms entrance. The lower levels are more complex with access to the platforms, maintenance areas and employee locker room.")
+HostageName=("Unknown")
+HostageVitals=("Information Unavailable")
+HostageDescription=("")
+SuspectName=("Anton Georgiev"," Unknown")
+SuspectVitals=("Sex:Male|Descent:Caucasian|Height:5'8''|Weight:200|Hair:Black|Eyes:Brown|DOB:1968|Age:38","Information Unavailable")
+SuspectDescription=("Georgiev is a known member of the Stetchkov clan, and was spotted by Wilkins before we lost comms. Georgiev has escaped prosecution for a number of offenses including ADW, Arson and Kidnapping. Detectives would love to pin this mess on him.","")
+EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
+EntryDescription=("Fresnal Street Entrance ","Maxwell Street Entrance ")
+TimeLinePlot=(0,44,100)
+TimeLineTime=("17:04","17:16","17:33")
+TimeLineShortDescription=("911 Call"," First Units Arrive"," SWAT Enter")
+TimeLineLongDescription=(" - 911 Call received and SWAT notified"," - First units arrive and perimeter established and confirmed."," - SWAT goes tactical ")
+NewEquipmentName=Colt Accurized Rifle
+NewEquipmentDescription=The Colt Accurized Rifle occupies the mid ground between an assault rifle and a dedicated sniper rifle. The CAR combines accurate fire at range with the large ammo capacity required for urban field use, plus mounting points for a variety of scopes. Firing a 5.56mm round from a 20 round magazine, the CAR is only capable of firing in semiautomatic mode. Its length can make it a difficult weapon to wield in close quarters.
+LoadingText=Fresnal St. Station
+
+[SP-Warehouse]
+PrimarySpawnPoint=Main Entrance
+SecondarySpawnPoint=Side Dock Entrance
+CampaignObjectiveEnemySpawn=("Kiril Stetchkov","Todor Stetchkov")
+MissionDescription=("High-Risk Warrant Service","2770 Harrington Rd.","September 13 - 19:47")
+BriefingText=("Okay, listen up. I know you're tired but we have one more job to do tonight. Following the incident on the subway, Judge Rainer issued an arrest warrant for Kiril Stetchkov, the head of the Stetchkov clan.","|The Stetchkov's own a Warehouse on Harrington road and it's reportedly used as a place for clan members to lie low. Undercover surveillance has been watching the building for several days, and they believe Stetchkov and his brother may be there right now. He's likely been hiding out since the attempt on his life two weeks ago. ","|Our job is to arrest or neutralize all the Stetchkov gang members in the building and to arrest Kiril Stetchkov. With Kiril under wraps, we can restore some order to the city.","|The Stetchkovs have already shown that they're willing to take it to the next level. You can expect well-armed, well equipped suspects, and since they'll be fighting on their own turf they'll be less likely to surrender.","|Just one more thing. Remember; we're professionals. Check your targets, watch out for your partner and keep your eyes and ears open.","|Let's get it right and get it done.")
+LocationInfoText=("2770 Harrington Rd.","|The warehouse is registered as belonging to a company called Tertiary Exports Limited, and likely contains both legitimate and illicit merchandise. The upper floor has access to the office space from street level, while the main area of the warehouse is accessed through the lower floor, level with the wharf on the opposite side of the building.")
+HostageName=("Unknown")
+HostageVitals=("Information Unavailable")
+HostageDescription=("")
+SuspectName=("Kiril Stetchkov ","Todor Stetchkov ")
+SuspectVitals=("Sex:Male |Descent:Caucasian |Height:5'11'' |Weight:190 |Hair:Black |Eyes:Brown |DOB:05/01/1971 |Age:35","Sex:Male|Descent:Caucasian|Height:6'0''|Weight:210|Hair:Black|Eyes:Brown|DOB:08/04/1972|Age:34")
+SuspectDescription=("The head of the Stetchkov crime syndicate. The older of two brothers, Kiril has ruled the Stetchkov clan for many years. He is considered intelligent and cautious. He disappeared from public view several weeks ago after an attempt on his life. Intelligence suggests the attempt harmed him more psychologically than physically.","Todor Stetchkov is the younger of two brothers who run the Stetchkov clan. Todor has been in charge since his older brother disappeared following an assassination attempt. Todor is reportedly a strong, powerful man with a short temper, fiercely protective of his brother and the family.")
+EntryOptionTitle=("Side 4, Level 1","Side 1, Level 1")
+EntryDescription=("Main Entrance","Side Dock Entrance")
+TimeLinePlot=(0,80,90,100)
+TimeLineTime=("19:04","19:27","19:35","19:47")
+TimeLineShortDescription=(" Arrest Warrant Issued.", "First units arrive.", "Perimeter Established.", "SWAT Entry.")
+TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
+NewEquipmentName=Mark 19 Semi-Automatic Pistol
+NewEquipmentDescription=This semiautomatic pistol holds eight .50 Action Express rounds, providing the greatest stopping power of any handgun outside a revolver.
+LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
+
+[SP-DNA]
+PrimarySpawnPoint=Front Door
+SecondarySpawnPoint=Service Entrance
+CampaignObjectiveEnemySpawn=("Jean Trouffant")
+CampaignObjectiveHostageSpawn=("Dr. Theodore Sterling")
+MissionDescription=("Barricaded Suspects / Hostage Rescue","72 Mt. Threshold Avenue","May 21 - 00:45")
+BriefingText=("If you haven't heard of the Army of Faith, here's your introduction.  A bit after 20 hundred hours a group of them broke into the Hologen research facility at Mount Threshold, closely affiliated with Mount Threshold University.   A couple of patrol cars responded quickly to the initial alarm, and the activists were trapped inside.   Unfortunately, trapped along with them are the building's late working scientists and graduate students.   The suspects have already released a statement declaring their willingness to become martyrs, and we have evidence of their willingness to make martyrs out of others.   It's a very touchy situation, with the potential to get worse.","|About the ''Army of Faith.''  They've been around for about two years, and have claimed credit for bombing research facilities doing work with stem cells and cloning technology.  Don't make the mistake of thinking of them as kooks.  Whatever they believe, they are also well armed, well trained, and dedicated to their cause. They've sent - and acted on - death threats to leading researchers in both fields, and this is not the first institution they've invaded.     ","|We think they intended the same sort of high damage, high speed raid at Hologen.  However, university police were nearby, and acted quickly to contain them.  Things are still confused enough that we don't know how many civilians are still in there, and we only have rough estimates on the number of suspects.  ","|Hologen is active in DNA cloning research, and we believe that is why they were targeted.  Our suspects are led by Jean Trouffant.   He is one of the major operatives in the Army of Faith.  Trouffant was wanted for bombing abortion clinics, before going underground and reappearing with the Army of Faith.   We don't have an accurate count of how many gunmen he has with him, but it's at least seven or eight, from eyewitness reports.","|One of the first things the Army of Faith did was take down the security system, so we don't know how many civilians are inside.  The suspects have named so far only Dr. Theodore Sturgeon as a hostage.   We believe he is in imminent danger from the suspects, as one of Hologen's key researchers.  As always, your first priority is to rescue him and get any other civilians out of there safely.  However, you should also keep your eyes open for Sturgeon's briefcase, which has contacts for other researchers around the world.  In the Army of Faith's hands, those documents become an open season list.   Study the location and your opponents, choose your gear carefully, and get in there.  There's a lot riding on this one. ")
+LocationInfoText=("72 Mount Threshold Ave.  The building has a main foyer and many large and intricately connected laboratory spaces.","There are no good vantage points for sniper teams outside of the foyer area.")
+HostageName=("Theodore Sturgeon")
+HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Grey|Eyes: Brown|Height: 5' 11''|Weight: 190|DOB: 9/23/48|Age: 60")
+HostageDescription=("Professor of Biochemistry at Mount Threshold University.  No relation to the popular science fiction author.")
+SuspectName=("Jean Trouffant","Unknown Accomplices")
+SuspectVitals=("Sex: Male|Descent: Caucasian|Hair: Light Brown|Eyes: Blue|Height: 5' 11''|Weight: 175|DOB: 04/19/73|Age: 35","Vitals unknown")
+SuspectDescription=("Of French descent, Trouffant is dedicated to the Army of Faith cause.  He has been arrested multiple times for misdemeanors such as disorderly conduct, and disturbing the peace, mainly in conjunction with vocal protests.","Masked Gunmen")
+EntryOptionTitle=("Side 1, Level 1","Side 2, Level 2")
+EntryDescription=("Entry through the front doors and foyer.","Service Entrance.")
+TimeLinePlot=(0,3,6,60,76,92,100)
+TimeLineTime=("20:12","20:19","20:28","22:43","23:27","00:12","00:45")
+TimeLineShortDescription=("Alarm wires cut","Cruiser arrives","SWAT arrives","Negotiations begun ","CNT IDs Trouffant","Suspects make demands","Tactical entry approved")
+TimeLineLongDescription=(" - The security system connection to University Police is lost.  Patrol car is dispatched to investigate."," - University Police arrive and investigate, finding wires cut.  Shots are fired at Police from inside the building.  Dispatch is notified.  SWAT is requested."," - Containment perimeter and high ground are established."," - CNT contacts suspects."," - CNT contacts suspects and is able to identify Jean Trouffant.  Army of Faith manifesto is read to CNT over the phone, confirming connection to the group."," - Suspects demand additional supplies including food and ammunition.  CNT agrees to food, but not to ammunition.  Suspects unsatisfied and verbally threaten hostages."," - Repeated attempts to contact Trouffant fail.  CNT believes that the hostages may be in danger based on the last contact.  CNT suggests that it is time for a tactical entry.")
+LoadingText=72 Mt. Threshold Ave., Mt. Threshold Research Center
 
 [Custom_Timed]
 Description=Debrief before the timer expires
@@ -5746,4 +5789,3 @@ Description=Male, Bulgarian Drug Worker
 
 [Custom_Band_Member]
 Description=Male, Band Member
-

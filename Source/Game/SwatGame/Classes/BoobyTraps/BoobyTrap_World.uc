@@ -11,7 +11,7 @@ function OnBoobyTrapInitialize()
     {
         DoorAttachment = Spawn(DoorAttachmentClass, Self);
         BoobyTrapDoor.AttachToBone(DoorAttachment, AttachSocket);
-        
+
         log(Self$" has attached to the door! ... staticmesh: "$DoorAttachment.StaticMesh);
         log("BoobyTrap attached to door: "$BoobyTrapDoor);
     }
@@ -46,4 +46,10 @@ defaultproperties
     bCollideActors=true
     bCollideWorld=true
     bBlockActors=true
+
+    // Force bombs to always update their collision box from their bone boxes;
+    // otherwise bombs sometimes don't get added to the octree properly when
+    // replicated to clients, causing traces (like for disabling bombs) to
+    // miss the bomb when they shouldn't.
+    bUseCollisionBoneBoundingBox=true
 }

@@ -129,7 +129,7 @@ function PreBeginPlay()
 
     Repo = SwatRepo(Level.GetRepo());
 
-    // ckline: Only debug objectives, leadership, and spawning if 
+    // ckline: Only debug objectives, leadership, and spawning if
     // EnableDevTools=true in [Engine.GameEngine] section
     // of Swat4.ini
     DebugObjectives = DebugObjectives && Level.GetEngine().EnableDevTools;
@@ -141,7 +141,7 @@ function PreBeginPlay()
     bAlreadyFailed=false;
     bAlreadyEnded=false;
 	bPostGameStarted=false;
-    
+
     // GameEvents needs to exist before the call to Super.PreBeginPlay,
     // which in turn calls InitGameReplicationInfo, which creates the
     // team objects, which depend on GameEvents upon their creation.
@@ -162,7 +162,7 @@ function PreBeginPlay()
 
     Admin = Spawn( class'SwatAdmin' );
     Admin.SetAdminPassword( SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword );
-    
+
     RegisterNotifyGameStarted();
 
     if (bDebugFrames)
@@ -182,10 +182,10 @@ function PreBeginPlay()
 
     if (PlayerStartArray.Length == 0)
     {
-        // If we don't fatally assert here, the game will go into an infinite loop 
+        // If we don't fatally assert here, the game will go into an infinite loop
         // spewing to the log. Which sucks.
         assertWithDescription(false , "Fatal Error: Failed to find any SwatPlayerStart points to spawn at -- make sure your start points are SwatPlayerStarts and not PlayerStarts!" );
-        assert(false); 
+        assert(false);
     }
 
     NextPlayerStartPoint = 0;
@@ -202,9 +202,9 @@ function PreBeginPlay()
 function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     //create and initialize Mission Objectives
-    if( Level.NetMode == NM_Standalone || 
+    if( Level.NetMode == NM_Standalone ||
         Level.IsCOOPServer )
     {
         if (GetCustomScenario() != None)
@@ -228,16 +228,16 @@ function PostBeginPlay()
 
         //initialize Leadership system
         Repo.Procedures.Init(self);
-        
-        
+
+
         ScoringUpdateTimer = Spawn(class'Timer');
         assert(ScoringUpdateTimer != None);
         ScoringUpdateTimer.timerDelegate = UpdateScoring;
         ScoringUpdateTimer.StartTimer( ScoringUpdateInterval, true );
     }
-    
+
     Level.TickSpecialEnabled = false;
-    
+
     if( Level.NetMode != NM_Standalone )
 	{
 		if ( Repo.NumberOfRepoPlayerItems() > GetNumPlayers() )
@@ -254,10 +254,10 @@ function ReconnectionTimerExpired()
 {
     //remove any bogus player items at this time
     Repo.FlushBogusPlayerItems();
-        
+
     //update the waitingForPlayers flag after flushing the items
     TestWaitingForPlayersToReconnect();
-    
+
     if( ReconnectionTimer != None )
         ReconnectionTimer.Destroy();
 }
@@ -319,7 +319,7 @@ final function ClearTimedMissionObjective()
     SGRI = SwatGameReplicationInfo(GameReplicationInfo);
     SGRI.SpecialTime = 0;
     SGRI.TimedObjectiveIndex = -1;
-    
+
     MissionObjectiveTimeExpired = None;
 
     if( ObjectiveTimer != None )
@@ -347,7 +347,7 @@ final function SetTimedMissionObjective(Objective Objective)
 	}
 
     MissionObjectiveTimeExpired = Objective.OnTimeExpired;
-    
+
 	if (ObjectiveTimer != None)
 		ObjectiveTimer.StopTimer();
 
@@ -371,6 +371,16 @@ final function UpdateTimedMissionObjective()
         MissionObjectiveTimeExpired();
 }
 
+function SendGlobalMessage(string Message, name Type)
+{
+  local SwatGamePlayerController PC;
+
+  ForEach AllActors(class'SwatGamePlayerController', PC)
+  {
+    PC.IssueMessage(Message, Type);
+  }
+}
+
 final function OnMissionObjectiveCompleted(Objective Objective)
 {
     if (DebugObjectives)
@@ -385,11 +395,14 @@ final function OnMissionObjectiveCompleted(Objective Objective)
             MissionCompleted();
         OnCriticalMoment();
     }
+    else {
+      SendGlobalMessage("Objective Complete!", 'ObjectiveCompleted');
+    }
 }
 
 final function OnMissionObjectiveFailed(Objective Objective)
 {
-    if (DebugObjectives) 
+    if (DebugObjectives)
         log("[OBJECTIVES] "$Objective.name$" ("$Objective.Description$") Failed");
 
     //TODO/COOP: Broadcast message to all clients, have the clients internally dispatchMessage
@@ -407,7 +420,7 @@ final function MissionCompleted()
 {
     log("[dkaplan] >>> MissionCompleted" );
     bAlreadyCompleted=true;
-    Broadcast( None, "", 'MissionCompleted' );    
+    Broadcast( None, "", 'MissionCompleted' );
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);
@@ -419,7 +432,7 @@ final function MissionFailed()
 {
     log("[dkaplan] >>> MissionFailed" );
     bAlreadyFailed=true;
-    Broadcast( None, "", 'MissionFailed' );    
+    Broadcast( None, "", 'MissionFailed' );
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);
@@ -434,7 +447,7 @@ final function MissionEnded()
 	local int i;
 
 	log("[dkaplan] >>> MissionEnded" );
-    
+
 	// save stats of each player's final score
     ForEach AllActors(class'PlayerController', C)
     {
@@ -446,10 +459,10 @@ final function MissionEnded()
 	//dont trigger game ended twice
     if( bAlreadyEnded )
         return;
-        
+
     //for the case where the mission ends before a mission completed/mission ended is triggered
-    if( !bAlreadyCompleted && !bAlreadyFailed && 
-        Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Client && 
+    if( !bAlreadyCompleted && !bAlreadyFailed &&
+        Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Client &&
         Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host )
     {
         if( Repo.GuiConfig.CurrentMission.IsMissionCompleted() )
@@ -457,7 +470,7 @@ final function MissionEnded()
         else
         MissionFailed();
     }
-    
+
     bAlreadyEnded=true;
     Broadcast( None, "", 'MissionEnded' );
     GameEvents.MissionEnded.Triggered();
@@ -491,7 +504,7 @@ final function OnCriticalMoment()
     log( "[dkaplan] in SwatGameinfo OnCriticalMoment()");
     Repo.OnCriticalMoment();
 }
-    
+
 //interface IInterested_GameEvent_EvidenceSecured implementation
 function OnEvidenceSecured(IEvidence Secured)
 {
@@ -590,7 +603,7 @@ function InitializeGameMode()
     local EMPMode GUIGameMode;
 
     bAlreadyEnded=false;
-    
+
     log( "Initializing GameMode." );
 
     // The game mode should be destroyed if it already exists - this will clean up the game state
@@ -601,7 +614,7 @@ function InitializeGameMode()
         GameMode.Destroy();
         GameMode = None;
     }
-    
+
     Assert( GameMode == None );
 
     if ( Level.NetMode == NM_Standalone )
@@ -684,7 +697,7 @@ function GetServerInfo( out ServerResponseLine ServerState )
 	ServerState.MaxPlayers		= MaxPlayersForServerBrowser();
 	ServerState.IP				= ""; // filled in at the other end.
 	ServerState.Port			= GetServerPort();
-	
+
 	ServerState.ModName			= Level.ModName;
 	ServerState.GameVersion		= Level.BuildVersion;
 
@@ -729,7 +742,7 @@ function GetServerDetails( out ServerResponseLine ServerState )
 	for ( G=GameRulesModifiers; G!=None; G=G.NextGameRules )
 		G.GetServerDetails(ServerState);
 }
-			
+
 function GetServerPlayers( out ServerResponseLine ServerState )
 {
     local Mutator M;
@@ -751,7 +764,7 @@ function GetServerPlayers( out ServerResponseLine ServerState )
 			ServerState.PlayerInfo.Length = i+1;
 			ServerState.PlayerInfo[i].PlayerNum  = PRI.SwatPlayerID;
 			ServerState.PlayerInfo[i].PlayerName = PRI.PlayerName;
-			ServerState.PlayerInfo[i].Score		 = PRI.netScoreInfo.GetScore();			
+			ServerState.PlayerInfo[i].Score		 = PRI.netScoreInfo.GetScore();
 			ServerState.PlayerInfo[i].Ping		 = PRI.Ping;
 			i++;
 		}
@@ -816,7 +829,7 @@ function OnGameStarted()
         RepoObj.GuiConfig.SwatGameRole == GAMEROLE_SP_Custom ||
         RepoObj.GuiConfig.SwatGameRole == GAMEROLE_SP_Other )
         RepoObj.OnMissionStarted();
-        
+
 //    TestHook(); //perform any tests
 }
 
@@ -906,10 +919,10 @@ function NetRoundTimerExpired()
 // SystemName should be one of "VISUAL" or "SOUND"
 exec function DumpEffects(Name SystemName)
 {
-    local EffectsSystem FX;    
+    local EffectsSystem FX;
     local EffectsSubsystem SubSys;
     local Name ClassName;
-        
+
     FX = EffectsSystem(Level.EffectsSystem);
     assert(FX != None);
 
@@ -1055,7 +1068,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
         if ( theNetPlayer.IsTheVIP() )
         {
             mplog( "...this player is the VIP." );
-            
+
             // The VIP must always be on the SWAT team.
             Assert( NetPlayer(PlayerPawn).GetTeamNumber() == 0 );
 
@@ -1091,7 +1104,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             RepoPlayerItem = SwatGamePlayerController(PlayerPawn.Controller).SwatRepoPlayerItem;
 
             //RepoPlayerItem.PrintLoadOutSpecToMPLog();
-        
+
             // Copy the items from the loadout to the netplayer.
             for( i = 0; i < Pocket.EnumCount; ++i )
             {
@@ -1102,13 +1115,13 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 				theNetPlayer.SetCustomSkinClassName( RepoPlayerItem.CustomSkinClassName );
 			else
 				theNetPlayer.SetCustomSkinClassName( "SwatGame.DefaultCustomSkin" );
-        
+
             LoadOutSpec = theNetPlayer.GetLoadoutSpec();
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
     }
-    
+
     LoadOut.Initialize( LoadOutSpec, IsSuspect );
 
     PlayerPawn.ReceiveLoadOut(LoadOut);
@@ -1188,10 +1201,10 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
     // GameMode::FindNetPlayerStart, coop servers should just look for primary
     // starts.
     if ( Level.IsCOOPServer )
-	    DesiredEntryType = ET_Primary;	
+	    DesiredEntryType = ET_Primary;
     else
-	    DesiredEntryType = Repo.GetDesiredEntryPoint();	
-	
+	    DesiredEntryType = Repo.GetDesiredEntryPoint();
+
 	// Remember the first point we checked, to avoid infinite loops
 	IndexOfFirstCheckedPoint = NextPlayerStartPoint;
 
@@ -1199,7 +1212,7 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 	// other players and (if this is a single-player game) has the correct
 	// entry type.
     PointToUse = PlayerStartArray[ IndexOfFirstCheckedPoint ];
-    while ( PointToUse.Touching.Length > 0 || 
+    while ( PointToUse.Touching.Length > 0 ||
 			!PointToUse.IsA('SwatPlayerStart') ||
 			( ( Level.NetMode == NM_Standalone || Level.IsCOOPServer )
 			    && SwatPlayerStart(PointToUse).EntryType != DesiredEntryType ) )
@@ -1218,7 +1231,7 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
         {
             NextPlayerStartPoint = 0;
         }
-		
+
 		// See if we've exhausted all the possible start points
 		if (NextPlayerStartPoint == IndexOfFirstCheckedPoint)
 		{
@@ -1230,7 +1243,7 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 			PointToUse = PlayerStartArray[ NextPlayerStartPoint ];
 		}
     }
-	
+
 	// Increment the start point so the next player to spawn won't choose the
 	// same point.
     NextPlayerStartPoint = NextPlayerStartPoint + 1;
@@ -1238,7 +1251,7 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
     {
         NextPlayerStartPoint = 0;
     }
-	
+
 	AssertWithDescription(PointToUse != None, "Failed to find any usable SwatPlayerStart points!");
 
 	log(" FindPlayerStart(): returning  "$PointToUse);
@@ -1247,7 +1260,7 @@ function NavigationPoint FindPlayerStart(Controller Player, optional byte InTeam
 }
 
 // Override default spawning so that you don't spawn on the point another
-// player has spawned on. 
+// player has spawned on.
 //
 // FIXME: move this to a subclass based on game type, a la UT2K3's
 // game-specific GameInfo subclasses
@@ -1265,16 +1278,16 @@ function float RatePlayerStart(NavigationPoint N, byte Team, Controller Player)
 	{
 		Log("SwatGameInfo.RatePlayerStart() rating NavigationPoint "$N);
 	}
-	
+
     if ( (P == None) || !P.bEnabled || P.PhysicsVolume.bWaterVolume || ((Level.NetMode == NM_Standalone || Level.IsCOOPServer) && ! P.bSinglePlayerStart) )
 	{
 		//Log("   Final rating is -1000 because start spot is none, not enabled, or water");
         return -1000;
 	}
-	
+
 	Log("   Base Rating is 1000");
 	Score = 1000;
-	
+
 	if (P.TimeOfLastSpawn >= 0) // TimeOfLastSpawn is -1 if nothing has spawned there yet
 	{
 		Score -= Max(Level.TimeSeconds - P.TimeOfLastSpawn, 0);
@@ -1349,7 +1362,7 @@ event PlayerController Login(string Portal, string Options, out string Error)
     local NavigationPoint    StartSpot;
     local PlayerController   NewPlayer;
     local Pawn               TestPawn;
-    local string             InName, InAdminName, InPassword, InChecksum, InClass, InCharacter; 
+    local string             InName, InAdminName, InPassword, InChecksum, InClass, InCharacter;
     local byte               InTeam;
     local class<Security>    MySecurityClass;
     local int                InSwatPlayerID, NewSwatPlayerID;
@@ -1449,7 +1462,7 @@ event PlayerController Login(string Portal, string Options, out string Error)
     if( Level.GetLocalPlayerController() == NewPlayer )
         theSwatRepoPlayerItem.LastAdminPassword = SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword;
 
-    //attempt to log the new player in as an admin (based on their last entered password)        
+    //attempt to log the new player in as an admin (based on their last entered password)
     Admin.AdminLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
 
     // Init player's replication info
@@ -1499,14 +1512,14 @@ event PlayerController Login(string Portal, string Options, out string Error)
 		if ( Level.NetMode == NM_ListenServer && Level.GetLocalPlayerController() == NewPlayer )
 			NewPlayer.InitializeVoiceChat();
 	}
-	
+
     // If a multiplayer game, set playercontroller to limbo state
     if ( Level.NetMode != NM_Standalone )
     {
         if ( bDelayedStart && !SwatGamePlayerController(NewPlayer).IsAReconnectingClient() )
         {
             NewPlayer.GotoState('NetPlayerLimbo');
-            return NewPlayer;	
+            return NewPlayer;
         }
     }
 
@@ -1528,7 +1541,7 @@ event PlayerController Login(string Portal, string Options, out string Error)
     TestWaitingForPlayersToReconnect();
 
     return newPlayer;
-}	
+}
 
 ///////////////////////////////////////
 //
@@ -1544,7 +1557,7 @@ event PostLogin( PlayerController NewPlayer )
     // If single player, start player in level immediately
     // MCJ: Also start player immediately if we've just reconnected to the
     // server because the round is starting.
-    
+
 	if ( !bDelayedStart ) //|| SwatGamePlayerController(NewPlayer).CreatePawnOponLogin() )
     {
         // start match, or let player enter, immediately
@@ -1585,42 +1598,42 @@ function PlayerLoggedIn(PlayerController NewPlayer)
 {
     local SwatGamePlayerController PC;
 
-    //dkaplan: when finished logging in, 
+    //dkaplan: when finished logging in,
     //
     // if this is not a remote client (is the Local PlayerController) or is the first time
     //   goto pregame state
-    // else 
-    //   the client's gamestate should be set to the same as the server's 
+    // else
+    //   the client's gamestate should be set to the same as the server's
     //
     //NOTE: this looks like it can be optimized better, but doing so may break
-    //  the natural progression of gamestate (Pregame->Midgame->Postgame) 
+    //  the natural progression of gamestate (Pregame->Midgame->Postgame)
 
     log( "[dkaplan] >>>  PlayerLoggedIn(), NewPlayer = "$NewPlayer);
     log( "[dkaplan]    ...  Level.GetLocalPlayerController() = "$Level.GetLocalPlayerController());
     log( "[dkaplan]    ...  Repo.GuiConfig.SwatGameState = "$Repo.GuiConfig.SwatGameState);
-    
+
     PC = SwatGamePlayerController(NewPlayer);
     if (PC != None )
     {
         if ( Level.NetMode != NM_Standalone )
             log( "[dkaplan]    ...  SwatGamePlayerController(NewPlayer).IsAReconnectingClient() = "$PC.IsAReconnectingClient() );
-            
+
         if( Level.IsCOOPServer )
             PrecacheOnClient( PC );
-            
+
         if( NewPlayer == Level.GetLocalPlayerController()
             || Repo.GuiConfig.SwatGameState == GAMESTATE_PreGame
             || (Level.NetMode != NM_Standalone && !PC.IsAReconnectingClient()) )
         {
             PC.ClientOnLoggedIn(ServerSettings(Level.CurrentServerSettings).GameType);
-            
+
             //notify of newly joined player
             if ( Level.NetMode != NM_Standalone )
             {
             if( !PC.IsAReconnectingClient())
                 Broadcast( NewPlayer, NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
             }
-            
+
             //notify of pre-game waiting state
             //if( Repo.GuiConfig.SwatGameState == GAMESTATE_PreGame )
                 //NewPlayer.ClientMessage( "Waiting for round to start!", 'SwatGameEvent' );
@@ -1660,10 +1673,10 @@ function Logout( Controller Exiting )
     {
         //broadcast this player's disconnection to all players
         Broadcast( SGPC, SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
-    
+
         //log the player out: remove their RepoItem
         Repo.Logout( SGPC );
-        
+
         mplog( "......triggering game event." );
         GameEvents.PlayerDied.Triggered( SGPC, SGPC );
 
@@ -1806,7 +1819,7 @@ function bool ShouldKillOnChangeTeam()
 //
 // Restart a player.
 //
-function RestartPlayer( Controller aPlayer )	
+function RestartPlayer( Controller aPlayer )
 {
 	local NavigationPoint startSpot;
     local SwatMPStartPoint MPStartSpot;
@@ -1833,8 +1846,8 @@ function RestartPlayer( Controller aPlayer )
         {
             log(" Player pawn start not found!!!");
             return;
-        }	
-	
+        }
+
         log("Setting TimeOfLastSpawn to "$Level.TimeSeconds$" for "$StartSpot);
         StartSpot.TimeOfLastSpawn = Level.TimeSeconds; // ckline added
 
@@ -1861,7 +1874,7 @@ function RestartPlayer( Controller aPlayer )
         {
             log("...Net player pawn start not found!!! returning from RestartPlayer()...");
             return;
-        }	
+        }
 
         NetPlayer(aPlayer.Pawn).SwatPlayerID = SwatGamePlayerController(aPlayer).SwatPlayerID;
 
@@ -1870,7 +1883,7 @@ function RestartPlayer( Controller aPlayer )
             mplog( "...setting that the player is the VIP" );
             NetPlayer(aPlayer.Pawn).SetIsVIP();
         }
-	
+
         //log("Setting TimeOfLastSpawn to "$Level.TimeSeconds$" for "$StartSpot);
         //StartSpot.TimeOfLastSpawn = Level.TimeSeconds; // ckline added
 
@@ -1892,7 +1905,7 @@ function RestartPlayer( Controller aPlayer )
         aPlayer.ClientSetRotation(aPlayer.Pawn.Rotation);
         AddDefaultInventory(aPlayer.Pawn);
         TriggerEvent( MPStartSpot.Event, MPStartSpot, aPlayer.Pawn);
-        
+
         SwatPlayerReplicationInfo(aPlayer.PlayerReplicationInfo).COOPPlayerStatus = STATUS_Healthy;
     }
     mplog( "...Leaving RestartPlayer()." );
@@ -1930,7 +1943,7 @@ function SwatMPStartPoint SpawnNetPlayerPawn(Controller aPlayer )
     }
 	if (aPlayer.PreviousPawnClass!=None && aPlayer.PawnClass != aPlayer.PreviousPawnClass)
     {
-		BaseMutator.PlayerChangedClass(aPlayer);			
+		BaseMutator.PlayerChangedClass(aPlayer);
     }
 
     SuccessfullySpawned = false;
@@ -1984,7 +1997,7 @@ function SwatMPStartPoint SpawnNetPlayerPawn(Controller aPlayer )
 
 function NetTeam GetTeamFromID( int TeamID )
 {
-    return NetTeam(GameReplicationInfo.Teams[TeamID]);    
+    return NetTeam(GameReplicationInfo.Teams[TeamID]);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1999,10 +2012,10 @@ event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional P
 function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type )
 {
 //log( self$"::BroadcastTeam( "$Sender$", "$Msg$" ), sender.statename = "$Sender.GetStateName() );
-    if( Sender.IsInState( 'ObserveTeam' ) || 
+    if( Sender.IsInState( 'ObserveTeam' ) ||
         Sender.IsInState( 'Dead' ) )
         BroadcastObservers( Sender, Msg, Type );
-        
+
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type);
 }
 
@@ -2021,9 +2034,9 @@ function BroadcastObservers( Controller Sender, coerce string Msg, optional name
 		For ( C=Level.ControllerList; C!=None; C=C.NextController )
 		{
 			P = PlayerController(C);
-			if ( ( P != None ) 
+			if ( ( P != None )
 			    && ( P.PlayerReplicationInfo.Team == Sender.PlayerReplicationInfo.Team )
-				&& ( P.IsInState( 'ObserveTeam' ) 
+				&& ( P.IsInState( 'ObserveTeam' )
 				  || P.IsInState( 'Dead' ) ) )
 				P.TeamMessage( Sender.PlayerReplicationInfo, Msg, Type );
 		}
@@ -2043,7 +2056,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
     //dont send death messages for generic deaths
     if( damageType == class'GenericDamageType' )
         return;
-        
+
     KillerName = Killer.GetHumanReadableName();
     VictimName = Other.GetHumanReadableName();
     WeaponName = string(damageType.Outer.name) $ "." $ string(damageType.name);
@@ -2057,12 +2070,12 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
     OtherPlayer = SwatPlayer(Other.Pawn);
     if ( OtherPlayer != None && !OtherPlayer.IsTheVIP() && OtherPlayer.IsArrested() )
         return;
-    
+
     // Note: VictimName might be None if Controller's Pawn is destroyed before this
     // this method is called. Hopefully that won't happen, but try to do something
     // semi-intelligent in this situation.
 
-	if( Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None && 
+	if( Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None &&
 	    Killer.IsA('PlayerController') && NetPlayer(Killer.Pawn) != None )
 	{
 	    if ( (Killer == Other) || (Killer == None) )
@@ -2120,7 +2133,7 @@ function BroadcastArrestedMessage(Controller Killer, Controller Other)
     KillerName = Killer.Pawn.GetHumanReadableName();
     VictimName = Other.Pawn.GetHumanReadableName();
     VictimTeam = NetPlayer(Other.Pawn).GetTeamNumber();
-    
+
 	AssertWithDescription( Killer != Other, KillerName $ " somehow arrested himself.  That really shouldn't ever happen!" );
 	if( Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None &&
 	    Killer.IsA('PlayerController') && NetPlayer(Killer.Pawn) != None )
@@ -2143,7 +2156,7 @@ function BroadcastArrestedMessage(Controller Killer, Controller Other)
 function Killed( Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> damageType )
 {
     Super.Killed( Killer, Killed, KilledPawn, damageType );
-    
+
     SwatPlayerReplicationInfo(Killed.PlayerReplicationInfo).COOPPlayerStatus = STATUS_Incapacitated;
 }
 
@@ -2167,7 +2180,7 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 
 	// If the TeamID corresponds to an AI team join the next best team.
 	if (NetTeam(NewTeam) != None && NetTeam(NewTeam).AIOnly)
-		NewTeam = GameReplicationInfo.Teams[GetAutoJoinTeamID()];		
+		NewTeam = GameReplicationInfo.Teams[GetAutoJoinTeamID()];
 
     log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
 
@@ -2334,7 +2347,7 @@ function TogglePlayerReady( SwatGamePlayerController Player )
 #endif
 
     // Do the following if the player is a late joiner.
-    if( Player != Level.GetLocalPlayerController() && (! Player.HasEnteredFirstRoundOfNetworkGame()) 
+    if( Player != Level.GetLocalPlayerController() && (! Player.HasEnteredFirstRoundOfNetworkGame())
         && !bChangingLevels )
     {
         if ( Repo.GuiConfig.SwatGameState == GAMESTATE_MidGame )
@@ -2355,7 +2368,7 @@ function logPlayerReadyValues()
 {
     local SwatGameReplicationInfo SGRI;
     local int i;
-    
+
     SGRI = SwatGameReplicationInfo(GameReplicationInfo);
     if( SGRI == None )
         return;
@@ -2385,10 +2398,10 @@ function PlayerLateStart( SwatGamePlayerController Player )
     Player.ClientRoundStarted();
 
     // Don't restart here...
-    //RestartPlayer( Player ); 
-    
+    //RestartPlayer( Player );
+
 	// player has entered the round (and thus had its pawn created)
-	Player.SwatRepoPlayerItem.SetHasEnteredFirstRound(); 
+	Player.SwatRepoPlayerItem.SetHasEnteredFirstRound();
 
     // Send them into observercam.
     Player.ForceObserverCam();
@@ -2460,7 +2473,7 @@ function int ReduceDamage( int Damage, pawn injured, pawn instigatedBy, vector H
     local float Modifier;
 
     Modifier = 1;
-    
+
     if( Level.IsCOOPServer && ClassIsChildOf(Injured.Class, class'NetPlayer') )
     {
         // In COOP, reduce damage based on MP damage modifier
@@ -2522,7 +2535,7 @@ function UpdateStatTrackingEnabled()
 
 	if (bShouldUse == Level.GetGameSpyManager().bTrackingStats)
 		return;
-	
+
 	Level.GetGameSpyManager().bTrackingStats = bShouldUse;
 
 	if (Level.GetGameSpyManager().bTrackingStats)
@@ -2556,7 +2569,7 @@ function PreQuickRoundRestart()
             SwatController.ClientPreQuickRoundRestart();
         }
     }
-    
+
 	UpdateStatTrackingEnabled();
 	SetupNameDisplay();
 
@@ -2564,7 +2577,7 @@ function PreQuickRoundRestart()
     //
     // The clients also do this in SwatGamePlayerController.ClientPreQuickRoundRestart()
     Log("Server in PreQuickRoundRestart: Collecting garbage.");
-    ConsoleCommand( "obj garbage" );    
+    ConsoleCommand( "obj garbage" );
 }
 
 function OnServerSettingsUpdated( Controller Admin )
@@ -2591,61 +2604,61 @@ function SetLevelHasFemaleCharacters()
 function AddMesh( Mesh inMesh )
 {
     local int i;
-    
+
     for( i = 0; i < PrecacheMeshes.Length; i++ )
     {
         if( inMesh == PrecacheMeshes[i] )
             return;
     }
-    
+
     PrecacheMeshes[PrecacheMeshes.Length] = inMesh;
 }
 
 function AddMaterial( Material inMaterial )
 {
     local int i;
-    
+
     for( i = 0; i < PrecacheMaterials.Length; i++ )
     {
         if( inMaterial == PrecacheMaterials[i] )
             return;
     }
-    
+
     PrecacheMaterials[PrecacheMaterials.Length] = inMaterial;
 }
 
 function AddStaticMesh( StaticMesh inStaticMesh )
 {
     local int i;
-    
+
     for( i = 0; i < PrecacheStaticMeshes.Length; i++ )
     {
         if( inStaticMesh == PrecacheStaticMeshes[i] )
             return;
     }
-    
+
     PrecacheStaticMeshes[PrecacheStaticMeshes.Length] = inStaticMesh;
 }
 
 function PrecacheOnClient( SwatGamePlayerController SGPC )
 {
     local int i;
-    
+
     for( i = 0; i < PrecacheMaterials.Length; i++ )
     {
         SGPC.ClientAddPrecacheableMaterial( PrecacheMaterials[i].outer.name $ "." $ PrecacheMaterials[i].name );
     }
-    
+
     for( i = 0; i < PrecacheMeshes.Length; i++ )
     {
         SGPC.ClientAddPrecacheableMesh( PrecacheMeshes[i].outer.name $ "." $ PrecacheMeshes[i].name );
     }
-    
+
     for( i = 0; i < PrecacheStaticMeshes.Length; i++ )
     {
         SGPC.ClientAddPrecacheableStaticMesh( PrecacheStaticMeshes[i].outer.name $ "." $ PrecacheStaticMeshes[i].name );
     }
-    
+
     SGPC.ClientPrecacheAll( LevelHasFemaleCharacters );
 }
 
@@ -2711,7 +2724,7 @@ defaultproperties
 	VoiceReplicationInfoClass=class'SwatGame.SwatVoiceReplicationInfo'
 	bAllowPrivateChat=True
     ScoringUpdateInterval=1.0
-    
+
     ReconnectionTime=60.0
 
 	MPStatsClass = "SwatGame.StatsGamespy"

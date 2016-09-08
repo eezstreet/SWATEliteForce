@@ -4,7 +4,8 @@ class SwatOfficer extends SwatAI
                 IControllableThroughViewport,
                 Engine.ICanBePepperSprayed,
                 Engine.IReactToCSGas,
-                ICanUseC2Charge
+                ICanUseC2Charge,
+                IInterested_GameEvent_ReportableReportedToTOC
 	native;
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -109,8 +110,9 @@ event PostBeginPlay()
     Super.PostBeginPlay();
     // Notify the hive that our swat officer has been fully-constructed
     SwatAIRepository(Level.AIRepo).GetHive().NotifyOfficerConstructed(self);
-    
+
     UpdateOfficerLOD();
+    SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Register(self);
 
     NotifyStoppedMovingTimer = Spawn(class'Timer');
     assert(NotifyStoppedMovingTimer  != None);
@@ -132,13 +134,14 @@ event Destroyed()
         NotifyStoppedMovingTimer = None;
     }
 
+    SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.UnRegister(self);
     Super.Destroyed();
 }
 
 function EnteredZone(ZoneInfo Zone)
 {
 	Super.EnteredZone(Zone);
-	
+
 //	log(Name $ " Entered Zone " $ Zone $ " Zone.bUseFlashlight: " $ Zone.bUseFlashlight);
 
     // don't toggle flashlight when dead/incapacitated
@@ -160,7 +163,7 @@ public function UpdateOfficerLOD()
 {
 	local int i;
 	local SimpleEquipment se;
-	
+
 	// Change detail settings of SimpleEquipment on swat officer
 	// based on world detail settings
 	for (i = Pocket.Pocket_SimpleBackPouch; i <= Pocket.Pocket_SimpleRadioPouch; ++i)
@@ -180,18 +183,18 @@ public function UpdateOfficerLOD()
 			se.bHidden		= false;
 			se.CullDistance = 875;
 		}
-		else 
+		else
 		{
 			// Don't hide simpleequipment on officers, and never cull it
 			se.bHidden		= false;
 			se.CullDistance = 0; // never cull
 		}
 	}
-	
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Resource Construction
 
 // Create SwatOfficer specific abilities
@@ -200,7 +203,7 @@ protected function ConstructCharacterAI()
     local AI_Resource characterResource;
     characterResource = AI_Resource(characterAI);
     assert(characterResource != none);
-    
+
 	characterResource.addAbility(new class'SwatAICommon.OfficerCommanderAction');
 	characterResource.addAbility(new class'SwatAICommon.OfficerSpeechManagerAction');
 	characterResource.addAbility(new class'SwatAICommon.StackedUpAction');
@@ -209,6 +212,7 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.PickLockAction');
 	characterResource.addAbility(new class'SwatAICommon.TryDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.StackUpAction');
+  characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
 	characterResource.addAbility(new class'SwatAICommon.MoveAndClearAction');
 	characterResource.addAbility(new class'SwatAICommon.FallInAction');
 	characterResource.addAbility(new class'SwatAICommon.ThrowGrenadeAction');
@@ -230,6 +234,7 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.WatchNonHostileTargetAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorCornerAction');
+  characterResource.addAbility(new class'SwatAICommon.ReportAction');
 
 	// call down the chain
 	Super.ConstructCharacterAI();
@@ -268,8 +273,8 @@ protected function ConstructWeaponAI()
 //
 // Current Assignment
 
-event Pawn GetCurrentAssignment()		
-{ 
+event Pawn GetCurrentAssignment()
+{
 	return GetOfficerCommanderAction().GetCurrentAssignment();
 }
 
@@ -295,7 +300,7 @@ function NotifyHit(float Damage, Pawn HitInstigator)
 	// the following doesn't need to be networked because we have no Officers in Coop
     if ( IsHitByPlayer )
 	    PlayerInstigator = SwatPlayer(Level.GetLocalPlayerController().Pawn);
-    
+
 	if ((PlayerInstigator != None) && !IsIncapacitated())
 	{
 		// if we are a god we don't attack the player (request by paul)
@@ -323,7 +328,7 @@ function NotifyBecameIncapacitated(Pawn Incapacitator)
 	// notify the hive of our death
 	SwatAIRepository(Level.AIRepo).GetHive().NotifyOfficerDied(self);
 
-    // if our flashlight is on, have it turn off after X seconds, for 
+    // if our flashlight is on, have it turn off after X seconds, for
     // performance
     CurrentWeapon = FiredWeapon(GetActiveItem());
     if (CurrentWeapon != None && CurrentWeapon.IsFlashlightOn())
@@ -512,36 +517,36 @@ private function InitLoadOut( String LoadOutName )
 {
     local DynamicLoadOutSpec LoadOutSpec;
     local CustomScenario CustomScen;
-    
+
 	LoadOut = Spawn(class'OfficerLoadOut', self, name("Default"$LoadOutName));
 	assert(LoadOut != None);
 
     if( Level.IsTraining )
     	LoadOutSpec = Spawn(class'DynamicLoadOutSpec', self, name("Default"$LoadOutName));
-    else 
+    else
     {
         //for custom missions, force loadouts to be the loadout specified by the custom mission if not 'Any'
         CustomScen = SwatRepo( Level.GetRepo() ).GuiConfig.CurrentMission.CustomScenario;
 
-        if( CustomScen != None && 
+        if( CustomScen != None &&
             self.IsA('OfficerRedOne') &&
             CustomScen.RedOneLoadOut != 'Any' )
         {
             LoadOutSpec = Spawn(class'DynamicLoadOutSpec', self, CustomScen.RedOneLoadOut);
         }
-        else if( CustomScen != None && 
+        else if( CustomScen != None &&
                  self.IsA('OfficerRedTwo') &&
                  CustomScen.RedTwoLoadOut != 'Any' )
         {
             LoadOutSpec = Spawn(class'DynamicLoadOutSpec', self, CustomScen.RedTwoLoadOut);
         }
-        else if( CustomScen != None && 
+        else if( CustomScen != None &&
                  self.IsA('OfficerBlueOne') &&
                  CustomScen.BlueOneLoadOut != 'Any' )
         {
             LoadOutSpec = Spawn(class'DynamicLoadOutSpec', self, CustomScen.BlueOneLoadOut);
         }
-        else if( CustomScen != None && 
+        else if( CustomScen != None &&
                  self.IsA('OfficerBlueTwo') &&
                  CustomScen.BlueTwoLoadOut != 'Any' )
         {
@@ -623,9 +628,9 @@ function EnableAwareness()
 event bool IgnoresSeenPawnsOfType(class<Pawn> SeenType)
 {
     // we see everyone except our own
-    return (ClassIsChildOf(SeenType, class'SwatGame.SwatOfficer') || 
-			ClassIsChildOf(SeenType, class'SwatGame.SwatPlayer')  || 
-			ClassIsChildOf(SeenType, class'SwatGame.SwatTrainer') || 
+    return (ClassIsChildOf(SeenType, class'SwatGame.SwatOfficer') ||
+			ClassIsChildOf(SeenType, class'SwatGame.SwatPlayer')  ||
+			ClassIsChildOf(SeenType, class'SwatGame.SwatTrainer') ||
 			ClassIsChildOf(SeenType, class'SwatGame.SniperPawn'));
 }
 
@@ -641,7 +646,7 @@ function Formation GetCurrentFormation()
 function SetCurrentFormation(Formation Formation)
 {
 	assert(Formation != None);
-	
+
 	// clear any existing formation out
 	ClearFormation();
 
@@ -701,8 +706,8 @@ function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 }
 
 // overridden from SwatAI
-protected function float GetLengthOfTimeToFireFullAuto() 
-{ 
+protected function float GetLengthOfTimeToFireFullAuto()
+{
 	return RandRange(MinTimeToFireFullAuto, MaxTimeToFireFullAuto);
 }
 
@@ -720,9 +725,13 @@ function FiredWeapon GetBackupWeapon()
     return LoadOut.GetBackupWeapon();
 }
 
+function bool PocketSlotContains(Pocket Slot, Name Equipment) {
+  return LoadOut.GetItemAtPocket(Slot).IsA(Equipment);
+}
+
 function bool HasUsableWeapon()
 {
-	return (((GetPrimaryWeapon() != None) && !GetPrimaryWeapon().IsEmpty()) || 
+	return (((GetPrimaryWeapon() != None) && !GetPrimaryWeapon().IsEmpty()) ||
 		    ((GetBackupWeapon() != None) && !GetBackupWeapon().IsEmpty()));
 }
 
@@ -779,7 +788,7 @@ latent function ReEquipFiredWeapon()
 		}
 		else if ((BackupWeapon != None) && ! BackupWeapon.IsEmpty())
 		{
-			BackupWeapon.LatentEquip(); 
+			BackupWeapon.LatentEquip();
 		}
 	}
 }
@@ -849,6 +858,39 @@ simulated function name GetEffectEventForReportingToTOCWhenArrested()       { as
 simulated function name GetEffectEventForReportResponseFromTOCWhenIncapacitated()      { return 'RepliedOfficerDown'; }
 simulated function name GetEffectEventForReportResponseFromTOCWhenNotIncapacitated()   { assertWithDescription(false, "Unexpected: TOC responding to a non-incapacitated swat officer"); return ''; }
 
+// IIInterested_GameEvent_ReportableReportedToTOC implementation
+
+function ReportToTOC(name EffectEventName, name ReplyEventName, Actor other, SwatGamePlayerController controller);
+function IAmReportableCharacter GetCurrentReportableCharacter();
+function SetCurrentReportableCharacter(IAmReportableCharacter InChar);
+
+function OnReportableReportedToTOC(IAmReportableCharacter ReportableCharacter, Pawn Reporter) {
+  local Controller i;
+  local SwatGamePlayerController current;
+  local name EffectEventName;
+  local name ReplyEventName;
+
+  if(Reporter != Self) {
+    return;
+  }
+
+  EffectEventName = ReportableCharacter.GetEffectEventForReportingToTOC();
+  ReplyEventName = ReportableCharacter.GetEffectEventForReportResponseFromTOC();
+  SetCurrentReportableCharacter(ReportableCharacter);
+
+  log("Officer "$Reporter$" is reporting "$ReportableCharacter);
+
+  // Walk the controller list here to notify all clients
+  for ( i = Level.ControllerList; i != None; i = i.NextController )
+  {
+      current = SwatGamePlayerController( i );
+      if ( current != None )
+      {
+          ReportToTOC(EffectEventName, ReplyEventName, Actor(ReportableCharacter), current);
+      }
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Harmless Shots
@@ -875,12 +917,12 @@ private function TriggerHarmlessShotSpeech()
 //
 // IReactToFlashbangGrenade implementation
 /*function ReactToFlashbangGrenade(
-    SwatGrenadeProjectile Grenade, 
+    SwatGrenadeProjectile Grenade,
 	Pawn  Instigator,
-    float Damage, float DamageRadius, 
-    Range KarmaImpulse, 
-    float KarmaImpulseRadius, 
-    float StunRadius, 
+    float Damage, float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
+    float StunRadius,
     float PlayerFlashbangStunDuration,
     float AIStunDuration,
     float MoraleModifier)
@@ -888,7 +930,7 @@ private function TriggerHarmlessShotSpeech()
 	if(HasProtection( 'IProtectFromFlashbang' ) )) {
 		return;
 	}
-	
+
 	if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
         return;
 }*/
@@ -903,7 +945,7 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 	{
 		TriggerHarmlessShotSpeech();
 	}
-	
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -914,7 +956,7 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, float AIDuration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
 	TriggerHarmlessShotSpeech();
-	
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -950,7 +992,7 @@ simulated function bool ReadyToTriggerEffectEvents()
 // proper name instead of "OfficerBlueTwo0" or some other auto-generated name
 simulated function String GetHumanReadableName()
 {
-    if (Level.NetMode == NM_StandAlone) 
+    if (Level.NetMode == NM_StandAlone)
     {
         return OfficerFriendlyName;
     }
@@ -981,8 +1023,7 @@ defaultproperties
     CollisionHeight             =  68.0
 
     OfficerLoadOutType="OfficerLoadOut"
-    
+
 	bAlwaysUseWalkAimErrorWhenMoving=true
 	bAlwaysTestPathReachability=true
 }
-

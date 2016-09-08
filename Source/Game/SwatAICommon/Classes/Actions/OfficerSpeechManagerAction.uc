@@ -101,7 +101,7 @@ function TriggerHostageDownSpeech(Pawn Hostage)
 }
 
 function TriggerHostageWontComplySpeech(Pawn Hostage)
-{	
+{
 	if (ISwatAICharacter(Hostage).IsFemale())
 	{
 		TriggerSpeech('ReportedFemCivilianWillNotComply', true);
@@ -152,6 +152,16 @@ function TriggerDeployingToolkitSpeech()
 function TriggerDeployingTaserSpeech()
 {
 	TriggerSpeech('ReportedDeployingTaser');
+}
+
+function TriggerDeployingLightstickSpeech()
+{
+	TriggerSpeech('RepliedDeployingLightstick');
+}
+
+function TriggerCantDeployLightstickSpeech()
+{
+	TriggerSpeech('RepliedCantDeployLightstick');
 }
 
 function TriggerFinishedLockPickSpeech()
@@ -480,6 +490,27 @@ function TriggerGenericOrderReplySpeech()
 	TriggerSpeech('ReportedGenericOrderReply', true);
 }
 
+// Trap responses
+function TriggerExaminedAfterTrapWentOffSpeech()
+{
+	TriggerSpeech('ExaminedAfterTrapWentOff');
+}
+
+function TriggerExaminedFoundNoTrapSpeech()
+{
+	TriggerSpeech('ExaminedFoundNoTrap');
+}
+
+function TriggerExaminedFoundTrapSpeech()
+{
+	TriggerSpeech('ExaminedFoundTrap');
+}
+
+function TriggerOpenedTrappedDoorSpeech()
+{
+	TriggerSpeech('OpenedTrappedDoor');
+}
+
 // Announcements
 function TriggerBusyEngagingSpeech()
 {
@@ -530,7 +561,7 @@ function TriggerCouldntCompleteMoveSpeech()
 
 function TriggerCantDeployThrownSpeech()
 {
-	TriggerSpeech('RepliedCantDeployThrown');	
+	TriggerSpeech('RepliedCantDeployThrown');
 }
 
 function TriggerRedTeamNeedsOrdersSpeech()

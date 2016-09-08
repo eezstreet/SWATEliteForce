@@ -46,7 +46,7 @@ var private float PendingAimErrorPenalty;           //penalties that have been r
 var config float MaxAimError;                       //AimError is never allowed to be above this value
 var config float SmallAimErrorRecoveryRate;         //AimError recovered per second until base AimError is achieved, when AimError is > AimErrorBreakingPoint
 var config float LargeAimErrorRecoveryRate;         //AimError recovered per second until base AimError is achieved, when AimError is <= AimErrorBreakingPoint
-var config float AimErrorBreakingPoint;             //At what multiple of BaseAimError does recovery transition from LargeAimErrorRecoveryRate to SmallAimErrorRecoveryRate 
+var config float AimErrorBreakingPoint;             //At what multiple of BaseAimError does recovery transition from LargeAimErrorRecoveryRate to SmallAimErrorRecoveryRate
 var float LookAimErrorQuantizationFactor;           //the "grid spacing" of the LookAimError... so that looking around doesn't make the reticle feel "jittery"
 
 // These values are penalties applied to AimError (ie. values added to AimError) when certain events occur during the game:
@@ -182,10 +182,10 @@ simulated event PostNetBeginPlay()
 simulated event Destroyed()
 {
 	// Destroy the flashlight now so we don't have to wait for the engine to
-	// destroy orphaned actors later.	
+	// destroy orphaned actors later.
 	if (IsFlashlightInitialized())
 		DestroyFlashlight(ICanToggleWeaponFlashlight(Owner).GetDelayBeforeFlashlightShutoff());
-	
+
     if (Ammo != None)
     {
         Ammo.Destroy();
@@ -284,7 +284,7 @@ simulated function TraceFire()
 
     GetPerfectFireStart(PerfectStartLocation, PerfectStartDirection);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (DebugDrawAccuracyCone)
         DrawAccuracyCone(PerfectStartLocation, PerfectStartDirection);
 #endif
@@ -294,7 +294,7 @@ simulated function TraceFire()
         StartLocation = PerfectStartLocation;
         StartDirection = PerfectStartDirection;
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
         if (!DebugPerfectAim && !PerfectAimNextShot)
 #endif
             ApplyAimError(StartDirection);
@@ -302,11 +302,11 @@ simulated function TraceFire()
         StartTrace = StartLocation;
         EndTrace = StartLocation + vector(StartDirection) * Range;
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
         if (DebugDrawTraceFire)
             Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 5);
 #endif
-                
+
         BallisticFire(StartTrace, EndTrace);
     }
     PerfectAimNextShot = false;
@@ -359,7 +359,7 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
     local ESkeletalRegion HitRegion;
-    
+
     Momentum = MuzzleVelocity * Ammo.Mass;
 
     if (Level.AnalyzeBallistics)
@@ -374,12 +374,12 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
     }
 
     foreach TraceActors(
-        class'Actor', 
-        Victim, 
-        HitLocation, 
-        HitNormal, 
+        class'Actor',
+        Victim,
+        HitLocation,
+        HitNormal,
         HitMaterial,
-        EndTrace, 
+        EndTrace,
         StartTrace,
         /*optional extent*/,
         true, //bSkeletalBoxTest
@@ -406,7 +406,7 @@ simulated function DealDamage(Actor Victim, int Damage, Pawn Instigator, Vector 
     if( Pawn(Owner) == None || Pawn(Owner).Controller == None )
         return;
 
-    Victim.TakeDamage(Damage, Pawn(Owner), HitLocation, MomentumVector, DamageType); 
+    Victim.TakeDamage(Damage, Pawn(Owner), HitLocation, MomentumVector, DamageType);
 }
 
 //returns true iff the bullet penetrates the Victim
@@ -443,9 +443,9 @@ simulated function bool HandleBallisticImpact(
     local Pawn  PawnVictim;
 	local PlayerController OwnerPC;
 
-    // You shouldn't be able to hit hidden actors that block zero-extent 
-    // traces (i.e., projectors, blocking volumes). However, the 'Victim' 
-    // when you hit BSP is LevelInfo, which is hidden, so we have to 
+    // You shouldn't be able to hit hidden actors that block zero-extent
+    // traces (i.e., projectors, blocking volumes). However, the 'Victim'
+    // when you hit BSP is LevelInfo, which is hidden, so we have to
     // handle that as a special case.
     if ((Victim.bHidden || Victim.DrawType == DT_None) && !(Victim.IsA('LevelInfo')))
     {
@@ -460,7 +460,7 @@ simulated function bool HandleBallisticImpact(
         return true;    //penetrates: SwatDoors (the animations) must be drawn, and their SkeletalRegions must block traces, but bullets should ignore them
 
 	// officers don't hit other officers, or the player (unless we're attacking them)
-	if (Owner.IsA('SwatOfficer') && 
+	if (Owner.IsA('SwatOfficer') &&
 		(Victim.IsA('SwatOfficer') || (Victim.IsA('SwatPlayer') && !Pawn(Owner).IsAttackingPlayer())))
 	{
         if (Level.AnalyzeBallistics)
@@ -471,9 +471,9 @@ simulated function bool HandleBallisticImpact(
 	}
 
     // Some dynamic actors are not rendered due to the player's
-    // detail settings being too low. In this case they should not block 
-    // bullets, to keep the visual experience consistent. 
-	if( (Victim.bHighDetail && Level.DetailMode == DM_Low) 
+    // detail settings being too low. In this case they should not block
+    // bullets, to keep the visual experience consistent.
+	if( (Victim.bHighDetail && Level.DetailMode == DM_Low)
          || (Victim.bSuperHighDetail && Level.DetailMode != DM_SuperHigh))
     {
         if (Level.AnalyzeBallistics)
@@ -489,7 +489,7 @@ simulated function bool HandleBallisticImpact(
     //play effects at the point of impact
     Ammo.SetLocation(HitLocation);
     Ammo.SetRotation(rotator(HitNormal));
-    
+
     // Normal TraceActors() collection of material doesn't work quite right for
     // skeletal meshes, so we call this helper function to get the material manually.
     if (Victim.DrawType == DT_Mesh)
@@ -511,12 +511,12 @@ simulated function bool HandleBallisticImpact(
                 {
                     Ammo.TriggerEffectEvent('BulletHit', Protection, HitMaterial);
                     if (!HandleProtectiveEquipmentBallisticImpact(
-                                Victim, 
-                                Protection, 
-                                HitRegion, 
-                                HitLocation, 
-                                HitNormal, 
-                                NormalizedBulletDirection, 
+                                Victim,
+                                Protection,
+                                HitRegion,
+                                HitLocation,
+                                HitNormal,
+                                NormalizedBulletDirection,
                                 Momentum))
                         return false;   //blocked by ProtectiveEquipment
                 }
@@ -558,11 +558,11 @@ simulated function bool HandleBallisticImpact(
     //consider adding internal damage
     if (!PenetratesVictim)
         Damage += Ammo.InternalDamage;
-        
+
     //apply any external damage modifiers (maintained by the Repo)
     ExternalDamageModifier = Level.GetRepo().GetExternalDamageModifier( Owner, Victim );
     Damage = int( float(Damage) * ExternalDamageModifier );
-    
+
 	// damage pawns
     PawnVictim = Pawn(Victim);
     if( Damage > 0 && SkeletalRegionInformation != None && PawnVictim != None)
@@ -575,7 +575,7 @@ simulated function bool HandleBallisticImpact(
 		}
 
 		DamageModifier = RandRange(SkeletalRegionInformation.DamageModifier.Min, SkeletalRegionInformation.DamageModifier.Max);
-        
+
         // Give the weapon the chance to override arm specific damage...
         if ( OverrideArmDamageModifier != 0 && (HitRegion == REGION_LeftArm || HitRegion == REGION_RightArm)  )
             DamageModifier = OverrideArmDamageModifier;
@@ -583,7 +583,7 @@ simulated function bool HandleBallisticImpact(
 
         LimbInjuryAimErrorPenalty = RandRange(SkeletalRegionInformation.AimErrorPenalty.Min, SkeletalRegionInformation.AimErrorPenalty.Max);
         PawnVictim.AccumulatedLimbInjury += LimbInjuryAimErrorPenalty;
-    } 
+    }
 
 #if IG_EFFECTS
     //don't play hit effects on the sky
@@ -630,7 +630,7 @@ simulated function bool HandleBallisticImpact(
                 $", Max="$SkeletalRegionInformation.AimErrorPenalty.Max
                 $"), Selected "$LimbInjuryAimErrorPenalty
                 $".");
-        
+
             if (PenetratesVictim)
                 log("[BALLISTICS]   ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor * DamageModifier * ExternalDamageModifier = "$MomentumLostToVictim
                     $" * "$Level.GetRepo().MomentumToDamageConversionFactor
@@ -658,21 +658,21 @@ simulated function bool HandleBallisticImpact(
                     $" = "$Damage);
         }
     }
-    
+
     // If it's something with skeletal regions, do notification
     // We check this using a separate variable to avoid accessed nones
     // every time bsp or a static mesh is hit
     SkelVictim = IHaveSkeletalRegions(Victim);
-    if (SkelVictim != None) 
+    if (SkelVictim != None)
         SkelVictim.OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
 
-    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType()); 
+    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
     if (Level.AnalyzeBallistics)
     {
         log("[BALLISTICS]   ... Bullet will impart to victim the momentum it lost to the victim:  "$VSize(MomentumVector)$" in direction "$Normal(MomentumVector));
     }
-    Victim.TakeHitImpulse(HitLocation, MomentumVector, GetDamageType()); 
+    Victim.TakeHitImpulse(HitLocation, MomentumVector, GetDamageType());
 
     //the bullet has lost momentum to its victim
     Momentum -= MomentumLostToVictim;
@@ -687,7 +687,7 @@ simulated function bool HandleBallisticImpact(
         Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
     }
 
-    if ( ShouldSpawnBloodForVictim( PawnVictim, Damage ) ) 
+    if ( ShouldSpawnBloodForVictim( PawnVictim, Damage ) )
         SpawnBloodEffects( Ammo, ExitLocation, Damage, NormalizedBulletDirection );
 #endif // IG_EFFECTS
     return PenetratesVictim;
@@ -716,16 +716,16 @@ simulated function bool SpawnBloodEffects(Ammunition Ammo,Vector ExitLocation, i
         Ammo.SetRotation( BloodRot );
         GetAxes( BloodRot, X, Y, Z );
         Ammo.SetLocation( ExitLocation + Y * (RandRange(-5,5)) + Z * (RandRange(-5, 5)) );
-        
-        Ammo.TriggerEffectEvent('BloodProjected'); 
-	}		
+
+        Ammo.TriggerEffectEvent('BloodProjected');
+	}
     return true;
 }
 
 //returns true iff the bullet penetrates the ProtectiveEquipment
 simulated function bool HandleProtectiveEquipmentBallisticImpact(
-    Actor Victim, 
-    ProtectiveEquipment Protection, 
+    Actor Victim,
+    ProtectiveEquipment Protection,
     ESkeletalRegion HitRegion,
     vector HitLocation,
     vector HitNormal,
@@ -747,13 +747,13 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         DamageModifierRange = Protection.PenetratedDamageFactor;
     else
         DamageModifierRange = Protection.BlockedDamageFactor;
-                
+
     //calculate damage imparted to victim
     MomentumLostToProtection = FMin(Momentum, Protection.MomentumToPenetrate);
     Damage = MomentumLostToProtection * Level.GetRepo().MomentumToDamageConversionFactor;
     DamageModifier = RandRange(DamageModifierRange.Min, DamageModifierRange.Max);
     Damage *= DamageModifier;
-    
+
     //apply any external damage modifiers (maintained by the Repo)
     ExternalDamageModifier = Level.GetRepo().GetExternalDamageModifier( Owner, Victim );
     Damage = int( float(Damage) * ExternalDamageModifier );
@@ -773,7 +773,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
             log("[BALLISTICS]   ... The ProtectiveEquipment was penetrated.  Using PenetratedDamageFactor.");
         else
             log("[BALLISTICS]   ... Bullet was buried in the ProtectiveEquipment  Using BlockedDamageFactor.");
-            
+
         log("[BALLISTICS]   ... DamageModifier is on the Range (Min="$DamageModifierRange.Min$", Max="$DamageModifierRange.Max$"), selected "$DamageModifier$".");
         log("[BALLISTICS]   ... ExternalDamageModifier = "$ExternalDamageModifier$".");
 
@@ -786,7 +786,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 
     IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
 
-    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType()); 
+    DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
     //the bullet has lost momentum to its target
     Momentum -= Protection.MomentumToPenetrate;
@@ -843,7 +843,7 @@ function SelectAmmoClass()
     local int RandChance;
     local int AccumulatedChance;
     local int i;
-    
+
     assertWithDescription(EnemyUsesAmmo.length > 0,
         "[tcohen] The FiredWeapon "$class.name
         $" was trying to SelectAmmoClass(), but there are no EnemyUsesAmmo options for that FiredWeapon.  Please provide at least one EnemyUsesAmmo for that FiredWeapon in SwatEquipment.ini.");
@@ -869,7 +869,7 @@ function SelectAmmoClass()
     for (i=0; i<EnemyUsesAmmo.length; ++i)
     {
         AccumulatedChance += EnemyUsesAmmo[i].Chance;
-        
+
         if (AccumulatedChance >= RandChance)
         {
             AmmoClass = EnemyUsesAmmo[i].LoadedAmmoClass;
@@ -1049,14 +1049,14 @@ simulated final function OnReloadKeyFrame()
     if (ReloadingStatus == ActionStatus_Started)
     {
         FiredWeaponModel(ThirdPersonModel).OnReloadKeyFrame();
-        
+
         if (GetHands() != None)
             FiredWeaponModel(FirstPersonModel).OnReloadKeyFrame();
 
         Ammo.OnReloaded();
 
         ReloadedHook();
-        
+
         ReloadingStatus = ActionStatus_HitKeyFrame;
     }
 }
@@ -1147,7 +1147,7 @@ simulated latent private function DoFiring()
         default:
             assert(false);  //unexpected FireMode
     }
-    
+
     //sometimes, you gotta break the rules to look pretty
     do Fire(); until (!WantsToContinueFiring() || Ammo.NeedsReload());
 
@@ -1271,7 +1271,7 @@ simulated latent private function Fire()
     {
         EffectsSource = FirstPersonModel;
 
-        // In first person view, if bOwnerNoSee is true on the first 
+        // In first person view, if bOwnerNoSee is true on the first
         // person model (meaning we can't see it in First Person),
         // then only play the sound effects, not the visual ones.
         //
@@ -1306,9 +1306,6 @@ simulated latent private function Fire()
 
     if (!NeedsReload())
     {
-        if (TweenTime > 0)
-            Sleep(TweenTime);   //wait for tween to firing position (ie. from low-ready)
-
         TraceFire();
         Ammo.OnRoundUsed(Pawn(Owner), self);
         if (CurrentFireMode == FireMode_Burst)
@@ -1333,7 +1330,7 @@ simulated latent private function Fire()
                         ,                                   //QueryOnly
                         ,                                   //Observer
                         ,                                   //ReferenceTag
-                        EffectSubsystemToIgnore);          
+                        EffectSubsystemToIgnore);
             }
             else    //burst, auto firing or double taser
             {
@@ -1347,7 +1344,7 @@ simulated latent private function Fire()
                         ,                                   //QueryOnly
                         ,                                   //Observer
                         ,                                   //ReferenceTag
-                        EffectSubsystemToIgnore);    
+                        EffectSubsystemToIgnore);
             }
         }
     }
@@ -1357,7 +1354,7 @@ simulated latent private function Fire()
         // server, RPC this to all clients for which the Owner is relevant.
         if (EffectsSource != None)
         {
-            EffectsSource.TriggerEffectEvent( 'EmptyFired', OtherForEffectEvents,,,, (OtherForEffectEvents != None),,,, EffectSubsystemToIgnore );    
+            EffectsSource.TriggerEffectEvent( 'EmptyFired', OtherForEffectEvents,,,, (OtherForEffectEvents != None),,,, EffectSubsystemToIgnore );
             if ( (Level.NetMode == NM_DedicatedServer || Level.NetMode == NM_ListenServer)
                  && Pawn(Owner) != None )
                 Pawn(Owner).BroadcastEmptyFiredToClients();
@@ -1370,6 +1367,9 @@ simulated latent private function Fire()
         ThirdPersonModel.FinishUse();
 
     PostRoundUsed();
+
+    if (TweenTime > 0)
+        Sleep(TweenTime);   //wait for tween to firing position (ie. from low-ready)
 
 	if (Pawn(Owner) != None && Pawn(Owner).Health <= 0)
 	{
@@ -1520,7 +1520,7 @@ simulated function AddAimError(AimPenaltyType Penalty)
 
         case AimPenalty_Fire:
             PendingAimErrorPenalty += FiredAimErrorPenalty;
-            break; 
+            break;
 
         default:
             assert(false);  //unexpected AimPenaltyType
@@ -1608,8 +1608,8 @@ simulated function UpdateAimError(float dTime)
 //
 
 // Is this weapon flashlight-capable?
-simulated final function bool HasFlashlight() 
-{ 
+simulated final function bool HasFlashlight()
+{
     return HasAttachedFlashlight;
 }
 
@@ -1617,17 +1617,17 @@ simulated final function bool HasFlashlight()
 native final function bool IsFlashlightOn();
 
 // This is called when the holder of the weapon changes its desired flashlight
-// state. 
+// state.
 simulated function OnHolderDesiredFlashlightStateChanged()
 {
 	local bool PawnWantsFlashlightOn;
 	local Name EventName;
 	local String FlashlightTextureName;
 	local Material FlashlightMaterial;
-    
-    if (HasAttachedFlashlight) 
+
+    if (HasAttachedFlashlight)
     {
-	    PawnWantsFlashlightOn = ICanToggleWeaponFlashlight(Owner).GetDesiredFlashlightState();   
+	    PawnWantsFlashlightOn = ICanToggleWeaponFlashlight(Owner).GetDesiredFlashlightState();
 	    if (PawnWantsFlashlightOn)
 	    {
 		    EventName = 'FlashlightSwitchedOn';
@@ -1647,12 +1647,12 @@ simulated function OnHolderDesiredFlashlightStateChanged()
                 ,           //HitLocation
                 ,           //HitNormal
                 true);      //PlayOnOther
-    	
+
 	    // change texture on 3rd person model
-	    if (! InFirstPersonView()) 
+	    if (! InFirstPersonView())
 	    {
 			if (PawnWantsFlashlightOn) // turn on the glow texture on the flashlight bulb
-			{				
+			{
 				FlashlightMaterial = Material(DynamicLoadObject( FlashlightTextureName, class'Material'));
 				AssertWithDescription(FlashlightMaterial != None, "[ckline]: Couldn't DLO flashlight lens texture "$FlashlightTextureName);
 			}
@@ -1660,34 +1660,34 @@ simulated function OnHolderDesiredFlashlightStateChanged()
 			{
 				// hack.. force the skin to None so that GetCurrentMaterial will pull from
 				// the default materials array instead of the skin
-				ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = None;			
-				
+				ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = None;
+
 				FlashlightMaterial = ThirdPersonModel.GetCurrentMaterial(FLASHLIGHT_TEXTURE_INDEX);
 			}
-			
-			ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = FlashlightMaterial;			
-	    }	
 
-	    UpdateFlashlightState();		
+			ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = FlashlightMaterial;
+	    }
+
+	    UpdateFlashlightState();
     }
 }
 
 // Switches the flashlight on/off depending on the desired flashlight state of
-// the pawn that is holding the flashlight. 
+// the pawn that is holding the flashlight.
 //
 // NOTE: A call to UpdateFlashlightState() does NOT necessarily mean that the
 // holder of the weapon turned the flashlight on/off. It just makes sure that
-// the weapon's flashlight state matches the holder's desired state. 
+// the weapon's flashlight state matches the holder's desired state.
 simulated function UpdateFlashlightState()
 {
     local bool PawnWantsFlashlightOn;
-	
-    if (! HasAttachedFlashlight) 
+
+    if (! HasAttachedFlashlight)
     {
 		//Log("[ckline]: Weapon "$self$" on "$Owner$" is not flashlight-equipped, so can't toggle its state.");
 		return;
     }
-	
+
     PawnWantsFlashlightOn = ICanToggleWeaponFlashlight(Owner).GetDesiredFlashlightState();
     //Log("UpdateFlashlightState(): Pawn wants it on = "$PawnWantsFlashlightOn$", IsFlashlightOn = "$IsFlashlightOn()$" on "$owner);
 	//LogGuardStack();
@@ -1793,7 +1793,7 @@ simulated private function UpdateFlashlightLighting(optional float dTime)
         WeaponModel    = ThirdPersonModel;
 		PositionOffset = FlashlightPosition_3rdPerson;
 		RotationOffset = FlashlightRotation_3rdPerson;
-    }	
+    }
 
 	traceStart   = FlashlightReferenceActor.Location;
 	rayDirection = FlashlightReferenceActor.Rotation;
@@ -1813,9 +1813,9 @@ simulated private function UpdateFlashlightLighting(optional float dTime)
 
 	if (DebugDrawFlashlightDir)
 	{
-		Level.GetLocalPlayerController().myHUD.AddDebugLine((traceStart + Vect(0.0,0.0,1.0)), (hitLocation +  Vect(0.0,0.0,1.0)), 
+		Level.GetLocalPlayerController().myHUD.AddDebugLine((traceStart + Vect(0.0,0.0,1.0)), (hitLocation +  Vect(0.0,0.0,1.0)),
 															class'Engine.Canvas'.Static.MakeColor(255,120,0), 0.02);
-		Level.GetLocalPlayerController().myHUD.AddDebugLine(traceStart, traceEnd, 
+		Level.GetLocalPlayerController().myHUD.AddDebugLine(traceStart, traceEnd,
 															class'Engine.Canvas'.Static.MakeColor(255,120,200), 0.02);
 	}
 
@@ -1826,7 +1826,7 @@ simulated private function UpdateFlashlightLighting(optional float dTime)
 
 	PointLightPos = traceStart + newDistance * Vector(FlashlightReferenceActor.Rotation);
 	FlashlightDynamicLight.SetLocation(PointLightPos);
-	
+
     if (InFirstPersonView())
 	{
 		// attenuate the radius if the light is approaching something very close
@@ -1837,7 +1837,7 @@ simulated private function UpdateFlashlightLighting(optional float dTime)
 	{
 		FlashlightDynamicLight.LightRadius = MinFlashlightRadius + newDistance *	PointLightRadiusScale;
 	}
-	
+
 	FlashlightDynamicLight.LightBrightness = BaseFlashlightBrightness +
 		FMin(newDistance/MaxFlashlightDistance, 1.0) * (MinFlashlightBrightness - BaseFlashlightBrightness);
 #if ENABLE_FLASHLIGHT_PROJECTION_VISIBILITY_TESTING
@@ -1848,7 +1848,7 @@ simulated private function UpdateFlashlightLighting(optional float dTime)
 
 // Sets up any additional rendering resources necessary to create the
 // flashlight effect. Should only be called once during the lifetime of the
-// weapon. 
+// weapon.
 simulated private function InitFlashlight()
 {
     local HandheldEquipmentModel WeaponModel;
@@ -1856,26 +1856,26 @@ simulated private function InitFlashlight()
     local Rotator RotationOffset;
     local bool AttachSucceeded;
 	local float saveRate;
-    local float SavedLastRenderTime;    
+    local float SavedLastRenderTime;
 
 	// if the FlashlightUseFancyLights value has not been initialized yet...
-	if (FlashlightUseFancyLights == -1) 
+	if (FlashlightUseFancyLights == -1)
 	{
 		// this will determine if flashlights use spots or point lights
-		
+
         // If we don't support bumpmapping, then we don't have pixel shaders
         // and hence dynamic spotlights on BSP surfaces will not work
         bHighEndGraphicsBoard = bool(Level.GetLocalPlayerController().ConsoleCommand( "SUPPORTS BUMPMAP") );
-		
+
         if (bHighEndGraphicsBoard)
 			FlashlightUseFancyLights = 1;
 		else
 			FlashlightUseFancyLights = 0; // approximate spot light with moving point light
 		//log("FLASHLIGHT Fancy lights: " $FlashlightUseFancyLights$" owner: "$owner);
 
-#if 1 // HACK HACK HACK: 
-        // This is a hack to get around a bug in ATI's drivers where the spotlight 
-        // pixel shader won't work. They say they'll fix this bug around Jan 05 
+#if 1 // HACK HACK HACK:
+        // This is a hack to get around a bug in ATI's drivers where the spotlight
+        // pixel shader won't work. They say they'll fix this bug around Jan 05
         // in their new drivers.
         if (bool(Level.GetLocalPlayerController().ConsoleCommand( "USE_ATI_R200_SPOTLIGHT_WORKAROUND") ))
         {
@@ -1907,7 +1907,7 @@ simulated private function InitFlashlight()
 		PositionOffset = FlashlightPosition_3rdPerson;
 		RotationOffset = FlashlightRotation_3rdPerson;
 		//log( "[FLASHLIGHT] In FiredWeapon::IsInitFlashlight(): Third Person" );
-    }	
+    }
 
     assertWithDescription(FlashlightSpotLightClass   != None, "[henry] Can't spawn flashlight spotlight for weapon of class "$Class$" because FlashlightSpotLightClass is None");
     assertWithDescription(FlashlightPointLightClass  != None, "[henry] Can't spawn flashlight pointlight for weapon of class "$Class$" because FlashlightPointLightClass is None");
@@ -1922,9 +1922,9 @@ simulated private function InitFlashlight()
 		FlashlightDynamicLight = Spawn(FlashlightPointLightClass,WeaponModel,,,);
 
 	FlashlightReferenceActor = Spawn(FlashlightCoronaLightClass,WeaponModel,,,);
-	
+
 	FlashlightReferenceActor.bCorona = true; // make coronas dissapear as angle to viewer approaches 90 degrees
-	
+
 	// save the base light params, so that they can be modified later relative
 	// to these values (for the pointlight-to-spotlight modeling)
 	BaseFlashlightBrightness = FlashlightDynamicLight.LightBrightness;
@@ -1940,14 +1940,14 @@ simulated private function InitFlashlight()
 		BaseFlashlightBrightness             *= 0.5;
 	}
 
-	if (InFirstPersonView()) 
+	if (InFirstPersonView())
 	{
 		// This tag is used in UnRenderVisibility.cpp to give a penalty to
 		// all dynamic lights except the first person's flashlight
 		FlashlightDynamicLight.Tag = 'FirstPersonFlashlight';
 
 		// no corona for the first person flashlight (it looks bad)
-		FlashlightReferenceActor.bCorona = false;	
+		FlashlightReferenceActor.bCorona = false;
 	}
 	else
 	{
@@ -2018,7 +2018,7 @@ simulated private function InitFlashlight()
 #endif
 }
 
-// Checks whether or not the flashlight rendering resources have been initialized. 
+// Checks whether or not the flashlight rendering resources have been initialized.
 native protected function bool IsFlashlightInitialized();
 native protected function bool IsFlashlightProjectionVisible();
 
@@ -2036,7 +2036,7 @@ private function DestroyFlashlight(float SecondsBeforeDestroying)
 
     //Log("Destroying flashlight "$FlashlightDynamicLight.Name$" (after "$SecondsBeforeDestroying$" secs) for Weapon "$self$" being used by Pawn "$Owner);
 
-	if (SecondsBeforeDestroying <= 0) 
+	if (SecondsBeforeDestroying <= 0)
 	{
 		// hack to get around the fact that LifeSpan of 0 means "live forever"
 	    delay = 0.01; // destroy almost instantly
@@ -2046,7 +2046,7 @@ private function DestroyFlashlight(float SecondsBeforeDestroying)
 	    delay = SecondsBeforeDestroying; // destroy almost instantly
 	}
 
-	FlashlightDynamicLight.LifeSpan = delay; 
+	FlashlightDynamicLight.LifeSpan = delay;
 
 	FlashlightDynamicLight = None; // for sanity
 
@@ -2054,7 +2054,7 @@ private function DestroyFlashlight(float SecondsBeforeDestroying)
 	{
         // Force FCoronaRender to gracefully remove the corona on next render pass
         FlashlightReferenceActor.bCorona = false;
-        
+
         // Destroy the corona light automatically after 1 second, after FCoronaRender has removed it
         FlashlightReferenceActor.LifeSpan = 1 + delay;
 
@@ -2065,7 +2065,7 @@ private function DestroyFlashlight(float SecondsBeforeDestroying)
 function OnPlayerViewChanged()
 {
     // Destroy the flashlight, then update the flashlight state to match
-    // what the pawn wants. 
+    // what the pawn wants.
     if (IsFlashlightInitialized())
     {
 		DestroyFlashlight(ICanToggleWeaponFlashlight(Owner).GetDelayBeforeFlashlightShutoff());
@@ -2134,7 +2134,7 @@ simulated function ApplyPolarOffset(out rotator outDirection, float Rho, float T
 	local vector xPlanarVec, yPlanarVec, zPlanarVec, spherePoint;
 	local vector offsetSpherePoint;
 
-	
+
 	xScale = Rho * Cos(Theta * DEGREES_TO_RADIANS);
 	yScale = Rho * Sin(Theta * DEGREES_TO_RADIANS);
 
@@ -2183,7 +2183,7 @@ defaultproperties
     BurstRateFactor=1.0
     BurstShotCount=3
     ReloadAnimationRate=1.0
-    
+
     LookAimErrorQuantizationFactor=1.5
 
 	FlashlightPointLightClass=None

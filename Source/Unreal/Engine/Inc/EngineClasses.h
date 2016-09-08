@@ -5317,7 +5317,7 @@ public:
 		   return Parms.ReturnValue;
 	  }
 	   DECLARE_CLASS(AHandheldEquipment,AEquipment,0|CLASS_Config,Engine)
-    // Automatically updates the correct value of bOwnerNoSee based on 
+    // Automatically updates the correct value of bOwnerNoSee based on
     // the current view and what this equipment is attached to.
     virtual UBOOL Tick( FLOAT DeltaSeconds, ELevelTick TickType );
 

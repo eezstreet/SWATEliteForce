@@ -37,6 +37,10 @@ var config float AggressiveChance;
 var config float TaserDeathChance;	// Chance that any hit with a taser may cause cardiac arrest in this archetype (will probably not actually kill?)
 var config float PepperDeathChance;	// Chance that any hit with pepper spray may cause respiratory failure in this archetype (will probably not actually kill?)
 
+var config bool Fearless;   // Won't scream if in a room with a suspect
+var config bool Polite;     // Won't threaten hostages
+var config bool Insane;     // Will shoot hostages like their life depends on it
+
 var Mesh OfficerMesh;
 
 //initialize this archetype
@@ -62,7 +66,7 @@ final private function InitializeEquipment(
     {
         if (Equipment[i].Equipment != "")
         {
-            EquipmentClasses[i] = 
+            EquipmentClasses[i] =
                 class<Actor>(DynamicLoadObject(Equipment[i].Equipment, class'Class'));
 
             AssertWithDescription(EquipmentClasses[i] != None,
@@ -91,7 +95,7 @@ protected function Validate()
         ValidateCondition(FaceMaterial.length > 0, "it is Missing a FaceMaterial");
         for (i=0; i<FaceMaterial.length; ++i)
             ValidateCondition(FaceMaterial[i] != None, "FaceMaterial number "$i+1$" resolves to None");
-        
+
         ValidateCondition(VestMaterial.length > 0, "it is Missing a VestMaterial");
         for (i=0; i<VestMaterial.length; ++i)
             ValidateCondition(VestMaterial[i] != None, "VestMaterial number "$i+1$" resolves to None");
@@ -99,7 +103,7 @@ protected function Validate()
         ValidateCondition(NameMaterial.length > 0, "it is Missing a NameMaterial");
         for (i=0; i<NameMaterial.length; ++i)
             ValidateCondition(NameMaterial[i] != None, "NameMaterial number "$i+1$" resolves to None");
-        
+
         ValidateCondition(PantsMaterial.length > 0, "it is Missing a PantsMaterial");
         for (i=0; i<PantsMaterial.length; ++i)
             ValidateCondition(PantsMaterial[i] != None, "PantsMaterial number "$i+1$" resolves to None");
@@ -115,7 +119,7 @@ protected function Validate()
         ValidateCondition(FleshMaterial.length > 0, "it is Missing a FleshMaterial");
         for (i=0; i<FleshMaterial.length; ++i)
             ValidateCondition(FleshMaterial[i] != None, "FleshMaterial number "$i+1$" resolves to None");
-        
+
         ValidateCondition(ClothesMaterial.length > 0, "it is Missing a ClothesMaterial");
         for (i=0; i<ClothesMaterial.length; ++i)
             ValidateCondition(ClothesMaterial[i] != None, "ClothesMaterial number "$i+1$" resolves to None");
@@ -188,12 +192,15 @@ function InitializeInstance(ArchetypeInstance inInstance)
 	Instance.VoiceTypeOverride = VoiceTypeOverride;
 	Instance.CharacterType     = CharacterType;
 	Instance.IsAggressive	   = (FRand() < AggressiveChance);
-	
+
 	Instance.TaserKillsMe = (FRand() < TaserDeathChance);
 	Instance.PepperKillsMe = (FRand() < PepperDeathChance);
+  Instance.Fearless = Fearless;
+  Instance.Polite = Polite;
+  Instance.Insane = Insane;
 
     Instance.UpdateInstancePrecachables();
-    
+
     //TMC TODO select values from CharacterArchetype
 }
 
@@ -209,10 +216,10 @@ final private function class<Equipment> InitializeInstanceEquipment(
     local int AccumulatedChance;
     local class<Equipment> Chosen;
     local int i;
-    
+
     if (Options.length == 0)
         return None;
-    
+
     //calculate the sum of chances of the options
     for (i=0; i<Options.length; ++i)
         TotalChance += Options[i].Chance;
@@ -223,7 +230,7 @@ final private function class<Equipment> InitializeInstanceEquipment(
     for (i=0; i<Options.length; ++i)
     {
         AccumulatedChance += Options[i].Chance;
-        
+
         if (AccumulatedChance >= RandChance)
         {
             //we found our chosen Equipment
@@ -246,8 +253,11 @@ final private function class<Equipment> InitializeInstanceEquipment(
 defaultproperties
 {
 	OfficerMesh=Mesh'SWATMaleAnimation2.SwatOfficer'
-	
+
 	// There's only really a small handful of archetypes that can cause issues here. Probably best we leave this at zero.
 	TaserDeathChance = 0.0;
 	PepperDeathChance = 0.0;
+  Fearless = false;
+  Polite = false;
+  Insane = false;
 }

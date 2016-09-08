@@ -16,6 +16,7 @@ var(parameters) Pawn					CompliantTarget;
 // behaviors we use
 var private MoveToActorGoal				CurrentMoveToActorGoal;
 var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
+var private ReportGoal CurrentReportGoal;
 
 // the cuffs
 var private HandheldEquipment			Handcuffs;
@@ -27,7 +28,7 @@ var private ArrestedSensor				TargetArrestedSensor;
 var config float						DistanceFromTargetToRestrain;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -41,7 +42,7 @@ function cleanup()
 		{
 			IAmAQualifiedUseEquipment(Handcuffs).InstantInterrupt();
 		}
-	
+
 		Handcuffs.AIInterrupt();
 	}
 
@@ -55,6 +56,12 @@ function cleanup()
 	{
 		CurrentRotateTowardRotationGoal.Release();
 		CurrentRotateTowardRotationGoal = None;
+	}
+
+	if(CurrentReportGoal != None)
+	{
+		CurrentReportGoal.Release();
+		CurrentReportGoal = None;
 	}
 
 	// deactivate the arrested sensor
@@ -87,7 +94,7 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 
 	assert(sensor == TargetArrestedSensor);
 
-	// if the sensor sends us a message that the target has been arrested by someone else, 
+	// if the sensor sends us a message that the target has been arrested by someone else,
 	// we can complete successfully
 	if ((value.objectData == CompliantTarget) && (ISwatAI(CompliantTarget).GetArrester() != m_Pawn))
 	{
@@ -189,12 +196,31 @@ latent function RestrainTarget()
 			TriggerReassuranceSpeech();
 			IAmUsedOnOther(Handcuffs).LatentUseOn(CompliantTarget);
 		}
-	
+
 		// re-equip our best fired weapon
 		ISwatOfficer(m_Pawn).ReEquipFiredWeapon();
 
 		if (ISwatAI(CompliantTarget).IsArrested())
 			TriggerFinishedArrestSpeech();
+	}
+}
+
+latent function ReportTarget()
+{
+	local ISwatAI target;
+
+	target = ISwatAI(CompliantTarget);
+	if(target.CanBeUsedNow()) {
+		CurrentReportGoal = new class 'ReportGoal'(characterResource(), target, m_Pawn.controller);
+		assert(CurrentReportGoal != None);
+		CurrentReportGoal.AddRef();
+
+		CurrentReportGoal.postGoal(self);
+		WaitForGoal(CurrentReportGoal);
+		CurrentReportGoal.unPostGoal(self);
+
+		CurrentReportGoal.Release();
+		CurrentReportGoal = None;
 	}
 }
 
@@ -219,7 +245,7 @@ private function TriggerFinishedArrestSpeech()
 	{
 		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerArrestedSuspectSpeech();
 	}
-	
+
 	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerArrestedReportSpeech(CompliantTarget);
 }
 
@@ -266,7 +292,9 @@ Begin:
 
 				RestrainTarget();
 
-				TriggerTargetRestrainedSpeech();
+				ReportTarget();
+
+				//TriggerTargetRestrainedSpeech();
 
 				// unlock our aim
 				ISwatAI(m_Pawn).UnlockAim();

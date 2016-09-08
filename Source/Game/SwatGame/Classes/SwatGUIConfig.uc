@@ -134,9 +134,9 @@ var(MPSettings) config localized array<string> VoiceTypeChoices "Choices for net
 var(MPSettings) config           eVoiceType     PreferredVoiceType "Selected voicetype for network games";
 
 // dbeswick: integrated 20/6/05
-// Caches the voice type to use when the user chooses "random" in the GUI. 
+// Caches the voice type to use when the user chooses "random" in the GUI.
 // If it's set to RANDOM, then it will be re-cached when next queried
-var                               eVoiceType     CachedRandomVoice; 
+var                               eVoiceType     CachedRandomVoice;
 
 var(MPSettings) config localized array<string> NetworkConnectionChoices "Choices for network connection";
 var(MPSettings) config           array<int>    NetworkConnectionSpeeds "Speeds for network connection";
@@ -175,7 +175,7 @@ var(MPSettings) Config localized string MPTieMessage "The message to display whe
 //////////////////////////////////////////////////////////////////////////////////////
 var(GameSettings) const Config Localized String DefaultMPName "The default name given to the player for Multiplayer Games";
 var(GameSettings) Config String MPName "The name the player will use for Multiplayer Games";
-#if IG_CAPTIONS 
+#if IG_CAPTIONS
 var(GameSettings) Config Bool bShowSubtitles "If true, subtitles will be displayed for in-game audio";
 #endif
 var(GameSettings) Config Bool bShowHelp "If true, help text will be displayed for each control";
@@ -276,7 +276,7 @@ overloaded function Construct()
 {
     local int i;
 	local SwatSkinEquipmentSpec SSES;
-    
+
     AssertWithDescription( MissionName.Length == FriendlyName.Length, "The number of campaign MissionNames specified in SwatGUIState.ini does not match the number of FriendlyNames" );
     AssertWithDescription( MissionName.Length > 0, "There must be at least one valid campaign MissionNames specified in SwatGUIState.ini" );
 
@@ -298,12 +298,12 @@ overloaded function Construct()
 	{
 		CustomEquipmentLoadoutFriendlyNames[i] = CustomEquipmentLoadoutDefaultFriendlyNames[i];
 	}
-    
+
     AssertWithDescription( CustomEquipmentLoadoutFriendlyNames.Length == CustomEquipmentLoadouts.Length, "The number of Custom Loadouts does not match the number of Friendly Names specified in SwatGUIState.ini!");
-    
+
 	//TODO: clean this up later
     LoadLastMissionPlayed();
-    
+
     //custom mission results
     for (i=0; i<MissionResultNames.Length; i++)
     {
@@ -311,7 +311,7 @@ overloaded function Construct()
 
         Assert(MissionResults[i] != None);
     }
-    
+
     for( i = 0; i < EMPMode.EnumCount; i++ )
     {
         MapList[i] = new(,string(GetEnum(EMPMode,i))) class'SwatGame.MapRotation';
@@ -327,9 +327,9 @@ overloaded function Construct()
 function SetCurrentMission( Name MissionName, optional string FriendlyName, optional CustomScenario CustomScenario )
 {
 log("[ckline] >>> SwatGUIConfig::SetCurrentMission('"$MissionName$"', '"$FriendlyName$"', '"$CustomScenario$"')");
-    if( CurrentMission != None && 
-        CurrentMission.Name == MissionName && 
-        CurrentMission.FriendlyName == FriendlyName && 
+    if( CurrentMission != None &&
+        CurrentMission.Name == MissionName &&
+        CurrentMission.FriendlyName == FriendlyName &&
         CurrentMission.CustomScenario == CustomScenario )
     {
         log("[carlos] >>> SwatGUIConfig::SetCurrentMission() desired mission is already the current mission");
@@ -345,17 +345,17 @@ log("[ckline] >>> SwatGUIConfig::SetCurrentMission('"$MissionName$"', '"$Friendl
 log("[ckline] >>> SwatGUIConfig::SetCurrentMission(): CurrentMission is now None");
         return;
     }
-        
+
     CurrentMission = new( None, string(MissionName) ) class'SwatGame.SwatMission';
     Assert(CurrentMission != None);
     CurrentMission.AddRef();
 
     if( CustomScenario != None )
         SetScenarioName( FriendlyName );
-        
+
     CurrentMission.Initialize( FriendlyName, CustomScenario );
 
-    //the the new one as the Last played immediately    
+    //the the new one as the Last played immediately
     CurrentMissionName = CurrentMission.Name;
     CurrentMissionFriendlyName = CurrentMission.FriendlyName;
     CurrentMissionCustomScenario = CurrentMission.CustomScenario;
@@ -373,10 +373,10 @@ log("[ckline] >>> SwatGUIConfig::SetCurrentMission(): CurrentMission is now None
         else
             SetDesiredEntryPoint( ET_Primary );
     }
-    
+
 log("[ckline] >>> SwatGUIConfig::SetCurrentMission(): CurrentMission is now '"$CurrentMission$"'");
 
-    SetCurrentCommandInterfaceStyle( CommandInterfaceStyle );    
+    SetCurrentCommandInterfaceStyle( CommandInterfaceStyle );
 }
 
 function ResetCurrentMission()
@@ -484,13 +484,13 @@ final function MissionEnded(name Mission, eDifficultyLevel difficulty, bool Comp
     local int index;
 
     index = GetMissionIndex(Mission);
-    
+
     if( (index >= MissionResults.length) ) //mission was never played before
     {
         MissionResults[index] = new(,string(Mission)) class'SwatGame.MissionResults';
         MissionResultNames[index] = Mission;
     }
-    
+
     Assert( MissionResults[index] != None );
 
     //add this mission result
@@ -578,9 +578,9 @@ function SetCurrentCommandInterfaceStyle(ECommandInterfaceStyle Style)
 
 // Set whether the player and his team should start from the primary or
 // secondary set of entry points in a single player mission.
-final function SetDesiredEntryPoint(EEntryType EntrySet) 
+final function SetDesiredEntryPoint(EEntryType EntrySet)
 {
-	DesiredSPEntryPoint = EntrySet; 
+	DesiredSPEntryPoint = EntrySet;
 
 	if (EntrySet == ET_Primary)
 		log("Desired entry point was set to PRIMARY");
@@ -588,9 +588,9 @@ final function SetDesiredEntryPoint(EEntryType EntrySet)
 		log("Desired entry point was set to SECONDARY");
 }
 
-final function EEntryType GetDesiredEntryPoint() 
+final function EEntryType GetDesiredEntryPoint()
 {
-	return DesiredSPEntryPoint; 
+	return DesiredSPEntryPoint;
 }
 
 final function Name GetTagForVoiceType( eVoiceType Type )
@@ -617,18 +617,18 @@ final function Name GetTagForVoiceType( eVoiceType Type )
 final function eVoiceType GetVoiceTypeForCurrentPlayer()
 {
     local eVoiceType Voice;
-    
+
 	//log("GetVoiceTypeForCurrentPlayer() Preferred type =  "$GetEnum(eVoiceType, PreferredVoiceType));
-    
+
     if( PreferredVoiceType == eVoiceType.VOICETYPE_Random )
 	{
 	    if (CachedRandomVoice == eVoiceType.VOICETYPE_Random) // random voice has not yet been chosen
         {
-            // choose a random voice to use consistently until the next time the 
+            // choose a random voice to use consistently until the next time the
             // user changes back and forth from a specific voice to the "random"
             // option in the GUI
             CachedRandomVoice = eVoiceType( Rand( eVoiceType.EnumCount - 2 ) + 1 );
-            
+
 		    //log("Caching a new consistent random voice: "$GetEnum(eVoiceType, CachedRandomVoice));
         }
 
@@ -668,19 +668,19 @@ defaultproperties
 	// The default entry choice is Primary, until the user chooses a different
 	// one in the briefing screen.
     DesiredSPEntryPoint=ET_Primary
-    
+
     //by default, we do not want to show subtitles in the game
-//#if IG_CAPTIONS 
+//#if IG_CAPTIONS
     bShowSubtitles=false
 //#endif
- 
+
     ServerName="SWAT 4 Server"
-    DefaultMPName="Player"   
+    DefaultMPName="Player"
     MPNameLength=30
     MPNameAllowableCharSet="abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ()<>{}|_!^"
-    
+
     AdminPassword=""
-    
+
     VoiceTypeChoices(0)="Random"
     VoiceTypeChoices(1)="Lead"
     VoiceTypeChoices(2)="Reynolds"

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // ISwatDoor.uc - ISwatDoor interface
-// this interface allows us to access functions in SwatDoor we are unable to 
+// this interface allows us to access functions in SwatDoor we are unable to
 //  access in SwatAICommon because of package compilation order
 
 interface ISwatDoor;
@@ -16,6 +16,8 @@ function bool IsOpenLeft();
 function bool IsBroken();
 function bool IsLocked();
 function bool IsWedged();
+function bool IsBoobyTrapped();
+function bool IsBoobyTrapTriggered();
 function bool IsChargePlacedOnLeft();
 function bool IsChargePlacedOnRight();
 function AIDoorUsageSide GetOpenPositions(Pawn Other, bool bPreferSides, out vector OpenPoint, out rotator PawnOpenRotation);

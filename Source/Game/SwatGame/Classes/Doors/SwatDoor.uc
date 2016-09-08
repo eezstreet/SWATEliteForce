@@ -1,4 +1,4 @@
-class SwatDoor extends Engine.Door 
+class SwatDoor extends Engine.Door
 	implements SwatAICommon.ISwatDoor,
         IAmUsedByToolkit,
         IAmUsedByWedge,
@@ -24,6 +24,7 @@ var() bool bIsPushable "If true, this AIs will treat this door like it doesn't h
 var() bool bPlayerCanUse "If false, then a Player is unable to interact with the door.";
 
 var private bool        bIsBoobyTrapped;
+var private bool				bBoobyTrapTripped;
 var private BoobyTrap   BoobyTrap;
 
 struct native DoorAttachmentSpec
@@ -50,7 +51,7 @@ var config float QualifyTimeForWedge;
 var config float QualifyTimeForC2Charge;
 
 // The doorway is an invisible copy of the DoorModel's static mesh, and it does
-// not move. It is used to define the region of space that is occupied by the 
+// not move. It is used to define the region of space that is occupied by the
 // DoorModel when the door is closed.
 var DoorWay DoorWay;
 
@@ -307,7 +308,7 @@ simulated function PreBeginPlay()
     SetPositionForMove( GetInitialPosition(), MR_Interacted );
     Moved(true); //instantly to initial position
 
-	// assert that a locked door can be locked, 
+	// assert that a locked door can be locked,
 	// and unlock the door if bCanBeLocked is false and the door is locked
 	assertWithDescription((! bIsLocked || bCanBeLocked), Name $ " is locked, but bCanBeLocked is false!  This is bad, set either bIsLocked to false or bCanBeLocked to true in UnrealEd!  (In the meantime this door will be set to be unlocked.)");
 	if (bIsLocked && !bCanBeLocked)
@@ -381,7 +382,7 @@ simulated function PostNetBeginPlay()
 //     mplog( "...CurrentPosition="$CurrentPosition );
 //     mplog( "...PendingPosition="$PendingPosition );
 //     mplog( "...DesiredPosition="$DesiredPosition );
-    
+
 //     if ( DesiredPosition != CurrentPosition )
 //     {
 //         PendingPosition = DesiredPosition;
@@ -402,7 +403,7 @@ function Tick( float dTime )
         {
 			if (Level.GetEngine().EnableDevTools)
 				mplog( "on server, updating attachment locations for door." );
-				
+
             UpdateAttachmentLocations();
         }
     }
@@ -422,11 +423,24 @@ simulated function bool IsBoobyTrapped()
 simulated function SetBoobyTrap(BoobyTrap Trap)
 {
     BoobyTrap = Trap;
-    
+
+		bBoobyTrapTripped = False;
+
     if ( Trap != None )
         bIsBoobyTrapped = True;
     else
         bIsBoobyTrapped = False;
+}
+
+simulated function BoobyTrapTriggered()
+{
+	if (BoobyTrap != None)
+		bBoobyTrapTripped = True;
+}
+
+simulated function bool IsBoobyTrapTriggered()
+{
+	return bBoobyTrapTripped;
 }
 
 
@@ -450,9 +464,8 @@ private function bool IsInterestedInDoorOpeningRegistrant(IInterestedInDoorOpeni
 
 function RegisterInterestedInDoorOpening(IInterestedInDoorOpening Registrant)
 {
-	assert(! IsInterestedInDoorOpeningRegistrant(Registrant));
-
-	InterestedInDoorOpeningRegistrants[InterestedInDoorOpeningRegistrants.Length] = Registrant;
+	if(!IsInterestedInDoorOpeningRegistrant(Registrant))
+		InterestedInDoorOpeningRegistrants[InterestedInDoorOpeningRegistrants.Length] = Registrant;
 }
 
 function UnRegisterInterestedInDoorOpening(IInterestedInDoorOpening Registrant)
@@ -513,7 +526,7 @@ simulated function Interact(Pawn Other, optional bool Force)
             PC.OnMissionExitDoorUsed();
         return;
     }
-    
+
 	// save off the last person who interacted with this door
 	LastInteractor = Other;
 
@@ -527,7 +540,7 @@ simulated function Interact(Pawn Other, optional bool Force)
 
         if( Level.GetLocalPlayerController() != None )
             PlayerPawn = SwatPawn(Level.GetLocalPlayerController().Pawn);
-    
+
         if ( PlayerPawn != None && Other == PlayerPawn)
         {
             PlayerPawn.SetDoorLockedBelief(self, true);
@@ -536,7 +549,7 @@ simulated function Interact(Pawn Other, optional bool Force)
         {
             NetPlayerPawn = NetPlayer( Other );
             LockedKnowledge[ NetPlayerPawn.GetTeamNumber() ] = 1;
-            
+
 			if (Level.GetEngine().EnableDevTools)
 				mplog("Saving locked door knowledge for pawn: "$NetPlayerPawn$", team number: "$NetPlayerPawn.GetTeamNumber());
         }
@@ -548,11 +561,11 @@ simulated function Interact(Pawn Other, optional bool Force)
 		{
 			bIsLocked = false;
 		}
-		
+
         switch (CurrentPosition)
         {
         case DoorPosition_Closed:
-        
+
             if (ActorIsToMyLeft(Other))
                 SetPositionForMove( DoorPosition_OpenRight, MR_Interacted );
             else
@@ -564,11 +577,11 @@ simulated function Interact(Pawn Other, optional bool Force)
 
             SetPositionForMove( DoorPosition_Closed, MR_Interacted );
             break;
-        
+
         default:
             assert(false);  //unexpected DoorPosition
         }
-    
+
         Moved();
     }
 }
@@ -604,7 +617,7 @@ simulated function OnUnlocked()
         return;
 
 	bIsLocked = false;
-    
+
     TriggerEffectEvent('Unlocked');
 
 	// update officer door knowledge in standalone
@@ -628,7 +641,7 @@ simulated function OnUnlocked()
                 {
 					if (Level.GetEngine().EnableDevTools)
 						mplog( "...on server: calling OnDoorUnlocked() on "$CurrentNetPlayer );
-						
+
                     CurrentNetPlayer.OnDoorUnlocked( self );
                 }
             }
@@ -653,7 +666,7 @@ private simulated function bool IsAntiPortalOn()
 	// if this door doesn't act as an antiportal, the antiportal is never on
 	if (!bIsAntiPortal)
 		return false;
-		
+
 	if (DoorAntiPortal == None)
 	{
 		// bad internal state... maybe map wasn't rebuilt before running?
@@ -662,7 +675,7 @@ private simulated function bool IsAntiPortalOn()
 
 		return false;
 	}
-		
+
 	// Antiportal is on if its drawtype is DT_AntiPortal (off when it is DT_None)
 	return (DoorAntiPortal.DrawType == DT_AntiPortal);
 }
@@ -695,9 +708,9 @@ private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 	    else
 	    {
 		    //log("Changing AntiPortalActor.DrawType for Door '"$self$"' from "$GetEnum(EDrawType, DoorAntiPortal.DrawType)$" to DT_None");
-		    DoorAntiPortal.SetDrawType(DT_None);	
+		    DoorAntiPortal.SetDrawType(DT_None);
 	    }
-    	
+
 	    assertWithDescription(!bIsAntiPortal || Enabled == IsAntiPortalOn(), "[ckline] After SetAntiPortalAndMPBlockingVolume("$Enabled$") on Door '"$self$"', IsAntiPortalOn() == "$(!Enabled)$" -- this is not right.");
     }
 
@@ -732,7 +745,7 @@ simulated function Moved(optional bool Instantly, optional bool Force)
 		log("TMC T"$Level.TimeSeconds$" SwatDoor::Moved() Instantly="$Instantly$", CurrentPosition="$GetEnum(DoorPosition, CurrentPosition)$", PendingPosition="$GetEnum(DoorPosition, PendingPosition));
 
     if (CurrentPosition == PendingPosition && !Force) return; //already there
-    
+
     if (Instantly)
     {
         if ( Level.NetMode != NM_Client )
@@ -750,7 +763,7 @@ simulated function Moved(optional bool Instantly, optional bool Force)
             case DoorPosition_OpenRight:
                 PlayAnim('AtOpenRight');
                 break;
-        
+
             default:
                 assert(false);  //unexpected DoorPosition value
         }
@@ -768,8 +781,8 @@ simulated function Moved(optional bool Instantly, optional bool Force)
         // only in PreBeginPlay(), but I'm putting it in because it would be
         // necessary if we ever call Moved(true) at any other time.
         //UpdateAttachmentLocations();
-        
-        // Set antiportal state manually here (non-Instantly moves handle the 
+
+        // Set antiportal state manually here (non-Instantly moves handle the
         // antiportal in BeginState of state Moving).
         //Log( self$" in SwatDoor::Moved(). PendingPosition = "$GetEnum(DoorPosition,PendingPosition)$" CurrentPosition = "$GetEnum(DoorPosition,CurrentPosition));
 		if (CurrentPosition == DoorPosition_Closed)
@@ -818,7 +831,7 @@ simulated function Moved(optional bool Instantly, optional bool Force)
                         GotoState('Opening');
                     }
                     break;
-                
+
                 case MR_Breached:
                     if ( Level.NetMode != NM_Client )
                         DesiredPosition = PendingPosition;
@@ -878,7 +891,7 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 
     if ( Level.NetMode == NM_ListenServer || Level.NetMode == NM_DedicatedServer )
     {
-    
+
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---SwatDoor::NotifyClientsOfDoorBlocked(). OpeningBlocked="$OpeningBlocked );
 
@@ -892,7 +905,7 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
                 {
 					if (Level.GetEngine().EnableDevTools)
 						mplog( "...on server: calling ClientPlayDoorIsBlocked() on "$current$", SwatDoor="$self );
-						
+
                     current.ClientPlayDoorBlocked( self, OpeningBlocked, PendingPosition );
                 }
             }
@@ -901,7 +914,7 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 }
 
 
-// Note: In multiplayer function Blasted only happens on the server 
+// Note: In multiplayer function Blasted only happens on the server
 function Blasted(Pawn Instigator)
 {
     if ( IsClosed() || IsClosing() )
@@ -915,7 +928,7 @@ function Blasted(Pawn Instigator)
     }
 }
 
-// Note: In multiplayer function Blasted only happens on the server 
+// Note: In multiplayer function Blasted only happens on the server
 function Breached(DeployedC2ChargeBase Charge)
 {
     if ( IsClosed() || IsClosing() )
@@ -942,14 +955,14 @@ native function bool PointIsToMyLeft(vector Point);
 
 // Returns true if the point is on the same side of the door as the side
 // that the door is open to. If the door is closed, always returns false;
-// 
+//
 // If TreatOpeningDoorsAsClosed=false (the default), then a door that is opening
-// but not yet fully open will be treated as if it is already fully open; if 
+// but not yet fully open will be treated as if it is already fully open; if
 // TreatOpeningDoorsAsClosed=true, then a door that is opening
 // but not yet fully open will be treated as if it is closed.
 function bool PointIsOnSideThatDoorIsOpenTo(vector Point, optional bool TreatOpeningDoorsAsClosed)
 {
-    if (IsClosed()) 
+    if (IsClosed())
         return false;
 
     if ( PointIsToMyLeft(Point) )
@@ -1016,7 +1029,7 @@ simulated function bool PositionIsBlocked(DoorPosition TestPosition)  //TMC TODO
     foreach RadiusActors(class'Pawn', Candidate, 200, PivotLocation)
 	{
 		// only concious AIs can block doors
-        if (class'Pawn'.static.checkConscious(Candidate) && 
+        if (class'Pawn'.static.checkConscious(Candidate) &&
 			LocationIsInSweep(PivotLocation, Candidate.Location, Candidate.CollisionRadius, TestSide))
 		{
             BlockingPawns[BlockingPawns.Length] = Candidate;
@@ -1044,7 +1057,7 @@ simulated function bool LocationIsInSweep(vector DoorPivot, vector TestLocation,
     //the candidate is not in the way if it is too far away
     if (VSize(TestLocation - DoorPivot) > CollisionRadius + TestLocationCollisionRadius)
         return false;   //this candidate is a safe distance away
-            
+
     //okay, so candidate is too close... but is it in the way?
 
     //the candidate is not in the way if if it is not on the test side
@@ -1060,7 +1073,7 @@ simulated function bool LocationIsInSweep(vector DoorPivot, vector TestLocation,
     // The candidate is not in the way if it is outside of the sweep of the door
     //
     // We pick the rotation that represents the door half-closed (at 45
-    // degree angle), and then we test to see if the TestLocation is 
+    // degree angle), and then we test to see if the TestLocation is
     // within 90 degrees (45 degrees in either direction) with a call to
     // PointWithinInfiniteCone(). If it's within 45 in either direction when
     // the door is half-closed, then it's within the sweep.
@@ -1069,8 +1082,8 @@ simulated function bool LocationIsInSweep(vector DoorPivot, vector TestLocation,
         OffsetRotation = Rotation - rot(0, 8192, 0);
     else
         OffsetRotation = Rotation + rot(0, 8192, 0);
-    
-    // Treat cone and test location as if both are at the same height 
+
+    // Treat cone and test location as if both are at the same height
     // (i.e. test in the XY-plane)
     ConeDirection = Vector(OffsetRotation);
     ConeDirection.Z = 0;
@@ -1098,7 +1111,7 @@ simulated function UpdateOfficerDoorKnowledge()
 		PlayerPawn = SwatPawn(Level.GetLocalPlayerController().Pawn);
 
 		// update our knowledge (and any AI knowledge, if any AIs exist)
-		// NOTE: this is different from before where the AI behavior would 
+		// NOTE: this is different from before where the AI behavior would
 		// update the door knowledge (wanted one codepath)
 		AIRepo = SwatAIRepository(Level.AIRepo);
 
@@ -1113,7 +1126,7 @@ simulated event bool PawnBelievesDoorLocked(SwatPawn Pawn)
 {
     local PawnDoorKnowledge Info;
     local NetPlayer         NetPawn;
-    
+
     Info = Pawn.GetDoorKnowledge(self);
     assert(Info != None);   //shouldn't try to get door knowledge on a SwatPawn with no door knowledge
 
@@ -1169,7 +1182,7 @@ simulated state Moving
 {
     //Doors cannot (currently) interact while moving
     simulated function bool CanInteract() { return false; }
-    
+
     simulated function Interact(Pawn Other, optional bool Force)
     {
         assertWithDescription(false,
@@ -1204,7 +1217,7 @@ simulated state Moving
     }
 
 Begin:
-    
+
     // If door is trying to open, turn off the antiportal
 	if (PendingPosition != DoorPosition_Closed)
 	{
@@ -1240,24 +1253,24 @@ simulated state Opening extends Moving
     simulated function StartMoving()
     {
 		NotifyRegistrantsDoorOpening();
-        
+
         if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
         {
             assert(BoobyTrap != None);
             BoobyTrap.OnTriggeredByDoor();
         }
-        
+
         if (PendingPosition == DoorPosition_OpenLeft)
             PlayAnim('OpenLeft');
         else
             PlayAnim('OpenRight');
     }
 
-	// WARNING: can't do per-state override of native functions, so this 
+	// WARNING: can't do per-state override of native functions, so this
 	// is handled manually in ASwatDoor::IsOpening()
 	//
-	//	simulated function bool IsOpening() { return true; } 
-    
+	//	simulated function bool IsOpening() { return true; }
+
     simulated function OnMoveEnded()
     {
     }
@@ -1266,7 +1279,7 @@ simulated state Opening extends Moving
 //State Hierarchy: Moving -> Closing
 simulated state Closing extends Moving
 {
-	// WARNING: can't do per-state override of native functions, so this 
+	// WARNING: can't do per-state override of native functions, so this
 	// is handled manually in ASwatDoor::IsClosing()
 	//
 	//	simulated function bool IsClosing() { return true; }
@@ -1335,6 +1348,12 @@ simulated state BeingBlasted extends Moving
             PlayAnim('BlastedLeft');
         else
             PlayAnim('BlastedRight');
+
+						if ( IsBoobyTrapped() )
+		        {
+		            assert(BoobyTrap != None);
+		            BoobyTrap.OnTriggeredByDoor();
+		        }
     }
 
     simulated function PlayBlastedEffects();    //implemented in subclasses
@@ -1361,6 +1380,12 @@ simulated state BeingBreached extends Moving
             PlayAnim('BreachedLeft');
         else
             PlayAnim('BreachedRight');
+
+						if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+		        {
+		            assert(BoobyTrap != None);
+		            BoobyTrap.OnTriggeredByDoor();
+		        }
     }
 }
 simulated function PlayBreachedEffects();    //implemented in subclasses
@@ -1520,7 +1545,7 @@ simulated function bool IsOfficerAtSideOpenPoint(Pawn Officer, bool bOnLeftSide)
 
 		return Officer.ReachedLocation(OpenPoint);
 	}
-	
+
 	return false;
 }
 
@@ -1621,7 +1646,7 @@ simulated function vector GetBreachFromPoint(Pawn Other)
 simulated function vector GetBreachAimPoint(Pawn Other)
 {
 	local vector BreachAimPoint;
-	
+
 	if (ActorIsToMyLeft(Other))
 	{
 		BreachAimPoint = GetBoneCoords('BreachAimLeft', true).Origin;
@@ -2156,8 +2181,8 @@ simulated function SetPendingInteractor(Pawn Interactor)
 
 
 // only for doors opening the opposite of the Other
-simulated function bool IsBlockedFor(Pawn Other)  
-{ 
+simulated function bool IsBlockedFor(Pawn Other)
+{
 	if (ActorIsToMyLeft(Other))
 	{
 		return PositionIsBlocked(DoorPosition_OpenRight);
@@ -2166,7 +2191,7 @@ simulated function bool IsBlockedFor(Pawn Other)
 	{
 		return PositionIsBlocked(DoorPosition_OpenLeft);
 	}
-}		
+}
 
 // requires that the BlockingPawns array is "fresh",
 // this should only be called after somebody tries to open the door
@@ -2370,13 +2395,13 @@ simulated function OnUsedByWedge()
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( "...door was not closed and stationary and not broken. Doing nothing..." );
-			
+
         return;
     }
 
 	if (Level.GetEngine().EnableDevTools)
 		mplog( "...door was closed and stationary and not broken. Deploying wedge..." );
-		
+
     DeployedWedge.OnDeployed();
     OnWedged();
 }
@@ -2437,7 +2462,7 @@ simulated event DesiredPositionChanged()
 		mplog( "...PendingPosition="$PendingPosition );
 		mplog( "...DesiredPosition="$DesiredPosition );
     }
-    
+
     // We don't want sounds to be played on empty doorways.
     if ( !IsEmptyDoorway() )
     {
@@ -2446,7 +2471,7 @@ simulated event DesiredPositionChanged()
     }
 }
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
 //debugging
 simulated function TestBlocking(Pawn Pawn, int Times)
 {
@@ -2469,13 +2494,13 @@ simulated function TestBlocking(Pawn Pawn, int Times)
 
         if (LocationIsInSweep(PivotLocation, TestLocation, Pawn.CollisionRadius, TestSide))
             Level.GetLocalPlayerController().myHUD.AddDebugBox(
-                TestLocation, 
+                TestLocation,
                 1,      //size
                 class'Engine.Canvas'.Static.MakeColor(255,128,128),
                 10);    //lifespan
         else
             Level.GetLocalPlayerController().myHUD.AddDebugBox(
-                TestLocation, 
+                TestLocation,
                 1,      //size
                 class'Engine.Canvas'.Static.MakeColor(128,255,128),
                 10);    //lifespan
@@ -2521,7 +2546,7 @@ defaultproperties
 	bPathColliding=true
     bIsMissionExit=false
     bEdShouldSnap=true
-    
+
     //note that collision for SwatDoors is changed at runtime in SwatDoor::PostBeginPlay() and SingleDoor::BeginPlay()
     bCollideActors=false
     bBlockZeroExtentTraces=true
@@ -2548,6 +2573,7 @@ defaultproperties
     bIsAntiPortal=true
     AntiPortalScaleFactor=(X=1.05f,Y=0.1f,Z=1.05f)
     bCollideWhenPlacing=false
+	bBoobyTrapTripped=false
 
 	MoveAndClearPauseThreshold=128.0
 

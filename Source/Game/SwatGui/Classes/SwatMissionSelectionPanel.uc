@@ -5,8 +5,7 @@
 //  Menu to load map from entry screen.
 // ====================================================================
 
-class SwatMissionSelectionPanel extends SwatGUIPanel
-     config(SwatMissionSelectionPanel);
+class SwatMissionSelectionPanel extends SwatGUIPanel;
 
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
 import enum eSwatGameRole from SwatGame.SwatGUIConfig;
@@ -31,14 +30,14 @@ var() private config localized string DifficultyLabelString;
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
-    
+
  	Super.InitComponent(MyOwner);
 
     for( i = 0; i < eDifficultyLevel.EnumCount; i++ )
     {
         MyDifficultySelector.AddItem(GC.DifficultyString[i]);
     }
-    
+
     MyDifficultySelector.SetIndex( GC.CurrentDifficulty );
 
 	MyMissionSelectionBox.OnChange=MyMissionSelectionBox_OnChange;
@@ -50,10 +49,10 @@ function InternalOnActivate()
     if( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom )
     {
         Assert( GC.GetCustomScenarioPack() != None );
-        
+
         theCampaign = None;
         MyCampaignNameLabel.SetCaption(GC.GetPakFriendlyName());
-        
+
         PopulateCustomScenarioList();
 
         MyMissionSelectionBox.List.FindExtra( GC.GetScenarioName() );
@@ -64,7 +63,7 @@ function InternalOnActivate()
 
         theCampaign = SwatGUIController(Controller).GetCampaign();
         MyCampaignNameLabel.SetCaption(theCampaign.StringName);
-        
+
         PopulateCampaignMissionList();
 
         if( theCampaign.GetAvailableIndex() >= MyMissionSelectionBox.Num() && !theCampaign.HasPlayedCreditsOnCampaignCompletion() )
@@ -84,19 +83,19 @@ function DisplayMissionResults( MissionResults Results )
     local int i;
     local MissionResult Result;
     local string scoreString;
-  
-// no "Mission not yet played" according to Paul    
+
+// no "Mission not yet played" according to Paul
 //    if( Results == None )
 //    {
 //        MyMissionInfoBox.SetContent( StringC );
 //        return;
 //    }
-    
+
     MyMissionInfoBox.SetContent( "" );
     for( i = 0; i < eDifficultyLevel.EnumCount; i++ )
     {
         Result = Results.GetResult( eDifficultyLevel(i) );
-        
+
         if( !Result.Played )
         {
             scoreString = "( - )";
@@ -107,7 +106,7 @@ function DisplayMissionResults( MissionResults Results )
             if( !Result.Completed )
                 scoreString = "("@scoreString@")";
         }
-        scoreString = ":"@scoreString; 
+        scoreString = ":"@scoreString;
 
         MyMissionInfoBox.AddText( GC.GetDifficultyString(eDifficultyLevel(i)) $ scoreString );
     }
@@ -116,7 +115,7 @@ function DisplayMissionResults( MissionResults Results )
 function MyMissionSelectionBox_OnChange(GUIComponent Sender)
 {
     local CustomScenario CustomScen;
-    
+
     if( bAddingMissions )
         return;
 
@@ -180,7 +179,7 @@ private function ShowMissionDescription()
     }
 
     MyMissionInfo.SetContent( Content );
-    
+
     MyThumbnail.Image = GC.CurrentMission.Thumbnail;
     MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
 }
@@ -201,23 +200,23 @@ private function PopulateCustomScenarioList()
     bAddingMissions=true;
 
     MyMissionSelectionBox.List.Clear();
-    
+
     ScenarioIterator = -1;
     i = 0;
     do
     {
         ScenarioString = GC.GetCustomScenarioPack().NextScenario(ScenarioIterator);
-        
+
         if (ScenarioIterator >= 0)
         {
             CustomScen = new() class'CustomScenario';
-            
+
             GC.GetCustomScenarioPack().LoadCustomScenarioInPlace(
                 CustomScen,
                 ScenarioString,
                 GC.GetPakName(),
                 GC.GetPakExtension());
-                
+
             MyMissionSelectionBox.List.Add(string(CustomScen.LevelLabel),CustomScen,ScenarioString,i,,true);
             i++;
         }
@@ -232,25 +231,26 @@ private function PopulateCustomScenarioList()
 private function PopulateCampaignMissionList()
 {
     local int index;
-    
+
     bAddingMissions=true;
 
     MyMissionSelectionBox.List.Clear();
-	if(theCampaign.CampaignPath == 0) {
-		for(index = 0;index < GC.MissionName.length;index++)
-		{
-			if( index <= theCampaign.GetAvailableIndex() )
-				MyMissionSelectionBox.List.Add(string(GC.MissionName[index]),,GC.FriendlyName[index],index,,true);
-		}
-	} else if(theCampaign.CampaignPath == 1) {
-		for(index = 0; index < ExtraMissionName.length; index++) {
-			if(index <= theCampaign.GetAvailableIndex() ) {
-				MyMissionSelectionBox.List.Add(string(ExtraMissionName[index]),,ExtraFriendlyName[index],index,,true);
-			}
-		}
-	}
+  	if(theCampaign.CampaignPath == 0) {
+  		for(index = 0;index < GC.MissionName.length;index++)
+  		{
+  			if( index <= theCampaign.GetAvailableIndex() ) {
+  				MyMissionSelectionBox.List.Add(string(GC.MissionName[index]),,GC.FriendlyName[index],index,,true);
+        }
+  		}
+  	} else if(theCampaign.CampaignPath == 1) {
+  		for(index = 0; index < ExtraMissionName.length; index++) {
+  			if(index <= theCampaign.GetAvailableIndex() ) {
+  				MyMissionSelectionBox.List.Add(string(ExtraMissionName[index]),,ExtraFriendlyName[index],index,,true);
+  			}
+  		}
+  	}
 
-	MyMissionSelectionBox.List.bSortForward=true;
+	  MyMissionSelectionBox.List.bSortForward=true;
     MyMissionSelectionBox.List.Sort();
 
     bAddingMissions=false;
@@ -259,7 +259,7 @@ private function PopulateCampaignMissionList()
 private function CompletedCampaign()
 {
     theCampaign.SetHasPlayedCreditsOnCampaignCompletion();
-	Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu"); 
+	Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu");
 }
 
 defaultproperties

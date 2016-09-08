@@ -93,7 +93,7 @@ var config float TasedViewEffectAmplitude;
 //how often to recenter
 var config float TasedViewEffectFrequency;
 
-var bool EquipOtherAfterUsed;                   //if true, 
+var bool EquipOtherAfterUsed;                   //if true,
 var EquipmentSlot SlotForReequip;               //if TryToReequipAfterUsed is set, then SlotForReequip records the EquipmentSlot that should be used to try to reequip
 
 var bool  DoneThrowing;    //mutex to enforce control over exits from state Throwing
@@ -254,7 +254,7 @@ simulated function            OnEndControlling();
 simulated event PreBeginPlay()
 {
     Super.PreBeginPlay();
-    
+
     Label = 'Player';
 
     //setup timers for non-lethal effects
@@ -287,7 +287,7 @@ simulated event PostBeginPlay()
 	{
 		SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Register(self);
 	}
-	
+
 	if( Level.NetMode != NM_Standalone )
 	{
 	    CommandArrow = Spawn(class'CommandArrow');
@@ -309,7 +309,7 @@ simulated function InitializeHands()
 
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPlayer::InitializeHands()." );
-    
+
     Hands = Spawn(class'Engine.Hands', self);
     assert(Hands != None);
 
@@ -412,12 +412,12 @@ native function bool HasA(name HandheldEquipmentName);
 simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
 {
     //mplog( self$"---SwatPlayer::SetPlayerSkins()." );
-    
+
     Skins[0] = inLoadOut.GetPantsMaterial();
     Skins[1] = inLoadOut.GetFaceMaterial();
     Skins[2] = inLoadOut.GetNameMaterial();
     Skins[3] = inLoadOut.GetVestMaterial();
-    
+
     //mplog( "...Skins[0]="$Skins[0] );
     //mplog( "...Skins[1]="$Skins[1] );
     //mplog( "...Skins[2]="$Skins[2] );
@@ -478,7 +478,7 @@ simulated function bool ValidateEquipPocket( Pocket thePocket )
     PocketContents = LoadOut.GetItemAtPocket( thePocket );
     ActiveItem = GetActiveItem();
     PendingItem = GetPendingItem();
-    
+
     //return if we can't equip now
 
     //nothing in the specified pocket
@@ -492,12 +492,12 @@ simulated function bool ValidateEquipPocket( Pocket thePocket )
 			mplog( "...ActiveItem     ="$ActiveItem );
 			mplog( "...PendingItem    ="$PendingItem );
         }
-        
+
         return false;
     }
-	
+
 	NewItem = HandheldEquipment(PocketContents);
-	
+
     //no handheldequipment in the specified pocket
     if (NewItem == None)
     {
@@ -510,7 +510,7 @@ simulated function bool ValidateEquipPocket( Pocket thePocket )
 			mplog( "...ActiveItem     ="$ActiveItem );
 			mplog( "...PendingItem    ="$PendingItem );
 		}
-		
+
         return false;
     }
     //one of those is already active
@@ -540,14 +540,14 @@ simulated function bool ValidateEquipPocket( Pocket thePocket )
 			mplog( "...ActiveItem     ="$ActiveItem );
 			mplog( "...PendingItem    ="$PendingItem );
         }
-        
+
         return false;
     }
 
     if ( ActiveItem != None && !ActiveItem.IsIdle() )
     {
         //the current item is busy
-        
+
 		if (Level.GetEngine().EnableDevTools)
 		{
 			mplog( self$"---SwatPlayer::ValidateEquipPocket(). Validate failed. Pocket="$thePocket );
@@ -557,14 +557,14 @@ simulated function bool ValidateEquipPocket( Pocket thePocket )
 			mplog( "...ActiveItem     ="$ActiveItem );
 			mplog( "...PendingItem    ="$PendingItem );
         }
-        
+
         return false;
     }
 
     if ( PendingItem != None && !PendingItem.IsIdle() )
     {
         //the pending item is busy
-        
+
 		if (Level.GetEngine().EnableDevTools)
 		{
 			mplog( self$"---SwatPlayer::ValidateEquipPocket(). Validate failed. Pocket="$thePocket );
@@ -574,11 +574,11 @@ simulated function bool ValidateEquipPocket( Pocket thePocket )
 			mplog( "...ActiveItem     ="$ActiveItem );
 			mplog( "...PendingItem    ="$PendingItem );
         }
-        
+
         return false;
     }
 
-	if (Level.GetEngine().EnableDevTools)    
+	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPlayer::ValidateEquipPocket(). Validate succeeded. Pocket="$thePocket$", NewItem="$NewItem );
 
     //okay, go ahead and equip
@@ -594,7 +594,7 @@ simulated function SetProtection(ESkeletalRegion Region, ProtectiveEquipment Pro
     Super.SetProtection(Region, Protection);
 
     PC = SwatGamePlayerController(Controller);
-    
+
     if( PC == Level.GetLocalPlayerController() && PC.HasHUDPage())
     {
         PC.GetHUDPage().UpdateProtectiveEquipmentOverlay();
@@ -675,7 +675,7 @@ function ServerRequestEquip( EquipmentSlot Slot )
 
     CurrentItem = GetActiveItem();
     PendingItem = GetPendingItem();
-    
+
     // The player can't unequip certain items. If they request it, just do
     // nothing. If the server needs to force the player to unequip one of
     // these items, it should call ForceEquipOnServer() below.
@@ -687,8 +687,8 @@ function ServerRequestEquip( EquipmentSlot Slot )
 // dbeswick: integrated 20/6/05
     // We don't want the player to be able to equip if he's currently under
     // the influence of nonlethals.
-    // 
-    // NOTE: we also check this on the client side in 
+    //
+    // NOTE: we also check this on the client side in
     // SwatGamePlayerController::InternalEquipSlot, but we put it here to prevent
     // clients who hack their .u files and are able to bypass the MD5 checks
     // from being able to cheat too egregiously.
@@ -756,7 +756,7 @@ function AuthorizedEquipOnServer( EquipmentSlot Slot )
         if ( ValidateEquipSlot( Slot ) )
         {
             CheckDesiredItemAndEquipIfNeeded();
-        }    
+        }
     }
 }
 
@@ -800,12 +800,12 @@ function ServerRequestMelee( EquipmentSlot Slot )
                     //log( "                            i: "$i );
                     //log( "                        Owner: "$Owner );
                     //log( "     theLocalPlayerController: "$theLocalPlayerController );
-                    
+
                     if ( (current != theLocalPlayerController) && (current.Pawn != None) )
                     {
 						if (Level.GetEngine().EnableDevTools)
 							mplog( self$" on server: calling ClientMeleeForPawn() on "$current.Pawn );
-							
+
                         current.ClientMeleeForPawn( self, ItemToMelee.GetSlot() );
                     }
                 }
@@ -859,12 +859,12 @@ function ServerRequestReload( EquipmentSlot Slot )
                     //log( "                            i: "$i );
                     //log( "                        Owner: "$Owner );
                     //log( "     theLocalPlayerController: "$theLocalPlayerController );
-                    
+
                     if ( (current != theLocalPlayerController) && (current.Pawn != None) )
                     {
 						if (Level.GetEngine().EnableDevTools)
 							mplog( self$" on server: calling ClientReloadForPawn() on "$current.Pawn );
-							
+
                         current.ClientReloadForPawn( self, ItemToReload.GetSlot() );
                     }
                 }
@@ -880,14 +880,14 @@ function ServerRequestReload( EquipmentSlot Slot )
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Executes only on the server. 
+// Executes only on the server.
 //
 
 function ServerRequestUse( SwatPlayer inUsePawn )
 {
     local SwatGamePlayerController current;
     local Controller iController, LocalPC;
-    local NetPlayer theNetPlayer; 
+    local NetPlayer theNetPlayer;
     local HandheldEquipment Equipment;
 
     assert( Level.NetMode != NM_Standalone );
@@ -902,18 +902,18 @@ function ServerRequestUse( SwatPlayer inUsePawn )
 
 	if (Level.GetEngine().EnableDevTools)
 		mplog( "...Equipment="$Equipment );
-		
+
 	if (Level.GetEngine().EnableDevTools)
 	{
 		// Begin: remove me once we get the equipment system thoroughly debugged.
 		if ( Equipment != None )
 		{
 			if ( !Equipment.IsEquipped() )
-			{    
+			{
 				mplog( "...failing because equipment wasn't equipped." );
 			}
 			if ( !Equipment.IsIdle() )
-			{    
+			{
 				mplog( "...failing because equipment wasn't idle." );
 			}
 		}
@@ -922,7 +922,7 @@ function ServerRequestUse( SwatPlayer inUsePawn )
 
     if ( Equipment == None || !Equipment.PrevalidateUse() )
         return;
-        
+
 	if (Level.GetEngine().EnableDevTools)
 	    mplog( "...Equipment.PrevalidateUse()=True" );
 
@@ -1069,7 +1069,7 @@ simulated function ClientStartQualify( SwatPlayer Qualifier, Actor QualifyTarget
     {
 		if (Level.GetEngine().EnableDevTools)
 		    mplog( "...equipment was not idle. Caching request to qualify." );
-		    
+
         // For remote pawns *only*, we want to save the info for a cached
         // qualification.
         Qualifier.CachedQualifyEquipment = theEquipment;
@@ -1095,14 +1095,14 @@ simulated function BeginCachedQualification()
     // Clear out the cached values to denote that we've already initiated the
     // cached qualify that was pending.
     CachedQualifyEquipment = None;
-    CachedQualifyTarget = None;    
+    CachedQualifyTarget = None;
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Executes only on the server. 
+// Executes only on the server.
 //
 
 // The following two functions will be needed when we implement VIP mode.
@@ -1114,7 +1114,7 @@ function NotifyClientsOfFinishQualify( Actor QualifyTarget, bool Success )
     local PlayerController current;
     local SwatPlayer playerPawn;
     local PlayerController theLocalPlayerController;
-    
+
 	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPlayer::NotifyClientsOfFinishQualify()" );
 
@@ -1217,7 +1217,7 @@ simulated function OnEquippingFinished()
 
             SwatGamePlayerController(Controller).EquipmentSlotForQualify = SLOT_Invalid;
 
-            //we need to update focus because the player may have looked away, 
+            //we need to update focus because the player may have looked away,
             //  and qualification is not appropriate anymore.
             SwatGamePlayerController(Controller).UpdateFocus();
 
@@ -1230,7 +1230,7 @@ simulated function OnEquippingFinished()
         {
 			if (Level.GetEngine().EnableDevTools)
 				mplog( "...WeHaveACachedQualify()="$WeHaveACachedQualify() );
-            
+
             if ( Level.NetMode == NM_Client && WeHaveACachedQualify() )
             {
                 // If we get here, we know we're dealing with a remote pawn who
@@ -1321,7 +1321,7 @@ simulated function OnUsingFinished()
             }
         }
     }
-    else 
+    else
     {
         CheckDesiredItemAndEquipIfNeeded();
     }
@@ -1333,7 +1333,7 @@ simulated function IWasNonlethaledAndFinishedSoDoAnEquipIfINeedToDoOne()
 {
     local HandheldEquipment theActiveItem;
     local HandheldEquipment thePendingItem;
-    
+
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPlayer::IWasNonlethaledAndFinishedSoDoAnEquipIfINeedToDoOne()." );
 
@@ -1359,7 +1359,7 @@ simulated function IWasNonlethaledAndFinishedSoDoAnEquipIfINeedToDoOne()
         if ( theActiveItem == None || !theActiveItem.IsAvailable() || theActiveItem.IsA('Lightstick') )
             DoDefaultEquip();
     }
-    else 
+    else
     {
         CheckDesiredItemAndEquipIfNeeded();
     }
@@ -1402,13 +1402,13 @@ simulated protected function bool CheckDesiredItemAndEquipIfNeeded()
         {
 			if (Level.GetEngine().EnableDevTools)
 				mplog( self$"...returning false: Pockets are same="$DesiredItemPocket );
-				
+
             return false;
         }
 
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"...Pockets differ:" );
-			
+
 		if (Level.GetEngine().EnableDevTools)
 		{
 			if ( ActiveItem != None )
@@ -1480,12 +1480,12 @@ simulated function bool ValidateReload()
         //can only do one thing at a time
         return false;
     }
-    
+
     if (!Weapon.Ammo.CanReload() )
     {
         return false;
     }
-        
+
     return true;
 }
 
@@ -1530,9 +1530,9 @@ simulated function bool CanThrowPrep()
 {
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPlayer::CanThrowPrep()." );
-		
+
     // NOTE: this function is typically overridden in other states
-		
+
     return true;
 }
 
@@ -1540,7 +1540,7 @@ simulated function bool RequestEquipShouldBeAllowed()
 {
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPlayer::RequestEquipShouldBeAllowed()." );
-		
+
     // NOTE: this function is typically overridden in other states
 
     return true;
@@ -1575,14 +1575,14 @@ simulated function EndThrow( float ThrowHeldTimeFromNetwork )
 ///
 ///
 simulated state ThrowingPrep
-{    
+{
     ignores HandsShouldIdle;
 
     simulated function bool CanThrowPrep()
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---CanThrowPrep() of state 'ThrowingPrep'." );
-			
+
         return false;
     }
 
@@ -1590,7 +1590,7 @@ simulated state ThrowingPrep
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---RequestEquipShouldBeAllowed() of state 'ThrowingPrep'." );
-        
+
         return false;
     }
 
@@ -1641,14 +1641,14 @@ simulated state ThrowingPrep
             Hands.PlayAnim(Grenade.GetHandsPreThrowAnimation(),,Hands.PreThrowTweenTime);
         //pawn
         PawnThrowAnimationChannel = AnimPlaySpecial(
-            Grenade.GetThirdPersonPreThrowAnimation(), 
-            GetPawnThrowTweenTime(), 
+            Grenade.GetThirdPersonPreThrowAnimation(),
+            GetPawnThrowTweenTime(),
 			GetPawnThrowRootBone());
         //grenade
         GrenadeFirstPersonModel = Grenade.GetFirstPersonModel();
         if ( GrenadeFirstPersonModel != None && Grenade.GetFirstPersonPreThrowAnimation() != '')
             GrenadeFirstPersonModel.PlayAnim(Grenade.GetFirstPersonPreThrowAnimation());
-       
+
         //finish animations...
 
         //hands
@@ -1687,12 +1687,12 @@ simulated state ThrowingPrep
         //else
         //  we're just waiting for the pre-throw animations to finish... we'll be releasing right after that
     }
-    
+
     simulated function EndThrow( float ThrowHeldTimeFromNetwork )
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---EndThrow() of state 'ThrowingPrep'." );
-			
+
         DoneThrowing = true;
         ThrowHeldTime = ThrowHeldTimeFromNetwork;
     }
@@ -1777,7 +1777,7 @@ simulated state Throwing
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---EndThrow() of state 'Throwing'." );
-			
+
         DoneThrowing = true;
         ThrowHeldTime = ThrowHeldTimeFromNetwork;
     }
@@ -1792,7 +1792,7 @@ simulated state Throwing
 
         //Throwing has been interrupted.  The pin is pulled, but the grenade is not yet thrown.
 
-        //If the player is about to be arrested, then 
+        //If the player is about to be arrested, then
         //  we want to "forget" about the grenade altogether, to avoid the degenerate strategy
         //  of running around with a live grenade to avoid being arrested.
         //If the player is not affected by a non-lethal (ie. killed), then they should drop
@@ -1826,7 +1826,7 @@ simulated state ThrowingFinish
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---CanThrowPrep() of state 'ThrowingFinish'." );
-			
+
         return false;
     }
 
@@ -1834,7 +1834,7 @@ simulated state ThrowingFinish
     {
 		if (Level.GetEngine().EnableDevTools)
 			mplog( self$"---RequestEquipShouldBeAllowed() of state 'ThrowingFinish'." );
-			
+
         return false;
     }
 
@@ -2032,7 +2032,7 @@ function ServerBeginFiringWeapon( EquipmentSlot ItemSlot )
                             //log( "                            i: "$i );
                             //log( "                        Owner: "$Owner );
                             //log( "     theLocalPlayerController: "$theLocalPlayerController );
-                    
+
                             if ( (i.Pawn != self) && (i != theLocalPlayerController) )
                             {
                                 //mplog( "On server: calling ClientBeginFiringWeapon() on "$current );
@@ -2066,7 +2066,7 @@ function BroadcastEmptyFiredToClients()
 	    mplog( self$"---SwatPlayer::BroadcastEmptyFiredToClients()." );
 
     Assert( Level.NetMode == NM_DedicatedServer || Level.NetMode == NM_ListenServer );
-    
+
     // Broadcast to all pawns except the LocalPlayerController's and the pawn
     // who fired (which is self).
 
@@ -2154,7 +2154,7 @@ function ServerEndFiringWeapon()
              //log( "                            i: "$i );
              //log( "                        Owner: "$Owner );
              //log( "     theLocalPlayerController: "$theLocalPlayerController );
-                    
+
              if ( (i.Pawn != self) && (i != theLocalPlayerController) )
              {
                  //mplog( "On server: calling ClientEndFiringWeapon() on "$current );
@@ -2176,12 +2176,12 @@ function ServerEndFiringWeapon()
 //IReactToFlashbangGrenade implementation
 
 Function ReactToFlashbangGrenade(
-    SwatGrenadeProjectile Grenade, 
+    SwatGrenadeProjectile Grenade,
 	Pawn  Instigator,
-    float Damage, float DamageRadius, 
-    Range KarmaImpulse, 
-    float KarmaImpulseRadius, 
-    float StunRadius, 
+    float Damage, float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
+    float StunRadius,
     float PlayerFlashbangStunDuration,
     float AIStunDuration,
     float MoraleModifier)
@@ -2231,10 +2231,10 @@ Function ReactToFlashbangGrenade(
             ||  PointWithinInfiniteCone(
 					 CameraLocation,
 					 Vector(CameraRotation),
-					 GrenadeLocation, 
+					 GrenadeLocation,
 					 Controller.FOVAngle * DEGREES_TO_RADIANS);
 log("TMC FOVMatters="$FOVMatters$", CanSee="$CanSee);
-    if  ( 
+    if  (
             bTestingCameraEffects
         ||  (Distance <= StunRadius && CanSee)
 		)
@@ -2242,7 +2242,7 @@ log("TMC FOVMatters="$FOVMatters$", CanSee="$CanSee);
         if (Level.NetMode != NM_Client)
         {
             FlashbangedTimer.StartTimer(PlayerFlashbangStunDuration, false, true);   //don't loop, reset if already running
-            
+
             if ( Controller.GetStateName() != 'BeingCuffed' && Controller.GetStateName() != 'BeingUncuffed' )
             {
                 Reason = 'ReactingToNonlethal';
@@ -2327,11 +2327,11 @@ function ReactToCSGas( Actor GasContainer,
         return;
 
     if ( HasProtection( 'IProtectFromCSGas' ) )
-    {        
+    {
 		// Protects from the effects of gas, so no sense in doing this
         return;
     }
-	
+
 	if ( GetLoadOut().HasRiotHelmet() )
 	{
 		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
@@ -2339,7 +2339,7 @@ function ReactToCSGas( Actor GasContainer,
 			Duration *= SPPlayerProtectiveEquipmentDurationScaleFactor;
 		else
 			Duration *= MPPlayerProtectiveEquipmentDurationScaleFactor;
-			
+
 		if (Duration <= 0)
 			return; // no sense bothering to set up effects if no duration
 	}
@@ -2368,7 +2368,7 @@ function ReactToCSGas( Actor GasContainer,
                 // We are the server
                 SwatGameReplicationInfo(Level.GetGameReplicationInfo()).NotifyClientsToInterruptAndGotoState( self, Reason, NewControllerState, NewPawnState );
             }
-            
+
             // Executes on server or in standalone
             InterruptState( Reason );
             Controller.InterruptState( Reason );
@@ -2490,7 +2490,7 @@ private function ApplyDazedEffect(float PlayerStingDuration, float HeavilyArmore
 private function DirectHitByGrenade(
 	Pawn  Instigator,
 	ELastStingWeapon LastStingWeaponType,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration)
@@ -2538,7 +2538,7 @@ function ReactToLessLeathalShotgun(
 
 function ReactToGLTripleBaton(
 	Pawn  Instigator,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -2550,7 +2550,7 @@ function ReactToGLTripleBaton(
 // React to a direct hit from a grenade from the grenade launcher
 function ReactToGLDirectGrenadeHit(
 	Pawn  Instigator,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -2562,7 +2562,7 @@ function ReactToGLDirectGrenadeHit(
 function ReactToMeleeAttack(
 	class<DamageType> MeleeDamageType,
 	Pawn  Instigator,
-    float Damage, 
+    float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -2594,12 +2594,12 @@ function ReactToMeleeAttack(
 //
 
 function ReactToStingGrenade(
-    SwatProjectile Grenade, 
+    SwatProjectile Grenade,
 	Pawn  Instigator,
-    float Damage, float DamageRadius, 
-    Range KarmaImpulse, 
-    float KarmaImpulseRadius, 
-    float StingRadius, 
+    float Damage, float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
+    float StingRadius,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -2689,7 +2689,7 @@ function ReactToBeingPepperSprayed( Actor PepperSpray,
 	//log(Self$", is testing whether it should be pepper sprayed; hasprotection="$HasProtection( 'IProtectFromPepperSpray' ));
     if ( HasProtection( 'IProtectFromPepperSpray' ) || GetLoadOut().HasRiotHelmet())
     {
-        //mplog(Self$", is protected by from Pepper and so actual duration will be lower than original duration of "$PlayerDuration);     
+        //mplog(Self$", is protected by from Pepper and so actual duration will be lower than original duration of "$PlayerDuration);
         if (Level.NetMode == NM_Standalone) // singleplayer
             PlayerDuration *= SPPlayerProtectiveEquipmentDurationScaleFactor;
         else // multiplayer
@@ -2698,7 +2698,7 @@ function ReactToBeingPepperSprayed( Actor PepperSpray,
         if (PlayerDuration <= 0)
             return; // no sense bothering to set up effects if no duration
     }
-    
+
 	//log(Self$", is going to be pepper sprayed for: "$PlayerDuration);
 
     if (Level.NetMode != NM_Client)
@@ -2710,13 +2710,13 @@ function ReactToBeingPepperSprayed( Actor PepperSpray,
             Reason = 'ReactingToNonlethal';
             NewControllerState = 'PlayerWalking';
             NewPawnState = '';
-        
+
             if ( Level.NetMode != NM_Standalone )
             {
                 // We are the server
                 SwatGameReplicationInfo(Level.GetGameReplicationInfo()).NotifyClientsToInterruptAndGotoState( self, Reason, NewControllerState, NewPawnState );
             }
-        
+
             // Executes on server or in standalone
             InterruptState( Reason );
             Controller.InterruptState( Reason );
@@ -2731,7 +2731,7 @@ function ReactToBeingPepperSprayed( Actor PepperSpray,
     SetIsPepperSprayed(true);
     RefreshCameraEffects(self);
 
-    ChangeAnimation();  
+    ChangeAnimation();
     UpdateNonLethalEffectEvents();
 
     // RPC to client who is AutonomousProxy.
@@ -2754,7 +2754,7 @@ simulated function ClientDoPepperSprayedReaction( float PlayerDuration )
         SetIsPepperSprayed(true);
         RefreshCameraEffects(self);
 
-        ChangeAnimation();  
+        ChangeAnimation();
         UpdateNonLethalEffectEvents();
     }
 }
@@ -2787,13 +2787,13 @@ function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration 
             Reason = 'ReactingToNonlethal';
             NewControllerState = 'PlayerWalking';
             NewPawnState = '';
-        
+
             if ( Level.NetMode != NM_Standalone )
             {
                 // We are the server
                 SwatGameReplicationInfo(Level.GetGameReplicationInfo()).NotifyClientsToInterruptAndGotoState( self, Reason, NewControllerState, NewPawnState );
             }
-        
+
             // Executes on server or in standalone
             InterruptState( Reason );
             Controller.InterruptState( Reason );
@@ -2857,8 +2857,8 @@ simulated function bool IsVulnerableToTaser()
 
 //Players do react to c2 detonation, but they only take damage;
 //  they don't do anything else.
-function ReactToC2Detonation(   
-    Actor C2Charge, 
+function ReactToC2Detonation(
+    Actor C2Charge,
     float StunRadius,
     float AIStunDuration);
 
@@ -3091,7 +3091,7 @@ simulated event OnNonlethalEffectChanged()
 		mplog( "...bIsStung         ="$bIsStung );
 		mplog( "...bIsTased         ="$bIsTased );
     }
-    
+
     Super.OnNonlethalEffectChanged();
     RefreshCameraEffects( self );
     UpdateNonLethalEffectEvents();
@@ -3158,7 +3158,7 @@ simulated function bool CanBeArrestedNow()
 {
     local HandheldEquipment theActiveItem;
     local HandheldEquipment thePendingItem;
-    
+
     if (checkDead(self))
         return false;
 
@@ -3277,7 +3277,7 @@ simulated function rotator GetViewRotation()
     {
         baseRotation = GetAimRotation();
     }
-    
+
     return baseRotation + GetStungRotationOffset() + GetLeanRotationOffset();
 }
 
@@ -3295,7 +3295,7 @@ function Rotator GetStungRotationOffset()
     local float Ordinate;      //input into the PerlinNoise function
     local float RollAndYawAbcissa;  //value of the perlin noise function at RollAndYawOrdinate
     local Rotator Result;
-    
+
     if (bDeleteMe)
     {
         log("ERROR: attempt to GetStungRotationOffset() on destroyed actor "$name);
@@ -3358,7 +3358,7 @@ function vector GetTasedViewLocationOffset(Rotator CameraRotation)
         //scale the TasedDuration over the range [0,1]
         Alpha = (Now - LastTasedTime) / LastTasedDuration;
         Alpha = FClamp(Alpha, 0.0, 1.0);
-        
+
         LocalXAxis = vect(0, 1, 0) >> CameraRotation;
 
         Result = LocalXAxis * TasedViewEffectAmplitude * PerlinNoiseAxisA.Noise1(Alpha * TasedViewEffectFrequency);
@@ -3395,7 +3395,7 @@ native function Rotator GetLeanRotationOffset();
 // is "You" instead of "SwatPlayer0".
 simulated function String GetHumanReadableName()
 {
-	if (Level.NetMode == NM_StandAlone) 
+	if (Level.NetMode == NM_StandAlone)
     {
         return YouString; // returned for local player in SP games only
     }
@@ -3433,7 +3433,7 @@ simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLoca
         // Notify player controller for hud notification
         if ( Controller != None )
             SwatGamePlayerController(Controller).ClientSkeletalRegionHit(RegionHit, Damage);
-    
+
         // Modify damage...s
         if ( Damage > 0 )
         {
@@ -3468,7 +3468,7 @@ function OnPickedUp(HandheldEquipment PickedUp)
 event EndCrouch(float HeightAdjust)
 {
     Super.EndCrouch(HeightAdjust);
-    
+
     if( Controller == Level.GetLocalPlayerController() && SwatGamePlayerController(Controller).HasHUDPage() )
         SwatGamePlayerController(Controller).GetHUDPage().SetCrouched(false);
 }
@@ -3601,7 +3601,7 @@ simulated event ApplyOneFrameNudgeRotationOffset(out Vector Acceleration)
 function OnReportableReportedToTOC(IAmReportableCharacter ReportableCharacter, Pawn Reporter)
 {
     local string PlayerTag;
-    
+
     if( Reporter != Self )
         return;
 
@@ -3619,7 +3619,7 @@ function BroadcastReportableReportedToTOC( IAmReportableCharacter ReportableChar
     local Controller i;
     local SwatGamePlayerController current;
 
-    // Walk the controller list here to notify all clients 
+    // Walk the controller list here to notify all clients
     for ( i = Level.ControllerList; i != None; i = i.NextController )
     {
         current = SwatGamePlayerController( i );
@@ -3636,17 +3636,19 @@ simulated function OnClientReportableReportedToTOC( IAmReportableCharacter Repor
     local name EffectEventName;
 
     CurrentReportableCharacter = ReportableCharacter;
-    
+
     if( CurrentReportableCharacter == None )
         CurrentReportableCharacter = IAmReportableCharacter(FindByUniqueID(class'Pawn', inUniqueID ));
 
 log( self$"::OnClientReportableReportedToTOC() ... CurrentReportableCharacter = "$CurrentReportableCharacter );
 
     EffectEventName = CurrentReportableCharacter.GetEffectEventForReportingToTOC();
-       
+
     if (EffectEventName != '')
     {
-        SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).OverrideCaptionSpeakerNameForNextEffectEvent = PlayerName;
+        if(PlayerName != "") {
+          SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).OverrideCaptionSpeakerNameForNextEffectEvent = PlayerName;
+        }
         TriggerEffectEvent( EffectEventName, Actor(CurrentReportableCharacter), , , , , , self, name(PlayerTag) );
     }
 }
@@ -3671,7 +3673,7 @@ simulated function Name GetPlayerTag()
 {
     if( NetPlayer(Self) == None )
         return '';
-        
+
     if( NetPlayer(Self).IsTheVIP() )
         return 'VIP';
 
@@ -3798,4 +3800,3 @@ defaultproperties
 	// and includes the AI's collision radius as well (so is 2x the collision radius)
 	ReachedDestinationThreshold=48.0
 }
-

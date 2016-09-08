@@ -4,10 +4,10 @@ class BoobyTrapSpawner extends InanimateSpawner;
 var() name DoorTag                      "The tag of the door this spawner corresponds to.";
 var() name DoorAttachmentBone           "Information about how this booby trap attaches itself to the door if at all";
 var() class<BoobyTrap> BoobyTrapClass   "The type of booby trap to spawn";
-
+/*
 function actor SpawnArchetype(
-        name ArchetypeName, 
-        optional bool bTesting, 
+        name ArchetypeName,
+        optional bool bTesting,
         optional CustomScenario CustomScenario)
 {
     local Spawner Slave;
@@ -64,7 +64,7 @@ function actor SpawnArchetype(
 
     return Spawned;
 }
-
+*/
 defaultproperties
 {
     ArchetypeClass=class'BoobyTrapArchetype'

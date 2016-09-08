@@ -7,6 +7,7 @@ var config localized string Description;
 var config bool IsNeverHidden;
 var config bool IsShownInObjectivesPanel;
 var config bool IsABonus; //bonuses are treated differently than penalties
+var config string ChatMessage;
 
 var private SwatGameInfo Game;
 
@@ -18,7 +19,7 @@ protected final function SwatGameInfo GetGame()
     return Game;
 }
 
-// Must be called before a procedure can be used, so that the procedure 
+// Must be called before a procedure can be used, so that the procedure
 // has reference to the game.
 final function Init(SwatGameInfo GameInfo)
 {
@@ -56,7 +57,7 @@ function Add(Pawn InPawn, out array<SwatPawn> SwatPawnArray)
 {
     if( IsInArray( InPawn, SwatPawnArray ) )
         return;
-    
+
     assert(InPawn.IsA('SwatPawn'));
 
     SwatPawnArray[SwatPawnArray.length] = SwatPawn(InPawn);
@@ -112,16 +113,25 @@ function int GetNumActors( class<Actor> InClass )
     {
         NumActors++;
     }
-    
+
     return NumActors;
 }
 
-function int GetNumPlayers()    
+function int GetNumPlayers()
 {
     return GetNumActors( class'SwatPlayer' );
 }
 
-function int GetNumOfficers()    
+function int GetNumOfficers()
 {
     return GetNumActors( class'SwatOfficer' );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//  Chat messages!
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+function ChatMessageEvent(Name EventType)
+{
+  Game.SendGlobalMessage(ChatMessage, EventType);
 }

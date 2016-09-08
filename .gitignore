@@ -1,4 +1,5 @@
 System/*.u
+System/Promotional/*
 *.bmp
 *.jpg
 *.png
@@ -10,3 +11,14 @@ System/*.u
 *.til
 *.s4m
 *.$$$
+*.zip
+*.dll
+*.bak
+*DynamicLoadout.ini
+*Autotest.ini
+*Campaign.ini
+*enbseries.ini
+*MissionResults.ini
+*MissionSelectionPanel.ini
+*SwatGuiState.ini
+*User.ini

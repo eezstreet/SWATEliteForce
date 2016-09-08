@@ -45,6 +45,7 @@ function OnOfficerIncapacitated(Pawn Pawn, Actor Incapacitator)
 
     AssertNotInArray( Pawn, IncapacitatedOfficers, 'IncapacitatedOfficers' );
     Add( Pawn, IncapacitatedOfficers );
+    ChatMessageEvent('PenaltyIssued');
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name
@@ -68,4 +69,3 @@ function int GetCurrentValue()
 
     return PenaltyPerOfficer * IncapacitatedOfficers.length;
 }
-

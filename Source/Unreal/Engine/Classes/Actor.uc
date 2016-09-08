@@ -1,9 +1,9 @@
 //=============================================================================
 // Actor: The base class of all actors.
-// Actor is the base class of all gameplay objects.  
+// Actor is the base class of all gameplay objects.
 // A large number of properties, behaviors and interfaces are implemented in Actor, including:
 //
-// -	Display 
+// -	Display
 // -	Animation
 // -	Physics and world interaction
 // -	Making sounds
@@ -25,7 +25,7 @@ class Actor extends Core.Object
 #endif
     ;
 
-#if IG_SWAT //dkaplan: flag for actors to replicate all properties 
+#if IG_SWAT //dkaplan: flag for actors to replicate all properties
 			//   (including those that do not differ from defaults) when dirty
 var bool bShouldReplicateDefaultProperties;
 #endif
@@ -118,15 +118,15 @@ var(Display) bool bGetSkinFromBase;				// inherit your base's skin
 #if IG_SHARED	// rowan: post render callback for fun stuff
 // If true, the actor will get a call to the event PostRenderCallback.
 //
-// IG_SWAT NOTE: ckline-- it will also get a call to the native PreRenderCallback. 
+// IG_SWAT NOTE: ckline-- it will also get a call to the native PreRenderCallback.
 // This is a bit of a hack, but I wanted to keep this variable name the same
 // as in the shared codebase.
 var bool bNeedPostRenderCallback;
 #endif
 
 #if IG_EXTERNAL_CAMERAS
-// If this flag is set to TRUE then this object will be considered a 
-// mirror, and be optimized as such in the renderer when rendering 
+// If this flag is set to TRUE then this object will be considered a
+// mirror, and be optimized as such in the renderer when rendering
 // external cameras
 var bool  bIsMirror;
 #endif
@@ -271,7 +271,7 @@ var(Display)		bool    bAcceptsShadowProjectors "If false, ShadowProjectors (e.g.
 var					bool	bOrientOnSlope;		// when landing, orient base on slope of floor
 var			  const	bool	bOnlyAffectPawns;	// Optimisation - only test ovelap against pawns. Used for influences etc.
 var(Display)		bool	bDisableSorting;	// Manual override for translucent material sorting.
-var(Movement)		bool	bIgnoreEncroachers; // Ignore collisions between movers and 
+var(Movement)		bool	bIgnoreEncroachers; // Ignore collisions between movers and
 
 var					bool    bShowOctreeNodes;
 var					bool    bWasSNFiltered;      // Mainly for debugging - the way this actor was inserted into Octree.
@@ -285,9 +285,9 @@ var					bool	bReplicateInstigator;		// Replicate instigator to client (used by b
 var					bool	bReplicateMovement;			// if true, replicate movement/location related properties
 var					bool	bSkipActorPropertyReplication; // if true, don't replicate actor class variables for this actor
 var					bool	bUpdateSimulatedPosition;	// if true, update velocity/location after initialization for simulated proxies
-var					bool	bTearOff;					// if true, this actor is no longer replicated to new clients, and 
+var					bool	bTearOff;					// if true, this actor is no longer replicated to new clients, and
 														// is "torn off" (becomes a ROLE_Authority) on clients to which it was being replicated.
-var					bool	bOnlyDirtyReplication;		// if true, only replicate actor if bNetDirty is true - useful if no C++ changed attributes (such as physics) 
+var					bool	bOnlyDirtyReplication;		// if true, only replicate actor if bNetDirty is true - useful if no C++ changed attributes (such as physics)
 														// bOnlyDirtyReplication only used with bAlwaysRelevant actors
 var					bool	bReplicateAnimations;		// Should replicate SimAnim
 var const           bool    bNetInitialRotation;        // Should replicate initial rotation
@@ -406,7 +406,7 @@ var const rotator		RelativeRotation;	// rotation relative to base/bone (valid if
 var(Movement) bool bHardAttach;             // Uses 'hard' attachment code. bBlockActor and bBlockPlayer must also be false.
 											// This actor cannot then move relative to base (setlocation etc.).
 											// Dont set while currently based on something!
-											// 
+											//
 var const     Matrix    HardRelMatrix;		// Transform of actor in base's ref frame. Doesn't change after SetBase.
 
 // Projectors
@@ -465,7 +465,7 @@ var(Advanced) bool		bMovable;				// Actor can be moved.
 var			  bool		bDestroyInPainVolume;	// destroy this actor if it enters a pain volume
 var			  bool		bCanBeDamaged;			// can take damage
 var(Advanced) bool		bShouldBaseAtStartup;	// if true, find base for this actor at level startup, if collides with world and PHYS_None or PHYS_Rotating
-var			  bool		bPendingDelete;			// set when actor is about to be deleted (since endstate and other functions called 
+var			  bool		bPendingDelete;			// set when actor is about to be deleted (since endstate and other functions called
 												// during deletion process before bDeleteMe is set).
 var					bool	bAnimByOwner;		// Animation dictated by owner.
 var 				bool	bOwnerNoSee;		// Everything but the owner can see this actor.
@@ -508,8 +508,8 @@ var(Sound) bool				bFullVolume;		// Whether to apply ambient attenuation.
 #endif
 
 // Carlos:  The effects system handles this in a completely different fashion.  This was used previously to have sounds
-// cut off other sounds playing in the same slot.  This has been superceded by the Monophonic system in the ig effects system. 
-#if !IG_EFFECTS     
+// cut off other sounds playing in the same slot.  This has been superceded by the Monophonic system in the ig effects system.
+#if !IG_EFFECTS
 // Sound slots for actors.
 enum ESoundSlot
 {
@@ -594,13 +594,13 @@ var(Movement) config float  Mass;			// Mass of this actor.
 var(Movement) float       Buoyancy;			// Water buoyancy.
 var(Movement) rotator	  RotationRate;		// Change in rotation per second.
 var(Movement) rotator     DesiredRotation;	// Physics will smoothly rotate actor to this rotation if bRotateToDesired.
-var			  Actor		  PendingTouch;		// Actor touched during move which wants to add an effect after the movement completes 
+var			  Actor		  PendingTouch;		// Actor touched during move which wants to add an effect after the movement completes
 var       const vector    ColLocation;		// Actor's old location one move ago. Only for debugging
 
 const MAXSTEPHEIGHT = 16.0; // Maximum step height walkable by pawns
 const MINFLOORZ = 0.7; // minimum z value for floor normal (if less, not a walkable floor)
 					   // 0.7 ~= 45 degree angle for floor
-					   
+
 #if WITH_KARMA
 
 // Used to avoid compression
@@ -616,7 +616,7 @@ struct KRigidBodyState
 	var KRBVec	LinVel;
 	var KRBVec	AngVel;
 };
-					   
+
 var(Karma) export editinline KarmaParamsCollision KParams; // Parameters for Karma Collision/Dynamics.
 var const native int KStepTag;
 #endif // Karma stuff...
@@ -641,8 +641,8 @@ var private vector havokGameTickForcePosition;
 // Animation replication
 struct AnimRep
 {
-	var name AnimSequence; 
-	var bool bAnimLoop;	
+	var name AnimSequence;
+	var bool bAnimLoop;
 	var byte AnimFrame;
 #if IG_SWAT
     var bool bIsAnimating;
@@ -728,11 +728,11 @@ var() bool Examinable "True indicates that this Actor can be Examined.";
 #endif
 
 #if IG_EFFECTS // tcohen: startup time optimization: most actors don't care about Alive or Spawned events. Saves TONS of time in debug builds by avoiding no-op triggers of Spawned and Alive events.
-// If false (the default), then TriggerEffectEvent() calls on this Actor that occur 
+// If false (the default), then TriggerEffectEvent() calls on this Actor that occur
 // before the game starts (i.e., before first Tick()) will be ignored.
 // If true, then effect events that happen before the game starts (such as
 // 'Alive' and 'Spawned' events) will be queued and triggered once the game starts
-var(Advanced) bool bTriggerEffectEventsBeforeGameStarts;    
+var(Advanced) bool bTriggerEffectEventsBeforeGameStarts;
 var(Advanced) bool bNeedLifetimeEffectEvents;
 #endif
 
@@ -806,7 +806,7 @@ var private array<MeshAnimation> AnimationSetReferences;
 #endif
 
 #if IG_SHARED // ckline: notifications upon Pawn death and Actor destruction
-var(Advanced) bool bSendDestructionNotification "If true, all registered IInterestedActorDestroyed objects will be notified when this actor is destroyed. NOTE: this setting is ignored if bStatic=true."; 
+var(Advanced) bool bSendDestructionNotification "If true, all registered IInterestedActorDestroyed objects will be notified when this actor is destroyed. NOTE: this setting is ignored if bStatic=true.";
 #endif
 
 #if IG_UC_LATENT_STACK_CLEANUP // Ryan: Latent stack cleanup
@@ -821,7 +821,7 @@ var private bool bAlwaysProcessState;
 // Adds a line of text to be displayed in front of the actor (if the actor is visible)
 // Only valid for the current update, so it must be called each update
 native function AddDebugMessage(string NewMessage, optional color NewMessageColor);
-#endif // IG_SHARED 
+#endif // IG_SHARED
 
 //-----------------------------------------------------------------------------
 // natives.
@@ -841,33 +841,33 @@ replication
 						|| ((RemoteRole == ROLE_DumbProxy) && ((Base == None) || Base.bWorldGeometry))) )
 		Location;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement
 					&& ((DrawType == DT_Mesh) || (DrawType == DT_StaticMesh))
 					&& (((RemoteRole == ROLE_AutonomousProxy) && bNetInitial)
 						|| ((RemoteRole == ROLE_SimulatedProxy) && (bNetInitial || bUpdateSimulatedPosition) && ((Base == None) || Base.bWorldGeometry))
 						|| ((RemoteRole == ROLE_DumbProxy) && ((Base == None) || Base.bWorldGeometry))) )
 		Rotation;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement
 					&& RemoteRole<=ROLE_SimulatedProxy )
 		Base,bOnlyDrawIfAttached;
 
-	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement 
+	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement
 					&& RemoteRole<=ROLE_SimulatedProxy && (Base != None) && !Base.bWorldGeometry)
 		RelativeRotation, RelativeLocation, AttachmentBone;
 
 	// Physics
-	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement 
+	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement
 					&& (((RemoteRole == ROLE_SimulatedProxy) && (bNetInitial || bUpdateSimulatedPosition))
 						|| ((RemoteRole == ROLE_DumbProxy) && (Physics == PHYS_Falling))) )
 		Velocity;
 
-	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement 
+	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement
 					&& (((RemoteRole == ROLE_SimulatedProxy) && bNetInitial)
 						|| (RemoteRole == ROLE_DumbProxy)) )
 		Physics;
 
-	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement 
+	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) && bReplicateMovement
 					&& (RemoteRole <= ROLE_SimulatedProxy) && (Physics == PHYS_Rotating) )
 		bFixedRotationDir, bRotateToDesired, RotationRate, DesiredRotation;
 
@@ -882,8 +882,8 @@ replication
 		SoundRadius, SoundVolume, SoundPitch;
 #endif
 
-	// Animation. 
-	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) 
+	// Animation.
+	unreliable if( (!bSkipActorPropertyReplication || bNetInitial)
 				&& (Role==ROLE_Authority) && (DrawType==DT_Mesh) && bReplicateAnimations )
 #if IG_SWAT
 		SpecialAnimRepInfo,
@@ -891,7 +891,7 @@ replication
 		SimAnim;
 
 #if IG_SHARED // Alex: required to fix SimAnim not playing animation in some instances
-	unreliable if( (!bSkipActorPropertyReplication || bNetInitial) 
+	unreliable if( (!bSkipActorPropertyReplication || bNetInitial)
 				&& (Role==ROLE_Authority) && (DrawType==DT_Mesh) )
 		bReplicateAnimations;
 #endif
@@ -903,7 +903,7 @@ replication
 	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) && bNetDirty )
 		Owner, DrawScale, DrawType, bCollideActors,bCollideWorld,bOnlyOwnerSee,Texture,Style, RepSkin;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) && bNetDirty 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) && bNetDirty
 					&& (bCollideActors || bCollideWorld) )
 		bProjTarget, bBlockActors, bBlockPlayers, CollisionRadius, CollisionHeight;
 
@@ -911,29 +911,29 @@ replication
 	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) )
 		Role,RemoteRole,bNetOwner,LightType,bTearOff;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority)
 					&& bNetDirty && bNetOwner )
 		Inventory;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority)
 					&& bNetDirty && bReplicateInstigator )
 		Instigator;
 
 	// Infrequently changed mesh properties
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority)
 					&& bNetDirty && (DrawType == DT_Mesh) )
 		AmbientGlow,bUnlit,PrePivot;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority)
 					&& bNetDirty && !bNoRepMesh && (DrawType == DT_Mesh) )
 		Mesh;
 
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority)
 				&& bNetDirty && (DrawType == DT_StaticMesh) )
 		StaticMesh;
 
 	// Infrequently changed lighting properties.
-	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority) 
+	unreliable if ( (!bSkipActorPropertyReplication || bNetInitial) && (Role==ROLE_Authority)
 					&& bNetDirty && (LightType != LT_None) )
 		LightEffect, LightBrightness, LightHue, LightSaturation,
 		LightRadius, LightPeriod, LightPhase, bSpecialLit;
@@ -1061,13 +1061,13 @@ native final iterator function staticActorLabel(class<Actor> actorClass, out Act
 #endif // IG_SCRIPTING
 
 #if IG_UC_ACTOR_ALLOCATOR // karl: Added Actor Allocator
-// Called by new operator (on the default object of a particular class).  
+// Called by new operator (on the default object of a particular class).
 // Allocates and returns an object of that class.
 native static function Object Allocate( Object Context, Object Outer, optional string n, optional INT flags, optional Object Template );
 
 // Constructor
 overloaded native function Construct();
-overloaded native function Construct( actor Owner, optional optional name Tag, 
+overloaded native function Construct( actor Owner, optional optional name Tag,
 				  optional vector Location, optional rotator Rotation);
 #endif // IG_UC_ACTOR_ALLOCATOR
 
@@ -1226,7 +1226,7 @@ native final function coords  GetBoneCoords(   name BoneName
 			  // -if BoneName is the name of a bone, bGetSocketCoords has no effect
 			  // -if BoneName is the name of a socket and bGetSocketCoords is false, the function returns the coords of the bone the socket is attached to
 			  // -if BoneName is the name of a socket and bGetSocketCoords is true, the function returns the coords of the socket (i.e., get the current world space location of the socket)
-											, optional bool bGetSocketCoords 
+											, optional bool bGetSocketCoords
 #endif
 											);
 native final function rotator GetBoneRotation( name BoneName, optional int Space );
@@ -1239,8 +1239,8 @@ native final function rotator GetRootRotationDelta();
 native final function bool  AttachToBone( actor Attachment, name BoneName );
 native final function bool  DetachFromBone( actor Attachment );
 #if IG_SHARED // ckline: forcibly update the position of an Actor's attachments, even if the Actor is not visible
-// Causes all attachments to have their positions/rotations updated, regardless of 
-// whether or not this actor is visible. 
+// Causes all attachments to have their positions/rotations updated, regardless of
+// whether or not this actor is visible.
 native final function UpdateAttachmentLocations();
 #endif
 
@@ -1251,7 +1251,7 @@ native final function SetBoneDirection( name BoneName, rotator BoneTurn, optiona
 native final function SetBoneLocation( name BoneName, optional vector BoneTrans, optional float Alpha );
 native final function SetBoneRotation( name BoneName, optional rotator BoneTurn, optional int Space, optional float Alpha );
 native final function GetAnimParams( int Channel, out name OutSeqName, out float OutAnimFrame, out float OutAnimRate );
-native final function bool AnimIsInGroup( int Channel, name GroupName );  
+native final function bool AnimIsInGroup( int Channel, name GroupName );
 
 //=========================================================================
 // Rendering.
@@ -1325,16 +1325,16 @@ native final function float KGetSkelMass();
 native final function KFreezeRagdoll();
 
 // You MUST turn collision off (KSetBlockKarma) before using bone lifters!
-native final function KAddBoneLifter( name BoneName, InterpCurve LiftVel, float LateralFriction, InterpCurve Softness ); 
-native final function KRemoveLifterFromBone( name BoneName ); 
-native final function KRemoveAllBoneLifters(); 
+native final function KAddBoneLifter( name BoneName, InterpCurve LiftVel, float LateralFriction, InterpCurve Softness );
+native final function KRemoveLifterFromBone( name BoneName );
+native final function KRemoveAllBoneLifters();
 
 // Used for only allowing a fixed maximum number of ragdolls in action.
 native final function KMakeRagdollAvailable();
 native final function bool KIsRagdollAvailable();
 
 // event called when Karmic actor hits with impact velocity over KImpactThreshold
-event KImpact(actor other, vector pos, vector impactVel, vector impactNorm); 
+event KImpact(actor other, vector pos, vector impactVel, vector impactNorm);
 
 // event called when karma actor's velocity drops below KVelDropBelowThreshold;
 event KVelDropBelow();
@@ -1342,7 +1342,7 @@ event KVelDropBelow();
 // event called when a ragdoll convulses (see KarmaParamsSkel)
 event KSkelConvulse();
 
-// event called just before sim to allow user to 
+// event called just before sim to allow user to
 // NOTE: you should ONLY put numbers into Force and Torque during this event!!!!
 event KApplyForce(out vector Force, out vector Torque);
 
@@ -1360,11 +1360,11 @@ native final event function bool HavokIsActive();
 native final function HavokImpartImpulse( vector Impulse, vector Position, optional name BoneName );
 native final function HavokImpartForce( vector Force, vector Position, optional name BoneName );
 
-// You can do this though HGetState / HavokUpdateState, but here is a quicker, specific to 
+// You can do this though HGetState / HavokUpdateState, but here is a quicker, specific to
 // just the velocities. If BoneName is None for a skeletal system, the last traced bone is used.
 // If you just set one bone in a skeletal system you will be introducing error into the system.
 #if IG_SHARED // ckline: if socket name specified, return velocity of bone socket is associated with
-//   Note: if HavokGet{Linear/Angular}Velocity is passed the name of a socket, the function will 
+//   Note: if HavokGet{Linear/Angular}Velocity is passed the name of a socket, the function will
 //   return the velocity of the bone to which the socket is attached.
 #endif
 native final function vector HavokGetLinearVelocity( optional name BoneName ); // in Unreal units
@@ -1375,10 +1375,10 @@ native final function HavokSetLinearVelocityAll( vector Linear ); // Only really
 #if IG_SHARED // ckline: can set havok damping from script
 // Set linear/angular damping on an actor. If this actor is a ragdoll, damping
 // will be applied to all bones unless a specific BoneName is specified.
-// Damping must be non-negative. As a reference, the default linear damping 
+// Damping must be non-negative. As a reference, the default linear damping
 // on a rigid body is 0, and the default angular damping is 0.5.
-native final function HavokSetLinearDamping(float Damping, optional name BoneName); 
-native final function HavokSetAngularDamping(float Damping, optional name BoneName); 
+native final function HavokSetLinearDamping(float Damping, optional name BoneName);
+native final function HavokSetAngularDamping(float Damping, optional name BoneName);
 #endif
 native final function name HavokGetLastTracedBone();
 #if IG_SHARED	// rowan: IG extensions to havok integration
@@ -1396,12 +1396,12 @@ native final function HavokSetGameTickForce(vector Force, vector Position);
 #endif
 
 // If you change the state and return true for this event, you will directly
-// effect the pos and rot of the given body. Note that this will cause the body to 
+// effect the pos and rot of the given body. Note that this will cause the body to
 // effectlively teleport to that state, so make sure that that state is valid!
 native final function HavokGetState(out HavokRigidBodyState state, optional name BoneName);
 event bool HavokUpdateState(out HavokRigidBodyState newState);
 
-// Pairwise Collision Detection filter. THIS CAUSES SLOW DOWN AT RUNTIME (LIST CHECKS IN COLLISION CALLBACKS) 
+// Pairwise Collision Detection filter. THIS CAUSES SLOW DOWN AT RUNTIME (LIST CHECKS IN COLLISION CALLBACKS)
 // Try to use Collision Groups in the HavokRigidBidy instead (see after these funcs):
 native final function HavokSlowSetCollisionEnabled( actor Other, bool Enabled, optional name BoneNameA, optional name BoneNameB );
 
@@ -1409,13 +1409,13 @@ native final function HavokSlowSetCollisionEnabled( actor Other, bool Enabled, o
 // 32768 system groups, 32 layers, 64 subpart ids. See the HavokRigidBody.uc  for more info.
 native final function HavokCollisionGroupChange( int layer, int systemGroup, int subpartID, int	subpartIgnoreID, optional name BoneName );
 
-// Call this after causing HavokQuit to be called (through SetPhysics( PHYS_None ) for instance if  
-// you want to reset the animation flags so that the Havok pose is no longer the one used 
-// and the animation is in full control. The first PHYSICAL bone in the hierarchy will be kept 
-// the same orientation (by changing the Actor pos after refreshing the pose) and the actor pos 
+// Call this after causing HavokQuit to be called (through SetPhysics( PHYS_None ) for instance if
+// you want to reset the animation flags so that the Havok pose is no longer the one used
+// and the animation is in full control. The first PHYSICAL bone in the hierarchy will be kept
+// the same orientation (by changing the Actor pos after refreshing the pose) and the actor pos
 // will remain unchanged. Thus you should be able to predict, given an animation set,
 // where the pose will be at the end of this call.
-native final function HavokReturnSkeletalActorToAnimationSystem(); 
+native final function HavokReturnSkeletalActorToAnimationSystem();
 
 // end Unreal Havok
 
@@ -1453,7 +1453,7 @@ simulated event Destroyed()
 event GainedChild( Actor Other );
 event LostChild( Actor Other );
 event Tick( float DeltaTime );
-event PostNetReceive(); 
+event PostNetReceive();
 
 //
 // Triggers.
@@ -1464,7 +1464,7 @@ simulated function BroadcastTrigger( Actor Other, Pawn EventInstigator )
     if ( Level.NetMode != NM_Standalone )
     {
         Level.GetGameReplicationInfo().ServerBroadcastTrigger( Self, UniqueID(), Other, EventInstigator );
-    } 
+    }
     else
     {
         Trigger( Other, EventInstigator );
@@ -1496,14 +1496,14 @@ simulated function BroadcastReactToBumped( Actor Other )
     local Controller Itr;
     local String UniqueIdentifier;
     local PlayerController LPC;
-    
+
     UniqueIdentifier = UniqueID();
 
     LPC = Level.GetLocalPlayerController();
 
     Itr = Level.ControllerList;
     while ( Itr != None ) // Walk the controller list
-    {    
+    {
         if( Itr.IsA( 'PlayerController' ) && Itr != LPC )
             PlayerController(Itr).ClientBroadcastReactToBumped( UniqueIdentifier, Other );
         Itr = Itr.NextController;
@@ -1542,11 +1542,11 @@ event UsedBy( Pawn user ); // called if this Actor was touching a Pawn who press
 simulated event FellOutOfWorld(eKillZType KillType)
 {
 	SetPhysics(PHYS_None);
-#if IG_SWAT 
+#if IG_SWAT
     Log("!!!! WARNING !!!!! Destroying actor "$self$" because it fell out of world at location "$Location.X$", "$Location.Y$", "$Location.Z);
 #endif
 	Destroy();
-}	
+}
 
 //
 // Damage and kills.
@@ -1594,14 +1594,14 @@ simulated function BroadcastReactToDamaged(int Damage, Pawn EventInstigator, vec
     local Controller Itr;
     local String UniqueIdentifier;
     local PlayerController LPC;
-    
+
     UniqueIdentifier = UniqueID();
 
     LPC = Level.GetLocalPlayerController();
 
     Itr = Level.ControllerList;
     while ( Itr != None ) // Walk the controller list
-    {    
+    {
         if( Itr.IsA( 'PlayerController' ) && Itr != LPC )
             PlayerController(Itr).ClientBroadcastReactToDamaged( UniqueIdentifier, Damage, EventInstigator, HitLocation, Momentum, DamageType );
         Itr = Itr.NextController;
@@ -1644,8 +1644,8 @@ native(277) final function Actor Trace
     optional bool   bSkeletalBoxTest,
     optional out ESkeletalRegion SkeletalRegionHit  // Only valid if bSkeletalBoxTest is true.
 #if IG_MULTILINE_EXIT_RESULTS
-    ,optional bool  bFindExitLocation,      
-    optional out vector ExitLocation,       
+    ,optional bool  bFindExitLocation,
+    optional out vector ExitLocation,
     optional out vector ExitNormal,
     optional out material ExitMaterial
 #endif // IG_MULTILINE_EXIT_RESULTS
@@ -1806,7 +1806,7 @@ or client) has a line of sight to actor's location.
 native(532) final function bool PlayerCanSeeMe();
 
 native final function vector SuggestFallVelocity(vector Destination, vector Start, float MaxZ, float MaxXYSpeed);
- 
+
 //=============================================================================
 // Regular engine functions.
 
@@ -1827,7 +1827,7 @@ native(547) final function string GetURLMap();
 native final function string GetNextInt( string ClassName, int Num );
 native final function GetNextIntDesc( string ClassName, int Num, out string Entry, out string Description );
 native final function bool GetCacheEntry( int Num, out string GUID, out string Filename );
-native final function bool MoveCacheEntry( string GUID, optional string NewFilename );  
+native final function bool MoveCacheEntry( string GUID, optional string NewFilename );
 
 //=============================================================================
 // Iterator functions.
@@ -1839,8 +1839,8 @@ native final function bool MoveCacheEntry( string GUID, optional string NewFilen
 native(304) final iterator function AllActors     ( class<object> BaseClass, out actor Actor, optional name MatchTag );
 
 /* DynamicActors() only iterates through the non-static actors on the list (still relatively slow, bu
- much better than AllActors).  This should be used in most cases and replaces AllActors in most of 
- Epic's game code. 
+ much better than AllActors).  This should be used in most cases and replaces AllActors in most of
+ Epic's game code.
 */
 #if IG_SHARED //darren: permit iterating over Actors that implement an Interface
 native(313) final iterator function DynamicActors     ( class<object> BaseClass, out actor Actor, optional name MatchTag );
@@ -1866,7 +1866,7 @@ native(307) final iterator function TouchingActors( class<actor> BaseClass, out 
 
 #if IG_MULTILINE_EXIT_RESULTS // Carlos: Added exit results
 native(309) final iterator function TraceActors   ( class<actor> BaseClass, out actor Actor, out vector HitLoc, out vector HitNorm, out Material HitMaterial, vector End, optional vector Start, optional vector Extent, optional bool bSkeletalBoxTest, optional out ESkeletalRegion SkeletalRegionHit, optional bool bGetMaterial, optional bool bFindExitLocation, optional out Vector ExitLocation, optional out Vector ExitNormal, optional out Material ExitMaterial  );
-#else // 
+#else //
 native(309) final iterator function TraceActors   ( class<actor> BaseClass, out actor Actor, out vector HitLoc, out vector HitNorm, out Material HitMaterial, vector End, optional vector Start, optional vector Extent, optional bool bSkeletalBoxTest, optional out ESkeletalRegion SkeletalRegionHit, optional bool bGetMaterial  );
 #endif // IG_MULTILINE_EXIT_RESULTS
 
@@ -1883,7 +1883,7 @@ native(310) final iterator function RadiusActors  ( class<object> BaseClass, out
 native(310) final iterator function RadiusActors  ( class<actor> BaseClass, out actor Actor, float Radius, optional vector Loc );
 #endif
 
-/* VisibleActors() returns all visible actors within a radius.  Slow like AllActors().  Use VisibleCollidingActors() instead if desired actor types are 
+/* VisibleActors() returns all visible actors within a radius.  Slow like AllActors().  Use VisibleCollidingActors() instead if desired actor types are
 in the collision hash (bCollideActors is true)
 */
 native(311) final iterator function VisibleActors ( class<actor> BaseClass, out actor Actor, optional float Radius, optional vector Loc );
@@ -2023,7 +2023,7 @@ simulated final function HurtRadius( float DamageAmount, float DamageRadius, cla
 	local actor Victims;
 	local float damageScale, dist;
 	local vector dir;
-	
+
 	if( bHurtEntry )
 		return;
 
@@ -2039,17 +2039,17 @@ simulated final function HurtRadius( float DamageAmount, float DamageRadius, cla
 		{
 			dir = Victims.Location - HitLocation;
 			dist = FMax(1,VSize(dir));
-			dir = dir/dist; 
+			dir = dir/dist;
 			damageScale = 1 - FMax(0,(dist - Victims.CollisionRadius)/DamageRadius);
 			Victims.TakeDamage
 			(
 				damageScale * DamageAmount,
-				Instigator, 
+				Instigator,
 				Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir,
 				(damageScale * Momentum * dir),
 				DamageType
 			);
-		} 
+		}
 	}
 	bHurtEntry = false;
 }
@@ -2094,14 +2094,14 @@ final function ReplaceText(out string Text, string Replace, string With)
 {
 	local int i;
 	local string Input;
-		
+
 	Input = Text;
 	Text = "";
 	i = InStr(Input, Replace);
 	while(i != -1)
-	{	
+	{
 		Text = Text $ Left(Input, i) $ With;
-		Input = Mid(Input, i + Len(Replace));	
+		Input = Mid(Input, i + Len(Replace));
 		i = InStr(Input, Replace);
 	}
 	Text = Text $ Input;
@@ -2127,7 +2127,7 @@ function SetDefaultDisplayProperties()
 // Get localized message string associated with this actor
 static function string GetLocalString(
 	optional int Switch,
-	optional PlayerReplicationInfo RelatedPRI_1, 
+	optional PlayerReplicationInfo RelatedPRI_1,
 	optional PlayerReplicationInfo RelatedPRI_2
 	)
 {
@@ -2265,7 +2265,7 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 		case STY_Translucent: T=T$"Translucent"; break;
 		case STY_Modulated: T=T$"Modulated"; break;
 		case STY_Alpha: T=T$"Alpha"; break;
-	}		
+	}
 
 	Switch(DrawType)
 	{
@@ -2298,7 +2298,7 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 		Canvas.DrawText(T, false);
 		YPos += YL;
 		Canvas.SetPos(4,YPos);
-		
+
 		// mesh animation
 		GetAnimParams(0,Anim,frame,rate);
 		T = "AnimSequence "$Anim$" Frame "$frame$" Rate "$rate;
@@ -2309,12 +2309,12 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 		T = T$Texture;
 	else if ( DrawType == DT_Brush )
 		T = T$Brush;
-		
+
 	Canvas.DrawText(T, false);
 	YPos += YL;
 	Canvas.SetPos(4,YPos);
-	
-	Canvas.DrawColor.B = 255;	
+
+	Canvas.DrawColor.B = 255;
 	Canvas.DrawText("Tag: "$Tag$" Event: "$Event$" STATE: "$GetStateName(), false);
 	YPos += YL;
 	Canvas.SetPos(4,YPos);
@@ -2338,7 +2338,7 @@ simulated final function bool NearSpot(vector Spot)
 	local vector Dir;
 
 	Dir = Location - Spot;
-	
+
 	if ( abs(Dir.Z) > CollisionHeight )
 		return false;
 
@@ -2351,7 +2351,7 @@ simulated final function bool TouchingActor(Actor A)
 	local vector Dir;
 
 	Dir = Location - A.Location;
-	
+
 	if ( abs(Dir.Z) > CollisionHeight + A.CollisionHeight )
 		return false;
 
@@ -2362,7 +2362,7 @@ simulated final function bool TouchingActor(Actor A)
 /* StartInterpolation()
 when this function is called, the actor will start moving along an interpolation path
 beginning at Dest
-*/	
+*/
 simulated function StartInterpolation()
 {
 	GotoState('');
@@ -2372,12 +2372,12 @@ simulated function StartInterpolation()
 	SetPhysics(PHYS_None);
 }
 
-/* Reset() 
+/* Reset()
 reset actor to initial state - used when restarting level without reloading.
 */
 function Reset();
 
-/* 
+/*
 Trigger an event
 */
 event TriggerEvent( Name EventName, Actor Other, Pawn EventInstigator )
@@ -2413,13 +2413,13 @@ function UntriggerEvent( Name EventName, Actor Other, Pawn EventInstigator )
 function bool IsInVolume(Volume aVolume)
 {
 	local Volume V;
-	
+
 	ForEach TouchingActors(class'Volume',V)
 		if ( V == aVolume )
 			return true;
 	return false;
 }
-	 
+
 function bool IsInPain()
 {
 	local PhysicsVolume V;
@@ -2450,7 +2450,7 @@ simulated function bool EffectIsRelevant(vector SpawnLocation, bool bForceDedica
 {
 	local PlayerController P;
 	local bool bResult;
-	
+
 	if ( Level.NetMode == NM_DedicatedServer )
 		bResult = bForceDedicated;
 	else if ( Level.NetMode == NM_Client )
@@ -2462,11 +2462,11 @@ simulated function bool EffectIsRelevant(vector SpawnLocation, bool bForceDedica
 	else if ( (Instigator != None) && (Level.TimeSeconds - Instigator.LastRenderTime < 3) )
 		bResult = true;
 	else
-	{	
+	{
 		P = Level.GetLocalPlayerController();
 		if ( P == None )
 			bResult = false;
-		else 
+		else
 			bResult = ( (Vector(P.Rotation) Dot (SpawnLocation - P.ViewTarget.Location)) > 0.0 );
 	}
 	return bResult;
@@ -2492,14 +2492,14 @@ simulated function BroadcastReactToTriggered( Actor Other )
     local Controller Itr;
     local String UniqueIdentifier;
     local PlayerController LPC;
-    
+
     UniqueIdentifier = UniqueID();
 
     LPC = Level.GetLocalPlayerController();
 
     Itr = Level.ControllerList;
     while ( Itr != None ) // Walk the controller list
-    {    
+    {
         if( Itr.IsA( 'PlayerController' ) && Itr != LPC )
             PlayerController(Itr).ClientBroadcastReactToTriggered( UniqueIdentifier, Other );
         Itr = Itr.NextController;
@@ -2513,14 +2513,14 @@ simulated function BroadcastReactToUsed( Actor Other )
     local Controller Itr;
     local String UniqueIdentifier;
     local PlayerController LPC;
-    
+
     UniqueIdentifier = UniqueID();
 
     LPC = Level.GetLocalPlayerController();
 
     Itr = Level.ControllerList;
     while ( Itr != None ) // Walk the controller list
-    {    
+    {
         if( Itr.IsA( 'PlayerController' ) && Itr != LPC )
             PlayerController(Itr).ClientBroadcastReactToUsed( UniqueIdentifier, Other );
         Itr = Itr.NextController;
@@ -2565,10 +2565,10 @@ simulated function SetSeedForNextEffectEvent( int Seed )
     Level.EffectsSystem.SetSeedForNextEffectEvent(Seed);
 }
 
-// Broadcasts the given sound effect specification to all clients.  Avoids matching 
-simulated function BroadcastSoundEffectSpecification( name EffectSpecification, 
-                                                      Actor Source, 
-                                                      optional Actor Target, 
+// Broadcasts the given sound effect specification to all clients.  Avoids matching
+simulated function BroadcastSoundEffectSpecification( name EffectSpecification,
+                                                      Actor Source,
+                                                      optional Actor Target,
                                                       optional Material Material,
                                                       optional vector overrideWorldLocation,
                                                       optional rotator overrideWorldRotation,
@@ -2580,10 +2580,10 @@ simulated function BroadcastSoundEffectSpecification( name EffectSpecification,
     }
 }
 
-// In MP this will broadcast the trigger effect event call to every client, including the server. 
+// In MP this will broadcast the trigger effect event call to every client, including the server.
 // In standalone, behaves exactly the same way as a TriggerEffectEvent call.
 // Needs access to the LocalPlayerController() to send the RPC, so will have to be looked at again when we add dedicated servers.
-simulated function BroadcastEffectEvent( name EffectEvent, 
+simulated function BroadcastEffectEvent( name EffectEvent,
                                            optional Actor Other,
                                            optional Material TargetMaterial,
                                            optional Vector HitLocation,
@@ -2617,7 +2617,7 @@ simulated event bool TriggerEffectEvent(
                                         //   without actually responding to the effect event.
     optional IEffectObserver Observer,  // Optional Observer that gets callbacks when effects are started and stopped.
                                         // Useful when you want to edit an effect dynamically
-    optional name ReferenceTag,         // If ReferenceTag is not passed (or is ''), then Other.Tag is used instead 
+    optional name ReferenceTag,         // If ReferenceTag is not passed (or is ''), then Other.Tag is used instead
 										//   when matching event triggers to responses.
     optional name SkipSubsystemWithThisName) // If this is set, effects will not be triggered for any effects subsystem whose class name matches this name
 {
@@ -2626,17 +2626,18 @@ simulated event bool TriggerEffectEvent(
 
     if (Level.HasGameStarted() || bTriggerEffectEventsBeforeGameStarts)
     {
+			//log("TriggerEffectEvent: EffectEvent("$EffectEvent$"), Other("$Other$"), Observer("$Observer$"), ReferenceTag("$ReferenceTag$")");
 		return Level.EffectsSystem.EffectEventTriggered(
-                self, 
-                EffectEvent, 
-                Other, 
-                TargetMaterial, 
-                HitLocation, 
-                HitNormal, 
-                false, 
-                PlayOnOther, 
-                QueryOnly, 
-                Observer, 
+                self,
+                EffectEvent,
+                Other,
+                TargetMaterial,
+                HitLocation,
+                HitNormal,
+                false,
+                PlayOnOther,
+                QueryOnly,
+                Observer,
                 ReferenceTag,
                 SkipSubsystemWithThisName);
     }
@@ -2647,7 +2648,7 @@ simulated event bool TriggerEffectEvent(
 }
 
 
-// In MP this will broadcast the trigger effect event call to every client, including the server. 
+// In MP this will broadcast the trigger effect event call to every client, including the server.
 // In standalone, behaves exactly the same way as a TriggerEffectEvent call.
 // Needs access to the LocalPlayerController() to send the RPC, so will have to be looked at again when we add dedicated servers.
 simulated function BroadcastUnTriggerEffectEvent( name EffectEvent,
@@ -2687,15 +2688,15 @@ simulated function bool ReadyToTriggerEffectEvents()
 // default materials are checked. If there is not valid
 // instance-specific or default material at the given Index, then
 // None is returned.
-// This method handles objects that are DrawType DT_Mesh and DT_StaticMesh, 
+// This method handles objects that are DrawType DT_Mesh and DT_StaticMesh,
 // but not other drawtypes.
 native final event Material GetCurrentMaterial(optional int Index); //defaults to 0
 #endif
 
 #if IG_SWAT // ckline
 // Sets the actor's skins to its materials.
-// 
-// If ShouldNotOverwriteExistingSkins is true (default is false) then will 
+//
+// If ShouldNotOverwriteExistingSkins is true (default is false) then will
 // not copy over an existing skin.
 native final event CopyMaterialsToSkins(optional bool ShouldNotOverwriteExistingSkins /* = false */);
 #endif
@@ -2756,7 +2757,7 @@ final function OptimizeOut()
     // Make the actor not get ticked
     SetPhysics(PHYS_None);
     bStasis = true;
-    
+
     OnOptimizedOut();
 }
 
@@ -2804,7 +2805,7 @@ function OnShown();
 #if IG_SWAT
 //subclasses can modify the way their MomentumToPenetrate is calculated, eg. StaticMeshActors do this
 simulated function float GetMomentumToPenetrate(vector HitLocation, vector HitNormal, Material MaterialHit)
-{ 
+{
     if (MaterialHit != None)
         return MaterialHit.MomentumToPenetrate;
     else // sometimes people accidentally pass None because they hit LevelInfo (e.g., bsp)
@@ -2825,17 +2826,17 @@ simulated function LoadAnimationSets(array<string> AnimationSets, optional bool 
     {
     //log( self$"::LoadAnimationSets()... DLOing: "$AnimationSets[i] );
         AnimationSetReferences[i] = MeshAnimation(DynamicLoadObject(AnimationSets[i], class'MeshAnimation'));
-        
+
         assertWithDescription(AnimationSetReferences[i] != None,
             "[tcohen] The AnimationSet at index "$i
             $" for the "$class.name
             $" class was specified as "$AnimationSets[i]
             $", but that is not a valid Animation Set for the specified Mesh ("$Mesh
             $").");
-            
+
         if( bDontLink )
             continue;
-            
+
     //log( self$"::LoadAnimationSets()... Linking: "$AnimationSetReferences[i] );
         LinkSkelAnim(AnimationSetReferences[i]);
     }
@@ -2862,14 +2863,14 @@ defaultproperties
 	 MaxDynamicLights=5
 //#endif
 	 DrawScale3D=(X=1,Y=1,Z=1)
-//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications 
+//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications
 //     SoundRadius=64
 //     SoundVolume=128
 //     SoundPitch=64
 //#endif
-     ScaleGlow=1.0 
-//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications 
-//	 TransientSoundVolume=0.3 
+     ScaleGlow=1.0
+//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications
+//	 TransientSoundVolume=0.3
 //   TransientSoundRadius=300.0
 //#endif
      CollisionRadius=+00022.000000
@@ -2891,7 +2892,7 @@ defaultproperties
 	 bBlockZeroExtentTraces=true
 	 bBlockNonZeroExtentTraces=true
 	 bReplicateMovement=true
-//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications 
+//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications
 //	 bScaleVolumeByLightBrightness = false
 //#endif
 	 CullDistance=0.0
@@ -2903,7 +2904,7 @@ defaultproperties
      StaticFilterState=FS_Maybe
      bUseDynamicLights=True
 
-// #if IG_R // rowan: 
+// #if IG_R // rowan:
 	bCastsVolumetricShadows = false
 	bVolumetricShadowCast = false
 	BumpmapLODScale = 1
@@ -2913,7 +2914,7 @@ defaultproperties
 	MaxTraceDistance = 5000
 // #endif
 
-// #if IG_SHARED 
+// #if IG_SHARED
     bOnlyAffectCurrentZone=false
 // #endif
 

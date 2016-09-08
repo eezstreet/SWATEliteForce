@@ -2,7 +2,7 @@
 // ISwatAI.uc - ISwatAI interface
 // we use this interface to be able to call functions on the SwatAI because we
 // the definition of SwatAI has not been defined yet, but because SwatAI implements
-// ISwatAI, we have a contract that says these functions will be implemented, and 
+// ISwatAI, we have a contract that says these functions will be implemented, and
 // we can cast any Pawn pointer to an ISwatAI interface to call them
 
 interface ISwatAI extends ISwatPawn native
@@ -121,6 +121,7 @@ function IssueComplianceTo(Pawn TargetPawn);
 function bool CanIssueComplianceTo(Pawn TargetPawn);
 function HandheldEquipment GetRestrainedHandcuffs();
 function Pawn GetArrester();
+function bool CanBeUsedNow();
 
 ///////////////////////////////////////////////////////////////////////////////
 //

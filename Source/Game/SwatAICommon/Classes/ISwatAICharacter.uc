@@ -17,6 +17,9 @@ enum AIEquipment
 
 function ForceUpdateAwareness();
 function bool IsFemale();
+function bool IsFearless();
+function bool IsPolite();
+function bool IsInsane();
 
 function SetCanBeArrested(bool Status);
 

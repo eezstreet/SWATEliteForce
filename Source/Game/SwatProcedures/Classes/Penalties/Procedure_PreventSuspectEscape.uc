@@ -1,4 +1,4 @@
-class Procedure_PreventSuspectEscape extends SwatGame.Procedure 
+class Procedure_PreventSuspectEscape extends SwatGame.Procedure
 	implements IInterested_GameEvent_SuspectEscaped;
 
 var config int PenaltyPerEscapee;
@@ -25,4 +25,5 @@ function int GetCurrentValue()
 function OnSuspectEscaped(SwatPawn Who)
 {
     Add( Who, Escaped );
+		ChatMessageEvent('PenaltyIssued');
 }
