@@ -16,6 +16,7 @@ var(SWATGui) private EditInline Config GUISlider			MyVoiceVolumeSlider;
 var(SWATGui) private EditInline Config GUISlider			MyVOIPVolumeSlider;
 var(SWATGui) private EditInline Config GUICheckBoxButton	RecognitionEnabled;
 var(SWATGui) private EditInline Config GUICheckBoxButton	VOIPEnabled;
+var(SWATGui) private EditInline Config GUICheckBoxButton  DisableDispatch;
 #if IG_CAPTIONS
 var(SWATGui) private EditInline Config GUICheckBoxButton MyShowSubtitlesCheck;
 #endif
@@ -43,6 +44,8 @@ function InitComponent(GUIComponent MyOwner)
     MyVoiceVolumeSlider.OnChange=OnVoiceVolumeChanged;
     MyVOIPVolumeSlider.OnChange=OnVOIPVolumeChanged;
 	RecognitionEnabled.OnClick=OnRecognitionEnabledChanged;
+  DisableDispatch.OnClick=OnDispatchDisabledChanged;
+//  DisableDispatch.OnClick=OnDisableDispatchChanged;
 	VOIPEnabled.OnClick=OnVOIPEnabledChanged;
 }
 
@@ -55,6 +58,8 @@ function SaveSettings()
 
     GC.SaveConfig();
 	class'SpeechManager'.static.StaticSaveConfig();
+  SwatGUIControllerBase(Controller).SetDispatchDisabled(DisableDispatch.bChecked);
+  SwatGUIControllerBase(Controller).SaveConfig();
 }
 
 function LoadSettings()
@@ -68,6 +73,7 @@ function LoadSettings()
 
 	RecognitionEnabled.SetEnabled(PlayerOwner().Level.GetEngine().SpeechManager.IsInitialized());
 	RecognitionEnabled.SetChecked(PlayerOwner().Level.GetEngine().SpeechManager.IsInitialized() && PlayerOwner().Level.GetEngine().SpeechManager.IsEnabled());
+  DisableDispatch.SetChecked(SwatGUIControllerBase(Controller).GetDispatchDisabled());
 
   #if IG_CAPTIONS
       MyShowSubtitlesCheck.SetChecked( GC.bShowSubtitles );
@@ -169,6 +175,20 @@ private function OnVOIPEnabledChanged( GUIComponent Sender )
 		Controller.StaticExec("set ini:Engine.Engine.AudioDevice UseVoIP"@False);
 		PlayerOwner().DisableVoiceChat();
 	}
+}
+
+private function OnDispatchDisabledChanged(GUIComponent Sender) {
+  if(DisableDispatch.bChecked)
+  {
+    log("Dispatch disabled");
+    SwatGUIControllerBase(Controller).SetDispatchDisabled(true);
+  }
+  else {
+    log("Dispatch enabled");
+    SwatGUIControllerBase(Controller).SetDispatchDisabled(false);
+  }
+  SwatGUIControllerBase(Controller).SaveConfig();
+  SwatGUIControllerBase(Controller).StaticSaveConfig();
 }
 
 // ISpeechClient implementation

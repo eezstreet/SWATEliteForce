@@ -25,6 +25,8 @@ import enum EMPMode from Engine.Repo;
 // how long since we last polled
 var private Float CumulativeDelta;
 
+function bool GetDispatchDisabled();
+function SetDispatchDisabled(bool newValue);
 
 /////////////////////////////////////////////////////////////////////////////
 // Initialization
@@ -32,23 +34,23 @@ var private Float CumulativeDelta;
 function InitializeController()
 {
 log("[dkaplan] >>> InitializeController of (SwatGUIControllerBase) "$self);
-    
+
     Campaigns = new( None ) class'SwatGame.Campaigns';
     AssertWithDescription( Campaigns != None, "Campaigns could not be loaded!");
     UseCampaign( Campaigns.CurCampaignName );
 
-log("[dkaplan] ... ViewportOwner="$ViewportOwner$", ViewportOwner.Actor="$ViewportOwner.Actor$", ViewportOwner.Actor.GetEntryLevel()="$ViewportOwner.Actor.GetEntryLevel()$", ViewportOwner.Actor.GetEntryLevel().GetRepo()="$ViewportOwner.Actor.GetEntryLevel().GetRepo() ); 
+log("[dkaplan] ... ViewportOwner="$ViewportOwner$", ViewportOwner.Actor="$ViewportOwner.Actor$", ViewportOwner.Actor.GetEntryLevel()="$ViewportOwner.Actor.GetEntryLevel()$", ViewportOwner.Actor.GetEntryLevel().GetRepo()="$ViewportOwner.Actor.GetEntryLevel().GetRepo() );
 
-    //set the repo    
+    //set the repo
     Repo = SwatRepo(ViewportOwner.Actor.GetEntryLevel().GetRepo());
     AssertWithDescription( Repo != None, "[dkaplan]: The repo could not be retrieved by "$self$" in InitializeController()");
-    
+
     //cache easy reference to the GuiConfig
     GuiConfig = Repo.GuiConfig;
     AssertWithDescription( GuiConfig != None, "[dkaplan]: The GuiConfig could not be retrieved by "$self$" in InitializeController()");
-    
+
     Super.InitializeController();
-	    
+
     //if we are initing as a net client, display the loading menu
     if( Repo.bInitAsNetPlayer )
     {
@@ -82,9 +84,9 @@ event OnTick( float Delta )
 		PollCoopQMMGUI();
 		return;
 	}
-        
+
     CumulativeDelta += Delta;
-    
+
     if( CumulativeDelta > GuiConfig.MPPollingDelay )
     {
         CumulativeDelta = 0;
@@ -252,14 +254,14 @@ final function OnDisconnected()
 function Quit()
 {
     //may need to add saving info routines here
-	ConsoleCommand( "quit" ); 
+	ConsoleCommand( "quit" );
 }
 
 function GameStart()
 {
     //start of game hook
     GuiConfig.SaveLastMissionPlayed();
-	LoadLevel( GuiConfig.CurrentMission.MapName ); 
+	LoadLevel( GuiConfig.CurrentMission.MapName );
 }
 
 function GameAbort()
@@ -339,7 +341,7 @@ function SetMPLoadOutPocketItem( Pocket Pocket, class<actor> Item )
 
 //function NetGameCompleted()
 //{
-    //send a message to the hud informing of the net game imminent completion 
+    //send a message to the hud informing of the net game imminent completion
 //log("[dkaplan] Net Game Has Been Completed!");
 //}
 
@@ -353,7 +355,7 @@ function HudPageBase GetHUDPage()
 	if (HudPage == None)
 	{
 		HudPage = HUDPageBase(CreateComponent("SwatGui.HUDPage"));
-		
+
 		if (!HudPage.bInited)
 			HudPage.InitComponent(None);
 	}
@@ -365,9 +367,9 @@ function HudPageBase GetHUDPage()
 event SetProgress(string Message1, string Message2)
 {
 	local int i;
-	
+
     log(self$"::SetProgress("$Message1$", "$Message2$")");
-	
+
 	if( Message1 == "LoadSplash" ||
         Message1 == "WaitForConnection" ||
         Message1 == "LoadMap" ||
@@ -376,8 +378,8 @@ event SetProgress(string Message1, string Message2)
 	    for (i = 0; i < MenuStack.Length; i++)
 		    MenuStack[i].OnProgress(Message2, Message1);
     }
-    else if( Message1 == "ConnectionFailed" || 
-        Message1 == "Networking Failed" || 
+    else if( Message1 == "ConnectionFailed" ||
+        Message1 == "Networking Failed" ||
         Message1 == "DemoLoadFailed" ||
         Message1 == "UrlFailed" ||
         Message1 == "Rejected By Server" ||
@@ -386,7 +388,7 @@ event SetProgress(string Message1, string Message2)
 		Message1 == "PackageMD5ChecksumFailed" ||
 		Message1 == "GenericFailure" ||
         ( Message1 == "ConnectingText" && Message2 == ConnectingURL ) ||
-        ( Message1 == "" && Message2 == "" ) 
+        ( Message1 == "" && Message2 == "" )
            )
     {
         ConnectingURL = "";
@@ -400,7 +402,7 @@ event SetProgress(string Message1, string Message2)
         ConnectingURL = Message2;
         return;
     }
-    
+
     ConnectingURL = "";
 }
 

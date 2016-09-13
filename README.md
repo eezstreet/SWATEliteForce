@@ -22,6 +22,7 @@ You can make a shortcut to these .bat files for more convenience.
 # VERSION HISTORY #
 ### v2 ###
 - New Feature: Speech Recognition. Enable it in Audio Options
+- New Feature: Disable initial dispatch. Enable it in Audio Options
 - You can now pick up guns through restrained suspects, and all hostages (except live, unrestrained ones)
 - AI-controlled officers will now automatically report suspects/hostages that they restrain
 - Fixed a bug that caused the Heavy Armor to have texture issues due to StaticLoadout.ini missing
@@ -32,16 +33,18 @@ You can make a shortcut to these .bat files for more convenience.
 - MIRROR UNDER DOOR and CHECK FOR TRAPS now obeys the stack-up positioning and stacks up the squad on the door.
 - Fixed: Children of Taronne has traps bolted onto incorrect bones
 - Fixed: Children of Taronne has a trap on the wrong side
+- Fixed: Missing drug rosters on Stetchkov Drug Lab
 - 'Show Subtitles' moved to Audio Options
 Files modified:
-SP-Tenement.s4m
-SpeechCommandGrammar.xml
-CommandInterfaceMenus_SP.ini
-PlayerInterface_Command_SP.ini
-PlayerInterface_Use.ini
-SoundEffects.ini
-StaticLoadout.ini
-SwatGui.ini
+Content/Maps/SP-DrugLab.s4m
+Content/Maps/SP-Tenement.s4m
+System/SpeechCommandGrammar.xml
+System/CommandInterfaceMenus_SP.ini
+System/PlayerInterface_Command_SP.ini
+System/PlayerInterface_Use.ini
+System/SoundEffects.ini
+System/StaticLoadout.ini
+System/SwatGui.ini
 Generated code
 
 ### v1 ###
@@ -180,6 +183,7 @@ Some of the changes are as follows.
 	- Fixed a bug where the music would get glitched
 	- 'Display Subtitles' moved to Audio Options
 	- 'Use Speech Recognition' option added to Audio Options
+	- 'Disable Initial Dispatch' option added to Audio Options
 
 
 ## EQUIPMENT ##

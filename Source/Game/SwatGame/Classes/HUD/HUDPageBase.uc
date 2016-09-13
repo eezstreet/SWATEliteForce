@@ -69,7 +69,7 @@ function OnConstruct(GUIController MyController)
 	local int i;
 
     Super.OnConstruct(MyController);
-    
+
     Feedback = GUIFeedback(AddComponent("SwatGame.GUIFeedback", "HUDPage_feedback"));
     AmmoStatus = GUIAmmoStatusBase(AddComponent("SwatGUI.GUIAmmoStatus", "HUDPage_ammostatus"));
     FireMode = GUIFireMode(AddComponent("SwatGame.GUIFireMode", "HUDPage_FireMode"));
@@ -102,7 +102,7 @@ function InitComponent(GUIComponent MyOwner)
     local int i;
 
     Super.InitComponent(MyOwner);
-    
+
     for( i = 0; i < SequenceComponents.Length; i++ )
     {
         SequenceComponents[i].bRepeatCycling = false;
@@ -142,7 +142,7 @@ event Hide()
 
 function PreLevelChangeCleanup()
 {
-    GraphicCommandInterface.SetLogic( None );    
+    GraphicCommandInterface.SetLogic( None );
 }
 
 function OnGameInit()
@@ -159,7 +159,7 @@ function OnGameStarted()
     // Set this to true early, to make sure we block out input during the
     // first 3 ticks.
     bInCinematic=true;
-    
+
     NumTicks = 0;
 }
 
@@ -172,7 +172,8 @@ function OnTick( float Delta )
 		if (NumTicks > 25/* && Controller.TopPage() == self*/)
 		{
 			if( SwatGUIControllerBase(Controller).GuiConfig.CurrentMission == None ||
-				SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None )
+				SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None ||
+        SwatGUIControllerBase(Controller).GetDispatchDisabled() )
 				FinishStartRoundSequence();
 			else
 			{
@@ -224,7 +225,7 @@ function StartEndRoundSequence()
     RepositionComponents( MissionEndSequenceAName );
 }
 
-function FinishEndRoundSequence() 
+function FinishEndRoundSequence()
 {
     bInCinematic=false;
     RepositionComponents( MissionEndSequenceBName );
@@ -264,7 +265,7 @@ protected function OpenComponents()
             assert(false);  //unexpected SwatGameRole
             break;
     }
-    
+
     OpenGenericComponents();
 }
 
@@ -288,7 +289,7 @@ protected function CloseComponents()
             assert(false);  //unexpected SwatGameRole
             break;
     }
-    
+
     CloseGenericComponents();
 }
 
@@ -298,7 +299,7 @@ protected function CloseComponents()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function OpenCinematicComponents()
-{    
+{
     local int i;
 
     for( i = 0; i < SequenceComponents.Length; i++ )
@@ -308,9 +309,9 @@ function OpenCinematicComponents()
 }
 
 function CloseCinematicComponents()
-{    
+{
     local int i;
-    
+
     for( i = 0; i < SequenceComponents.Length; i++ )
     {
         SequenceComponents[i].Hide();
@@ -381,23 +382,23 @@ function OpenGenericComponents()
     assert( Feedback != None );
     Feedback.Show();
     Feedback.RePosition('down', true); //ensure feedback always starts from down position
-    
+
     assert( AmmoStatus != None );
     //updated in UpdateFireMode, below
-    
+
     assert( FireMode != None );
     UpdateFireMode();
-    
+
     assert( DamageIndicator != None );
     DamageIndicator.Reset();
     DamageIndicator.Show();
-    
+
     assert( Overlay != None );
     Overlay.Show();
-    
+
     assert( Progress != None );
     Progress.Show();
-    
+
     assert( Reticle != None );
     Reticle.Show();
 
@@ -431,13 +432,13 @@ function UpdateCIVisibility()
 
     CurrentCommandInterface = SwatGamePlayerController(PlayerOwner()).GetCommandInterface();
     CurrentInterfaceIsEnabled = CurrentCommandInterface != None && CurrentCommandInterface.Enabled;
-    
+
     CCIShown = SwatGUIControllerBase(Controller).GuiConfig.CurrentCommandInterfaceStyle == CommandInterface_Classic;
 //log( self$"::UpdateCIVisibility() ... CCIShown = "$CCIShown$", CurrentCommandInterface = "$CurrentCommandInterface$", CurrentInterfaceIsEnabled = "$CurrentInterfaceIsEnabled );
-                 
+
     assertWithDescription(CurrentCommandInterface == None || CurrentCommandInterface.IsA('ClassicCommandInterface') == CCIShown,
         "[tcohen] HUDPageBase::UpdateCIVisibility() the GUIConfig and the GamePlayerController disagree about which CommandInterface is current.");
-    
+
     assert(ClassicCommandInterface != None);
     ClassicCommandInterface.SetVisibility( CCIShown && CurrentInterfaceIsEnabled );
 
@@ -450,8 +451,8 @@ function UpdateCIVisibility()
 
     assert(CommandInterfaceMenuPage != None);
     CommandInterfaceMenuPage.SetVisibility(
-            CurrentInterfaceIsEnabled 
-        &&  !CCIShown 
+            CurrentInterfaceIsEnabled
+        &&  !CCIShown
         &&  (
                 SwatGUIControllerBase(Controller).GuiConfig.SwatGameRole == GAMEROLE_MP_Host
             ||  SwatGUIControllerBase(Controller).GuiConfig.SwatGameRole == GAMEROLE_MP_Client
@@ -527,7 +528,7 @@ simulated function UpdateFireMode()
         //      var private config array<FireMode> AvailableFireMode;       //named in singular for simplicity of config file
         //
         //log("[FIRE MODE] The following FireModes are available for "$FiredWeapon.class.name$":");
-        
+
         CurrentFireMode = FiredWeapon.CurrentFireMode;
 
         //FireMode.HideFireModes();
@@ -537,7 +538,7 @@ simulated function UpdateFireMode()
         //}
 
         FireMode.SelectFireMode( CurrentFireMode );
-                                     
+
         //log("[FIRE MODE] FireMode for "$FiredWeapon.class.name$" is now "$GetEnum(FiredWeapon.FireMode, CurrentFireMode));
     }
 }
@@ -563,7 +564,7 @@ function ResetDamageIndicator()
 protected function RepositionComponents( name ToPos, optional bool Immediate )
 {
     local int i;
-        
+
     for( i = 0; i < Controls.Length; i++ )
     {
         Controls[i].RePosition( ToPos, Immediate );
