@@ -107,7 +107,7 @@ var(AudioSettings) config localized array<string> SoundQualityChoices "Choices f
 //////////////////////////////////////////////////////////////////////////////////////
 // Video Settings
 //////////////////////////////////////////////////////////////////////////////////////
-var(VideoSettings) config localized array<string> ScreenResolutionChoices "Choices for screen resolution";
+var(VideoSettings) config array<string> ScreenResolutionChoices "Choices for screen resolution";
 var(VideoSettings) config localized array<string> TextureDetailChoices "Choices for texture detail";
 var(VideoSettings) config localized array<string> OtherDetailChoices "Choices for other detail";
 var(VideoSettings) config localized array<string> RenderDetailChoices "Choices for generic render detail";

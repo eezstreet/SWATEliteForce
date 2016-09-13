@@ -25,6 +25,7 @@ You can make a shortcut to these .bat files for more convenience.
 - New Feature: Disable initial dispatch. Enable it in Audio Options
 - You can now pick up guns through restrained suspects, and all hostages (except live, unrestrained ones)
 - AI-controlled officers will now automatically report suspects/hostages that they restrain
+- Support for many more resolutions (4 -> 22)
 - Fixed a bug that caused the Heavy Armor to have texture issues due to StaticLoadout.ini missing
 - Fixed a bug that caused the AI-controlled officers to not deploy pepperball gun if it was their secondary weapon
 - Fixed a bug that caused the AI-controlled officers to not deploy grenade launcher if it was their secondary weapon
@@ -45,6 +46,7 @@ System/PlayerInterface_Use.ini
 System/SoundEffects.ini
 System/StaticLoadout.ini
 System/SwatGui.ini
+System/SwatGuiState.ini
 Generated code
 
 ### v1 ###
@@ -184,6 +186,7 @@ Some of the changes are as follows.
 	- 'Display Subtitles' moved to Audio Options
 	- 'Use Speech Recognition' option added to Audio Options
 	- 'Disable Initial Dispatch' option added to Audio Options
+	- Support for ~5x as many resolutions (4 -> 22)
 
 
 ## EQUIPMENT ##
