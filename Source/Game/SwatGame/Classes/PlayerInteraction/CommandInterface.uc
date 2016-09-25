@@ -60,8 +60,7 @@ enum CommandInterfacePage
     Page_Response,
     Page_RapidDeployment,
     Page_VIPEscort,
-    Page_General,
-    Page_Preferences
+    Page_General
 };
 var protected CommandInterfacePage          CurrentPage;                    //which page of the command interface is currently selected
                                                                             //PLEASE only access thru Set/GetCurrentPage
@@ -204,11 +203,11 @@ enum ECommand
 	Command_Breach,
 	Command_Investigate,
   Command_Move,
-	Command_Response_Positive,	// MP only
-	Command_Response_NegativePage,	// MP only
-	Command_Response_Moving,	// MP only
+	Command_Response_PosNegPage,	// MP only
+	Command_Response_MovingPage,	// MP only
 	Command_Response_Mirror,	// MP only
 
+  Command_StackUpMP,        // MP only - because "Stack Up" was renamed "Try Lock"
   Command_Preferences,
 
     Command_Static,

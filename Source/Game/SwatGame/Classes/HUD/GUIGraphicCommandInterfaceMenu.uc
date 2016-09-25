@@ -182,7 +182,7 @@ private function UpdateOriginAndRoot()
 
             Root.X = Origin.X;
             Root.Y = Origin.Y;
-            
+
             return;
         }
     }
@@ -195,7 +195,7 @@ private function UpdateOriginAndRoot()
 //        $" could not locate its AnchorCommand "$GetEnum(ECommand, AnchorCommand)
 //        $" on its AnchorPage "$AnchorPage.name
 //        $".");
-
+    log("Menu "$name $" could not locate its AnchorCommand "$GetEnum(ECommand, AnchorCommand) $" on its AnchorPage "$AnchorPage.name);
     return;
 }
 
@@ -239,7 +239,7 @@ function Command GetCommandPreviousIndex(Command CurrentCommand)
     for (i=CurrentCommand.GCIMenuPad-1; i>=0; --i)
         if (!MenuPads[i].HideInGCI(GCI))
             return MenuPads[i].Command;
-    
+
     //nothing above
     return CurrentCommand;
 }
@@ -251,7 +251,7 @@ function Command GetCommandNextIndex(Command CurrentCommand)
     for (i=CurrentCommand.GCIMenuPad+1; i<MAX_COMMANDS_PER_PAGE; ++i)
         if (!MenuPads[i].HideInGCI(GCI))
             return MenuPads[i].Command;
-    
+
     //nothing above
     return CurrentCommand;
 }
@@ -263,7 +263,7 @@ function Command GetTopCommand()
     for (i=0; i<MAX_COMMANDS_PER_PAGE; ++i)
         if (MenuPads[i].Command != None)
             return MenuPads[i].Command;
-    
+
     assertWithDescription(false,
         "[tcohen] GUIGraphicCommandInterfaceMenu::GetTopCommand() no Commands found.");
 }
