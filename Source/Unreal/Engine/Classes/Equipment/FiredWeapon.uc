@@ -264,6 +264,8 @@ simulated function bool NeedsReload()
     return Ammo.NeedsReload();
 }
 
+simulated function float GetChoke();
+
 //this is the base FiredWeapon's implementation of firing a single shot.
 //note that some FiredWeapon subclasses override this and implement firing
 //  a single shot in a completely different way.
@@ -277,8 +279,8 @@ simulated function bool NeedsReload()
 simulated function TraceFire()
 {
     local vector PerfectStartLocation, StartLocation;
-    local rotator PerfectStartDirection, StartDirection;
-	local vector StartTrace, EndTrace;
+    local rotator PerfectStartDirection, StartDirection, CurrentDirection;
+	  local vector StartTrace, EndTrace;
     local PlayerController LocalPlayerController;
     local int Shot;
 
@@ -289,6 +291,8 @@ simulated function TraceFire()
         DrawAccuracyCone(PerfectStartLocation, PerfectStartDirection);
 #endif
 
+    // eez: Had to redo the below code so that shotgun accuracy is correct
+    /*
     for (Shot = 0; Shot < Ammo.ShotsPerRound; ++Shot)
     {
         StartLocation = PerfectStartLocation;
@@ -309,6 +313,18 @@ simulated function TraceFire()
 
         BallisticFire(StartTrace, EndTrace);
     }
+    */
+
+    StartLocation = PerfectStartLocation;
+    StartDirection = PerfectStartDirection;
+    ApplyAimError(StartDirection);
+    StartTrace = StartLocation;
+    for(Shot = 0; Shot < Ammo.ShotsPerRound; ++Shot) {
+      ApplyRandomOffsetToRotation(StartDirection, GetChoke() * DEGREES_TO_RADIANS, CurrentDirection);
+      EndTrace = StartLocation + vector(CurrentDirection) * Range;
+      BallisticFire(StartTrace, EndTrace);
+    }
+
     PerfectAimNextShot = false;
 
     //TMC TODO 9/17/2003 move this into LocalFire() after Mike meets the milestone... then we don't need to do this redundant test.

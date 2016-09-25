@@ -1,6 +1,7 @@
 class SwatWeapon extends Engine.FiredWeapon;
 
 var config int MagazineSize;
+var() protected config float Choke;
 // Manufacturer Information
 var() protected localized config string Manufacturer;
 var() protected localized config string CountryOfOrigin;
@@ -13,6 +14,11 @@ var() protected localized config string TotalAmmoString;
 var() protected localized config string FireModes;
 // Muzzle velocity
 var() protected localized config string RateOfFire;
+
+simulated function float GetChoke()
+{
+  return Choke;
+}
 
 simulated function EquippedHook()
 {
@@ -92,4 +98,5 @@ defaultproperties
   MagazineSizeString="Unknown"
   RateOfFireString="Not Applicable"
   TotalAmmoString="Unknown"
+  Choke = 1.0;
 }
