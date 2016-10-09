@@ -748,10 +748,10 @@ enum ECommand
 	 Command_Breach          =53,
 	 Command_Investigate     =54,
 	 Command_Move            =55,
-	 Command_Response_Positive=56,
-	 Command_Response_NegativePage=57,
-	 Command_Response_Moving =58,
-	 Command_Response_Mirror =59,
+	 Command_Response_PosNegPage=56,
+	 Command_Response_MovingPage=57,
+	 Command_Response_Mirror =58,
+	 Command_StackUpMP       =59,
 	 Command_Preferences     =60,
 	 Command_Static          =61,
 	 Command_MAX             =62,
@@ -774,8 +774,7 @@ enum CommandInterfacePage
 	 Page_RapidDeployment    =4,
 	 Page_VIPEscort          =5,
 	 Page_General            =6,
-	 Page_Preferences        =7,
-	 Page_MAX                =8,
+	 Page_MAX                =7,
 };
 
 // "event"	function whose parameters correspond to	"struct ACommandInterface_eventColorizeExpectedCommand_Parms"	is declared	in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"

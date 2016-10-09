@@ -5,7 +5,7 @@ class SwatPlayerController extends Engine.PlayerController
 
 // If set to 1, you will not be allowed to suicide in multiplayer games.
 // If set to 0, you will be allowed to suicide as long as you are not
-// in the process of being arrested and are not the VIP and already 
+// in the process of being arrested and are not the VIP and already
 // arrested.
 #define DISALLOW_SUICIDE 1
 
@@ -47,7 +47,7 @@ native function bool ShouldAutoJoinOnStartUp();
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-	
+
 	//always clear this flag at the beginning a of a level, because a player may no longer be admin
     ShouldDisplayPRIIds = false;
 
@@ -106,7 +106,7 @@ function NotifyTakeHit(pawn InstigatedBy, vector HitLocation, int Damage, class<
 	if ( (instigatedBy != None) && (instigatedBy != self.pawn) )
     {
         //Log("PLAYING FLASH BECAUSE TOOK "$Damage$" DAMAGE "$DamageType$" from "$InstigatedBy$", Health now = "$pawn.Health);
-		if ((Damage > 0 || bGodMode) && self.pawn.Health > 0) 
+		if ((Damage > 0 || bGodMode) && self.pawn.Health > 0)
         {
             ClientFlash(FlashScale, FlashFog);
         }
@@ -114,7 +114,7 @@ function NotifyTakeHit(pawn InstigatedBy, vector HitLocation, int Damage, class<
     }
 
 	TriggerHitSpeech();
-} 
+}
 
 function DamageShake(int damage)
 {
@@ -156,7 +156,7 @@ exec function Suicide()
 
 #if DISALLOW_SUICIDE
 
-    // Designers do not want to allow suicide, especially in MP ... to many ways to 
+    // Designers do not want to allow suicide, especially in MP ... to many ways to
     // cheat (e.g., suicide when nonlethaled to avoid losing points from
     // being arrested or killed) and break things.
     return;
@@ -182,7 +182,7 @@ exec function Suicide()
         mplog(self$" Suicide(): SwatPlayer(Pawn) == None, allowing suicide");
     }
 
-    // don't let the player suicide while being arrested, as this 
+    // don't let the player suicide while being arrested, as this
     // will let the player cheat the arresting team out of the arrest
     // points. Also don't let the VIP suicide while he's arrested.
     if (! (IsInProcessOfBeingArrested || IsVIPAndCurrentlyArrested) )
@@ -207,9 +207,9 @@ exec function SetName( coerce string S)
     if( S == "" )
         return;
 
-    // get the guiconfig object    
+    // get the guiconfig object
     GC = SwatRepo(Level.GetRepo()).GuiConfig;
-    
+
     ReplaceText( S, "[b]", "{b}" );
     ReplaceText( S, "[B]", "{B}" );
     ReplaceText( S, "[i]", "{i}" );
@@ -232,16 +232,16 @@ exec function SetName( coerce string S)
     	    S = Left( S, index ) $ Right( S, len(S) - (index+1) );
     	}
     } until (index >= Len(S));
-    	
+
     //Cap the Max length = 20 characters
     if( Len(S) > GC.MPNameLength )
         S = Left(S,GC.MPNameLength);
-        
+
     //empty string is still not a valid name - no change should be made
     if( S == "" )
         return;
-        
-    
+
+
 	if( Level.GetLocalPlayerController() == self )
     {
         //set the new name & save it
@@ -254,7 +254,7 @@ exec function SetName( coerce string S)
     //update the URL with the new name
 	if( Level.GetLocalPlayerController() == self )
 	    UpdateURL("Name", GC.MPName, true);
-	
+
 	//dkaplan - this was in PlayerController after UpdateURL... why? It doesn't save anything new in the player controller!
 	//  this causes the failed to write SwatGame.ini error message after you quit the game
 	//SaveConfig();
@@ -273,7 +273,7 @@ function ChangeName( coerce string S )
 private simulated function LogPlayerIDs(GameReplicationInfo GRI)
 {
 	local int i;
-	
+
 	// List the players and their IDs
 	log("-----------------");
 	log("ID\tPLAYERNAME");
@@ -285,25 +285,25 @@ private simulated function LogPlayerIDs(GameReplicationInfo GRI)
 }
 
 // Shorthand for KickBanID
-exec function KBID(String S) 
+exec function KBID(String S)
 {
 	KickBanID(S);
 }
 
 // Kickban the player who is at index S in the GameRelicationInfo.PRIArray
-exec function KickBanID(String S) 
+exec function KickBanID(String S)
 {
     KickOrBanByID( S, true );
 }
 
 // Shorthand for KickID
-exec function KID(String S) 
+exec function KID(String S)
 {
 	KickID(S);
 }
 
 // Kick the player who is at index S in the GameRelicationInfo.PRIArray
-exec function KickID(String S) 
+exec function KickID(String S)
 {
     KickOrBanByID( S, false );
 }
@@ -312,7 +312,7 @@ simulated function KickOrBanByID( String S, bool bKickBan )
 {
     local int ID, i;
     local PlayerReplicationInfo PRI;
-    
+
 	// Make sure it's a number. We don't want to cast to an integer without checking
 	// because if the cast fails it will return 0, which would result in
 	// kicking the player at ID 0 when it really shouldn't kick anyone.
@@ -325,16 +325,16 @@ simulated function KickOrBanByID( String S, bool bKickBan )
 	}
 
     ID = int(S);
-    
+
     //handle invalid ID number
     if( ID < 0 || ID > 15 )
         return;
-    
+
     PRI = SwatGameReplicationInfo(GameReplicationInfo).PRIStaticArray[ID];
-    
+
     if( PRI == None )
         return;
-        
+
     if( bKickBan )
     	KickBan(PRI.PlayerName);
     else
@@ -386,21 +386,21 @@ exec function ToggleIDs()
 // Set the ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function ServerSetSettings( ServerSettings Settings, 
-                            EMPMode newGameType, 
-                            int newMapIndex, 
-                            int newNumRounds, 
-                            int newMaxPlayers, 
+function ServerSetSettings( ServerSettings Settings,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
                             int newDeathLimit,
-                            int newPostGameTimeLimit, 
-                            int newRoundTimeLimit, 
-                            int newMPMissionReadyTime, 
-                            bool newbShowTeammateNames, 
+                            int newPostGameTimeLimit,
+                            int newRoundTimeLimit,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
                             bool newbShowEnemyNames,
 							bool newbAllowReferendums,
-                            bool newbNoRespawn, 
-                            bool newbQuickRoundReset, 
-                            float newFriendlyFireAmount, 
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
                             float newEnemyFireAmount,
 							float newArrestRoundTimeDeduction,
 							int newAdditionalRespawnTime,
@@ -409,20 +409,20 @@ function ServerSetSettings( ServerSettings Settings,
 							bool newbDisableTeamSpecificWeapons)
 {
     Settings.SetServerSettings( self,
-                                newGameType, 
-                                newMapIndex, 
-                                newNumRounds, 
-                                newMaxPlayers, 
+                                newGameType,
+                                newMapIndex,
+                                newNumRounds,
+                                newMaxPlayers,
                                 newDeathLimit,
-                                newPostGameTimeLimit, 
-                                newRoundTimeLimit, 
-                                newMPMissionReadyTime, 
-                                newbShowTeammateNames, 
-                                newbShowEnemyNames, 
+                                newPostGameTimeLimit,
+                                newRoundTimeLimit,
+                                newMPMissionReadyTime,
+                                newbShowTeammateNames,
+                                newbShowEnemyNames,
 								newbAllowReferendums,
-                                newbNoRespawn, 
-                                newbQuickRoundReset, 
-                                newFriendlyFireAmount, 
+                                newbNoRespawn,
+                                newbQuickRoundReset,
+                                newFriendlyFireAmount,
                                 newEnemyFireAmount,
 								newArrestRoundTimeDeduction,
 								newAdditionalRespawnTime,
@@ -435,16 +435,16 @@ function ServerSetSettings( ServerSettings Settings,
 // Set the Admin ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function ServerSetAdminSettings( ServerSettings Settings, 
-                            String newServerName, 
-                            String newPassword, 
-                            bool newbPassworded, 
+function ServerSetAdminSettings( ServerSettings Settings,
+                            String newServerName,
+                            String newPassword,
+                            bool newbPassworded,
                             bool newbLAN )
 {
     Settings.SetAdminServerSettings( self,
-                                newServerName, 
-                                newPassword, 
-                                newbPassworded, 
+                                newServerName,
+                                newPassword,
+                                newbPassworded,
                                 newbLAN );
 }
 
@@ -641,7 +641,7 @@ simulated event bool VOIPIsIgnored(int PlayerID)
 	return false;
 }
 
-// can this player hear "PlayerID" speaking? 
+// can this player hear "PlayerID" speaking?
 function bool VOIPIsSpeaking(int PlayerID)
 {
 	local int i;

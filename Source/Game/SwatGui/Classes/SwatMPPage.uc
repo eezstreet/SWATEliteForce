@@ -43,6 +43,7 @@ var(SWATGui) private EditInline Config SwatChatPanel  MyChatPanel;
 var(SWATGui) private localized config String BombsRemaining;
 var(SWATGui) private localized config String RoundsRemainingString;
 var(SWATGui) private localized config String ReadyString;
+var(SWATGui) private localized config String UnreadyString;
 var(SWATGui) private localized config String ContinueString;
 var(SWATGui) private localized config String GameModeAndLevelString;
 
@@ -64,6 +65,7 @@ var() private config localized string WaitingForPlayersString;
 
 var private EMPMode CachedGameMode;
 var private string CachedTitle;
+var private bool bPressedReady;
 
 ////////////////////////////////////////////////////////////////////////
 // Initial Setup of Page
@@ -135,7 +137,10 @@ private function SetupPopup()
         MyLoadingTextLabel.Hide();
         LoadingImage.Hide();
 
-        MyStartButton.SetCaption( ReadyString );
+        if(!bPressedReady)
+          MyStartButton.SetCaption( ReadyString );
+        else
+          MyStartButton.SetCaption( UnreadyString );
 
         MyServerSettingsButton.SetVisibility( bAdminable );
         MyServerSettingsButton.SetActive( bAdminable );
@@ -206,7 +211,10 @@ private function SetupPopup()
 //        MyStartButton.Hide();
 //        MyStartButton.DeActivate();
 //        MyStartButton.DisableComponent();
-        MyStartButton.SetCaption( ReadyString );
+        if(!bPressedReady)
+          MyStartButton.SetCaption( ReadyString );
+        else
+          MyStartButton.SetCaption( UnreadyString );
 
         MyServerSettingsButton.SetVisibility( bAdminable );
         MyServerSettingsButton.SetActive( bAdminable );
@@ -376,9 +384,16 @@ function CommonOnClick(GUIComponent Sender)
 	switch (Sender)
 	{
 		case MyStartButton:
-            SwatGuiController(Controller).SetPlayerReady();
-            MyStartButton.DisableComponent();
-	        ResumeGame();
+            if(!bPressedReady) {
+              SwatGuiController(Controller).SetPlayerReady();
+              bPressedReady = true;
+              MyStartButton.SetCaption(UnreadyString);
+            } else {
+              SwatGuiController(Controller).SetPlayerNotReady();
+              bPressedReady = false;
+              MyStartButton.SetCaption(ReadyString);
+            }
+	          ResumeGame();
             break;
 		case MyBackButton:
             OnDlgReturned=InternalOnDlgReturned;
@@ -607,6 +622,8 @@ defaultproperties
     WaitForConnectionString="Connecting..."
     LoadMapString="Loading..."
     DownloadString="Downloading..."
+
+    bPressedReady = false;
 
     ConfirmAbortString="Disconnect from the current game?"
 }

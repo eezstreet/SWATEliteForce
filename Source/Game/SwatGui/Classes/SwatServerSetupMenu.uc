@@ -44,7 +44,6 @@ var(SWATGui) EMPMode CurGameType;
 
 var() private config localized string CannotUndercutCurrentPlayersFormatString;
 var() private config localized string CannotStartDedicatedServerString;
-var() private config localized string HostCDKeyInvalidString;
 var() private config localized string StartDedicatedServerQueryString;
 var() private config localized string StartServerQueryString;
 var() private config localized string ReStartServerQueryString;
@@ -98,7 +97,7 @@ function OnProfileButton(GUIComponent Sender)
 function InternalOnClick(GUIComponent Sender)
 {
     local int MaxPlayers, CurrentPlayers;
-    
+
     MaxPlayers = AdvancedSetupPanel.MyMaxPlayersBox.Value;
     CurrentPlayers = SwatGameReplicationInfo(PlayerOwner().GameReplicationInfo).NumPlayers();
 
@@ -114,10 +113,10 @@ function InternalOnClick(GUIComponent Sender)
 		    //if in-game, accept and return
 		    if( bInGame )
             {
-                Controller.CloseMenu(); 
+                Controller.CloseMenu();
             }
             else
-                Quit(); 
+                Quit();
             break;
 		case StartButton:
 	        if( bInGame && MaxPlayers < CurrentPlayers )
@@ -133,10 +132,6 @@ function InternalOnClick(GUIComponent Sender)
             }
             else
             {
-                // Dan, here is where we are checking the host's CD key and
-                // should display a dialog if the key is not valid.
-                if ( !bUseGameSpy || SGSM.IsHostCDKeyValid() )
-                {
                     if( AdvancedSetupPanel.MyDedicatedServerCheck.bChecked )
                     {
                         // Dan, here's the check to use.
@@ -150,11 +145,6 @@ function InternalOnClick(GUIComponent Sender)
                     {
             		    OpenDlg( StartServerQueryString, QBTN_OkCancel, "StartServer" );
                     }
-                }
-                else
-                {
-                    OpenDlg( HostCDKeyInvalidString, QBTN_Cancel, "HostCDKeyInvalid" );
-                }
             }
             break;
 		case MyMainMenuButton:
@@ -163,7 +153,7 @@ function InternalOnClick(GUIComponent Sender)
             {
     		    SaveServerSettings();
             }
-            Controller.CloseMenu(); 
+            Controller.CloseMenu();
             break;
 	}
 }
@@ -188,7 +178,7 @@ function InternalOnActivate()
 event HandleParameters(string Param1, string Param2, optional int param3)
 {
     Super.HandleParameters( Param1, Param2, param3 );
-    
+
     //if param1 == InGame, this is to be opened as an in game screen - special options apply
     bInGame = ( Param1 == "InGame" );
     bIsAdmin = ( GC.SwatGameRole == GAMEROLE_MP_Host ) || SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).IsAdmin();
@@ -261,8 +251,8 @@ function SaveServerSettings()
 								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
 								AdvancedSetupPanel.MyEnableStatsCheck.bChecked,
 								!AdvancedSetupPanel.MyEnableTeamSpecificWeapons.bChecked );
-    
-    GC.SaveConfig();    
+
+    GC.SaveConfig();
 }
 
 function InternalOnDlgReturned( int Selection, String passback )
@@ -280,18 +270,7 @@ function InternalOnDlgReturned( int Selection, String passback )
             if( Selection == QBTN_Ok )
             {
                 GC.FirstTimeThrough = true;
-
-                if ( bUseGameSpy )
-                {
-                    // MCJ: we have to tell the GameSpyManager whether we're
-                    // doing a LAN game or an Internet game, since it
-                    // currently can't figure it out on it's own.
-                    SGSM.SetShouldCheckClientCDKeys( true );
-                }
-                else
-                {
-                    SGSM.SetShouldCheckClientCDKeys( false );
-                }
+                SGSM.SetShouldCheckClientCDKeys( false );
 
                 SaveServerSettings();
                 LoadSelectedMap();
@@ -300,23 +279,13 @@ function InternalOnDlgReturned( int Selection, String passback )
         case "RestartServer":
             if( Selection == QBTN_Ok )
             {
-                if ( bUseGameSpy )
-                {
-                    // MCJ: we have to tell the GameSpyManager whether we're
-                    // doing a LAN game or an Internet game, since it
-                    // currently can't figure it out on it's own.
-                    SGSM.SetShouldCheckClientCDKeys( true );
-                }
-                else
-                {
-                    SGSM.SetShouldCheckClientCDKeys( false );
-                }
+                SGSM.SetShouldCheckClientCDKeys( false );
                 SaveServerSettings();
 
-				if (CurGameType == MPM_COOPQMM)
-					LoadSelectedMap();
-				else
-					SwatPlayerController(PlayerOwner()).ServerQuickRestart();
+				        if (CurGameType == MPM_COOPQMM)
+					           LoadSelectedMap();
+				        else
+					           SwatPlayerController(PlayerOwner()).ServerQuickRestart();
             }
             break;
     }
@@ -334,7 +303,7 @@ private final function LaunchDedicatedServer()
 private function LoadSelectedMap()
 {
     local String URL;
-	
+
 	// Load the Coop-QMM lobby map if the game type is Coop-QMM, else load the selected map
 	if (CurGameType == MPM_COOPQMM)
 		URL = "CoopQMMLobby";
@@ -348,7 +317,7 @@ private function LoadSelectedMap()
         URL = URL$"?GamePassword="$QuickSetupPanel.MyPasswordBox.GetText();
     }
 
-    SwatGUIController(Controller).LoadLevel(URL); 
+    SwatGUIController(Controller).LoadLevel(URL);
 }
 
 function ResetDefaultsForGameMode( EMPMode NewMode )
@@ -360,17 +329,17 @@ function ResetDefaultsForGameMode( EMPMode NewMode )
 function RefreshEnabled()
 {
     local bool bEnableStart;
-    
+
     bEnableStart = bIsAdmin &&
         (!QuickSetupPanel.SelectedMaps.IsEmpty() || CurGameType == MPM_COOPQMM) &&
         QuickSetupPanel.MyNameBox.GetText() != "" &&
         QuickSetupPanel.MyServerNameBox.GetText() != "" &&
-        ( QuickSetupPanel.MyPasswordBox.GetText() != "" || 
+        ( QuickSetupPanel.MyPasswordBox.GetText() != "" ||
           !QuickSetupPanel.MyPasswordedButton.bChecked );
-          
+
     StartButton.SetEnabled( bEnableStart );
     ProfileButton.SetEnabled( bUseGameSpy );
-    
+
     if( bInGame )
         MyQuitButton.SetEnabled( bEnableStart );
 
@@ -394,7 +363,6 @@ defaultproperties
 	QuitButtonHelpString="Exit the game and return to Windows."
 	AcceptButtonHelpString="Apply the current settings and return to the previous menu."
 
-    HostCDKeyInvalidString="Invalid CD Key!"	
     StartDedicatedServerQueryString="Quit the game and launch a dedicated server with the current settings?"
 	StartServerQueryString="Start the server?"
 	ReStartServerQueryString="Restart the server with the current settings?"

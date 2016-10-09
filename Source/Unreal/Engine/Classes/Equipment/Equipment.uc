@@ -15,8 +15,8 @@ defaultproperties
     bOwnerNoSee=true
 
     // To speed up rendering, don't let pawn shadows be cast on equipment
-    bAcceptsShadowProjectors=false 
+    bAcceptsShadowProjectors=true
 
     // To speed up rendering, regular equipment doesn't accept projectors
-    bAcceptsProjectors=false
+    bAcceptsProjectors=true
 }

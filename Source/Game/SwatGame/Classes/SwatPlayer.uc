@@ -370,11 +370,19 @@ simulated function EAnimationSet GetP90LowReadyAimPoseSet()             { if (Re
 simulated function EAnimationSet GetOptiwandLowReadyAimPoseSet()        { if (ReasonForLowReady == 'Obstruction' && !IsUsingOptiwand()) return kAnimationSetOptiwandExtremeLowReady;       else return Super.GetOptiwandLowReadyAimPoseSet(); }
 simulated function EAnimationSet GetPaintballLowReadyAimPoseSet()       { if (ReasonForLowReady == 'Obstruction') return kAnimationSetPaintballExtremeLowReady;      else return Super.GetPaintballLowReadyAimPoseSet(); }
 
-simulated protected function bool CanPawnUseLowReady() { return true; }
+simulated protected function bool CanPawnUseLowReady()
+{
+  local HandheldEquipment Equipment;
+  Equipment = Self.GetActiveItem();
+  if(Equipment.IsA('Optiwand'))
+    return false;
+  return true;
+}
 
 simulated function SetLowReady(bool bEnable, optional name Reason)
 {
     if (bEnable == IsLowReady()) return;        //already there
+    if (!CanPawnUseLowReady() && bEnable) return;
 
     Super.SetLowReady(bEnable, Reason);
 
@@ -2767,6 +2775,8 @@ function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration 
     local name Reason;
     local name NewControllerState;
     local name NewPawnState;
+
+    SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(self, Taser);
 
     if ( Level.NetMode == NM_Client )
         return;

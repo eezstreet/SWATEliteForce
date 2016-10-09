@@ -1,31 +1,31 @@
 class FiredWeapon extends Weapon
     native;
 
-var config array<String> PlayerAmmoOption;  //Specifies ammo to be made available in the GUI when this is selected
+var(Ammo) config array<String> PlayerAmmoOption  "Specifies ammo to be made available in the GUI when this is selected";
 
 struct native EnemyAmmo
 {
-    var config string           AmmoClass;
-    var config int              Chance;
+    var() config string           AmmoClass;
+    var() config int              Chance;
 
     //set at runtime by SelectAmmoClass()
-    var class<Ammunition>       LoadedAmmoClass;
+    var() class<Ammunition>       LoadedAmmoClass;
 };
-var config array<EnemyAmmo>     EnemyUsesAmmo;
+var(Ammo) config array<EnemyAmmo>     EnemyUsesAmmo;
 var class<Ammunition>           AmmoClass;
 var Ammunition                  Ammo;
 var bool						bHasAmmoBandolier;
 
-var config vector               ThirdPersonFireOffset;         // the offset from our pivot to the muzzle tip
-var config float                MuzzleVelocity;                // the velocity that this FiredWeapon imparts to a fired bullet
-var config bool					bCanShootThroughGlass;		   // can this weapon shoot through glass (this is just letting the AIs know so they don't try)
-var config bool					bAimAtHead;						// should this weapon be aimed at the head (for AIs)
+var(Firing) config vector               ThirdPersonFireOffset         "The offset from our pivot to the muzzle tip";
+var(Firing) config float                MuzzleVelocity                "The velocity that this FiredWeapon imparts to a fired bullet";
+var(Firing) config bool					bCanShootThroughGlass		   "Can this weapon shoot through glass (this is just letting the AIs know so they don't try)";
+var(AI) config bool					bAimAtHead						"Should this weapon be aimed at the head (for AIs)";
 
 var private float               NextFireTime;                  // the time when we can be used again (compare against Level.TimeSeconds)
 
 var private ActionStatus        ReloadingStatus;
 
-var config float                ReloadAnimationRate;
+var(Reloading) config float                ReloadAnimationRate;
 
 var int							DeathFired;						// used to stop players expelling entire clips on death
 
@@ -43,46 +43,45 @@ var protected float AimError;                       //in degrees, the maximum an
                                                     //  rotation anywhere within 36 degrees, or 10% of a full sphere.
 
 var private float PendingAimErrorPenalty;           //penalties that have been received but not yet applied
-var config float MaxAimError;                       //AimError is never allowed to be above this value
-var config float SmallAimErrorRecoveryRate;         //AimError recovered per second until base AimError is achieved, when AimError is > AimErrorBreakingPoint
-var config float LargeAimErrorRecoveryRate;         //AimError recovered per second until base AimError is achieved, when AimError is <= AimErrorBreakingPoint
-var config float AimErrorBreakingPoint;             //At what multiple of BaseAimError does recovery transition from LargeAimErrorRecoveryRate to SmallAimErrorRecoveryRate
+var(Aim) config float MaxAimError                       "AimError is never allowed to be above this value";
+var(Aim) config float SmallAimErrorRecoveryRate         "AimError recovered per second until base AimError is achieved, when AimError is > AimErrorBreakingPoint";
+var(Aim) config float LargeAimErrorRecoveryRate         "AimError recovered per second until base AimError is achieved, when AimError is <= AimErrorBreakingPoint";
+var(Aim) config float AimErrorBreakingPoint             "At what multiple of BaseAimError does recovery transition from LargeAimErrorRecoveryRate to SmallAimErrorRecoveryRate";
 var float LookAimErrorQuantizationFactor;           //the "grid spacing" of the LookAimError... so that looking around doesn't make the reticle feel "jittery"
 
 // These values are penalties applied to AimError (ie. values added to AimError) when certain events occur during the game:
-var config float LookAimErrorPenaltyFactor;         //a penalty applied to AimError when the player looks around.  the total penalty applied is the amount of movement per second times this factor, ie. the greater the movement, the greater the movement adversely affects accuracy.
-var config float MaxLookAimErrorPenalty;
-var config float InjuredAimErrorPenalty;
-var config float MaxInjuredAimErrorPenalty;
-var config float DamagedAimErrorPenalty;
-var config float EquippedAimErrorPenalty;
-var config float FiredAimErrorPenalty;
-var config float WalkToRunAimErrorPenalty;
-var config float StandToWalkAimErrorPenalty;
+var(Aim) config float LookAimErrorPenaltyFactor         "A penalty applied to AimError when the player looks around.  the total penalty applied is the amount of movement per second times this factor, ie. the greater the movement, the greater the movement adversely affects accuracy.";
+var(Aim) config float MaxLookAimErrorPenalty;
+var(Aim) config float InjuredAimErrorPenalty;
+var(Aim) config float MaxInjuredAimErrorPenalty;
+var(Aim) config float DamagedAimErrorPenalty;
+var(Aim) config float EquippedAimErrorPenalty;
+var(Aim) config float FiredAimErrorPenalty;
+var(Aim) config float WalkToRunAimErrorPenalty;
+var(Aim) config float StandToWalkAimErrorPenalty;
 
 // These values represent a Pawn's base accuracy under given conditions, ie. the best accuracy that the Pawn can have in these conditions:
-var config float StandingAimError;
-var config float WalkingAimError;
-var config float RunningAimError;
-var config float CrouchingAimError;
+var(Aim) config float StandingAimError;
+var(Aim) config float WalkingAimError;
+var(Aim) config float RunningAimError;
+var(Aim) config float CrouchingAimError;
 
 //recoil causes a back-and-forward movement of the camera after firing, to represent the recoiling forces of a person recovering from firing a weapon
-var config float RecoilBackDuration;                //the time over which this FiredWeapon will cause the camera to move back
-var config float RecoilForeDuration;                //the time over which this FiredWeapon will cause the camera to move forward
-var config float RecoilMagnitude;                   //how far this FiredWeapon will cause the camera to pitch back.  the camera will pitch forward the same amount unless another recoil is applied before a previous recoil is fully complete.
-var config float AutoFireRecoilMagnitudeIncrement;  //each contiguous auto-fire shot accumulates another AutoFireRecoilMagnitudeIncrement
-                                                    //So auto-fire shot n's recoil value = RecoilMagnitude + n * AutoFireRecoilMagnitudeIncrement
+var(Recoil) config float RecoilBackDuration                "The time over which this FiredWeapon will cause the camera to move back";
+var(Recoil) config float RecoilForeDuration                "The time over which this FiredWeapon will cause the camera to move forward";
+var(Recoil) config float RecoilMagnitude                   "How far this FiredWeapon will cause the camera to pitch back.  The camera will pitch forward the same amount unless another recoil is applied before a previous recoil is fully complete.";
+var(Recoil) config float AutoFireRecoilMagnitudeIncrement  "Each contiguous auto-fire shot accumulates another AutoFireRecoilMagnitudeIncrement. So auto-fire shot n's recoil value = RecoilMagnitude + n * AutoFireRecoilMagnitudeIncrement";
 
-var config bool DebugPerfectAim;        // If true, when the weapon is fired the game will act as if you have perfect aim (i.e., ignore any current aim error)
-var config bool DebugDrawTraceFire;     // If true, when the weapon is fired the game will draw line(s) representing the path of the bullet(s) after AimError has been applied
-var config bool DebugDrawAccuracyCone;  // If true, when the weapon is fired the game will draw the cone representing the AimError-adusted area through which the bullet might travel
+var config bool DebugPerfectAim        "If true, when the weapon is fired the game will act as if you have perfect aim (i.e., ignore any current aim error)";
+var config bool DebugDrawTraceFire     "If true, when the weapon is fired the game will draw line(s) representing the path of the bullet(s) after AimError has been applied";
+var config bool DebugDrawAccuracyCone  "If true, when the weapon is fired the game will draw the cone representing the AimError-adusted area through which the bullet might travel";
 
 // flashlights
-var private config bool HasAttachedFlashlight;           // If true, this weapon will enable flashlight on/off toggling and create a light source at located at the socket specified in the FlashlightSocketName property
-var private config vector  FlashlightPosition_1stPerson; // Positional offset from the EquippedSocket on this weapon's FirstPersonModel to the point from which the flashlight emanates
-var private config rotator FlashlightRotation_1stPerson; // Same idea as FlashlightPosition_1stPerson, but rotational offset
-var private config vector  FlashlightPosition_3rdPerson; // Positional offset from the EquippedSocket on this weapon's ThirdPersonModel to the point from which the flashlight emanates
-var private config rotator FlashlightRotation_3rdPerson; // Same idea as FlashlightPosition_3rdPerson, but rotational offset
+var(Flashlight) private config bool HasAttachedFlashlight           "If true, this weapon will enable flashlight on/off toggling and create a light source at located at the socket specified in the FlashlightSocketName property";
+var(Flashlight) private config vector  FlashlightPosition_1stPerson "Positional offset from the EquippedSocket on this weapon's FirstPersonModel to the point from which the flashlight emanates";
+var(Flashlight) private config rotator FlashlightRotation_1stPerson "Same idea as FlashlightPosition_1stPerson, but rotational offset";
+var(Flashlight) private config vector  FlashlightPosition_3rdPerson "Positional offset from the EquippedSocket on this weapon's ThirdPersonModel to the point from which the flashlight emanates";
+var(Flashlight) private config rotator FlashlightRotation_3rdPerson "Same idea as FlashlightPosition_3rdPerson, but rotational offset";
 const FLASHLIGHT_TEXTURE_INDEX = 1;                      // Material index for the flashlight "glow" texture
 
 // State used for determining if a 3rd person flashlight projection is
@@ -106,21 +105,21 @@ var private float  FlashlightProjection_CurrentBrightnessAlpha;         // From 
 #define ENABLE_FLASHLIGHT_PROJECTION_VISIBILITY_TESTING 1
 
 //------- Flashlight lighting parameters ----------
-var private config class<Light> FlashlightSpotLightClass;   // Type of Spotlight to spawn for this weapon's flashlight
-var private config class<Light> FlashlightPointLightClass;  // Type of Pointlight to spawn for this weapon's flashlight
-var private config class<Light> FlashlightCoronaLightClass; // Type of CoronaLight to spawn for this weapon's flashlight
-var private config float PointLightDistanceFraction;     // where to place the pointlight along the line to the nearest object (0 = at flashlight, 1=at object intersection)
-var private config float PointLightRadiusScale;          // how much to scale the pointlight radius with distance from the nearest object
-var private config float PointLightDistanceFadeRate;     // How fast will the pointlight incorporate new distance values;
+var(Flashlight) private config class<Light> FlashlightSpotLightClass   "Type of Spotlight to spawn for this weapon's flashlight";
+var(Flashlight) private config class<Light> FlashlightPointLightClass  "Type of Pointlight to spawn for this weapon's flashlight";
+var(Flashlight) private config class<Light> FlashlightCoronaLightClass "Type of CoronaLight to spawn for this weapon's flashlight";
+var(Flashlight) private config float PointLightDistanceFraction     "Where to place the pointlight along the line to the nearest object (0 = at flashlight, 1=at object intersection)";
+var(Flashlight) private config float PointLightRadiusScale          "How much to scale the pointlight radius with distance from the nearest object";
+var(Flashlight) private config float PointLightDistanceFadeRate     "How fast will the pointlight incorporate new distance values";
 var private Light  FlashlightDynamicLight;                 // The actual light spawned for this weapon's flashlight
 var private Actor  FlashlightReferenceActor;             // Reference point for the flashlight's position; this is where the flashlight appears to originate from (where the corona appears, and where traces are done from when using a moving pointlight on low end cards to approximate a spotlight)
-var config  bool   DebugDrawFlashlightDir;               // if true, draw the trace lines and sprites for the flashlight lights
-var config  int    FlashlightUseFancyLights;             // for flashlights: -1 = uninitialized, 1 = spotlights, 0 = point lights
-var config  float  MinFlashlightBrightness;              // The brightness at the max distance of the flashlight
-var config  float  MinFlashlightRadius;                  // The brightness at the max distance of the flashlight
-var config  float  FlashlightFirstPersonDistance;        // Distance to pointlight in non-fancy mode, 1st person
-var config  float  MaxFlashlightDistance;                // The brightness at the max distance of the flashlight
-var config  float  ThirdPersonFlashlightRadiusPenalty;   // The radius penalty on flishlights for 3rd person flashlights so that they do not take away from the limited lighting resources of static meshes.
+var(Debug) config  bool   DebugDrawFlashlightDir               "If true, draw the trace lines and sprites for the flashlight lights";
+var(Flashlight) config  int    FlashlightUseFancyLights              "for flashlights: -1 = uninitialized, 1 = spotlights, 0 = point lights";
+var(Flashlight) config  float  MinFlashlightBrightness               "The brightness at the max distance of the flashlight";
+var(Flashlight) config  float  MinFlashlightRadius                   "The brightness at the max distance of the flashlight";
+var(Flashlight) config  float  FlashlightFirstPersonDistance         "Distance to pointlight in non-fancy mode, 1st person";
+var(Flashlight) config  float  MaxFlashlightDistance                 "The brightness at the max distance of the flashlight";
+var(Flashlight) config  float  ThirdPersonFlashlightRadiusPenalty    "The radius penalty on flishlights for 3rd person flashlights so that they do not take away from the limited lighting resources of static meshes.";
 var private bool   bHighEndGraphicsBoard;                // determines which type of lights are used in the flashlights
 var private float  BaseFlashlightBrightness;             // The base level brightness that will be scaled with distance
 var private float  BaseFlashlightRadius;                 // radius specified in the flashlight's light source
@@ -136,20 +135,20 @@ enum FireMode
     FireMode_Burst,
     FireMode_Auto
 };
-var private config array<FireMode> AvailableFireMode;       //named in singular for simplicity of config file
+var(Firing) private config array<FireMode> AvailableFireMode       "Named in singular for simplicity of config file";
 var FireMode CurrentFireMode;                               //set with SetCurrentFireMode()
 var int FireModeIndex;                                      //the currently selected index into the FiredWeapon's AvailableFireMode
-var private config int BurstShotCount;                      //the number of shots that will be fired when CurrentFireMode is FireMode_Burst
+var(Firing) private config int BurstShotCount                      "The number of shots that will be fired when CurrentFireMode is FireMode_Burst";
 var private int BurstShotsRemaining;                        //while firing in FireMode_Burst, how many shots remain to be shot in the current burst
-var config float BurstRateFactor;                           //the rate at which burst and auto-fire animations are played
+var(Firing) config float BurstRateFactor                           "The rate at which burst and auto-fire animations are played";
 
 var private int AutoFireShotIndex;                          //while firing in FireMode_Auto, how many shots have been started since the FiredWeapon began auto-firing
 
 var private bool PerfectAimNextShot;                        //for special purposes, we want to be able to take a shot with perfect aim, ie. Officers with shotguns
 
-var private config float OverrideArmDamageModifier;
+var(Damage) private config float OverrideArmDamageModifier;
 
-var config bool OfficerWontEquipAsPrimary;					// if true Officer will use secondary weapon unless ordered otherwise
+var(AI) config bool OfficerWontEquipAsPrimary					"If true Officer will use secondary weapon unless ordered otherwise";
 
 #define DONT_REQUIRE_PENETRATION_FOR_BLOOD_PROJECTORS 1
 

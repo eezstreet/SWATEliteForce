@@ -1,19 +1,19 @@
 class SwatWeapon extends Engine.FiredWeapon;
 
-var config int MagazineSize;
-var() protected config float Choke;
+var(Firing) config int MagazineSize;
+var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
 // Manufacturer Information
-var() protected localized config string Manufacturer;
-var() protected localized config string CountryOfOrigin;
-var() protected localized config string ProductionStart;
+var(AdvancedDescription) protected localized config string Manufacturer         "The Manufacturer in the Advanced Information panel (localized)";
+var(AdvancedDescription) protected localized config string CountryOfOrigin      "The Country of Origin in the Advanced Information panel (localized)";
+var(AdvancedDescription) protected localized config string ProductionStart      "The Production Start in the Advanced Information panel (localized)";
 // Cartridge Information
-var() protected localized config string Caliber;
-var() protected localized config string MagazineSizeString;
-var() protected localized config string TotalAmmoString;
+var(AdvancedDescription) protected localized config string Caliber              "The Caliber in the Advanced Information panel (localized)";
+var(AdvancedDescription) protected localized config string MagazineSizeString   "The Magazine Size in the Advanced Information panel - this needs to be defined separately since real magazine size is determined by ammo. Logical, right?";
+var(AdvancedDescription) protected localized config string TotalAmmoString      "The Total Ammo in the Advanced Information panel - human friendly localized string";
 // Action Information
-var() protected localized config string FireModes;
+var(AdvancedDescription) protected localized config string FireModes            "Human-readable firing mode string for Advanced Information panel (localized)";
 // Muzzle velocity
-var() protected localized config string RateOfFire;
+var(AdvancedDescription) protected localized config string RateOfFire           "Human-readable RoF string for Advanced Information panel (localized)";
 
 simulated function float GetChoke()
 {
@@ -67,8 +67,8 @@ static function string GetMuzzleVelocityString()
   // Therefore by multiplying by ~0.015 you can get meters and 0.05 for feet
   local int metersPerSecond, feetPerSecond;
   local string metersPerSecondStr, feetPerSecondStr;
-  metersPerSecond = default.MuzzleVelocity * 0.015;
-  feetPerSecond = default.MuzzleVelocity * 0.05;
+  metersPerSecond = default.MuzzleVelocity / 50.4628;
+  feetPerSecond = default.MuzzleVelocity / 15.385;
   metersPerSecondStr = string(metersPerSecond);
   feetPerSecondStr = string(feetPerSecond);
 
@@ -98,5 +98,6 @@ defaultproperties
   MagazineSizeString="Unknown"
   RateOfFireString="Not Applicable"
   TotalAmmoString="Unknown"
-  Choke = 1.0;
+  Choke = 1.0
+  Slot=Slot_Invalid
 }

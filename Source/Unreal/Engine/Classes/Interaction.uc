@@ -1,9 +1,9 @@
 // ====================================================================
 //  Class:  Engine.Interaction
-//  
+//
 //  Each individual Interaction is a jumping point in UScript.  The should
 //  be the foundatation for any subsystem that requires interaction with
-//  the player (such as a menu).  
+//  the player (such as a menu).
 //
 //  Interactions take on two forms, the Global Interaction and the Local
 //  Interaction.  The GI get's to process data before the LI and get's
@@ -36,34 +36,32 @@ var InteractionMaster Master;	// Pointer to the Interaction Master
 native function Initialize();							// setup the state system and stack frame
 native function bool ConsoleCommand( coerce string S );	// Executes a console command
 
-// WorldToScreen converts a vector in the world 
+// WorldToScreen converts a vector in the world
 
 // ====================================================================
 // WorldToScreen - Returns the X/Y screen coordinates in to a viewport of a given vector
-// in the world. 
+// in the world.
 // ====================================================================
 native function vector WorldToScreen(vector Location, optional vector CameraLocation, optional rotator CameraRotation);
 
 // ====================================================================
 // ScreenToWorld - Converts an X/Y screen coordinate in to a world vector
 // ====================================================================
-native function vector ScreenToWorld(vector Location, optional vector CameraLocation, optional rotator CameraRotation); 
+native function vector ScreenToWorld(vector Location, optional vector CameraLocation, optional rotator CameraRotation);
 
 // ====================================================================
 // Initialized - Called directly after an Interaction Object has been created
 // and Initialized.  Should be subclassed
 // ====================================================================
 
-event Initialized(); 
+event Initialized();
 
 
 // ====================================================================
 // Message - This event allows interactions to receive messages
 // ====================================================================
 
-function Message( coerce string Msg, float MsgLife)
-{
-} // Message
+function Message( coerce string Msg, float MsgLife);
 
 // ====================================================================
 // ====================================================================
@@ -76,7 +74,7 @@ function Message( coerce string Msg, float MsgLife)
 
 function bool KeyType( out EInputKey Key, optional string Unicode )
 {
-	return false;	
+	return false;
 }
 
 
@@ -108,7 +106,7 @@ function SetFocus()
 	Master.SetFocusTo(self,ViewportOwner);
 
 } // SetFocus
-	
+
 // ====================================================================
 // Tick - By default, Interactions do not get ticked, but you can
 // simply turn on bRequiresTick.

@@ -364,7 +364,7 @@ private function ClearChatHistory()
 function bool OnMessageRecieved( String Msg, Name Type )
 {
 //log( "[dkaplan]: >>>OnMessageRecieved: Msg = "$Msg$", Type = "$Type$", ViewportOwner.Actor = "$ViewportOwner.Actor);
-
+    ViewportOwner.Actor.ConsoleMessage("OnMessageReceived("$Type$"): "$Msg);
     switch (Type)
     {
         case 'Connected':

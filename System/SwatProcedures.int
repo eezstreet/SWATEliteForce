@@ -39,24 +39,36 @@ Description=Failed to report a downed suspect
 
 [Procedure_NoHostageIncapacitated]
 Description=Incapacitated a hostage
+ChatMessage=[c=ffff00]Incapacitated Hostage (-25)[\c]
 
 [Procedure_NoHostageKilled]
 Description=Killed a hostage
+ChatMessage=[c=ffff00]Killed Hostage (-50)[\c]
 
 [Procedure_NoOfficerIncapacitated]
 Description=Incapacitated a fellow officer
+ChatMessage=[c=ffff00]Incapacitated Officer (-25)[\c]
 
 [Procedure_NoOfficerInjured]
 Description=Injured a fellow officer
+ChatMessage=[c=ffff00]Injured Officer (-10)[\c]
+
+[Procedure_NoOfficerTased]
+Description=Tased a fellow officer
+ChatMessage=[c=ffff00]Tased Officer (-5)[\c]
 
 [Procedure_NoUnauthorizedUseOfDeadlyForce]
 Description=Unauthorized use of deadly force
+ChatMessage=[c=ffff00]Unauthorized Deadly Force (-20)[\c]
 
 [Procedure_NoUnauthorizedUseOfForce]
 Description=Unauthorized use of force
+ChatMessage=[c=ffff00]Unauthorized Force (-5)[\c]
 
 [Procedure_PreventSuspectEscape]
 Description=Failed to apprehend fleeing suspect
+ChatMessage=[c=ffff00]Suspect Escaped (-5)[\c]
 
 [Procedure_NoTrapsTriggered]
 Description=Tripped a trap
+ChatMessage=[c=ffff00]Triggered Trap (-10)[\c]

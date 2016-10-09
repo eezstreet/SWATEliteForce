@@ -505,8 +505,8 @@ Caption=HOST GAME
 Hint=Create a multiplayer game.
 
 [SwatMainMenu_TrainingButton]
-Caption=NEW FEATURES
-Hint=This should probably be removed.
+Caption=TRAINING
+Hint=Learn to play SWAT: Elite Forces
 
 [SwatMainMenu_bottomblack]
 Hint=Campaign
@@ -2524,7 +2524,7 @@ Hint=Disconnect from the server.
 
 [SwatMPPage_StartButton]
 Caption=READY
-Hint=Click in when you are ready to begin.
+Hint=Toggle whether you are ready to begin.
 
 [SwatMPPage_MissionLoadingStatusText]
 Caption=Loading...
@@ -2532,6 +2532,7 @@ Caption=Loading...
 [SwatMPPage]
 ReadyString=READY
 ContinueString=CONTINUE
+UnreadyString=NOT READY
 GameModeAndLevelString=%2                Mode: %1
 
 [SwatIntroMenu_WaitDialogueDoNotUse_CaptionLabel]
@@ -4734,7 +4735,19 @@ Text=MOVE >>
 Text=MIRROR CORNER
 
 [Command_MirrorUnderDoor]
-Text=MIRROR UNDER DOOR
+Text=MIRROR/SCAN DOOR
+
+[Command_PosNegPage]
+Text=AFFIRM/DENY >>
+
+[Command_MovingPage]
+Text=MOVING >>
+
+[Command_Response_NoSuspectsVisible]
+Text=NO SUSPECTS VISIBLE
+
+[Command_Response_SuspsectSpotted]
+Text=SUSPECT SPOTTED!
 
 [Command_MirrorRoom]
 Text=MIRROR ROOM

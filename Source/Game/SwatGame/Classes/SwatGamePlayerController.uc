@@ -1076,6 +1076,11 @@ exec function EnableMirrors( bool bInEnabledMirrors )
     class'Mirror'.Static.SetMirrorsEnabled( bInEnabledMirrors );
 }
 
+exec function Echo(string s)
+{
+	Player.Console.Message(s, 0);
+}
+
 // Called when the player is holding down the button to Control the viewport.
 exec function ControlOfficerViewport()
 {
@@ -4170,6 +4175,7 @@ event ClientMessage( coerce string S, optional Name Type )
 {
     //log("[dkaplan] >>> "$self$"::ClientMessage( "$S$", "$Type$" )" );
 	TeamMessage(PlayerReplicationInfo, S, Type);
+  ConsoleMessage(S);
 }
 
 event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)

@@ -748,13 +748,14 @@ enum ECommand
 	 Command_Breach          =53,
 	 Command_Investigate     =54,
 	 Command_Move            =55,
-	 Command_Response_Positive=56,
+	 Command_Response_PositivePage=56,
 	 Command_Response_NegativePage=57,
 	 Command_Response_Moving =58,
 	 Command_Response_Mirror =59,
-	 Command_Preferences     =60,
-	 Command_Static          =61,
-	 Command_MAX             =62,
+	 Command_StackUpMP       =60,
+	 Command_Preferences     =61,
+	 Command_Static          =62,
+	 Command_MAX             =63,
 };
 // Enum MenuPadStatus is declared in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
 enum MenuPadStatus
@@ -2251,7 +2252,6 @@ public:
     class UMaterial* ViewportOverlayMaterial;
     FLOAT NextTimeCanReactToHarmlessShotByPlayer;
     FLOAT DeltaReactionTimeBetweenHarmlessShot;
-    class IIAmReportableCharacter* CurrentReportableCharacter;
     class ATimer* NotifyStoppedMovingTimer;
 	   DECLARE_FUNCTION(execGetOfficerCommanderAction);
 	   DECLARE_CLASS(ASwatOfficer,ASwatAI,0|CLASS_Config,SwatGame)

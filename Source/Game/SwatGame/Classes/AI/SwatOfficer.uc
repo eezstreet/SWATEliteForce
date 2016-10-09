@@ -4,6 +4,7 @@ class SwatOfficer extends SwatAI
                 IControllableThroughViewport,
                 Engine.ICanBePepperSprayed,
                 Engine.IReactToCSGas,
+                Engine.ICanBeTased,
                 ICanUseC2Charge,
                 IInterested_GameEvent_ReportableReportedToTOC
 	native;
@@ -32,37 +33,6 @@ var private config Material  ViewportOverlayMaterial;
 var private float			 NextTimeCanReactToHarmlessShotByPlayer;
 var private config float	 DeltaReactionTimeBetweenHarmlessShot;
 
-// reacting to nonlethal weapons --eez
-/*var private Timer StungTimer;
-var private Timer FlashbangedTimer;
-var private Timer GassedTimer;
-var private Timer PepperSprayedTimer;
-var private Timer TasedTimer;
-
-enum ELastStingWeapon
-{
-    StingGrenade,
-    LessLethalShotgun,
-	TripleBatonRound,
-	DirectGrenadeHit,
-	MeleeAttack
-};
-var ELastStingWeapon LastStingWeapon; // type of last thing to cause sting effect
-
-var float                 LastStungTime;
-var float                 LastStungDuration;
-
-var float LastFlashbangedTime;
-
-var float LastGassedTime;
-var float LastGassedDuration;
-
-var float LastPepperedTime;
-var float LastPepperedDuration;
-
-var float LastTasedTime;
-var float LastTasedDuration;
-*/
 // When the officer stops avoiding collisions, this timer is started. When the
 // timer is triggered, the officer unsets the kUBABCI_AvoidCollisions upper
 // animation behavior. This helps smooth out the animation transitioning if the
@@ -956,7 +926,25 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, float AIDuration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
 	TriggerHarmlessShotSpeech();
+}
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// ICanBeTased implementation
+
+function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration )
+{
+  SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(self, Taser);
+}
+
+simulated function bool IsVulnerableToTaser()
+{
+    //Fix 2436: Spec says that taser should only affect players with no armor, but this makes no sense
+    //
+    //Paul wants players to always be vulnerable to Taser:
+//    //heavy armor protects from taser
+//    return (!GetLoadOut().HasHeavyArmor());
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,188 @@
+[M4Super90]
+Description=The Benelli M4 Super90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its five round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has two drawbacks.  The first is that its bulk can make it difficult to handle in close quarters situations.  The second is its small magazine size.
+FriendlyName=M4 Super90
+Manufacturer=Benelli
+Caliber=12 Gauge
+CountryOfOrigin=Italy
+ProductionStart=1999
+FireModes=Semi-Automatic
+TotalAmmoString=30 shells (50 with Ammo Pouch)
+RateOfFire=20-120 RPM
+
+[NovaPump]
+Description=A relatively new design from Benelli, the Nova pump is the top of the line in pump action shotguns.   While firing a bit slower than the semi-automatic M4 Super 90, the attached magazine extender allows the Nova pump to hold up to 8 shells at one time.
+FriendlyName=Nova Pump
+Manufacturer=Benelli
+Caliber=12 Gauge
+CountryOfOrigin=Italy
+ProductionStart=Unknown
+FireModes=Pump-Action
+TotalAmmoString=30 shells (50 with Ammo Pouch)
+RateOfFire=10-100 RPM
+
+[Colt_M1911]
+Description=The Colt M1911 Handgun has been a mainstay in law enforcement for decades.  This .45 caliber weapon packs a powerful punch and is the most common backup weapon for SWAT officers.  This semi-automatic weapon has an 8 round magazine and can fire both full metal jacket and jacketed hollow point ammunition.
+FriendlyName=M1911 Handgun
+Manufacturer=Colt
+Caliber=.45
+CountryOfOrigin=United States
+ProductionStart=1911
+FireModes=Semi-Automatic
+MagazineSizeString=8
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+RateOfFire=20-100 RPM
+
+[Glock]
+Description=This Austrian designed handgun is largely made of high tech polymer plastics.  This construction results in a weapon that is incredibly easy to handle and manipulate.  While less powerful than the Colt 1911, it boasts a 17 round magazine.  Its ease of use, accuracy, and ''safe action'' trigger has made it a popular choice for law enforcement agencies.
+FriendlyName=Glock 17
+Manufacturer=Glock
+Caliber=9mm
+CountryOfOrigin=Austria
+ProductionStart=~1990
+FireModes=Semi-Automatic
+MagazineSizeString=17
+TotalAmmoString=6 magazines (+2 with Ammo Pouch)
+RateOfFire=30-200 RPM
+
+[Python]
+Description=The Colt Python is among the most famous of Colt revolvers and was introduced in 1955.  It is chambered for the powerful .357 Magnum ammunition making it one of the most powerful hand guns on the market.  Its power is offset by its slow rate of fire and arduous reload.  In addition, it is not equipped with a tactical flashlight.
+FriendlyName=Colt Python
+Manufacturer=Colt
+Caliber=.357
+CountryOfOrigin=United States
+ProductionStart=1955
+FireModes=Double-Action
+MagazineSizeString=6
+TotalAmmoString=7 magazines (+2 with Ammo Pouch)
+RateOfFire=~10 RPM
+
+[DesertEagle]
+Description=This semiautomatic pistol holds eight .50 Action Express rounds, providing the greatest stopping power of any handgun outside a revolver. Favored by criminals for its considerable intimidation potential, it is often eschewed as a practical combat weapon due to its low ammunition capacity and excessive weight.
+FriendlyName=Desert Eagle .50AE
+Manufacturer=Israel Military Industries (IMI)
+Caliber=.50 Action Express
+CountryOfOrigin=Israel
+ProductionStart=1995
+FireModes=Semi-Automatic
+MagazineSizeString=8
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+RateOfFire=~280 RPM
+
+[TEC9]
+Description=This infamous machine pistol was developed by Intratech, a Miami offshoot of the Swedish company Interdynamic. The TEC-DC9 received noteriety after the Columbine and Cleveland school shootings. Criminals often modify this semi-automatic weapon for full automatic use, and it is banned in several US states by name.
+FriendlyName=TEC-DC9 Machine Pistol
+Manufacturer=Intratech
+Caliber=9mm
+CountryOfOrigin=United States
+ProductionStart=1990
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=32
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+
+[P90]
+Description=The P90 was developed by the Belgian company FN in conjunction with their Five-Seven in response to NATO's requests for a replacement to 9x19mm firearms. It began production in 1990 (hence the name P90), and features a futuristic and ambidextrous design. It remains in service in over 40 countries worldwide.||One of the unique features of the P90 is its top-loaded magazine. It can hold an abnormally large amount of ammunition due to its compact design.
+FriendlyName=FN P90 PDW
+Manufacturer=FN Herstal
+Caliber=FN 5.7x28mm
+CountryOfOrigin=Belgium
+ProductionStart=1990
+FireModes=Semi-Automatic, Burst Fire, Full-Auto
+MagazineSizeString=50
+TotalAmmoString=2 magazines (+2 with Ammo Pouch)
+RateOfFire=900 RPM
+
+[MP5]
+Description=This 9mm submachine gun was designed by H&K, a world renowned German manufacturer.  It is preferred by many para-military groups throughout the world for urban tactical engagements.  Firing either full metal jacket or jacketed hollow point 9mm ammunition it is versatile, but lacks the stopping power of an assault rifle.  Its key advantage is its compact design, which allows superior maneuverability in indoor situations.  It is equipped with a fire mode selector allowing automatic, semi-automatic and three round burst firing modes.
+FriendlyName=H&K MP5A2 SMG
+Manufacturer=Heckler & Koch
+Caliber=9mm
+CountryOfOrigin=West Germany
+ProductionStart=1964
+FireModes=Semi-Automatic, Burst Fire, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+RateOfFire=900 RPM
+
+[MP5SSD]
+Description=This 9mm submachine gun was designed by H&K, a world renowned German manufacturer.  It is preferred by many para-military groups throughout the world for urban tactical engagements.  Firing either full metal jacket or jacketed hollow point 9mm pistol ammunition it is versatile, but lacks the stopping power of the Colt Carbine.  Its key advantage is its compact design, which allows superior maneuverability in indoor situations.  This model is equipped with a fire mode selector allowing automatic, semi-automatic and three round burst firing modes.  It also sports a sound and flash suppressor for when stealth is paramount.
+FriendlyName=Suppressed H&K MP5A2 SMG
+Manufacturer=Heckler & Koch
+Caliber=9mm
+CountryOfOrigin=West Germany
+ProductionStart=1964
+FireModes=Semi-Automatic, Burst Fire, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+RateOfFire=900 RPM
+
+[UMP45]
+Description=The UMP is the cheaper and lighter successor to the MP5.  Built largely of glass-fiber reinforced polymers, this lightweight submachine gun provides the same reliability as the MP5, but with the added punch of the larger .45 caliber round.  The heavy bullet provides superior penetration of armored targets with FMJ rounds compared to its 9mm brethren, despite having a lower muzzle velocity and slower cyclical rate of fire.  This model is equipped with a fire mode selector allowing semi-automatic and fully automatic firing modes.
+FriendlyName=H&K UMP SMG
+Manufacturer=Heckler & Koch
+Caliber=.45
+CountryOfOrigin=Germany
+ProductionStart=1999
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=25
+TotalAmmoString=3 magazines (+2 with Ammo Pouch)
+RateOfFire=600 RPM
+
+[Colt_M4A1]
+Description=The Colt M4A1 carbine is based on the tried and true design of the M16 assault rifle used by the United States Army.  The shorter carbine design makes it a more viable weapon than the M16 in close quarters situations.  Using .223 caliber rifle ammunition in both full metal jacket and jacketed hollow point configurations, the Colt carbine is the most powerful weapon available to SWAT officers.  It is equipped with a fire mode selector allowing semi-automatic as well as fully automatic firing.
+FriendlyName=Colt M4A1 Carbine
+Manufacturer=Colt
+Caliber=.223
+CountryOfOrigin=United States
+ProductionStart=1994
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=3 magazines (+2 with Ammo Pouch)
+RateOfFire=700-970 RPM
+
+[G36k]
+Description=The G36K Assault Rifle is a lightweight full sized assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around assault rifle.  Firing a mid-sized 5.56mm (.223) rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic firing.
+FriendlyName=H&K G36K Assault Rifle
+Manufacturer=Heckler & Koch
+Caliber=5.56x45mm NATO
+CountryOfOrigin=Germany
+ProductionStart=1996
+FireModes=2-Round Burst, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+RateOfFire=750 RPM
+
+[Uzi]
+Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel.  It has a very high rate of fire and can be hard to control when fired in full auto mode.  This model is equipped with a suppressor making it a more stealthy choice. Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
+FriendlyName=Silenced IMI Uzi
+Manufacturer=Israel Military Industries (IMI)
+Caliber=9x19 Parabellum
+CountryOfOrigin=Israel
+ProductionStart=1950
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=25
+TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+RateOfFire=600 RPM
+
+[SAW]
+Description=This light support weapon is intended only for military operations; however as with most weapons some are available on the black market. The weapon is designed to be fired accurately from the hip or shoulder, though it is more commonly fired from a deployed bipod. It uses a box magazine holding 200 rounds of disintegrating-link ammunition.
+FriendlyName=M249 SAW Light Machine Gun
+Manufacturer=FN Herstal
+Caliber=5.56
+CountryOfOrigin=United States/Belgium
+ProductionStart=1970s
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=200
+TotalAmmoString=1 magazine (+1 with Ammo Pouch)
+RateOfFire=200-800 RPM
+
+[AK47]
+Description=The Kalashnikov AK-47 was designed in the Soviet Union in 1945 and began its field trials in 1946. It was officially accepted by the Soviet army in 1949 and became standard issue in 1951.  It has remained in service in many third world armies as well as terrorist organizations around the world due to its dependability and the ease at which it can be maintained.  It has a slower rate of fire and lower muzzle velocity than the Colt M4A1, but uses a higher caliber bullet which makes it comparable to its American counterpart at short ranges.  Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
+FriendlyName=AK-47 Assault Rifle
+Manufacturer=Various
+Caliber=7.62x39mm
+CountryOfOrigin=Soviet Union
+ProductionStart=1949
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=2 magazines (+2 with Ammo Pouch)
+RateOfFire=600 RPM

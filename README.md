@@ -20,6 +20,107 @@ To run the game, use the "Launch SEFMod.bat" file. To run SWATEd, use the "Launc
 You can make a shortcut to these .bat files for more convenience.
 
 # VERSION HISTORY #
+
+### v4 ###
+
+#### MAJOR FEATURES ####
+- Weapons have been altered across the board. Many incorrect muzzle velocities have been corrected.
+  * In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
+- Texture packs can now be used in online games.
+- Totally overhauled all weapon classes. Weapons are no longer defined in code - instead they can be added in new classes designed by SwatED.
+  * This makes it easier to edit and add new weapons. New weapons are as easy as adding a new weapon to SEFWeapons.u and adding it to the list of usable weapons in SwatEquipment.ini.
+- The console has been extensively upgraded. It will no longer close after entering a command, and it will show a log of commands entered (and output)
+
+#### MINOR FEATURES / FULL CHANGES ####
+- Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
+- Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc.
+- (Most) weapons have had their configuration moved from SwatEquipment.ini. This is to make it easier to create new weapons and reduce filesize of the mod somewhat.
+- Multiplayer Pregame: Server name correctly shows HTML formatting like the server list does (so it isn't broken looking)
+- Multiplayer Setup: Server name field raised to 128 characters (up from 20)
+- Optiwand will no longer lower when near an obstacle or teammate. This possibly fixes the glitchiness of multiplayer Optiwand.
+- Fixed a (vanilla) multiplayer bug where the Taser sidearms would inflict recoil to everyone in the game when one was used
+- The Glock is now a selectable weapon for suspects in the Custom Scenario Creator
+- Fairfax Residence: The accomplice can no longer carry two of the same weapon (??)
+- The console will no longer close after entering a command.
+- The console will show a log of commands entered as well as output.
+- Added a new console command: "history" (toggles the console log)
+- New penalty: Tased a fellow officer
+- Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
+- "Tripped Trap (-10)" -> "Triggered Trap (-10)"
+- "Fleeing Suspect (-5)" -> "Suspect Escaped (-5)"
+
+#### NITTY GRITTY ####
+* NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
+- Colt Accurized Rifle: Muzzle Velocity (61261 -> 47838)
+- M4Super90: Muzzle Velocity (21384 -> 20386)
+- Colt M4A1 Carbine: Muzzle Velocity (58344 -> 44609)
+- AK-47 Assault Rifle: Muzzle Velocity (47404 -> 36080)
+- H&K G36C: Muzzle Velocity (56355 -> 40370)
+- M249 SAW: Muzzle Velocity (48037 -> 46173)
+- FN P90 PDW: Muzzle Velocity (25185 -> 36131)
+- IMI Uzi: Muzzle Velocity (19508 -> 17106)
+- H&K MP5A4: Muzzle Velocity (26520 -> 20185)
+- H&K MP5A4SD: Muzzle Velocity (18895 -> 14381)
+- H&K UMP45: Muzzle Velocity (12693 -> 13120)
+- Glock 9mm: Muzzle Velocity (18170 -> 16148)
+- Desert Eagle: Muzzle Velocity (24675 -> 19983)
+- TEC-DC9: Muzzle Velocity (16170 -> 18166)
+- M9 (suspect weapon): Muzzle Velocity (18924 -> 17863)
+- MAC-10 (suspect weapon): Muzzle Velocity (14123 -> 15391)
+- G3KA4 (suspect weapon): Muzzle Velocity (42893 -> 40370)
+- AK74 (suspect weapon): Muzzle Velocity (37093 -> 45416)
+
+#### FILES MODIFIED ####
+Content/Classes/SEFWeapons.u
+System/Core.dll
+System/SEFWeapons.int
+System/CustomScenarioCreator.ini
+System/DefSwatGuiState.ini
+System/DynamicLoadout.ini
+System/EnemyArchetypes.ini
+System/StaticLoadout.ini
+System/SwatEquipment.ini
+System/SwatEquipment.int
+System/SwatGui.ini
+System/SwatGuiState.ini
+System/SwatProcedures.int
+Generated code
+
+### v3 ###
+MAJOR FEATURES
+- Multiplayer fixed. You can now play in CO-OP again.
+- MOVE menu disabled, all MOVE commands moved to OPEN submenu (there seems to be some hardcoded trickery going on...)
+- Fixed bad shotgun aiming mechanics. Instead of shotguns firing in a spread determined by crosshair, shotguns fire in a fixed spread that chooses a point determined by crosshair.
+- Main Menu changed: new logo, and New Features replaced with Training
+MINOR FEATURES / FULL CHANGES
+- Multiplayer GCI: Positive responses moved to a submenu: POSITIVE >> and negative responses moved to NEGATIVE >> submenu
+- Multiplayer GCI: BREACH commands removed, OPEN commands can be used on locked doors
+- Fixed accidental bug introduced in previous version with MP loadout menu
+- MIRROR UNDER DOOR renamed to MIRROR/SCAN DOOR (for multiplayer reasons)
+- OUT OF THE WAY changed to be the default for General
+- Multiplayer Pregame/Postgame: "Ready" button will no longer grey out when ready; instead it will change to "Unready" and clicking it will make you not ready.
+- Multiplayer Pregame: Removed Gamespy button
+- Multiplayer Pregame: The "Server Setup" button is only visible if you are the host of the game
+- Multiplayer Host: Removed the "Powered by Gamespy" image
+- Multiplayer Server Select: Removed the "Profile" button
+- Multiplayer Server Select: Removed the "Powered by Gamespy" image
+- Removed New Features, replaced with Training.
+- Missions will inform you to try playing Training before indulging in the campaign.
+- Instant Action will play Training if the campaign hasn't started.
+- Modified main menu logo
+- Added missing texture: gui_tex2.audio_Processing (related to speech recognition)
+- Included startup.ini because I am bad
+Files modified:
+Content/Textures/gui_tex2.utx
+System/CommandInterfaceMenus_SP.ini
+System/CommandInterfaceMenus_MP.ini
+System/PlayerInterface_Command_SP.ini
+System/PlayerInterface_Command_MP.ini
+System/SwatGui.ini
+System/startup.ini
+System/transient.int
+Generated code
+
 ### v2 ###
 - New Feature: Speech Recognition. Enable it in Audio Options
 - New Feature: Disable initial dispatch. Enable it in Audio Options
@@ -79,12 +180,11 @@ Some of the changes are as follows.
 		** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
 	* The game reveals much more information to you. A warning will display when you have made a penalty, and a message will show when you have completed an objective.
 		** Major gripe. I hate having to pause the menu to see if I've found all the civilians. Likewise, not finding out until the end of the game that a kill (which you might have forgotten about) was illegal is extremely frustrating.
+  * Multiplayer playability. For starters, annoying DRM preventing you from hosting a server has been removed. You can also use different texture packs (GEM, etc) while playing online. Tons of bugs regarding multiplayer stability have been addressed.
 	* Many many many many bugfixes.
 
 # KNOWN ISSUES #
-	* Does not work in Multiplayer due to changes to the GUI.
   * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
-  * Haven't made anything new for the main menu yet. Don't be surprised when THE STETCHKOV SYNDICATE shows up, I just haven't changed the logo yet.
   * No new missions in Additional Missions campaign. It's still a WIP.
 	* TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
 	* The game sometimes freezes during loading. Hit ENTER a few times and it will clear itself up. The internal script garbage collector crashes for reasons unknown but it's completely harmless.
@@ -133,6 +233,9 @@ Some of the changes are as follows.
 		* Likewise, the player will not be harmed by flashbangs if they have a helmet
 		* (Previously, the player was immune to CS gas but not flashbangs, despite having the complete opposite equipment for this)
 	- AI-controlled officers will automatically report any suspects or civilians that they restrain.
+	- New Features removed, Training mission brought back.
+### Multiplayer ###
+  - Texture packs (such as SWAT 4: GEM) can now be used online without causing problems.
 ### Suspects ###
 	- Modified morale alters:
 		"Weapon Drop" morale modifier increased substantially.
@@ -160,15 +263,18 @@ Some of the changes are as follows.
 
 ## GUI ##
 * New splash screen
+* New Main Menu logo
+* Removed all trace of Gamespy (no logo at start, no logo in Host Game, no logo in Join Game, etc..)
+* Removed bugged DRM (Invalid CD-Key when hosting a game)
 ### Equipment Menu (SP): ###
 	- Weapons now have a detailed information panel with statistics like their manufacturer, etc
 	- Can now select body armor for AI-controlled officers and yourself
 	- You can also select more choices for helmets, including riot helmets, terrorist helmets and gas masks
 	- Cleaned up the appearance of the top tabs
-	- Breaching tab on right is relabelled "BREACH AND PROTECTION" for clarity
+	- Breaching tab on right is relabeled "BREACH AND PROTECTION" for clarity
 	- Corrected typo for label on Secondary tab
 		"Select secondary weapon and equipment" --> "Select secondary weapon and ammunition"
-### Graphic Command Interface ###
+### Graphic Command Interface (SP) ###
 	- Performed a drastic redesign of the menu to promote both speed and functionality
 		* "Open and ..." commands have been moved to a submenu: "OPEN >>>"
 		* STACK UP has been renamed to TRY LOCK
@@ -179,6 +285,8 @@ Some of the changes are as follows.
 		* These are available via OPEN >> submenu
 	- The GCI is now dynamic in that drop-down menus (such as "OPEN >>>") can only appear in certain contexts (OPEN will only show on doors)
 	- Deploy Lightstick has been moved out of the Deploy menu (Drop Lightstick command) so they can be dropped faster
+### Graphic Command Interface (MP) ###
+	- OUT OF THE WAY changed to be the default for the General menu
 ### Career Menu ###
 	- Removed "-EXP-" tag before all TSS missions in the menu
 ### Settings Menu ###
@@ -190,8 +298,7 @@ Some of the changes are as follows.
 
 
 ## EQUIPMENT ##
-* Colt Accurized Rifle:
-	- Corrected muzzle velocity
+All weapons have been changed to have correct muzzle velocities.
 * Grenade Launcher:
 	- Given real world name (HK69 Grenade Launcher)
 	- Greatly increased damage dealt from direct impact
@@ -200,16 +307,13 @@ Some of the changes are as follows.
 	- Fixed inaccurate description
 	- Fixed name (AK-47 Assault Rifle)
 	- Now selectable in Singleplayer
-	- Corrected muzzle velocity
 	- 1 less magazine
 * GB36s:
 	- Corrected wrong name (is now H&K G36K)
 	- Updated description
-	- Corrected muzzle velocity
 	- 1 extra magazine
 * 5.56mm Light Machine Gun
 	- Corrected wrong name (is now M249 SAW Light Machine Gun)
-	- Fixed incorrect muzzle velocity
 	- Now selectable in Singleplayer
 * 5.7x28mm Submachine Gun
 	- Corrected wrong name (is now FN P90 Personal Defense Weapon)
@@ -224,7 +328,6 @@ Some of the changes are as follows.
 	- Added automatic firing mode
 	- Updated description
 	- Fixed incorrect magazine size for FMJ (holds 30 rounds, not 25)
-	- Corrected muzzle velocity
 * .45 SMG
 	- Corrected wrong name (H&K UMP SMG)
 	- Updated description
@@ -235,9 +338,7 @@ Some of the changes are as follows.
 	- Corrected wrong name (Desert Eagle .50AE)
 		NOTE: The name is technically correct (as a Desert Eagle Mark XIX is designed to fire .50 AE rounds), but I felt the need to change it
 	- Fixed typo in description
-	- Fixed incorrect muzzle velocity
 	- Slightly reduced recoil
-	- Added an extra clip
 * 9mm Machine Pistol
 	- Corrected wrong name (TEC-DC9 Machine Pistol)
 	- Completely redid the description
@@ -281,17 +382,17 @@ Some of the changes are as follows.
 * Pepperball Gun:
 	- May now be equipped as a Secondary Weapon
 * M4Super90:
+  - Now fires in a spread that isn't dictated by crosshair accuracy
 	- May now be equipped as a Secondary Weapon
 	- Added new ammo type: 000 Buck
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
 	- Corrected magazine size (5 -> 7)
 		SWAT 4 uses the magazine size from a civilian version of the shotgun. The Law Enforcement and Military models have 7 round magazines.
 * Nova Pump:
+  - Now fires in a spread that isn't dictated by crosshair accuracy
 	- Corrected invalid magazine size (8 -> 7)
 	- Added new ammo type: 000 Buck
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
-* M4A1 Carbine:
-	- Corrected muzzle velocity
 * Ammo Pouch:
 	- Fixed misleading description (it gives ammo for all guns, not just the primary)
 	- No longer affects the Less Lethal Shotgun
@@ -417,6 +518,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 # CREDITS #
 Irrational Games and Sierra for the game.
 MulleDK9 for information regarding the Speech Recognition feature.
+Jose21Crisis helped a lot with weapon-related math and contributed much to the design.
 Anything else was my own work.
 
 # LICENSE #

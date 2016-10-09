@@ -7,7 +7,7 @@ var config localized string Description;
 var config bool IsNeverHidden;
 var config bool IsShownInObjectivesPanel;
 var config bool IsABonus; //bonuses are treated differently than penalties
-var config string ChatMessage;
+var config localized string ChatMessage;
 
 var private SwatGameInfo Game;
 
