@@ -14,6 +14,8 @@ System/Promotional/*
 *.zip
 *.dll
 *.bak
+*.dds
+*.psd
 *DynamicLoadout.ini
 *Autotest.ini
 *Campaign.ini
