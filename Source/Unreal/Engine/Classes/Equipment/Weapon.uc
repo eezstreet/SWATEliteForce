@@ -1,7 +1,7 @@
 class Weapon extends HandheldEquipment
 	abstract
 	native
-    /*nativereplication*/;
+  nativereplication;
 
 // MCJ: All the interesting stuff has moved out of this class into others. I
 // don't think it needs to be native or have nativereplication anymore. Once

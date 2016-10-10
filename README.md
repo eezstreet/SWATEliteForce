@@ -48,6 +48,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
 - "Tripped Trap (-10)" -> "Triggered Trap (-10)"
 - "Fleeing Suspect (-5)" -> "Suspect Escaped (-5)"
+- "Learn to play SWAT: Elite Forces" -> "Learn to play SWAT: Elite Force"
 
 #### NITTY GRITTY ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.

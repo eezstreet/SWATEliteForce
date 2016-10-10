@@ -263,11 +263,8 @@ simulated final function Interrupt()
 //This is ugly, but Crombie says that the AIs will clean up after themselves.
 final function InstantInterrupt()
 {
-  log("QualifiedUseEquipment::InstantInterrupt step 0");
     Interrupt();
-  log("QualifiedUseEquipment::InstantInterrupt step 1");
 	OnUsingFinished();
-  log("QualifiedUseEquipment::InstantInterrupt step 2");
 }
 
 simulated function OnInterrupted();

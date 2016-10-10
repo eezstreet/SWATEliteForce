@@ -130,7 +130,7 @@ var float FramerateCompensationDelay;   //[see comments in DoEquipping()]
 
 var HandheldEquipmentPickup Pickup;
 
-var(Karma) private config float RagdollDeathImpactMomentumMultiplier;
+var() private config float RagdollDeathImpactMomentumMultiplier;
 
 function PostBeginPlay()
 {
@@ -1258,17 +1258,11 @@ simulated function EquipmentSlot GetSlotForReequip()
 
 function AIInterrupt()
 {
-  log("AIInterrupt() called for "$self$" with owner "$Owner);
-  log("EquippingStatus: "$EquippingStatus);
-  log("UnequippingStatus: "$UnequippingStatus);
-  log("UsingStatus: "$UsingStatus);
     if      (EquippingStatus > ActionStatus_Idle)   AIInterrupt_Equipping();
     else if (UnequippingStatus > ActionStatus_Idle) AIInterrupt_Unequipping();
     else if (UsingStatus > ActionStatus_Idle)       AIInterrupt_Using();
     else                                            AIInterruptHandheldEquipmentHook();
-  log("AIInterrupt called child function");
 	Pawn(Owner).AnimStopEquipment();
-  log("AIInterrupt stopped");
 }
 protected function AIInterruptHandheldEquipmentHook(); //for subclasses
 
@@ -1286,11 +1280,8 @@ protected function AIInterrupt_Unequipping()
 
 protected function AIInterrupt_Using()
 {
-    log("AIInterrupt_Using: step 0");
-    GotoState('');
-    log("AIInterrupt_Using: step 1");
+    //GotoState('');  // for some reason this line is causing crashes...sp00ky
     UsingStatus = ActionStatus_Idle;
-    log("AIInterrupt_Using: step 2");
 }
 
 simulated function InterruptUsing();

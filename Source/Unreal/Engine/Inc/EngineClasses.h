@@ -5331,7 +5331,7 @@ class ENGINE_API	AWeapon	: public AHandheldEquipment
 {
 public:
     BITFIELD bIsLessLethal:1;
-	   DECLARE_CLASS(AWeapon,AHandheldEquipment,0|CLASS_Config,Engine)
+	   DECLARE_CLASS(AWeapon,AHandheldEquipment,0|CLASS_Config|CLASS_NativeReplication,Engine)
 	   NO_DEFAULT_CONSTRUCTOR(AWeapon)
 };
 
