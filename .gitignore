@@ -1,5 +1,6 @@
 System/*.u
 System/Promotional/*
+System/Running.ini
 *.bmp
 *.jpg
 *.png
