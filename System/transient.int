@@ -4803,6 +4803,21 @@ Text=BREACH & CLEAR
 [Command_MoveAndClear]
 Text=MOVE & CLEAR
 
+[Command_BreachLeaderThrowAndClear]
+Text=BREACH, LEADER & CLEAR
+
+[Command_BreachLeaderThrowAndMakeEntry]
+Text=BREACH, LEADER & MAKE ENTRY
+
+[Command_LeaderThrowAndClear]
+Text=LEADER THROW & CLEAR
+
+[Command_OpenLeaderThrowAndClear]
+Text=OPEN, LEADER & CLEAR
+
+[Command_OpenLeaderThrowAndMakeEntry]
+Text=OPEN, LEADER & MAKE ENTRY
+
 [Command_PickLock]
 Text=PICK LOCK
 

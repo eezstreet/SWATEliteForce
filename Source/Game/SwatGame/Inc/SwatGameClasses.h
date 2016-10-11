@@ -753,8 +753,13 @@ enum ECommand
 	 Command_Response_Mirror =58,
 	 Command_StackUpMP       =59,
 	 Command_Preferences     =60,
-	 Command_Static          =61,
-	 Command_MAX             =62,
+	 Command_LeaderThrowAndClear=61,
+	 Command_BreachLeaderThrowAndClear=62,
+	 Command_BreachLeaderThrowAndMakeEntry=63,
+	 Command_OpenLeaderThrowAndClear=64,
+	 Command_OpenLeaderThrowAndMakeEntry=65,
+	 Command_Static          =66,
+	 Command_MAX             =67,
 };
 // Enum MenuPadStatus is declared in "..\SwatGame\Classes\PlayerInteraction\CommandInterface.uc"
 enum MenuPadStatus

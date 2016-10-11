@@ -21,21 +21,26 @@ var config float MoraleModifier;
 simulated function Detonated()
 {
     local IReactToStingGrenade Current;
+    local ICareAboutGrenadesGoingOff CurrentExtra;
     local float OuterRadius;
 
     OuterRadius = FMax(FMax(DamageRadius, KarmaImpulseRadius), StingRadius);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (bRenderDebugInfo)
     {
         // Render a box approximating the radius of effect
         Level.GetLocalPlayerController().myHUD.AddDebugBox(
-            Location, 
-            OuterRadius*2, 
-            class'Engine.Canvas'.Static.MakeColor(0,255,0), 
+            Location,
+            OuterRadius*2,
+            class'Engine.Canvas'.Static.MakeColor(0,255,0),
             5);
     }
 #endif
+
+    foreach AllActors(class 'ICareAboutGrenadesGoingOff', CurrentExtra) {
+      CurrentExtra.OnStingerWentOff(Pawn(Owner));
+    }
 
     foreach VisibleCollidingActors(class'IReactToStingGrenade', Current, OuterRadius)
     {
@@ -50,18 +55,18 @@ simulated function Detonated()
         Current.ReactToStingGrenade(
             Self,
             Pawn(Owner),
-            Damage, 
-            DamageRadius, 
-            KarmaImpulse, 
-            KarmaImpulseRadius, 
-            StingRadius, 
+            Damage,
+            DamageRadius,
+            KarmaImpulse,
+            KarmaImpulseRadius,
+            StingRadius,
             PlayerStingDuration,
             HeavilyArmoredPlayerStingDuration,
 			NonArmoredPlayerStingDuration,
             AIStingDuration,
             MoraleModifier);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
         if (bRenderDebugInfo)
         {
             // Render line to actors that are affected

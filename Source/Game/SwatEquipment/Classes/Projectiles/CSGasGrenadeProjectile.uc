@@ -3,12 +3,12 @@ class CSGasGrenadeProjectile extends Engine.SwatGrenadeProjectile;
 var config float UpdatePeriod;  //how often to check who I'm affecting
 var config float GasEmissionDuration; // how long the gas grenade continues to "emit" gas (not related to the visual effect, only the logic)
 var config float ReactionDuration; // how long a gassed pawn reacts to the gas, ie. how long it takes for a pawn to recover after leaving the gas
-var config float ExpansionTime; // how long it takes for the radius of effect to go from min to max 
+var config float ExpansionTime; // how long it takes for the radius of effect to go from min to max
 var config Range Radius; // the radius of effect, both min and max, that expands over ExpansionTime
 
-// When a Player (non-AI) being gassed has protective 
-// equipment that protects him from gas, then the duration of 
-// effect will be scaled by this value. 
+// When a Player (non-AI) being gassed has protective
+// equipment that protects him from gas, then the duration of
+// effect will be scaled by this value.
 // I.e., Duration *= <XXX>PlayerProtectiveEquipmentDurationScaleFactor
 // Where XXX is SP or MP depending on whether it's a single-player or
 // multiplayer game
@@ -23,8 +23,13 @@ var float DetonatedTime;
 ///////////////////////////////////////////////////////////////////////////////
 simulated function Detonated()
 {
+    local ICareAboutGrenadesGoingOff CurrentExtra;
     DetonatedTime = Level.TimeSeconds;
     GotoState('Active');
+
+    foreach AllActors(class'ICareAboutGrenadesGoingOff', CurrentExtra) {
+      CurrentExtra.OnCSGasWentOff(Pawn(Owner));
+    }
 
     dispatchMessage(new class'MessageCSGasGrenadeDetonated');
 }
@@ -33,7 +38,7 @@ simulated function Detonated()
 
 protected function float GetRadiusOfEffect()
 {
-    local float FractionOfMaxRadius; 
+    local float FractionOfMaxRadius;
     local float ElapsedTime;
 
     ElapsedTime = Level.TimeSeconds - DetonatedTime;
@@ -71,12 +76,12 @@ simulated state Active
                     )
                 {
                     Current.ReactToCSGas(
-                        self, 
-                        ReactionDuration, 
-                        SPPlayerProtectiveEquipmentDurationScaleFactor, 
+                        self,
+                        ReactionDuration,
+                        SPPlayerProtectiveEquipmentDurationScaleFactor,
                         MPPlayerProtectiveEquipmentDurationScaleFactor);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
                     if (bRenderDebugInfo)
                     {
                         // Render line to actors that are affected
@@ -94,31 +99,31 @@ simulated state Active
 
     event Tick(float dTime)
     {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
         local float EffectRadius;
 #endif
         Super.Tick(dTime);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
         if (bRenderDebugInfo)
         {
             EffectRadius = GetRadiusOfEffect();
             log("RAD="$EffectRadius);
-//#if 0            
+//#if 0
 //        // ckline: Draw3DCylinder seems to be busted
 //            // Render a cylinder approximating the radius of effect
 //            Level.GetLocalPlayerController().myHUD.Draw3DCylinder(
-//                Location, 
+//                Location,
 //                Vect(1,0,0), Vect(0,1,0), Vect(0,0,1),
-//                EffectRadius, EffectRadius, 
+//                EffectRadius, EffectRadius,
 //                class'Engine.Canvas'.Static.MakeColor(0,255,0),
 //                20);
 //#else
             // Render a box approximating the radius of effect
             Level.GetLocalPlayerController().myHUD.AddDebugBox(
-                Location, 
+                Location,
                 EffectRadius*2, // pass the diameter to addDebugBox
-                class'Engine.Canvas'.Static.MakeColor(0,255,0), 
+                class'Engine.Canvas'.Static.MakeColor(0,255,0),
                 UpdatePeriod);
 //#endif
        }
@@ -132,7 +137,7 @@ simulated state Active
     }
 
 Begin:
-    
+
     SetTimer(UpdatePeriod, true);   //loop
 }
 

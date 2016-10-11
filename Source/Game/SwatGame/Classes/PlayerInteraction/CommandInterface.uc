@@ -210,6 +210,15 @@ enum ECommand
   Command_StackUpMP,        // MP only - because "Stack Up" was renamed "Try Lock"
   Command_Preferences,
 
+    //
+    // New commands - Leader Throws Grenade
+    //
+    Command_LeaderThrowAndClear,
+    Command_BreachLeaderThrowAndClear,
+    Command_BreachLeaderThrowAndMakeEntry,
+    Command_OpenLeaderThrowAndClear,
+    Command_OpenLeaderThrowAndMakeEntry,
+
     Command_Static,
 };
 
@@ -727,7 +736,12 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
       } else {
         Status = Pad_GreyedOut;
       }
-    } else if  (
+    } else if(Command.Command == Command_BreachLeaderThrowAndClear || Command.Command == Command_BreachLeaderThrowAndMakeEntry ||
+      Command.Command == Command_OpenLeaderThrowAndClear || Command.Command == Command_OpenLeaderThrowAndMakeEntry ||
+      Command.Command == Command_LeaderThrowAndClear) {
+        Status = Pad_Normal; // FIXME
+    }
+    else if  (
             Command.IsCancel
         ||  Command.SubPage != Page_None                        //command is an achor for a sub-page
         ||  Command.Command == Command_CheckForTraps            // YUGE hack, and we should be able to execute this anyway
@@ -1836,6 +1850,36 @@ simulated function SendCommandToOfficers()
                     SwatDoor(PendingCommandTargetActor));
             break;
 
+        // clear with leader-thrown grenade
+        case Command_LeaderThrowAndClear:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor)) {
+              bCommandIssued = PendingCommandTeam.LeaderThrowAndClear(
+                  Level.GetLocalPlayerController().Pawn,
+                  PendingCommandOrigin,
+                  SwatDoor(PendingCommandTargetActor));
+            }
+            break;
+
+        case Command_BreachLeaderThrowAndClear:
+        case Command_BreachLeaderThrowAndMakeEntry:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor)) {
+              bCommandIssued = PendingCommandTeam.BreachLeaderThrowAndClear(
+                  Level.GetLocalPlayerController().Pawn,
+                  PendingCommandOrigin,
+                  SwatDoor(PendingCommandTargetActor), true);
+            }
+            break;
+
+        case Command_OpenLeaderThrowAndClear:
+        case Command_OpenLeaderThrowAndMakeEntry:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor)) {
+              bCommandIssued = PendingCommandTeam.BreachLeaderThrowAndClear(
+                  Level.GetLocalPlayerController().Pawn,
+                  PendingCommandOrigin,
+                  SwatDoor(PendingCommandTargetActor));
+            }
+            break;
+
         case Command_Deploy_C2Charge:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
                 bCommandIssued = PendingCommandTeam.DeployC2(
@@ -2023,6 +2067,10 @@ simulated protected function Actor GetPendingCommandTargetActor()
         case Command_Deploy_BreachingShotgun:
         case Command_Deploy_Wedge:
         case Command_MirrorUnderDoor:
+        case Command_OpenLeaderThrowAndClear:
+        case Command_OpenLeaderThrowAndMakeEntry:
+        case Command_BreachLeaderThrowAndClear:
+        case Command_BreachLeaderThrowAndMakeEntry:
             return GetDoorFocus();
 
         //cases where we prefer an open door
@@ -2033,6 +2081,7 @@ simulated protected function Actor GetPendingCommandTargetActor()
         case Command_Deploy_Flashbang:
         case Command_Deploy_CSGas:
         case Command_Deploy_StingGrenade:
+        case Command_LeaderThrowAndClear:
             return GetDoorFocus(true);          //prefer open door
 
         case Command_CloseDoor:

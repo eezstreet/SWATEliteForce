@@ -67,7 +67,7 @@ function NotifyDetonatorEquipping()
 //
 // Stacking up
 
-// any breaching in a move and clear should be preceded by a stack up 
+// any breaching in a move and clear should be preceded by a stack up
 // (according to the designers, and I agree)
 protected function bool ShouldStackUpIfOfficersInRoomToClear() { return true; }
 
@@ -82,7 +82,7 @@ protected function SetBreacher()
 	Breacher = GetFirstOfficer();
 }
 
-private function bool CanOfficerBreachWithShotgun(Pawn Officer)
+protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
 {
 	local HandheldEquipment Equipment;
 	local FiredWeapon Weapon;
@@ -105,7 +105,7 @@ private function bool CanOfficerBreachWithShotgun(Pawn Officer)
 latent function UseBreachingShotgun()
 {
 	assert(Breacher != None);
-   
+
 	ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
 
 	CurrentUseBreachingShotgunGoal = new class'UseBreachingShotgunGoal'(AI_Resource(Breacher.characterAI), TargetDoor);
@@ -113,7 +113,7 @@ latent function UseBreachingShotgun()
 	CurrentUseBreachingShotgunGoal.AddRef();
 
 	CurrentUseBreachingShotgunGoal.postGoal(self);
-	
+
 	// if we have a second officer, pause and wait for the door to open
 	if (GetSecondOfficer() != None)
 	{
@@ -121,7 +121,7 @@ latent function UseBreachingShotgun()
 	}
 	else
 	{
-		WaitForGoal(CurrentUseBreachingShotgunGoal);		    
+		WaitForGoal(CurrentUseBreachingShotgunGoal);
 	}
 
 	CurrentUseBreachingShotgunGoal.unPostGoal(self);
@@ -130,7 +130,7 @@ latent function UseBreachingShotgun()
 	CurrentUseBreachingShotgunGoal = None;
 }
 
-function private bool CanOfficerBreachWithC2(Pawn Officer)
+protected function bool CanOfficerBreachWithC2(Pawn Officer)
 {
 	local ISwatDoor SwatDoorTarget;
 	local bool bIsChargeAlreadyPlacedOnDoor;
@@ -165,7 +165,7 @@ function private bool CanOfficerBreachWithC2(Pawn Officer)
 latent function PlaceAndUseBreachingCharge()
 {
     local NavigationPoint SafeLocation;
-    
+
 	assert(Breacher != None);
 
 	ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
@@ -209,7 +209,7 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 {
 	local ISwatDoor SwatDoorTarget;
 	local bool bForceBreachAction;
-	
+
 	bForceBreachAction = SquadBreachAndClearGoal(achievingGoal).DoWeUseBreachingCharge();
 
     Super.PrepareToMoveSquad(true);
@@ -234,13 +234,14 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 		else
 		{
 			assert(DoesAnOfficerHaveUsableEquipment(Slot_Toolkit));
-		
+
 			PreTargetDoorBreached();
 			WaitForZulu();
 
 			// just pick the lock because nobody has a breaching device
 			// if there's no second officer, don't move to a destination afterwards, we will just open the door
-			PickLock(GetSecondOfficer() != None);
+			if(SwatDoorTarget.IsLocked())
+				PickLock(GetSecondOfficer() != None);
 
 			// if we are opening the door for throwing a grenade, do that
 			// otherwise just let the base move and clear behavior take care of door opening

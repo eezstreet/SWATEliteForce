@@ -19,21 +19,26 @@ var config float MoraleModifier;
 simulated function Detonated()
 {
     local IReactToFlashbangGrenade Current;
+    local ICareAboutGrenadesGoingOff CurrentExtra;
     local float OuterRadius;
 
     OuterRadius = FMax(FMax(DamageRadius, KarmaImpulseRadius), StunRadius);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (bRenderDebugInfo)
     {
         // Render a box approximating the radius of affect
         Level.GetLocalPlayerController().myHUD.AddDebugBox(
-            Location, 
-            StunRadius*2, 
-            class'Engine.Canvas'.Static.MakeColor(0,255,0), 
+            Location,
+            StunRadius*2,
+            class'Engine.Canvas'.Static.MakeColor(0,255,0),
             5);
     }
 #endif
+
+    foreach AllActors(class'ICareAboutGrenadesGoingOff', CurrentExtra) {
+      CurrentExtra.OnFlashbangWentOff(Pawn(Owner));
+    }
 
     foreach VisibleCollidingActors(class'IReactToFlashbangGrenade', Current, OuterRadius)
     {
@@ -51,16 +56,16 @@ simulated function Detonated()
         Current.ReactToFlashbangGrenade(
             Self,
             Pawn(Owner),
-            Damage, 
-            DamageRadius, 
-            KarmaImpulse, 
-            KarmaImpulseRadius, 
-            StunRadius, 
+            Damage,
+            DamageRadius,
+            KarmaImpulse,
+            KarmaImpulseRadius,
+            StunRadius,
             PlayerStunDuration,
             AIStunDuration,
             MoraleModifier);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
         if (bRenderDebugInfo)
         {
             // Render line to actors that are affected
@@ -77,7 +82,7 @@ simulated function Detonated()
     dispatchMessage(new class'MessageFlashbangGrenadeDetonated');
 
     bStasis = true; // optimization
-     
+
     if (Level.DetailMode == DM_Low)
         LifeSpan = 30; // destroy self after 30 seconds, for optimization
     else

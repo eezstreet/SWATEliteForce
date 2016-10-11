@@ -45,6 +45,7 @@ AUTOGENERATE_NAME(CanBreachAndClear)
 AUTOGENERATE_NAME(CanBreachAndClearLockedDoor)
 AUTOGENERATE_NAME(CanBreachBangAndClear)
 AUTOGENERATE_NAME(CanBreachGasAndClear)
+AUTOGENERATE_NAME(CanBreachLeaderThrowAndClear)
 AUTOGENERATE_NAME(CanBreachStingAndClear)
 AUTOGENERATE_NAME(CanDeployC2)
 AUTOGENERATE_NAME(CanDeployGrenadeLauncher)
@@ -59,6 +60,7 @@ AUTOGENERATE_NAME(CanDeployWedge)
 AUTOGENERATE_NAME(CanDisable)
 AUTOGENERATE_NAME(CanGasAndClear)
 AUTOGENERATE_NAME(CanIssueComplianceTo)
+AUTOGENERATE_NAME(CanLeaderThrowAndClear)
 AUTOGENERATE_NAME(CanMirror)
 AUTOGENERATE_NAME(CanPawnUseLowReady)
 AUTOGENERATE_NAME(CanPickLock)
@@ -362,6 +364,11 @@ struct AOfficerTeamInfo_eventCanDeployThrownItem_Parms
 	  BYTE ThrownItemEquipmentSlot;
 	  BITFIELD ReturnValue;
 };
+// "event"	function whose parameters correspond to	"struct AOfficerTeamInfo_eventCanLeaderThrowAndClear_Parms"	is declared	in "..\SwatAICommon\Classes\Squads\OfficerTeamInfo.uc"
+struct AOfficerTeamInfo_eventCanLeaderThrowAndClear_Parms
+{
+	  BITFIELD ReturnValue;
+};
 // "event"	function whose parameters correspond to	"struct AOfficerTeamInfo_eventCanStingAndClear_Parms"	is declared	in "..\SwatAICommon\Classes\Squads\OfficerTeamInfo.uc"
 struct AOfficerTeamInfo_eventCanStingAndClear_Parms
 {
@@ -375,6 +382,12 @@ struct AOfficerTeamInfo_eventCanGasAndClear_Parms
 // "event"	function whose parameters correspond to	"struct AOfficerTeamInfo_eventCanBangAndClear_Parms"	is declared	in "..\SwatAICommon\Classes\Squads\OfficerTeamInfo.uc"
 struct AOfficerTeamInfo_eventCanBangAndClear_Parms
 {
+	  BITFIELD ReturnValue;
+};
+// "event"	function whose parameters correspond to	"struct AOfficerTeamInfo_eventCanBreachLeaderThrowAndClear_Parms"	is declared	in "..\SwatAICommon\Classes\Squads\OfficerTeamInfo.uc"
+struct AOfficerTeamInfo_eventCanBreachLeaderThrowAndClear_Parms
+{
+	  BITFIELD bPlayerBelievesDoorLocked;
 	  BITFIELD ReturnValue;
 };
 // "event"	function whose parameters correspond to	"struct AOfficerTeamInfo_eventCanBreachStingAndClear_Parms"	is declared	in "..\SwatAICommon\Classes\Squads\OfficerTeamInfo.uc"
@@ -1674,6 +1687,13 @@ public:
         ProcessEvent(FindFunctionChecked(SWATAICOMMON_CanDeployThrownItem),&Parms);
 		   return Parms.ReturnValue;
 	  }
+	  BITFIELD	eventCanLeaderThrowAndClear()
+	  {
+        AOfficerTeamInfo_eventCanLeaderThrowAndClear_Parms Parms;
+		   Parms.ReturnValue=0;
+        ProcessEvent(FindFunctionChecked(SWATAICOMMON_CanLeaderThrowAndClear),&Parms);
+		   return Parms.ReturnValue;
+	  }
 	  BITFIELD	eventCanStingAndClear()
 	  {
         AOfficerTeamInfo_eventCanStingAndClear_Parms Parms;
@@ -1693,6 +1713,14 @@ public:
         AOfficerTeamInfo_eventCanBangAndClear_Parms Parms;
 		   Parms.ReturnValue=0;
         ProcessEvent(FindFunctionChecked(SWATAICOMMON_CanBangAndClear),&Parms);
+		   return Parms.ReturnValue;
+	  }
+	  BITFIELD	eventCanBreachLeaderThrowAndClear(BITFIELD bPlayerBelievesDoorLocked)
+	  {
+        AOfficerTeamInfo_eventCanBreachLeaderThrowAndClear_Parms Parms;
+		   Parms.ReturnValue=0;
+		   Parms.bPlayerBelievesDoorLocked=bPlayerBelievesDoorLocked;
+        ProcessEvent(FindFunctionChecked(SWATAICOMMON_CanBreachLeaderThrowAndClear),&Parms);
 		   return Parms.ReturnValue;
 	  }
 	  BITFIELD	eventCanBreachStingAndClear(BITFIELD bPlayerBelievesDoorLocked)
