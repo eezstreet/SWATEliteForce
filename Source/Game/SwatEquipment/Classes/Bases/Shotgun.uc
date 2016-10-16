@@ -4,4 +4,5 @@ class Shotgun extends RoundBasedWeapon;
 
 defaultproperties {
   LightstickThrowAnimPostfix = "SG"
+  Choke=1.0
 }

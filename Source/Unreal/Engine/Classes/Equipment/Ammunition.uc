@@ -81,6 +81,9 @@ simulated function SetClip(int index, int amount) { Assert(false); } //subclasse
 simulated function int GetCurrentClip() { Assert(false); return 0; } //subclasses must implement
 simulated function SetCurrentClip(int Clip) { Assert(false); } //subclasses must implement
 
+simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector NormalizedBulletDirection, Material HitMaterial, float Momentum, int BounceNumber);
+simulated function float GetRicochetMomentumModifier();
+
 defaultproperties
 {
     DrawType=DT_None

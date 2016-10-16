@@ -55,7 +55,7 @@ FriendlyName=C2 (x3)
 
 [LessLethalSG]
 Description=The less lethal shotgun is a Benelli Nova, pump-action shotgun which is always loaded with less than lethal beanbag rounds.  It is most often used on an uncooperative suspect or civilian.  The specially designated less lethal shotgun is necessary to eliminate errors that can occur from individually loading lethal or less than lethal munitions into the same weapon.  To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted green.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation.
-FriendlyName=Less Lethal Shotgun
+FriendlyName=Less-than-Lethal Shotgun
 Manufacturer=Benelli
 Caliber=12 Gauge
 CountryOfOrigin=Italy
@@ -66,7 +66,7 @@ RateOfFire=20-100 RPM
 
 [CSBallLauncher]
 Description=The Pepper-ball gun is based on technology originally designed for recreational paintball.  Compressed Carbon Dioxide ejects the ammunition at relatively high velocities.  The Pepper-ball gun allows officers to quickly deploy OC at specific targets, in more easily controlled quantities, and at significantly longer ranges than a grenade or standard pepper spray.  With the large ammunition hopper this weapon never needs to be reloaded under normal operating conditions.
-FriendlyName=Pepper-ball
+FriendlyName=Pepper-ball Launcher
 Manufacturer=Unknown
 Caliber=Paintball
 CountryOfOrigin=United States

@@ -98,6 +98,6 @@ defaultproperties
   MagazineSizeString="Unknown"
   RateOfFireString="Not Applicable"
   TotalAmmoString="Unknown"
-  Choke = 1.0
+  Choke = 0.0
   Slot=Slot_Invalid
 }

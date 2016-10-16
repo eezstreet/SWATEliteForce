@@ -359,6 +359,82 @@ simulated function ApplyAimError(out rotator FireDirection)
 
 native function ApplyRandomOffsetToRotation(rotator OriginalRotation, float OffsetHalfAngleRadians, out rotator NewRotation);
 
+// Handles bullet fracture
+// TODO
+/*
+simulated function bool HandleBallisticImpact(
+    Actor Victim,
+    vector HitLocation,
+    vector HitNormal,
+    vector NormalizedBulletDirection,
+    Material HitMaterial,
+    ESkeletalRegion HitRegion,
+    out float Momentum,
+    vector ExitLocation,
+    vector ExitNormal,
+    Material ExitMaterial
+    )*/
+
+// Handles bullet ricochet.
+// For right now, all this does is fire the bullet in a perfect mirror.
+simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, int BounceCount)
+{
+  local vector MirroredAngle, EndTrace;
+  local vector NewHitLocation, NewHitNormal, NewExitLocation, NewExitNormal;
+  local Material NewHitMaterial, NewExitMaterial;
+  local Actor NewVictim;
+  local ESkeletalRegion NewHitRegion;
+
+  BounceCount = BounceCount + 1;
+  MirroredAngle = BulletDirection - 2 * (BulletDirection dot Normal(HitNormal)) * Normal(HitNormal);
+  Momentum *= Ammo.GetRicochetMomentumModifier();
+  EndTrace = HitLocation + MirroredAngle * Range;
+
+  // Play an effect when it hits the first surface
+  Ammo.SetLocation(HitLocation);
+  Ammo.SetRotation(rotator(HitNormal));
+  #if IG_EFFECTS
+      //don't play hit effects on the sky
+      if (HitMaterial == None || HitMaterial.MaterialVisualType != MVT_Sky)
+      {
+          Ammo.TriggerEffectEvent('BulletHit', Victim, HitMaterial);
+      }
+  #endif // IG_EFFECTS
+
+  foreach TraceActors(
+      class'Actor',
+      NewVictim,
+      NewHitLocation,
+      NewHitNormal,
+      NewHitMaterial,
+      EndTrace,
+      HitLocation,
+      /*extent*/,
+      true,
+      NewHitRegion,
+      true,
+      true,
+      NewExitLocation,
+      NewExitNormal,
+      NewExitMaterial
+    )
+  {
+      log("[Ballistics] Ricochet bullet made an impact on Victim="$NewVictim$
+          ", NewHitLocation="$NewHitLocation$
+          ", NewHitNormal="$NewHitNormal$
+          ", NewHitMaterial="$NewHitMaterial.MaterialVisualType);
+      if(Ammo.CanRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount)) {
+        // the bullet ricocheted from the material
+        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount);
+        break;
+      } else if(!HandleBallisticImpact(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial,
+                  NewHitRegion, Momentum, NewExitLocation, NewExitNormal, NewExitMaterial)) {
+        // the bullet embedded itself into the material
+        break;
+      }
+  }
+}
+
 //handles the physics simulation of a bullet hitting something in the world.
 //determines how much damage a target should take, and if the shot should conseptually "penetrate" a target.
 //if a shot "penetrates" a target, then BallisticFire continues to evaluate hits until the shot is
@@ -406,7 +482,12 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         ExitMaterial )
     {
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
-        if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
+        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
+          // Do a ricochet
+          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0);
+          break;
+        }
+        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
             break;
     }
 }

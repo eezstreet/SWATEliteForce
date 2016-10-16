@@ -1,4 +1,4 @@
-class RoundBasedAmmo extends Engine.Ammunition;
+class RoundBasedAmmo extends SwatAmmo;
 
 var(Ammo) config int DefaultEnemyRounds;
 var(Ammo) config int DefaultOfficerRounds;
@@ -45,7 +45,7 @@ simulated function Initialize(bool bUsingAmmoBandolier)
     else
         assertWithDescription(false,
             "[tcohen] RoundBasedAmmo::Initialize() (class "$class.name$") expected Pawn Owner to be either a SwatEnemy or a SwatOfficer, but "$Pawn$" is neither. (Owner Weapon is "$Weapon$")");
-    
+
     //we should have enough rounds to initially fill the magazine
     assertWithDescription(ReserveRounds >= Weapon.MagazineSize,
         "[tcohen] RoundBasedAmmo::Initialize() (class "$class.name$") can't fill "$Weapon$"'s Magazine. MagazineSize is "$Weapon.MagazineSize$", but the ammo only has "$ReserveRounds$" rounds.");
@@ -59,7 +59,7 @@ simulated function bool IsEmpty()
     return (CurrentRounds == 0 && ReserveRounds == 0);
 }
 
-simulated function bool IsFull() 
+simulated function bool IsFull()
 {
 	local RoundBasedWeapon Weapon;
 
@@ -167,14 +167,14 @@ function int GetInitialReserveRounds()
     return DefaultOfficerRounds-GetMagazineSize();
 }
 
-simulated function int GetClip( int index ) 
-{ 
+simulated function int GetClip( int index )
+{
     if( index == 0 )
         return CurrentRounds;
     else if( index == 1 )
         return ReserveRounds;
 
-    return 0; 
+    return 0;
 }
 
 simulated function SetClip(int index, int amount)

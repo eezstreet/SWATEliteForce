@@ -27,25 +27,26 @@ var private int SelectedIndex;
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
-    
+
 	Super.InitComponent(MyOwner);
-	
+
 	MyKeyChoose.OnClick=InternalOnClick;
 
     for( i = 0; i < MyCategoryButtons.Length; i++ )
     {
         MyCategoryButtons[i].OnClick=CategorySelectorOnClick;
     }
-	
+
 	for( i = 0; i < MyKeyBindingsBox.MultiColumnList.Length; i++ )
     {
         MyKeyBindingsBox.MultiColumnList[i].MCList.OnDblClick=InternalOnClick;
     }
-    
+
     MyKeyBindingsBox.OnChange=OnListSelectionChanged;
     SelectedIndex=-1;
-    
+
     RestrictKeys();
+    GC.LocalizedCommandString[GC.LocalizedCommandString.Length] = "Take Screenshot"; // ಠ_ಠ
 }
 
 function SaveSettings()
@@ -63,7 +64,7 @@ private function RestrictKeys()
 {
     local int i;
     local string newRestrictedKeys;
-    
+
     for( i = 0; i < GC.CommandString.Length; i++ )
     {
         //only load ones in this category
@@ -83,10 +84,10 @@ private function LoadCategory( eCommandCategory Category )
 {
     local int i;
     local string boundKeys;
-    
+
     LastCategory=Category;
     MyKeyBindingsBox.Clear();
-    
+
     for( i = 0; i < GC.CommandString.Length; i++ )
     {
         //only load ones in this category
@@ -107,9 +108,9 @@ private function LoadCategory( eCommandCategory Category )
     MyKeyBindingsBox.Sort();
     MyKeyBindingsBox.SetIndex(SelectedIndex);
     SelectedIndex=-1;
-    
+
     MyKeyBindingsBox.SetEnabled( Category != COMCAT_Reserved );
-    
+
     for( i = 0; i < MyCategoryButtons.Length; i++ )
     {
         MyCategoryButtons[i].SetEnabled(i != Category);
@@ -169,7 +170,7 @@ function InternalOnPopupReturned( GUIListElem returnObj, optional string Passbac
 private function CategorySelectorOnClick( GUIComponent Sender )
 {
     local int i;
-    
+
     for( i = 0; i < MyCategoryButtons.Length; i++ )
     {
         if( MyCategoryButtons[i] == sender )
@@ -191,7 +192,7 @@ defaultproperties
 {
     LastCategory=COMCAT_Movement
     MaxKeysLength=50
-    
+
     ReMappingQuery="The current bindings for %1 are %2. Press a different key to add it to the list of bindings, or press a currently bound key to remove it from the bindings."
     ConfirmResetString="Are you sure that you wish to reset all key bindings to their defaults? This may take a few moments."
 }

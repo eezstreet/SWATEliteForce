@@ -1,4 +1,4 @@
-class ClipBasedAmmo extends Engine.Ammunition;
+class ClipBasedAmmo extends SwatAmmo;
 
 var(Ammo) config int ClipSize;
 var(Ammo) config int DefaultEnemyClipCount;
@@ -69,7 +69,7 @@ simulated function Initialize(bool bUsingAmmoBandolier)
         "[tcohen] The ClipBasedAmmo "$class.name
         $" is missing a ClipSize.  Please set this in SwatEquipment.ini, section [SwatEquipment."$class.name
         $"]");
-    
+
     if (Pawn.IsA('SwatEnemy'))
         ClipCount = DefaultEnemyClipCount;
     else
@@ -82,7 +82,7 @@ simulated function Initialize(bool bUsingAmmoBandolier)
             $" (class "$Pawn.class
             $") is none of those. (Owner Weapon is "$Weapon
             $")");
-    
+
     for (i=0; i<ClipCount; ++i)
     {
         ClipRoundsRemaining[i] = ClipSize;
@@ -94,7 +94,7 @@ simulated function bool IsEmpty()
     return (FullestClip() == -1);
 }
 
-simulated function bool IsFull() 
+simulated function bool IsFull()
 {
 	return (ClipRoundsRemaining[CurrentClip] == ClipSize);
 }
@@ -134,7 +134,7 @@ simulated function int FullestClip()
 simulated function bool NeedsReload()
 {
     assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize);
-    
+
     return (ClipRoundsRemaining[CurrentClip] == 0);
 }
 
