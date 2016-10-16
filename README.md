@@ -7,7 +7,7 @@ I spoke to one of the programmers - Terrance Cohen - through email, about the ga
 I think I could do better.
 There are very many glaring inaccuracies with the game. For starters, the game doesn't penalize you for killing hostages with the snipers, which I think is silly. Suspects have a much greater variety of behaviors and are made to be more realistic. There's some rather baffling logic here. You can't equip your officers with gas masks and the ammo pouch doesn't display what actually happens with your weapons.
 
-Enter SWAT Elite Forces.
+Enter SWAT Elite Force.
 I originally wanted to try and market this mod as a police officer trainer, but I stopped getting interest in the project after encountering some bugs. I picked the game up again and started playing on |ESF| and remembered this mod. So, I started work on it again and took a much harder look at the engine, trying to figure out how everything works, and resumed work on it. I think I've got it to the point where people would really like it.
 
 I wish I could do more with the game. I'm not an artist by any means, so a lot of the other things that I wish I could do (TASER rounds for shotguns, fixing a lot of the bad bump maps and flat shaded textures) aren't in the pipes. I do plan on dabbling with maps at some point, so there may be a custom campaign. I may include some community maps as part of the new campaign.
@@ -26,6 +26,8 @@ You can make a shortcut to these .bat files for more convenience.
 #### MAJOR FEATURES ####
 - Weapons have been altered across the board. Many incorrect muzzle velocities have been corrected. Many incorrect firing rates were corrected.
   * In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
+- Bullets can now ricochet off of surfaces. Be very wary when using those FMJ rounds! Particularly when there's concrete, thick metal or water involved...
+  * Currently a WIP feature and subject to tweaking
 - Texture packs can now be used in online games.
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
@@ -33,6 +35,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Totally overhauled all weapon classes. Weapons are no longer defined in code - instead they can be added in new classes designed by SwatED.
   * This makes it easier to edit and add new weapons. New weapons are as easy as adding a new weapon to SEFWeapons.u and adding it to the list of usable weapons in SwatEquipment.ini.
 - The console has been improved.
+- Completely redid all of the campaign progression/unlocks.
 
 #### MINOR FEATURES / FULL CHANGES ####
 - Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
@@ -44,6 +47,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Fixed a (vanilla) multiplayer bug where the Taser sidearms would inflict recoil to everyone in the game when one was used
 - The Glock is now a selectable weapon for suspects in the Custom Scenario Creator
 - Fairfax Residence: The accomplice can no longer carry two of the same weapon (??)
+- Old Granite Hotel: Adding some missing flashing lights on floor 6
 - The console will no longer close after entering a command. (Close with ESC key instead)
 - The console will show a log of commands entered as well as output.
 - Added a new console command: "history" (toggles the console log)
@@ -52,6 +56,20 @@ You can make a shortcut to these .bat files for more convenience.
 - Corrected some typos
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - When an AI is issued a BREACH command, and they are out of breaching equipment, they will now only pick the lock when the door is locked, instead of always picking the lock.
+- Redid all of the campaign progression/unlocks
+- Removed the VIP Colt M1911 (for now)
+- Added "Take Screenshot" option to controls menu
+- Fixed a bug introduced in the last patch where snipers would be inaccurate
+- Greatly increased the effectiveness of Stinger grenades against Hostage and Suspect morale. They're as good as Tasers now.
+- Greatly increased the area of effect for Stinger grenades.
+- Doubled the duration of effect for CS gas but greatly reduced its morale modifier
+- Slightly increased the effectiveness of Tasers against Suspect morale
+- Slightly increased the effectiveness of bullets against Hostage morale
+- Slightly reduced the effectiveness of C2 against Hostage morale
+- Removed a slight (< 1 second) delay from AI being affected by Stinger and Flashbangs. (it still exists for CS gas)
+- Reduced duration of effect of Pepperball gun by 50%
+- FMJ and buckshot can now ricochet off of hard surfaces
+  * Currently a 50% chance to do a perfect mirror on Stone, Concrete, Thick Metal, Thick Glass, Opaque Glass, Bricks, and Water
 
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
@@ -59,46 +77,70 @@ You can make a shortcut to these .bat files for more convenience.
 - Colt Accurized Rifle: Muzzle Velocity (61261 -> 47838)
 - M4Super90: Muzzle Velocity (21384 -> 20386)
 - Colt M4A1 Carbine: Muzzle Velocity (58344 -> 44609)
-- Colt M4A1 Carbine: Firing Speed (1.5 -> 1.375)
+- Colt M4A1 Carbine: Firing Speed (1.5 -> 1.333)
+- Colt M4A1 Carbine: Single Fire Speed (1.00 -> 2.00)
 - AK-47 Assault Rifle: Muzzle Velocity (47404 -> 36080)
+- AK-47 Assault Rifle: Single Fire Speed (1.00 -> 2.00)
+- AK-47 Assault Rifle: Auto Fire Speed (1.00 -> 1.666667)
 - H&K G36C: Muzzle Velocity (56355 -> 40370)
+- H&K G36C: Single Fire Speed (1.0 -> 2.0)
 - M249 SAW: Muzzle Velocity (48037 -> 46173)
-- M249 SAW: Firing Speed (1.75 -> 1.25)
+- M249 SAW: Firing Speed (1.75 -> 2.44445)
+- M249 SAW: Single Fire Speed (1.00 -> 1.8333333)
 - FN P90 PDW: Muzzle Velocity (25185 -> 36131)
-- FN P90 PDW: Firing Speed (1.75 -> 1.5)
+- FN P90 PDW: Firing Speed (1.75 -> 1.25)
+- FN P90 PDW: Single Fire Speed (1.0 -> 0.833333)
 - IMI Uzi: Muzzle Velocity (19508 -> 17106)
-- IMI Uzi: Firing Speed (1.25 -> 1.0)
+- IMI Uzi: Firing Speed (1.25 -> 0.6777)
+- IMI Uzi: Single Fire Speed (1.00 -> 2.00)
 - H&K MP5A4: Muzzle Velocity (26520 -> 20185)
 - H&K MP5A4SD: Muzzle Velocity (18895 -> 14381)
-- H&K MP5: Both versions firing speed (1.3300 -> 1.3333) (rounding problem)
+- H&K MP5: Both versions firing speed (1.3300 -> 1.1111)
+- H&K MP5: Both versions single fire speed (1.00 -> 2.00)
 - H&K UMP45: Muzzle Velocity (12693 -> 13120)
 - H&K UMP45: Firing Speed (0.55 -> 1.00)
+- H&K UMP45: Single Fire Speed (1.00 -> 2.00)
 - Glock 9mm: Muzzle Velocity (18170 -> 16148)
+- Glock 9mm: Single Fire Speed (1.00 -> 2.00)
+- Colt M1911: Single Fire Speed (1.00 -> 2.00)
 - Desert Eagle: Muzzle Velocity (24675 -> 19983)
+- Desert Eagle: Firing Speed (1.0 -> 2.0)
 - TEC-DC9: Muzzle Velocity (16170 -> 18166)
-- TEC-DC9: Firing Speed (1.75 -> 1.00)
+- TEC-DC9: Firing Speed (1.75 -> 2.00)
+- TEC-DC9: Single Fire Speed (1.00 -> 2.00)
 - M9 (suspect weapon): Muzzle Velocity (18924 -> 17863)
 - MAC-10 (suspect weapon): Muzzle Velocity (14123 -> 15391)
 - G3KA4 (suspect weapon): Muzzle Velocity (42893 -> 40370)
 - AK74 (suspect weapon): Muzzle Velocity (37093 -> 45416)
+- Colt Python: Fire Speed (1.00 -> 1.03)
+- Nova Pump: Fire Speed (1.00 -> 1.166667)
 - "Tripped Trap (-10)" -> "Triggered Trap (-10)"
 - "Fleeing Suspect (-5)" -> "Suspect Escaped (-5)"
 - "Learn to play SWAT: Elite Forces" -> "Learn to play SWAT: Elite Force"
+- "Pepper-ball" -> "Pepper-ball Launcher"
+- "Less Lethal Shotgun" -> "Less-than-Lethal Shotgun"
+- "NIGHT VISION" -> "Night Vision"
 
 #### FILES MODIFIED ####
 Content/Classes/SEFWeapons.u
+Content/Classes/SwatAmmo.u
+Content/Maps/SP-Hotel.s4m
+Content/Maps/SP-Training.s4m
+System/AI.ini
 System/Core.dll
-System/SEFWeapons.int
 System/CustomScenarioCreator.ini
 System/DefSwatGuiState.ini
 System/DynamicLoadout.ini
 System/EnemyArchetypes.ini
 System/PlayerInterface_Command_SP.ini
+System/SEFWeapons.int
 System/StaticLoadout.ini
 System/SwatEquipment.ini
 System/SwatEquipment.int
+System/SwatGame.int
 System/SwatGui.ini
 System/SwatGuiState.ini
+System/SwatMissions.ini
 System/SwatProcedures.int
 System/transient.int
 Generated code
@@ -205,7 +247,6 @@ Some of the changes are as follows.
   * No new missions in Additional Missions campaign. It's still a WIP.
 	* TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
 	* The game sometimes freezes during loading. Hit ENTER a few times and it will clear itself up. The internal script garbage collector crashes for reasons unknown but it's completely harmless.
-	* Currently there are missions with incorrect descriptions for the New Equipment panel. This will be fixed.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
