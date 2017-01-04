@@ -24,20 +24,20 @@ You can make a shortcut to these .bat files for more convenience.
 ### v4 ###
 
 #### MAJOR FEATURES ####
-- Weapons have been altered across the board. Many incorrect muzzle velocities have been corrected. Many incorrect firing rates were corrected.
-  * In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
-- Bullets can now ricochet off of surfaces. Be very wary when using those FMJ rounds! Particularly when there's concrete, thick metal or water involved...
-  * Currently a WIP feature and subject to tweaking
-- Texture packs can now be used in online games.
+- Weapons have been totally altered, both internally (how they function) and externally (how they play).
+  * Weapons have been given realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
+  * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
+  * The weapons are no longer defined in code - instead they can be added in SWATEd and totally modified from there, just like ammo is currently done.
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
   * These commands work for both thrown grenades and the grenade launcher, and they're "one-command-fits all" (OPEN, LEADER & CLEAR accepts flashbangs, CS gas and sting grenades without needing to pick in the menu)
-- Totally overhauled all weapon classes. Weapons are no longer defined in code - instead they can be added in new classes designed by SwatED.
-  * This makes it easier to edit and add new weapons. New weapons are as easy as adding a new weapon to SEFWeapons.u and adding it to the list of usable weapons in SwatEquipment.ini.
+- Suspect AI got a slight nerf to be more realistic
 - The console has been improved.
 - Completely redid all of the campaign progression/unlocks.
+- Texture packs can now be used in online games.
 
 #### MINOR FEATURES / FULL CHANGES ####
+- "Join Game" button now appears again.
 - Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
 - Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc.
 - (Most) weapons have had their configuration moved from SwatEquipment.ini. This is to make it easier to create new weapons and reduce filesize of the mod somewhat.
@@ -60,6 +60,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Removed the VIP Colt M1911 (for now)
 - Added "Take Screenshot" option to controls menu
 - Fixed a bug introduced in the last patch where snipers would be inaccurate
+- Civilians are now not ridiculously noncompliant like they were before
 - Greatly increased the effectiveness of Stinger grenades against Hostage and Suspect morale. They're as good as Tasers now.
 - Greatly increased the area of effect for Stinger grenades.
 - Doubled the duration of effect for CS gas but greatly reduced its morale modifier
@@ -69,11 +70,16 @@ You can make a shortcut to these .bat files for more convenience.
 - Removed a slight (< 1 second) delay from AI being affected by Stinger and Flashbangs. (it still exists for CS gas)
 - Reduced duration of effect of Pepperball gun by 50%
 - FMJ and buckshot can now ricochet off of hard surfaces
-  * Currently a 50% chance to do a perfect mirror on Stone, Concrete, Thick Metal, Thick Glass, Opaque Glass, Bricks, and Water
+- Suspects will now have a slight delay before firing upon SWAT officers. Depending on how skilled the suspect is, it can range between 0.3 and 0.9 seconds.
+- Incapacitation health increased from 20 to 30, so incapacitation is more likely
+- Suspects are more likely to play a gethit animation (so they shrug off bullets less often)
+- Suspects are slightly less accurate
 
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
-* HUGE thanks to Jose21Crisis for crunching all of these numbers for me.
+* HUGE thanks to Jose21Crisis for crunching a lot of these numbers for me.
+
+Weapon Stats
 - Colt Accurized Rifle: Muzzle Velocity (61261 -> 47838)
 - M4Super90: Muzzle Velocity (21384 -> 20386)
 - Colt M4A1 Carbine: Muzzle Velocity (58344 -> 44609)
@@ -114,12 +120,89 @@ You can make a shortcut to these .bat files for more convenience.
 - AK74 (suspect weapon): Muzzle Velocity (37093 -> 45416)
 - Colt Python: Fire Speed (1.00 -> 1.03)
 - Nova Pump: Fire Speed (1.00 -> 1.166667)
+
+Typos
 - "Tripped Trap (-10)" -> "Triggered Trap (-10)"
 - "Fleeing Suspect (-5)" -> "Suspect Escaped (-5)"
 - "Learn to play SWAT: Elite Forces" -> "Learn to play SWAT: Elite Force"
 - "Pepper-ball" -> "Pepper-ball Launcher"
 - "Less Lethal Shotgun" -> "Less-than-Lethal Shotgun"
 - "NIGHT VISION" -> "Night Vision"
+
+Hostages
+- Halfway House Staff: Max Morale (0.7 -> 0.35)
+- Halfway House Residents (not Lionel MacArthur): Max Morale (1.5 -> 1.1)
+- Halfway House Residents (not Lionel MacArthur): Min Morale (0.5 -> 0.6)
+- Sellers Street Band: Max Morale (0.95 -> 1.2)
+- Sellers Street Band: Min Morale (0.3 -> 0.5)
+- Sellers Street Male Patrons: Max Morale (1.2 -> 0.5)
+- Sellers Street Female Patrons: Max Morale (1.2 -> 0.6)
+- Rita Winston: Max Morale (1.5 -> 1.2)
+- Department of Agriculture Staff: Max Morale (0.9 -> 0.6)
+- Drug Lab Workers: Max Morale (0.6 -> 1.1)
+- Subway Homeless: Max Morale (0.2 -> 0.4)
+- Subway Businesswoman: Max Morale (0.8 -> 0.2)
+- Warehouse Civilians: Max Morale (1.2 -> 0.9)
+- Wolcott Homeless: Min Morale (0.5 -> 0.3)
+- Wolcott Homeless: Max Morale (1.33 -> 1.1)
+- Louis Baccus: Min Morale (0.7 -> 0.5)
+- Northside Gamblers: Min Morale (0.8 -> 0.3)
+- Convenience Store Workers: Max Morale (0.4 -> 0.1)
+- Theodore Sturgeon: Max Morale (1.1 -> 0.8)
+- Hologen Students: Min Morale (0.5 -> 0.25)
+- Hologen Students: Max Morale (1.1 -> 1.0)
+- Food Wall Patron: Max Morale (1.1 -> 0.8)
+- Food Wall Staff: Max Morale (1.1 -> 1.0)
+- DuPlessi Security: Max Morale (0.15 -> 0.8)
+- Warren Rooney: Max Morale (1.35 -> 1.0)
+- Red Library Staff: Max Morale (1.15 -> 0.6)
+- Gladys Fairfax: Min Morale (0.75 -> 0.3)
+- Gladys Fairfax: Max Morale (1.2 -> 1.0)
+- Taronne Civilian: Min Morale (0.8 -> 0.0)
+- Female Taronne Civilians max morale (1.33) now matches Male civilians (1.2)
+
+Suspects
+- Javier Arias: Max Morale (0.8 -> 1.0)
+- Halfway House Robbers: Max Morale (0.7 -> 0.5)
+- Andrew Norman: Max Morale (0.9 -> 1.0)
+- CASM: Min Morale (0.6 -> 0.3)
+- CASM: Max Morale (0.8 -> 0.9)
+- Angry Farmers: Min Morale (0.7 -> 0.5)
+- Angry Farmers: Max Morale (0.9/1.1 -> 0.7/0.8)
+- Drug Lab Workers: Max Morale (0.9 -> 1.0)
+- Only the drug lab workers who wear a gas mask can die from the taser now
+- Kiril Stetchkov: Max Morale (2.0 -> 1.5)
+- Kiril Stetchkov: Taser Death Chance (0.35 -> 0.5)
+- Alex Jimenez: Max Morale (0.6 -> 0.8)
+- Lawrence Fairfax: Max Morale (0.75 -> 1.0)
+- Fairfax Accomplice: Max Morale (0.75 -> 0.6)
+- Taronne Cultists: Max Morale (0.9 -> 1.1)
+- Andrew Taronne: Max Morale (0.95 -> 1.1)
+- Andrew Taronne: Min Morale (0.7 -> 0.4)
+- Hologen Terrorists: Max Morale (9.0 -> 1.2) [good lord]
+
+#### PROGRESSION ####
+The progression has been modified. There is now a piece of equipment unlocked on every mission.
+- Fairfax Residence (---)
+- Food Wall (yellow Taser)
+- Qwik Fuel (M4Super90)
+- FunTime Amusements (Gas Mask)
+- Victory Imports (Less Lethal Shotgun)
+- Sisters of Mercy (Pepperball Gun)
+- A-Bomb Nightclub (Riot Helmet)
+- Northside Vending (P90)
+- Red Library (Colt Accurized Rifle)
+- Sellers Street Auditorium (Colt M4A1 Carbine)
+- DuPlessis Diamonds (HK69 Grenade Launcher)
+- Children of Taronne Tenement (Night Vision Goggles)
+- Department of Agriculture (Ammo Bag)
+- St. Micheal's Medical Center (Uzi)
+- The Wolcott Projects (TEC-DC9)
+- Stetchkov Drug Lab (expansion Taser)
+- Fresnal St. Station (ProTec Helmet)
+- Stechkov Warehouse (Desert Eagle)
+- Old Granite Hotel (AK-47)
+- Mt. Threshold Research Center (M249 SAW)
 
 #### FILES MODIFIED ####
 Content/Classes/SEFWeapons.u
@@ -132,6 +215,7 @@ System/CustomScenarioCreator.ini
 System/DefSwatGuiState.ini
 System/DynamicLoadout.ini
 System/EnemyArchetypes.ini
+System/HostageArchetypes.ini
 System/PlayerInterface_Command_SP.ini
 System/SEFWeapons.int
 System/StaticLoadout.ini
