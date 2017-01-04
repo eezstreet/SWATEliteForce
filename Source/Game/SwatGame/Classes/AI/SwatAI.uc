@@ -2056,6 +2056,11 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 	}
 }
 
+function float GetTimeToWaitBeforeFiring()
+{
+  return 0.0; // For most NPCs this is 0 - only implemented in SwatEnemy
+}
+
 // return weapon specific time values for this AI
 function float GetTimeToWaitBetweenFiring(FiredWeapon Weapon)
 {

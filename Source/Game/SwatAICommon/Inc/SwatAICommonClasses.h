@@ -135,6 +135,7 @@ AUTOGENERATE_NAME(GetThrowAngle)
 AUTOGENERATE_NAME(GetThrowOrigin)
 AUTOGENERATE_NAME(GetThrowOriginOffset)
 AUTOGENERATE_NAME(GetThrownWeapon)
+AUTOGENERATE_NAME(GetTimeToWaitBeforeFiring)
 AUTOGENERATE_NAME(GetTimeToWaitBetweenFiring)
 AUTOGENERATE_NAME(GetTouchingStaircaseAimVolumeAtIndex)
 AUTOGENERATE_NAME(GetUpperBodyAnimBehavior)
@@ -807,6 +808,11 @@ struct IISwatAI_SwapInCompliantAnimSet_Parms
 // "event"	function whose parameters correspond to	"struct IISwatAI_eventSwapInRestrainedAnimSet_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatAI.uc"
 struct IISwatAI_SwapInRestrainedAnimSet_Parms
 {
+};
+// "event"	function whose parameters correspond to	"struct IISwatAI_eventGetTimeToWaitBeforeFiring_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatAI.uc"
+struct IISwatAI_GetTimeToWaitBeforeFiring_Parms
+{
+	  FLOAT ReturnValue;
 };
 // "event"	function whose parameters correspond to	"struct IISwatAI_eventGetTimeToWaitBetweenFiring_Parms"	is declared	in "..\SwatAICommon\Classes\ISwatAI.uc"
 struct IISwatAI_GetTimeToWaitBetweenFiring_Parms
@@ -2304,6 +2310,13 @@ public:
 	  void SwapInRestrainedAnimSet()
 	  {
 		   ProcessEvent(FindFunctionChecked(SWATAICOMMON_SwapInRestrainedAnimSet),NULL);
+	  }
+	  FLOAT GetTimeToWaitBeforeFiring()
+	  {
+        IISwatAI_GetTimeToWaitBeforeFiring_Parms Parms;
+		   Parms.ReturnValue=0;
+        ProcessFunction(FindFunctionChecked(SWATAICOMMON_GetTimeToWaitBeforeFiring),&Parms);
+		   return Parms.ReturnValue;
 	  }
 	  FLOAT GetTimeToWaitBetweenFiring(class AFiredWeapon* Weapon)
 	  {

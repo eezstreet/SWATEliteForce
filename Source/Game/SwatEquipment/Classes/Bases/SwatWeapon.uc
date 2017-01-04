@@ -67,7 +67,7 @@ static function string GetMuzzleVelocityString()
   // Therefore by multiplying by ~0.015 you can get meters and 0.05 for feet
   local int metersPerSecond, feetPerSecond;
   local string metersPerSecondStr, feetPerSecondStr;
-  metersPerSecond = default.MuzzleVelocity / 50.4628;
+  metersPerSecond = default.MuzzleVelocity / 50.4725;
   feetPerSecond = default.MuzzleVelocity / 15.385;
   metersPerSecondStr = string(metersPerSecond);
   feetPerSecondStr = string(feetPerSecond);

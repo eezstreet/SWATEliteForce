@@ -36,6 +36,8 @@ var private bool			bCanHitTarget;
 var private float			TimeToStopTryingToAttack;
 var private FiredWeapon		OtherWeapon;		// currently unequipped weapon
 
+var private float			StartActionTime;
+
 // config
 var config float			MaximumTimeToWaitToAttack;
 
@@ -60,7 +62,7 @@ function cleanup()
 	local FiredWeapon CurrentWeapon;
 
 	super.cleanup();
-	
+
 	if ( TargetSensor != None )
 	{
 		TargetSensor.deactivateSensor( self );
@@ -161,7 +163,7 @@ latent function ReadyWeapon()
 // allows us to set a firemode before attacking
 // Ask each AI for their default fire mode
 function SetFireMode(FiredWeapon CurrentWeapon)
-{	
+{
 	local FireMode DesiredFireMode;
 	assert(CurrentWeapon != None);
 
@@ -177,51 +179,54 @@ private function bool ShouldSucceed()
 
 latent function AttackTarget()
 {
-    local FiredWeapon CurrentWeapon;
+  local FiredWeapon CurrentWeapon;
+
+	StartActionTime = Level.TimeSeconds;
 
 	ReadyWeapon();
 
-    CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
+  CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
 
-	// we should have a weapon before we continue
+		// we should have a weapon before we continue
 	if (CurrentWeapon == None)
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 
 	if (m_Pawn.LogTyrion)
 		log(m_Pawn.Name $ " AttackTargetAction::AttackTarget - CurrentWeapon: " $ CurrentWeapon.Name $ " NeedsReload: " $ CurrentWeapon.NeedsReload() $ " CanReload: " $ CurrentWeapon.CanReload());
 
-    // if our current weapon is empty, and can reload, reload
-    if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
-    {
+  // if our current weapon is empty, and can reload, reload
+  if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
+  {
 		CurrentWeapon.LatentReload();
-    }
+  }
 	else if (CurrentWeapon.IsEmpty())
 	{
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 	}
 
 	AimAtActor(Target);
-    // @HACK: See comments in ISwatAI::LockAim for more info.
-    ISwatAI(m_pawn).LockAim();
+
+  // @HACK: See comments in ISwatAI::LockAim for more info.
+  ISwatAI(m_pawn).LockAim();
 
 	// interrupt anything the weapon is doing if it's not idle, we need to fire.
 	if(! CurrentWeapon.IsIdle())
 	{
-		CurrentWeapon.AIInterrupt();		
+		CurrentWeapon.AIInterrupt();
 	}
 
-    // wait until we can hit the target (make sure the target is still conscious too!)
-    while(! m_Pawn.CanHit(Target) && ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)))
-    {
+  // wait until we can hit the target (make sure the target is still conscious too!)
+  while(! m_Pawn.CanHit(Target) && ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)))
+  {
 		if (m_Pawn.logTyrion)
 			log(m_Pawn.Name $ " is waiting to be able to hit target " $ TargetPawn);
-		
-        yield();
-    }
 
-    // if we can aim at the target
-    if (ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Target))
-    {
+    yield();
+  }
+
+  // if we can aim at the target
+  if (ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Target))
+  {
 		// make sure the correct aim behavior is set (in case it got unset when we couldn't aim at the desired target)
 		ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AttackTargetAction);
 
@@ -239,15 +244,15 @@ latent function AttackTarget()
 			// wait until we can use the weapon again
 			sleep(ISwatAI(m_Pawn).GetTimeToWaitBetweenFiring(CurrentWeapon));
 		}
-    }
-    else if (ISwatAI(m_pawn).AnimIsWeaponAimSet())
-    {
-        // if the weapon is currently aiming, but we can't hit the target, turn off upper body animation
-        ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_AttackTargetAction);
-    }
+  }
+  else if (ISwatAI(m_pawn).AnimIsWeaponAimSet())
+  {
+      // if the weapon is currently aiming, but we can't hit the target, turn off upper body animation
+      ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_AttackTargetAction);
+  }
 
-    // @HACK: See comments in ISwatAI::UnlockAim for more info.
-    ISwatAI(m_pawn).UnlockAim();
+  // @HACK: See comments in ISwatAI::UnlockAim for more info.
+  ISwatAI(m_pawn).UnlockAim();
 }
 
 latent function WildGunnerAttackTarget()
@@ -283,7 +288,7 @@ latent function WildGunnerAttackTarget()
 	// interrupt anything the weapon is doing if it's not idle, we need to fire.
 	if(! CurrentWeapon.IsIdle())
 	{
-		CurrentWeapon.AIInterrupt();		
+		CurrentWeapon.AIInterrupt();
 	}
 
   	// make sure the correct aim behavior is set (in case it got unset when we couldn't aim at the desired target)
@@ -303,13 +308,15 @@ latent function WildGunnerAttackTarget()
 		// wait until we can use the weapon again
 		sleep(ISwatAI(m_Pawn).GetTimeToWaitBetweenFiring(CurrentWeapon));
 	}
- 
+
     // @HACK: See comments in ISwatAI::UnlockAim for more info.
     ISwatAI(m_pawn).UnlockAim();
 }
 
 protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 {
+	local float TimeElapsed;
+	local float MandatedWait;
 	// allows us to change our fire mode
 	SetFireMode(CurrentWeapon);
 
@@ -317,7 +324,15 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 		Sleep(WaitTimeBeforeFiring);
 
 	LatentAimAtActor(Target);
-    ShootWeaponAt(Target);
+
+	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
+	TimeElapsed = Level.TimeSeconds - StartActionTime;
+	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
+	if(TimeElapsed < MandatedWait) {
+		Sleep(MandatedWait - TimeElapsed);
+	}
+
+  ShootWeaponAt(Target);
 }
 
 protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
@@ -371,7 +386,7 @@ state Running
 			SwitchWeapons();
 	}
 
-	while (class'Pawn'.static.checkConscious(m_Pawn) && 
+	while (class'Pawn'.static.checkConscious(m_Pawn) &&
 		   ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)) &&
 		   (! m_Pawn.IsA('SwatOfficer') || IsTargetAThreat()))
 	{

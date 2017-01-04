@@ -35,6 +35,13 @@ var config float						MediumSkillMaxTimeToFireFullAuto;
 var config float						HighSkillMinTimeToFireFullAuto;
 var config float						HighSkillMaxTimeToFireFullAuto;
 
+const            LowSkillMinTimeBeforeShooting = 0.65;
+const            LowSkillMaxTimeBeforeShooting = 0.9;
+const            MediumSkillMinTimeBeforeShooting = 0.5;
+const            MediumSkillMaxTimeBeforeShooting = 0.65;
+const            HighSkillMinTimeBeforeShooting = 0.3;
+const            HighSkillMaxTimeBeforeShooting = 0.45;
+
 var config float						MinDistanceToAffectMoraleOfOtherEnemiesUponDeath;
 
 var config array<name>					ThrowWeaponDownAnimationsHG;
@@ -89,7 +96,7 @@ simulated function bool IsPrimaryWeapon( HandheldEquipment theItem )
 simulated event ReplicatedPrimaryWeaponClassInfoOnChanged()
 {
     //local Vector NoDirection;
-    
+
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SwatEnemy::ReplicatedPrimaryWeaponClassInfoOnChanged()." );
 
@@ -243,7 +250,7 @@ function InitializeFromArchetypeInstance()
 
     // setup our weapons
     InitializeWeapons(Instance);
-    
+
     // set a few state variables
     Skill           = Instance.Skill;
     bIsInvestigator = Instance.InvestigatorOverride;
@@ -280,9 +287,9 @@ private function InitializeInvestigationFromSpawner(EnemySpawner InEnemySpawner)
     assert(InEnemySpawner != None);
 
     // if we are already an investigator, then it was set by the override in the archetype
-    // and we shouldn't change that value.  Typically, whether an AI is an investigator 
-    // is set on the Spawner, but the designer can override that value in the archetype, 
-    // and that is why we only set the value from the spawner if we aren't already an 
+    // and we shouldn't change that value.  Typically, whether an AI is an investigator
+    // is set on the Spawner, but the designer can override that value in the archetype,
+    // and that is why we only set the value from the spawner if we aren't already an
     // investigator.
     if (! bIsInvestigator)
     {
@@ -291,7 +298,7 @@ private function InitializeInvestigationFromSpawner(EnemySpawner InEnemySpawner)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Resource Construction
 
 // Create SwatEnemy specific abilities
@@ -300,7 +307,7 @@ protected function ConstructCharacterAI()
     local AI_Resource characterResource;
     characterResource = AI_Resource(characterAI);
     assert(characterResource != none);
-	
+
 	characterResource.addAbility(new class'SwatAICommon.EnemyCommanderAction');
 	characterResource.addAbility(new class'SwatAICommon.EnemySpeechManagerAction');
     characterResource.addAbility(new class'SwatAICommon.BarricadeAction');
@@ -338,7 +345,7 @@ protected function ConstructCharacterAIHook(AI_Resource characterResource)
 protected function ConstructMovementAI()
 {
     local AI_Resource movementResource;
-    
+
 	movementResource = AI_Resource(movementAI);
     assert(movementResource != none);
 
@@ -387,8 +394,8 @@ function bool ShouldPlayFullBodyHitAnimation()
 }
 
 // Animation Set Overrides
-simulated function EAnimationSet GetStandingWalkAnimSet()		
-{ 
+simulated function EAnimationSet GetStandingWalkAnimSet()
+{
 	local HandheldEquipment CurrentActiveItem;
 
 	CurrentActiveItem = GetActiveItem();
@@ -419,8 +426,8 @@ simulated function EAnimationSet GetStandingWalkAnimSet()
 }
 
 simulated function EAnimationSet GetCrouchingAnimSet()	{ return kAnimationSetCrouching; }
-simulated function EAnimationSet GetStandingRunAnimSet()		
-{ 
+simulated function EAnimationSet GetStandingRunAnimSet()
+{
 	if (bIsSprinting) // if we're sprinting from someone
 	{
 		return GetSprintAnimSet();
@@ -497,13 +504,13 @@ function StartSprinting() { bIsSprinting = true; }
 function StopSprinting() { bIsSprinting = false; }
 
 // Allow SwatEnemy to override their aim pose animation sets
-simulated function EAnimationSet GetMachineGunAimPoseSet()		
-{ 
+simulated function EAnimationSet GetMachineGunAimPoseSet()
+{
 	assert(CharacterType != '');
 
 	// if we're a gang member, use the gang anim poses
 	if (CharacterType == 'EnemyMaleGang')
-		return kAnimationSetGangMachinegun; 
+		return kAnimationSetGangMachinegun;
 	else
 		return kAnimationSetMachineGun;
 }
@@ -600,7 +607,7 @@ simulated function FiredWeapon GetBackupWeapon()
 // returns true if we have a primary or backup weapon that has ammo (not empty)
 function bool HasUsableWeapon()
 {
-	return (((GetPrimaryWeapon() != None) && !GetPrimaryWeapon().IsEmpty()) || 
+	return (((GetPrimaryWeapon() != None) && !GetPrimaryWeapon().IsEmpty()) ||
 		    ((GetBackupWeapon() != None) && !GetBackupWeapon().IsEmpty()));
 }
 
@@ -753,7 +760,7 @@ simulated final function PickUpWeaponModel(HandHeldEquipmentModel HHEModel)
 	HHEModel.Destroy();
 }
 
-// Used by DropWeapon(). 
+// Used by DropWeapon().
 native event bool ActorIsInSameOrAdjacentZoneAsMe( Actor theOtherActor );
 
 simulated final function DropWeapon(HandheldEquipment Weapon, vector WeaponSpaceImpulse)
@@ -794,7 +801,7 @@ simulated final function DropWeapon(HandheldEquipment Weapon, vector WeaponSpace
 	Weapon.AIInterrupt();
 
     // Unequip the weapon and make it unavailable while simultaneously
-    // bypassing the equipment system's normal unequip process of 
+    // bypassing the equipment system's normal unequip process of
     // playing animations, etc.
 	if (Weapon == GetActiveItem())
 	{
@@ -810,7 +817,7 @@ simulated final function DropWeapon(HandheldEquipment Weapon, vector WeaponSpace
 	if (Weapon == GetPrimaryWeapon())
 	{
 	    DestroyDroppedWeapon( true );
-	    
+
 	    WasPrimary = true;
 	    //PrimaryWeaponDropped=true;
 		PrimaryWeapon = None;
@@ -824,7 +831,7 @@ simulated final function DropWeapon(HandheldEquipment Weapon, vector WeaponSpace
 	else
 	{
 		assertWithDescription((Weapon == GetBackupWeapon()), "SwatEnemy::DropWeapon - Weapon ("$Weapon$") is not the backup weapon.  Crombie's sanity check failed!");
-		
+
 	    DestroyDroppedWeapon( false );
 
 	    //BackupWeaponDropped=true;
@@ -871,14 +878,14 @@ simulated final function DropWeapon(HandheldEquipment Weapon, vector WeaponSpace
 	    if (WeaponModel.StaticMesh == None)
 	    {
 		    assertWithDescription((WeaponModel.DroppedStaticMesh != None), "WeaponModel " $ WeaponModel.Name $ " does not have a Dropped static mesh set for it.  It must!  Bug Shawn!!!");
-    
+
 		    log("setting static mesh to: " $ WeaponModel.DroppedStaticMesh);
 		    WeaponModel.SetStaticMesh(WeaponModel.DroppedStaticMesh);
 		    WeaponModel.SetDrawType(DT_StaticMesh);
 	    }
 
 	    WeaponModel.HavokSetBlocking(true);
-	    WeaponModel.SetPhysics(PHYS_Havok);	
+	    WeaponModel.SetPhysics(PHYS_Havok);
 
         // convert the weapon-local impulse to world space and apply it to
         // the weapon
@@ -895,7 +902,7 @@ simulated final function DropWeapon(HandheldEquipment Weapon, vector WeaponSpace
     if ( Level.IsCOOPServer )
         WeaponModel.NotifyClientsAIDroppedWeapon(WeaponSpaceImpulse >> Rotation);
 
-	// Swap in the correct movement animation set for not having a weapon 
+	// Swap in the correct movement animation set for not having a weapon
 	// (don't want them to run around like they have a weapon)
 	ChangeAnimation();
 }
@@ -907,7 +914,7 @@ simulated function DestroyDroppedWeapon( bool bPrimary )
 
     mplog( self$"---SwatEnemy::DestroyDroppedWeapon()." );
     mplog( "...bPrimary="$bPrimary );
-    
+
     if( bPrimary )
         UniqueIdentifier = UniqueID() $ "Pocket_PrimaryWeapon";
     else
@@ -940,7 +947,7 @@ simulated private function name GetThrowWeaponDownAnimation()
 	else
 	{
 		assert(GetActiveItem().IsA('Shotgun'));
-	
+
 		return ThrowWeaponDownAnimationsSG[Rand(ThrowWeaponDownAnimationsSG.Length)];
 	}
 }
@@ -1030,9 +1037,23 @@ function Spawner GetSpawner()
 
 native event float GetAdditionalBaseAimError();
 
+// overridden from ISwatAI
+function float GetTimeToWaitBeforeFiring()
+{
+  switch(Skill)
+  {
+    case EnemySkill_High:
+      return RandRange(HighSkillMinTimeBeforeShooting, HighSkillMaxTimeBeforeShooting);
+    case EnemySkill_Medium:
+      return RandRange(MediumSkillMinTimeBeforeShooting, MediumSkillMaxTimeBeforeShooting);
+    case EnemySkill_Low:
+      return RandRange(LowSkillMinTimeBeforeShooting, LowSkillMaxTimeBeforeShooting);
+  }
+}
+
 // overridden from SwatAI
-protected function float GetLengthOfTimeToFireFullAuto() 
-{ 
+protected function float GetLengthOfTimeToFireFullAuto()
+{
 	switch(Skill)
 	{
 		case EnemySkill_High:
@@ -1078,12 +1099,12 @@ simulated function name GetEffectEventForReportResponseFromTOCWhenNotIncapacitat
 // proper name instead of "SwatEnemy12" or some other auto-generated name
 simulated function String GetHumanReadableName()
 {
-	if (Level.NetMode == NM_StandAlone) 
+	if (Level.NetMode == NM_StandAlone)
     {
-	    // ckline FIXME: right now we don't have to display a 
+	    // ckline FIXME: right now we don't have to display a
 	    // human-readable name for enemies in single-player games.
 		// If it becomes necessary to do this, we should associated a localized
-		// human-readable name with each archetype, and then return 
+		// human-readable name with each archetype, and then return
 		// the human-readable name associated with this pawn's archetype.
 		//
 		// But for now we're ignoring the problem, and just returning "Suspect".

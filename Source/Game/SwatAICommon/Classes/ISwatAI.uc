@@ -192,6 +192,7 @@ function LatentAITriggerEffectEvent(name EffectEvent,                   //The na
 
 function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon);
 function float GetTimeToWaitBetweenFiring(FiredWeapon Weapon);
+function float GetTimeToWaitBeforeFiring();
 
 ///////////////////////////////////////////////////////////////////////////////
 //

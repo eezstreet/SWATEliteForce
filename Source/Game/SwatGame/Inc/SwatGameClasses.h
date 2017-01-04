@@ -554,6 +554,18 @@ struct ASwatAICharacter_eventReplicatedSkinsOnChanged_Parms
 struct ASwatAICharacter_eventReplicatedMeshInfoOnChanged_Parms
 {
 };
+// Constant HighSkillMaxTimeBeforeShooting is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
+#define UCONST_HighSkillMaxTimeBeforeShooting 10
+// Constant HighSkillMinTimeBeforeShooting is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
+#define UCONST_HighSkillMinTimeBeforeShooting 5
+// Constant MediumSkillMaxTimeBeforeShooting is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
+#define UCONST_MediumSkillMaxTimeBeforeShooting 10
+// Constant MediumSkillMinTimeBeforeShooting is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
+#define UCONST_MediumSkillMinTimeBeforeShooting 5
+// Constant LowSkillMaxTimeBeforeShooting is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
+#define UCONST_LowSkillMaxTimeBeforeShooting 10
+// Constant LowSkillMinTimeBeforeShooting is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
+#define UCONST_LowSkillMinTimeBeforeShooting 5
 // Constant maxWeaponDistance is declared in "..\SwatGame\Classes\AI\SwatEnemy.uc"
 #define UCONST_maxWeaponDistance 200.0f
 
