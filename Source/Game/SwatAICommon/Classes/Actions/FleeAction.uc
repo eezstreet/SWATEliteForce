@@ -76,7 +76,7 @@ function cleanup()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 private function bool IsWithinDistanceOfOfficers()
@@ -114,6 +114,13 @@ private function bool CanGetOutOfRoomSafely()
 	for(i=0; i<DoorsInRoom.GetSize(); ++i)
 	{
 		DoorInRoom = Door(DoorsInRoom.GetEntryAt(i));
+
+    if(ISwatPawn(m_Pawn).DoesBelieveDoorWedged()) {
+      continue; // We can't use this door if we know it's wedged
+    }
+    if(ISwatPawn(m_Pawn).DoesBelieveDoorLocked()) {
+      continue; // We can't use this door if we know it's locked
+    }
 
 		// if there is one door that we can use to get out of here, that isn't close too any player or officer, then we can get out safely
 		if (! HiveMind.IsActorWithinDistanceOfOfficers(DoorInRoom, MinRequiredFleeDistanceFromOfficer))
@@ -170,7 +177,7 @@ function float selectionHeuristic( AI_Goal goal )
 			return FRand() * 0.1;
 		}
 	}
-	
+
 	return 0.0;
 }
 
@@ -287,7 +294,7 @@ private function FleePoint FindFleePointDestination()
     for(i=0; i<AllFleePoints.GetSize(); ++i)
     {
         Iter = FleePoint(AllFleePoints.GetEntryAt(i));
-		
+
 //		log("Distance to ITer from Enemy is: " $ VSize2D(Iter.Location - CurrentEnemy.Location) $ " Required Distance is: " $ MinRequiredFleeDistanceFromOfficer);
 
         if ((CurrentEnemy == None) || !CurrentEnemy.IsInRoom(Iter.GetRoomName(CurrentEnemy)))
@@ -372,14 +379,14 @@ Begin:
 	{
 		AttackWhileFleeing();
 	}
-	else 
+	else
 	{
 		// if we're not attacking while fleeing, use the full body flee (movement) animations
 		SwapInFullBodyFleeAnimations();
 	}
 
     Flee();
-    
+
 	// let the commander know to clean up after this particular behavior
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().FinishedMovingEngageBehavior();
 

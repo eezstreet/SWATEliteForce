@@ -21,7 +21,7 @@ var private bool		bIsDoorBlockedBeforeOpen;
 var ISwatDoor			SwatDoorTarget;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Init / Cleanup
 
 function initAction(AI_Resource r, AI_Goal goal)
@@ -60,7 +60,7 @@ function bool ShouldContinueToOpenDoor()
 
 	PendingDoorInteractor = SwatDoorTarget.GetPendingInteractor();
 
-	return (TargetDoor.IsClosed() && !SwatDoorTarget.IsBroken() && !TargetDoor.IsOpening() && !TargetDoor.IsClosing() && 
+	return (TargetDoor.IsClosed() && !SwatDoorTarget.IsBroken() && !TargetDoor.IsOpening() && !TargetDoor.IsClosing() &&
 		((PendingDoorInteractor == None) || (PendingDoorInteractor == m_Pawn)));
 }
 
@@ -69,7 +69,7 @@ private function UpdateDoorKnowledge()
 	if (m_Pawn.IsA('SwatOfficer'))
 	{
 		SwatAIRepository(Level.AIRepo).UpdateDoorKnowledgeForOfficers(TargetDoor);
-		
+
 		if (SwatDoorTarget.IsLocked())
 		{
 			ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerReportDoorLockedSpeech();
@@ -168,14 +168,14 @@ latent function OpenDoor()
 state Running
 {
  Begin:
-	OpenDoor();	
+	OpenDoor();
 
 	// wait for it to open if it wasn't blocked
 	// if it was blocked, try opening again soon
 	if (! bIsDoorBlockedBeforeOpen)
 	{
-		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !SwatDoorTarget.IsBroken() && !SwatDoorTarget.IsWedged())
-		{		
+		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !SwatDoorTarget.IsBroken() && !SwatDoorTarget.IsWedged() && !(bOpenFrantically && SwatDoorTarget.IsLocked()))
+		{
 			yield();
 		}
 	}
