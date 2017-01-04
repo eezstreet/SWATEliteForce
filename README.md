@@ -35,6 +35,7 @@ You can make a shortcut to these .bat files for more convenience.
 - The console has been improved.
 - Completely redid all of the campaign progression/unlocks.
 - Texture packs can now be used in online games.
+- You can now lock doors using the toolkit.
 
 #### MINOR FEATURES / FULL CHANGES ####
 - "Join Game" button now appears again.
@@ -57,6 +58,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - When an AI is issued a BREACH command, and they are out of breaching equipment, they will now only pick the lock when the door is locked, instead of always picking the lock.
 - The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
+- The toolkit can now be used to lock doors.
 - Redid all of the campaign progression/unlocks
 - Removed the VIP Colt M1911 (for now)
 - Added "Take Screenshot" option to controls menu
