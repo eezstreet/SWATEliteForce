@@ -56,6 +56,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Corrected some typos
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - When an AI is issued a BREACH command, and they are out of breaching equipment, they will now only pick the lock when the door is locked, instead of always picking the lock.
+- The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
 - Redid all of the campaign progression/unlocks
 - Removed the VIP Colt M1911 (for now)
 - Added "Take Screenshot" option to controls menu
@@ -217,6 +218,7 @@ System/DynamicLoadout.ini
 System/EnemyArchetypes.ini
 System/HostageArchetypes.ini
 System/PlayerInterface_Command_SP.ini
+System/PlayerInterface_Fire.ini
 System/SEFWeapons.int
 System/StaticLoadout.ini
 System/SwatEquipment.ini

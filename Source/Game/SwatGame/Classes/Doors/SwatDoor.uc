@@ -656,7 +656,6 @@ simulated function bool KnowsDoorIsLocked( int TeamNumber )
     return LockedKnowledge[TeamNumber] == 1;
 }
 
-
 //
 // Antiportal handling
 //
@@ -1136,6 +1135,13 @@ simulated event bool PawnBelievesDoorLocked(SwatPawn Pawn)
         return KnowsDoorIsLocked(NetPawn.GetTeamNumber());
     } else
         return Info.DoesBelieveDoorLocked();
+}
+
+simulated function bool BelievesDoorLocked(Pawn p) {
+	local SwatPawn SwatPawn_;
+
+	SwatPawn_ = SwatPawn(p);
+	return PawnBelievesDoorLocked(SwatPawn_);
 }
 
 simulated function Broken()
@@ -2357,7 +2363,7 @@ simulated event bool IsC2ChargeOnPlayersSide()
 // Return true iff this can be operated by a toolkit now
 simulated function bool CanBeUsedByToolkitNow()
 {
-    return IsLocked();
+	return CanBeLocked();
 }
 
 // Called when qualifying begins.

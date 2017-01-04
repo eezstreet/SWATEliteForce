@@ -44,6 +44,9 @@ simulated native function bool IsBroken();
 simulated native function bool IsLocked();
 simulated native function bool IsWedged();
 
+simulated function bool CanBeLocked();
+simulated function bool BelievesDoorLocked(Pawn p);
+
 // returns true when this door has no door model (only in SingleDoor)
 // returns false all other times
 native event bool IsEmptyDoorway();
