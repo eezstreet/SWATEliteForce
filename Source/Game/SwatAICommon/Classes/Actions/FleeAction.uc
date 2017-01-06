@@ -115,10 +115,10 @@ private function bool CanGetOutOfRoomSafely()
 	{
 		DoorInRoom = Door(DoorsInRoom.GetEntryAt(i));
 
-    if(ISwatPawn(m_Pawn).DoesBelieveDoorWedged()) {
+    if(ISwatPawn(m_Pawn).DoesBelieveDoorWedged(DoorInRoom)) {
       continue; // We can't use this door if we know it's wedged
     }
-    if(ISwatPawn(m_Pawn).DoesBelieveDoorLocked()) {
+    if(ISwatPawn(m_Pawn).DoesBelieveDoorLocked(DoorInRoom)) {
       continue; // We can't use this door if we know it's locked
     }
 
