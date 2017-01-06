@@ -24,6 +24,9 @@ You can make a shortcut to these .bat files for more convenience.
 ### v4 ###
 
 #### MAJOR FEATURES ####
+- Introducing, Extra Missions! These are a second, Irrational-quality campaign of missions for you to explore.
+  * You will need to create a second campaign (in the menu) and select Extra Missions from the dropdown box (SWAT4 + TSS are selected by default)
+  * The first one, Meat Barn Restaurant, is an altered version of the multiplayer-exclusive Meat Barn Restaurant. Major changes were made to the layout to make it easier in Singleplayer and CO-OP.
 - Weapons have been totally altered, both internally (how they function) and externally (how they play).
   * Weapons have been given realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
@@ -38,6 +41,7 @@ You can make a shortcut to these .bat files for more convenience.
 - You can now lock doors using the toolkit.
 
 #### MINOR FEATURES / FULL CHANGES ####
+- Added Meat Barn Restaurant extra mission
 - "Join Game" button now appears again.
 - Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
 - Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc.
@@ -59,6 +63,7 @@ You can make a shortcut to these .bat files for more convenience.
 - When an AI is issued a BREACH command, and they are out of breaching equipment, they will now only pick the lock when the door is locked, instead of always picking the lock.
 - The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
 - The toolkit can now be used to lock doors.
+- Fixed a bug where known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
 - Redid all of the campaign progression/unlocks
 - Removed the VIP Colt M1911 (for now)
 - Added "Take Screenshot" option to controls menu
@@ -211,7 +216,15 @@ The progression has been modified. There is now a piece of equipment unlocked on
 Content/Classes/SEFWeapons.u
 Content/Classes/SwatAmmo.u
 Content/Maps/SP-Hotel.s4m
+Content/Maps/SP-MeatBarn.s4m
 Content/Maps/SP-Training.s4m
+Content/Sounds/Sierra1/s1_lostcontact_extm01_1.ogg
+Content/Sounds/Sierra1/s1_lostcontact_extm01_2.ogg
+Content/Sounds/Sierra1/s1_lostcontact_extm01_3.ogg
+Content/Sounds/Sierra1/s1_spottedcontact_extm01_1.ogg
+Content/Sounds/Sierra1/s1_spottedcontact_extm01_2.ogg
+Content/Sounds/Sierra1/s1_spottedcontact_extm01_3.ogg
+Content/Textures/gui_tex3.utx
 System/AI.ini
 System/Core.dll
 System/CustomScenarioCreator.ini
@@ -222,6 +235,7 @@ System/HostageArchetypes.ini
 System/PlayerInterface_Command_SP.ini
 System/PlayerInterface_Fire.ini
 System/SEFWeapons.int
+System/Startup.ini
 System/StaticLoadout.ini
 System/SwatEquipment.ini
 System/SwatEquipment.int
