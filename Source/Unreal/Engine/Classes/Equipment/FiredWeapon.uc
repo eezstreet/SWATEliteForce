@@ -167,6 +167,7 @@ simulated function PreBeginPlay()
     }
 
     UpdateAimError(0);
+
     Disable('Tick');
 }
 
@@ -289,30 +290,6 @@ simulated function TraceFire()
     if (DebugDrawAccuracyCone)
         DrawAccuracyCone(PerfectStartLocation, PerfectStartDirection);
 #endif
-
-    // eez: Had to redo the below code so that shotgun accuracy is correct
-    /*
-    for (Shot = 0; Shot < Ammo.ShotsPerRound; ++Shot)
-    {
-        StartLocation = PerfectStartLocation;
-        StartDirection = PerfectStartDirection;
-
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
-        if (!DebugPerfectAim && !PerfectAimNextShot)
-#endif
-            ApplyAimError(StartDirection);
-
-        StartTrace = StartLocation;
-        EndTrace = StartLocation + vector(StartDirection) * Range;
-
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
-        if (DebugDrawTraceFire)
-            Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 5);
-#endif
-
-        BallisticFire(StartTrace, EndTrace);
-    }
-    */
 
     StartLocation = PerfectStartLocation;
     StartDirection = PerfectStartDirection;
@@ -1575,6 +1552,13 @@ simulated function EquippedHook()
     // See if the pawn had the flashlight on at the time he changed
     // equipment. If so, turn the light on for the new equipment.
     UpdateFlashlightState();
+
+    UpdateAmmoDisplay();
+}
+
+simulated function UpdateAmmoDisplay()
+{
+  // This function has to be overrided..
 }
 
 simulated function UnEquippedHook()
@@ -1629,7 +1613,7 @@ simulated function float GetAimError()
 }
 
 //update flashlight and AimError.
-simulated function Tick(float dTime)
+simulated event Tick(float dTime)
 {
     Super.Tick(dTime);
 
@@ -1641,7 +1625,6 @@ simulated function Tick(float dTime)
     if (class'Pawn'.static.CheckDead(Pawn(Owner)))
     {
         //in this case, we might still be equipped, but we don't want to update stuff
-
         Disable('Tick');
         return;
     }
@@ -1671,13 +1654,8 @@ simulated function UpdateAimError(float dTime)
     local float AimErrorRecoveryRate;
     local float TargetAimError;
 
-//    if (PendingAimErrorPenalty > 0)
-//        log("[AIM] Applying PendingAimErrorPenalty="$PendingAimErrorPenalty);
-
     //target aim error is state-based error plus event-based penalties
     TargetAimError = GetBaseAimError() + PendingAimErrorPenalty;
-    //clear event-based penalties which are applied once
-    PendingAimErrorPenalty = 0;
 
     if (AimError > TargetAimError)
     {
@@ -1690,11 +1668,15 @@ simulated function UpdateAimError(float dTime)
         //recover accuracy over time
         AimError = FMax(TargetAimError, AimError - dTime * AimErrorRecoveryRate);
     }
-    else
+    else {
         //current aim error should be at least target aim error
         AimError = FMax(TargetAimError, AimError);
+    }
 
 //    log("[AIM] Updated AimError="$AimError);
+
+    //clear event-based penalties which are applied once
+    PendingAimErrorPenalty = 0;
 }
 
 

@@ -170,11 +170,6 @@ simulated function CreateModels()
             "[tcohen] The class "$class.name
             $" should have a valid FirstPersonModelClass, but it doesn't.  In SwatEquipment.ini, [SwatEquipment."$class.name
             $", please specify a valid FirstPersonModelClass, or set ShouldHaveFirstPersonModel=false.");
-    else
-        assertWithDescription(SelectedFirstPersonModelClass == None,
-            "[tcohen] The class "$class.name
-            $" should not have a valid FirstPersonModelClass, but it does.  In SwatEquipment.ini, [SwatEquipment."$class.name
-            $", please specify FirstPersonModelClass=None, or set ShouldHaveFirstPersonModel=true.");
 
     if (ShouldHaveFirstPersonModel && GetHands() != None )
     {

@@ -1,4 +1,4 @@
-class BadguyColtM1911HG extends Handgun;
+class BadguyColtM1911HG extends ColtM1911HG;
 
 defaultproperties
 {

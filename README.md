@@ -30,7 +30,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Weapons have been totally altered, both internally (how they function) and externally (how they play).
   * Weapons have been given realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
-  * The weapons are no longer defined in code - instead they can be added in SWATEd and totally modified from there, just like ammo is currently done.
+  * Pistols are now selectable in primary weapon slots.
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
   * These commands work for both thrown grenades and the grenade launcher, and they're "one-command-fits all" (OPEN, LEADER & CLEAR accepts flashbangs, CS gas and sting grenades without needing to pick in the menu)
@@ -82,6 +82,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Incapacitation health increased from 20 to 30, so incapacitation is more likely
 - Suspects are more likely to play a gethit animation (so they shrug off bullets less often)
 - Suspects are slightly less accurate
+- All pistols are selectable in primary weapon slots.
 
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
@@ -200,7 +201,7 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - A-Bomb Nightclub (Riot Helmet)
 - Northside Vending (P90)
 - Red Library (Colt Accurized Rifle)
-- Sellers Street Auditorium (Colt M4A1 Carbine)
+- Sellers Street Auditorium (UMP 45)
 - DuPlessis Diamonds (HK69 Grenade Launcher)
 - Children of Taronne Tenement (Night Vision Goggles)
 - Department of Agriculture (Ammo Bag)
@@ -213,7 +214,6 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Mt. Threshold Research Center (M249 SAW)
 
 #### FILES MODIFIED ####
-Content/Classes/SEFWeapons.u
 Content/Classes/SwatAmmo.u
 Content/Maps/SP-Hotel.s4m
 Content/Maps/SP-MeatBarn.s4m

@@ -1,4 +1,4 @@
-class BadguyG36kMG extends MachineGun;
+class BadguyG36kMG extends G36kMG;
 
 defaultproperties
 {

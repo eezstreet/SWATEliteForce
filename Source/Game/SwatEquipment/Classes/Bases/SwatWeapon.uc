@@ -20,11 +20,9 @@ simulated function float GetChoke()
   return Choke;
 }
 
-simulated function EquippedHook()
+simulated function UpdateAmmoDisplay()
 {
-    Super.EquippedHook();
-
-    Ammo.UpdateHUD();
+  Ammo.UpdateHUD();
 }
 
 static function string GetManufacturer()
