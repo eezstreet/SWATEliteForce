@@ -22,11 +22,11 @@ simulated function float GetMaximumQualifyModifer() {
 }
 
 simulated function float GetMinimumMovementModifier() {
-  return /*MinimumMovementModifier*/ 0.75;
+  return /*MinimumMovementModifier*/ 0.675;
 }
 
 simulated function float GetMaximumMovementModifier() {
-  return /*MaximumMovementModifier*/ 1.3;
+  return /*MaximumMovementModifier*/ 1.225;
 }
 
 simulated function float GetMinimumBulk() {
@@ -39,7 +39,7 @@ simulated function float GetMinimumWeight() {
 
 // Functions for getting the maximum amount of weight/bulk we can carry
 simulated function float GetMaximumWeight() {
-  return /*MaximumAbsoluteWeight*/ 60.0;
+  return /*MaximumAbsoluteWeight*/ 50.0;
 }
 
 simulated function float GetMaximumBulk() {
@@ -92,14 +92,15 @@ function float GetWeightMovementModifier() {
   maxMoveModifier = GetMaximumMovementModifier();
 
   assertWithDescription(totalWeight <= maxWeight,
-    "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in StaticLoadout.ini");
+    "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in code.");
   assertWithDescription(totalWeight >= minWeight,
-    "Loadout "$self$" doesn't meet minimum weight ("$totalWeight$" < "$minWeight$"). Adjust the value in StaticLoadout.ini");
+    "Loadout "$self$" doesn't meet minimum weight ("$totalWeight$" < "$minWeight$"). Adjust the value in code.");
 
   totalWeight -= minWeight;
   maxWeight -= minWeight;
 
-  return ((totalWeight / maxWeight) * (maxMoveModifier - minMoveModifier)) + minMoveModifier;
+
+  return ((totalWeight / maxWeight) * (minMoveModifier - maxMoveModifier)) + maxMoveModifier;
 }
 
 function float GetBulkQualifyModifier() {
@@ -114,9 +115,9 @@ function float GetBulkQualifyModifier() {
   maxQualifyModifier = GetMaximumQualifyModifer();
 
   assertWithDescription(totalBulk <= maxBulk,
-    "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in StaticLoadout.ini");
+    "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
   assertWithDescription(totalBulk >= minBulk,
-    "Loadout "$self$" doesn't meet minimum bulk ("$totalBulk$" < "$minBulk$"). Adjust the value in StaticLoadout.ini");
+    "Loadout "$self$" doesn't meet minimum bulk ("$totalBulk$" < "$minBulk$"). Adjust the value in code.");
 
   totalBulk -= minBulk;
   maxBulk -= minBulk;

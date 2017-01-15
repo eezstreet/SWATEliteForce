@@ -1526,6 +1526,38 @@ simulated function float GetFireTweenTime()
         return 0.0;
 }
 
+simulated function AdjustPlayerMovementSpeed() {
+  local float OriginalFwd, OriginalBck, OriginalSde;
+  local float ModdedFwd, ModdedBck, ModdedSde;
+  local float TotalWeight;
+
+  local AnimationSetManager AnimationSetManager;
+  local AnimationSet setObject;
+
+  AnimationSetManager = SwatRepo(Level.GetRepo()).GetAnimationSetManager();
+  setObject = AnimationSetManager.GetAnimationSet(GetMovementAnimSet());
+
+  OriginalFwd = setObject.AnimSpeedForward;
+  OriginalBck = setObject.AnimSpeedBackward;
+  OriginalSde = setObject.AnimSpeedSidestep;
+
+  ModdedFwd = OriginalFwd;
+  ModdedBck = OriginalBck;
+  ModdedSde = OriginalSde;
+
+  ModdedFwd *= LoadOut.GetWeightMovementModifier();
+  ModdedBck *= LoadOut.GetWeightMovementModifier();
+  ModdedSde *= LoadOut.GetWeightMovementModifier();
+
+  AnimSet.AnimSpeedForward = ModdedFwd;
+  AnimSet.AnimSpeedBackward = ModdedBck;
+  AnimSet.AnimSpeedSidestep = ModdedSde;
+
+  TotalWeight = LoadOut.GetTotalWeight();
+
+  PlayerController(Controller).ConsoleMessage("AdjustPlayerMovementSpeed: OriginalFwd "$OriginalFwd$" modified to "$ModdedFwd$", TotalWeight="$TotalWeight$"");
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1696,6 +1728,8 @@ simulated state ThrowingPrep
     {
         Global.Tick(dTime);
 
+        AdjustPlayerMovementSpeed();
+
         if (!DoneThrowing)
         {
             if ( Controller == Level.GetLocalPlayerController() )
@@ -1775,6 +1809,8 @@ simulated state Throwing
     simulated function Tick(float dTime)
     {
         Global.Tick(dTime);
+
+        AdjustPlayerMovementSpeed();
 
         if (!DoneThrowing)
         {
@@ -1973,6 +2009,10 @@ Begin:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+simulated function Tick(float dTime) {
+  AdjustPlayerMovementSpeed();
+}
 
 
 //ICanThrowWeapons implementation
