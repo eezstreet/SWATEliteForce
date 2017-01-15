@@ -1,1 +1,1 @@
-class ProTecHelmetBase extends Engine.ProtectiveEquipment;
+class ProTecHelmetBase extends Headgear;

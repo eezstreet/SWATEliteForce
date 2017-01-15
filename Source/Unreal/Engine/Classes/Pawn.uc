@@ -1,14 +1,14 @@
 //=============================================================================
 // Pawn, the base class of all actors that can be controlled by players or AI.
 //
-// Pawns are the physical representations of players and creatures in a level.  
-// Pawns have a mesh, collision, and physics.  Pawns can take damage, make sounds, 
-// and hold weapons and other inventory.  In short, they are responsible for all 
+// Pawns are the physical representations of players and creatures in a level.
+// Pawns have a mesh, collision, and physics.  Pawns can take damage, make sounds,
+// and hold weapons and other inventory.  In short, they are responsible for all
 // physical interaction between the player or AI and the world.
 //
 // This is a built-in Unreal class and it shouldn't be modified.
 //=============================================================================
-class Pawn extends Actor 
+class Pawn extends Actor
 #if IG_SWAT
     implements  ICanHoldEquipment,
                 ICanUseProtectiveEquipment
@@ -94,7 +94,7 @@ var config float	RelevancyLOSDistance;
 
 // Physics related flags.
 var bool		bJustLanded;		// used by eyeheight adjustment
-var bool		bUpAndOut;			// used by swimming 
+var bool		bUpAndOut;			// used by swimming
 var bool		bIsWalking;			// currently walking (can't jump, affects animations)
 var bool		bWarping;			// Set when travelling through warpzone (so shouldn't telefrag)
 var bool		bWantsToCrouch;		// if true crouched (physics will automatically reduce collision height to CrouchHeight)
@@ -110,9 +110,9 @@ var private float CurrentMeshRenderZ;
 
 #if IG_SWAT  // Talk about last minute hacks.
 // This hack is to fix VUG bug 731.  If you kill someone just after you yourself have been killed, the controller passed
-// into Died() and Killed() will be none.  This happens because the pawn is unpossessed from the controller as soon as death 
-// occurs.  This isn't a bug in single player, but in mp, this will get treated as if the killed pawn suicided, even though he 
-// really didn't.  This fix caches the controller that was unpossessed, and uses that as the Killer passed into Died/Killed()  
+// into Died() and Killed() will be none.  This happens because the pawn is unpossessed from the controller as soon as death
+// occurs.  This isn't a bug in single player, but in mp, this will get treated as if the killed pawn suicided, even though he
+// really didn't.  This fix caches the controller that was unpossessed, and uses that as the Killer passed into Died/Killed()
 var private Controller  LastUnPossessedController;
 #endif
 
@@ -163,7 +163,7 @@ var	bool		bCanStrafe;
 var	bool		bCanDoubleJump;
 var	bool		bAvoidLedges;		// don't get too close to ledges
 var	bool		bStopAtLedges;		// if bAvoidLedges and bStopAtLedges, Pawn doesn't try to walk along the edge at all
-var	bool		bNoJumpAdjust;		// set to tell controller not to modify velocity of a jump/fall	
+var	bool		bNoJumpAdjust;		// set to tell controller not to modify velocity of a jump/fall
 var	bool		bCountJumps;		// if true, inventory wants message whenever this pawn jumps
 var const bool	bSimulateGravity;	// simulate gravity for this pawn on network clients when predicting position (true if pawn is walking or falling)
 var	bool		bUpdateEyeheight;	// if true, UpdateEyeheight will get called every tick
@@ -179,10 +179,10 @@ var bool		bDirectHitWall;		// always call pawn hitwall directly (no controller n
 var(Havok) bool bHavokCharacterCollisions "If true this pawn's bones will collide with Havok objects, push them out of the way, and generate collision events.";
 var const transient bool bHavokInitCalled; // internal check
 // radius of Havok proxy 0.02 (1/50) extra than that of Unreal to allow Havok first go ;)
-var(Havok) float bHavokCharacterCollisionExtraRadius "How much larger than the Unreal collision cylinder should the Havok collision cylinder be? Default is 1, which is enough to ensure that Havok can respond to collisions before Unreal does.\r\n\r\nWARNING: must be in Unreal units, not meters (1 Unreal unit == 1/50 meter)"; 
+var(Havok) float bHavokCharacterCollisionExtraRadius "How much larger than the Unreal collision cylinder should the Havok collision cylinder be? Default is 1, which is enough to ensure that Havok can respond to collisions before Unreal does.\r\n\r\nWARNING: must be in Unreal units, not meters (1 Unreal unit == 1/50 meter)";
 
 // used by dead pawns (for bodies landing and changing collision box)
-var		bool	bThumped;		
+var		bool	bThumped;
 var		bool	bInvulnerableBody;
 
 // AI related flags
@@ -213,20 +213,20 @@ var		globalconfig bool bWeaponBob;
 var     bool    bHideRegularHUD;
 var		bool	bSpecialHUD;
 var		bool    bSpecialCalcView;		// If true, the Controller controlling this pawn will call 'SpecialCalcView' to find camera pos.
-var		bool	bIsTyping; 
+var		bool	bIsTyping;
 
 // AI basics.
-var 	byte	Visibility;			//How visible is the pawn? 0=invisible, 128=normal, 255=highly visible 
+var 	byte	Visibility;			//How visible is the pawn? 0=invisible, 128=normal, 255=highly visible
 var		float	DesiredSpeed;
 var		float	MaxDesiredSpeed;
 #if !IG_SWAT // ckline: we don't support this
 var(AI) name	AIScriptTag;		// tag of AIScript which should be associated with this pawn
 #endif
 var(AI) float	HearingThreshold;	// max distance at which a makenoise(1.0) loudness sound can be heard
-var(AI)	float	Alertness;			// -1 to 1 ->Used within specific states for varying reaction to stimuli 
+var(AI)	float	Alertness;			// -1 to 1 ->Used within specific states for varying reaction to stimuli
 var(AI)	float	SightRadius;		// Maximum seeing distance.
 var(AI)	float	PeripheralVision;	// Cosine of limits of peripheral vision.
-var()	float	SkillModifier;			// skill modifier (same scale as game difficulty)	
+var()	float	SkillModifier;			// skill modifier (same scale as game difficulty)
 var const float	AvgPhysicsTime;		// Physics updating time monitoring (for AI monitoring reaching destinations)
 var		float	MeleeRange;			// Max range for melee attack (not including collision radii)
 var NavigationPoint Anchor;			// current nearest path;
@@ -324,7 +324,7 @@ var				vector			WalkBob;
 var float SoundDampening;
 var float DamageScaling;
 
-var localized  string MenuName; // Name used for this pawn type in menus (e.g. player selection) 
+var localized  string MenuName; // Name used for this pawn type in menus (e.g. player selection)
 
 // shadow decal
 #if IG_SWAT // ckline
@@ -357,7 +357,7 @@ var PlayerStart LastStartSpot;	// used to avoid spawn camping
 var float LastStartTime;
 
 // Animation status
-var name AnimAction;			// use for replicating anims 
+var name AnimAction;			// use for replicating anims
 
 enum EAnimPlayType
 {
@@ -377,7 +377,7 @@ const kInvalidKillerLocationZ = -10000.0;
 #endif
 var class<DamageType> DeathHitDamageType;	// damage type of last hit (for playing hit/death anims)
 var vector DeathHitMomentum;		// momentum to apply when torn off (bTearOff == true)
-var bool bPhysicsAnimUpdate;	
+var bool bPhysicsAnimUpdate;
 var bool bWasCrouched;
 var bool bWasWalking;
 var bool bWasOnGround;
@@ -464,12 +464,12 @@ replication
 #endif
         bIsWalking, bIsTyping, PlayerReplicationInfo, AnimAction, DeathHitDamageType, DeathHitLocation,HeadScale;
 	reliable if( bTearOff && bNetDirty && (Role==ROLE_Authority) )
-		DeathHitMomentum;	
+		DeathHitMomentum;
     //TMC removed
-//	reliable if ( bNetDirty && !bNetOwner && (Role==ROLE_Authority) ) 
+//	reliable if ( bNetDirty && !bNetOwner && (Role==ROLE_Authority) )
 //		bSteadyFiring;
 	reliable if( bNetDirty && bNetOwner && Role==ROLE_Authority )
-         Controller, GroundSpeed, WaterSpeed, AirSpeed, AccelRate, JumpZ, AirControl;   //TMC removed SelectedItem, 
+         Controller, GroundSpeed, WaterSpeed, AirSpeed, AccelRate, JumpZ, AirControl;   //TMC removed SelectedItem,
          //ActiveItem, PendingItem;
 	reliable if( bNetDirty && Role==ROLE_Authority )
          Health, DesiredItemPocket;
@@ -564,20 +564,20 @@ native final function bool FitsAtLocation( vector NewLocation );
 native function bool IsDoorBlockedForPawn(Door Target);
 
 // End Irrational Addition [crombie]
-	
+
 #if IG_SWAT
 // Irrational Added [crombie]
 
 // Collision avoidance functions
-	
+
 function DisableCollisionAvoidance()
 {
-    bCollisionAvoidanceEnabled = false;	
+    bCollisionAvoidanceEnabled = false;
 }
 
 function EnableCollisionAvoidance()
 {
-    bCollisionAvoidanceEnabled = true;	
+    bCollisionAvoidanceEnabled = true;
 }
 
 function bool IsCollisionAvoidanceEnabled()
@@ -619,7 +619,7 @@ simulated function SetForceCrouchState(bool inbForceCrouch)
 
 //TMC removed Epic's Weapon or Inventory code here - function GetDemoRecordingWeapon()
 
-/* Reset() 
+/* Reset()
 reset actor to initial state - used when restarting level without reloading.
 */
 function Reset()
@@ -644,18 +644,18 @@ function DrawHUD(Canvas Canvas);
 // If returns false, do normal calview anyway
 function bool SpecialCalcView(out actor ViewActor, out vector CameraLocation, out rotator CameraRotation );
 
-#if IG_SWAT // ckline: 
-// Returns true if this pawn is controlled by a human sitting in front of 
+#if IG_SWAT // ckline:
+// Returns true if this pawn is controlled by a human sitting in front of
 // this computer.
 //
-// This is useful when you want to do something different depending on whether 
-// this is the local or remote representation of a given player's pawn. 
+// This is useful when you want to do something different depending on whether
+// this is the local or remote representation of a given player's pawn.
 simulated function bool IsControlledByLocalHuman()
 {
     // If this test fails, we're dealing with an AI so return false.
     if ( PlayerController(Controller) == None )
         return false;
-    
+
     if (
         Level.NetMode != NM_DedicatedServer &&          // All pawns are remotely controlled on dedicated servers
         Controller != None &&                           // Remote representation of a pawn don't have a controller
@@ -664,7 +664,7 @@ simulated function bool IsControlledByLocalHuman()
     {
         return true; // yep, a human is driving this pawn locally
     }
-    
+
     return false; // nope, it's a manifestation of a remote pawn.
 }
 
@@ -681,7 +681,7 @@ simulated function String GetHumanReadableName()
 {
     // If in a multiplayer game, return the player's chosen name
 	if (Level.NetMode != NM_StandAlone &&  // HACK FIXME: we shouldn't be creating PlayerReplicationInfo in standalone games anyhow
-		PlayerReplicationInfo != None) 
+		PlayerReplicationInfo != None)
     {
 		return PlayerReplicationInfo.PlayerName;
 }
@@ -738,7 +738,7 @@ function PossessedBy(Controller C)
 }
 
 function UnPossessed()
-{	
+{
 #if IG_SWAT
     LastUnPossessedController = Controller;
 #endif
@@ -780,7 +780,7 @@ function DropToGround()
 #if !IG_SWAT // ckline: we don't support this
 function bool CanGrabLadder()
 {
-	return ( bCanClimbLadders 
+	return ( bCanClimbLadders
 			&& (Controller != None)
 			&& (Physics != PHYS_Ladder)
 			&& ((Physics != Phys_Falling) || (abs(Velocity.Z) <= JumpZ)) );
@@ -876,7 +876,7 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 	else
 		GetActiveItem().DisplayDebug(Canvas,YL,YPos);
 }
-		 		
+
 //
 // Compute offset for drawing an inventory item.
 //
@@ -890,11 +890,11 @@ simulated function vector CalcDrawOffset()
 	if ( Controller == None )
 		return (Hands.PlayerViewOffset >> Rotation) + BaseEyeHeight * vect(0,0,1);
 
-	DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() ); 
+	DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
 	if ( !IsLocallyControlled() )
 		DrawOffset.Z += BaseEyeHeight;
 	else
-	{	
+	{
 		DrawOffset.Z += EyeHeight;
         if( bWeaponBob && GetActiveItem() != None)
 			DrawOffset += WeaponBob(0); //TMC 11-11-2003 += WeaponBob(GetActiveItem().GetFirstPersonModel().BobDamping);
@@ -952,7 +952,7 @@ function CheckBob(float DeltaTime, vector Y)
 		WalkBob = WalkBob * (1 - FMin(1, 8 * deltatime));
 	}
 }
-	
+
 //***************************************
 // Interface to Pawn's Controller
 
@@ -991,7 +991,7 @@ simulated function bool IsLocallyControlled()
 simulated function bool IsFirstPerson()
 {
     local PlayerController PC;
- 
+
     PC = PlayerController(Controller);
     return ( PC != None && !PC.bBehindView && Viewport(PC.Player) != None );
 }
@@ -1066,7 +1066,7 @@ simulated final function bool PressingAltFire()
 }
 
 function Actor GetMoveTarget()
-{	
+{
 	if ( Controller == None )
 		return None;
 
@@ -1397,7 +1397,7 @@ function bool InCurrentCombo()
 // Executes only on the server.
 // Override in derived class (SwatPawn).
 function ServerRequestEquip( EquipmentSlot Slot );
-	
+
 
 // Override in derived class (SwatPlayer).
 simulated function bool ValidateEquipSlot( EquipmentSlot Slot )
@@ -1413,10 +1413,10 @@ event bool EncroachingOn( actor Other )
 {
 	if ( Other.bWorldGeometry )
 		return true;
-		
+
 	if ( ((Controller == None) || !Controller.bIsPlayer || bWarping) && (Pawn(Other) != None) )
 		return true;
-		
+
 	return false;
 }
 
@@ -1426,7 +1426,7 @@ event EncroachedBy( actor Other )
 	// Allow encroachment by Vehicles so they can push the pawn out of the way
 	if ( Pawn(Other) != None && Vehicle(Other) == None )
 		gibbedBy(Other);
-#endif 
+#endif
 }
 
 #if !IG_SWAT // ckline: removed unreal classes not needed for SWAT
@@ -1439,7 +1439,7 @@ function gibbedBy(actor Other)
 	else
 		Died(None, class'Gibbed', Location);
 }
-#endif 
+#endif
 
 //Base change - if new base is pawn or decoration, damage based on relative mass and old velocity
 // Also, non-players will jump off pawns immediately
@@ -1455,7 +1455,7 @@ function JumpOffPawn()
 singular event BaseChange()
 {
 	local float decorMass;
-	
+
 	if ( bInterpolating )
 		return;
 	if ( (base == None) && (Physics == PHYS_None) )
@@ -1463,7 +1463,7 @@ singular event BaseChange()
 	// Pawns can only set base to non-pawns, or pawns which specifically allow it.
 	// Otherwise we do some damage and jump off.
 	else if ( Pawn(Base) != None )
-	{	
+	{
 		if ( !Pawn(Base).bCanBeBaseForPawns )
 		{
 #if ! IG_SWAT	// don't take damage if we have a pawn as our base [crombie]
@@ -1571,7 +1571,7 @@ simulated event Destroyed()
 #if IG_SHARED // ckline: notifications upon Pawn death and Actor destruction
 	// it's possible the pawn was destroyed and never got Died() called on it,
 	// (e.g., with the 'Killall' console command) so we'll notify here just in case.
-	NotifyPawnDeathListeners();    
+	NotifyPawnDeathListeners();
 #endif
 
 	// remove the Pawn from the Level's Pawn list
@@ -1606,8 +1606,8 @@ simulated event Destroyed()
 // Called immediately before gameplay begins.
 //
 #if IG_SWAT // Make prebeginplay simulated so it runs on clients.  This ensures that the skeletal regions are correctly initialized on all clients
-simulated 
-#endif 
+simulated
+#endif
 event PreBeginPlay()
 {
 	Super.PreBeginPlay();
@@ -1716,7 +1716,7 @@ event PostBeginPlay()
 
 #if IG_SWAT // use ControllerClassName instead of ControllerClass, and don't support AIScript
         if ( (Controller == None) && ControllerClassName != "" )
-	    {		    
+	    {
             Controller = spawn(class<Controller>( DynamicLoadObject( ControllerClassName, class'Class')));
 
             assertWithDescription(Controller != None, "Couldn't spawn controller of class "$ControllerClassName$" for "$self);
@@ -1826,7 +1826,7 @@ simulated function bool HasProtection(name ProtectionClass)
     for (i=0; i<SkeletalRegionProtection.length; ++i)
         if (SkeletalRegionProtection[i] != None && SkeletalRegionProtection[i].IsA(ProtectionClass))
             return true;
-    
+
     return false;
 }
 
@@ -1869,12 +1869,12 @@ simulated event PostNetBeginPlay()
 		if ( (PlayerController(Controller) != None)
 			&& (PlayerController(Controller).ViewTarget == Controller) )
 			PlayerController(Controller).SetViewTarget(self);
-	} 
+	}
 
 	if ( Role == ROLE_AutonomousProxy )
 		bUpdateEyeHeight = true;
 
-	if ( (PlayerReplicationInfo != None) 
+	if ( (PlayerReplicationInfo != None)
 		&& (PlayerReplicationInfo.Owner == None) )
 		PlayerReplicationInfo.SetOwner(Controller);
 	PlayWaiting();
@@ -1906,10 +1906,10 @@ function float GetInjuredAimErrorPenalty() { return 0.0; }
 #endif
 
 #if IG_SHARED  //tcohen: hooked TakeDamage(), used by effects system and reactive world objects
-function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation, 
+function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 						Vector momentum, class<DamageType> damageType)
 #else
-function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation, 
+function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 						Vector momentum, class<DamageType> damageType)
 #endif
 {
@@ -1942,7 +1942,7 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 #if 0 // ckline: this screws up the momentum passed to PlayDying, so I disabled it
     if (Physics == PHYS_Walking)
 		momentum.Z = FMax(momentum.Z, 0.4 * VSize(momentum));
-	if ( (instigatedBy == self) 
+	if ( (instigatedBy == self)
 		|| ((Controller != None) && (InstigatedBy != None) && (InstigatedBy.Controller != None) && InstigatedBy.Controller.SameTeamAs(Controller)) )
 		momentum *= 0.6;
 	momentum = momentum/Mass;
@@ -1967,8 +1967,8 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 		if ( instigatedBy != None )
         {
             Killer = instigatedBy.GetKillerController();
-        
-            // ckline: warn in cases where killer can't be determined... 
+
+            // ckline: warn in cases where killer can't be determined...
             // helps debug "accessed none" errors in GameInfo.NotifyKilled()
             if (Killer == None)
             {
@@ -1986,16 +1986,16 @@ function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 	else
 	{
 		if ( (InstigatedBy != None) && (InstigatedBy != self) && (Controller != None)
-			&& (InstigatedBy.Controller != None) && InstigatedBy.Controller.SameTeamAs(Controller) ) 
+			&& (InstigatedBy.Controller != None) && InstigatedBy.Controller.SameTeamAs(Controller) )
 			Momentum *= 0.5;
-		
+
 #if !IG_SWAT // ckline: this causes pawns to get moved when shot, which looks dumb
-		AddVelocity( momentum ); 
+		AddVelocity( momentum );
 #endif
 		if ( Controller != None )
 			Controller.NotifyTakeHit(instigatedBy, HitLocation, actualDamage, DamageType, Momentum);
 	}
-	MakeNoise(1.0); 
+	MakeNoise(1.0);
 }
 
 function TeamInfo GetTeam()
@@ -2012,9 +2012,9 @@ function Controller GetKillerController()
 
 #if IG_SHARED // ckline: notifications upon Pawn death and Actor destruction
 // Notify anyone who registered with the LevelInfo for pawn death notification.
-// It is safe to call this multiple times on the same Pawn; the function 
+// It is safe to call this multiple times on the same Pawn; the function
 // automatically handles this so that listeners are only notified once.
-native function NotifyPawnDeathListeners();    
+native function NotifyPawnDeathListeners();
 #endif
 
 function Died(Controller Killer, class<DamageType> damageType, vector HitLocation, vector HitMomentum)
@@ -2039,11 +2039,11 @@ function Died(Controller Killer, class<DamageType> damageType, vector HitLocatio
 	Health = Min(0, Health);
 
 #if IG_SHARED // ckline: notifications upon Pawn death and Actor destruction
-	NotifyPawnDeathListeners();    
+	NotifyPawnDeathListeners();
 #endif
 
-	if ( Controller != None ) 
-	{   
+	if ( Controller != None )
+	{
 	    Level.Game.Killed(Killer, Controller, self, damageType);
         Controller.WasKilledBy(Killer);
 	}
@@ -2107,9 +2107,9 @@ function Died(Controller Killer, class<DamageType> damageType, vector HitLocatio
 function bool Gibbed(class<DamageType> damageType)
 {
 	if ( damageType.default.GibModifier == 0 )
-		return false; 
+		return false;
 	if ( damageType.default.GibModifier >= 100 )
-		return true;	
+		return true;
 	if ( (Health < -80) || ((Health < -40) && (FRand() < 0.6)) )
 		return true;
 	return false;
@@ -2130,7 +2130,7 @@ static final function bool checkDead( Pawn pawn )
 }
 #endif
 
-#if IG_SWAT 
+#if IG_SWAT
 static final function bool checkIsAThreat( Pawn pawn )
 {
 	return pawn != None && !pawn.bDeleteMe && pawn.IsAThreat();
@@ -2213,7 +2213,7 @@ event HitWall(vector HitNormal, actor Wall);
 
 event Landed(vector HitNormal)
 {
-	LandBob = FMin(50, 0.055 * Velocity.Z); 
+	LandBob = FMin(50, 0.055 * Velocity.Z);
 	TakeFallingDamage();
 	if ( Health > 0 )
 		PlayLanded(Velocity.Z);
@@ -2232,7 +2232,7 @@ function bool TouchingWaterVolume()
 	ForEach TouchingActors(class'PhysicsVolume',V)
 		if ( V.bWaterVolume )
 			return true;
-			
+
 	return false;
 }
 
@@ -2264,14 +2264,14 @@ function bool IsInPain()
 	local PhysicsVolume V;
 
 	ForEach TouchingActors(class'PhysicsVolume',V)
-		if ( V.bPainCausing && (V.DamageType != ReducedDamageType) 
+		if ( V.bPainCausing && (V.DamageType != ReducedDamageType)
 			&& (V.DamagePerSec > 0) )
 			return true;
 #endif
 	return false;
 }
-	
-function TakeDrowningDamage();		
+
+function TakeDrowningDamage();
 
 function bool CheckWaterJump(out vector WallNormal)
 {
@@ -2312,7 +2312,7 @@ function bool Dodge(eDoubleClickDir DoubleClickMove)
 function bool DoJump( bool bUpdating )
 {
 #if !IG_SWAT // ckline: disable jumping
-	if ( !bIsCrouched && !bWantsToCrouch && ((Physics == PHYS_Walking) || 
+	if ( !bIsCrouched && !bWantsToCrouch && ((Physics == PHYS_Walking) ||
                                              (Physics == PHYS_Spider)) )
 	{
 		if ( Role == ROLE_Authority )
@@ -2329,7 +2329,7 @@ function bool DoJump( bool bUpdating )
 		else
 			Velocity.Z = JumpZ;
 		if ( (Base != None) && !Base.bWorldGeometry )
-			Velocity.Z += Base.Velocity.Z; 
+			Velocity.Z += Base.Velocity.Z;
 		SetPhysics(PHYS_Falling);
         return true;
 	}
@@ -2353,10 +2353,10 @@ simulated function bool CanBeAffectedByHurtRadius()
 function PlayHit(float Damage, Pawn InstigatedBy, vector HitLocation, class<DamageType> damageType, vector Momentum)
 {
 	local PlayerController PC;
-	
+
 	if ( (Damage <= 0) && ((Controller == None) || !Controller.bGodMode) )
 		return;
-		
+
 	// jdf ---
 	if ( (Level.NetMode != NM_DedicatedServer) && (Level.NetMode != NM_ListenServer) )
 	{
@@ -2367,13 +2367,13 @@ function PlayHit(float Damage, Pawn InstigatedBy, vector HitLocation, class<Dama
 	// --- jdf
 }
 
-/* 
+/*
 Pawn was killed - detach any controller, and die
 */
 
-// blow up into little pieces (implemented in subclass)		
+// blow up into little pieces (implemented in subclass)
 
-simulated function ChunkUp( Rotator HitRotation, class<DamageType> D ) 
+simulated function ChunkUp( Rotator HitRotation, class<DamageType> D )
 {
 	if ( (Level.NetMode != NM_Client) && (Controller != None) )
 	{
@@ -2415,7 +2415,7 @@ ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling;
 #if IG_THIS_IS_SHIPPING_VERSION
         log(
 #else
-        AssertWithDescription(false, 
+        AssertWithDescription(false,
 #endif
             "[ckline]: !!!! WARNING !!!!! Pawn "$self$" in state Pawn.Dying and Physics="$GetEnum(EPhysics,Physics)$" fell out of the world and was Destroy()ed! Pawn's location = "$Location$", look around this area in the editor for gaps in bsp.");
 
@@ -2427,14 +2427,14 @@ ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling;
 		if ( !PlayerCanSeeMe() )
 			Destroy();
 		else
-			SetTimer(2.0, false);	
+			SetTimer(2.0, false);
 	}
 
 	function Landed(vector HitNormal)
 	{
 		local rotator finalRot;
 
-		LandBob = FMin(50, 0.055 * Velocity.Z); 
+		LandBob = FMin(50, 0.055 * Velocity.Z);
 		if( Velocity.Z < -500 )
 			TakeDamage( (1-Velocity.Z/30),Instigator,Location,vect(0,0,0) , class'Crushed');
 
@@ -2495,14 +2495,14 @@ ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling;
 #endif
 			SetPhysics(PHYS_Falling);
 		else if ( Pawn(base) != None ) // don't let corpse ride around on someone's head
-        	ChunkUp( Rotation, class'Fell' ); 
+        	ChunkUp( Rotation, class'Fell' );
 	}
 
 #if IG_SHARED  //tcohen: hooked TakeDamage(), used by effects system and reactive world objects
-	function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation, 
+	function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 							Vector momentum, class<DamageType> damageType)
 #else
-	function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation, 
+	function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 							Vector momentum, class<DamageType> damageType)
 #endif
 	{
@@ -2517,7 +2517,7 @@ ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling;
 #endif
 		Health -=Damage;
 		if ( ((Damage > 30) || !IsAnimating()) && (Health < -80) )
-        	ChunkUp( Rotation, DamageType ); 
+        	ChunkUp( Rotation, DamageType );
 	}
 
 	function BeginState()
@@ -2560,7 +2560,7 @@ simulated event SetAnimAction(name NewAction);
 
 simulated function PlayRagdoll(class<DamageType> DamageType, vector HitLoc);
 
-/* PlayXXX() function called by controller to play transient animation actions 
+/* PlayXXX() function called by controller to play transient animation actions
 */
 #if IG_SWAT
 simulated event PlayDying(class<DamageType> DamageType, vector HitLoc, vector HitMomentum, vector inKillerLocation)
@@ -2704,9 +2704,9 @@ simulated final function OnEquipKeyFrame()
     {
         //make pending item active (protected call)
         SetActiveItem(GetPendingItem());
-        
+
         GetActiveItem().OnEquipKeyFrame();
-        
+
         //allow subclasses to extend functionality
         OnActiveItemEquipped();
     }
@@ -2749,7 +2749,7 @@ simulated function OnUseKeyFrame()
         //TMC 11-16-2003 This is unexpected... I expect that
         //  HandheldEquipment::OnUseKeyFrame() just sets Available=false. I
         //  don't want to change it now for fear of messing-up Mike.  But in
-        //  the future... I think this should go and be replaced with 
+        //  the future... I think this should go and be replaced with
         //  LocalActiveItem.SetAvailable( false ).
         //TMC TODO remove this:
 
@@ -2906,13 +2906,11 @@ event OnCollisionAvoidanceMoveTo(vector MoveToLocation);
 
 simulated event rotator ViewRotationOffset()
 {
-    assert(false);  //should only be called on SwatPlayers
     return Rot(0,0,0);
 }
 
 simulated function vector ViewLocationOffset(Rotator CameraRotation)
 {
-    assert(false);  //should only be called on SwatPlayers
     return vect(0,0,0);
 }
 
@@ -2985,7 +2983,7 @@ defaultproperties
      bDirectional=True
      bCanTeleport=True
 	 bStasis=True
-//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications 
+//#if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications
 //     SoundRadius=60
 //	 SoundVolume=255
 //#endif
@@ -3024,7 +3022,7 @@ defaultproperties
 	 bBlockKarma=False
 	 bBlockHavok=False
 	 bHavokCharacterCollisions=False
-	 bHavokCharacterCollisionExtraRadius=1 
+	 bHavokCharacterCollisionExtraRadius=1
 	 bWeaponBob=true
 	 bUseCompressedPosition=true
 	 HeadScale=+1.0

@@ -1,4 +1,4 @@
-class Wedge extends SwatGame.EquipmentUsedOnOther
+class Wedge extends QualifiedTacticalAid
     implements ITacticalAid;
 
 simulated function UsedHook()

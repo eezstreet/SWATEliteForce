@@ -19,7 +19,7 @@ var(DEBUG) SwatGUIConfig GC;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Completely initialize a loadout.  The procedure is as follows:
-// 
+//
 // - Replace any static spec data with valid Dynamic spec data
 // - Validate entire loadout.  Replace any invalid equipment with the pocket's defaults
 // - Spawn the equipment from the LoadoutSpec
@@ -37,7 +37,7 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
 //         log(self.Name$" ... Dynamic Loadout spec:");
 //         DynamicSpec.PrintLoadOutSpecToMPLog();
 //     }
-    
+
 //     log(self.Name$" ... Static Loadout spec:");
 //     PrintLoadOutSpecToMPLog();
 
@@ -48,7 +48,7 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
         //log(self.Name$" ... After mutation:");
         //PrintLoadOutSpecToMPLog();
     }
-    
+
     ValidateLoadOutSpec(IsSuspect);
 
     //log(self.Name$" ... After validation:");
@@ -61,14 +61,14 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Mutate the static loadout with the given dynamic loadout.  
+// Mutate the static loadout with the given dynamic loadout.
 //      Ignore any invalid equipment in the dynamic loadout
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
 {
     local int i;
-    
+
     // The VIP may have no dynamic part, and, in cases like that, no mutation
     // is necessary.
     if ( DynamicSpec == None )
@@ -101,14 +101,14 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Validate the final loadout spec.  
+// Validate the final loadout spec.
 //      Replace any invalid equipment in the loadout spec with the defaults for that pocket.
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated function bool ValidateLoadOutSpec(bool IsSuspect)
 {
     local int i;
-    
+
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
 		if( i == Pocket.Pocket_CustomSkin )
@@ -122,7 +122,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect)
         {
             warn("Failed to validate equipment class "$LoadOutSpec[i]$" specified in DynamicLoadout.ini for pocket "$GetEnum( Pocket, i ) );
             AssertWithDescription( false, self.Name$":  Failed to validate equipment class "$LoadOutSpec[i]$" specified in DynamicLoadout.ini for pocket "$GetEnum( Pocket, i ));
-            
+
             //replace with default for pocket
             LoadOutSpec[i] = DLOClassForPocket( Pocket(i), 0 );
         }
@@ -137,14 +137,14 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect)
 				LoadOutSpec[GC.AvailableEquipmentPockets[i].DependentPocket] = DLOClassForPocket(GC.AvailableEquipmentPockets[i].DependentPocket, 0 );
 		}
     }
-    
+
     return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Validate the custom skin pocket. Custom skins are a special case because the skin class may not be
 // available on the client. The default skin will be used in that case.
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function ValidatePocketCustomSkin(bool IsSuspect)
 {
@@ -181,9 +181,9 @@ simulated protected function ValidatePocketCustomSkin(bool IsSuspect)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Validate a single piece of quipment in a given pocket.  
+// Validate a single piece of quipment in a given pocket.
 //      Returns true iff the equipment class is valid in the current game mode
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function bool ValidateEquipmentForPocket( Pocket pock, class<Actor> CheckClass )
 {
@@ -193,14 +193,14 @@ simulated protected function bool ValidateEquipmentForPocket( Pocket pock, class
     local bool Valid;
 
     NumEquipment = GC.AvailableEquipmentPockets[pock].EquipmentClassName.Length;
-    
+
     if( CheckClass == None && NumEquipment == 0)
         return true;
-        
+
     for( i = 0; i < NumEquipment; i++ )
     {
         EquipClass = DLOClassForPocket( pock, i );
-                
+
         //did we find it?
         if( CheckClass == EquipClass )
         {
@@ -208,14 +208,14 @@ simulated protected function bool ValidateEquipmentForPocket( Pocket pock, class
             break;
         }
     }
-    
+
     return Valid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Validate a single piece of quipment in a given pocket for team.  
+// Validate a single piece of quipment in a given pocket for team.
 //      Returns true iff the equipment class is valid for the current team
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function bool ValidateEquipmentForTeam( Pocket pock, class<Actor> CheckClass, bool IsSuspect )
 {
@@ -231,14 +231,14 @@ simulated protected function bool ValidateEquipmentForTeam( Pocket pock, class<A
 		return true;
 
     NumEquipment = GC.AvailableEquipmentPockets[pock].EquipmentClassName.Length;
-    
+
     if( CheckClass == None && NumEquipment == 0)
         return true;
-        
+
     for( i = 0; i < NumEquipment; i++ )
     {
         EquipClass = DLOClassForPocket( pock, i );
-                
+
         //did we find it?
         if( CheckClass == EquipClass )
         {
@@ -246,21 +246,21 @@ simulated protected function bool ValidateEquipmentForTeam( Pocket pock, class<A
             break;
         }
     }
-    
+
     return Valid;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility: DLO's a class for the pocket spec of the given pocket at the given index
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated private function class<actor> DLOClassForPocket( Pocket pock, int index )
 {
     local string ClassName;
     local class<actor> DLOClass;
-    
+
     ClassName = GC.AvailableEquipmentPockets[pock].EquipmentClassName[index];
-    
+
     if( ClassName == "None" || ClassName == "" )
         return None;
 
@@ -273,7 +273,7 @@ simulated private function class<actor> DLOClassForPocket( Pocket pock, int inde
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility: Check the validity given the current game mode
 //      Returns true iff the current game mode matches the input validity
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function bool CheckValidity( eNetworkValidity type )  //may be further subclassed
 {
@@ -281,8 +281,8 @@ simulated protected function bool CheckValidity( eNetworkValidity type )  //may 
         return true;
     if(type == NETVALID_None)
         return false;
-    
-    return ( ( type == NETVALID_MPOnly ) == 
+
+    return ( ( type == NETVALID_MPOnly ) ==
              ( GC.SwatGameRole == GAMEROLE_MP_Host ||
                GC.SwatGameRole == GAMEROLE_MP_Client ) );
 }
@@ -290,13 +290,13 @@ simulated protected function bool CheckValidity( eNetworkValidity type )  //may 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility: Check the validity given the current team
 //      Returns true iff IsSuspect matches the input team validity
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function bool CheckTeamValidity( eTeamValidity type, bool IsSuspect )  //may be further subclassed
 {
     if(type == TEAMVALID_All)
         return true;
-    
+
 	// Team restrictions only checked in MP
     if (GC.SwatGameRole == GAMEROLE_MP_Host || GC.SwatGameRole == GAMEROLE_MP_Client)
 	{
@@ -307,10 +307,10 @@ simulated protected function bool CheckTeamValidity( eTeamValidity type, bool Is
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Spawn the actual equipment from the final loadout spec.  
-//      Do not spawn any equipment that has already been created or that cannot be spawned 
+// Spawn the actual equipment from the final loadout spec.
+//      Do not spawn any equipment that has already been created or that cannot be spawned
 //          (such as POCKET_Invalid, the ammunition pockets).
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function SpawnEquipmentFromLoadOutSpec()
 {
@@ -326,8 +326,8 @@ simulated protected function SpawnEquipmentFromLoadOutSpec()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Spawn a piece of equipment in the given pocket from the final loadout spec.  
-// 
+// Spawn a piece of equipment in the given pocket from the final loadout spec.
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> EquipmentClass )
 {
@@ -338,18 +338,18 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
 
     if( EquipmentClass == None )
         return;
-        
+
     PocketEquipment[i] = Owner.Spawn(EquipmentClass, Owner);
-    
+
     assertWithDescription(PocketEquipment[i] != None,
         "LoadOut "$name$" failed to spawn PocketEquipment item in pocket "$GetEnum(Pocket,i)$" of class "$EquipmentClass$".");
 
     //mplog( "...Spawned equipment="$PocketEquipment[i] );
-    
+
     if( GC.AvailableEquipmentPockets[i].TypeOfEquipment == EQUIP_Weaponry )
     {
         Assert( GC.AvailableEquipmentPockets[i].DependentPocket != Pocket_Invalid );
-        
+
         switch( i )
         {
             case Pocket_PrimaryWeapon:
@@ -385,7 +385,7 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Add an existing item to the LoadOut - intended for Pickups
-// 
+//
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function AddExistingItemToPocket( Pocket i, Actor Item )
 {
@@ -393,13 +393,13 @@ simulated protected function AddExistingItemToPocket( Pocket i, Actor Item )
         PocketEquipment[i].Destroy();
 
     assert(Item != None);
-        
+
     PocketEquipment[i] = Item;
-    
+
     if( GC.AvailableEquipmentPockets[i].TypeOfEquipment == EQUIP_Weaponry )
     {
         Assert( GC.AvailableEquipmentPockets[i].DependentPocket != Pocket_Invalid );
-        
+
         switch( i )
         {
             case Pocket_PrimaryWeapon:
@@ -424,7 +424,7 @@ simulated protected function AddExistingItemToPocket( Pocket i, Actor Item )
 simulated function PrintLoadOutToMPLog()
 {
     local int i;
- 
+
     mplog( "LoadOut "$self$" contains:" );
     log( "LoadOut "$self$" contains:" );
 
@@ -471,7 +471,7 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
                 //continue looking for an instance that isn't empty
         }
     }
-    
+
     if (Level.NetMode != NM_Standalone ) // ckline: this was bogging down SP performance
     {
 	 	if (Level.GetEngine().EnableDevTools)

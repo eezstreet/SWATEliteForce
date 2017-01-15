@@ -12,6 +12,15 @@ var protected float TransitionStart;
 var() float EffectDownTime;
 var() float EffectUpTime;
 
+// Extreme edge case that I don't feel like fixing --eez
+simulated function float GetWeight() {
+	return 0.68;
+}
+
+simulated function float GetBulk() {
+	return 1.1466;
+}
+
 simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
@@ -140,7 +149,7 @@ simulated event UpdateLight()
 		Light.LightRadius = 0;
 }
 
-function QualifyProtectedRegion() 
+function QualifyProtectedRegion()
 {
     assertWithDescription(ProtectedRegion < REGION_Body_Max,
         "[Carlos] The NVGogglesBase class "$class.name

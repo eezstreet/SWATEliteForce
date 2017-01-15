@@ -1,6 +1,14 @@
 class Detonator extends Engine.HandheldEquipment
     implements ITacticalAid;
 
+simulated function float GetWeight() {
+  return 0.0;
+}
+
+simulated function float GetBulk() {
+  return 0.0;
+}
+
 simulated function bool HandleMultiplayerUse()
 {
     if ( Level.NetMode != NM_Standalone )

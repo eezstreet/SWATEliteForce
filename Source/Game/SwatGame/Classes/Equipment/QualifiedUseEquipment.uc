@@ -5,8 +5,6 @@ class QualifiedUseEquipment extends Engine.HandheldEquipment
 //In order to use a QualifiedUseEquipment, the player must first
 //  "qualify", ie. hold the use button for a minimum amount of time.
 
-var private config float NoArmorQualifyMultiplier;
-
 var protected float UseBeginTime;
 var protected bool Interrupted;
 
@@ -27,9 +25,8 @@ simulated function float CalcQualifyDuration()
 	CalculatedDuration = GetQualifyDuration();
 
 	SP = SwatPlayer(Owner);
-
-	if (SP != None && SP.GetLoadOut() != None && SP.GetLoadOut().HasNoArmor())
-		CalculatedDuration *= NoArmorQualifyMultiplier;
+  
+	CalculatedDuration *= SP.GetBulkQualifyModifier();
 
 	return CalculatedDuration;
 }

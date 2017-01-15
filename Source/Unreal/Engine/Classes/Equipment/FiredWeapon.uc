@@ -1,4 +1,5 @@
 class FiredWeapon extends Weapon
+    abstract
     native;
 
 var(Ammo) config array<String> PlayerAmmoOption  "Specifies ammo to be made available in the GUI when this is selected";

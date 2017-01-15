@@ -24,7 +24,7 @@ var(DEBUG) config string CustomSkinSpec;
 simulated function PrintLoadOutSpecToMPLog()
 {
     local int i;
- 
+
     log( "LoadOut "$self$" contains spec:" );
 
     for ( i = 0; i < Pocket.EnumCount; i++ )
@@ -43,7 +43,7 @@ simulated function PrintLoadOutSpecToMPLog()
 function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
 {
     local class<FiredWeapon> Weap;
-    local class OptiwandClass, AmmoBandolierClass, C2Class;
+    local class OptiwandClass, AmmoBandolierClass, C2Class, PepperSprayClass;
     local int i;
 
     switch( pock )
@@ -92,7 +92,15 @@ function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
                         return false;
             }
 
-			//ensure only 1 ammo bandolier per loadout
+            //ensure only 1 pepper spray per loadout
+            PepperSprayClass = class(DynamicLoadObject("SwatEquipment.PepperSpray", class'class'));
+            if( ClassIsChildOf(newEquip, PepperSprayClass)) {
+              for( i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++ )
+                  if( pock != i && LoadOutSpec[i] != None && ClassIsChildOf( LoadOutSpec[i], AmmoBandolierClass ) )
+                      return false;
+            }
+
+			      //ensure only 1 ammo bandolier per loadout
             AmmoBandolierClass = class(DynamicLoadObject("SwatEquipment.AmmoBandolier",class'class'));
             if( ClassIsChildOf( newEquip, AmmoBandolierClass ) )
             {
@@ -116,4 +124,3 @@ function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
     }
     return true;
 }
-

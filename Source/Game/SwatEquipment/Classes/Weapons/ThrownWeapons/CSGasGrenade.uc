@@ -1,4 +1,4 @@
-class CSGasGrenade extends Engine.ThrownWeapon;
+class CSGasGrenade extends SwatGrenade;
 
 defaultproperties
 {

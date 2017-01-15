@@ -5,6 +5,7 @@ class SwatPlayer extends SwatRagdollPawn
                 Engine.IReactToStingGrenade,
                 Engine.IReactToC2Detonation,
                 Engine.IReactToDazingWeapon,
+                Engine.IAmAffectedByWeight,
                 ICanUseC2Charge,
                 ICanQualifyForUse,
                 Engine.ICanBeTased,
@@ -154,6 +155,25 @@ replication
         ClientDoFlashbangReaction, ClientDoGassedReaction, ClientDoStungReaction,
         ClientDoPepperSprayedReaction, ClientDoTasedReaction,
         bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IAmAffectedByWeight implementation
+simulated function float GetTotalWeight() {
+  return LoadOut.GetTotalWeight();
+}
+
+simulated function float GetTotalBulk() {
+  return LoadOut.GetTotalBulk();
+}
+
+simulated function float GetWeightMovementModifier() {
+  return LoadOut.GetWeightMovementModifier();
+}
+
+simulated function float GetBulkQualifyModifier() {
+  return LoadOut.GetBulkQualifyModifier();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-class Toolkit extends SwatGame.EquipmentUsedOnOther
+class Toolkit extends QualifiedTacticalAid
     implements ITacticalAid;
 
 

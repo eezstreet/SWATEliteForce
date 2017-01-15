@@ -15,6 +15,18 @@ var(AdvancedDescription) protected localized config string FireModes            
 // Muzzle velocity
 var(AdvancedDescription) protected localized config string RateOfFire           "Human-readable RoF string for Advanced Information panel (localized)";
 
+// Weight/bulk
+var() protected config float Weight;
+var() protected config float Bulk;
+
+simulated function float GetWeight() {
+  return Weight;
+}
+
+simulated function float GetBulk() {
+  return Bulk;
+}
+
 simulated function float GetChoke()
 {
   return Choke;

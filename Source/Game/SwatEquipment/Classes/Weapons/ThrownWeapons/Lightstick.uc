@@ -1,4 +1,4 @@
-class Lightstick extends Engine.ThrownWeapon
+class Lightstick extends SwatGrenade
 	config(SwatEquipment);
 
 import enum EquipmentSlot from Engine.HandheldEquipment;
@@ -50,9 +50,9 @@ simulated function UsedHook()
         assertWithDescription(Holder != None,
                               "[tcohen] "$class.name$" was notified OnThrown(), but its Owner ("$Owner
                               $") cannot throw weapons.");
-        
+
         Holder.GetThrownProjectileParams(InitialLocation, ThrownDirection);
-        
+
 		if (Owner.IsA('NetPlayer'))
 		{
 			// start location for the grenade is where the weapon's third person model is
@@ -87,8 +87,8 @@ simulated function UsedHook()
 		}
 
 		Projectile.CurrentAngular = Rot;
-		Projectile.HavokSetLinearVelocity(Projectile.CurrentVelocity); 
-		Projectile.HavokSetAngularVelocity(Projectile.CurrentAngular); 
+		Projectile.HavokSetLinearVelocity(Projectile.CurrentVelocity);
+		Projectile.HavokSetAngularVelocity(Projectile.CurrentAngular);
 
 		if(Owner.IsA('SwatAI'))
 		{
@@ -122,7 +122,7 @@ function name GetThirdPersonThrowAnimation()
 	if (Owner.IsA('SwatAI'))
 	{
 		FiredWeapon = FiredWeapon(SwatPawn(Owner).GetActiveItem());
-	
+
 		if (FiredWeapon != None)
 			return name(BaseThirdPersonThrowAnim $ FiredWeapon.LightstickThrowAnimPostfix);
 	}
@@ -160,7 +160,7 @@ simulated function OnUsingFinishedHook()
 {
 	if (!Used)
 		UsedHook();
-		
+
 		Used = false;
 
 	if (Owner.IsA('SwatPlayer'))

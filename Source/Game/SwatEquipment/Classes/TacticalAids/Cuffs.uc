@@ -1,4 +1,4 @@
-class Cuffs extends SwatGame.EquipmentUsedOnOther
+class Cuffs extends QualifiedTacticalAid
     implements ITacticalAid;
 
 var float LastInterruptTime;
@@ -40,7 +40,7 @@ simulated latent protected function OnUsingBegan()
 simulated function UsedHook()
 {
     local SwatGamePlayerController SGPC;
-    
+
     mplog( self$"---Cuffs::UsedHook(). Other="$Other$", Owner="$Owner );
 
     Assert( Pawn(Other) != None );

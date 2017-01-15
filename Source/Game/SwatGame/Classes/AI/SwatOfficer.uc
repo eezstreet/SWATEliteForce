@@ -63,6 +63,25 @@ cpptext
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// IAmAffectedByWeight implementation
+simulated function float GetTotalBulk() {
+  return LoadOut.GetTotalBulk();
+}
+
+simulated function float GetTotalWeight() {
+  return LoadOut.GetTotalWeight();
+}
+
+simulated function float GetWeightMovementModifier() {
+  return LoadOut.GetWeightMovementModifier();
+}
+
+simulated function float GetBulkQualifyModifier() {
+  return LoadOut.GetBulkQualifyModifier();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // Engine Events
 
 event PreBeginPlay()

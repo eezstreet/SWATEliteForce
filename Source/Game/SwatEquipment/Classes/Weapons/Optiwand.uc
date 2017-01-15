@@ -5,9 +5,9 @@ class Optiwand extends Engine.HandheldEquipment implements Engine.IControllableV
 // Optiwand
 //
 // The Optiwand is a handheld equipment that an officer can use to look around corners
-// and under doors.  It's made up of two main parts, a camera placed at the end of a 
+// and under doors.  It's made up of two main parts, a camera placed at the end of a
 // flexible tip, and an lcd screen that displays what the camera sees.  Implementation
-// of the optiwand uses a rendertotexture scripted texture to render the view from the 
+// of the optiwand uses a rendertotexture scripted texture to render the view from the
 // camera tip's location.
 //
 // =============================================================================
@@ -30,6 +30,9 @@ var private config const int       ClampYawAngle;      // How much the lens is a
 var private config const int       ClampPitchAngle;    // ...On pitch
 var private config name            BoneName;
 
+var private config float           Weight;
+var private config float           Bulk;
+
 var private Vector                 MouseAccel;         // Mouseacceleration when controlling through the optiwand
 var private Rotator                DesiredViewRotation;// Desired rotation for the camera lens
 var private Rotator                BoneRotation;       // Actual rotation of the camera lens bone
@@ -43,6 +46,14 @@ var private bool					bInUse;				// Are we using it right now?
 
 const kOptiwandLength = 90.0;
 
+simulated function float GetWeight() {
+  return Weight;
+}
+
+simulated function float GetBulk() {
+  return Bulk;
+}
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -50,9 +61,9 @@ simulated function PostBeginPlay()
 }
 
 // Helper function, this should really be in Object or something
-simulated function int DegreesToUnreal( INT inDegrees ) 
-{ 
-    return (65536*inDegrees)/360; 
+simulated function int DegreesToUnreal( INT inDegrees )
+{
+    return (65536*inDegrees)/360;
 }
 
 simulated function EquippedHook()
@@ -73,7 +84,7 @@ simulated function OnGivenToOwner()
         LCDScreen.Client = Self;
         LCDScreen.SetSize(SizeX, SizeY);
         //mplog( "...FirstPersonModel="$FirstPersonModel );
-        assert( FirstPersonModel != None );  
+        assert( FirstPersonModel != None );
 
         FirstPersonModel.Skins[0] = GunShader;
         //FirstPersonModel.Skins[1] = BlankScreen;
@@ -123,7 +134,7 @@ simulated function OnEndControlling()
 
     // Use the blank screen texture now
     //FirstPersonModel.Skins[1] = BlankScreen;
-    FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,0,1 );      
+    FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,0,1 );
 	bInUse = false;
 }
 
@@ -145,14 +156,14 @@ simulated function ResolveInitialLocationAndRotation( out Vector CameraLocation,
 
     // In Multiplayer, the server needs to have some correct location to determine what actors are
     // relevent to the optiwand camera.  Since there's no firstperson model, we'll have to use
-    // a point offset from the player's location by the length of the optiwand.  
+    // a point offset from the player's location by the length of the optiwand.
     if ( Level.NetMode != NM_Standalone && FirstPersonModel == None )
     {
-        GetAxes( Owner.Rotation, X, Y, Z );    
+        GetAxes( Owner.Rotation, X, Y, Z );
         CameraLocation = Owner.Location + X * kOptiwandLength + Z * 20;
-    } 
+    }
     // In standalone use the bones available to us...
-    else        
+    else
     {
         // Mirroring under a door uses a point on the other side of the door and not the camera lens bone location
         if ( bMirroring )
@@ -186,12 +197,12 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
 	FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation(),,, 1);
     ResolveInitialLocationAndRotation( CameraLocation, PlayerViewRot );
 
-    // Only handle this stuff when we're actually moving the mouse.  
+    // Only handle this stuff when we're actually moving the mouse.
     if ( VSize(MouseAccel) != 0 )
     {
         DesiredViewRotation.Yaw += MouseAccel.X * LensTurnSpeed * LastDeltaTime;
         DesiredViewRotation.Pitch += MouseAccel.Y * LensTurnSpeed * LastDeltaTime;
-        
+
         YawRange.Min = PlayerViewRot.Yaw - DegreesToUnreal(ClampYawAngle);
         YawRange.Max = PlayerViewRot.Yaw + DegreesToUnreal(ClampYawAngle);
         PitchRange.Min = PlayerViewRot.Pitch - DegreesToUnreal(ClampPitchAngle);
@@ -199,20 +210,20 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
 
         DesiredViewRotation.Yaw = Clamp( DesiredViewRotation.Yaw, YawRange.Min, YawRange.Max );
         DesiredViewRotation.Pitch= Clamp( DesiredViewRotation.Pitch, PitchRange.Min, PitchRange.Max );
-    } 
+    }
 
     // When FirstPersonModel is none, this function is being called for visibility calcluations on the server, don't slerp
     if ( FirstPersonModel == None )
     {
         CameraRotation = DesiredViewRotation;
     }
-    else 
+    else
     {
-        // Slerp the lens bone, and use the slerp'd bone rotation as the camera rotation so wysiwyg 
+        // Slerp the lens bone, and use the slerp'd bone rotation as the camera rotation so wysiwyg
         OldQuat = QuatFromRotator(FirstPersonModel.GetBoneRotation(BoneName, 1));
         NewQuat = QuatFromRotator(DesiredViewRotation);
         BoneRotation = QuatToRotator(QuatSlerp(OldQuat, NewQuat, LensTurnAlpha));
-        FirstPersonModel.SetBoneDirection( BoneName, BoneRotation,,,1 );       
+        FirstPersonModel.SetBoneDirection( BoneName, BoneRotation,,,1 );
         CameraRotation = BoneRotation;
     }
 }
@@ -246,10 +257,10 @@ simulated function bool CanUseNow()
     local Vector X, Y, Z;
 
     // There is a really funky exploit that happens in first person view and are close to a wall, where if you move the camera really
-    // quick towards a wall, you can sometimes press fire and use the optiwand BEFORE the low ready interface updates and realizes that 
-    // there's an obstruction in front of you.  In multiplayer this can be REALLY BAD (TM), cuz it allows you to look through walls and doors.  
+    // quick towards a wall, you can sometimes press fire and use the optiwand BEFORE the low ready interface updates and realizes that
+    // there's an obstruction in front of you.  In multiplayer this can be REALLY BAD (TM), cuz it allows you to look through walls and doors.
     // The only way to catch it is to do this fast trace...
-    if ( FirstPersonModel != None && MirroringDoor == None ) 
+    if ( FirstPersonModel != None && MirroringDoor == None )
     {
         GetAxes( Owner.Rotation, X, Y, Z );
         if ( !FastTrace( Owner.Location + X * kOptiwandLength, Owner.Location ) )
@@ -261,7 +272,7 @@ simulated function bool CanUseNow()
 
     //Normally, the Optiwand can't be used while in low-ready.
     //However, Players may use the Optiwand while in low-ready
-    //  if they are currently looking at an optiwand spot on a door. 
+    //  if they are currently looking at an optiwand spot on a door.
     if ( SwatPawn(Owner) != None && !SwatPawn(Owner).IsLowReady() )
         return true;
 
@@ -269,7 +280,7 @@ simulated function bool CanUseNow()
     if (PC == None) return false;  //not a Player (in MP, only the Server should test this for Players)
 
     FireInterface = FireInterface(PC.GetFocusInterface(Focus_Fire));
-    if (FireInterface == None) return false;   //fail-safe... a SwatGamePlayerController should always have a FireInterface if they're trying to use an item 
+    if (FireInterface == None) return false;   //fail-safe... a SwatGamePlayerController should always have a FireInterface if they're trying to use an item
 
     return FireInterface.HasContext('OptiwandOnDoor');
 }
@@ -277,9 +288,9 @@ simulated function bool CanUseNow()
 simulated function InterruptUsing()
 {
     local Name EndAnim;
-    
+
     if ( !CompletedUsing )
-    {    
+    {
         OnUsingFinished();
         if ( bMirroring )
             EndAnim = 'OptiwandDoorUseEnd';
@@ -287,7 +298,7 @@ simulated function InterruptUsing()
             EndAnim = 'OptiwandUseEnd';
 		// Stop playing any sounds from looping...
         SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).StopMySchemas(Pawn(Owner).GetHands());
-        Pawn(Owner).GetHands().PlayAnim(EndAnim);   
+        Pawn(Owner).GetHands().PlayAnim(EndAnim);
         Disable('Tick');
     }
 }
@@ -322,11 +333,11 @@ simulated latent protected function DoUsingHook()
     PawnOwner = Pawn(Owner);
     PlayerOwner = SwatPlayer(Owner);
     PC = SwatGamePlayerController(PlayerOwner.Controller);
-    
+
     if ( PC != None )
     {
         MirroringDoor = PC.GetDoorInWay();
-        bMirroring = MirroringDoor != None;        
+        bMirroring = MirroringDoor != None;
     }
 
     Hands = PawnOwner.GetHands();
@@ -337,7 +348,7 @@ simulated latent protected function DoUsingHook()
         // We completed using in the sense that nothing interrupted the using of this optiwand...
         CompletedUsing = true;
         return;
-    } 
+    }
 
     Enable('Tick');
     mplog( Self$" DoUsingHook() Latent function 3" );
@@ -350,7 +361,7 @@ simulated latent protected function DoUsingHook()
             EndAnim = 'OptiwandDoorUseEnd';
 
             DesiredViewRotation = Pawn(Owner).Rotation;
-        } 
+        }
         else
         {
             UseAnim = 'OptiwandUse';
@@ -384,7 +395,7 @@ simulated latent protected function DoUsingHook()
         Sleep(TimerFreq);
         LCDScreen.Revision++;
     }
-    
+
     /*if ( PlayerOwner != None )
     {
         // Use the blank screen texture now
@@ -400,7 +411,7 @@ simulated latent protected function DoUsingHook()
         OldQuat = QuatFromRotator(FirstPersonModel.GetBoneRotation(BoneName, 1));
         NewQuat = QuatFromRotator(Pawn(Owner).GetViewRotation());
         BoneRotation = QuatToRotator(QuatSlerp(OldQuat, NewQuat, LensFinishSpeed));
-        FirstPersonModel.SetBoneDirection( BoneName, BoneRotation,,1,1 );       
+        FirstPersonModel.SetBoneDirection( BoneName, BoneRotation,,1,1 );
     }
 
     mplog( Self$" DoUsingHook() Latent function 8" );
