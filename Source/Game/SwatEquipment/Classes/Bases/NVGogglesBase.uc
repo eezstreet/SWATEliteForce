@@ -14,11 +14,11 @@ var() float EffectUpTime;
 
 // Extreme edge case that I don't feel like fixing --eez
 simulated function float GetWeight() {
-	return 0.68;
+	return 0.68;		// IMPORTANT: Make sure to alter the value in DynamicLoadOutSpec.uc as well!
 }
 
 simulated function float GetBulk() {
-	return 1.1466;
+	return 1.1466;	// IMPORTANT: Make sure to alter the value in DynamicLoadOutSpec.uc as well!
 }
 
 simulated function PostBeginPlay()

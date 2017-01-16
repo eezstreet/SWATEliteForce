@@ -14,7 +14,7 @@ simulated function OnPlayerUse()
     local SwatGamePlayerController LPC;
 
     LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
-    
+
     if( LPC != None )
         DefaultFireFocusActor = LPC.GetFocusInterface(Focus_Fire).GetDefaultFocusActor();
 

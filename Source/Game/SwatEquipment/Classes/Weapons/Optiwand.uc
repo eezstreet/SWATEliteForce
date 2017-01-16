@@ -1,5 +1,5 @@
 
-class Optiwand extends Engine.HandheldEquipment implements Engine.IControllableViewport;
+class Optiwand extends Engine.OptiwandBase implements Engine.IControllableViewport;
 
 // =============================================================================
 // Optiwand
@@ -29,9 +29,6 @@ var private config const float     LensFinishSpeed;    // How fast the camera mo
 var private config const int       ClampYawAngle;      // How much the lens is allowed to turn on yaw
 var private config const int       ClampPitchAngle;    // ...On pitch
 var private config name            BoneName;
-
-var private config float           Weight;
-var private config float           Bulk;
 
 var private Vector                 MouseAccel;         // Mouseacceleration when controlling through the optiwand
 var private Rotator                DesiredViewRotation;// Desired rotation for the camera lens

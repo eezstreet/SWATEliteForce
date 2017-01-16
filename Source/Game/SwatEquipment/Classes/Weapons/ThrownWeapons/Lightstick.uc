@@ -1,4 +1,4 @@
-class Lightstick extends SwatGrenade
+class Lightstick extends Engine.SwatGrenade
 	config(SwatEquipment);
 
 import enum EquipmentSlot from Engine.HandheldEquipment;

@@ -1,4 +1,4 @@
-class GasMaskBase extends Headgear
+class GasMaskBase extends Engine.Headgear
     implements IProtectFromCSGas, IProtectFromPepperSpray;
 
 function QualifyProtectedRegion()

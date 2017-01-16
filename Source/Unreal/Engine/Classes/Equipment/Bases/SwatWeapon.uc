@@ -1,4 +1,4 @@
-class SwatWeapon extends Engine.FiredWeapon;
+class SwatWeapon extends FiredWeapon;
 
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
@@ -16,8 +16,8 @@ var(AdvancedDescription) protected localized config string FireModes            
 var(AdvancedDescription) protected localized config string RateOfFire           "Human-readable RoF string for Advanced Information panel (localized)";
 
 // Weight/bulk
-var() protected config float Weight;
-var() protected config float Bulk;
+var() public config float Weight;
+var() public config float Bulk;
 
 simulated function float GetWeight() {
   return Weight;

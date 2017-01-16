@@ -1,11 +1,10 @@
-class SwatGrenade extends Engine.ThrownWeapon;
+class BodyArmor extends ProtectiveEquipment;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 // IHaveWeight implementation
-
-var() protected config float Weight;
-var() protected config float Bulk;
+var() public config float Weight;
+var() public config float Bulk;
 
 simulated function float GetWeight() {
   return Weight;

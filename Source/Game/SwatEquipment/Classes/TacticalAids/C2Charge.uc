@@ -1,4 +1,4 @@
-class C2Charge extends QualifiedTacticalAid
+class C2Charge extends SwatGame.EquipmentUsedOnOther
     implements ITacticalAid;
 
 simulated function UsedHook()

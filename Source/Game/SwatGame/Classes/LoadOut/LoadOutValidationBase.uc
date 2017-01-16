@@ -1,4 +1,5 @@
 class LoadOutValidationBase extends Engine.Actor
+implements IAmAffectedByWeight
     native
     perObjectConfig
     abstract;
@@ -123,4 +124,81 @@ function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
                 return false;
     }
     return true;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// IAmAffectedByWeight implementation
+
+// Absolute bulk/weight - these determine how to scale weight and bulk
+/*static var config float MinimumAbsoluteBulk;
+static var config float MaximumAbsoluteBulk;
+static var config float MinimumAbsoluteWeight;
+static var config float MaximumAbsoluteWeight;
+
+static var config float MinimumQualifyModifer;
+static var config float MaximumQualifyModifier;
+static var config float MinimumMovementModifier;
+static var config float MaximumMovementModifier;*/
+
+simulated function float GetMinimumQualifyModifer() {
+  return /*MinimumQualifyModifer*/ 0.5;
+}
+
+simulated function float GetMaximumQualifyModifer() {
+  return /*MaximumQualifyModifier*/ 2.0;
+}
+
+simulated function float GetMinimumMovementModifier() {
+  return /*MinimumMovementModifier*/ 0.675;
+}
+
+simulated function float GetMaximumMovementModifier() {
+  return /*MaximumMovementModifier*/ 1.225;
+}
+
+simulated function float GetMinimumBulk() {
+  return /*MinimumAbsoluteBulk*/ 20.0;
+}
+
+simulated function float GetMinimumWeight() {
+  return /*MinimumAbsoluteWeight*/ 5.0;
+}
+
+// Functions for getting the maximum amount of weight/bulk we can carry
+simulated function float GetMaximumWeight() {
+  return /*MaximumAbsoluteWeight*/ 50.0;
+}
+
+simulated function float GetMaximumBulk() {
+  return /*MaximumAbsoluteBulk*/ 125.0;
+}
+
+simulated function float GetWeightPercentage() {
+  return (GetTotalWeight() - GetMinimumWeight()) / (GetMaximumWeight() - GetMinimumWeight());
+}
+
+simulated function float GetBulkPercentage() {
+  return (GetTotalBulk() - GetMinimumBulk()) / (GetMaximumBulk() - GetMinimumBulk());
+}
+
+function float GetTotalWeight() {
+  assertWithDescription(false, "GetTotalWeight() called on LoadOutValidationBase. Don't do this; call it on a LoadOut or DynamicLoadOutSpec instead.");
+  return 0.0;
+}
+
+function float GetTotalBulk() {
+  assertWithDescription(false, "GetTotalBulk() called on LoadOutValidationBase. Don't do this; call it on a LoadOut or DynamicLoadOutSpec instead.");
+  return 0.0;
+}
+
+function float GetWeightMovementModifier() {
+  assertWithDescription(false, "GetWeightMovementModifier() called on LoadOutValidationBase. Don't do this; call it on a LoadOut or DynamicLoadOutSpec instead.");
+  return 0.0;
+}
+
+function float GetBulkQualifyModifier() {
+  assertWithDescription(false, "GetBulkQualifyModifier() called on LoadOutValidationBase. Don't do this; call it on a LoadOut or DynamicLoadOutSpec instead.");
+  return 0.0;
 }

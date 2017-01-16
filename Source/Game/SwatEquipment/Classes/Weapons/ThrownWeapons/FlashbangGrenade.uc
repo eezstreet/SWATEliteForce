@@ -1,4 +1,4 @@
-class FlashbangGrenade extends SwatGrenade;
+class FlashbangGrenade extends Engine.SwatGrenade;
 
 defaultproperties
 {

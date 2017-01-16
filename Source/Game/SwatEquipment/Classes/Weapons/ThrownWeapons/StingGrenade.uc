@@ -1,4 +1,4 @@
-class StingGrenade extends SwatGrenade;
+class StingGrenade extends Engine.SwatGrenade;
 
 defaultproperties
 {

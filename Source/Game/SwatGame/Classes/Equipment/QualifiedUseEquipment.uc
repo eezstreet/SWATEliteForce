@@ -1,4 +1,4 @@
-class QualifiedUseEquipment extends Engine.HandheldEquipment
+class QualifiedUseEquipment extends Engine.QualifiedTacticalAid
     implements IAmAQualifiedUseEquipment
     abstract;
 
@@ -25,7 +25,7 @@ simulated function float CalcQualifyDuration()
 	CalculatedDuration = GetQualifyDuration();
 
 	SP = SwatPlayer(Owner);
-  
+
 	CalculatedDuration *= SP.GetBulkQualifyModifier();
 
 	return CalculatedDuration;

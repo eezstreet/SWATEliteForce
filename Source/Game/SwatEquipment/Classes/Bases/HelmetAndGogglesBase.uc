@@ -1,4 +1,4 @@
-class HelmetAndGogglesBase extends Headgear
+class HelmetAndGogglesBase extends Engine.Headgear
     implements  SwatGame.IProtectFromFlashbang;
 
 function QualifyProtectedRegion()

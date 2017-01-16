@@ -27,6 +27,11 @@ You can make a shortcut to these .bat files for more convenience.
 - Introducing, Extra Missions! These are a second, Irrational-quality campaign of missions for you to explore.
   * You will need to create a second campaign (in the menu) and select Extra Missions from the dropdown box (SWAT4 + TSS are selected by default)
   * The first one, Meat Barn Restaurant, is an altered version of the multiplayer-exclusive Meat Barn Restaurant. Major changes were made to the layout to make it easier in Singleplayer and CO-OP.
+- New system: Weight/Bulk. Instead of speed and use time being dictated by armor equipped, it's now based on two variables: Weight and Bulk.
+  * There are two bars on the loadout screen to help visualize how much weight/bulk you have, along with the real values.
+  * WEIGHT will slow you down. It is measured in kilograms, as a measure of how heavy things are.
+  * BULK will make things take longer to use. It is a percentage ingame, with real measurements behind it - it is a measure of surface area of your gear.
+  * Generally weight and bulk go in tandem, but there are some differences. The Desert Eagle is heavier than the Python, but the Python is more bulky.
 - Weapons have been totally altered, both internally (how they function) and externally (how they play).
   * Weapons have been given realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
@@ -42,10 +47,10 @@ You can make a shortcut to these .bat files for more convenience.
 
 #### MINOR FEATURES / FULL CHANGES ####
 - Added Meat Barn Restaurant extra mission
+- Applied weight and bulk to every piece of equipment.
 - "Join Game" button now appears again.
 - Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
-- Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc.
-- (Most) weapons have had their configuration moved from SwatEquipment.ini. This is to make it easier to create new weapons and reduce filesize of the mod somewhat.
+- Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc. [In theory]
 - Multiplayer Pregame: Server name correctly shows HTML formatting like the server list does (so it isn't broken looking)
 - Multiplayer Setup: Server name field raised to 128 characters (up from 20)
 - Optiwand will no longer lower when near an obstacle or teammate. This possibly fixes the glitchiness of multiplayer Optiwand.
@@ -83,6 +88,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Suspects are more likely to play a gethit animation (so they shrug off bullets less often)
 - Suspects are slightly less accurate
 - All pistols are selectable in primary weapon slots.
+- Riot Helmet protects against pepper spray like it's supposed to.
 
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
@@ -214,7 +220,10 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Mt. Threshold Research Center (M249 SAW)
 
 #### FILES MODIFIED ####
+Content/Classes/SwatProtectiveEquipment.u
+Content/Classes/SwatProtectiveEquipment2.u
 Content/Classes/SwatAmmo.u
+Content/HavokData/SP-MeatBarn.mopp
 Content/Maps/SP-Hotel.s4m
 Content/Maps/SP-MeatBarn.s4m
 Content/Maps/SP-Training.s4m
@@ -234,7 +243,6 @@ System/EnemyArchetypes.ini
 System/HostageArchetypes.ini
 System/PlayerInterface_Command_SP.ini
 System/PlayerInterface_Fire.ini
-System/SEFWeapons.int
 System/Startup.ini
 System/StaticLoadout.ini
 System/SwatEquipment.ini

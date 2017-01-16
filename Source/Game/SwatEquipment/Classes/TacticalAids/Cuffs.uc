@@ -1,4 +1,4 @@
-class Cuffs extends QualifiedTacticalAid
+class Cuffs extends SwatGame.EquipmentUsedOnOther
     implements ITacticalAid;
 
 var float LastInterruptTime;

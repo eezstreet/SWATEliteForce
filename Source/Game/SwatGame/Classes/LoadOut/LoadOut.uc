@@ -675,6 +675,84 @@ simulated event Destroyed()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// IHaveWeight implementation
+function float GetTotalWeight() {
+  local int i;
+  local Engine.IHaveWeight PocketItem;
+  local float total;
+
+  total = 0.0;
+
+  for(i = 0; i < Pocket.EnumCount; i++) {
+    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
+    total += PocketItem.GetWeight();
+  }
+
+  return total;
+}
+
+function float GetTotalBulk() {
+  local int i;
+  local Engine.IHaveWeight PocketItem;
+  local float total;
+
+  total = 0.0;
+
+  for(i = 0; i < Pocket.EnumCount; i++) {
+    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
+    total += PocketItem.GetBulk();
+  }
+
+  return total;
+}
+
+function float GetWeightMovementModifier() {
+  local float totalWeight;
+  local float maxWeight, minWeight;
+  local float minMoveModifier, maxMoveModifier;
+
+  totalWeight = GetTotalWeight();
+  maxWeight = GetMaximumWeight();
+  minWeight = GetMinimumWeight();
+  minMoveModifier = GetMinimumMovementModifier();
+  maxMoveModifier = GetMaximumMovementModifier();
+
+  assertWithDescription(totalWeight <= maxWeight,
+    "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in code.");
+  assertWithDescription(totalWeight >= minWeight,
+    "Loadout "$self$" doesn't meet minimum weight ("$totalWeight$" < "$minWeight$"). Adjust the value in code.");
+
+  totalWeight -= minWeight;
+  maxWeight -= minWeight;
+
+
+  return ((totalWeight / maxWeight) * (minMoveModifier - maxMoveModifier)) + maxMoveModifier;
+}
+
+function float GetBulkQualifyModifier() {
+  local float totalBulk;
+  local float maxBulk, minBulk;
+  local float minQualifyModifier, maxQualifyModifier;
+
+  totalBulk = GetTotalBulk();
+  minBulk = GetMinimumBulk();
+  maxBulk = GetMaximumBulk();
+  minQualifyModifier = GetMinimumQualifyModifer();
+  maxQualifyModifier = GetMaximumQualifyModifer();
+
+  assertWithDescription(totalBulk <= maxBulk,
+    "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
+  assertWithDescription(totalBulk >= minBulk,
+    "Loadout "$self$" doesn't meet minimum bulk ("$totalBulk$" < "$minBulk$"). Adjust the value in code.");
+
+  totalBulk -= minBulk;
+  maxBulk -= minBulk;
+
+  return ((totalBulk / maxBulk) * (maxQualifyModifier - minQualifyModifier)) + minQualifyModifier;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 // cpptext
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 cpptext

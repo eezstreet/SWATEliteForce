@@ -41,6 +41,12 @@ var(SWATGui) protected EditInline Config GUILabel          MyEquipmentFireModesL
 var(SWATGui) protected EditInline Config GUILabel          MyEquipmentMuzzleVelocityLabel;
 var(SWATGui) protected EditInline Config GUILabel          MyEquipmentRateOfFireLabel;
 
+// Weight/Bulk system
+var(SWATGui) protected EditInline Config GUIProgressBar    MyEquipmentWeightBar;
+var(SWATGui) protected EditInline Config GUIProgressBar    MyEquipmentBulkBar;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentWeightLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentBulkLabel;
+
 
 var(SWATGui) protected EditInline EditConst DynamicLoadOutSpec   MyCurrentLoadOut "Holds all current loadout info";
 
@@ -184,6 +190,49 @@ function ValidatePocketForSelection( Pocket thePocket )
 		EquipmentList[thePocket].SetIndex( 0 );
 		ChangeLoadOut( thePocket );
 	}
+}
+
+///////////////////////////
+// Function for updating the bar display
+///////////////////////////
+function UpdateWeights() {
+  local float bulkDisplay;
+
+  MyEquipmentWeightBar.Value = MyCurrentLoadOut.GetWeightPercentage();
+  MyEquipmentBulkBar.Value = MyCurrentLoadOut.GetBulkPercentage();
+
+  if(MyEquipmentWeightBar.Value < 0.0) {
+    MyEquipmentWeightBar.Value = 0.0;
+  } else if(MyEquipmentWeightBar.Value > 1.0) {
+    MyEquipmentWeightBar.Value = 1.0;
+    MyEquipmentWeightBar.BarColor.R = 105;
+    MyEquipmentWeightBar.BarColor.B = 0;
+    MyEquipmentWeightBar.BarColor.G = 0;
+    // TODO disable start button
+  } else {
+    MyEquipmentWeightBar.BarColor.R = 255;
+    MyEquipmentWeightBar.BarColor.B = 255;
+    MyEquipmentWeightBar.BarColor.G = 255;
+  }
+
+  if(MyEquipmentBulkBar.Value < 0.0) {
+    MyEquipmentBulkBar.Value = 0.0;
+  } else if(MyEquipmentBulkBar.Value > 1.0) {
+    MyEquipmentBulkBar.Value = 1.0;
+    MyEquipmentBulkBar.BarColor.R = 105;
+    MyEquipmentBulkBar.BarColor.B = 0;
+    MyEquipmentBulkBar.BarColor.G = 0;
+  } else {
+    MyEquipmentBulkBar.BarColor.R = 255;
+    MyEquipmentBulkBar.BarColor.B = 255;
+    MyEquipmentBulkBar.BarColor.G = 255;
+  }
+
+  bulkDisplay = MyCurrentLoadOut.GetBulkPercentage();
+  bulkDisplay *= 100.0;
+
+  MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
+  MyEquipmentBulkLabel.Caption =""$bulkDisplay$" %";
 }
 
 ///////////////////////////
@@ -390,6 +439,8 @@ function DisplayEquipment( Pocket thePocket )
             MyEquipmentInfoBox.SetContent( Equipment.static.GetDescription() );
             break;
     }
+
+    UpdateWeights();
 }
 
 // update must be made whenever a scroll button is pressed

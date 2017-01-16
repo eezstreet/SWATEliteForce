@@ -67,6 +67,9 @@ FireModeDoubleTaserText=DOUBLE
 FireModeBurstText=BURST
 FireModeAutoText=AUTO
 
+[GUIWeight]
+WeightText=WT:
+
 [ConcussiveDamageType]
 FriendlyName=C2 Explosion
 
