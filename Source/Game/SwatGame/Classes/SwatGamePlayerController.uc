@@ -2060,7 +2060,7 @@ exec function UseAmmo(string newAmmoClass)
 
     Weapon.Ammo = Ammo;
 
-    Ammo.Initialize(false);
+    Weapon.Ammo.InitializeAmmo(8);
 }
 
 //for debugging only!

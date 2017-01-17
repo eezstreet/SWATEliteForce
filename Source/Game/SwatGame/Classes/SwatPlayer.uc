@@ -6,6 +6,7 @@ class SwatPlayer extends SwatRagdollPawn
                 Engine.IReactToC2Detonation,
                 Engine.IReactToDazingWeapon,
                 Engine.IAmAffectedByWeight,
+                Engine.ICarryGuns,
                 ICanUseC2Charge,
                 ICanQualifyForUse,
                 Engine.ICanBeTased,
@@ -1554,8 +1555,6 @@ simulated function AdjustPlayerMovementSpeed() {
   AnimSet.AnimSpeedSidestep = ModdedSde;
 
   TotalWeight = LoadOut.GetTotalWeight();
-
-  PlayerController(Controller).ConsoleMessage("AdjustPlayerMovementSpeed: OriginalFwd "$OriginalFwd$" modified to "$ModdedFwd$", TotalWeight="$TotalWeight$"");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3272,9 +3271,16 @@ simulated function bool CanBeUnarrestedNow()
 
 
 //return the time it takes for a Player to "qualify" to arrest me
-simulated function float GetQualifyTimeForArrest()
+simulated function float GetQualifyTimeForArrest(Pawn arrester)
 {
-    return QualifyTimeForArrest;
+  local float QualifyTime;
+
+  QualifyTime = QualifyTimeForArrest * IAmAffectedByWeight(Arrester).GetBulkQualifyModifier();
+  // This CANNOT be higher than 3.0, otherwise you will get all kinds of strange glitches.
+  if(QualifyTime > 3.0) {
+    QualifyTime = 3.0;
+  }
+  return QualifyTime;
 }
 
 // Executes only on server
@@ -3838,6 +3844,14 @@ simulated function OnLightstickKeyFrame()
 		GetActiveItem().OnUseKeyFrame();
 }
 ///////////////////////////////////////////////////////////////////////////////
+
+simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
+  if(LoadOut.IsWeaponPrimary(in)) {
+    return LoadOut.GetPrimaryAmmoCount();
+  } else {
+    return LoadOut.GetSecondaryAmmoCount();
+  }
+}
 
 defaultproperties
 {

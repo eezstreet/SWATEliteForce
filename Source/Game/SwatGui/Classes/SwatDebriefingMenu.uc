@@ -54,9 +54,9 @@ function InternalOnActivate()
             MyMissionOutcome.SetCaption( MissionCompletedString );
         else
             MyMissionOutcome.SetCaption( MissionCompletedDifficultyReqFailedString );
-        
-        // if playing a quick mission, always "fail" back to the mission select 
-        if( GC.CurrentMission.CustomScenario != None || !GC.CurrentMission.HasMetDifficultyRequirement() ) 
+
+        // if playing a quick mission, always "fail" back to the mission select
+        if( GC.CurrentMission.CustomScenario != None || !GC.CurrentMission.HasMetDifficultyRequirement() )
             MyContinueButton.SetCaption( ContinueMissionFailedString );
         else
             MyContinueButton.SetCaption( ContinueMissionCompletedString );
@@ -66,10 +66,10 @@ function InternalOnActivate()
         MyMissionOutcome.SetCaption( MissionFailedString );
         MyContinueButton.SetCaption( ContinueMissionFailedString );
     }
-        
+
     if( GC.SwatGameRole == GAMEROLE_SP_Other )
         MyContinueButton.SetCaption( MainMenuString );
-        
+
     if( bOpeningSubMenu )
         OpenLoadout();
     else
@@ -94,7 +94,7 @@ function OpenDebriefing()
     MyLoadoutPanel.DeActivate();
 
     MyMissionOutcome.Show();
-    
+
     MyDebriefingButton.DisableComponent();
     MyLoadoutButton.EnableComponent();
     if( PlayerOwner().Level.IsTraining )
@@ -124,7 +124,9 @@ function InternalOnClick(GUIComponent Sender)
 	        SwatGUIController(Controller).GameOver();
             break;
 		case MyRestartButton:
-		    GameStart();
+            if(MyLoadoutPanel.CheckWeightBulkValidity()) {
+		            GameStart();
+            }
             break;
 		case MyDebriefingButton:
 		    OpenDebriefing();
@@ -133,7 +135,7 @@ function InternalOnClick(GUIComponent Sender)
 		    OpenLoadout();
             break;
 		case MyQuitButton:
-            Quit(); 
+            Quit();
             break;
 	}
 }
@@ -141,7 +143,7 @@ function InternalOnClick(GUIComponent Sender)
 function PerformClose()
 {
     //do nothing on this menu
-    //SwatGUIController(Controller).GameOver(); 
+    //SwatGUIController(Controller).GameOver();
 }
 
 protected function bool ShouldSetSplashCameraPosition()
@@ -152,7 +154,7 @@ protected function bool ShouldSetSplashCameraPosition()
 defaultproperties
 {
     OnActivate=InternalOnActivate
-    
+
     MissionCompletedString="[c=ffffff]Mission [c=00ff00]Completed[c=ffffff]!"
     MissionCompletedDifficultyReqFailedString="[c=ffffff]Mission [c=ff0000]Completed[c=ffffff]!"
     MissionFailedString="[c=ffffff]Mission [c=ff0000]Failed[c=ffffff]!"

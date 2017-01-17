@@ -13,7 +13,7 @@ simulated function UsedHook()
 
 simulated function float GetQualifyDuration()
 {
-    return IAmUsedByWedge(Other).GetQualifyTimeForWedge();
+    return IAmUsedByWedge(Other).GetQualifyTimeForWedge() * GetQualifyModifier();
 }
 
 // IAmUsedOnOther implementation

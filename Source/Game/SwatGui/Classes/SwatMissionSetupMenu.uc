@@ -47,7 +47,7 @@ function InternalOnActivate()
 {
     if( !bOpeningSubMenu )
         GC.ClearCurrentMission();
-        
+
     bOpeningSubMenu = false;
 }
 
@@ -62,13 +62,15 @@ function InternalOnClick(GUIComponent Sender)
 	switch (Sender)
 	{
 	    case MyQuitButton:
-            Quit(); 
+            Quit();
             break;
 		case MyStartButton:
-            GameStart();
+            if(SwatGUIController(Controller).SPLoadoutPanel == None || SwatGUIController(Controller).SPLoadoutPanel.CheckWeightBulkValidity()) {
+              GameStart();
+            }
             break;
 		case MyBackButton:
-            Controller.CloseMenu(); 
+            Controller.CloseMenu();
             break;
 		case MyMainMenuButton:
             DisplayMainMenu();
@@ -80,7 +82,7 @@ defaultproperties
 {
     OnShow=InternalOnShow
     OnActivate=InternalOnActivate
-    
+
     CampaignString="CAMPAIGN"
     CustomString="CUSTOM"
 }

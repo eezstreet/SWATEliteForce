@@ -1861,9 +1861,16 @@ simulated function OnArrestInterrupted(Pawn Arrester)
 }
 
 //return the time it takes for a Player to "qualify" to arrest me
-simulated function float GetQualifyTimeForArrest()
+simulated function float GetQualifyTimeForArrest(Pawn Arrester)
 {
-    return QualifyTimeForArrest;
+    local float QualifyTime;
+
+    QualifyTime = QualifyTimeForArrest * IAmAffectedByWeight(Arrester).GetBulkQualifyModifier();
+    // This CANNOT be higher than 3.0, otherwise you will get all kinds of strange glitches.
+    if(QualifyTime > 3.0) {
+      QualifyTime = 3.0;
+    }
+    return QualifyTime;
 }
 
 //returns whether we've been arrested

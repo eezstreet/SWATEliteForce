@@ -27,6 +27,7 @@ enum eIMDType
 
 var(SwatGUIController) Editinline EditConst	Array<GUIPage>	StorageStack "Holds an out-of-game set of page names for recreating the stack";
 
+var(SwatGUIController) public EditInline EditConst SwatSPLoadoutPanel              SPLoadoutPanel "The loadout panel that should be used to display messages";
 var(SwatGUIController) private Editinline EditConst SwatMPLoadoutPanel              MPLoadoutPanel "The loadout panel that should be used to display messages";
 var(SwatGUIController) private Editinline EditConst array<SwatChatPanel>            ChatPanel "The chat panel that should be used to display messages";
 var(SwatGUIController) private Editinline EditConst SwatImportantMessageDisplay     ImportantMessageDisplays[eIMDType.EnumCount] "The important message display";

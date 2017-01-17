@@ -42,7 +42,7 @@ simulated function bool ShouldUseAlternate()
 
 simulated function float GetQualifyDuration()
 {
-    return IAmUsedByToolkit(Other).GetQualifyTimeForToolkit();
+    return IAmUsedByToolkit(Other).GetQualifyTimeForToolkit() * GetQualifyModifier();
 }
 
 simulated function bool CanUseOnOtherNow(Actor other) {

@@ -18,7 +18,7 @@ function InitComponent(GUIComponent MyOwner)
 function OnConstruct(GUIController MyController)
 {
     Super.OnConstruct(MyController);
-    
+
     ChatPanel = SwatChatPanel(AddComponent("SwatGUI.SwatChatPanel", "HudChatPanel"));
     ImportantMessageDisplay = SwatImportantMessageDisplay(AddComponent("SwatGUI.SwatImportantMessageDisplay", "HUDPage_ImportantMessageDisplay"));
     RespawnMessageDisplay = SwatImportantMessageDisplay(AddComponent("SwatGUI.SwatImportantMessageDisplay", "HUDPage_RespawnMessageDisplay"));
@@ -54,7 +54,7 @@ function OpenGUIGenericComponents()
     else
         ChatPanel.Reposition( 'Default' );
     ChatPanel.Show();
-    
+
     assert( ImportantMessageDisplay != None );
     ImportantMessageDisplay.ClearDisplay();
     ImportantMessageDisplay.Hide();
@@ -91,14 +91,14 @@ protected function CloseComponents()
             assert(false);  //unexpected SwatGameRole
             break;
     }
-    
+
     CloseGUIGenericComponents();
 }
 
 protected function OpenComponents()
 {
     Super.OpenComponents();
-    
+
     switch (SwatGUIControllerBase(Controller).GuiConfig.SwatGameRole)
     {
         case GAMEROLE_None:
@@ -116,7 +116,7 @@ protected function OpenComponents()
             assert(false);  //unexpected SwatGameRole
             break;
     }
-    
+
     OpenGUIGenericComponents();
 }
 
@@ -133,7 +133,7 @@ function OnPlayerRespawned()
 function OnGameOver()
 {
     Super.OnGameOver();
-    
+
     assert( SpecialTimeDisplay != None );
     SpecialTimeDisplay.StopTimer();
     SpecialTimeDisplay.Hide();

@@ -24,12 +24,12 @@ function LoadMultiPlayerLoadout()
     DestroyLoadouts();
 }
 
-protected function SpawnLoadouts() 
+protected function SpawnLoadouts()
 {
     LoadLoadOut( "CurrentMultiplayerLoadOut", true );
 }
 
-protected function DestroyLoadouts() 
+protected function DestroyLoadouts()
 {
     if( MyCurrentLoadOut != None )
         MyCurrentLoadOut.destroy();
@@ -47,12 +47,16 @@ function LoadLoadOut( String loadOutName, optional bool bForceSpawn )
     SwatGUIController(Controller).SetMPLoadOut( MyCurrentLoadOut );
 }
 
+function SaveCurrentLoadout() {
+  SaveLoadOut( "CurrentMultiPlayerLoadout" );
+}
+
 function ChangeLoadOut( Pocket thePocket )
 {
     local class<actor> theItem;
 //log("[dkaplan] changing loadout for pocket "$GetEnum(Pocket,thePocket) );
     Super.ChangeLoadOut( thePocket );
-    SaveLoadOut( "CurrentMultiPlayerLoadout" ); //save to current loadout
+    SaveCurrentLoadout(); //save to current loadout
 
     switch (thePocket)
     {
@@ -111,6 +115,26 @@ function bool CheckTeamValidity( eTeamValidity type )
 	return Super.CheckTeamValidity( type ) || (type == TEAMVALID_SuspectsOnly && IsSuspect) || (type == TEAMVALID_SWATOnly && !IsSuspect);
 }
 
+function bool CheckWeightBulkValidity() {
+  local float Weight;
+  local float Bulk;
+
+  Weight = MyCurrentLoadOut.GetTotalWeight();
+  Bulk = MyCurrentLoadOut.GetTotalBulk();
+
+  if(Weight > MyCurrentLoadOut.GetMaximumWeight()) {
+    TooMuchWeightModal();
+    return false;
+  } else if(Bulk > MyCurrentLoadOut.GetMaximumBulk()) {
+    TooMuchBulkModal();
+    return false;
+  }
+
+  return true;
+}
+
 defaultproperties
 {
+  EquipmentOverWeightString="You are equipped with too much weight. Your loadout will be changed to the default if you don't adjust it."
+  EquipmentOverBulkString="You are equipped with too much bulk. Your loadout will be changed to the default if you don't adjust it."
 }

@@ -19,7 +19,9 @@ var(Ammo) config            int         ShotsPerRound           "The number of s
 
 var(Ammo) config            bool        RoundsNeverPenetrate    "If true, then impact will always cause round to lose all momentum to its victim";
 
-simulated function Initialize(bool bUsingAmmoBandolier);
+simulated function InitializeAmmo(int StartingAmmoAmount);
+simulated function float GetCurrentAmmoWeight();
+simulated function float GetCurrentAmmoBulk();
 
 //returns true iff there is no ammo loaded (ie. weapon cannot currently be fired).  does not check IsEmpty or CanReload
 simulated function bool NeedsReload() { assert(false); return false; } //subclasses must implement

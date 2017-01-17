@@ -1,7 +1,7 @@
 class GUIAmmoStatus extends SwatGame.GUIAmmoStatusBase;
 
 //NOTE: Should match the corresponding const in ClipBasedAmmo, may be optimized to min number displayed in gui
-const MAX_CLIP_ROUNDS_REMAINING = 10;   // 10 should be greater than the number of
+const MAX_CLIP_ROUNDS_REMAINING = 10;   // 30 should be greater than the number of
                                         // clips we would need.
 
 var(GUIAmmoStatus) EditInline Config GUILabel         LoadedAmmoLabel               "Text that displays the current rounds remaining in the magazine/clip.";
@@ -17,7 +17,7 @@ var(GUIAmmoStatus) Config Color   InActiveClipColor      "Progress bar that disp
 function OnConstruct(GUIController MyController)
 {
     local int i;
-    
+
     Super.OnConstruct(MyController);
 
     LoadedAmmoLabel=GUILabel(AddComponent( "GUI.GUILabel", self.Name$"_LoadedAmmoLabel" ));
@@ -43,7 +43,7 @@ function SetWeaponStatus( Ammunition Ammo )
 //log("[dkaplan] In SetWeaponStatus, Ammo = "$Ammo);
     ClipAmmo = ClipBasedAmmo( Ammo );
     RoundAmmo = RoundBasedAmmo( Ammo );
-    
+
     if( ClipAmmo != None )
         SetClipBasedWeaponStatus( ClipAmmo );
     else if( RoundAmmo != None )
@@ -63,10 +63,10 @@ private function SetRoundBasedWeaponStatus( RoundBasedAmmo Ammo )
 
     LoadedAmmoLabel.SetCaption( string(loadedAmmo) );
     LoadedAmmoLabel.Show();
-    
+
     MagazineSizeLabel.SetCaption( "/" $ string(magazineSize) );
     MagazineSizeLabel.Show();
-    
+
     ExtraAmmoLabel.SetCaption( "+" $ string(extraRounds) );
     ExtraAmmoLabel.Show();
 
@@ -78,7 +78,7 @@ private function SetRoundBasedWeaponStatus( RoundBasedAmmo Ammo )
 //    }
 //    else
 //        RoundsRemainingBar.Hide();
-        
+
     for( i = 0; i < MAX_CLIP_ROUNDS_REMAINING; i++ )
     {
         ClipRoundsRemainingBar[i].Hide();
@@ -95,14 +95,14 @@ private function SetClipBasedWeaponStatus( ClipBasedAmmo Ammo )
 
     LoadedAmmoLabel.SetCaption( string(Ammo.GetClip(currentClip)) );
     LoadedAmmoLabel.Show();
-    
+
     MagazineSizeLabel.SetCaption( "/" $ string(magazineSize) );
     MagazineSizeLabel.Show();
-    
+
     ExtraAmmoLabel.Hide();
 
     RoundsRemainingBar.Hide();
-        
+
     for( i = 0; i < MAX_CLIP_ROUNDS_REMAINING; i++ )
     {
         if( i < clipCount )
@@ -129,7 +129,7 @@ defaultproperties
     PropagateState=false
     PropagateActivity=false
     PropagateVisibility=false
-    
+
     ActiveClipColor=(R=255,G=255,B=255,A=255)
     InActiveClipColor=(R=155,G=155,B=155,A=255)
 }

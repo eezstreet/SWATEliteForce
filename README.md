@@ -33,9 +33,10 @@ You can make a shortcut to these .bat files for more convenience.
   * BULK will make things take longer to use. It is a percentage ingame, with real measurements behind it - it is a measure of surface area of your gear.
   * Generally weight and bulk go in tandem, but there are some differences. The Desert Eagle is heavier than the Python, but the Python is more bulky.
 - Weapons have been totally altered, both internally (how they function) and externally (how they play).
-  * Weapons have been given realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
+  * The ammo bag tactical aid has been removed. Instead you can now customize the amount of ammo you want to bring, to fine-tune your weight and bulk.
+  * Weapons have been given more realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
-  * Pistols are now selectable in primary weapon slots.
+  * All secondary weapons are available in primary weapon slots.
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
   * These commands work for both thrown grenades and the grenade launcher, and they're "one-command-fits all" (OPEN, LEADER & CLEAR accepts flashbangs, CS gas and sting grenades without needing to pick in the menu)
@@ -48,31 +49,21 @@ You can make a shortcut to these .bat files for more convenience.
 #### MINOR FEATURES / FULL CHANGES ####
 - Added Meat Barn Restaurant extra mission
 - Applied weight and bulk to every piece of equipment.
-- "Join Game" button now appears again.
 - Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
 - Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc. [In theory]
-- Multiplayer Pregame: Server name correctly shows HTML formatting like the server list does (so it isn't broken looking)
 - Multiplayer Setup: Server name field raised to 128 characters (up from 20)
-- Optiwand will no longer lower when near an obstacle or teammate. This possibly fixes the glitchiness of multiplayer Optiwand.
-- Fixed a (vanilla) multiplayer bug where the Taser sidearms would inflict recoil to everyone in the game when one was used
-- The Glock is now a selectable weapon for suspects in the Custom Scenario Creator
-- Fairfax Residence: The accomplice can no longer carry two of the same weapon (??)
-- Old Granite Hotel: Adding some missing flashing lights on floor 6
 - The console will no longer close after entering a command. (Close with ESC key instead)
 - The console will show a log of commands entered as well as output.
 - Added a new console command: "history" (toggles the console log)
 - New penalty: Tased a fellow officer
 - Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
-- Corrected some typos
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - When an AI is issued a BREACH command, and they are out of breaching equipment, they will now only pick the lock when the door is locked, instead of always picking the lock.
 - The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
 - The toolkit can now be used to lock doors.
-- Fixed a bug where known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
 - Redid all of the campaign progression/unlocks
 - Removed the VIP Colt M1911 (for now)
 - Added "Take Screenshot" option to controls menu
-- Fixed a bug introduced in the last patch where snipers would be inaccurate
 - Civilians are now not ridiculously noncompliant like they were before
 - Greatly increased the effectiveness of Stinger grenades against Hostage and Suspect morale. They're as good as Tasers now.
 - Greatly increased the area of effect for Stinger grenades.
@@ -88,7 +79,24 @@ You can make a shortcut to these .bat files for more convenience.
 - Suspects are more likely to play a gethit animation (so they shrug off bullets less often)
 - Suspects are slightly less accurate
 - All pistols are selectable in primary weapon slots.
-- Riot Helmet protects against pepper spray like it's supposed to.
+- Ammo Bandolier item removed
+- Officers get (by default) 3 primary magazines and 5 secondary magazines. The only exception is Jackson, who gets 25 shotgun shells.
+- You can no longer edit your equipment in Multiplayer while you are ready. Unready yourself first.
+- You can no longer ready in Multiplayer while your equipment is over weight or bulk.
+- If your equipment is over weight in multiplayer, it will be replaced with the default loadout.
+- Fixed TSS bug: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
+- Fixed TSS bug: FunTime Amusements not having any loading screen text
+- Fixed TSS bug: Glitchy arrests with No Armor
+- Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
+- Fixed TSS bug: Pregame not showing HTML styling of server name
+- Fixed TSS bug: Glock not selectable in Custom Mission Maker
+- Fixed TSS bug: Fairfax accomplice could have two of the same weapon
+- Fixed TSS bug: Taser recoil applying to every player on the map
+- Fixed TSS bug: Old Granite Hotel missing some flashing lights
+- Fixed SEF bug: Join Game button on menu not appearing
+- Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
+- Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
+- Fixed SEF bug: Sniper rifle not accurate
 
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
@@ -210,7 +218,7 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Sellers Street Auditorium (UMP 45)
 - DuPlessis Diamonds (HK69 Grenade Launcher)
 - Children of Taronne Tenement (Night Vision Goggles)
-- Department of Agriculture (Ammo Bag)
+- Department of Agriculture (Colt Python)
 - St. Micheal's Medical Center (Uzi)
 - The Wolcott Projects (TEC-DC9)
 - Stetchkov Drug Lab (expansion Taser)
@@ -220,9 +228,11 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Mt. Threshold Research Center (M249 SAW)
 
 #### FILES MODIFIED ####
+Content/Classes/SwatEffects.u
 Content/Classes/SwatProtectiveEquipment.u
 Content/Classes/SwatProtectiveEquipment2.u
 Content/Classes/SwatAmmo.u
+Content/Classes/SwatAmmo2.u
 Content/HavokData/SP-MeatBarn.mopp
 Content/Maps/SP-Hotel.s4m
 Content/Maps/SP-MeatBarn.s4m

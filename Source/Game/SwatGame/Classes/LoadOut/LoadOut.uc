@@ -54,7 +54,7 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
     //log(self.Name$" ... After validation:");
     //PrintLoadOutSpecToMPLog();
 
-    SpawnEquipmentFromLoadOutSpec();
+    SpawnEquipmentFromLoadOutSpec(DynamicSpec);
 
     //log(self.Name$" ... Spawned equipment:");
     //PrintLoadOutToMPLog();
@@ -108,6 +108,18 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
 simulated function bool ValidateLoadOutSpec(bool IsSuspect)
 {
     local int i;
+
+    if(GetTotalWeight() > GetMaximumWeight() || GetTotalBulk() > GetMaximumBulk()) {
+      // We are overweight. We need to completely respawn our gear from scratch.
+      for(i = 0; i < Pocket.EnumCount; i++) {
+        LoadOutSpec[i] = DLOClassForPocket(Pocket(i), 0);
+
+        //also replace with default for dependent pocket if valid
+  			if( GC.AvailableEquipmentPockets[i].DependentPocket != Pocket_Invalid )
+  				LoadOutSpec[GC.AvailableEquipmentPockets[i].DependentPocket] = DLOClassForPocket(GC.AvailableEquipmentPockets[i].DependentPocket, 0 );
+      }
+      return true;
+    }
 
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
@@ -312,7 +324,7 @@ simulated protected function bool CheckTeamValidity( eTeamValidity type, bool Is
 //          (such as POCKET_Invalid, the ammunition pockets).
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-simulated protected function SpawnEquipmentFromLoadOutSpec()
+simulated protected function SpawnEquipmentFromLoadOutSpec(DynamicLoadOutSpec DynamicSpec)
 {
     local int i;
 
@@ -321,7 +333,7 @@ simulated protected function SpawnEquipmentFromLoadOutSpec()
         if( !GC.AvailableEquipmentPockets[i].bSpawnable )
             continue;
 
-        SpawnEquipmentForPocket( Pocket(i), LoadOutSpec[i] );
+        SpawnEquipmentForPocket( Pocket(i), LoadOutSpec[i], DynamicSpec );
     }
 }
 
@@ -329,7 +341,7 @@ simulated protected function SpawnEquipmentFromLoadOutSpec()
 // Spawn a piece of equipment in the given pocket from the final loadout spec.
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> EquipmentClass )
+simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> EquipmentClass, DynamicLoadOutSpec DynamicSpec )
 {
     //mplog( self$"---LoadOut::SpawnEquipmentForPocket(). Pocket="$i$", class="$EquipmentClass );
 
@@ -355,17 +367,16 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
             case Pocket_PrimaryWeapon:
                 FiredWeapon( PocketEquipment[i] ).SetSlot( EquipmentSlot.Slot_PrimaryWeapon );
 
-				// The player will have an ammo bandolier if any one of the Equip pockets contains an ammo banodolier
-				FiredWeapon( PocketEquipment[i] ).bHasAmmoBandolier =
-					class<AmmoBandolierBase>(LoadOutSpec[Pocket.Pocket_EquipOne]) != None ||
-					class<AmmoBandolierBase>(LoadOutSpec[Pocket.Pocket_EquipTwo]) != None ||
-					class<AmmoBandolierBase>(LoadOutSpec[Pocket.Pocket_EquipThree]) != None ||
-					class<AmmoBandolierBase>(LoadOutSpec[Pocket.Pocket_EquipFour]) != None ||
-					class<AmmoBandolierBase>(LoadOutSpec[Pocket.Pocket_EquipFive]) != None;
+				        // INCREDIBLE HACK... but probably necessary?
+                FiredWeapon(PocketEquipment[i]).DeathFired = DynamicSpec.GetPrimaryAmmoCount();
 
                 break;
             case Pocket_SecondaryWeapon:
                 FiredWeapon( PocketEquipment[i] ).SetSlot( EquipmentSlot.Slot_SecondaryWeapon );
+
+                // INCREDIBLE HACK...but probably necessary?
+                FiredWeapon(PocketEquipment[i]).DeathFired = DynamicSpec.GetSecondaryAmmoCount();
+
                 break;
             default:
                 Assert( false );
@@ -680,13 +691,28 @@ simulated event Destroyed()
 function float GetTotalWeight() {
   local int i;
   local Engine.IHaveWeight PocketItem;
+  local Engine.FiredWeapon FiredItem;
+  local Engine.HandHeldEquipment HHEItem;
+  local Engine.SwatAmmo FiredItemAmmo;
   local float total;
 
   total = 0.0;
 
   for(i = 0; i < Pocket.EnumCount; i++) {
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
-    total += PocketItem.GetWeight();
+    HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
+    if(HHEItem == None) {
+      total += PocketItem.GetWeight();
+    } else if(HHEItem.IsAvailable()) {
+      total += PocketItem.GetWeight();
+    }
+
+    if(i == 0 || i == 2) {
+      // A weapon
+      FiredItem = FiredWeapon(PocketItem);
+      FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
+      total += FiredItemAmmo.GetCurrentAmmoWeight();
+    }
   }
 
   return total;
@@ -695,6 +721,8 @@ function float GetTotalWeight() {
 function float GetTotalBulk() {
   local int i;
   local Engine.IHaveWeight PocketItem;
+  local Engine.FiredWeapon FiredItem;
+  local Engine.SwatAmmo FiredItemAmmo;
   local float total;
 
   total = 0.0;
@@ -702,6 +730,13 @@ function float GetTotalBulk() {
   for(i = 0; i < Pocket.EnumCount; i++) {
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
     total += PocketItem.GetBulk();
+
+    if(i == 0 || i == 2) {
+      // Weapon
+      FiredItem = FiredWeapon(PocketItem);
+      FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
+      total += FiredItemAmmo.GetCurrentAmmoBulk();
+    }
   }
 
   return total;

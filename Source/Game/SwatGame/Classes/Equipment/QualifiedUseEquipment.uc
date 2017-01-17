@@ -17,18 +17,12 @@ function PostBeginPlay()
 
 simulated function float GetQualifyDuration() { assert(false); return 0; }   //TMC TODO remove this... it is here to work-around bug 79
 
-simulated function float CalcQualifyDuration()
-{
-	local float CalculatedDuration;
-	local SwatPlayer SP;
+simulated function float GetQualifyModifier() {
+  local IAmAffectedByWeight SP;
 
-	CalculatedDuration = GetQualifyDuration();
+  SP = IAmAffectedByWeight(Owner);
 
-	SP = SwatPlayer(Owner);
-
-	CalculatedDuration *= SP.GetBulkQualifyModifier();
-
-	return CalculatedDuration;
+  return SP.GetBulkQualifyModifier();
 }
 
 // PreUse() gets called before GotoState('BeingUsed') in HandheldEquipment. We
@@ -98,12 +92,12 @@ simulated latent protected function DoUsingHook()
 
     if (QualifiedUseFirstPersonModel != None)
     {
-        QualifiedUseFirstPersonModel.PlayBeginQualify(UseAlternate);
+        QualifiedUseFirstPersonModel.PlayBeginQualify(UseAlternate, 1.0f / GetQualifyModifier());
         QualifiedUseFirstPersonModel.TriggerEffectEvent('QualifyBegan');
     }
     if (QualifiedUseThirdPersonModel != None)
     {
-        QualifiedUseThirdPersonModel.PlayBeginQualify(UseAlternate);
+        QualifiedUseThirdPersonModel.PlayBeginQualify(UseAlternate, 1.0f / GetQualifyModifier());
         QualifiedUseThirdPersonModel.TriggerEffectEvent('QualifyBegan');
     }
 
@@ -125,17 +119,17 @@ simulated latent protected function DoUsingHook()
 
     if (QualifiedUseFirstPersonModel != None)
     {
-        QualifiedUseFirstPersonModel.PlayQualifyLoop(UseAlternate);
+        QualifiedUseFirstPersonModel.PlayQualifyLoop(UseAlternate, 1.0f / GetQualifyModifier());
         QualifiedUseFirstPersonModel.TriggerEffectEvent('Qualifying');
     }
     if (QualifiedUseThirdPersonModel != None)
     {
-        QualifiedUseThirdPersonModel.PlayQualifyLoop(UseAlternate);
+        QualifiedUseThirdPersonModel.PlayQualifyLoop(UseAlternate, 1.0f / GetQualifyModifier());
         QualifiedUseThirdPersonModel.TriggerEffectEvent('Qualifying');
     }
 
     //wait to finish or be interrupted
-    while (!Interrupted && Level.TimeSeconds < UseBeginTime + CalcQualifyDuration())
+    while (!Interrupted && Level.TimeSeconds < UseBeginTime + GetQualifyDuration())
         Sleep(0);
 
     if (QualifiedUseFirstPersonModel != None)
@@ -285,7 +279,7 @@ function Tick(float dTime)
 
     LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
     if ( LPC != None && Pawn(Owner) == LPC.Pawn)        //our owner is the local player
-        LPC.GetHUDPage().Progress.Value = (Level.TimeSeconds - UseBeginTime)/CalcQualifyDuration();
+        LPC.GetHUDPage().Progress.Value = (Level.TimeSeconds - UseBeginTime)/GetQualifyDuration();
 }
 
 //overridden from HandheldEquipment

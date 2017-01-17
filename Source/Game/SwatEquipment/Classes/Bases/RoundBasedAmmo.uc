@@ -1,4 +1,4 @@
-class RoundBasedAmmo extends SwatAmmo;
+class RoundBasedAmmo extends Engine.SwatAmmo;
 
 var(Ammo) config int DefaultEnemyRounds;
 var(Ammo) config int DefaultOfficerRounds;
@@ -6,6 +6,10 @@ var(Ammo) config int DefaultBandolierRounds;
 
 var int CurrentRounds;
 var int ReserveRounds;
+
+// Ammo and weight related
+var int StartingRounds;
+
 
 
 replication
@@ -16,42 +20,39 @@ replication
 		CurrentRounds, ReserveRounds;
 }
 
+simulated function InitializeAmmo(int StartingAmmoAmount) {
+	local int AmmoCount;
+	local ICarryGuns Pawn;
+	local FiredWeapon Weapon;
+	local RoundBasedWeapon RBWeapon;
 
-// Executes only on the server.
-simulated function Initialize(bool bUsingAmmoBandolier)
-{
-    local RoundBasedWeapon Weapon;
-    local Pawn Pawn;
+	Weapon = FiredWeapon(Owner);
+	RBWeapon = RoundBasedWeapon(Weapon);
+	Pawn = ICarryGuns(Weapon.Owner);
 
-    Super.Initialize(bUsingAmmoBandolier);
-
-    Weapon = RoundBasedWeapon(Owner);
-    assert(Weapon != None);
-
-    Pawn = Pawn(Weapon.Owner);
-    assert(Pawn != None);
-
-	if (bUsingAmmoBandolier)
-	{
-		DefaultEnemyRounds += DefaultBandolierRounds;
-		DefaultOfficerRounds += DefaultBandolierRounds;
+	if(!Pawn.IsA('SwatEnemy')) {
+		AmmoCount = StartingAmmoAmount;
+	} else {
+		AmmoCount = DefaultEnemyRounds;
 	}
 
-    if (Pawn.IsA('SwatEnemy'))
-        ReserveRounds = DefaultEnemyRounds;
-    else
-    if (Pawn.IsA('SwatOfficer') || Pawn.IsA('SwatPlayer'))
-        ReserveRounds = DefaultOfficerRounds;
-    else
-        assertWithDescription(false,
-            "[tcohen] RoundBasedAmmo::Initialize() (class "$class.name$") expected Pawn Owner to be either a SwatEnemy or a SwatOfficer, but "$Pawn$" is neither. (Owner Weapon is "$Weapon$")");
+	log("RoundBasedAmmo::InitializeAmmo: "$AmmoCount$" shells");
 
-    //we should have enough rounds to initially fill the magazine
-    assertWithDescription(ReserveRounds >= Weapon.MagazineSize,
-        "[tcohen] RoundBasedAmmo::Initialize() (class "$class.name$") can't fill "$Weapon$"'s Magazine. MagazineSize is "$Weapon.MagazineSize$", but the ammo only has "$ReserveRounds$" rounds.");
+	ReserveRounds = AmmoCount;
+	CurrentRounds = RBWeapon.MagazineSize;
+	ReserveRounds -= CurrentRounds;
+}
 
-    CurrentRounds = Weapon.MagazineSize;
-    ReserveRounds -= CurrentRounds;
+simulated function float GetCurrentAmmoWeight() {
+	local int TotalAmmo;
+
+	TotalAmmo = ReserveRounds + CurrentRounds;
+
+	return TotalAmmo * WeightPerReloadLoaded;
+}
+
+simulated function float GetCurrentAmmoBulk() {
+	return ReserveRounds * BulkPerReload;
 }
 
 simulated function bool IsEmpty()
@@ -140,6 +141,7 @@ simulated function UpdateHUD()
     if (Pawn(Owner.Owner).Controller != LPC) return; //the player doesn't own this ammo
 
     LPC.GetHUDPage().AmmoStatus.SetWeaponStatus( self );
+		LPC.GetHUDPage().UpdateWeight();
 }
 
 function int GetCurrentRounds()

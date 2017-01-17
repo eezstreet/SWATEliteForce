@@ -906,7 +906,8 @@ function OnGivenToOwner()
         $") failed to spawn its Ammunition of class "$AmmoClass
         $".");
 
-    Ammo.Initialize(bHasAmmoBandolier);
+    Ammo.InitializeAmmo(DeathFired);
+    DeathFired = 0;
 }
 
 //for enemies, FiredWeapon ammunition type is selected randomly from the set of types of ammo

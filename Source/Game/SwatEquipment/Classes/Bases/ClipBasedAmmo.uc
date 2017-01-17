@@ -1,4 +1,4 @@
-class ClipBasedAmmo extends SwatAmmo;
+class ClipBasedAmmo extends Engine.SwatAmmo;
 
 var(Ammo) config int ClipSize;
 var(Ammo) config int DefaultEnemyClipCount;
@@ -12,6 +12,7 @@ const MAX_CLIPS = 10;   // 10 should be greater than the number of clips we woul
 const INVALID_CLIP = -2;
 var private int ClipRoundsRemaining[MAX_CLIPS];
 var private int CurrentClip;
+var private int StartingClipCount;
 
 
 replication
@@ -28,65 +29,57 @@ replication
 	//	CurrentClip, ClipRoundsRemaining;
 }
 
+simulated function InitializeAmmo(int StartingAmmoAmount) {
+	local int ClipCount;
+	local ICarryGuns Pawn;
+	local FiredWeapon Weapon;
+	local int i;
 
-// Executes only on the server.
-simulated function Initialize(bool bUsingAmmoBandolier)
-{
-    local ClipBasedWeapon Weapon;
-    local Pawn Pawn;
-    local int ClipCount;
-    local int i;
-
-    // Initialize ClipRoundsRemaining to initial values.
-    for (i=0; i < MAX_CLIPS; ++i)
-    {
-        ClipRoundsRemaining[i] = INVALID_CLIP;
-    }
-
-    Weapon = ClipBasedWeapon(Owner);
-    assert(Weapon != None);
-
-    Pawn = Pawn(Weapon.Owner);
-    assert(Pawn != None);
-
-	if (bUsingAmmoBandolier)
-	{
-		DefaultEnemyClipCount += DefaultBandolierClipCount;
-		DefaultOfficerClipCount += DefaultBandolierClipCount;
+	for(i=0; i < MAX_CLIPS; i++) {
+		ClipRoundsRemaining[i] = INVALID_CLIP;
 	}
 
-    assertWithDescription(DefaultEnemyClipCount > 0,
-        "[tcohen] The ClipBasedAmmo "$class.name
-        $" is missing a DefaultEnemyClipCount.  Please set this in SwatEquipment.ini, section [SwatEquipment."$class.name
-        $"]");
-    assert( DefaultEnemyClipCount <= MAX_CLIPS );
-    assertWithDescription(DefaultOfficerClipCount > 0,
-        "[tcohen] The ClipBasedAmmo "$class.name
-        $" is missing a DefaultOfficerClipCount.  Please set this in SwatEquipment.ini, section [SwatEquipment."$class.name
-        $"]");
-    assert( DefaultOfficerClipCount <= MAX_CLIPS );
-    assertWithDescription(ClipSize > 0,
-        "[tcohen] The ClipBasedAmmo "$class.name
-        $" is missing a ClipSize.  Please set this in SwatEquipment.ini, section [SwatEquipment."$class.name
-        $"]");
+	Weapon = FiredWeapon(Owner);
+	Pawn = ICarryGuns(Weapon.Owner);
 
-    if (Pawn.IsA('SwatEnemy'))
-        ClipCount = DefaultEnemyClipCount;
-    else
-    if (Pawn.IsA('SwatOfficer') || Pawn.IsA('SwatPlayer') || Pawn.IsA('SniperPawn'))
-        ClipCount = DefaultOfficerClipCount;
-    else
-        assertWithDescription(false,
-            "[tcohen] ClipBasedAmmo::Initialize() (class "$class.name
-            $") expected Pawn Owner to be a SwatEnemy, SwatPlayer, SniperPawn, or SwatOfficer, but "$Pawn.name
-            $" (class "$Pawn.class
-            $") is none of those. (Owner Weapon is "$Weapon
-            $")");
+	if(!Pawn.IsA('SwatEnemy')) {
+		ClipCount = StartingAmmoAmount;
+	} else {
+		ClipCount = DefaultEnemyClipCount;
+	}
 
-    for (i=0; i<ClipCount; ++i)
-    {
-        ClipRoundsRemaining[i] = ClipSize;
-    }
+	log("ClipBasedAmmo::InitializeAmmo: "$ClipCount$" clips");
+
+	for(i=0; i < ClipCount; i++) {
+		ClipRoundsRemaining[i] = ClipSize;
+	}
+
+	StartingClipCount = ClipCount;
+}
+
+simulated function float GetCurrentAmmoWeight() {
+	local int i;
+	local float weight;
+	local float amountThisClipAdded;
+
+	for(i=0; i < StartingClipCount; i++) {
+		if(ClipRoundsRemaining[i] == ClipSize) {
+			weight += WeightPerReloadLoaded;	// Add the weight of a full magazine
+		} else {
+			weight += WeightPerReloadUnloaded;	// Add the weight of an empty magazine
+			if(ClipRoundsRemaining[i] > 0) {
+				// Add the weight of the bullets in the magazine
+				amountThisClipAdded = ((WeightPerReloadLoaded - WeightPerReloadUnloaded) / ClipSize) * ClipRoundsRemaining[i];
+				weight += amountThisClipAdded;
+			}
+		}
+	}
+
+	return weight;
+}
+
+simulated function float GetCurrentAmmoBulk() {
+	return (StartingClipCount - 1) * BulkPerReload; // The magazine is factored into the bulk of the weapon, so we subtract one
 }
 
 simulated function bool IsEmpty()
@@ -187,6 +180,7 @@ simulated function UpdateHUD()
     if (Pawn(Owner.Owner).Controller != LPC) return; //the player doesn't own this ammo
 
     LPC.GetHUDPage().AmmoStatus.SetWeaponStatus( self );
+		LPC.GetHUDPage().UpdateWeight();
 }
 
 function int GetMagazineSize()
@@ -196,7 +190,7 @@ function int GetMagazineSize()
 
 function int GetClipCount()
 {
-    return DefaultOfficerClipCount;
+    return StartingClipCount;
 }
 
 simulated function int GetClip(int index)

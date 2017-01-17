@@ -84,7 +84,7 @@ simulated function bool ShouldUseAlternate()
 
 simulated function float GetQualifyDuration()
 {
-    return ICanBeArrested(Other).GetQualifyTimeForArrest();
+    return ICanBeArrested(Other).GetQualifyTimeForArrest(Pawn(Owner)); // Don't apply
 }
 
 // IAmUsedOnOther implementation

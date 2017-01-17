@@ -2,6 +2,26 @@ class DynamicLoadOutSpec extends LoadOutValidationBase
     perObjectConfig
     Config(DynamicLoadout);
 
+var public config int PrimaryWeaponAmmoCount;
+var public config int SecondaryWeaponAmmoCount;
+
+////////////////////////////////////////////////////////////////////////////////
+simulated function int GetPrimaryAmmoCount() {
+  return PrimaryWeaponAmmoCount;
+}
+
+simulated function int GetSecondaryAmmoCount() {
+  return SecondaryWeaponAmmoCount;
+}
+
+simulated function SetPrimaryAmmoCount(int in) {
+  PrimaryWeaponAmmoCount = in;
+}
+
+simulated function SetSecondaryAmmoCount(int in) {
+  SecondaryWeaponAmmoCount = in;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // IHaveWeight implementation
@@ -17,6 +37,7 @@ simulated function float GetTotalWeight() {
   local class<OptiwandBase> OptiwandClass;
   local class<QualifiedTacticalAid> TacticalAidClass;
   local class<SwatGrenade> GrenadeClass;
+  local class<SwatAmmo> AmmoClass;
 
   local class NightVisionClass; // special case
   local class OptiwandGenericClass;
@@ -34,7 +55,12 @@ simulated function float GetTotalWeight() {
         break;
 
       case Pocket_PrimaryAmmo:
+        AmmoClass = class<SwatAmmo>(LoadOutSpec[i]);
+        total += AmmoClass.default.WeightPerReloadLoaded * PrimaryWeaponAmmoCount;
+        break;
       case Pocket_SecondaryAmmo:
+        AmmoClass = class<SwatAmmo>(LoadOutSpec[i]);
+        total += AmmoClass.default.WeightPerReloadLoaded * SecondaryWeaponAmmoCount;
         break;
 
       case Pocket_BodyArmor:
@@ -86,8 +112,13 @@ simulated function float GetTotalWeight() {
           total += WeaponClass.default.Weight;
         } else if(ClassIsChildOf(LoadOutSpec[i], TacticalAidGenericClass)) {
           TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
-          total += TacticalAidClass.default.Weight;
+          total += TacticalAidClass.default.Weight * 3; // FIXME: assumes that we're carrying 3 C2 charges..
         }
+        break;
+
+      case Pocket_Toolkit:
+        TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
+        total += TacticalAidClass.default.Weight;
         break;
 
       default:
@@ -110,6 +141,7 @@ simulated function float GetTotalBulk() {
   local class<OptiwandBase> OptiwandClass;
   local class<QualifiedTacticalAid> TacticalAidClass;
   local class<SwatGrenade> GrenadeClass;
+  local class<SwatAmmo> AmmoClass;
 
   local class NightVisionClass; // special case
   local class OptiwandGenericClass;
@@ -127,7 +159,13 @@ simulated function float GetTotalBulk() {
         break;
 
       case Pocket_PrimaryAmmo:
+        AmmoClass = class<SwatAmmo>(LoadOutSpec[i]);
+        total += AmmoClass.default.BulkPerReload * PrimaryWeaponAmmoCount;
+        break;
+
       case Pocket_SecondaryAmmo:
+        AmmoClass = class<SwatAmmo>(LoadOutSpec[i]);
+        total += AmmoClass.default.BulkPerReload * SecondaryWeaponAmmoCount;
         break;
 
       case Pocket_BodyArmor:

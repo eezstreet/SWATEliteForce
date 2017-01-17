@@ -69,7 +69,7 @@ simulated function SetHandHeldEquipment(HandheldEquipment HHE)
 	}
 }
 
-simulated function PlayBeginQualify(bool UseAlternate)
+simulated function PlayBeginQualify(bool UseAlternate, float RateModification)
 {
     local name ModelAnimation;
     local name HolderAnimation;
@@ -84,19 +84,19 @@ simulated function PlayBeginQualify(bool UseAlternate)
         ModelAnimation = BeginAlternateQualifyAnimation;
         HolderAnimation = HolderBeginAlternateQualifyAnimation;
     }
-    
+
     //play any specified animations on model and holder
     if (ModelAnimation != '')
-        PlayAnim(ModelAnimation);
+        PlayAnim(ModelAnimation, RateModification);
     if (HolderAnimation != '')
     {
         if (Owner.IsA('SwatPawn'))
         {
-            HolderUseAnimationChannel = Pawn(Owner).AnimPlayEquipment(HolderAnimationBlending, HolderAnimation, , HolderAnimationRootBone);
+            HolderUseAnimationChannel = Pawn(Owner).AnimPlayEquipment(HolderAnimationBlending, HolderAnimation, , HolderAnimationRootBone, RateModification);
         }
         else
         {
-            Owner.PlayAnim(HolderAnimation);
+            Owner.PlayAnim(HolderAnimation, RateModification);
             HolderUseAnimationChannel = 0;
         }
 
@@ -139,7 +139,7 @@ simulated latent function FinishBeginQualify(bool UseAlternate)
     }
 }
 
-simulated function PlayQualifyLoop(bool UseAlternate)
+simulated function PlayQualifyLoop(bool UseAlternate, float RateModification)
 {
     local name ModelAnimation;
     local name HolderAnimation;
@@ -157,16 +157,16 @@ simulated function PlayQualifyLoop(bool UseAlternate)
 
     //play any specified animations on model and holder
     if (ModelAnimation != '')
-        PlayAnim(ModelAnimation);
+        PlayAnim(ModelAnimation, RateModification);
     if (HolderAnimation != '')
     {
         if (Owner.IsA('SwatPawn'))
         {
-            Pawn(Owner).AnimLoopEquipment(HolderAnimationBlending, HolderAnimation, , HolderAnimationRootBone);
+            Pawn(Owner).AnimLoopEquipment(HolderAnimationBlending, HolderAnimation, , HolderAnimationRootBone, RateModification);
         }
         else
         {
-            Owner.LoopAnim(HolderAnimation);
+            Owner.LoopAnim(HolderAnimation, RateModification);
             HolderUseAnimationChannel = 0;
         }
     }

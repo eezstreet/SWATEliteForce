@@ -1,6 +1,6 @@
-class SwatAmmo extends Engine.Ammunition;
+class SwatAmmo extends Ammunition abstract;
 
-import enum EMaterialVisualType from Engine.Material;
+import enum EMaterialVisualType from Material;
 
 // Ricochet occurs when a bullet hits a hard surface and bounces off.
 // It can only occur within a certain angle, and when the bullet bounces, it loses momentum.
@@ -28,6 +28,13 @@ var(Ricochet) config float FractureMomentumMin "Momentum is multiplied by a valu
 var(Ricochet) config float FractureMomentumMax "Momentum is multiplied by a value between this and FractureMomentumLossMin for each fracture bullet";
 var(Ricochet) config float FractureMinimumMomentum "Minimum momentum required to trigger a fracture";
 */
+
+// Weight and bulk system for Ammunition
+// For RoundBasedWeapon, you want WeightPerMagazine and BulkPerMagazine to be zero.
+// For MagazineBasedWeapon, you want BulkPerRound to be zero.
+var() public config float WeightPerReloadLoaded "Amount of weight to add per reload";
+var() public config float WeightPerReloadUnloaded "Amount of weight that's in an unloaded reload (ClipBasedAmmo only)";
+var() public config float BulkPerReload "Amount of bulk to add per reload";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions

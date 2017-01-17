@@ -3,6 +3,10 @@ class GUIAmmoStatusBase extends GUI.GUIMultiComponent
 
 function SetWeaponStatus( Ammunition Ammo );
 
+
+
+
+
 defaultproperties
 {
     bPersistent=True

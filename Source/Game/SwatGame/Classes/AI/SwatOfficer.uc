@@ -5,6 +5,8 @@ class SwatOfficer extends SwatAI
                 Engine.ICanBePepperSprayed,
                 Engine.IReactToCSGas,
                 Engine.ICanBeTased,
+                Engine.IAmAffectedByWeight,
+                Engine.ICarryGuns,
                 ICanUseC2Charge,
                 IInterested_GameEvent_ReportableReportedToTOC
 	native;
@@ -59,6 +61,18 @@ cpptext
 
         return Super::WillCollide(otherActor, otherActorTestLocation);
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// ICarryGuns implementation
+simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
+  // Identical to the one in SwatPlayer
+  if(LoadOut.IsWeaponPrimary(in)) {
+    return LoadOut.GetPrimaryAmmoCount();
+  } else {
+    return LoadOut.GetSecondaryAmmoCount();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1023,6 +1037,40 @@ simulated function OnLightstickKeyFrame()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+simulated function AdjustOfficerMovementSpeed() {
+  local float OriginalFwd, OriginalBck, OriginalSde;
+  local float ModdedFwd, ModdedBck, ModdedSde;
+  local float TotalWeight;
+
+  local AnimationSetManager AnimationSetManager;
+  local AnimationSet setObject;
+
+  AnimationSetManager = SwatRepo(Level.GetRepo()).GetAnimationSetManager();
+  setObject = AnimationSetManager.GetAnimationSet(GetMovementAnimSet());
+
+  OriginalFwd = setObject.AnimSpeedForward;
+  OriginalBck = setObject.AnimSpeedBackward;
+  OriginalSde = setObject.AnimSpeedSidestep;
+
+  ModdedFwd = OriginalFwd;
+  ModdedBck = OriginalBck;
+  ModdedSde = OriginalSde;
+
+  ModdedFwd *= LoadOut.GetWeightMovementModifier();
+  ModdedBck *= LoadOut.GetWeightMovementModifier();
+  ModdedSde *= LoadOut.GetWeightMovementModifier();
+
+  AnimSet.AnimSpeedForward = ModdedFwd;
+  AnimSet.AnimSpeedBackward = ModdedBck;
+  AnimSet.AnimSpeedSidestep = ModdedSde;
+
+  TotalWeight = LoadOut.GetTotalWeight();
+}
+
+simulated function Tick(float dTime) {
+  AdjustOfficerMovementSpeed();
+}
 
 defaultproperties
 {

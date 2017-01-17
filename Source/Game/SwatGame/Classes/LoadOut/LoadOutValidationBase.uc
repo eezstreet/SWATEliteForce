@@ -14,13 +14,23 @@ enum MaterialPocket
     MATERIAL_Vest,
     MATERIAL_HeavyPants,
     MATERIAL_HeavyVest,
-	MATERIAL_NoArmourVest,
+	  MATERIAL_NoArmourVest,
 };
 
 // the loadout specification
 var(DEBUG) config class<Actor> LoadOutSpec[Pocket.EnumCount];
 var(DEBUG) config Material MaterialSpec[MaterialPocket.EnumCount];
 var(DEBUG) config string CustomSkinSpec;
+
+simulated function int GetPrimaryAmmoCount();
+simulated function int GetSecondaryAmmoCount();
+
+simulated function bool IsWeaponPrimary(FiredWeapon in) {
+  if(in.class == LoadOutSpec[0]) {
+    return true;
+  }
+  return false;
+}
 
 simulated function PrintLoadOutSpecToMPLog()
 {
@@ -151,11 +161,11 @@ simulated function float GetMaximumQualifyModifer() {
 }
 
 simulated function float GetMinimumMovementModifier() {
-  return /*MinimumMovementModifier*/ 0.675;
+  return /*MinimumMovementModifier*/ 0.5;
 }
 
 simulated function float GetMaximumMovementModifier() {
-  return /*MaximumMovementModifier*/ 1.225;
+  return /*MaximumMovementModifier*/ 1.4;
 }
 
 simulated function float GetMinimumBulk() {
