@@ -42,7 +42,7 @@
             <PHRASE VALSTR="Command_MoveAndClear">Move in.</PHRASE>
 
             <PHRASE VALSTR="Command_BreachAndClear">Breach and clear.</PHRASE>
-            <PHRASE VALSTR="Command_BreachAndMakeEntry">Breach and clear.</PHRASE>
+            <PHRASE VALSTR="Command_BreachAndMakeEntry">Breach and make entry.</PHRASE>
             <PHRASE VALSTR="Command_OpenAndClear">Get in there.</PHRASE>
             <PHRASE VALSTR="Command_OpenAndClear">Get through there.</PHRASE>
             <PHRASE VALSTR="Command_OpenAndClear">Get in there ... clear ...</PHRASE>
@@ -105,7 +105,7 @@
             <PHRASE VALSTR="Command_Disable">Disarm it</PHRASE>
             <PHRASE VALSTR="Command_Disable">Disarm that ...</PHRASE>
             <PHRASE VALSTR="Command_Disable">Disarm the ...</PHRASE>
-            <PHRASE VALSTR="Command_CheckForTraps">... traps ...</PHRASE>
+            <PHRASE VALSTR="Command_CheckForTraps">Check ...</PHRASE>
             <PHRASE VALSTR="Command_CloseDoor">Close ...</PHRASE>
             <PHRASE VALSTR="Command_RemoveWedge">Remove ?the wedge</PHRASE>
 
@@ -163,12 +163,14 @@
             <PHRASE VALSTR="Command_Zulu">Let's go ?go ?go ?go.</PHRASE>
             <PHRASE VALSTR="Command_Zulu">Let's do it.</PHRASE>
             <PHRASE VALSTR="Command_Zulu">Let's move.</PHRASE>
+            <PHRASE VALSTR="Command_Zulu">Mark.</PHRASE>
         </LIST>
     </RULE>
 
     <RULE NAME="Hold" TOPLEVEL="ACTIVE">
 		<LIST PROPNAME="Hold">
                     <PHRASE VALSTR="Hold">On my command</PHRASE>
+                    <PHRASE VALSTR="Hold">On my mark</PHRASE>
                     <PHRASE VALSTR="Hold">When I tell you to</PHRASE>
                     <PHRASE VALSTR="Hold">On my when</PHRASE>
                     <PHRASE VALSTR="Hold">On my order</PHRASE>
