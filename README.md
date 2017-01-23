@@ -37,6 +37,7 @@ You can make a shortcut to these .bat files for more convenience.
   * Weapons have been given more realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
   * All secondary weapons are available in primary weapon slots.
+  * The Less Lethal shotgun, or as it is now dubbed, the Less-than-Lethal shotgun, is much more dangerous. Don't fire it at point blank range; give the beanbags some travel time, and don't aim for the head...
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
   * These commands work for both thrown grenades and the grenade launcher, and they're "one-command-fits all" (OPEN, LEADER & CLEAR accepts flashbangs, CS gas and sting grenades without needing to pick in the menu)
@@ -55,6 +56,8 @@ You can make a shortcut to these .bat files for more convenience.
 - The console will no longer close after entering a command. (Close with ESC key instead)
 - The console will show a log of commands entered as well as output.
 - Added a new console command: "history" (toggles the console log)
+- AI SWAT members will take less time shouting at noncompliant civilians
+- AI SWAT members will clear rooms quicker and won't form a "death funnel" at doors nearly as easily.
 - New penalty: Tased a fellow officer
 - Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
@@ -84,19 +87,78 @@ You can make a shortcut to these .bat files for more convenience.
 - You can no longer edit your equipment in Multiplayer while you are ready. Unready yourself first.
 - You can no longer ready in Multiplayer while your equipment is over weight or bulk.
 - If your equipment is over weight in multiplayer, it will be replaced with the default loadout.
+- Mapmakers now have the ability for Rosters (bombs/enemies/hostages/etc) to be based on difficulty level.
 - Fixed TSS bug: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
-- Fixed TSS bug: FunTime Amusements not having any loading screen text
 - Fixed TSS bug: Glitchy arrests with No Armor
 - Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
 - Fixed TSS bug: Pregame not showing HTML styling of server name
 - Fixed TSS bug: Glock not selectable in Custom Mission Maker
-- Fixed TSS bug: Fairfax accomplice could have two of the same weapon
 - Fixed TSS bug: Taser recoil applying to every player on the map
-- Fixed TSS bug: Old Granite Hotel missing some flashing lights
 - Fixed SEF bug: Join Game button on menu not appearing
 - Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
 - Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
 - Fixed SEF bug: Sniper rifle not accurate
+
+## PER-MAP CHANGES (possible spoilers) ##
+* Fairfax Residence
+  - Lawrence Fairfax: Max Morale (0.75 -> 1.0)
+  - Fairfax Accomplice: Max Morale (0.75 -> 0.6)
+  - Gladys Fairfax: Min Morale (0.75 -> 0.3)
+  - Gladys Fairfax: Max Morale (1.2 -> 1.0)
+  * Cut content restored: Conversation where Fields is disgusted by the residence
+  * Fixed SEF Bug: Cut conversation between TOC and Lead not working correctly with regards to the accomplice
+  * Fixed SEF Bug: Cut conversation between TOC and Lead not working correctly with regards to a trap being tripped.
+  * Fixed TSS bug: Accomplice carrying two Colt Pythons
+  * The accomplice now spawns 100% of the time in Elite difficulty
+  * The trap now spawns 100% of the time in Elite difficulty
+
+* FunTime Amusements
+  - Javier Arias: Max Morale (0.8 -> 1.0)
+  * Fixed TSS bug: Missing loading screen text
+
+* Our Sisters of Mercy Hostel
+  - Halfway House Staff: Max Morale (0.7 -> 0.35)
+  - Halfway House Residents (not Lionel MacArthur): Max Morale (1.5 -> 1.1)
+  - Halfway House Residents (not Lionel MacArthur): Min Morale (0.5 -> 0.6)
+  - Halfway House Robbers: Max Morale (0.7 -> 0.5)
+  * Cut content restored: Conversation where Lead informs TOC about heavily armed, panicking suspects
+  * Cut content restored: Conversation where Lead informs TOC about resistant civilians
+  * Fixed TSS bug: SwatWildGunner holding the wrong gun model (he's classified as wielding an M249 SAW, but the model was pointing to the M4 Carbine)
+
+* Northside Vending and Amusements
+  * Cut content restored: Conversation between Lead and TOC when an alarm has been triggered
+  - Louis Baccus: Min Morale (0.7 -> 0.5)
+  - Northside Gamblers: Min Morale (0.8 -> 0.3)
+
+* A-Bomb Nightclub
+  * Fixed TSS bug: Alley door does not have MAKE ENTRY commands on it
+
+* Sellers St. Auditorium
+  - Andrew Norman: Max Morale (0.9 -> 1.0)
+  - CASM: Min Morale (0.6 -> 0.3)
+  - CASM: Max Morale (0.8 -> 0.9)
+  - Sellers Street Band: Max Morale (0.95 -> 1.2)
+  - Sellers Street Band: Min Morale (0.3 -> 0.5)
+  - Sellers Street Male Patrons: Max Morale (1.2 -> 0.5)
+  - Sellers Street Female Patrons: Max Morale (1.2 -> 0.6)
+
+* Drug Lab
+  - Drug Lab Workers (Civ): Max Morale (0.9 -> 1.0)
+  - Drug Lab Workers (Hostile): Max Morale (0.6 -> 1.1)
+  - Only the drug lab workers who wear a gas mask can die from the taser now
+  * Cut content restored: Conversation where Fields makes a sarcastic remark
+  * Cut content restored: Conversation where the team converses about the smell of the establishment
+
+* Fresnal St. Station
+  - Subway Homeless: Max Morale (0.2 -> 0.4)
+  - Subway Businesswoman: Max Morale (0.8 -> 0.2)
+  * Cut content restored: Lead telling TOC that Officer Wilkins is safe
+
+* Old Granite Hotel
+  * Cut content restored: Lead saying when he's disabled bombs
+  * Cut content restored: Jackson remarking that the bomb squad is "missing on all the fun" when all the bombs are disabled.
+  * Fixed TSS bug: Snipers in wrong positions (for real this time)
+  * Fixed TSS bug: Missing lights on floor 6
 
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
@@ -152,24 +214,12 @@ Typos
 - "Less Lethal Shotgun" -> "Less-than-Lethal Shotgun"
 - "NIGHT VISION" -> "Night Vision"
 
-Hostages
-- Halfway House Staff: Max Morale (0.7 -> 0.35)
-- Halfway House Residents (not Lionel MacArthur): Max Morale (1.5 -> 1.1)
-- Halfway House Residents (not Lionel MacArthur): Min Morale (0.5 -> 0.6)
-- Sellers Street Band: Max Morale (0.95 -> 1.2)
-- Sellers Street Band: Min Morale (0.3 -> 0.5)
-- Sellers Street Male Patrons: Max Morale (1.2 -> 0.5)
-- Sellers Street Female Patrons: Max Morale (1.2 -> 0.6)
+Other Hostages Not Listed
 - Rita Winston: Max Morale (1.5 -> 1.2)
 - Department of Agriculture Staff: Max Morale (0.9 -> 0.6)
-- Drug Lab Workers: Max Morale (0.6 -> 1.1)
-- Subway Homeless: Max Morale (0.2 -> 0.4)
-- Subway Businesswoman: Max Morale (0.8 -> 0.2)
 - Warehouse Civilians: Max Morale (1.2 -> 0.9)
 - Wolcott Homeless: Min Morale (0.5 -> 0.3)
 - Wolcott Homeless: Max Morale (1.33 -> 1.1)
-- Louis Baccus: Min Morale (0.7 -> 0.5)
-- Northside Gamblers: Min Morale (0.8 -> 0.3)
 - Convenience Store Workers: Max Morale (0.4 -> 0.1)
 - Theodore Sturgeon: Max Morale (1.1 -> 0.8)
 - Hologen Students: Min Morale (0.5 -> 0.25)
@@ -179,26 +229,15 @@ Hostages
 - DuPlessi Security: Max Morale (0.15 -> 0.8)
 - Warren Rooney: Max Morale (1.35 -> 1.0)
 - Red Library Staff: Max Morale (1.15 -> 0.6)
-- Gladys Fairfax: Min Morale (0.75 -> 0.3)
-- Gladys Fairfax: Max Morale (1.2 -> 1.0)
 - Taronne Civilian: Min Morale (0.8 -> 0.0)
 - Female Taronne Civilians max morale (1.33) now matches Male civilians (1.2)
 
-Suspects
-- Javier Arias: Max Morale (0.8 -> 1.0)
-- Halfway House Robbers: Max Morale (0.7 -> 0.5)
-- Andrew Norman: Max Morale (0.9 -> 1.0)
-- CASM: Min Morale (0.6 -> 0.3)
-- CASM: Max Morale (0.8 -> 0.9)
+Other Suspects Not Listed
 - Angry Farmers: Min Morale (0.7 -> 0.5)
 - Angry Farmers: Max Morale (0.9/1.1 -> 0.7/0.8)
-- Drug Lab Workers: Max Morale (0.9 -> 1.0)
-- Only the drug lab workers who wear a gas mask can die from the taser now
 - Kiril Stetchkov: Max Morale (2.0 -> 1.5)
 - Kiril Stetchkov: Taser Death Chance (0.35 -> 0.5)
 - Alex Jimenez: Max Morale (0.6 -> 0.8)
-- Lawrence Fairfax: Max Morale (0.75 -> 1.0)
-- Fairfax Accomplice: Max Morale (0.75 -> 0.6)
 - Taronne Cultists: Max Morale (0.9 -> 1.1)
 - Andrew Taronne: Max Morale (0.95 -> 1.1)
 - Andrew Taronne: Min Morale (0.7 -> 0.4)
@@ -233,17 +272,30 @@ Content/Classes/SwatProtectiveEquipment.u
 Content/Classes/SwatProtectiveEquipment2.u
 Content/Classes/SwatAmmo.u
 Content/Classes/SwatAmmo2.u
+Content/HavokData/SP-DrugLab.mopp
 Content/HavokData/SP-MeatBarn.mopp
+Content/Maps/SP-ABomb.s4m
+Content/Maps/SP-Casino.s4m
+Content/Maps/SP-DrugLab.s4m
+Content/Maps/SP-FairfaxResidence.s4m
+Content/Maps/SP-HalfwayHouse.s4m
 Content/Maps/SP-Hotel.s4m
 Content/Maps/SP-MeatBarn.s4m
-Content/Maps/SP-Training.s4m
+Content/Maps/SP-Subway.s4m
 Content/Sounds/Sierra1/s1_lostcontact_extm01_1.ogg
 Content/Sounds/Sierra1/s1_lostcontact_extm01_2.ogg
 Content/Sounds/Sierra1/s1_lostcontact_extm01_3.ogg
 Content/Sounds/Sierra1/s1_spottedcontact_extm01_1.ogg
 Content/Sounds/Sierra1/s1_spottedcontact_extm01_2.ogg
 Content/Sounds/Sierra1/s1_spottedcontact_extm01_3.ogg
+Content/Sounds/StreamingAudio/01-meatbarn_packing01.ogg
+Content/Sounds/StreamingAudio/01-meatbarn_packingDyn01.ogg
+Content/Sounds/StreamingAudio/01-meatbarn01.ogg
+Content/Sounds/StreamingAudio/01-meatbarnDyn01.ogg
+Content/Sounds/StreamingAudio/01-meatbarnDyn02.ogg
+Content/Sounds/StreamingAudio/01-meatbarnDyn03.ogg
 Content/Textures/gui_tex3.utx
+Content/Textures/MaleCasualArmorTex.utx
 System/AI.ini
 System/Core.dll
 System/CustomScenarioCreator.ini
@@ -262,6 +314,7 @@ System/SwatGui.ini
 System/SwatGuiState.ini
 System/SwatMissions.ini
 System/SwatProcedures.int
+System/TrainingText.ini
 System/transient.int
 Generated code
 
