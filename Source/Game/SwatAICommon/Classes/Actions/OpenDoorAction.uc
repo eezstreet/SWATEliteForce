@@ -174,7 +174,7 @@ state Running
 	// if it was blocked, try opening again soon
 	if (! bIsDoorBlockedBeforeOpen)
 	{
-		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !SwatDoorTarget.IsBroken() && !SwatDoorTarget.IsWedged() && !(bOpenFrantically && SwatDoorTarget.IsLocked()))
+		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !SwatDoorTarget.IsBroken() && !SwatDoorTarget.IsWedged())
 		{
 			yield();
 		}

@@ -75,7 +75,7 @@ const kGrenadeThrowOffsetFromDoor = 20.0;
 //
 // selection heuristic
 
-// In the case of all MoveAndClearActions, we only want to match actions with 
+// In the case of all MoveAndClearActions, we only want to match actions with
 //  goals that exactly match the satisfiesGoal (otherwise the SquadMoveAndClearAction
 //  can satisfy the SquadBangAndClearGoal, which isn't correct)
 function float selectionHeuristic( AI_Goal goal )
@@ -108,7 +108,7 @@ function initAction(AI_Resource r, AI_Goal goal)
 }
 
 private function DetermineClearRoomSide()
-{	
+{
 	// if the command came from the left side of the door, we are clearing the right room...
 	// and vice versa.
 	if (ISwatDoor(TargetDoor).PointIsToMyLeft(CommandOrigin))
@@ -241,7 +241,7 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 //			log("leader distance sensor triggered at time " $ resource.pawn().Level.TimeSeconds);
 
 			if ((value.integerData == 0) && (Leader.GetRoomName() == ClearPoints[kLeaderClearPointIndex].GetRoomName(None)))
-			{	
+			{
 				// deactivate the sensor
 				LeaderDistanceSensor.deactivateSensor(self);
 				LeaderDistanceSensor = None;
@@ -349,7 +349,7 @@ protected function NotifyPawnDied(Pawn pawn)
 
 	assert(pawn != None);
 
-	// if the pawn is gonna be deleted restart the behavior, 
+	// if the pawn is gonna be deleted restart the behavior,
     // or if someone important dies before we've moved through or are moving through the door, restart the behavior
 	// don't restart the behavior if we just threw a grenade
 	if (pawn.bPendingDelete ||
@@ -440,17 +440,17 @@ protected function bool ShouldRunToStackupPoint()
 
 // @TODO: there's a few things we can't implement yet.
 //	* removing wedges if there is a wedge on the target door.  wedges haven't been implemented yet
-//  * AI knowledge of a door being locked, blocked, wedged, or open 
-//		-- need to have some facility to handle when AIs don't know that a door is locked 
-//		    (we want them to assume a door is closed until they try and open the door, 
+//  * AI knowledge of a door being locked, blocked, wedged, or open
+//		-- need to have some facility to handle when AIs don't know that a door is locked
+//		    (we want them to assume a door is closed until they try and open the door,
 //			 and when they can't open it they now "know" that the door is wedged or locked)
 latent function OpenTargetDoor(Pawn Officer)
 {
 	assert(Officer != None);
-	
+
 	// only open the door if it's closed and not broken
 	if (CanInteractWithTargetDoor())
-	{	
+	{
 		ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
 
 		// have him open the door
@@ -623,10 +623,10 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 	local AIThrowSide ThrowSide;
 	local StackUpPoint ThrowerStackUpPoint;
 	local PlacedThrowPoint PlacedThrowPointToUse;
-	
+
 	PlacedThrowPointToUse = ISwatDoor(TargetDoor).GetPlacedThrowPoint(CommandOrigin);
 
-	// remove the stacked up goal on the thrower 
+	// remove the stacked up goal on the thrower
 	// because it will try and move the officer back to his stackup point
 	RemoveStackedUpGoalOnOfficer(Thrower);
 
@@ -641,7 +641,7 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 		ThrowSide        = PlacedThrowPointToUse.ThrowSide;
 		ThrowFromPoint   = PlacedThrowPointToUse.Location;
 		TargetThrowPoint = GetTargetThrowPoint(ThrowFromPoint);
-		
+
 		if (ThrowSide == kThrowFromCenter)
 		{
 			ThrowRotation = rotator(TargetThrowPoint - ThrowFromPoint);
@@ -761,7 +761,7 @@ protected latent function MoveUpThrower()
 
 				OriginalThrower = Thrower;
 				FirstOfficer    = GetFirstOfficer();
-				
+
 				SwapOfficerRoles(OriginalThrower, FirstOfficer);
 				SwapStackUpPositions(OriginalThrower, FirstOfficer);
 			}
@@ -803,7 +803,7 @@ protected function SwapOfficerRoles(Pawn OfficerA, Pawn OfficerB)
 	{
 		Follower = OfficerA;
 	}
-	
+
 	if (OfficerA == DoorOpener)
 	{
 		DoorOpener = OfficerB;
@@ -880,7 +880,7 @@ latent function OpenDoorForThrowingGrenade()
 	// otherwise, start throwing as soon as the door starts opening
 	if (IsFirstOfficerThrower())
 	{
-		WaitToFinishOpeningDoor();	
+		WaitToFinishOpeningDoor();
 	}
 	else if (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !ISwatDoor(TargetDoor).IsBroken())
 	{
@@ -888,7 +888,7 @@ latent function OpenDoorForThrowingGrenade()
 	}
 }
 
-// this function will be overridden to allow the squad to open the door, 
+// this function will be overridden to allow the squad to open the door,
 // flashbang, gas, place charges, etc. (all the move & clear variances)
 latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 {
@@ -1009,7 +1009,7 @@ protected function SetupOfficerRoles()
 		log("SetupOfficerRoles - FirstOfficer: " $ FirstOfficer $ " SecondOfficer: " $ SecondOfficer $ " ThirdOfficer: " $ ThirdOfficer $ " FourthOfficer: " $ FourthOfficer);
 
 	// the first officer could be the same as the second officer, if the original first officer died at some point
-	// between when they stacked up and now, so set the second officer to the third or fourth officer if possible, 
+	// between when they stacked up and now, so set the second officer to the third or fourth officer if possible,
 	// or just set them to none
 	if (FirstOfficer == SecondOfficer)
 	{
@@ -1029,7 +1029,7 @@ protected function SetupOfficerRoles()
 		}
 	}
 
-	// the second officer could be the third or fourth officer, like if the officer at the second stack up point 
+	// the second officer could be the third or fourth officer, like if the officer at the second stack up point
 	// dies between when they stacked up and now, so set the third or fourth officer to none if that's the case
 	if (SecondOfficer == ThirdOfficer)
 	{
@@ -1054,7 +1054,7 @@ protected function SetupOfficerRoles()
 	assert((FourthOfficer == None) || (ThirdOfficer != FourthOfficer));
 	assert((ThirdOfficer == None) || (SecondOfficer != ThirdOfficer));
 	assert((FourthOfficer == None) || (SecondOfficer != FourthOfficer));
-	
+
 
 	// handle the case where the second officer doesn't exist
 	if (SecondOfficer != None)
@@ -1063,7 +1063,7 @@ protected function SetupOfficerRoles()
 		{
 			// we have to have enough clear points on the other side
 			if (NumClearPointsInClearingRoom >= 2)
-			{	
+			{
 				Leader     = SecondOfficer;
 				Follower   = FirstOfficer;
 				DoorOpener = FirstOfficer;
@@ -1079,7 +1079,7 @@ protected function SetupOfficerRoles()
 		{
 			// we have to have enough clear points on the other side
 			if (NumClearPointsInClearingRoom >= 2)
-			{	
+			{
 				Leader     = FirstOfficer;
 				Follower   = SecondOfficer;
 			}
@@ -1176,9 +1176,9 @@ latent function MoveFirstTwoOfficersThroughDoor()
 	if (Follower != None)
 	{
 		// we're interested when they're on the other side of the door and 128 units away
-		// setup a sensor to find out when that happens, 
+		// setup a sensor to find out when that happens,
 		// and wait until that happens before moving remainder of squad.
-		LeaderDistanceSensor = DistanceSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceSensor', AI_Resource(Leader.characterAI), 0, 1000000 )); 
+		LeaderDistanceSensor = DistanceSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceSensor', AI_Resource(Leader.characterAI), 0, 1000000 ));
 		LeaderDistanceSensor.SetParameters(ISwatDoor(TargetDoor).GetMoveAndClearPauseThreshold(), TargetDoor);
 	}
 
@@ -1188,7 +1188,7 @@ latent function MoveFirstTwoOfficersThroughDoor()
 private function MoveUpSecondTwoOfficers()
 {
 	local StackupPoint ThirdOfficerStackupPoint, FourthOfficerStackupPoint;
-	
+
 	ThirdOfficerStackupPoint  = StackupPoints[0];
 	FourthOfficerStackupPoint = StackupPoints[1];
 
@@ -1243,7 +1243,7 @@ private function PauseLeadingOfficer()
 
 private function ActivateFollowingSensor()
 {
-	FollowerDistanceSensor = DistanceSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceSensor', AI_Resource(Follower.characterAI), 0, 1000000 )); 
+	FollowerDistanceSensor = DistanceSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceSensor', AI_Resource(Follower.characterAI), 0, 1000000 ));
 	FollowerDistanceSensor.SetParameters(ISwatDoor(TargetDoor).GetMoveAndClearPauseThreshold(), TargetDoor);
 }
 
@@ -1282,7 +1282,7 @@ latent private function MoveFirstTwoOfficersToClearPoints()
 	AddMoveAndClearGoalToList(Leader, ClearPoints[kLeaderClearPointIndex], true);
 
 	if (Follower != None)
-	{	
+	{
 		AddMoveAndClearGoalToList(Follower, ClearPoints[kFollowerClearPointIndex], true);
 	}
 }
@@ -1387,12 +1387,12 @@ private function ActivateDoorSideSensors()
 	// only move up the second two officers if there's enough clear points in the room we're clearing
 	if (NumClearPointsInClearingRoom > 2)
 	{
-		LeaderDoorSideSensor = DoorSideSensor(class'AI_Sensor'.static.activateSensor( self, class'DoorSideSensor', AI_Resource(Leader.characterAI), 0, 1000000 )); 
+		LeaderDoorSideSensor = DoorSideSensor(class'AI_Sensor'.static.activateSensor( self, class'DoorSideSensor', AI_Resource(Leader.characterAI), 0, 1000000 ));
 		LeaderDoorSideSensor.SetParameters(Leader, TargetDoor, !bClearingRoomIsOnRight);
 
 		if (Follower != None)
 		{
-			FollowerDoorSideSensor = DoorSideSensor(class'AI_Sensor'.static.activateSensor( self, class'DoorSideSensor', AI_Resource(Leader.characterAI), 0, 1000000 )); 
+			FollowerDoorSideSensor = DoorSideSensor(class'AI_Sensor'.static.activateSensor( self, class'DoorSideSensor', AI_Resource(Leader.characterAI), 0, 1000000 ));
 			FollowerDoorSideSensor.SetParameters(Follower, TargetDoor, !bClearingRoomIsOnRight);
 		}
 		else
@@ -1411,7 +1411,7 @@ private function HandleDoorSideSensorMessage(AI_Sensor DoorSideSensor)
 		LeaderDoorSideSensor.deactivateSensor(self);
 		LeaderDoorSideSensor = None;
 	}
-	else 
+	else
 	{
 		assert(DoorSideSensor == FollowerDoorSideSensor);
 
@@ -1424,7 +1424,7 @@ private function HandleDoorSideSensorMessage(AI_Sensor DoorSideSensor)
 	// if both have reached the other side of the door, move up the second two officers
 	if (bLeaderReachedOtherSide && bFollowerReachedOtherSide)
 	{
-		MoveUpSecondTwoOfficers();	
+		MoveUpSecondTwoOfficers();
 	}
 }
 
@@ -1512,7 +1512,7 @@ private function bool AreAnyOfficersInRoomToClear()
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -1583,7 +1583,7 @@ Begin:
 		PrepareToMoveSquad();			// <-- "WaitForZulu" happens in here
 
 		FinishUpThrowBehavior();
-		
+
 		ClearOutStackedUpGoals();
 
 		MoveStackedUpSquad();
@@ -1603,10 +1603,12 @@ Begin:
 	// wait for everything to cleanup...
 	WaitForAllGoalsInList(MoveAndClearGoals);
 
-//	log("move done");
+	log("move done");
 
 	// ...then cleanup
 	ClearOutMoveAndClearGoals();
+
+	// Clean the restrain goals
 
     succeed();
 }

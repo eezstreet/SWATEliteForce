@@ -7,7 +7,7 @@ class SwatGameInfo extends Engine.GameInfo
     dependsOn(SwatGUIConfig)
     native;
 
-//import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
+import enum eDifficultyLevel from SwatGUIConfig;
 import enum EEntryType from SwatGame.SwatStartPointBase;
 import enum Pocket from Engine.HandheldEquipment;
 import enum EOfficerStartType from SwatGame.SwatOfficerStart;

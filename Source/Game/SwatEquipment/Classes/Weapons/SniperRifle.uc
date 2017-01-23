@@ -30,6 +30,14 @@ function OnPreEquipped()
     Holder.OnEquipKeyFrame();
 }
 
+function OnGivenToOwner()
+{
+  // Need to override this, because otherwise we get problems
+  Super.OnGivenToOwner();
+
+  Ammo.InitializeAmmo(50);
+}
+
 simulated function GetPerfectFireStart(out vector outLocation, out rotator outDirection)
 {
     outLocation  = SniperPawn(Owner).GetViewportLocation();

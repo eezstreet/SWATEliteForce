@@ -2263,48 +2263,47 @@ Function ReactToFlashbangGrenade(
     local rotator CameraRotation;
     local bool FOVMatters;          //the player's field-of-view affects flashbang reaction in SP and in CoOp, but not in regular MP
     local bool CanSee;
+    local bool HasVisionProtection;
 
     if ( Level.NetMode == NM_Client )
         return;
 
     if ( HasProtection( 'IProtectFromFlashbang' ) )
-        return;
+        HasVisionProtection = true;
 
     //cheat
     if (Controller != None && Controller.bGodMode)
         return;
 
-	if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
+	  if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
         return;
 
-	if (Grenade != None)
-	{
-		GrenadeLocation = Grenade.Location;
-		Direction       = Location - Grenade.Location;
-		Distance        = VSize(Direction);
-		if (Instigator == None)
-			Instigator = Pawn(Grenade.Owner);
-	}
-	else
-	{
-		GrenadeLocation = Location; // we were hit by a cheat command without an actual grenade
+  	if (Grenade != None)
+  	{
+        GrenadeLocation = Grenade.Location;
+    		Direction       = Location - Grenade.Location;
+    		Distance        = VSize(Direction);
+    		if (Instigator == None)
+    			Instigator = Pawn(Grenade.Owner);
+	  }
+    else
+  	{
+  		GrenadeLocation = Location; // we were hit by a cheat command without an actual grenade
 		                            // so the hit location is the player's location
-		Distance        = 0;
-	}
+  		Distance        = 0;
+  	}
 
     PlayerController(Controller).PlayerCalcView(ViewTarget, CameraLocation, CameraRotation);
     FOVMatters = Level.NetMode == NM_Standalone || Level.IsPlayingCOOP;
-    CanSee =    !FOVMatters
+    CanSee =   !HasVisionProtection
+            && (!FOVMatters
             ||  PointWithinInfiniteCone(
 					 CameraLocation,
 					 Vector(CameraRotation),
 					 GrenadeLocation,
-					 Controller.FOVAngle * DEGREES_TO_RADIANS);
+					 Controller.FOVAngle * DEGREES_TO_RADIANS));
 log("TMC FOVMatters="$FOVMatters$", CanSee="$CanSee);
-    if  (
-            bTestingCameraEffects
-        ||  (Distance <= StunRadius && CanSee)
-		)
+    if  (bTestingCameraEffects ||  (Distance <= StunRadius && CanSee))
     {
         if (Level.NetMode != NM_Client)
         {
@@ -3273,14 +3272,7 @@ simulated function bool CanBeUnarrestedNow()
 //return the time it takes for a Player to "qualify" to arrest me
 simulated function float GetQualifyTimeForArrest(Pawn arrester)
 {
-  local float QualifyTime;
-
-  QualifyTime = QualifyTimeForArrest * IAmAffectedByWeight(Arrester).GetBulkQualifyModifier();
-  // This CANNOT be higher than 3.0, otherwise you will get all kinds of strange glitches.
-  if(QualifyTime > 3.0) {
-    QualifyTime = 3.0;
-  }
-  return QualifyTime;
+  return QualifyTimeForArrest;
 }
 
 // Executes only on server

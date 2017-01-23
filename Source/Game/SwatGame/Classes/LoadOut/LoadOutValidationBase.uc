@@ -161,15 +161,15 @@ simulated function float GetMaximumQualifyModifer() {
 }
 
 simulated function float GetMinimumMovementModifier() {
-  return /*MinimumMovementModifier*/ 0.5;
+  return /*MinimumMovementModifier*/ 0.7;
 }
 
 simulated function float GetMaximumMovementModifier() {
-  return /*MaximumMovementModifier*/ 1.4;
+  return /*MaximumMovementModifier*/ 1.3;
 }
 
 simulated function float GetMinimumBulk() {
-  return /*MinimumAbsoluteBulk*/ 20.0;
+  return /*MinimumAbsoluteBulk*/ 18.0;
 }
 
 simulated function float GetMinimumWeight() {
@@ -178,11 +178,11 @@ simulated function float GetMinimumWeight() {
 
 // Functions for getting the maximum amount of weight/bulk we can carry
 simulated function float GetMaximumWeight() {
-  return /*MaximumAbsoluteWeight*/ 50.0;
+  return /*MaximumAbsoluteWeight*/ 35.0;
 }
 
 simulated function float GetMaximumBulk() {
-  return /*MaximumAbsoluteBulk*/ 125.0;
+  return /*MaximumAbsoluteBulk*/ 100.0;
 }
 
 simulated function float GetWeightPercentage() {

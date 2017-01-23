@@ -1456,6 +1456,7 @@ state SpeakingCommand extends Speaking
         {
             log("[COMMAND INTERFACE] At Time "$Level.TimeSeconds$", "$PendingCommand.name$" completed.");
             SendCommandToOfficers();
+            log("[COMMAND INTERFACE] Sent command to officers");
         }
         //else, PendingCommand is probably a new command that was just started
 
@@ -1738,11 +1739,13 @@ simulated function SendCommandToOfficers()
             break;
 
         case Command_PickLock:
-            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor)) {
+              log("CheckForValidDoorSucceeded");
                 bCommandIssued = PendingCommandTeam.PickLock(
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
+            }
             break;
 
         case Command_MoveAndClear:

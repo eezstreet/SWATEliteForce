@@ -1313,6 +1313,7 @@ function bool PickLock(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 {
 	local SquadPickLockGoal SquadPickLockGoal;
 
+	log("PickLock()");
 	// only post the goal if we are allowed
 	if (CanExecuteCommand())
 	{
@@ -1330,6 +1331,7 @@ function bool PickLock(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 			else
 			{
 				// respond to not being able to pick a lock
+				assertWithDescription(false, "An officer didn't have a toolkit...! Best investigate this...");
 				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerToolkitUnavailableSpeech();
 			}
 		}
@@ -1338,7 +1340,7 @@ function bool PickLock(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 			TriggerOtherTeamDoingBehaviorSpeech();
 		}
 	}
-
+	log("Cannot execute picklock command");
 	return false;
 }
 

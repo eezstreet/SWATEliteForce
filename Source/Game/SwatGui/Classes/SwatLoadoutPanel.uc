@@ -222,21 +222,20 @@ function bool CheckWeightBulkValidity() {
 ///////////////////////////
 function UpdateWeights() {
   local float bulkDisplay;
+  local class<SwatAmmo> WeaponAmmo;
 
   if(ActivePocket == Pocket_PrimaryWeapon) {
-    if(ClassIsChildOf(MyCurrentLoadOut.LoadOutSpec[0], class'RoundBasedWeapon')) {
-      MyAmmoMagazineCountSpinner.MaxValue = 200;
-    } else {
-      MyAmmoMagazineCountSpinner.MaxValue = 10;
-    }
+    WeaponAmmo = class<SwatAmmo>(MyCurrentLoadOut.LoadOutSpec[1]);
+    MyAmmoMagazineCountSpinner.MinValue = WeaponAmmo.default.MinReloadsToCarry;
+    MyAmmoMagazineCountSpinner.MaxValue = WeaponAmmo.default.MaxReloadsToCarry;
     MyAmmoMagazineCountSpinner.SetValue(MyCurrentLoadOut.GetPrimaryAmmoCount());
+    MyAmmoMagazineCountLabel.Caption = WeaponAmmo.default.ReloadsString;
   } else if(ActivePocket == Pocket_SecondaryWeapon) {
-    if(ClassIsChildOf(MyCurrentLoadOut.LoadOutSpec[2], class'RoundBasedWeapon')) {
-      MyAmmoMagazineCountSpinner.MaxValue = 200;
-    } else {
-      MyAmmoMagazineCountSpinner.MaxValue = 10;
-    }
+    WeaponAmmo = class<SwatAmmo>(MyCurrentLoadOut.LoadOutSpec[3]);
+    MyAmmoMagazineCountSpinner.MinValue = WeaponAmmo.default.MinReloadsToCarry;
+    MyAmmoMagazineCountSpinner.MaxValue = WeaponAmmo.default.MaxReloadsToCarry;
     MyAmmoMagazineCountSpinner.SetValue(MyCurrentLoadOut.GetSecondaryAmmoCount());
+    MyAmmoMagazineCountLabel.Caption = WeaponAmmo.default.ReloadsString;
   }
 
   MyEquipmentWeightBar.Value = MyCurrentLoadOut.GetWeightPercentage();

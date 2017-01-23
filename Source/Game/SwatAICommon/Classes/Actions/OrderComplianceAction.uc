@@ -2,7 +2,7 @@
 // OrderComplianceAction.uc - EngageTargetAction class
 // The Action that causes an Officer AI to engage a target for compliance
 
-class OrderComplianceAction extends SwatWeaponAction 
+class OrderComplianceAction extends SwatWeaponAction
 	implements Tyrion.ISensorNotification
 	config(AI)
     dependson(ISwatAI)
@@ -76,11 +76,11 @@ private function ActivateComplianceSensor()
 private latent function SetOrderComplianceAim()
 {
 	ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_OrderComplianceAction);
-	
+
 	// @HACK: See comments in ISwatAI::LockAim for more info.
 	ISwatAI(m_Pawn).AimAtActor(TargetPawn);
 	ISwatAI(m_Pawn).LockAim();
-	
+
 	// just make sure we're aimed at him
 	LatentAimAtActor(TargetPawn);
 }
@@ -191,6 +191,14 @@ private function SetTimeToStopTryingToEngage()
 	TimeToStopTryingToEngage = Level.TimeSeconds + MaximumTimeToWaitToEngage;
 }
 
+private function bool ShouldEngageImmediately() {
+	local SwatAIRepository SwatAIRepo;
+	SwatAIRepo = SwatAIRepository(Level.AIRepo);
+
+	// test to see if we're moving and clearing
+	return (SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
+}
+
 state Running
 {
  Begin:
@@ -203,9 +211,11 @@ state Running
 			OrderToComply();
 
 			// reset the timer
-			SetTimeToStopTryingToEngage();
+			if(!ShouldEngageImmediately()) {
+				SetTimeToStopTryingToEngage();
 
-			sleep(RandRange(MinComplianceOrderSleepTime, MaxComplianceOrderSleepTime));
+				sleep(RandRange(MinComplianceOrderSleepTime, MaxComplianceOrderSleepTime));
+			}
 		}
 		else
 		{

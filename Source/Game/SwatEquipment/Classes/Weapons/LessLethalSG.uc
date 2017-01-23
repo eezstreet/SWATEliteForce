@@ -14,13 +14,15 @@ simulated function DealDamage(Actor Victim, int Damage, Pawn Instigator, Vector 
     if ( Victim.IsA( 'Pawn' ) )
     {
         IReactToDazingWeapon(Victim).ReactToLessLeathalShotgun(
-			PlayerStingDuration, 
-			HeavilyArmoredPlayerStingDuration, 
+			PlayerStingDuration,
+			HeavilyArmoredPlayerStingDuration,
 			NonArmoredPlayerStingDuration,
 			AIStingDuration);
 
-        mplog("Called ReactToLessLeathalShotgun on: "$Victim );
-    } 
+      log("Called ReactToLessLeathalShotgun on: "$Victim$", Damage="$Damage$"" );
+
+      Super.DealDamage( Victim, Damage, Instigator, HitLocation, MomentumVector, DamageType );
+    }
     // Otherwise deal damage, cept for ExplodingStaticMesh that is....
     else if ( !Victim.IsA('ExplodingStaticMesh') )
     {
@@ -33,8 +35,8 @@ simulated function bool  ShouldSpawnBloodForVictim( Pawn PawnVictim, int Damage 
 {
     return false;
 }
-    
-    
+
+
 defaultproperties
 {
     Slot=Slot_Invalid

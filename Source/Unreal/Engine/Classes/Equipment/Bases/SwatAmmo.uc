@@ -32,9 +32,12 @@ var(Ricochet) config float FractureMinimumMomentum "Minimum momentum required to
 // Weight and bulk system for Ammunition
 // For RoundBasedWeapon, you want WeightPerMagazine and BulkPerMagazine to be zero.
 // For MagazineBasedWeapon, you want BulkPerRound to be zero.
-var() public config float WeightPerReloadLoaded "Amount of weight to add per reload";
-var() public config float WeightPerReloadUnloaded "Amount of weight that's in an unloaded reload (ClipBasedAmmo only)";
-var() public config float BulkPerReload "Amount of bulk to add per reload";
+var(CustomReloads) public config float WeightPerReloadLoaded "Amount of weight to add per reload";
+var(CustomReloads) public config float WeightPerReloadUnloaded "Amount of weight that's in an unloaded reload (ClipBasedAmmo only)";
+var(CustomReloads) public config float BulkPerReload "Amount of bulk to add per reload";
+var(CustomReloads) public config int MinReloadsToCarry "Minimum number of reloads we should be carrying";
+var(CustomReloads) public config int MaxReloadsToCarry "Maximum number of reloads we should be carrying";
+var(CustomReloads) public localized config string ReloadsString "String to show in the Loadout panel (originally was 'Reloads:')";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Helper functions

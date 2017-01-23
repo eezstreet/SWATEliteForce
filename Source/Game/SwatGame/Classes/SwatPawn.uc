@@ -1863,14 +1863,7 @@ simulated function OnArrestInterrupted(Pawn Arrester)
 //return the time it takes for a Player to "qualify" to arrest me
 simulated function float GetQualifyTimeForArrest(Pawn Arrester)
 {
-    local float QualifyTime;
-
-    QualifyTime = QualifyTimeForArrest * IAmAffectedByWeight(Arrester).GetBulkQualifyModifier();
-    // This CANNOT be higher than 3.0, otherwise you will get all kinds of strange glitches.
-    if(QualifyTime > 3.0) {
-      QualifyTime = 3.0;
-    }
-    return QualifyTime;
+    return QualifyTimeForArrest;
 }
 
 //returns whether we've been arrested
@@ -1922,6 +1915,8 @@ function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
     local HandheldEquipment ActiveItem;
 
     Super.PostTakeDamage(Damage, instigatedBy, hitLocation, Momentum, DamageType);
+
+    log("PostTakeDamage on "$self$" - Damage ="$Damage$", DamageType="$damageType);
 
     if (Damage > 0)
     {

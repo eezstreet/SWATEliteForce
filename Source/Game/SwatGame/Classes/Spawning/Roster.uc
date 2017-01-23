@@ -6,9 +6,12 @@ class Roster extends Core.Object
 
 var class<Archetype> ArchetypeClass;
 
+import enum eDifficultyLevel from SwatGUIConfig;
+
 var (Roster) IntegerRange Count;
-var (Roster) editinline array<Archetype.ChanceArchetypePair> Archetypes;    //named for clarity in the Editor 
+var (Roster) editinline array<Archetype.ChanceArchetypePair> Archetypes;    //named for clarity in the Editor
 var (Roster) name SpawnerGroup;
+var (Roster) editinline array<eDifficultyLevel> DisallowedDifficulties "A list of difficulties which won't spawn this roster";
 
 function name PickArchetype()
 {

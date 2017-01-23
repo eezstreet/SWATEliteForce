@@ -21,6 +21,7 @@ overloaded function construct( AI_Resource r, Pawn inCompliantTarget)
 
 	assert(inCompliantTarget != None);
 	CompliantTarget = inCompliantTarget;
+	log("New RestrainAndReportGoal posted");
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@ var private bool						bDoorHasOpened;
 var private bool						bMovedToPickLock;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -261,7 +261,6 @@ latent function RotateToPostPickLockRotation()
 state Running
 {
  Begin:
-
 	if (TargetDoor.IsClosed() && ! TargetDoor.IsOpening() && ! TargetDoor.IsBroken())
 	{
 		ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
@@ -272,7 +271,7 @@ state Running
 
 		bMovedToPickLock = true;
 		MoveToPickLockPoint();
-		
+
 		if (! bDoorHasOpened)
 		{
 			// no avoiding collision while we're picking the lock!

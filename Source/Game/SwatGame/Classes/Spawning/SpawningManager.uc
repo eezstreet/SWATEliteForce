@@ -5,6 +5,7 @@ class SpawningManager extends Core.Object implements Engine.ISpawningManager
 
 import enum EStartPointDependent from Spawner;
 import enum EEntryType from SwatGame.SwatStartPointBase;
+import enum eDifficultyLevel from SwatGUIConfig;
 
 ////////////////////////////////////////////////////////////////////
 // NOTE: Dynamic class variables should be reset to their initial state
@@ -46,12 +47,21 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     local SwatRepo Repo;
     local EEntryType StartPoint;
     local int HighPriority;
+    local eDifficultyLevel DifficultyLevel;
+    local bool ThisRosterNotAllowed;
 
     // DoSpawning() should only be called in standalone games.
     assert( Level.NetMode == NM_Standalone || Level.IsCOOPServer );
 
     //we only expect to do this once per run
     assert(!HasSpawned || bTesting);
+
+    // Determine the difficulty level
+    if(Level.IsCOOPServer) {
+      DifficultyLevel = Difficulty_Elite; // Gloves are off in co-op mode..!
+    } else {
+      DifficultyLevel = Repo.GuiConfig.CurrentDifficulty;
+    }
 
     //reference any custom scenario
     CustomScenario = SwatGameInfo(Level.Game).GetCustomScenario();
@@ -147,6 +157,18 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
                 "[tcohen] While the SpawningManger was preparing to spawn from the level Roster index "$i
                 $", it determined that the Roster's SpawnerGroup is the SpawnerGroup for the Mission Objective "$ObjectiveFromRoster
                 $", but the Roster's Count Min is zero.  If zero were to be selected, then the player wouldn't need to do anything to complete the Objective!");
+
+        // Disallow this roster if our difficulty is in the DisallowedDifficulties
+        for(j = 0; j < CurrentRoster.DisallowedDifficulties.Length; j++) {
+          if(CurrentRoster.DisallowedDifficulties[j] == DifficultyLevel) {
+            ThisRosterNotAllowed = true;
+            break;
+          }
+        }
+        if(ThisRosterNotAllowed) {
+          ThisRosterNotAllowed = false;
+          continue;
+        }
 
         if (Game.DebugSpawning)
         {
