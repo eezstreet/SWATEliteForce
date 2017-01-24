@@ -33,6 +33,7 @@ You can make a shortcut to these .bat files for more convenience.
   * BULK will make things take longer to use. It is a percentage ingame, with real measurements behind it - it is a measure of surface area of your gear.
   * Generally weight and bulk go in tandem, but there are some differences. The Desert Eagle is heavier than the Python, but the Python is more bulky.
 - Weapons have been totally altered, both internally (how they function) and externally (how they play).
+  * All weapons have reworked accuracy, recoil and handling characteristics using realistic weights and lenght for each. Light, shorter weapons like pistols and SMGs now suffer less penalties for movement and injuries, whereas long, heavier weapons like assault rifles and shotguns are more accurate and powerful.
   * The ammo bag tactical aid has been removed. Instead you can now customize the amount of ammo you want to bring, to fine-tune your weight and bulk.
   * Weapons have been given more realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
@@ -269,6 +270,36 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Stechkov Warehouse (Desert Eagle)
 - Old Granite Hotel (AK-47)
 - Mt. Threshold Research Center (M249 SAW)
+
+## SCORING SYSTEM ##
+The scoring system has been altered:
+
+* Bonuses:
+
+- Mission Completed: Awarded when all of the mission objectives are completed. Points: 45
+- Suspects Arrested: Bonus based on the amount of suspects secured. Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
+- Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
+- Suspects Neutralized: Bonus based on the amount of suspects neutralized. Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
+- No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. Points: 5
+- No Officers Downed: Bonus based on the amount of incapacitated officers. Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
+- Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. Points: 5 - ((Number of downed officers)/(Total Number of officers) x 5).
+- Report Status to TOC: Bonus based on the amount of reports to TOC. Points: (Number of reports made)/(Total Number of reportable characters) x 10.
+- All Evidence Secured: Bonus based on the amount of evidence collected. Points: (Number of evidence collected)/(Total Number of evidence) x 5.
+
+* Penalties:
+
+- Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Points: -5 per suspect.
+- Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Points: -20 per suspect.
+- Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Points: -20 per hostage.
+- Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission. Points: -50 per hostage.
+- Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire. Points: -10 per officer.
+- Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator. Points: -25 per officer.
+- Tased a fellow officer: Given when an officer uses a taser another officer. Points: -5 per infraction.
+- Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it. Points: -10 per trap.
+- Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area. Points: -5 per suspect.
+- Failed to report a downed officer: Given when a downed officer is not reported to TOC: Points: -5 per downed officer
+- Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: Points: -5 per downed suspect
+- Failed to report a downed hostage: Given when a downed hostage is not reported to TOC: Points: -5 per downed hostage
 
 #### FILES MODIFIED ####
 Content/Classes/SwatEffects.u
