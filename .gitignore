@@ -10,13 +10,14 @@ System/Running.ini
 *.nam
 *.log
 *.til
-*.s4m
 *.$$$
 *.zip
 *.dll
 *.bak
 *.dds
 *.psd
+*Autoplay.s4m
+*autosave*.s4m
 *DynamicLoadout.ini
 *Autotest.ini
 *Campaign.ini
