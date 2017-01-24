@@ -49,6 +49,8 @@ var(SWATGui) protected EditInline Config GUIProgressBar    MyEquipmentWeightBar;
 var(SWATGui) protected EditInline Config GUIProgressBar    MyEquipmentBulkBar;
 var(SWATGui) protected EditInline Config GUILabel          MyEquipmentWeightLabel;
 var(SWATGui) protected EditInline Config GUILabel          MyEquipmentBulkLabel;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentWeightName;
+var(SWATGui) protected EditInline Config GUILabel          MyEquipmentBulkName;
 
 var(SWATGui) Config Localized String EquipmentOverWeightString;
 var(SWATGui) Config Localized String EquipmentOverBulkString;
