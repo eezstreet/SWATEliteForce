@@ -2,6 +2,7 @@ class Roster extends Core.Object
     editinlinenew
     hideCategories(Object)
     collapsecategories
+    dependsOn(SwatGUIConfig)
     abstract;
 
 var class<Archetype> ArchetypeClass;
