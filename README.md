@@ -88,6 +88,7 @@ You can make a shortcut to these .bat files for more convenience.
 - You can no longer ready in Multiplayer while your equipment is over weight or bulk.
 - If your equipment is over weight in multiplayer, it will be replaced with the default loadout.
 - Mapmakers now have the ability for Rosters (bombs/enemies/hostages/etc) to be based on difficulty level.
+- The scoring system has been changed. There is no longer a bonus for no suspects incapacitated or killed. Elite difficulty now requires 90 instead of 95 score to complete.
 - Fixed TSS bug: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
 - Fixed TSS bug: Glitchy arrests with No Armor
 - Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
@@ -141,6 +142,9 @@ You can make a shortcut to these .bat files for more convenience.
   - Sellers Street Band: Min Morale (0.3 -> 0.5)
   - Sellers Street Male Patrons: Max Morale (1.2 -> 0.5)
   - Sellers Street Female Patrons: Max Morale (1.2 -> 0.6)
+
+* Department of Agriculture
+  * Cut content restored: Conversation between TOC and Lead about how many bombs are present
 
 * Drug Lab
   - Drug Lab Workers (Civ): Max Morale (0.9 -> 1.0)
@@ -280,6 +284,7 @@ Content/Maps/SP-DrugLab.s4m
 Content/Maps/SP-FairfaxResidence.s4m
 Content/Maps/SP-HalfwayHouse.s4m
 Content/Maps/SP-Hotel.s4m
+Content/Maps/SP-Office.s4m
 Content/Maps/SP-MeatBarn.s4m
 Content/Maps/SP-Subway.s4m
 Content/Sounds/Sierra1/s1_lostcontact_extm01_1.ogg
@@ -303,16 +308,19 @@ System/DefSwatGuiState.ini
 System/DynamicLoadout.ini
 System/EnemyArchetypes.ini
 System/HostageArchetypes.ini
+System/Leadership.ini
 System/PlayerInterface_Command_SP.ini
 System/PlayerInterface_Fire.ini
 System/Startup.ini
 System/StaticLoadout.ini
+System/SwatAmmo.int
 System/SwatEquipment.ini
 System/SwatEquipment.int
 System/SwatGame.int
 System/SwatGui.ini
 System/SwatGuiState.ini
 System/SwatMissions.ini
+System/SwatPawn.ini
 System/SwatProcedures.int
 System/TrainingText.ini
 System/transient.int
