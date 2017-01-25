@@ -515,6 +515,17 @@ simulated function EAnimationSet GetMachineGunAimPoseSet()
 	else
 		return kAnimationSetMachineGun;
 }
+// Allow SwatEnemy to override their aim pose animation sets
+simulated function EAnimationSet GetHandGunAimPoseSet()
+{
+	assert(CharacterType != '');
+
+	// if we're a gang member, use the gang anim poses
+	if (CharacterType == 'EnemyMaleGang')
+		return kAnimationSetGangHandGun;
+	else
+		return kAnimationSetHandGun;
+}
 
 // Enemies should not use specialized UMP aim poses
 simulated function EAnimationSet GetUMPAimPoseSet()         { return GetSubMachineGunAimPoseSet(); }

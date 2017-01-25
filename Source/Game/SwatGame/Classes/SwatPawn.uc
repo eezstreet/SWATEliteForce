@@ -568,17 +568,22 @@ simulated function EAnimationSet GetEquipmentAimSet()
             return GetHandgunAimPoseSet();
         }
         // Special (weird) case for P90
-        else if (Equipment.IsA('P90'))
+        else if (Equipment.IsA('FNP90SMG'))
         {
             return GetP90AimPoseSet();
         }
         // Special (weird) case aim pose for the m4 the swat officers use
-        else if (Equipment.IsA('Colt_M4A1'))
+        else if (Equipment.IsA('M4A1MG'))
+        {
+            return GetM4AimPoseSet();
+        }        
+		// Special (weird) case aim pose for the m4 the suspects use
+        else if (Equipment.IsA('M4MG'))
         {
             return GetM4AimPoseSet();
         }
         // Special (weird) case aim pose for the UMP
-        else if (Equipment.IsA('UMP45'))
+        else if (Equipment.IsA('UMP45SMG'))
         {
             return GetUMPAimPoseSet();
         }
@@ -720,6 +725,16 @@ simulated function EAnimationSet GetLowReadySet()
             if (Equipment.IsA('M4A1MG'))
             {
                 return GetM4LowReadyAimPoseSet();
+            }
+            // Special case aim pose for the m4 the suspects use
+            else if (Equipment.IsA('M4MG'))
+            {
+                return GetM4LowReadyAimPoseSet();
+            }
+            // Special case aim pose for the ak the swat officers use
+            else if (Equipment.IsA('AK47MG'))
+            {
+                return GetMachineGunLowReadyAimPoseSet();
             }
             else
             {
