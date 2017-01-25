@@ -29,8 +29,9 @@ event Show()
     local int i;
 
     Super.Show();
-    
-    if( GC.SwatGameRole == GAMEROLE_SP_Campaign && GC.CurrentMission != none && GC.CurrentMission.LoadingImage != None )
+
+    if(GC.CurrentMission != None && GC.CurrentMission.LoadingImage != None &&
+      (GC.SwatGameRole == GAMEROLE_SP_Campaign || (GC.SwatGameRole == GAMEROLE_SP_Other && GC.CurrentMission.MapName == "SP-Training")))
     {
         LoadingText.SetCaption( GC.CurrentMission.LoadingText );
         LoadingImage.Image = GC.CurrentMission.LoadingImage;
@@ -38,7 +39,7 @@ event Show()
     else if( DefaultImages.Length > 0 )
     {
         i = Rand( DefaultImages.Length );
-    
+
         LoadingText.SetCaption( DefaultCaptions[i] );
         LoadingImage.Image = DefaultImages[i];
     }
@@ -65,7 +66,7 @@ function OnProgress(string PercentComplete, string ExtraInfo)
         MissionLoadingStatusText.SetCaption( LoadMapString );
     else if( ExtraInfo == "Download" )
         MissionLoadingStatusText.SetCaption( DownloadString );
-    
+
 	if (Controller != None)
 		Controller.PaintProgress();
 }
@@ -74,7 +75,7 @@ function OnProgress(string PercentComplete, string ExtraInfo)
 defaultproperties
 {
     bNeverTriggerEffectEvents=true
-    
+
     LoadSplashString="Loading..."
     WaitForConnectionString="Connecting..."
     LoadMapString="Loading..."
