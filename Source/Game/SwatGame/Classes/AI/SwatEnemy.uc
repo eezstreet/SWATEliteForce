@@ -524,7 +524,7 @@ simulated function EAnimationSet GetHandGunAimPoseSet()
 	if (CharacterType == 'EnemyMaleGang')
 		return kAnimationSetGangHandGun;
 	else
-		return kAnimationSetMachineGun;
+		return kAnimationSetHandGun;
 }
 
 // Enemies should not use specialized UMP aim poses
