@@ -14,6 +14,9 @@ var(Ricochet) config int RicochetBounceCount "Maximum times that a bullet can ri
 var(Ricochet) config float RicochetMomentum "Momentum is multiplied by this when a ricochet (not a fracture) occurs";
 var(Ricochet) config float RicochetMinimumMomentum "Minimum momentum required to trigger a ricochet";
 
+// Advanced ballstics for Elite Force
+var(AdvancedBallistics) config float Drag "The amount of Momentum that is lost with each unit traveled.";
+
 // Fracture occurs when a bullet ricochets and splits into multiple pieces.
 // These fractured projectiles deviate from the ricochet angle when they collide against each other. This is simulated by giving them some slop.
 // Fractured projectiles lose a great deal more momentum than ricochet because the projectiles are much smaller in mass.
@@ -56,10 +59,8 @@ simulated function float GetRicochetMomentumModifier() {
   return RicochetMomentum;
 }
 
-simulated function BallisticsLog(string Message) {
-  if(Level.AnalyzeBallistics) {
-    log("[Ballistics] "$Message);
-  }
+simulated function float GetDrag() {
+  return Drag;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +134,8 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
 
 defaultproperties
 {
+  Drag=0
+
   CanCauseRicochet=false
   RicochetChance=0.5
   MinRicochetAngle=20
