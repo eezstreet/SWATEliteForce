@@ -332,6 +332,7 @@ Content/Sounds/StreamingAudio/01-meatbarnDyn02.ogg
 Content/Sounds/StreamingAudio/01-meatbarnDyn03.ogg
 Content/Textures/gui_tex3.utx
 Content/Textures/MaleCasualArmorTex.utx
+Content/Textures/MaleGang1Tex.utx
 System/AI.ini
 System/Core.dll
 System/CustomScenarioCreator.ini
@@ -340,6 +341,8 @@ System/DynamicLoadout.ini
 System/EnemyArchetypes.ini
 System/HostageArchetypes.ini
 System/Leadership.ini
+System/MissionObjectives.ini
+System/ObjectiveSpecs.ini
 System/PlayerInterface_Command_SP.ini
 System/PlayerInterface_Fire.ini
 System/Startup.ini
