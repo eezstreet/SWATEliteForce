@@ -1049,7 +1049,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
         if( Level.IsTraining )
         {
             LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'TrainingLoadOut');
-            LoadOutSpec = None;
+            LoadOutSpec = Spawn(class'DynamicLoadOutSpec', PlayerPawn, 'TrainingLoadOut');
         }
         else
         {

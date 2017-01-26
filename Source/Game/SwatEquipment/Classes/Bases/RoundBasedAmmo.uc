@@ -26,6 +26,10 @@ simulated function InitializeAmmo(int StartingAmmoAmount) {
 	local FiredWeapon Weapon;
 	local RoundBasedWeapon RBWeapon;
 
+	if(StartingAmmoAmount <= 0) {
+		StartingAmmoAmount = 25;
+	}
+
 	Weapon = FiredWeapon(Owner);
 	RBWeapon = RoundBasedWeapon(Weapon);
 	Pawn = ICarryGuns(Weapon.Owner);
