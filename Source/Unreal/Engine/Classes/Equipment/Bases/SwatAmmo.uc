@@ -45,7 +45,7 @@ var(CustomReloads) public localized config string ReloadsString "String to show 
 simulated function bool ShouldRicochet() {
   local float Chance;
   Chance = FRand();
-  log("ShouldRicochet(): Chance = "$Chance);
+  BallisticsLog("ShouldRicochet(): Chance = "$Chance);
   if(CanCauseRicochet && Chance < RicochetChance) {
     return true;
   }
@@ -54,6 +54,12 @@ simulated function bool ShouldRicochet() {
 
 simulated function float GetRicochetMomentumModifier() {
   return RicochetMomentum;
+}
+
+simulated function BallisticsLog(string Message) {
+  if(Level.AnalyzeBallistics) {
+    log("[Ballistics] "$Message);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,28 +74,28 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
   local float PitchNormal, YawNormal;
   local int i;
 
-  log("[Ballistics] checked if CanRicochet with Victim="$Victim$", HitLocation="$HitLocation$
+  BallisticsLog("checked if CanRicochet with Victim="$Victim$", HitLocation="$HitLocation$
     ", HitNormal="$HitNormal$
     ", NormalizedBulletDirection="$NormalizedBulletDirection$
     ", HitMaterialType="$HitMaterial.MaterialVisualType);
 
   if(!ShouldRicochet()) {
-    log("[Ballistics] Ammo "$self$" can't cause a ricochet or the roll failed.");
+    BallisticsLog("Ammo "$self$" can't cause a ricochet or the roll failed.");
     return false;
   }
 
   if(RicochetFromBSPOnly && !Victim.IsA('LevelInfo') && !Victim.IsA('StaticMeshActor')) {
-    log("[Ballistics] RicochetFromBSPOnly was checked and not a LevelInfo or StaticMeshActor");
+    BallisticsLog("RicochetFromBSPOnly was checked and not a LevelInfo or StaticMeshActor");
     return false;
   }
 
   if(Momentum < RicochetMinimumMomentum) {
-    log("[Ballistics] Does not meet minimum momentum to cause a ricochet");
+    BallisticsLog("Does not meet minimum momentum to cause a ricochet");
     return false;
   }
 
   if(BounceNumber >= RicochetBounceCount) {
-    log("[Ballistics] RicochetBounceCount met");
+    BallisticsLog("RicochetBounceCount met");
     return false;
   }
 
@@ -100,7 +106,7 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
   YawNormal = Abs(NormalizedBulletDirection.y);
   if(PitchNormal > NormalizedMaximum || PitchNormal < NormalizedMinimum) {
     if(YawNormal > NormalizedMaximum || YawNormal < NormalizedMinimum) {
-      log("[Ballistics] Ricochet angle is not correct (PitchNormal: "$PitchNormal$"; YawNormal: "$YawNormal$")");
+      BallisticsLog("Ricochet angle is not correct (PitchNormal: "$PitchNormal$"; YawNormal: "$YawNormal$")");
       return false;
     }
   }
@@ -114,11 +120,11 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
   }
 
   if(!bCorrectMaterial) {
-    log("[Ballistics] Incorrect material to cause a ricochet.");
+    BallisticsLog("Incorrect material to cause a ricochet.");
     return false;
   }
 
-  log("[Ballistics] Ricochet succeeded");
+  BallisticsLog("Ricochet succeeded");
   return true;
 }
 
@@ -128,7 +134,6 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
 defaultproperties
 {
   CanCauseRicochet=false
-
   RicochetChance=0.5
   MinRicochetAngle=20
   MaxRicochetAngle=70
