@@ -100,6 +100,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
 - Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
 - Fixed SEF bug: Sniper rifle not accurate
+- Fixed SEF bug: Wrong resolution in options menu (1600x1050 -> 1680x1050)
 
 ## PER-MAP CHANGES (possible spoilers) ##
 * Fairfax Residence
