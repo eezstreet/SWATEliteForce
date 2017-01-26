@@ -5493,6 +5493,9 @@ Description=Neutralize Javier Arias
 [Rescue_Bogard]
 Description=Rescue Oscar Bogard
 
+[Neutralize_Moretti]
+Description=Neutralize Adam Moretti
+
 [Training_ProtectOfficers]
 Description=Do not kill your fellow officers
 
