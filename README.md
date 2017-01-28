@@ -38,7 +38,8 @@ You can make a shortcut to these .bat files for more convenience.
   * Weapons have been given more realistic rates of fire and muzzle velocities. In terms of gameplay, higher muzzle velocity = more potential for penetration. Most weapons got reduced muzzle velocity, except for the P90, TEC-9 and UMP.
   * Bullets can now ricochet off of hard surfaces, such as concrete, stone, bricks, etc. Ricochets occur from FMJ and buckshot rounds. (This feature will be improved as more research is done)
   * All secondary weapons are available in primary weapon slots.
-  * The Less Lethal shotgun, or as it is now dubbed, the Less-than-Lethal shotgun, is much more dangerous. Don't fire it at point blank range; give the beanbags some travel time, and don't aim for the head...
+  * Heavy Armor now acts differently. It completely protects against conventional weapons, but may become damaged over time. At 0% health, it will only be as effective as Light Armor.
+  * The Less Lethal shotgun is much more dangerous. Don't fire it at point blank range; give the beanbags some travel time, and don't aim for the head...
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
   * These commands work for both thrown grenades and the grenade launcher, and they're "one-command-fits all" (OPEN, LEADER & CLEAR accepts flashbangs, CS gas and sting grenades without needing to pick in the menu)
@@ -101,6 +102,7 @@ You can make a shortcut to these .bat files for more convenience.
 - Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
 - Fixed SEF bug: Sniper rifle not accurate
 - Fixed SEF bug: Wrong resolution in options menu (1600x1050 -> 1680x1050)
+- Fixed SEF bug: Wrong window title ("MyMod" -> "SWAT: Elite Force")
 
 ## PER-MAP CHANGES (possible spoilers) ##
 * Fairfax Residence
