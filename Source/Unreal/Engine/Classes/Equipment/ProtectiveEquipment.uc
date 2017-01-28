@@ -17,9 +17,6 @@ var() config localized   Material GUIImage;
 
 function QualifyProtectedRegion()
 {
-    assertWithDescription(ProtectedRegion > REGION_None,
-        "[tcohen] The ProtectiveEquipment class "$class.name
-        $" does not specify a ProtectedRegion.  Please fix this in UnrealEd.");
 
     assertWithDescription(ProtectedRegion < REGION_Body_Max,
         "[tcohen] The ProtectiveEquipment class "$class.name
@@ -40,7 +37,8 @@ function OnGivenToOwner()
 
     QualifyProtectedRegion();
 
-    PawnOwner.SetProtection(ProtectedRegion, self);
+    if(ProtectedRegion != REGION_None)
+      PawnOwner.SetProtection(ProtectedRegion, self);
 
     if (WearerMesh != None && WearerMesh != PawnOwner.Mesh)
         PawnOwner.SwitchToMesh(WearerMesh);
