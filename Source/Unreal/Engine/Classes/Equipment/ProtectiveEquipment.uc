@@ -5,7 +5,7 @@ class ProtectiveEquipment extends Equipment
 
 var() name AttachmentBone "To which Bone of the Wearer does this ProtectiveEquipment attach (if any).";
 var() ESkeletalRegion ProtectedRegion "Which SkeletalRegion does this ProtectiveEquipment protect (if any).";
-var() float MomentumToPenetrate;
+var() protected float MomentumToPenetrate;
 var() Range PenetratedDamageFactor "If a bullet penetrates this ProtectiveEquipment, then the Damage that it _would_ cause is multiplied by this Factor before being delt to the Wearer.";
 var() Range BlockedDamageFactor "If a bullet is blocked by this ProtectiveEquipment, then the Damage that it _would_ cause (if it had penetrated) is multiplied by this Factor, and the resulting Damage is given to the Wearer.";
 var() Mesh WearerMesh "If a Pawn wears this ProtectiveEquipment, then the Pawn should use this Mesh.  Leave None if the ProtectiveEquipment shouldn't affect the Wearer's Mesh.  Note that a WearerMesh must be compatible with the SwatOfficer Mesh, ie. must have all the same animations with the same names.";
@@ -15,6 +15,10 @@ var() config localized   String  Description;
 var() config localized   String  FriendlyName;
 var() config localized   Material GUIImage;
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Equipment implementation
 function QualifyProtectedRegion()
 {
 
@@ -62,6 +66,28 @@ static function Material GetGUIImage()
 static function class<Actor> GetRenderableActorClass()
 {
     return default.Class;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Armor shredding mechanic
+
+simulated function float GetMtP() {
+  return MomentumToPenetrate;
+}
+
+// This occurs AFTER the MtP calculation.
+simulated function OnProtectedRegionHit() {
+  // Do nothing by default
+  return;
+}
+
+function bool IsArmorShreddable() {
+  return false;
+}
+
+simulated function float GetArmorHealthPercent() {
+  return 1.0;
 }
 
 defaultproperties

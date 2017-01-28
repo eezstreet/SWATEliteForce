@@ -78,6 +78,11 @@ static function class<Actor> GetRenderableActorClass()
     return default.Class;
 }
 
+simulated function bool CanShredArmor()
+{
+  return true;
+}
+
 simulated function BallisticsLog(string Message) {
   if(Level.AnalyzeBallistics) {
     log("[BALLISTICS] "$Message);

@@ -803,7 +803,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float DamageModifier, ExternalDamageModifier;
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
-    PenetratesProtection = (Protection.MomentumToPenetrate < Momentum);
+    PenetratesProtection = (Protection.GetMtP() < Momentum);
 
     //determine DamageModifierRange
     if (PenetratesProtection)
@@ -812,7 +812,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         DamageModifierRange = Protection.BlockedDamageFactor;
 
     //calculate damage imparted to victim
-    MomentumLostToProtection = FMin(Momentum, Protection.MomentumToPenetrate);
+    MomentumLostToProtection = FMin(Momentum, Protection.GetMtP());
     Damage = MomentumLostToProtection * Level.GetRepo().MomentumToDamageConversionFactor;
     DamageModifier = RandRange(DamageModifierRange.Min, DamageModifierRange.Max);
     Damage *= DamageModifier;
@@ -822,13 +822,13 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     Damage = int( float(Damage) * ExternalDamageModifier );
 
     //calculate momentum vector imparted to victim
-    MomentumVector = NormalizedBulletDirection * Protection.MomentumToPenetrate;
+    MomentumVector = NormalizedBulletDirection * Protection.GetMtP();
     if (PenetratesProtection)
         MomentumVector *= Level.getRepo().MomentumImpartedOnPenetrationFraction;
 
     Ammo.BallisticsLog("  ->  Remaining Momentum is "$Momentum$".");
     Ammo.BallisticsLog("  ... Bullet hit "$Protection.class.name$" ProtectiveEquipment on Victim "$Victim.name);
-    Ammo.BallisticsLog("  ... Protection.MomentumToPenetrate is "$Protection.MomentumToPenetrate$".");
+    Ammo.BallisticsLog("  ... Protection.MomentumToPenetrate is "$Protection.GetMtP()$".");
 
     if (PenetratesProtection)
         Ammo.BallisticsLog("  ... The ProtectiveEquipment was penetrated.  Using PenetratedDamageFactor.");
@@ -849,7 +849,11 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
     //the bullet has lost momentum to its target
-    Momentum -= Protection.MomentumToPenetrate;
+    Momentum -= Protection.GetMtP();
+
+    if(Ammo.CanShredArmor()) {
+      Protection.OnProtectedRegionHit();
+    }
 
     return PenetratesProtection;
 }
