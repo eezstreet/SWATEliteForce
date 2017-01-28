@@ -238,7 +238,10 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         //select spawners - from the candidate spawners - to spawn this roster
         for (j=0; j<Count; ++j)
         {
-            assert(CandidateSpawners.length > 0);   //we should still have a candidate spawner left to spawn the archetype
+            if(CandidateSpawners.length <= 0) {
+              assertWithDescription(false, "Ran out of candidate spawners for Roster "$CurrentRoster.SpawnerGroup);
+              break;
+            }
 
             //find out if any of the candidate spawners have priority
             HighPriority = 0;
