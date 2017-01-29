@@ -2035,6 +2035,10 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 {
 	assert(Weapon != None);
 
+	if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+	{
+		return FireMode_Single;
+	}
 	if (Weapon.HasFireMode(FireMode_Burst))
 	{
 		return FireMode_Burst;
@@ -2043,16 +2047,12 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 	{
 		return FireMode_Auto;
 	}
-	else if (Weapon.HasFireMode(FireMode_DoubleTaser))
-	{
-		return FireMode_DoubleTaser;
-	}
 	else
 	{
 		// sanity check!
-		assert(Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser));
+		assert(Weapon.HasFireMode(FireMode_DoubleTaser));
 
-		return FireMode_Single;
+		return FireMode_DoubleTaser;
 	}
 }
 
