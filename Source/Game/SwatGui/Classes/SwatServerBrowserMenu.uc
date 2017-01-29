@@ -95,7 +95,7 @@ function InitComponent(GUIComponent MyOwner)
     MyNameBox.OnChange=UpdateJoinableState;
     MyNameBox.MaxWidth = GC.MPNameLength;
     MyNameBox.AllowedCharSet = GC.MPNameAllowableCharSet;
-    
+
 	LockedIcon=GUIImage(Controller.CreateComponent("GUI.GUIImage","Canvas_LockedIcon"));
 	StatsIcon=GUIImage(Controller.CreateComponent("GUI.GUIImage","Canvas_StatsIcon"));
 	LockedStatsIcon=GUIImage(Controller.CreateComponent("GUI.GUIImage","Canvas_LockedStatsIcon"));
@@ -107,7 +107,7 @@ function InternalOnActivate()
 
     BuildVersion = PlayerOwner().Level.BuildVersion;
     ModName = PlayerOwner().Level.ModName;
-    
+
     VersionLabel.SetCaption( FormatTextString( VersionFormatString, BuildVersion ) );
     if( ModName ~= "SWAT 4X" )
         ModLabel.SetCaption( "" );
@@ -126,21 +126,21 @@ function InternalOnActivate()
 	}
 
     CreatePingClient();
-    
+
     if( !SGSM.bInitialised )
     {
         SGSM.InitGameSpyClient();
     }
-    
+
     SGSM.OnUpdatedServer = OnUpdatedGameSpyServer;
 
     bUseGameSpy = GC.bViewingGameSpy;
-    
+
     MyFiltersButton.SetEnabled( bUseGameSpy );
-    
+
     // alwyas re-enable refresh when activating the SB
     MyRefreshButton.EnableComponent();
-    
+
     if( bUseGameSpy )
         MyUseGameSpyButton.SelectRadioButton();
     else
@@ -174,7 +174,7 @@ function InternalOnDeActivate()
 
 	SwatPlayerController(PlayerOwner()).SetName( MyNameBox.GetText() );
     GC.bViewingGameSpy = bUseGameSpy;
-    GC.SaveConfig();    
+    GC.SaveConfig();
 }
 
 function OnQueryPatchResult(bool bNeeded, bool bMandatory, string versionName, string URL)
@@ -250,15 +250,15 @@ private function NetworkModeSelected( GUIComponent sender )
     log( "...NetworkModeSelected() bUseGameSpy="$bUseGameSpy$" MyUseGameSpyButton.bChecked = "$MyUseGameSpyButton.bChecked);
 
 #if PREVENT_SPILLOVER_INTO_LAN
-    // If we're changing modes from Internet to Lan, then 
+    // If we're changing modes from Internet to Lan, then
     // cancel any outstanding internet pings. This will not prevent them
 	// from being sent to OnReceivedPingInfoForUpdate(), but it will
 	// cause their ping to be 9999. We'll use this magic ping value
-	// to filter them out of the LAN browser. 
+	// to filter them out of the LAN browser.
 	//
 	// Yes, this is a horrible HACK. The right way to do it would be
 	// to put some flag in the ServerResponseLine structure that
-	// indicates whether it's a LAN or Internet ping and filter based 
+	// indicates whether it's a LAN or Internet ping and filter based
 	// on that.
     if (bUseGameSpy && !MyUseGameSpyButton.bChecked)
     {
@@ -387,7 +387,7 @@ function AttemptURL( string URL )
     if( MyNameBox.GetText() != "" )
         URL = URL $ "?Name=" $ MyNameBox.GetText();
     log( "Trying to join to: " $ URL );
-    SwatGUIController(Controller).LoadLevel(URL); 
+    SwatGUIController(Controller).LoadLevel(URL);
 }
 
 function InternalOnClick(GUIComponent Sender)
@@ -399,7 +399,7 @@ function InternalOnClick(GUIComponent Sender)
 	switch (Sender)
 	{
 	    case MyQuitButton:
-            Quit(); 
+            Quit();
             break;
 		case StartButton:
     	    URL = MyServerListBox.GetColumn( "IPAddress" ).GetExtra();
@@ -409,7 +409,7 @@ function InternalOnClick(GUIComponent Sender)
                 AttemptURL( URL );
             break;
 		case MyMainMenuButton:
-            Controller.CloseMenu(); 
+            Controller.CloseMenu();
             break;
 		case MyUpdateButton:
             UpdateServerList();
@@ -443,7 +443,7 @@ private function DebugAddServer()
 {
     local GameInfo.ServerResponseLine s;
     local GameInfo.KeyValuePair kvp;
-    
+
     debugID++;
     if( debugID >= 5000 )
     {
@@ -451,7 +451,7 @@ private function DebugAddServer()
         bDebugging=false;
         return;
     }
-    
+
     s.MaxPlayers = Rand(16)+1;
     s.CurrentPlayers = Rand(s.MaxPlayers+1);
 
@@ -471,7 +471,7 @@ private function DebugAddServer()
             s.MapName = "MP-Powerplant";
             break;
     }
-    
+
     switch (rand(4))
     {
         case 0:
@@ -487,17 +487,17 @@ private function DebugAddServer()
             s.ServerName = "Terrys Torture Chamber";
             break;
     }
-    
+
     s.IP = Rand(256)$"."$Rand(256)$"."$Rand(256)$"."$Rand(256);
     s.Port = rand(32768);
 
     s.Ping = rand(debugID+10);
-    
+
     kvp.Key = "password";
     kvp.Value = string(rand(2));
 
     s.ServerInfo[0] = kvp;
-    
+
     OnReceivedPingInfoForUpdate( debugID, PC_AutoPing, s );
 }
 
@@ -543,19 +543,19 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
     log( "......Ping="$s.Ping );
     log( "......theServerFilters.MaxPing ="$GC.theServerFilters.MaxPing );
 #endif
-    
+
 	// Gamespy filters servers based on the info (e.g., ping, playercount) sent
 	// from the server to gamespy's server.
 	// But since we re-query the server, it might have changed since gamespy
-	// last queried it. So we have to do some redundant filtering here. 
+	// last queried it. So we have to do some redundant filtering here.
 	if( GC.theServerFilters.MaxPing > 0 && s.Ping > GC.theServerFilters.MaxPing )
 		return; // doesn't meet max ping filter
 	if( GC.theServerFilters.bFull && (s.MaxPlayers - s.CurrentPlayers <= 0))
 		return; // doesn't meet full server filter
-		
+
 // dbeswick: integrated 20/6/05
 #if PREVENT_SPILLOVER_INTO_LAN
-    // HACK! Prevent pings from internet games from spilling over into lan 
+    // HACK! Prevent pings from internet games from spilling over into lan
     // listing when we switch from internet to lan before the full list
     // of internet games has been returned.
 	if (s.Ping >= 9998 && !MyUseGameSpyButton.bChecked)
@@ -814,15 +814,15 @@ private function RefreshEnabled()
 {
     local bool bEnableStart;
     local string maxPlayers, numPlayers;
-    
+
     maxPlayers = MyServerListBox.GetColumn( "numPlayers" ).GetExtra();
     numPlayers = GetFirstField( maxPlayers, "/" );
-    
-    bEnableStart = 
+
+    bEnableStart =
         MyNameBox.GetText() != "" &&
         MyServerListBox.GetIndex() >= 0 &&
         numPlayers != maxPlayers;
-          
+
     StartButton.SetEnabled( bEnableStart );
 }
 
@@ -836,12 +836,12 @@ defaultproperties
 	OnDeActivate=InternalOnDeActivate
     bUseGamespy=true
     MaxResults=500
-    
+
     ConnectPasswordQueryString="Please enter the Password for the selected server:"
-    
+
     VersionFormatString="Version: %1"
     ModFormatString="Mod: %1"
-    
+
     CompatibleColorString="[c=00ff00]"
     InCompatibleColorString="[c=ff0000]"
 }
