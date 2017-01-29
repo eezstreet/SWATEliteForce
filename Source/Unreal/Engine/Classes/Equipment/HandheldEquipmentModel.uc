@@ -116,7 +116,7 @@ simulated event FellOutOfWorld(eKillZType KillType)
         {
             //AssertWithDescription( false, "!!!! WARNING !!!!! Destroying actor "$self$" because it fell out of world at location "$Location.X$", "$Location.Y$", "$Location.Z);
             mplog( "...on server" );
-        }    
+        }
 
         if ( Level.Netmode != NM_Standalone )
         {
@@ -134,7 +134,7 @@ simulated event FellOutOfWorld(eKillZType KillType)
 
         if (Level.GetEngine().EnableDevTools)
             mplog( "...destroying." );
-        
+
         Destroy();
     }
     else
@@ -154,7 +154,7 @@ simulated event FellOutOfWorld(eKillZType KillType)
             Move( MovementDelta );
         }
     }
-}	
+}
 
 
 simulated function ProcessAtRestValuesFromServer( Vector ServerLocation, rotator ServerRotation )
@@ -192,30 +192,6 @@ simulated function SetHandHeldEquipment(HandheldEquipment HHE)
             "[tcohen] You cannot assign None as the HandheldEquipment of HandheldEquipmentModel "$class.name);
 
 	self.HandheldEquipment = HHE;
- 
-	// Check for errors in the weapon model setup.
-	if (DrawType != DT_Mesh)
-    {
-        assertWithDescription(EquipAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies an EquipAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-        assertWithDescription(UnEquipAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies an UnEquipAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-        assertWithDescription(UseAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a UeAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-		assertWithDescription(MeleeAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a MeleeAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-    }
 }
 
 simulated function bool IsEquipped() { return bIsEquipped; }
@@ -241,7 +217,7 @@ simulated function PlayEquip()
     //play any specified animations on model and holder
     if (EquipAnimation != '')
         PlayAnim(
-            EquipAnimation, 
+            EquipAnimation,
             HandheldEquipment.EquipAnimationRate);
     if (HolderEquipAnimation != '')
     {
@@ -249,15 +225,15 @@ simulated function PlayEquip()
         {
             HolderEquipAnimationChannel = Pawn(Owner).AnimPlayEquipment(
 				kAPT_Normal,
-                HolderEquipAnimation, 
-                HolderEquipTweenTime, 
+                HolderEquipAnimation,
+                HolderEquipTweenTime,
                 HolderAnimationRootBone,
                 HandheldEquipment.EquipAnimationRate);
         }
         else
         {
             Owner.PlayAnim(
-                HolderEquipAnimation, 
+                HolderEquipAnimation,
                 HandheldEquipment.EquipAnimationRate,
 				HolderEquipTweenTime);
             HolderEquipAnimationChannel = 0;
@@ -323,15 +299,15 @@ simulated function PlayUnequip()
         {
             HolderUnequipAnimationChannel = Pawn(Owner).AnimPlayEquipment(
 				kAPT_Normal,
-                HolderUnequipAnimationForContext, 
-                , 
+                HolderUnequipAnimationForContext,
+                ,
                 HolderAnimationRootBone,
                 HandheldEquipment.UnequipAnimationRate);
         }
         else
         {
             Owner.PlayAnim(
-                HolderUnequipAnimationForContext, 
+                HolderUnequipAnimationForContext,
                 HandheldEquipment.UnequipAnimationRate,
                 0.5);   //tween time
             HolderUnEquipAnimationChannel = 0;
@@ -396,12 +372,12 @@ simulated function OnUnequipKeyFrame()
     //mplog( self$"---HEM::OnUnequipKeyFrame()." );
 
     Owner.DetachFromBone(self);
-    
+
     if (UnequippedSocket != '')
         Owner.AttachToBone(self, UnequippedSocket);
     else
         Hide();
-    
+
     SetEquipped(false);
 }
 
@@ -427,25 +403,25 @@ simulated function PlayUse(float TweenTime)
             {
                 HolderUseAnimationChannel = Pawn(Owner).AnimPlayEquipment(
 					kAPT_Normal,
-                    SelectedHolderUseAnimation, 
-                    , 
-                    HolderAnimationRootBone, 
+                    SelectedHolderUseAnimation,
+                    ,
+                    HolderAnimationRootBone,
                     SelectedHolderUseAnimationRate);
             }
             else
             {
                 HolderUseAnimationChannel = Pawn(Owner).AnimPlayEquipment(
                     AnimPlayType,
-                    SelectedHolderUseAnimation, 
-                    , 
-                    HolderAnimationRootBone, 
+                    SelectedHolderUseAnimation,
+                    ,
+                    HolderAnimationRootBone,
                     SelectedHolderUseAnimationRate);
             }
         }
         else
         {
             Owner.PlayAnim(
-                SelectedHolderUseAnimation, 
+                SelectedHolderUseAnimation,
                 SelectedHolderUseAnimationRate);
             HolderUseAnimationChannel = 0;
         }
@@ -490,7 +466,7 @@ simulated function PlayMelee()
 {
     SelectedMeleeAnimation = SelectMeleeAnimation();
     SelectedHolderMeleeAnimation = SelectHolderMeleeAnimation();
-    
+
     //play any specified animations on model and holder
     if (SelectedMeleeAnimation != '')
         PlayAnim(SelectedMeleeAnimation, HandheldEquipment.MeleeAnimationRate);
@@ -501,8 +477,8 @@ simulated function PlayMelee()
 		{
             HolderMeleeAnimationChannel = Pawn(Owner).AnimPlayEquipment(
 				kAPT_Normal,
-                SelectedHolderMeleeAnimation, 
-                MeleeTweenTime, 
+                SelectedHolderMeleeAnimation,
+                MeleeTweenTime,
                 HolderAnimationRootBone,
                 HandheldEquipment.MeleeAnimationRate);
 		}
@@ -657,7 +633,7 @@ simulated function String UniqueID()
 
     if ( PrecomputedUniqueID != "" )
         return PrecomputedUniqueID;
-    
+
     CacheUniqueID = false; // by default, don't cache it
 
     //mplog( self$"---HEM::UniqueID(). No cached UniqueID, computing one..." );
@@ -720,7 +696,7 @@ simulated function String UniqueID()
     // time this function is called.
     if ( CacheUniqueID )
         SetUniqueID( NewUniqueID );
-        
+
     return NewUniqueID;
 }
 
