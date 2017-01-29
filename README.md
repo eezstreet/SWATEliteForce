@@ -13,11 +13,16 @@ I originally wanted to try and market this mod as a police officer trainer, but 
 I wish I could do more with the game. I'm not an artist by any means, so a lot of the other things that I wish I could do (TASER rounds for shotguns, fixing a lot of the bad bump maps and flat shaded textures) aren't in the pipes. I do plan on dabbling with maps at some point, so there may be a custom campaign. I may include some community maps as part of the new campaign.
 
 # HOW TO INSTALL #
-Copy the folder containing this folder (SEFMod) into your SWAT 4 directory (the one containing Content and ContentExpansion).
+Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
 By default this folder is located in C:/Program Files (x86)/SWAT 4 or C:/Program Files (x86)/Sierra/SWAT 4
+
+!!! CAUTION !!!
+Do not extract the SEF folder *into* your Content or ContentExpansion folders (and therefore overwrite things), otherwise the mod will not work correctly.
 
 To run the game, use the "Launch SEFMod.bat" file. To run SWATEd, use the "Launch SwatEd.bat" file.
 You can make a shortcut to these .bat files for more convenience.
+
+The mod can be removed by deleting the SEF folder from your hard drive.
 
 # VERSION HISTORY #
 
@@ -43,33 +48,62 @@ You can make a shortcut to these .bat files for more convenience.
 - New set of commands in singleplayer: LEADER THROW. These commands allow you to use a grenade instead of your AI companions.
   * For hold commands, when the INITIATE command is done, officers will blow/open the door, and will only enter after you use a grenade. Therefore, you only need one grenade for a double entry.
   * These commands work for both thrown grenades and the grenade launcher, and they're "one-command-fits all" (OPEN, LEADER & CLEAR accepts flashbangs, CS gas and sting grenades without needing to pick in the menu)
-- Suspect AI got a slight nerf to be more realistic
+- Many changes to both the officer and suspect AI to make them both better.
 - The console has been improved.
 - Completely redid all of the campaign progression/unlocks.
-- Texture packs can now be used in online games.
 - You can now lock doors using the toolkit.
 
 #### MINOR FEATURES / FULL CHANGES ####
 - Added Meat Barn Restaurant extra mission
-- Applied weight and bulk to every piece of equipment.
-- Removed all CD key checks from the game. (They were bugged, and this game can't be purchased legally anymore.)
-- Removed checksum for all Unreal packages - so now you can play online with custom models, textures, etc. [In theory]
-- Multiplayer Setup: Server name field raised to 128 characters (up from 20)
-- The console will no longer close after entering a command. (Close with ESC key instead)
-- The console will show a log of commands entered as well as output.
-- Added a new console command: "history" (toggles the console log)
-- AI SWAT members will take less time shouting at noncompliant civilians
-- AI SWAT members will clear rooms quicker and won't form a "death funnel" at doors nearly as easily.
-- New penalty: Tased a fellow officer
-- Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
+- AI improvements: SWAT officers no longer stare down noncompliant civilians for days
+- AI improvements: SWAT officers will no longer form "death funnels" as easily in doors - they will engage with suspects while moving through doors.
+- AI improvements: Suspects are more likely to play a Get-Hit animation when they are injured and are less accurate in general
+- AI improvements: Suspects will no longer shoot instantaneously at SWAT officers. There is a small delay, dependent on skill level.
+- AI improvements: Suspects will now shoot at SWAT officers while on the move. The chance is dependent on the skill level of the suspect.
+- Fixed TSS bug/AI Improvements: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
+- Fixed TSS bug: Glitchy arrests with No Armor
+- Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
+- Fixed TSS bug: Pregame not showing HTML styling of server name
+- Fixed TSS bug: Glock not selectable in Custom Mission Maker
+- Fixed TSS bug: Taser recoil applying to every player on the map
+- Fixed TSS bug: Server name field in Multiplayer Setup not matching the actual number of characters that could be used
+- Fixed TSS bug: When using Deploy C2 command, AI will pick the lock if they are out of C2
+- Fixed SEF bug: Join Game button on menu not appearing
+- Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
+- Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
+- Fixed SEF bug: Sniper rifle not accurate
+- Fixed SEF bug: Wrong resolution in options menu (1600x1050 -> 1680x1050)
+- Fixed SEF bug: Wrong window title ("MyMod" -> "SWAT: Elite Force")
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
-- When an AI is issued a BREACH command, and they are out of breaching equipment, they will now only pick the lock when the door is locked, instead of always picking the lock.
-- The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
+- Equipment is now affected by Weight and Bulk. Weight, which represents how heavy your equipment is, slows your character down, and Bulk, which represents how large your equipment is, slows down your actions.
 - The toolkit can now be used to lock doors.
+- The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
+- FMJ and buckshot can now ricochet off of hard surfaces
+- Bullets are now affected by drag; they will lose momentum (and therefore lethality) over long distances. JHP is more susceptible to drag than FMJ rounds.
+- Heavy Armor now has "health". It will protect against rifle rounds almost perfectly but will lose that ability with successive shots.
+- JHP does slightly more bullet-expansion ("internal damage") damage to account for drag.
 - Redid all of the campaign progression/unlocks
-- Removed the VIP Colt M1911 (for now)
 - Added "Take Screenshot" option to controls menu
+- Minor changes to the compliance system (see the detailed section below for a full list of changes)
 - Civilians are now not ridiculously noncompliant like they were before
+- Incapacitation health increased from 20 to 30, so incapacitation is more likely
+- All pistols are selectable in primary weapon slots.
+- Ammo Bandolier item removed
+- VIP Colt M1911 removed
+- Officers get (by default) 3 primary magazines and 5 secondary magazines. The only exception is Jackson, who gets 25 shotgun shells.
+- You can no longer edit your equipment in Multiplayer while you are ready. Unready yourself first.
+- You can no longer ready in Multiplayer while your equipment is over weight or bulk.
+- If your equipment is over weight in multiplayer, it will be replaced with the default loadout.
+- Mapmakers now have the ability for Rosters (bombs/enemies/hostages/etc) to be based on difficulty level.
+- The scoring system has been changed. There is no longer a bonus for no suspects incapacitated or killed. Elite difficulty now requires 90 instead of 95 score to complete.
+- Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
+- Console upgrades: The console will no longer close after entering a command (use the ESC key)
+- Console upgrades: The console will show a log of commands used and show the output of commands
+- Console upgrades: New console command "history"
+
+## COMPLIANCE CHANGES ##
+The compliance system has been changed slightly. Civilians are not nearly as noncompliant as before, but all of the changes required their own section.
+
 - Greatly increased the effectiveness of Stinger grenades against Hostage and Suspect morale. They're as good as Tasers now.
 - Greatly increased the area of effect for Stinger grenades.
 - Doubled the duration of effect for CS gas but greatly reduced its morale modifier
@@ -78,33 +112,60 @@ You can make a shortcut to these .bat files for more convenience.
 - Slightly reduced the effectiveness of C2 against Hostage morale
 - Removed a slight (< 1 second) delay from AI being affected by Stinger and Flashbangs. (it still exists for CS gas)
 - Reduced duration of effect of Pepperball gun by 50%
-- FMJ and buckshot can now ricochet off of hard surfaces
-- Suspects will now have a slight delay before firing upon SWAT officers. Depending on how skilled the suspect is, it can range between 0.3 and 0.9 seconds.
-- Incapacitation health increased from 20 to 30, so incapacitation is more likely
-- Suspects are more likely to play a gethit animation (so they shrug off bullets less often)
-- Suspects are slightly less accurate
-- All pistols are selectable in primary weapon slots.
-- Ammo Bandolier item removed
-- Officers get (by default) 3 primary magazines and 5 secondary magazines. The only exception is Jackson, who gets 25 shotgun shells.
-- You can no longer edit your equipment in Multiplayer while you are ready. Unready yourself first.
-- You can no longer ready in Multiplayer while your equipment is over weight or bulk.
-- If your equipment is over weight in multiplayer, it will be replaced with the default loadout.
-- Mapmakers now have the ability for Rosters (bombs/enemies/hostages/etc) to be based on difficulty level.
-- The scoring system has been changed. There is no longer a bonus for no suspects incapacitated or killed. Elite difficulty now requires 90 instead of 95 score to complete.
-- Fixed TSS bug: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
-- Fixed TSS bug: Glitchy arrests with No Armor
-- Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
-- Fixed TSS bug: Pregame not showing HTML styling of server name
-- Fixed TSS bug: Glock not selectable in Custom Mission Maker
-- Fixed TSS bug: Taser recoil applying to every player on the map
-- Fixed SEF bug: Join Game button on menu not appearing
-- Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
-- Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
-- Fixed SEF bug: Sniper rifle not accurate
-- Fixed SEF bug: Wrong resolution in options menu (1600x1050 -> 1680x1050)
-- Fixed SEF bug: Wrong window title ("MyMod" -> "SWAT: Elite Force")
 
-## PER-MAP CHANGES (possible spoilers) ##
+## SCORING SYSTEM ##
+The scoring system has been altered:
+
+#### BONUSES ####
+- Mission Completed: Awarded when all of the mission objectives are completed. 
+ * Points: 45
+- Suspects Arrested: Bonus based on the amount of suspects secured. 
+ * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
+- Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
+ * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
+- Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
+ * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
+- No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
+ * Points: 5
+- No Officers Downed: Bonus based on the amount of incapacitated officers. 
+ * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
+- Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. 
+ * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
+- Report Status to TOC: Bonus based on the amount of reports to TOC. 
+ * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
+- All Evidence Secured: Bonus based on the amount of evidence collected. 
+ * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
+
+#### PENALTIES: ####
+- Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+ * Points: -5 per suspect.
+- Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+ * Points: -20 per suspect.
+- Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+ * Points: -20 per hostage.
+- Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission. 
+ * Points: -50 per hostage.
+- Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire. 
+ * Points: -10 per officer.
+- Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator. 
+ * Points: -25 per officer.
+- Tased a fellow officer: Given when an officer uses a taser another officer. 
+ * Points: -5 per infraction.
+- Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it. 
+ * Points: -10 per trap.
+- Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area. 
+ * Points: -5 per suspect.
+- Failed to report a downed officer: Given when a downed officer is not reported to TOC: 
+ * Points: -5 per downed officer
+- Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: 
+ * Points: -5 per downed suspect
+- Failed to report a downed hostage: Given when a downed hostage is not reported to TOC: 
+ * Points: -5 per downed hostage
+
+## PER-MAP CHANGES ##
+
+!!!! WARNING !!!! From here down, there are possible spoilers if you have not played the TSS and SWAT 4 campaigns.
+
 * Fairfax Residence
   - Lawrence Fairfax: Max Morale (0.75 -> 1.0)
   - Fairfax Accomplice: Max Morale (0.75 -> 0.6)
@@ -171,6 +232,7 @@ You can make a shortcut to these .bat files for more convenience.
 #### NITTY GRITTY/TYPOS AND STATS ####
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
 * HUGE thanks to Jose21Crisis for crunching a lot of these numbers for me.
+* NOTE: This section may not be completely accurate as some of the stats were changed in developments
 
 Weapon Stats
 - Colt Accurized Rifle: Muzzle Velocity (61261 -> 47838)
@@ -274,55 +336,6 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Old Granite Hotel (AK-47)
 - Mt. Threshold Research Center (M249 SAW)
 
-## SCORING SYSTEM ##
-The scoring system has been altered:
-
-#### BONUSES ####
-- Mission Completed: Awarded when all of the mission objectives are completed. 
- * Points: 45
-- Suspects Arrested: Bonus based on the amount of suspects secured. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
-- Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
-- Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
-- No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
- * Points: 5
-- No Officers Downed: Bonus based on the amount of incapacitated officers. 
- * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
-- Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. 
- * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
-- Report Status to TOC: Bonus based on the amount of reports to TOC. 
- * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
-- All Evidence Secured: Bonus based on the amount of evidence collected. 
- * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
-
-#### PENALTIES: ####
-- Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
- * Points: -5 per suspect.
-- Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
- * Points: -20 per suspect.
-- Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
- * Points: -20 per hostage.
-- Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission. 
- * Points: -50 per hostage.
-- Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire. 
- * Points: -10 per officer.
-- Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator. 
- * Points: -25 per officer.
-- Tased a fellow officer: Given when an officer uses a taser another officer. 
- * Points: -5 per infraction.
-- Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it. 
- * Points: -10 per trap.
-- Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area. 
- * Points: -5 per suspect.
-- Failed to report a downed officer: Given when a downed officer is not reported to TOC: 
- * Points: -5 per downed officer
-- Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: 
- * Points: -5 per downed suspect
-- Failed to report a downed hostage: Given when a downed hostage is not reported to TOC: 
- * Points: -5 per downed hostage
-
 #### FILES MODIFIED ####
 Content/Classes/SwatEffects.u
 Content/Classes/SwatProtectiveEquipment.u
@@ -367,6 +380,7 @@ System/MissionObjectives.ini
 System/ObjectiveSpecs.ini
 System/PlayerInterface_Command_SP.ini
 System/PlayerInterface_Fire.ini
+System/SoundEffects.ini
 System/Startup.ini
 System/StaticLoadout.ini
 System/SwatAmmo.int
@@ -450,6 +464,7 @@ Generated code
 - First release
 
 # CHANGES, SUMMARIZED #
+NOTENOTE: This needs to be updated to match all of the changes in V4!!
 
 As mentioned before, there were many inaccuracies with the game. I went for those first, before addressing some of my other grievances with the game: mainly the cut content and clunky expansion pack content.
 Some of the changes are as follows.
