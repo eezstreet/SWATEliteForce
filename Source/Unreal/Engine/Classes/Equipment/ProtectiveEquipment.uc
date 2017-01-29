@@ -41,7 +41,7 @@ function OnGivenToOwner()
 
     QualifyProtectedRegion();
 
-    if(ProtectedRegion != REGION_None)
+    //if(ProtectedRegion != REGION_None) // this line apparently breaks the gas mask --eez
       PawnOwner.SetProtection(ProtectedRegion, self);
 
     if (WearerMesh != None && WearerMesh != PawnOwner.Mesh)
