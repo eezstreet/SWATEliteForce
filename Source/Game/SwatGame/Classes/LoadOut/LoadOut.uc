@@ -668,7 +668,19 @@ function HandheldEquipment FindItemToReplace(HandheldEquipment PickedUp)
 
 simulated function OnPickedUp(HandheldEquipment Item)
 {
+  local SwatWeapon Weapon;
+
     AddExistingItemToPocket(FindItemToReplace(Item).GetPocket(), Item);
+
+    if(Item.IsA('RoundBasedWeapon')) {
+      Weapon = SwatWeapon(Item);
+      Weapon.Ammo.InitializeAmmo(25);
+    }
+    else if(Item.IsA('ClipBasedWeapon')) {
+      // We need to make sure the item has 5 magazines to start out with.
+      Weapon = SwatWeapon(Item);
+      Weapon.Ammo.InitializeAmmo(5);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -753,14 +765,16 @@ function float GetWeightMovementModifier() {
   minMoveModifier = GetMinimumMovementModifier();
   maxMoveModifier = GetMaximumMovementModifier();
 
+  if(totalWeight < minWeight) {
+    // There are legitimate reasons that we don't meet the minimum weight - Training mission comes to mind
+    totalWeight = minWeight;
+  }
+
   assertWithDescription(totalWeight <= maxWeight,
     "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in code.");
-  assertWithDescription(totalWeight >= minWeight,
-    "Loadout "$self$" doesn't meet minimum weight ("$totalWeight$" < "$minWeight$"). Adjust the value in code.");
 
   totalWeight -= minWeight;
   maxWeight -= minWeight;
-
 
   return ((totalWeight / maxWeight) * (minMoveModifier - maxMoveModifier)) + maxMoveModifier;
 }
@@ -776,10 +790,13 @@ function float GetBulkQualifyModifier() {
   minQualifyModifier = GetMinimumQualifyModifer();
   maxQualifyModifier = GetMaximumQualifyModifer();
 
+  if(totalBulk < minBulk) {
+    // There are legitimate reasons that we don't meet the minimum bulk - Training mission comes to mind
+    totalBulk = minBulk;
+  }
+
   assertWithDescription(totalBulk <= maxBulk,
     "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
-  assertWithDescription(totalBulk >= minBulk,
-    "Loadout "$self$" doesn't meet minimum bulk ("$totalBulk$" < "$minBulk$"). Adjust the value in code.");
 
   totalBulk -= minBulk;
   maxBulk -= minBulk;

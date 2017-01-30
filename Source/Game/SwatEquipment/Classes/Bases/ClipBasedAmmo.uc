@@ -35,6 +35,10 @@ simulated function InitializeAmmo(int StartingAmmoAmount) {
 	local FiredWeapon Weapon;
 	local int i;
 
+	if(StartingAmmoAmount <= 0) {
+		StartingAmmoAmount = 5;
+	}
+
 	for(i=0; i < MAX_CLIPS; i++) {
 		ClipRoundsRemaining[i] = INVALID_CLIP;
 	}

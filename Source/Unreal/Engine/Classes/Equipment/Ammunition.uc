@@ -78,6 +78,17 @@ static function class<Actor> GetRenderableActorClass()
     return default.Class;
 }
 
+simulated function bool CanShredArmor()
+{
+  return true;
+}
+
+simulated function BallisticsLog(string Message) {
+  if(Level.AnalyzeBallistics) {
+    log("[BALLISTICS] "$Message);
+  }
+}
+
 simulated function int GetClip( int index ) { Assert(false); return 0; } //subclasses must implement
 simulated function SetClip(int index, int amount) { Assert(false); } //subclasses must implement
 simulated function int GetCurrentClip() { Assert(false); return 0; } //subclasses must implement
@@ -85,6 +96,7 @@ simulated function SetCurrentClip(int Clip) { Assert(false); } //subclasses must
 
 simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector NormalizedBulletDirection, Material HitMaterial, float Momentum, int BounceNumber);
 simulated function float GetRicochetMomentumModifier();
+simulated function float GetDrag();
 
 defaultproperties
 {

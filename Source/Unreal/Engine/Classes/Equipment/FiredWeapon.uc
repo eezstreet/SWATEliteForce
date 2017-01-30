@@ -397,10 +397,16 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
       NewExitMaterial
     )
   {
-      log("[Ballistics] Ricochet bullet made an impact on Victim="$NewVictim$
+      Ammo.BallisticsLog("Ricochet bullet made an impact on Victim="$NewVictim$
           ", NewHitLocation="$NewHitLocation$
           ", NewHitNormal="$NewHitNormal$
           ", NewHitMaterial="$NewHitMaterial.MaterialVisualType);
+
+      Ammo.BallisticsLog("Momentum (before drag): "$Momentum);
+      // Reduce the bullet's momentum by drag
+      Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - HitLocation);
+      Ammo.BallisticsLog("Momentum (after drag): "$Momentum);
+
       if(Ammo.CanRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount)) {
         // the bullet ricocheted from the material
         DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount);
@@ -431,16 +437,13 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 
     Momentum = MuzzleVelocity * Ammo.Mass;
 
-    if (Level.AnalyzeBallistics)
-    {
-        log("[BALLISTICS] BallisticFire(): Weapon "$name
-            $", shot by "$Owner.name
-            $", has MuzzleVelocity="$MuzzleVelocity
-            $", Ammo "$Ammo.name
-            $" has Mass="$Ammo.Mass
-            $".  Initial Momentum is "$Momentum
-            $".");
-    }
+    Ammo.BallisticsLog("BallisticFire(): Weapon "$name
+        $", shot by "$Owner.name
+        $", has MuzzleVelocity="$MuzzleVelocity
+        $", Ammo "$Ammo.name
+        $" has Mass="$Ammo.Mass
+        $".  Initial Momentum is "$Momentum
+        $".");
 
     foreach TraceActors(
         class'Actor',
@@ -459,6 +462,10 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         ExitNormal,
         ExitMaterial )
     {
+        Ammo.BallisticsLog("IMPACT: Momentum before drag: "$Momentum);
+        Momentum -= Ammo.GetDrag() * VSize(HitLocation - StartTrace);
+        Ammo.BallisticsLog("IMPACT: Momentum after drag: "$Momentum);
+
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
         if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
           // Do a ricochet
@@ -523,10 +530,7 @@ simulated function bool HandleBallisticImpact(
     // handle that as a special case.
     if ((Victim.bHidden || Victim.DrawType == DT_None) && !(Victim.IsA('LevelInfo')))
     {
-        if (Level.AnalyzeBallistics)
-        {
-            log("BallisticFire: Skipping bHidden=true Victim "$Victim.Name$" of class "$Victim.class.name);
-        }
+        Ammo.BallisticsLog("BallisticFire: Skipping bHidden=true Victim "$Victim.Name$" of class "$Victim.class.name);
         return true;    //penetrates, no damage or momentum lost
     }
 
@@ -537,10 +541,7 @@ simulated function bool HandleBallisticImpact(
 	if (Owner.IsA('SwatOfficer') &&
 		(Victim.IsA('SwatOfficer') || (Victim.IsA('SwatPlayer') && !Pawn(Owner).IsAttackingPlayer())))
 	{
-        if (Level.AnalyzeBallistics)
-        {
-            log("BallisticFire: Skipping Victim "$Victim.Name$" of class "$Victim.class.name$" because officers shouldn't hit other friendly officers/players");
-        }
+    Ammo.BallisticsLog("BallisticFire: Skipping Victim "$Victim.Name$" of class "$Victim.class.name$" because officers shouldn't hit other friendly officers/players");
 		return false;   //friendly fire... blocked, no effects
 	}
 
@@ -550,13 +551,10 @@ simulated function bool HandleBallisticImpact(
 	if( (Victim.bHighDetail && Level.DetailMode == DM_Low)
          || (Victim.bSuperHighDetail && Level.DetailMode != DM_SuperHigh))
     {
-        if (Level.AnalyzeBallistics)
-        {
-            log("BallisticFire: Skipping Victim "$Victim.Name$" of class "$Victim.class.name$
+        Ammo.BallisticsLog("BallisticFire: Skipping Victim "$Victim.Name$" of class "$Victim.class.name$
                 " because Level.DetailMode="$GetEnum(EDetailMode, Level.DetailMode)$
                 " and Victim.bHighDetail="$Victim.bHighDetail$
                 " and Victim.bSuperHighDetail="$Victim.bSuperHighDetail);
-        }
         return true;    //penetrates, no damage or momentum lost
     }
 
@@ -600,10 +598,7 @@ simulated function bool HandleBallisticImpact(
 
     if (HitMaterial == None) // weird situation, should trigger FX but not block the bullet (or should it?)
     {
-        if (Level.AnalyzeBallistics)
-        {
-            Log("[WARNING!!] BallisticFire: Trace hit Victim "$Victim$" of class "$Victim.class.name$", HitMaterial is None, treating as if no momentum required to penetrate.");
-        }
+        Ammo.BallisticsLog("[WARNING!!] BallisticFire: Trace hit Victim "$Victim$" of class "$Victim.class.name$", HitMaterial is None, treating as if no momentum required to penetrate.");
         MomentumLostToVictim = 0;
     }
     else
@@ -669,68 +664,64 @@ simulated function bool HandleBallisticImpact(
     }
 #endif // IG_EFFECTS
 
-    if (Level.AnalyzeBallistics)
+    Ammo.BallisticsLog("  ->  Remaining Momentum is "$Momentum$". Bullet hit Victim "$Victim.name);
+
+    if (HitMaterial != None)
+        Ammo.BallisticsLog("  ... HitMaterial = "$HitMaterial);
+    else
+        Ammo.BallisticsLog("  ... HitMaterial = None");
+
+    Ammo.BallisticsLog("  ... MomentumToPenetrateVictim is "$MomentumToPenetrateVictim$", so the bullet will lose "$MomentumLostToVictim$" momentum to the Victim.");
+
+    if ( HitRegion != REGION_None && Victim.IsA( 'IHaveSkeletalRegions' ) )
     {
-        log("[BALLISTICS]   ->  Remaining Momentum is "$Momentum$". Bullet hit Victim "$Victim.name);
-
-        // Prevent None material from screwing up the log() call
-        if (HitMaterial != None)
-            log("[BALLISTICS]   ... HitMaterial = "$HitMaterial);
-        else
-            log("[BALLISTICS]   ... HitMaterial = None");
-
-        log("[BALLISTICS]   ... MomentumToPenetrateVictim is "$MomentumToPenetrateVictim$", so the bullet will lose "$MomentumLostToVictim$" momentum to the Victim.");
-
-        if ( HitRegion != REGION_None && Victim.IsA( 'IHaveSkeletalRegions' ) )
+        Ammo.BallisticsLog("  ... Victim has SkeletalRegions.  "$GetEnum(ESkeletalRegion, HitRegion)$" was hit.");
+        if (Protection != None)
+            Ammo.BallisticsLog("  ... (Region is protected by "$Protection.class.name$".)");
+        if ( OverrideArmDamageModifier != 0 && (HitRegion == REGION_LeftArm || HitRegion == REGION_RightArm) )
         {
-            log("[BALLISTICS]   ... Victim has SkeletalRegions.  "$GetEnum(ESkeletalRegion, HitRegion)$" was hit.");
-            if (Protection != None)
-                log("[BALLISTICS]   ... (Region is protected by "$Protection.class.name$".)");
-            if ( OverrideArmDamageModifier != 0 && (HitRegion == REGION_LeftArm || HitRegion == REGION_RightArm) )
-            {
-                log("[BALLISTICS]   ... DamageModifier from the skeletal region was overriden for this arm hit, the OverrideArmDamageModifier is: "
-                    $OverrideArmDamageModifier);
-            }
-            else
-            {
-                log("[BALLISTICS]   ... DamageModifier from the skeletal region is on the Range (Min="$SkeletalRegionInformation.DamageModifier.Min
-                    $", Max="$SkeletalRegionInformation.DamageModifier.Max
-                    $"), Selected "$DamageModifier
-                    $".");
-            }
-            log("[BALLISTICS]   ... ExternalDamageModifier = "$ExternalDamageModifier
-                $".");
-            log("[BALLISTICS]   ... AimErrorPenalty in on Range (Min="$SkeletalRegionInformation.AimErrorPenalty.Min
-                $", Max="$SkeletalRegionInformation.AimErrorPenalty.Max
-                $"), Selected "$LimbInjuryAimErrorPenalty
-                $".");
-
-            if (PenetratesVictim)
-                log("[BALLISTICS]   ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor * DamageModifier * ExternalDamageModifier = "$MomentumLostToVictim
-                    $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-                    $" * "$DamageModifier
-                    $" * "$ExternalDamageModifier
-                    $" = "$Damage);
-            else
-                log("[BALLISTICS]   ... Bullet was buried in Victim:    Damage = ((MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage) * DamageModifier * ExternalDamageModifier = (("$MomentumLostToVictim
-                    $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-                    $") + "$Ammo.InternalDamage
-                    $") * "$DamageModifier
-                    $" * "$ExternalDamageModifier
-                    $" = "$Damage);
+            Ammo.BallisticsLog("  ... DamageModifier from the skeletal region was overriden for this arm hit, the OverrideArmDamageModifier is: "
+                $OverrideArmDamageModifier);
         }
         else
         {
-            if (PenetratesVictim)
-                log("[BALLISTICS]   ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor = "$MomentumLostToVictim
-                    $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-                    $" = "$Damage);
-            else
-                log("[BALLISTICS]   ... Bullet was buried in Victim:    Damage = (MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage = ("$MomentumLostToVictim
-                    $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-                    $") + "$Ammo.InternalDamage
-                    $" = "$Damage);
+            Ammo.BallisticsLog("  ... DamageModifier from the skeletal region is on the Range (Min="$SkeletalRegionInformation.DamageModifier.Min
+                $", Max="$SkeletalRegionInformation.DamageModifier.Max
+                $"), Selected "$DamageModifier
+                $".");
         }
+        Ammo.BallisticsLog("  ... ExternalDamageModifier = "$ExternalDamageModifier
+            $".");
+        Ammo.BallisticsLog("  ... AimErrorPenalty in on Range (Min="$SkeletalRegionInformation.AimErrorPenalty.Min
+            $", Max="$SkeletalRegionInformation.AimErrorPenalty.Max
+            $"), Selected "$LimbInjuryAimErrorPenalty
+            $".");
+
+        if (PenetratesVictim)
+            Ammo.BallisticsLog("  ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor * DamageModifier * ExternalDamageModifier = "$MomentumLostToVictim
+                $" * "$Level.GetRepo().MomentumToDamageConversionFactor
+                $" * "$DamageModifier
+                $" * "$ExternalDamageModifier
+                $" = "$Damage);
+        else
+            Ammo.BallisticsLog("  ... Bullet was buried in Victim:    Damage = ((MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage) * DamageModifier * ExternalDamageModifier = (("$MomentumLostToVictim
+                $" * "$Level.GetRepo().MomentumToDamageConversionFactor
+                $") + "$Ammo.InternalDamage
+                $") * "$DamageModifier
+                $" * "$ExternalDamageModifier
+                $" = "$Damage);
+    }
+    else
+    {
+        if (PenetratesVictim)
+            Ammo.BallisticsLog("  ... Victim was penetrated:          Damage = MomentumLostToVictim * MomentumToDamageConversionFactor = "$MomentumLostToVictim
+                $" * "$Level.GetRepo().MomentumToDamageConversionFactor
+                $" = "$Damage);
+        else
+            Ammo.BallisticsLog("  ... Bullet was buried in Victim:    Damage = (MomentumLostToVictim * MomentumToDamageConversionFactor) + InternalDamage = ("$MomentumLostToVictim
+                $" * "$Level.GetRepo().MomentumToDamageConversionFactor
+                $") + "$Ammo.InternalDamage
+                $" = "$Damage);
     }
 
     // If it's something with skeletal regions, do notification
@@ -742,10 +733,8 @@ simulated function bool HandleBallisticImpact(
 
     DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
-    if (Level.AnalyzeBallistics)
-    {
-        log("[BALLISTICS]   ... Bullet will impart to victim the momentum it lost to the victim:  "$VSize(MomentumVector)$" in direction "$Normal(MomentumVector));
-    }
+    Ammo.BallisticsLog("  ... Bullet will impart to victim the momentum it lost to the victim:  "$VSize(MomentumVector)$" in direction "$Normal(MomentumVector));
+
     Victim.TakeHitImpulse(HitLocation, MomentumVector, GetDamageType());
 
     //the bullet has lost momentum to its victim
@@ -814,7 +803,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float DamageModifier, ExternalDamageModifier;
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
-    PenetratesProtection = (Protection.MomentumToPenetrate < Momentum);
+    PenetratesProtection = (Protection.GetMtP() < Momentum);
 
     //determine DamageModifierRange
     if (PenetratesProtection)
@@ -823,7 +812,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         DamageModifierRange = Protection.BlockedDamageFactor;
 
     //calculate damage imparted to victim
-    MomentumLostToProtection = FMin(Momentum, Protection.MomentumToPenetrate);
+    MomentumLostToProtection = FMin(Momentum, Protection.GetMtP());
     Damage = MomentumLostToProtection * Level.GetRepo().MomentumToDamageConversionFactor;
     DamageModifier = RandRange(DamageModifierRange.Min, DamageModifierRange.Max);
     Damage *= DamageModifier;
@@ -833,37 +822,38 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     Damage = int( float(Damage) * ExternalDamageModifier );
 
     //calculate momentum vector imparted to victim
-    MomentumVector = NormalizedBulletDirection * Protection.MomentumToPenetrate;
+    MomentumVector = NormalizedBulletDirection * Protection.GetMtP();
     if (PenetratesProtection)
         MomentumVector *= Level.getRepo().MomentumImpartedOnPenetrationFraction;
 
-    if (Level.AnalyzeBallistics)
-    {
-        log("[BALLISTICS]   ->  Remaining Momentum is "$Momentum$".");
-        log("[BALLISTICS]   ... Bullet hit "$Protection.class.name$" ProtectiveEquipment on Victim "$Victim.name);
-        log("[BALLISTICS]   ... Protection.MomentumToPenetrate is "$Protection.MomentumToPenetrate$".");
+    Ammo.BallisticsLog("  ->  Remaining Momentum is "$Momentum$".");
+    Ammo.BallisticsLog("  ... Bullet hit "$Protection.class.name$" ProtectiveEquipment on Victim "$Victim.name);
+    Ammo.BallisticsLog("  ... Protection.MomentumToPenetrate is "$Protection.GetMtP()$".");
 
-        if (PenetratesProtection)
-            log("[BALLISTICS]   ... The ProtectiveEquipment was penetrated.  Using PenetratedDamageFactor.");
-        else
-            log("[BALLISTICS]   ... Bullet was buried in the ProtectiveEquipment  Using BlockedDamageFactor.");
+    if (PenetratesProtection)
+        Ammo.BallisticsLog("  ... The ProtectiveEquipment was penetrated.  Using PenetratedDamageFactor.");
+    else
+        Ammo.BallisticsLog("  ... Bullet was buried in the ProtectiveEquipment  Using BlockedDamageFactor.");
 
-        log("[BALLISTICS]   ... DamageModifier is on the Range (Min="$DamageModifierRange.Min$", Max="$DamageModifierRange.Max$"), selected "$DamageModifier$".");
-        log("[BALLISTICS]   ... ExternalDamageModifier = "$ExternalDamageModifier$".");
+    Ammo.BallisticsLog("  ... DamageModifier is on the Range (Min="$DamageModifierRange.Min$", Max="$DamageModifierRange.Max$"), selected "$DamageModifier$".");
+    Ammo.BallisticsLog("  ... ExternalDamageModifier = "$ExternalDamageModifier$".");
 
-        log("[BALLISTICS]   ... Damage = MomentumLostToProtection * MomentumToDamageConversionFactor * DamageModifier * ExternalDamageModifier = "$MomentumLostToProtection
-            $" * "$Level.GetRepo().MomentumToDamageConversionFactor
-            $" * "$DamageModifier
-            $" * "$ExternalDamageModifier
-            $" = "$Damage);
-    }
+    Ammo.BallisticsLog("  ... Damage = MomentumLostToProtection * MomentumToDamageConversionFactor * DamageModifier * ExternalDamageModifier = "$MomentumLostToProtection
+        $" * "$Level.GetRepo().MomentumToDamageConversionFactor
+        $" * "$DamageModifier
+        $" * "$ExternalDamageModifier
+        $" = "$Damage);
 
     IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(HitRegion, HitLocation, HitNormal, Damage, GetDamageType(), Owner);
 
     DealDamage(Victim, Damage, Pawn(Owner), HitLocation, MomentumVector, GetDamageType());
 
     //the bullet has lost momentum to its target
-    Momentum -= Protection.MomentumToPenetrate;
+    Momentum -= Protection.GetMtP();
+
+    if(Ammo.CanShredArmor()) {
+      Protection.OnProtectedRegionHit();
+    }
 
     return PenetratesProtection;
 }

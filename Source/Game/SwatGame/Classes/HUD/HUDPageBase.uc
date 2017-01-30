@@ -20,6 +20,7 @@ var(HUD) EditInline GUIOverlay                          Overlay                 
 var(HUD) EditInline GUIProgressBar                      Progress                    "A multi-purpose progress bar.";
 var(HUD) EditInline GUIReticle                          Reticle                     "The reticle.";
 var(HUD) EditInline GUILabel                            WeightIndicator             "The text that shows the amount of weight that you are carrying.";
+var(HUD) EditInline GUILabel                            ArmorProtectionIndicator    "The text that shows your armor protection level.";
 
 //sp only hud components
 var(HUD) EditInline GUIDefaultCommandIndicator          DefaultCommand              "Text that displays the Command that will be given if the player presses the button to give the Default Command (right-mouse by default).";
@@ -91,6 +92,7 @@ function OnConstruct(GUIController MyController)
     TrainingText = GUIScrollText(AddComponent("GUI.GUIScrollText", "HUDPage_TrainingText"));
     TrainingText.CharDelay=0.001;
     WeightIndicator = GUIWeight(AddComponent("SwatGame.GUIWeight", "HUDPage_weight"));
+    ArmorProtectionIndicator = GUILabel(AddComponent("GUI.GUILabel", "HUDPage_ArmorProtection"));
 
 	for (i = 0; i < NVOIPSPEAKERS; i++)
 	{
@@ -354,6 +356,8 @@ function CloseGenericComponents()
     Progress.Reposition('down');
     assert( Reticle != None );
     Reticle.Hide();
+    assert(ArmorProtectionIndicator != None);
+    ArmorProtectionIndicator.Hide();
 }
 
 function CloseSPComponents()
@@ -393,6 +397,10 @@ function OpenGenericComponents()
 
     assert(WeightIndicator != None);
     UpdateWeight();
+
+    assert(ArmorProtectionIndicator != None);
+    ArmorProtectionIndicator.Show();
+    UpdateArmor();
 
     assert( DamageIndicator != None );
     DamageIndicator.Reset();
@@ -494,6 +502,7 @@ function GUIScrollText GetTrainingTextControl()
 simulated function UpdateProtectiveEquipmentOverlay()
 {
     Overlay.UpdateImage();
+    UpdateArmor();
 }
 
 simulated function UpdateWeight()
@@ -509,6 +518,30 @@ simulated function UpdateWeight()
 
   WeightLabel.Show();
   WeightLabel.SetWeightText(Weight);
+}
+
+simulated function UpdateArmor()
+{
+  local ProtectiveEquipment Protection;
+  local float ProtectionPercent;
+
+  if(PlayerOwner().Pawn != None) {
+    Protection = PlayerOwner().Pawn.GetSkeletalRegionProtection(REGION_Torso);
+  }
+
+  if(Protection == None) {
+    ArmorProtectionIndicator.Hide();
+    return;
+  }
+
+  if(!Protection.IsArmorShreddable()) {
+    ArmorProtectionIndicator.Hide();
+    return;
+  }
+
+  ProtectionPercent = Protection.GetArmorHealthPercent();
+  ProtectionPercent *= 100.0;
+  ArmorProtectionIndicator.SetCaption(""$ProtectionPercent$"%");
 }
 
 simulated function UpdateFireMode()
@@ -566,6 +599,7 @@ simulated function UpdateFireMode()
 function SkeletalRegionHit(ESkeletalRegion RegionHit, int damage)
 {
     DamageIndicator.SkeletalRegionHit(RegionHit, damage);
+    UpdateArmor();
 }
 
 function SetCrouched( bool bCrouching )

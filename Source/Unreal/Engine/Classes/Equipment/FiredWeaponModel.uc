@@ -28,35 +28,6 @@ simulated function SetHandHeldEquipment(HandheldEquipment HHE)
 {
     Super.SetHandHeldEquipment(HHE);
 
-    // Check for errors in the weapon model setup.
-    if (DrawType != DT_Mesh)
-    {
-        assertWithDescription(BurstAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a BurstAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-        assertWithDescription(UseLastRoundAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a UseLastRoundAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-        assertWithDescription(UseEmptyAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a UseEmptyAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-        assertWithDescription(ReloadAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a ReloadAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-        assertWithDescription(EmptyReloadAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies an EmptyReloadAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-    }
-    
     if (FiredWeapon(HHE) != None && FiredWeapon(HHE).HasFlashlight())
     {
         // copy materials to skins, so that when the flashlight goes on/off
@@ -71,11 +42,11 @@ simulated function PlayReload()
 {
     SelectedReloadAnimation = SelectReloadAnimation();
     SelectedHolderReloadAnimation = SelectHolderReloadAnimation();
-    
+
     //play any specified animations on model and holder
     if (SelectedReloadAnimation != '')
         PlayAnim(
-            SelectedReloadAnimation, 
+            SelectedReloadAnimation,
             FiredWeapon(HandheldEquipment).ReloadAnimationRate);
     if (SelectedHolderReloadAnimation != '')
     {
@@ -83,8 +54,8 @@ simulated function PlayReload()
 		{
             HolderReloadAnimationChannel = Pawn(Owner).AnimPlayEquipment(
 				kAPT_Normal,
-                SelectedHolderReloadAnimation, 
-                ReloadTweenTime, 
+                SelectedHolderReloadAnimation,
+                ReloadTweenTime,
                 HolderAnimationRootBone,
                 FiredWeapon(HandheldEquipment).ReloadAnimationRate);
 		}
@@ -247,7 +218,7 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector mo
 	{
 		if(VSize(momentum) < 0.001)
 			return;
-		
+
 		impulse = Normal(momentum) * FClamp(VSize(momentum), 0, 75);
         log("Applying impulse to FiredWeaponModel "$Name$": "$impulse$" at location "$hitLocation);
 		HavokImpartImpulse(impulse, hitLocation);
@@ -257,8 +228,8 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector mo
 
 defaultproperties
 {
-    // default havok params. if designers want to override, they can make a 
-    // new HavokRigidBody subclass in the editor and assign it to the 
+    // default havok params. if designers want to override, they can make a
+    // new HavokRigidBody subclass in the editor and assign it to the
     // firedweaponmodel subclass.
 	HavokDataClass = class'DefaultFiredWeaponModelHavokParams'
 }

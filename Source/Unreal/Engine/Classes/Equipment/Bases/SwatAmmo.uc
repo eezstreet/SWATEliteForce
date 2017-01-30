@@ -14,6 +14,10 @@ var(Ricochet) config int RicochetBounceCount "Maximum times that a bullet can ri
 var(Ricochet) config float RicochetMomentum "Momentum is multiplied by this when a ricochet (not a fracture) occurs";
 var(Ricochet) config float RicochetMinimumMomentum "Minimum momentum required to trigger a ricochet";
 
+// Advanced ballstics for Elite Force
+var(AdvancedBallistics) config float Drag "The amount of Momentum that is lost with each unit traveled.";
+var(AdvancedBallistics) config bool ShredsArmor "True if this ammo type can shred armor, false otherwise";
+
 // Fracture occurs when a bullet ricochets and splits into multiple pieces.
 // These fractured projectiles deviate from the ricochet angle when they collide against each other. This is simulated by giving them some slop.
 // Fractured projectiles lose a great deal more momentum than ricochet because the projectiles are much smaller in mass.
@@ -45,7 +49,7 @@ var(CustomReloads) public localized config string ReloadsString "String to show 
 simulated function bool ShouldRicochet() {
   local float Chance;
   Chance = FRand();
-  log("ShouldRicochet(): Chance = "$Chance);
+  BallisticsLog("ShouldRicochet(): Chance = "$Chance);
   if(CanCauseRicochet && Chance < RicochetChance) {
     return true;
   }
@@ -54,6 +58,14 @@ simulated function bool ShouldRicochet() {
 
 simulated function float GetRicochetMomentumModifier() {
   return RicochetMomentum;
+}
+
+simulated function float GetDrag() {
+  return Drag;
+}
+
+simulated function bool CanShredArmor() {
+  return ShredsArmor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,28 +80,28 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
   local float PitchNormal, YawNormal;
   local int i;
 
-  log("[Ballistics] checked if CanRicochet with Victim="$Victim$", HitLocation="$HitLocation$
+  BallisticsLog("checked if CanRicochet with Victim="$Victim$", HitLocation="$HitLocation$
     ", HitNormal="$HitNormal$
     ", NormalizedBulletDirection="$NormalizedBulletDirection$
     ", HitMaterialType="$HitMaterial.MaterialVisualType);
 
   if(!ShouldRicochet()) {
-    log("[Ballistics] Ammo "$self$" can't cause a ricochet or the roll failed.");
+    BallisticsLog("Ammo "$self$" can't cause a ricochet or the roll failed.");
     return false;
   }
 
   if(RicochetFromBSPOnly && !Victim.IsA('LevelInfo') && !Victim.IsA('StaticMeshActor')) {
-    log("[Ballistics] RicochetFromBSPOnly was checked and not a LevelInfo or StaticMeshActor");
+    BallisticsLog("RicochetFromBSPOnly was checked and not a LevelInfo or StaticMeshActor");
     return false;
   }
 
   if(Momentum < RicochetMinimumMomentum) {
-    log("[Ballistics] Does not meet minimum momentum to cause a ricochet");
+    BallisticsLog("Does not meet minimum momentum to cause a ricochet");
     return false;
   }
 
   if(BounceNumber >= RicochetBounceCount) {
-    log("[Ballistics] RicochetBounceCount met");
+    BallisticsLog("RicochetBounceCount met");
     return false;
   }
 
@@ -100,7 +112,7 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
   YawNormal = Abs(NormalizedBulletDirection.y);
   if(PitchNormal > NormalizedMaximum || PitchNormal < NormalizedMinimum) {
     if(YawNormal > NormalizedMaximum || YawNormal < NormalizedMinimum) {
-      log("[Ballistics] Ricochet angle is not correct (PitchNormal: "$PitchNormal$"; YawNormal: "$YawNormal$")");
+      BallisticsLog("Ricochet angle is not correct (PitchNormal: "$PitchNormal$"; YawNormal: "$YawNormal$")");
       return false;
     }
   }
@@ -114,11 +126,11 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
   }
 
   if(!bCorrectMaterial) {
-    log("[Ballistics] Incorrect material to cause a ricochet.");
+    BallisticsLog("Incorrect material to cause a ricochet.");
     return false;
   }
 
-  log("[Ballistics] Ricochet succeeded");
+  BallisticsLog("Ricochet succeeded");
   return true;
 }
 
@@ -127,8 +139,9 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
 
 defaultproperties
 {
-  CanCauseRicochet=false
+  Drag=0
 
+  CanCauseRicochet=false
   RicochetChance=0.5
   MinRicochetAngle=20
   MaxRicochetAngle=70

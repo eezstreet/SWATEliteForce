@@ -33,40 +33,6 @@ simulated function PostNetBeginPlay()
 simulated function SetHandHeldEquipment(HandheldEquipment HHE)
 {
 	Super.SetHandHeldEquipment(HHE);
-
-	// Check for errors in the weapon model setup.
-    if (DrawType != DT_Mesh)
-    {
-         assertWithDescription(BeginQualifyAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a BeginQualifyAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-         assertWithDescription(QualifyAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a QualifyAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-         assertWithDescription(EndQualifyAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies an EndQualifyAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-         assertWithDescription(BeginAlternateQualifyAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies a BeginAlternateQualifyAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-         assertWithDescription(AlternateQualifyLoopAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies an AlternateQualifyLoopAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-
-         assertWithDescription(EndAlternateQualifyAnimation == '',
-            "[tcohen] The "$HandheldEquipment.class.name
-            $"'s Model "$class.name
-            $" specifies an EndAlternateQualifyAnimation, but its DrawType is not DT_Mesh.  Shawn should fix this.");
-	}
 }
 
 simulated function PlayBeginQualify(bool UseAlternate, float RateModification)

@@ -92,7 +92,7 @@ static function string GetRateOfFire()
 
 static function string GetTotalAmmoString()
 {
-  return "Total Ammo: "$default.TotalAmmoString;
+  return "Maximum Ammo: "$default.TotalAmmoString;
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?

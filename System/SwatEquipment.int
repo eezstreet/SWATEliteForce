@@ -6,7 +6,7 @@ Caliber=12 Gauge
 CountryOfOrigin=Italy
 ProductionStart=1999
 FireModes=Semi-Automatic
-TotalAmmoString=A maximum of 50 shells
+TotalAmmoString=50 shells
 RateOfFire=200 RPM
 
 [NovaPumpSG]
@@ -17,7 +17,7 @@ Caliber=12 Gauge
 CountryOfOrigin=Italy
 ProductionStart=Late 1990s
 FireModes=Pump-Action
-TotalAmmoString=A maximum of 50 shells
+TotalAmmoString=50 shells
 RateOfFire=100 RPM
 
 [ColtM1911HG]
@@ -29,7 +29,7 @@ CountryOfOrigin=United States
 ProductionStart=1911
 FireModes=Semi-Automatic
 MagazineSizeString=8
-TotalAmmoString=A maximum of 50 shells
+TotalAmmoString=10 magazines
 RateOfFire=390 RPM
 
 [Glock9mmHG]
@@ -41,19 +41,19 @@ CountryOfOrigin=Austria
 ProductionStart=1988
 FireModes=Semi-Automatic
 MagazineSizeString=15
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=390 RPM
 
 [PythonRevolverHG]
 Description=The Colt Python is among the most famous of Colt revolvers and was introduced in 1955.  It is chambered for the powerful .357 Magnum ammunition making it one of the most powerful hand guns on the market.  Its power is offset by its slow rate of fire and arduous reload.  In addition, it is not equipped with a tactical flashlight.
-FriendlyName=Colt Python
+FriendlyName=Python
 Manufacturer=Colt
 Caliber=.357 Magnum
 CountryOfOrigin=United States
 ProductionStart=1955
 FireModes=Double-Action
 MagazineSizeString=6
-TotalAmmoString=A maximum of 60 rounds (10 magazines)
+TotalAmmoString=10 speedloaders
 RateOfFire=80 RPM
 
 [DesertEagleHG]
@@ -65,7 +65,7 @@ CountryOfOrigin=Israel
 ProductionStart=1995
 FireModes=Semi-Automatic
 MagazineSizeString=8
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=300 RPM
 
 [TEC9HG]
@@ -77,7 +77,7 @@ CountryOfOrigin=United States
 ProductionStart=1989
 FireModes=Semi-Automatic, Full-Auto
 MagazineSizeString=32
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=950 RPM
 
 [FNP90SMG]
@@ -89,7 +89,7 @@ CountryOfOrigin=Belgium
 ProductionStart=1990
 FireModes=Semi-Automatic, Full-Auto
 MagazineSizeString=50
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=900 RPM
 
 [MP5SMG]
@@ -99,9 +99,9 @@ Manufacturer=Heckler & Koch
 Caliber=9x19mm
 CountryOfOrigin=Germany
 ProductionStart=1974
-FireModes=Semi-Automatic, 3 Round Burst, Full-Auto
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
 MagazineSizeString=30
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=900 RPM
 
 [SilencedMP5SMG]
@@ -111,9 +111,9 @@ Manufacturer=Heckler & Koch
 Caliber=Subsonic 9x19mm
 CountryOfOrigin=Germany
 ProductionStart=1964
-FireModes=Semi-Automatic, 3 Round Burst, Full-Auto
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
 MagazineSizeString=30
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=800 RPM
 
 [UMP45SMG]
@@ -123,9 +123,9 @@ Manufacturer=Heckler & Koch
 Caliber=.45 ACP
 CountryOfOrigin=Germany
 ProductionStart=1999
-FireModes=Semi-Automatic, 2 Round Burst, Full-Auto
+FireModes=Semi-Automatic, 2-rd. Burst, Full-Auto
 MagazineSizeString=25
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
 [M4A1MG]
@@ -137,7 +137,7 @@ CountryOfOrigin=United States
 ProductionStart=1994
 FireModes=Semi-Automatic, Full-Auto
 MagazineSizeString=30
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=800 RPM
 
 [G36kMG]
@@ -147,9 +147,9 @@ Manufacturer=Heckler & Koch
 Caliber=5.56x45mm DM11
 CountryOfOrigin=Germany
 ProductionStart=2001
-FireModes=Semi-Automatic, 2 Round Burst, Full-Auto
+FireModes=Semi-Automatic, 2-rd. Burst, Full-Auto
 MagazineSizeString=30
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=750 RPM
 
 [UziSMG]
@@ -161,7 +161,7 @@ CountryOfOrigin=Israel
 ProductionStart=1950
 FireModes=Semi-Automatic, Full-Auto
 MagazineSizeString=25
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
 [SAWMG]
@@ -173,7 +173,7 @@ CountryOfOrigin=Belgium
 ProductionStart=Late 1970s
 FireModes=Full-Auto
 MagazineSizeString=200
-TotalAmmoString=Maximum of 10 belts
+TotalAmmoString=10 belts
 RateOfFire=800 RPM
 
 [AK47MG]
@@ -185,7 +185,7 @@ CountryOfOrigin=Soviet Union
 ProductionStart=1959
 FireModes=Semi-Automatic, Full-Auto
 MagazineSizeString=30
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
 
@@ -197,17 +197,17 @@ Caliber=TASER Cartridge
 CountryOfOrigin=United States
 ProductionStart=2000
 FireModes=Single Fire
-TotalAmmoString=A maximum of 25 cartridges
+TotalAmmoString=25 cartridges
 
 [Stingray]
 Description=The X2 model is a dual-purpose less-lethal weapon. It possesses both a ranged means of Electro-Muscular Disruption (EMD) and a touch-stun mode. The electrical discharge causes involuntary contraction of the target's muscle tissue, regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. The C2 can fire darts in groups of four or two separate groups of two. It can also be used in touch-stun mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors. The main drawback is the reduced range of the C2 cartridges in comparison to the newer M26C model.
-FriendlyName=TASER X2 Series Stun Gun
+FriendlyName=X2 Series Stun Gun
 Manufacturer=TASER International
 Caliber=TASER Cartridge
 CountryOfOrigin=United States
 ProductionStart=2004
 FireModes=2-Barb, 4-Barb, Touch-Stun
-TotalAmmoString=A maximum of 25 cartridges
+TotalAmmoString=25 cartridges
 
 [HK69GrenadeLauncher]
 Description=The grenade launcher has become a standard piece of police equipment for use in unusual situations such as hostage rescue or riot control. Its ability to fire a wide range of direct and indirect less-lethal ammunitions has proved it to be extremely versatile.
@@ -218,7 +218,7 @@ CountryOfOrigin=West Germany
 ProductionStart=1960s
 FireModes=Single Fire
 MagazineSizeString=1
-TotalAmmoString=A maximum of 25 grenades
+TotalAmmoString=25 grenades
 RateOfFire=6 RPM
 
 [AmmoBandolier]
@@ -233,7 +233,7 @@ Caliber=5.56x45mm Mk.262
 CountryOfOrigin=United States
 FireModes=Semi-Automatic
 MagazineSizeString=20
-TotalAmmoString=A maximum of 10 magazines
+TotalAmmoString=10 magazines
 RateOfFire=200 RPM
 
 [SniperRifle]
@@ -245,14 +245,14 @@ Description=The C2 breaching charge is a powerful and devastating method of brea
 FriendlyName=C2 (x3)
 
 [LessLethalSG]
-Description=The less lethal shotgun is a Benelli Nova, pump-action shotgun which is always loaded with less than lethal beanbag rounds.  It is most often used on an uncooperative suspect or civilian.  The specially designated less lethal shotgun is necessary to eliminate errors that can occur from individually loading lethal or less than lethal munitions into the same weapon.  To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted green.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation.
+Description=The less lethal shotgun is a Benelli Nova, pump-action shotgun which is always loaded with less than lethal beanbag rounds.  It is most often used on an uncooperative suspect or civilian.  The specially designated less lethal shotgun is necessary to eliminate errors that can occur from individually loading lethal or less than lethal munitions into the same weapon.  To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted green.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation. Sufficient distance should be kept between the operator and the intended target for the beanbag to slow down, otherwise it produce a potentially life threatening injury such as broken bones.
 FriendlyName=Less-Lethal Nova
 Manufacturer=Benelli
 Caliber=Beanbags
 CountryOfOrigin=Italy
 ProductionStart=Late 1990s
 FireModes=Pump-Action
-TotalAmmoString=A maximum of 50 beanbags
+TotalAmmoString=50 shells
 RateOfFire=100 RPM
 
 [CSBallLauncher]
@@ -263,7 +263,7 @@ Caliber=Pepper-ball
 CountryOfOrigin=United States
 ProductionStart=Unknown
 FireModes=Semi-Automatic
-TotalAmmoString=A maximum of 200 pepper-balls
+TotalAmmoString=200 pepper-balls
 RateOfFire=600 RPM
 
 [Wedge]
@@ -279,7 +279,7 @@ Description=While generally used for riot control, handheld pepper spray caniste
 FriendlyName=Pepper Spray
 
 [stingGrenade]
-Description=The sting grenade, or Stinger, is filled with many small rubber balls.  Upon detonation these balls are ejected from the grenade, bombarding targets with blunt force projectiles.  The rubber balls will not penetrate the skin but can cause dizzyness, disorientation, and severe pain from the impact of the projectiles.  While considered less lethal, the sting grenade can cause severe injury if it detonates in very close proximity to someone.
+Description=The sting grenade, or Stinger, is filled with many small rubber balls.  Upon detonation these balls are ejected from the grenade, bombarding targets with blunt force projectiles.  The rubber balls will not penetrate the skin but can cause dizzyness, disorientation, and severe pain from the impact of the projectiles. ||While considered less lethal, the sting grenade can cause severe injury if it detonates in very close proximity to someone.
 FriendlyName=Model 9590 Stinger
 
 [CSGasGrenade]
@@ -300,7 +300,7 @@ FriendlyName=Toolkit
 
 [BadguyColtM1911HG]
 Description=Colt M1911 Handgun
-FriendlyName=Colt M1911
+FriendlyName=M1911
 
 [BadguyG36kMG]
 Description=The GB36s Assault Rifle is a lightweight full sized assault rifle originally developed in the 1990s for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around assault rifle.  Firing a mid-sized 5.56mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic firing.
@@ -323,7 +323,7 @@ CountryOfOrigin=United States
 ProductionStart=1911
 FireModes=Semi-Automatic
 MagazineSizeString=8
-TotalAmmoString=4 magazines (+2 with Ammo Pouch)
+TotalAmmoString=10 magazines
 RateOfFire=20-100 RPM
 
 [Cuffs]
