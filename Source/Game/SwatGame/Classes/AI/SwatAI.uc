@@ -2186,7 +2186,10 @@ simulated private function bool CanHitCurrentTarget()
 
 simulated function Died(Controller Killer, class<DamageType> damageType, vector HitLocation, vector HitMomentum)
 {
+  local CharacterSpeechManagerAction SpeechManagerAction;
 	log(Name $ " Died - IsIncapacitated: " $ IsIncapacitated() $ " ShouldBecomeIncapacitated: " $ ShouldBecomeIncapacitated());
+
+  SpeechManagerAction = GetSpeechManagerAction();
 
 	if (ShouldBecomeIncapacitated())
 	{
@@ -2194,7 +2197,7 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 	}
 	else
 	{
-		if (! IsIncapacitated())
+		if (! IsIncapacitated() && SpeechManagerAction != None)
 			GetSpeechManagerAction().TriggerDiedSpeech();
 
 		// we are no longer incapacitated, we are dead!
@@ -2330,8 +2333,10 @@ native function CommanderAction GetCommanderAction();
 
 function CharacterSpeechManagerAction GetSpeechManagerAction()
 {
+  if(SpeechManager.achievingAction == None) {
+    return None;
+  }
 	assert(SpeechManager != None);
-	assert(SpeechManager.achievingAction != None);
 	assert(CharacterSpeechManagerAction(SpeechManager.achievingAction) != None);
 
 	return CharacterSpeechManagerAction(SpeechManager.achievingAction);
