@@ -228,11 +228,28 @@ function float GetSkillSpecificAttackChance()
 
 function bool ShouldAttackWhileFleeing()
 {
+  local Pawn CurrentEnemy;
+
 	assert(m_Pawn != None);
 
-	return  m_Pawn.IsA('SwatEnemy') &&
-			ISwatAI(m_Pawn).HasUsableWeapon() &&
-			(FRand() < GetSkillSpecificAttackChance());
+  if(!m_Pawn.IsA('SwatEnemy')) {
+    return false; // Sanity check - anything below this point might have unintended consequences
+  }
+
+  CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+  if(CurrentEnemy.IsA('SniperPawn')) {
+    return false; // We should not be able to target SniperPawns
+  }
+
+  if(!ISwatAI(m_Pawn).HasUsableWeapon()) {
+    return false; // Can't fire if we don't have a usable weapon
+  }
+
+  if(FRand() < GetSkillSpecificAttackChance()) {
+    return false;
+  }
+
+  return true;
 }
 
 function AttackWhileFleeing()
