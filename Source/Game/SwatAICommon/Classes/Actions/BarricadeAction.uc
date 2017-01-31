@@ -476,6 +476,8 @@ latent function ShootAtOpeningDoor()
 	AttackDoorGoal.AddRef();
 
 	AttackDoorGoal.postGoal(self);
+	// do some speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDoorOpeningSpeech();
 
 	EndShootingTime = Level.TimeSeconds + RandRange(MinShootingAtDoorsTime, MaxShootingAtDoorsTime);
 

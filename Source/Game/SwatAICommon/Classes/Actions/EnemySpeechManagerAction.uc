@@ -30,6 +30,11 @@ function TriggerDoorBlockedSpeech()
 	TriggerSpeech('DoorBlocked', true);
 }
 
+function TriggerDoorOpeningSpeech()
+{
+	TriggerSpeech('ShotAtBreachedDoor', true);
+}
+
 function TriggerFleeSpeech()
 {
 	TriggerSpeech('AnnouncedFlee');
