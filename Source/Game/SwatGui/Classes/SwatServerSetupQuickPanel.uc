@@ -105,6 +105,8 @@ event Timer() {
 ///////////////////////////////////////////////////////////////////////////
 function InitComponent(GUIComponent MyOwner)
 {
+    local int i;
+
 	  Super.InitComponent(MyOwner);
 
     FullMapList = GUIList(AddComponent("GUI.GUIList", self.Name$"_FullMapList", true ));
@@ -115,8 +117,9 @@ function InitComponent(GUIComponent MyOwner)
     MyUseGameSpyBox.AddItem( GAMESPYString );
 
     //set the available missions for the list box
-    MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOP));
-    MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOPQMM));
+    for(i = 0; i < EMPMode.EnumCount; i++) {
+      MyGameTypeBox.AddItem(GC.GetGameModeName(EMPMode(i)));
+    }
 
     MyGameTypeBox.SetIndex(3 /*MPM_COOP*/);
 
@@ -170,6 +173,9 @@ function InternalOnChange(GUIComponent Sender)
 		    SwatServerSetupMenu.RefreshEnabled();
             break;
         case MyGameTypeBox:
+            if(MyGameTypeBox.GetIndex() != 3 && MyGameTypeBox.GetIndex() != 5) {
+              MyGameTypeBox.SetIndex(3);
+            }
             OnGameModeChanged( EMPMode(MyGameTypeBox.GetIndex()) );
             break;
     }
