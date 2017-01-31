@@ -49,7 +49,7 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
         //PrintLoadOutSpecToMPLog();
     }
 
-    ValidateLoadOutSpec(IsSuspect);
+    ValidateLoadOutSpec(IsSuspect, DynamicSpec);
 
     //log(self.Name$" ... After validation:");
     //PrintLoadOutSpecToMPLog();
@@ -105,9 +105,22 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
 //      Replace any invalid equipment in the loadout spec with the defaults for that pocket.
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-simulated function bool ValidateLoadOutSpec(bool IsSuspect)
+simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec DynamicSpec)
 {
     local int i;
+    local class<SwatAmmo> PrimaryAmmo;
+    local class<SwatAmmo> SecondaryAmmo;
+
+    // Check to make sure that we're bringing along the minimum ammo for primary and secondary weapons
+    PrimaryAmmo = class<SwatAmmo>(LoadOutSpec[1]);
+    SecondaryAmmo = class<SwatAmmo>(LoadOutSpec[3]);
+
+    if(DynamicSpec.GetPrimaryAmmoCount() < PrimaryAmmo.default.MinReloadsToCarry) {
+      DynamicSpec.SetPrimaryAmmoCount(PrimaryAmmo.default.MinReloadsToCarry);
+    }
+    if(DynamicSpec.GetSecondaryAmmoCount() < SecondaryAmmo.default.MinReloadsToCarry) {
+      DynamicSpec.SetSecondaryAmmoCount(SecondaryAmmo.default.MinReloadsToCarry);
+    }
 
     if(GetTotalWeight() > GetMaximumWeight() || GetTotalBulk() > GetMaximumBulk()) {
       // We are overweight. We need to completely respawn our gear from scratch.
@@ -123,11 +136,11 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect)
 
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
-		if( i == Pocket.Pocket_CustomSkin )
-		{
-			ValidatePocketCustomSkin(IsSuspect);
-			continue;
-		}
+		    if( i == Pocket.Pocket_CustomSkin )
+		    {
+			     ValidatePocketCustomSkin(IsSuspect);
+			     continue;
+		    }
 
         if( !ValidateEquipmentForPocket( Pocket(i), LoadOutSpec[i] ) ||
             !ValidForLoadoutSpec( LoadOutSpec[i], Pocket(i) ) )
@@ -139,15 +152,15 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect)
             LoadOutSpec[i] = DLOClassForPocket( Pocket(i), 0 );
         }
 
-		if( !ValidateEquipmentForTeam( Pocket(i), LoadOutSpec[i], IsSuspect ) )
-		{
-			//replace with default for pocket
-            LoadOutSpec[i] = DLOClassForPocket( Pocket(i), 0 );
+		    if( !ValidateEquipmentForTeam( Pocket(i), LoadOutSpec[i], IsSuspect ) )
+		    {
+			       //replace with default for pocket
+             LoadOutSpec[i] = DLOClassForPocket( Pocket(i), 0 );
 
-			//also replace with default for dependent pocket if valid
-			if( GC.AvailableEquipmentPockets[i].DependentPocket != Pocket_Invalid )
-				LoadOutSpec[GC.AvailableEquipmentPockets[i].DependentPocket] = DLOClassForPocket(GC.AvailableEquipmentPockets[i].DependentPocket, 0 );
-		}
+			       //also replace with default for dependent pocket if valid
+			       if( GC.AvailableEquipmentPockets[i].DependentPocket != Pocket_Invalid )
+				         LoadOutSpec[GC.AvailableEquipmentPockets[i].DependentPocket] = DLOClassForPocket(GC.AvailableEquipmentPockets[i].DependentPocket, 0 );
+		    }
     }
 
     return true;
