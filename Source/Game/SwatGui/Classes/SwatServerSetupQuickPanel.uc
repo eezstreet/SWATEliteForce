@@ -91,7 +91,6 @@ function LoadNextMap() {
 event Timer() {
   if(CurrentMapLoadIndex >= MapsToLoad.Length) {
     bUpdatingMapLists = false;
-    OnGameModeChanged(SwatServerSetupMenu.CurGameType);
     return;
   }
 
