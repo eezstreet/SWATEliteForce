@@ -472,6 +472,7 @@ function DisplayEquipment( Pocket thePocket )
 
       MyAmmoMagazineCountSpinner.SetVisibility(true);
       MyAmmoMagazineCountLabel.SetVisibility(true);
+      MyAmmoMagazineCountSpinner.SetActive(true);
     } else {
       MyAmmoMagazineCountSpinner.SetVisibility(false);
       MyAmmoMagazineCountLabel.SetVisibility(false);
