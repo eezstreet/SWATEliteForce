@@ -796,7 +796,7 @@ simulated function DynamicLoadOutSpec GetLoadoutSpec()
         if ( IsTheVIP() )
             DynamicLoadOutSpec = Spawn(class'DynamicLoadOutSpec', None, 'DefaultVIPLoadOut');
         else
-            DynamicLoadOutSpec = Spawn(class'DynamicLoadOutSpec', None, 'DefaultMultiplayerLoadOut');
+            DynamicLoadOutSpec = Spawn(class'DynamicLoadOutSpec', None, 'CurrentMultiPlayerLoadout');
         Assert( DynamicLoadOutSpec != None );
     }
     
