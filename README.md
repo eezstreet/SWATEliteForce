@@ -55,12 +55,14 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 
 #### MINOR FEATURES / FULL CHANGES ####
 - Added Meat Barn Restaurant extra mission
+- Fixed CO-OP and tested. It works now, honest! Although it will see some improvements.
 - AI improvements: SWAT officers no longer stare down noncompliant civilians for days
 - AI improvements: SWAT officers will no longer form "death funnels" as easily in doors - they will engage with suspects while moving through doors.
 - AI improvements: Suspects are more likely to play a Get-Hit animation when they are injured and are less accurate in general
 - AI improvements: Suspects will no longer shoot instantaneously at SWAT officers. There is a small delay, dependent on skill level.
 - AI improvements: Suspects will now shoot at SWAT officers while on the move. The chance is dependent on the skill level of the suspect.
 - Fixed TSS bug/AI Improvements: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
+- Fixed TSS bug: Can save loadouts to work around the campaign unlocks (It will bring up a dialog box informing you that the loadout you want uses invalid equipment)
 - Fixed TSS bug: Glitchy arrests with No Armor
 - Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
 - Fixed TSS bug: Pregame not showing HTML styling of server name
@@ -68,12 +70,16 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 - Fixed TSS bug: Taser recoil applying to every player on the map
 - Fixed TSS bug: Server name field in Multiplayer Setup not matching the actual number of characters that could be used
 - Fixed TSS bug: When using Deploy C2 command, AI will pick the lock if they are out of C2
+- Fixed TSS bug: TEC-9 not having any reload sound effects
+- Fixed TSS bug: Hologen suspects having ridiculously high morale at times
 - Fixed SEF bug: Join Game button on menu not appearing
 - Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
 - Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
 - Fixed SEF bug: Sniper rifle not accurate
 - Fixed SEF bug: Wrong resolution in options menu (1600x1050 -> 1680x1050)
 - Fixed SEF bug: Wrong window title ("MyMod" -> "SWAT: Elite Force")
+- Fixed SEF bug: Invisible traps in CO-OP
+- Fixed SEF bug: Invisible drug bags in CO-OP
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - Equipment is now affected by Weight and Bulk. Weight, which represents how heavy your equipment is, slows your character down, and Bulk, which represents how large your equipment is, slows down your actions.
 - The toolkit can now be used to lock doors.
@@ -82,6 +88,8 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 - Bullets are now affected by drag; they will lose momentum (and therefore lethality) over long distances. JHP is more susceptible to drag than FMJ rounds.
 - Heavy Armor now has "health". It will protect against rifle rounds almost perfectly but will lose that ability with successive shots.
 - JHP does slightly more bullet-expansion ("internal damage") damage to account for drag.
+- Restored cut content: AI-controlled officers will now report when they spot a civilian
+- Restored cut content: Suspects will now yell loudly as they shoot at doors
 - Redid all of the campaign progression/unlocks
 - Added "Take Screenshot" option to controls menu
 - Minor changes to the compliance system (see the detailed section below for a full list of changes)
@@ -97,6 +105,8 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 - Mapmakers now have the ability for Rosters (bombs/enemies/hostages/etc) to be based on difficulty level.
 - The scoring system has been changed. There is no longer a bonus for no suspects incapacitated or killed. Elite difficulty now requires 90 instead of 95 score to complete.
 - Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
+- The Host Game menu no longer loads all of the maps in one go. Instead, the menu will load quickly, and parse all of the maps while in the menu. It will stutter for a bit while it loads all the maps; this is normal.
+- The Host Game menu now STRICTLY enforces CO-OP mode. Lots of options relating to Barricaded Suspects/VIP Escort/Smash and Grab have been removed.
 - Console upgrades: The console will no longer close after entering a command (use the ESC key)
 - Console upgrades: The console will show a log of commands used and show the output of commands
 - Console upgrades: New console command "history"
@@ -210,6 +220,10 @@ The scoring system has been altered:
 
 * Department of Agriculture
   * Cut content restored: Conversation between TOC and Lead about how many bombs are present
+  - Rita Winston: Max Morale (1.5 -> 1.2)
+  - Department of Agriculture Staff: Max Morale (0.9 -> 0.6)
+  - Angry Farmers: Min Morale (0.7 -> 0.5)
+  - Angry Farmers: Max Morale (0.9/1.1 -> 0.7/0.8)
 
 * Drug Lab
   - Drug Lab Workers (Civ): Max Morale (0.9 -> 1.0)
@@ -276,17 +290,7 @@ Weapon Stats
 - Colt Python: Fire Speed (1.00 -> 1.03)
 - Nova Pump: Fire Speed (1.00 -> 1.166667)
 
-Typos
-- "Tripped Trap (-10)" -> "Triggered Trap (-10)"
-- "Fleeing Suspect (-5)" -> "Suspect Escaped (-5)"
-- "Learn to play SWAT: Elite Forces" -> "Learn to play SWAT: Elite Force"
-- "Pepper-ball" -> "Pepper-ball Launcher"
-- "Less Lethal Shotgun" -> "Less-than-Lethal Shotgun"
-- "NIGHT VISION" -> "Night Vision"
-
 Other Hostages Not Listed
-- Rita Winston: Max Morale (1.5 -> 1.2)
-- Department of Agriculture Staff: Max Morale (0.9 -> 0.6)
 - Warehouse Civilians: Max Morale (1.2 -> 0.9)
 - Wolcott Homeless: Min Morale (0.5 -> 0.3)
 - Wolcott Homeless: Max Morale (1.33 -> 1.1)
@@ -303,8 +307,6 @@ Other Hostages Not Listed
 - Female Taronne Civilians max morale (1.33) now matches Male civilians (1.2)
 
 Other Suspects Not Listed
-- Angry Farmers: Min Morale (0.7 -> 0.5)
-- Angry Farmers: Max Morale (0.9/1.1 -> 0.7/0.8)
 - Kiril Stetchkov: Max Morale (2.0 -> 1.5)
 - Kiril Stetchkov: Taser Death Chance (0.35 -> 0.5)
 - Alex Jimenez: Max Morale (0.6 -> 0.8)
@@ -335,6 +337,13 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Stechkov Warehouse (Desert Eagle)
 - Old Granite Hotel (AK-47)
 - Mt. Threshold Research Center (M249 SAW)
+
+#### RUNNING A MULTIPLAYER GAME ####
+
+In order to run a multiplayer game, you need to delete your GuiBase.ini in SEF/System folder. Despite storing your graphics settings, this file is apparently crosschecked on the server.
+This goes for both servers and clients!
+
+Note that multiplayer has yet to receive a lot of testing, so there will likely be bugs!
 
 #### FILES MODIFIED ####
 Content/Classes/SwatEffects.u
