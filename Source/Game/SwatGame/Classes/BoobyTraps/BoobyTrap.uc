@@ -1,10 +1,19 @@
 class BoobyTrap extends RWOSupport.ReactiveStaticMesh
-      implements IUseArchetype, ICanBeDisabled;
+      implements IUseArchetype, ICanBeDisabled, ICanBeSpawned;
 
 var() SwatDoor                    BoobyTrapDoor;
 var config float                QualifyTime;
 var() bool                        bActive;
 var() name                        AttachSocket;
+
+var protected BoobyTrapSpawner SpawnedFrom;   //the Spawner that I was spawned from
+var private Name SpawnedFromName;
+
+replication
+{
+    reliable if ( Role == ROLE_Authority )
+        SpawnedFromName;
+}
 
 function PostBeginPlay()
 {
@@ -100,6 +109,9 @@ final function InitializeFromSpawner(Spawner Spawner)
     BoobySpawner = BoobyTrapSpawner(Spawner);
     assert(BoobySpawner != None);
 
+    SpawnedFrom = BoobySpawner;
+    SpawnedFromName = BoobySpawner.Name;
+
     foreach DynamicActors(class'SwatDoor', Door, BoobySpawner.DoorTag)
     {
         BoobyTrapDoor = Door;
@@ -112,6 +124,24 @@ final function InitializeFromSpawner(Spawner Spawner)
     OnBoobyTrapInitialize();
 }
 
+function Spawner GetSpawner()
+{
+    return SpawnedFrom;
+}
+
+simulated function PostNetBeginPlay()
+{
+    Super.PostNetBeginPlay();
+
+    ReactToTriggered( None );
+}
 
 final function Internal_InitializeFromArchetypeInstance(ArchetypeInstance Instance);
 final function InitializeFromArchetypeInstance();
+
+defaultproperties
+{
+  bAlwaysRelevant=true
+  RemoteRole=ROLE_DumbProxy
+  bUseCollisionBoneBoundingBox=true
+}
