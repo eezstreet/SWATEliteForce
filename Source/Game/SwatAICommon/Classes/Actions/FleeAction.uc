@@ -254,7 +254,14 @@ function bool ShouldAttackWhileFleeing()
 
 function AttackWhileFleeing()
 {
-	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy());
+  local Pawn Enemy;
+
+  Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+  if(Enemy == None) {
+    return;
+  }
+
+	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
     assert(CurrentAttackTargetGoal != None);
 	CurrentAttackTargetGoal.AddRef();
 
