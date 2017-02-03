@@ -12,7 +12,7 @@ var private Name SpawnedFromName;
 replication
 {
     reliable if ( Role == ROLE_Authority )
-        SpawnedFromName;
+        bActive, SpawnedFromName;
 }
 
 function PostBeginPlay()
