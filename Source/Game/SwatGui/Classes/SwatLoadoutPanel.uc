@@ -76,7 +76,7 @@ var(SWATGui) protected EditInline array<GUILabel> EquipmentLabel "These go next 
 var(SWATGui) protected EditInline array<GUIButton> EquipmentSelectionButton "These go next to the paperdoll figure";
 
 var private int     ActiveTab;
-var private Pocket  ActivePocket;
+var protected Pocket  ActivePocket;
 var private Pocket  ActiveAmmoPocket;
 var private int     FailedToValidate;
 
@@ -576,7 +576,7 @@ function SaveCurrentLoadout()
 ///////////////////////////
 // Component delegates
 ///////////////////////////
-private function MagazineCountChange(GUIComponent Sender) {
+protected function MagazineCountChange(GUIComponent Sender) {
   local GUINumericEdit SenderEdit;
   SenderEdit = GUINumericEdit(Sender);
 

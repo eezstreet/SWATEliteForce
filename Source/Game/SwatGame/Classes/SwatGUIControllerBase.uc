@@ -312,6 +312,21 @@ function SetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class
     }
 }
 
+function SetMPLoadOutPrimaryAmmo(int Amount)
+{
+  if(SwatGamePlayerController(ViewportOwner.Actor) != None)
+  {
+    SwatGamePlayerController(ViewportOwner.Actor).ServerSetMPLoadOutPrimaryAmmo(Amount);
+  }
+}
+
+function SetMPLoadOutSecondaryAmmo(int Amount)
+{
+  if(SwatGamePlayerController(ViewportOwner.Actor) != None)
+  {
+    SwatGamePlayerController(ViewportOwner.Actor).ServerSetMPLoadOutSecondaryAmmo(Amount);
+  }
+}
 
 function SetMPLoadOutPocketCustomSkin( Pocket Pocket, String CustomSkinClassName )
 {

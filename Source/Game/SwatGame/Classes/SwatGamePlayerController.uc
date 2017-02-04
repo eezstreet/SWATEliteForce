@@ -308,7 +308,7 @@ replication
         ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
-		ServerRetryStatsAuth;
+		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2512,6 +2512,11 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
 
     SetMPLoadOutPocketWeapon( Pocket_SecondaryWeapon, LoadOut.LoadOutSpec[Pocket.Pocket_SecondaryWeapon], LoadOut.LoadOutSpec[Pocket.Pocket_SecondaryAmmo] );
 
+    SetMPLoadOutPrimaryAmmo(LoadOut.GetPrimaryAmmoCount());
+    SetMPLoadOutSecondaryAmmo(LoadOut.GetSecondaryAmmoCount());
+
+    log("Loadout ammo: Primary ("$LoadOut.GetPrimaryAmmoCount()$"), secondary ("$LoadOut.GetSecondaryAmmoCount()$")");
+
     for( i = 4; i < Pocket.EnumCount; i++ )
     {
 		if( Pocket(i) == Pocket_CustomSkin )
@@ -2527,6 +2532,13 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
         UpdateVoiceType();
 }
 
+simulated function SetMPLoadOutPrimaryAmmo(int Amount) {
+  ServerSetMPLoadOutPrimaryAmmo(Amount);
+}
+
+simulated function SetMPLoadOutSecondaryAmmo(int Amount) {
+  ServerSetMPLoadOutSecondaryAmmo(Amount);
+}
 
 simulated function SetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class<actor> AmmoItem )
 {
@@ -2553,6 +2565,17 @@ simulated function SetMPLoadOutPocketItem( Pocket Pocket, class<actor> Item )
     ServerSetMPLoadOutPocketItem( Pocket, Item );
 }
 
+// Executes only on the server
+function ServerSetMPLoadOutPrimaryAmmo(int Amount)
+{
+  SwatRepoPlayerItem.SetPrimaryAmmoCount(Amount);
+}
+
+// Executes only on the server
+function ServerSetMPLoadOutSecondaryAmmo(int Amount)
+{
+  SwatRepoPlayerItem.SetSecondaryAmmoCount(Amount);
+}
 
 // Executes only on the server
 function ServerSetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class<actor> AmmoItem )

@@ -16,8 +16,8 @@ replication
 {
 	// Things the server should send to the client.
 	//reliable if( bNetOwner && bNetDirty && (Role==ROLE_Authority) )
-	reliable if( bNetInitial && (Role==ROLE_Authority) )
-		CurrentRounds, ReserveRounds;
+	reliable if( Role==ROLE_Authority )
+		CurrentRounds, ReserveRounds, StartingRounds;
 }
 
 simulated function InitializeAmmo(int StartingAmmoAmount) {
