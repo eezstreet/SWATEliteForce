@@ -5,15 +5,16 @@
 //  Menu to load map from entry screen.
 // ====================================================================
 
-class SwatMissionSetupMenu extends SwatGUIPage
-     ;
+class SwatMissionSetupMenu extends SwatGUIPage;
 
 import enum eSwatGameRole from SwatGame.SwatGuiConfig;
+import enum EMPMode from Engine.Repo;
 
 var(SWATGui) private EditInline Config GUIButton    MyQuitButton;
 var(SWATGui) private EditInline Config GUIButton    MyStartButton;
 var(SWATGui) private EditInline Config GUIButton    MyBackButton;
 var(SWATGui) private EditInline Config GUIButton    MyMainMenuButton;
+var(SWATGui) private EditInline Config GUIButton    MyLoadoutButton;
 var(SWATGui) private EditInline Config GUITabControl	MyTabControl;
 
 var() private config localized string CampaignString;
@@ -45,7 +46,18 @@ function InternalOnShow()
 
 function InternalOnActivate()
 {
-    if( !bOpeningSubMenu )
+    if (SwatGUIController(Controller).coopcampaign)
+	{
+		MyLoadoutButton.Hide();
+		MyLoadoutButton.DisableComponent();
+	}
+	else 
+	{
+		MyLoadoutButton.Show();
+		MyLoadoutButton.EnableComponent();
+	}
+	
+	if( !bOpeningSubMenu )
         GC.ClearCurrentMission();
 
     bOpeningSubMenu = false;
@@ -59,6 +71,8 @@ function OpenPopup( string ClassName, string ObjName )
 
 function InternalOnClick(GUIComponent Sender)
 {
+	local ServerSettings Settings;
+	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
 	switch (Sender)
 	{
 	    case MyQuitButton:
@@ -66,7 +80,24 @@ function InternalOnClick(GUIComponent Sender)
             break;
 		case MyStartButton:
             if(SwatGUIController(Controller).SPLoadoutPanel == None || SwatGUIController(Controller).SPLoadoutPanel.CheckWeightBulkValidity()) {
-              GameStart();
+				if (SwatGUIController(Controller).coopcampaign)
+				{
+					SwatPlayerController(PlayerOwner()).ServerSetSettings(
+						Settings, 
+						EMPMode.MPM_COOP,
+						0, 1, 5, 0, 60, 1, 10,
+						true, false, false, true, true,
+						1, 1, 0, 0, false, false, true
+					);
+					SwatPlayerController(PlayerOwner()).ServerSetAdminSettings(
+						Settings,
+						GC.MPName $ " Coop Campaign",
+						"Coop Campaign",
+						false, true
+					);
+					SwatGUIController(Controller).LoadLevel(GC.CurrentMission.Name $ "?listen");
+				}
+				else {GameStart();}
             }
             break;
 		case MyBackButton:

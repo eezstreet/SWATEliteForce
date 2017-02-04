@@ -55,11 +55,11 @@ function PostBeginPlay()
     Super.PostBeginPlay();
 
 	// Snipers are disabled in multiplayer!
-    if ( Level.NetMode != NM_Standalone )
+    /*if ( Level.NetMode != NM_Standalone )
     {
         Destroy();
         return;
-    }
+    }*/
 
     // Create my SniperRifle
     SniperRifle = Spawn(SniperRifleClass, Self);
