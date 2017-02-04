@@ -142,7 +142,7 @@ simulated function string GetFilter()
 
 simulated function bool ShouldControlViewport()
 {
-    return Level.NetMode == NM_Standalone && SwatGamePlayerController(Owner) != None && SwatGamePlayerController(Owner).bControlViewport != 0 && GetCurrentControllable().ShouldDrawViewport();
+	return (Level.NetMode == NM_Standalone || Filter ~= "sniper") && SwatGamePlayerController(Owner) != None && SwatGamePlayerController(Owner).bControlViewport != 0 && GetCurrentControllable().ShouldDrawViewport();
 }
 
 simulated function Initialize()
