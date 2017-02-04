@@ -41,10 +41,8 @@ You can make a shortcut to these .bat files for more convenience.
 The mod can be removed by deleting the SEF folder from your hard drive.
 
 # HOW TO PLAY IN MULTIPLAYER #
-SEFv4 includes a modified Engine.dll which is required to play in Multiplayer.
-It is based on the SWAT4Stats.com browser plugin, so you also get a working master server.
-MAKE A BACKUP FIRST, then copy the Engine.dll from SEF/System to ContentExpansion/System folder.
-BOTH the server and the client need to do this first.
+In order to play in multiplayer, both the host and client need to have the same GuiBase.ini.
+Unfortunately, this file tends to get changed (either by changing video settings or otherwise) so it will have issues.
 
 # CHANGES, SUMMARIZED #
 	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
@@ -99,7 +97,8 @@ BOTH the server and the client need to do this first.
   * The game may crash when accessing the video menu. If that happens, make sure your SEF folder is able to be written to. The game engine was not meant to operate on Windows 7.
   * At certain resolutions, some text may disappear. This is a bug of the engine and I'm working to solve it. However you might want to either play on a different resolution or maybe try `setguires WxH` in the console.
   * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=ger` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
-  * MULTIPLAYER: "GUIBASE.ini incompatible with server" --> Make sure both you AND the server are using the modified Engine.dll that is included with the mod (read the HOW TO PLAY IN MULTIPLAYER section)
+  * MULTIPLAYER: "GUIBASE.ini incompatible with server" --> Make sure both you AND the server are using the same GUIBase.ini file.
+  * Meat Barn is a bit glitchy in CO-OP at the moment. It seems to freeze the server. Best to avoid it until it gets figured out.
 
 # OTHER MINOR CHANGES #
 
@@ -171,6 +170,7 @@ BOTH the server and the client need to do this first.
 ## GUI ##
   * Training mission returns! New Features from the Expansion are gone.
   * Maps in the Voting screen are now sorted alphabetically.
+  * 'Call Vote' will automatically succeed when you are the only one on the server.
   * Host Game no longer precaches all of the maps at once; it goes to the menu and loads the maps while in the menu.
   * Added Advanced Information tab to Equipment Panel. It now shows a weapon's manufacturer, manufacturer country, date manufactured, caliber, magazine size, maximum ammo carried, muzzle velocity and firing modes.
   * New splash screen
@@ -180,6 +180,7 @@ BOTH the server and the client need to do this first.
   * New main menu logo
   * All evidence of Gamespy scrubbed
   * Cleaned up appearance throughout
+  * You can now Un-Ready yourself in CO-OP games. You can only edit your equipment when you are not ready.
   * OUT OF THE WAY now the default for General MP menu.
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
   * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
@@ -865,7 +866,6 @@ MulleDK9 for information regarding the Speech Recognition feature.
 KevinL for a tip about Voting Screen.
 sandman332 for a tip about audio
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
-sergei/Swat4Stats for providing a base to use a modified Engine.dll off of
 Sebasien NovA for his modified SwatEd.exe
 
 PUBLICITY
@@ -890,4 +890,4 @@ Rangar: Music (Composition), Textures
 .. if there is anyone I missed, feel free to send me a message and this will be corrected.
 
 # LICENSE #
-This software is licensed under the GNU General Public License v2. You can read it in more detail in LICENSE.md.
+This software is licensed under the GNU General Public License v2. You can read it in more detail in LICENSE
