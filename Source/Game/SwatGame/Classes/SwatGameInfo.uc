@@ -2344,6 +2344,8 @@ function TogglePlayerReady( SwatGamePlayerController Player )
 
     if( SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus == STATUS_NotReady )
         SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus = STATUS_Ready;
+    else if(SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus == STATUS_Ready)
+        SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus = STATUS_NotReady;
     SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).TogglePlayerIsReady();
 
 #if !IG_THIS_IS_SHIPPING_VERSION
