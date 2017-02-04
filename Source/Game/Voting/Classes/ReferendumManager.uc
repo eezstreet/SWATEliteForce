@@ -4,9 +4,9 @@ var private TeamInfo ReferendumTeam;				// The team of the player that started t
 
 var private int YesVotes;							// The current tally of yes votes
 var private int NoVotes;							// The current tally of no votes
-	
+
 var private array<int> Voters;						// A list of PlayerIds that have submitted a vote
-	
+
 var private globalconfig float ReferendumDuration;	// How long the referendum will allow votes to be cast
 var private float TimeRemaining;					// How much time remains before the referendum expires
 
@@ -289,7 +289,7 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 // Returns true if the Yes voters have won the referendum
 private function bool YesVotesWin()
 {
-	return Voters.Length > 1 && YesVotes > (MaxPossibleVoters() - YesVotes);
+	return (Voters.Length > 1 && YesVotes > (MaxPossibleVoters() - YesVotes)) || Voters.Length == 1;
 }
 
 private function EndReferendum()
