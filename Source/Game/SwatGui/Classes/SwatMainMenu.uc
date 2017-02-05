@@ -59,6 +59,8 @@ function InternalOnActivate()
     Controller.bDontDisplayHelpText = !GC.bShowHelp;
     if( GC.SwatGameState == GAMESTATE_None )
     	SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_None );
+		
+	SwatGUIController(Controller).coopcampaign = false;
 }
 
 function InternalOnDlgReturned( int Selection, optional string Passback )
