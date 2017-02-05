@@ -14,6 +14,7 @@ import enum eVoiceType from SwatGame.SwatGUIConfig;
 var(SWATGui) private EditInline Config GUIComboBox MyVoiceTypeBox;
 var(SWATGui) private EditInline Config GUIEditBox MyMPNameBox;
 
+var(SWATGui) private EditInline Config GUICheckBoxButton MyMouseSmoothingBox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyAlwaysRunCheck;
 var(SWATGui) private EditInline Config GUIComboBox MyNetSpeedBox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyHelpTextCheck;
@@ -60,6 +61,7 @@ var() private float DefaultMouseSensitivity;
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
+
 	Super.InitComponent(MyOwner);
 
     MyMPNameBox.MaxWidth = GC.MPNameLength;
@@ -82,6 +84,7 @@ function InitComponent(GUIComponent MyOwner)
     MyHelpTextCheck.OnChange=OnHelpTextClicked;
 
     MyGraphicCICheck.OnChange=OnCISelectionChanged;
+    MyMouseSmoothingBox.OnChange=OnMouseSmoothingChanged;
 }
 
 event Show()
@@ -108,6 +111,15 @@ event Show()
 function SaveSettings()
 {
     local int NewNetSpeed;
+    local byte MouseSmoothingMode;
+
+    if(MyMouseSmoothingBox.bChecked) {
+      MouseSmoothingMode = 1;
+    } else {
+      MouseSmoothingMode = 0;
+    }
+    PlayerOwner().ConsoleCommand("SetSmoothingMode "$MouseSmoothingMode);
+    PlayerOwner().ConsoleCommand("SetMouseAcceleration "$MouseSmoothingMode * 100.0);
 
     //TODO
     SwatPlayerController(PlayerOwner()).SetName( MyMPNameBox.GetText() );
@@ -166,6 +178,7 @@ function LoadSettings()
 {
     local bool IsMouseInverted;
     local float MouseXMultiplier, MouseYMultiplier;
+    local byte MouseSmoothingMode;
 
     MyMPNameBox.SetText( GC.MPName );
     MyNetSpeedBox.SetIndex(GC.NetSpeedSelection);
@@ -207,9 +220,30 @@ function LoadSettings()
     //Log("Mouse Multipliers Are: X="$MouseXMultiplier$" Y="$MouseYMultiplier);
     MyMouseSensitivity.SetValue( MouseXMultiplier );
 
+    MouseSmoothingMode = byte(PlayerOwner().ConsoleCommand("Get PlayerInput MouseSmoothingMode"));
+    if(MouseSmoothingMode > 0) {
+      MyMouseSmoothingBox.SetChecked(true);
+    } else {
+      MyMouseSmoothingBox.SetChecked(false);
+    }
+
     IsMouseInverted = bool(PlayerOwner().ConsoleCommand("Get PlayerInput bInvertMouse"));
     //Log("Mouse Inverted Is: "$IsMouseInverted);
     MyInvertMouseCheck.SetChecked( IsMouseInverted );
+}
+
+private function OnMouseSmoothingChanged( GUIComponent Sender )
+{
+  local byte MouseSmoothingMode;
+
+  if(GUICheckBoxButton(Sender).bChecked) {
+    MouseSmoothingMode = 1;
+  } else {
+    MouseSmoothingMode = 0;
+  }
+
+  Controller.StaticExec("SetSmoothingMode "$MouseSmoothingMode);
+  Controller.StaticExec("SetMouseAcceleration "$MouseSmoothingMode * 100.0);
 }
 
 private function OnMouseSensitivityChanged( GUIComponent Sender )
@@ -254,6 +288,7 @@ protected function ResetToDefaults()
 	MyInvertMouseCheck.SetChecked( false );
 	MyHelpTextCheck.SetChecked( true );
 	MyAlwaysRunCheck.SetChecked( false );
+  MyMouseSmoothingBox.SetChecked(true);
     SetRadioGroup(MyGraphicCICheck);
     MyGCIOptions.SetRadioGroup(MyGCIOption2Check);
 }
