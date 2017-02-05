@@ -16,17 +16,16 @@ Since Version 3, the mod has gained a large following. I've since been able to e
 
 # TABLE OF CONTENTS #
 1. How to Install
-2. How to play in Multiplayer
-3. Changes, Summarized
-4. Known Issues
-5. Other Minor Changes
+2. Changes, Summarized
+3. Known Issues
+4. Other Minor Changes
   - Gameplay
   - GUI
   - Equipment
   - Mission Changes
-6. Version History
-7. Credits
-8. License
+5. Version History
+6. Credits
+7. License
 
 # HOW TO INSTALL #
 Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
@@ -39,10 +38,6 @@ To run the game, use the "Launch SEFMod.bat" file. To run SWATEd, use the "Launc
 You can make a shortcut to these .bat files for more convenience.
 
 The mod can be removed by deleting the SEF folder from your hard drive.
-
-# HOW TO PLAY IN MULTIPLAYER #
-In order to play in multiplayer, both the host and client need to have the same GuiBase.ini.
-Unfortunately, this file tends to get changed (either by changing video settings or otherwise) so it will have issues.
 
 # CHANGES, SUMMARIZED #
 	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
@@ -94,9 +89,9 @@ Unfortunately, this file tends to get changed (either by changing video settings
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
-  * The game may crash when accessing the video menu. If that happens, make sure your SEF folder is able to be written to. The game engine was not meant to operate on Windows 7.
+  * Crashing when accessing video menu or changing settings? Read the second CAUTION notice in the Installation instructions.
   * At certain resolutions, some text may disappear. This is a bug of the engine and I'm working to solve it. However you might want to either play on a different resolution or maybe try `setguires WxH` in the console.
-  * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=ger` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
+  * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
   * MULTIPLAYER: "GUIBASE.ini incompatible with server" --> Make sure both you AND the server are using the same GUIBase.ini file.
   * Meat Barn is a bit glitchy in CO-OP at the moment. It seems to freeze the server. Best to avoid it until it gets figured out.
 
@@ -169,6 +164,9 @@ Unfortunately, this file tends to get changed (either by changing video settings
 
 ## GUI ##
   * Training mission returns! New Features from the Expansion are gone.
+  * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
+  * "Mouse Smoothing" checkbox in Control Settings enables (default) or disables mouse smoothing.
+  * "Field of Vision" slider in Video Settings lets you change the field of vision.
   * Maps in the Voting screen are now sorted alphabetically.
   * 'Call Vote' will automatically succeed when you are the only one on the server.
   * Host Game no longer precaches all of the maps at once; it goes to the menu and loads the maps while in the menu.
@@ -183,7 +181,6 @@ Unfortunately, this file tends to get changed (either by changing video settings
   * You can now Un-Ready yourself in CO-OP games. You can only edit your equipment when you are not ready.
   * OUT OF THE WAY now the default for General MP menu.
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
-  * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
 
 
 ## EQUIPMENT ##
