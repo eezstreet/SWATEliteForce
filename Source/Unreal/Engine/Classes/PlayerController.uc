@@ -1236,10 +1236,14 @@ exec function SetZoom(bool Zoom, optional bool Instantly)
 
 exec function FOV(float F)
 {
+	local float fFOV;
+	
 	if( (F >= 70.0) )
 	{
-		BaseFOV = FClamp(F, 70, 120);
-		SaveConfig();
+		fFOV = FClamp(F, 70, 120);
+		BaseFOV = fFOV;
+		default.BaseFOV = fFOV;
+		class'PlayerController'.static.StaticSaveConfig();
 	}
 }
 

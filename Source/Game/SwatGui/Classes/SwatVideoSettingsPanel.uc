@@ -110,7 +110,11 @@ log("[dkaplan] >>> SaveSettings");
 
 function LoadSettings()
 {
-log("[dkaplan] >>> LoadSettings");
+    local float FOV;
+
+    FOV = float(PlayerOwner().ConsoleCommand("Get PlayerController BaseFOV"));
+    log("[dkaplan] >>> LoadSettings");
+    log("setting FOV to "$FOV);
 
     PlayerOwner().ConsoleCommand( "RESETCLIENTCONFIG" );
     // reset render config after client config because it modifies some
@@ -120,7 +124,7 @@ log("[dkaplan] >>> LoadSettings");
     MyBrightnessSlider.SetValue( float(PlayerOwner().ConsoleCommand( "GETBRIGHTNESS" ) ));
     MyContrastSlider.SetValue( float(PlayerOwner().ConsoleCommand( "GETCONTRAST" ) ));
     MyGammaSlider.SetValue( float(PlayerOwner().ConsoleCommand( "GETGAMMA" ) ));
-    MyFOVSlider.SetValue( float(PlayerOwner().ConsoleCommand("GET PLAYERCONTROLLER BASEFOV")));
+    MyFOVSlider.SetValue( FOV );
     MyResBox.Find( PlayerOwner().ConsoleCommand( "GETCURRENTRES" ) );
 
     MyResBox.SetEnabled( true );
