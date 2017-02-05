@@ -473,6 +473,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - Equipment is now affected by Weight and Bulk. Weight, which represents how heavy your equipment is, slows your character down, and Bulk, which represents how large your equipment is, slows down your actions.
 - The toolkit can now be used to lock doors.
+- Added an FOV slider (Video Options) and a Mouse Smoothing checkbox (Controls Settings)
 - The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
 - FMJ and buckshot can now ricochet off of hard surfaces
 - Bullets are now affected by drag; they will lose momentum (and therefore lethality) over long distances. JHP is more susceptible to drag than FMJ rounds.
@@ -486,6 +487,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Civilians are now not ridiculously noncompliant like they were before
 - Incapacitation health increased from 20 to 30, so incapacitation is more likely
 - All pistols are selectable in primary weapon slots.
+- CO-OP damage modifier reduced (2.0x -> 1.5x, same as Elite difficulty) and Easy damage modifier increased (0.5x -> 1.0x, same as Normal difficulty)
 - Ammo Bandolier item removed
 - VIP Colt M1911 removed
 - Officers get (by default) 3 primary magazines and 5 secondary magazines. The only exception is Jackson, who gets 25 shotgun shells.
