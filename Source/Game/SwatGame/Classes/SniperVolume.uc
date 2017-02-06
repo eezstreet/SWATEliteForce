@@ -26,8 +26,8 @@ function PostBeginPlay()
 function bool ShouldRejectCondition(HighGroundCondition inCondition)
 {
     // Always reject in MP...
-    /*if ( Level.NetMode != NM_Standalone )
-        return true;*/
+    if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bShowEnemyNames))
+        return true;
 
     if ( inCondition.Subject == 'SwatPlayer' || inCondition.Subject == 'SwatOfficer' )
     {
