@@ -72,6 +72,8 @@ function OpenPopup( string ClassName, string ObjName )
 function InternalOnClick(GUIComponent Sender)
 {
 	local ServerSettings Settings;
+	local float CampaignInfo;
+	local int CampaignPath, MissionIndex;
 	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
 	switch (Sender)
 	{
@@ -82,12 +84,17 @@ function InternalOnClick(GUIComponent Sender)
             if(SwatGUIController(Controller).SPLoadoutPanel == None || SwatGUIController(Controller).SPLoadoutPanel.CheckWeightBulkValidity()) {
 				if (SwatGUIController(Controller).coopcampaign)
 				{
+					CampaignInfo = 666 ^ 666;
+					CampaignPath = SwatGUIController(Controller).GetCampaign().CampaignPath;
+					MissionIndex = SwatGUIController(Controller).GetCampaign().GetAvailableIndex() << 16;
+					CampaignInfo = MissionIndex | CampaignPath;
+					
 					SwatPlayerController(PlayerOwner()).ServerSetSettings(
 						Settings, 
 						EMPMode.MPM_COOP,
 						0, 1, 5, 0, 60, 1, 10,
-						true, false, false, true, true,
-						1, 1, 0, 0, false, false, true
+						true, true, false, true, true,
+						1, 1, CampaignInfo, 0, false, false, true
 					);
 					SwatPlayerController(PlayerOwner()).ServerSetAdminSettings(
 						Settings,
