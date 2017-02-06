@@ -537,6 +537,14 @@ log("dkaplan >>> ResetToDefaults()");
 	MyVSyncCheck.bChecked = false;
 }
 
+function InternalOnDeActivate()
+{
+  Controller.OpenWaitDialog();
+  Super.InternalOnDeActivate();
+  PlayerOwner().ConsoleCommand("SaveFOVSettings");
+  Controller.CloseWaitDialog();
+}
+
 
 defaultproperties
 {

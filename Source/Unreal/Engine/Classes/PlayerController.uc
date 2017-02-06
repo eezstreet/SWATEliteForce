@@ -1242,7 +1242,6 @@ exec function FOV(float F)
 	{
 		fFOV = FClamp(F, 70, 120);
 		BaseFOV = fFOV;
-		SaveConfig();
 	}
 }
 
