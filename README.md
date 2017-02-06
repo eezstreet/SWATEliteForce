@@ -867,6 +867,9 @@ sandman332 for a tip about audio
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
 Sebasien NovA for his modified SwatEd.exe
 
+Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
+Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
+
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
 PC Power Play (Also ran a nice overview of the mod)
