@@ -42,6 +42,8 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 # CHANGES, SUMMARIZED #
 	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
 	* New EXTRA MISSIONS. These are a separate campaign that show in the Create Campaign menu dropdown (you'll have a choice, either SWAT 4 + TSS or EXTRA MISSIONS)
+	* Important QOL (quality-of-life) and playability features that are essential to playing the game.
+		** There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
 	* Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
 		** Suspects will also try to shoot at you as they're fleeing.
 	* Smarter Officer AI!
@@ -416,6 +418,20 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 
 # VERSION HISTORY #
 
+### v4.1 ###
+This is a hotfix patch to address some common issues that have been raised.
+- FOV slider no longer freezes the game, and resolution options should now save correctly. As a consequence, switching away from video options will now bring up a "Please Wait.." dialogue
+- Widescreen improvements; the GUI has been tweaked so that certain widescreen resolutions (mostly 16:9 ones) won't have disappearing elements in the GUI. Ultrawide is still unsupported at the moment.
+- Sellers St. Auditorium no longer displays the Colt Carbine text for New Equipment; it displays the UMP text instead.
+- Speech Command Interface improvements:
+  * Now distinguishes between "Mark with Lightstick" and "Drop Lightstick" properly
+  * Added missing commands: SECURE EVIDENCE, RESTRAIN and all of the LEADER THROW commands.
+
+Files modified:
+System/SwatGui.ini
+System/transient.int
+Generated code
+
 ### v4 ###
 
 #### MAJOR FEATURES ####
@@ -524,9 +540,9 @@ The scoring system has been altered:
 - Suspects Arrested: Bonus based on the amount of suspects secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
 - Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
+ * Points: (Number of suspects incapacitated)/(Total Number of suspects) x 13 (65% of 20).
 - Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
+ * Points: (Number of suspects neutralized)/(Total Number of suspects) x 4 (20% of 20).
 - No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
  * Points: 5
 - No Officers Downed: Bonus based on the amount of incapacitated officers. 
