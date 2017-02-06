@@ -116,6 +116,7 @@
             <PHRASE VALSTR="Command_MirrorUnderDoor">Check behind ...</PHRASE>
             <PHRASE VALSTR="Command_MirrorUnderDoor">... behind ... door ...</PHRASE>
             <PHRASE VALSTR="Command_MirrorCorner">Mirror ... corner.</PHRASE>
+            <PHRASE VALSTR="Command_MirrorCorner">Check ... corner.</PHRASE>
             <PHRASE VALSTR="Command_Deploy_Wedge">Deploy ?a wedge.</PHRASE>
             <PHRASE VALSTR="Command_Deploy_Wedge">-Put ... wedge ... ?on ?under ... door ...</PHRASE>
             <PHRASE VALSTR="Command_Deploy_Wedge">-Get ... wedge ... ?on ?under ... door ...</PHRASE>
@@ -128,6 +129,7 @@
             <PHRASE VALSTR="Command_Deploy_LessLethalShotgun">Deploy less +lethal ?shot +gun.</PHRASE>
             <PHRASE VALSTR="Command_Deploy_LessLethalShotgun">Deploy bean bag</PHRASE>
             <PHRASE VALSTR="Command_Deploy_Taser">... taser ...</PHRASE>
+            <PHRASE VALSTR="Command_Deploy_Taser">... tazer ...</PHRASE>
             <PHRASE VALSTR="Command_Deploy_Taser">Taze ...</PHRASE>
             <PHRASE VALSTR="Command_Deploy_Flashbang">Deploy flashbang.</PHRASE>
             <PHRASE VALSTR="Command_Deploy_CSGas">... ?CS ... gas ...</PHRASE>
@@ -175,6 +177,7 @@
             <PHRASE VALSTR="Command_Restrain">?Hand Cuff ...</PHRASE>
             <PHRASE VALSTR="Command_Restrain">Restrain ...</PHRASE>
             <PHRASE VALSTR="Command_Restrain">Arrest ...</PHRASE>
+            <PHRASE VALSTR="Command_Restrain">Make ... secure</PHRASE>
             <PHRASE VALSTR="Command_LeaderThrowAndClear">Move ?in after ... throw ?a ...</PHRASE>
             <PHRASE VALSTR="Command_LeaderThrowAndClear">Leader Throw ?And Clear</PHRASE>
             <PHRASE VALSTR="Command_BreachLeaderThrowAndClear">Breach Leader ?Throw ?And Clear</PHRASE>
