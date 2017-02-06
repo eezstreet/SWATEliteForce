@@ -1084,9 +1084,9 @@ exec function Echo(string s)
 // Called when the player is holding down the button to Control the viewport.
 exec function ControlOfficerViewport()
 {
-    local string ViewportFilter;
+	local string ViewportFilter;
 
-    if ( Level.NetMode == NM_Standalone && !IsDead() && ViewportManager.ShouldControlViewport() )
+    if ( !IsDead() && ViewportManager.ShouldControlViewport() )
     {
         if ( GetHUDPage().ExternalViewport.bVisible )
         {
@@ -1929,23 +1929,32 @@ exec function ShowViewport(string ViewportType)
 
     if ( Level.NetMode != NM_Standalone )
     {
-        SavedReplicatedViewportTeammate = ReplicatedViewportTeammate;
-
-        // Ask the server to choose the next viewport teammate. The teammate's
-        // pawn is assigned to the replicated variable
-        // ReplicatedViewportTeammate. OnReplicatedViewportTeammateChanged is
-        // called on the client whenever that variable changes.
-        ServerActivateOfficerViewport( true );
-
-        // If we're on a listen server, PostNetReceive is not called on us so we'll
-        // never detect a change in ReplicatedViewportTeammate there, like we do
-        // for clients. Therefore, we perform the test here, and just show the
-        // viewport if it's changed.
-        if (Level.NetMode == NM_ListenServer &&
-            SavedReplicatedViewportTeammate != ReplicatedViewportTeammate)
-        {
+		if ( ViewportType ~= "sniper" && SwatPlayerReplicationInfo(PlayerReplicationInfo).IsLeader )
+		{
+            SpecificOfficer = SniperAlertFilter;
             GetHUDPage().ExternalViewport.Show();
-        }
+            ViewportManager.ShowViewport(ViewportType, SpecificOfficer);
+		}
+		else
+		{
+			SavedReplicatedViewportTeammate = ReplicatedViewportTeammate;
+	
+			// Ask the server to choose the next viewport teammate. The teammate's
+			// pawn is assigned to the replicated variable
+			// ReplicatedViewportTeammate. OnReplicatedViewportTeammateChanged is
+			// called on the client whenever that variable changes.
+			ServerActivateOfficerViewport( true );
+	
+			// If we're on a listen server, PostNetReceive is not called on us so we'll
+			// never detect a change in ReplicatedViewportTeammate there, like we do
+			// for clients. Therefore, we perform the test here, and just show the
+			// viewport if it's changed.
+			if (Level.NetMode == NM_ListenServer &&
+				SavedReplicatedViewportTeammate != ReplicatedViewportTeammate)
+			{
+				GetHUDPage().ExternalViewport.Show();
+			}
+		}
     }
     else
     {
