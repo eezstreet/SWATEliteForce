@@ -386,13 +386,15 @@ function PlayerController GetPlayerControllerFromIndex(int index)
 
 event bool ShouldCheckClientCDKeys()
 {
-    return bInitAsServer && bShouldCheckClientCDKeys;
+    return false;
+	//bInitAsServer && bShouldCheckClientCDKeys;
 }
 
 function SetShouldCheckClientCDKeys( bool NewValue )
 {
-	mplog( "---SGSM::SetShouldCheckClientCDKeys(). Value="$NewValue );
-    bShouldCheckClientCDKeys = NewValue;
+	return;
+	/*mplog( "---SGSM::SetShouldCheckClientCDKeys(). Value="$NewValue );
+    bShouldCheckClientCDKeys = NewValue;*/
 }
 
 // Returns true if we should advertise the server on the Internet using
