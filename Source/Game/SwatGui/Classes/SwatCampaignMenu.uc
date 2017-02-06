@@ -88,6 +88,9 @@ private function InternalOnActivate()
     BriefingTabButton.DisableComponent();
     LoadoutTabButton.DisableComponent();
     StartButton.DisableComponent();
+	
+	if (SwatGUIController(Controller).coopcampaign) {LoadoutTabButton.Hide();}
+	else{LoadoutTabButton.Show();}
 
 	MyCampaignPathBox.SetIndex(1);	// Use SWAT 4 missions as the default
 

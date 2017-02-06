@@ -297,13 +297,24 @@ private function SetupPopup()
 
 function InternalOnActivate()
 {
-    SetFocusInstead(MyServerInfoBox);
+	SetFocusInstead(MyServerInfoBox);
 
     DisplayGameInfo();
 
     MyMPLoadoutPanel.LoadMultiPlayerLoadout();
 
     SetTimer( 1.0, true );
+	
+	if (SwatGUIController(Controller).coopcampaign)
+	{
+		MyServerSettingsButton.Hide();
+		MyServerSettingsButton.DisableComponent();
+	}
+	else 
+	{
+		MyServerSettingsButton.Show();
+		MyServerSettingsButton.EnableComponent();
+	}
 }
 
 function InternalOnDeActivate()

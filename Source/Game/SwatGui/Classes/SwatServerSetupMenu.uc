@@ -246,11 +246,11 @@ function SaveServerSettings()
                                 QuickSetupPanel.MyQuickResetBox.bChecked,
                                 AdvancedSetupPanel.MyFriendlyFireSlider.GetValue(),
                                 EnemyFireAmount,
-								AdvancedSetupPanel.MyArrestRoundTimeDeductionBox.Value,
+								-1^0,
 								AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
 								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
 								AdvancedSetupPanel.MyEnableStatsCheck.bChecked,
-								!AdvancedSetupPanel.MyEnableTeamSpecificWeapons.bChecked );
+								!AdvancedSetupPanel.MyEnableTeamSpecificWeapons.bChecked);
 
     GC.SaveConfig();
 }
