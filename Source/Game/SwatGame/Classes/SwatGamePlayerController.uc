@@ -2023,6 +2023,17 @@ function IssueMessage(string Message, name Type)
     Log("IssueMessage: "$Message);
     ClientMessage(Message, Type);
 }
+
+exec function ToggleSpeechManager()
+{
+  Level.GetEngine().SpeechManager.ToggleSpeech();
+  if(Level.GetEngine().SpeechManager.IsEnabled()) {
+    ClientMessage("[c=FFFFFF]Speech Recognition enabled", 'SpeechManagerNotification');
+  } else {
+    ClientMessage("[c=FFFFFF]Speech Recognition disabled", 'SpeechManagerNotification');
+  }
+}
+
 // ----------------------
 
 //for debugging only!  Normal gameplay should call Interact()

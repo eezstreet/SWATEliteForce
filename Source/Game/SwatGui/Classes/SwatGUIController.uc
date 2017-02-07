@@ -456,6 +456,10 @@ function bool OnMessageRecieved( String Msg, Name Type )
             SendMessageToChat( Msg, Type );
             break;
 
+        case 'SpeechManagerNotification':
+            SendMessageToChat( Msg, Type );
+            break;
+
         //multi-player messages
         case 'PreGameWait':
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( WaitingString, -1.0 );

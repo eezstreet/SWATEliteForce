@@ -38,7 +38,7 @@ function InitComponent(GUIComponent MyOwner)
 	if (!PlayerOwner().Level.GetEngine().SpeechManager.IsInitialized())
 		RecognitionEnabled.Hint = SpeechRecognitionDisabledHelpString;
 	else
-		RecognitionEnabled.Hint = SpeechRecogntionHelpString;
+		RecognitionEnabled.Hint = SpeechRecognitionHelpString;
 
 	MyMusicVolumeSlider.OnChange=OnMusicVolumeChanged;
     MySoundVolumeSlider.OnChange=OnSoundVolumeChanged;
