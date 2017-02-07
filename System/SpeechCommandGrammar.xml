@@ -210,6 +210,25 @@
 		</LIST>
     </RULE>
 
+    <RULE NAME="Actions" TOPLEVEL="ACTIVE">
+		<LIST PROPNAME="Actions">
+			<PHRASE VALSTR="TOCReport">Talk, this is entry team ...</PHRASE>
+			<PHRASE VALSTR="TOCReport">Entry team to talk ...</PHRASE>
+			<PHRASE VALSTR="TOCReport">Talk, we have ...</PHRASE>
+			<PHRASE VALSTR="TOCReport">Talk, subject ...</PHRASE>
+			<PHRASE VALSTR="TOCReport">Talk, there's ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... Police ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... Hands up ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... Hands in the ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... Hands where ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... Get down ...</PHRASE>
+			<PHRASE VALSTR="Compliance">Comply ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... SWAT ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... search warrant ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... Drop ?your ?the weapon ...</PHRASE>
+		</LIST>
+    </RULE>
+
     <RULE NAME="TeamAndCommand" TOPLEVEL="ACTIVE">
 		<RULEREF NAME="Team"></RULEREF>
 		<RULEREF NAME="Command"></RULEREF>

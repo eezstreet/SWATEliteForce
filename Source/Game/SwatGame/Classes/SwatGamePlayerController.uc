@@ -5211,12 +5211,16 @@ exec function IssueCompliance()
 	ServerIssueCompliance( string(PlayerTag) );
 }
 
-function ServerIssueCompliance( string VoiceTag )
+function ServerIssueCompliance( optional string VoiceTag )
 {
 	   local bool ACharacterHasAWeaponEquipped;
      local NetPlayer theNetPlayer;
-	   local int bTargetArrested;
-	   local int bTargetSuspect;
+     local int TargetIsSuspect;
+     local vector CameraLocation;
+     local rotator CameraRotation;
+     local Actor Candidate;
+
+     CalcViewForFocus(Candidate, CameraLocation, CameraRotation );
 
      if(ViewTarget != Pawn) {
        log("ServerIssueCompliance: ViewTarget ("$ViewTarget$") != Pawn ("$Pawn$")");
@@ -5238,24 +5242,25 @@ function ServerIssueCompliance( string VoiceTag )
         }
 
 	    // IssueCompliance returns true if any character that listens to us has a weapon equipped
-	    ACharacterHasAWeaponEquipped = SwatPawn(Pawn).IssueCompliance(bTargetArrested, bTargetSuspect);
+	    ACharacterHasAWeaponEquipped = SwatPawn(Pawn).IssueCompliance();
 
-	    if (ACharacterHasAWeaponEquipped)
-	    {
-		        Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
-	    }
-		else if(bTargetArrested == 1)
-		{
-			if(bTargetSuspect == 1) {
-				Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
-			} else {
-				Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag)); // TODO: check for aggressiveness
-			}
-		}
-	    else
-	    {
-	            Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
-	    }
+      if (VoiceTag != "") { // Might be legitimately None, because it could be issued through the Speech Command Interface
+        if (ACharacterHasAWeaponEquipped)
+        {
+            Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
+        }
+        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect)) {
+          Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
+        }
+        else if(TargetIsSuspect == 1) {
+          Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
+        }
+        else {
+          Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag)); // TODO: check for aggressiveness
+        }
+      } else {
+        log("[SPEECH] Issued compliance.");
+      }
     }
 }
 

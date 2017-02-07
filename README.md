@@ -39,6 +39,8 @@ You can make a shortcut to these .bat files for more convenience.
 
 The mod can be removed by deleting the SEF folder from your hard drive.
 
+NOTE: You may run into an issue with the game not saving your settings, or throwing an assertion failure at times in the Settings menu. This is mostly a problem with Windows Vista and up; try giving the folder write permissions or "Total Control". Alternatively you can make your SWAT4x.exe run in administrator mode.
+
 # CHANGES, SUMMARIZED #
 	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
 	* New EXTRA MISSIONS. These are a separate campaign that show in the Create Campaign menu dropdown (you'll have a choice, either SWAT 4 + TSS or EXTRA MISSIONS)
@@ -91,8 +93,6 @@ The mod can be removed by deleting the SEF folder from your hard drive.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
-  * Crashing when accessing video menu or changing settings? Read the second CAUTION notice in the Installation instructions.
-  * At certain resolutions, some text may disappear. This is a bug of the engine and I'm working to solve it. However you might want to either play on a different resolution or maybe try `setguires WxH` in the console.
   * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
   * MULTIPLAYER: "GUIBASE.ini incompatible with server" --> Make sure both you AND the server are using the same GUIBase.ini file.
   * Meat Barn is a bit glitchy in CO-OP at the moment. It seems to freeze the server. Best to avoid it until it gets figured out.
@@ -420,15 +420,21 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 
 ### v4.1 ###
 This is a hotfix patch to address some common issues that have been raised.
-- FOV slider no longer freezes the game, and resolution options should now save correctly. As a consequence, switching away from video options will now bring up a "Please Wait.." dialogue
-- Widescreen improvements; the GUI has been tweaked so that certain widescreen resolutions (mostly 16:9 ones) won't have disappearing elements in the GUI. Ultrawide is still unsupported at the moment.
+- The taunt feature has been improved significantly. You now have to be aiming at the target in order to taunt at them.
+- The FOV slider no longer freezes the game, and resolution options should now save correctly. (Review the updated installation instructions if it does not work.) Navigating away from the Video Options menu will bring up a "Please Wait..." dialogue as it saves settings.
+- Widescreen improvements; the GUI has been tweaked so that certain widescreen resolutions (mostly 16:9 ones) won't have disappearing elements in the GUI. Ultrawide is still unsupported at the moment and there might be a few issues I missed.
 - Sellers St. Auditorium no longer displays the Colt Carbine text for New Equipment; it displays the UMP text correctly instead.
 - Speech Command Interface improvements:
   * Now distinguishes between "Mark with Lightstick" and "Drop Lightstick" properly
   * Added missing commands: SECURE EVIDENCE, RESTRAIN and all of the LEADER THROW commands.
   * Added a new keybind to the Key Config menu: Toggle Speech Commands. This button turns off/on the speech command interface; which is good for streamers.
+  * You can now shout for compliance at civilians, suspects, etc using your voice. Try "Police!", "Put your hands up!", "Drop your weapons!" or for roleplay purposes, "Police! Search warrant!"
+  * Commands involving "stinger" now use "sting" since this was often confused by the engine for "taser"
+  * Various other misc improvements
 
 Files modified:
+System/DefSwatGui.ini
+System/SpeechCommandGrammar.xml
 System/SwatGui.ini
 System/transient.int
 Generated code

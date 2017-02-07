@@ -576,7 +576,7 @@ simulated function EAnimationSet GetEquipmentAimSet()
         else if (Equipment.IsA('M4A1MG'))
         {
             return GetM4AimPoseSet();
-        }        
+        }
 		// Special (weird) case aim pose for the m4 the suspects use
         else if (Equipment.IsA('M4MG'))
         {
@@ -1742,6 +1742,7 @@ simulated function bool CanIssueComplianceTo(Pawn otherPawn)
 	if (otherPawn.IsA('SwatAICharacter') &&
 		(VSize(otherPawn.Location - Location) <= MaxComplianceIssueDistance) &&
 		LineOfSightTo(otherPawn) &&
+    otherPawn.PlayerCanSeeMe() &&
         SwatCharacterResource(otherPawn.characterAI).CommonSensorAction.GetComplySensor() != None)
 	{
 		return true;
@@ -1765,15 +1766,62 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 	SwatCharacterResource(TargetPawn.characterAI).CommonSensorAction.GetComplySensor().NotifyComply(self);
 }
 
+// returns true if we should issue a taunt to the subject
+// returns false otherwise
+// out bool says if it's a suspect
+simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect)
+{
+  local Actor TraceActor;
+  local Actor CandidateActor;
+  local vector TraceStart, TraceEnd;
+  local vector HitLocation, HitNormal;
+  local Material HitMaterial;
+
+  TraceStart = CameraLocation;
+  TraceEnd = TraceStart + (CameraRotation * TraceDistance);
+
+  bIsSuspect = 0; // This should be filled out first
+
+  foreach TraceActors(
+    class'Actor',
+    TraceActor,
+    HitLocation,
+    HitNormal,
+    HitMaterial,
+    TraceEnd,
+    TraceStart
+    )
+    {
+      // If we find a SwatEnemy or SwatHostage, stop the trace immediately
+      if(TraceActor.IsA('SwatEnemy') || TraceActor.IsA('SwatHostage')) {
+        CandidateActor = TraceActor;
+        break;
+      }
+    }
+
+    if(CandidateActor == None) {
+      // There's nothing there
+      return false;
+    }
+
+    if(CandidateActor.IsA('SwatEnemy')) {
+      bIsSuspect = 1;
+    } else {
+      bIsSuspect = 0;
+    }
+
+    if(SwatPawn(CandidateActor).bArrested) {
+      return true; // They're already handcuffed
+    }
+    return false; // They...aren't.
+}
+
 // returns true if any character that we are yelling at had a weapon equipped
 // returns false otherwise
-simulated function bool IssueCompliance(optional out int checkIfCuffed, optional out int isSuspect)
+simulated function bool IssueCompliance()
 {
 	local Pawn Iter;
 	local bool ACharacterHasAWeaponEquipped;
-
-	checkIfCuffed = 0;
-	isSuspect = 0;
 
 	for(Iter = Level.pawnList; Iter != None; Iter = Iter.nextPawn)
 	{
@@ -1786,19 +1834,7 @@ simulated function bool IssueCompliance(optional out int checkIfCuffed, optional
 				if (SwatPawn(Iter).HasFiredWeaponEquipped())
 				{
 					ACharacterHasAWeaponEquipped = true;
-					checkIfCuffed = 0;
 					break;
-				}
-				if (SwatPawn(Iter).bArrested) {
-					checkIfCuffed = 1;
-				}
-				if (SwatPawn(Iter).IsA('SwatEnemy'))
-				{
-					isSuspect = 1;
-				}
-				if (SwatPawn(Iter).IsA('SwatHostage'))
-				{
-					isSuspect = 0;
 				}
 			}
 		}
