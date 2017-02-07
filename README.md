@@ -422,10 +422,11 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 This is a hotfix patch to address some common issues that have been raised.
 - FOV slider no longer freezes the game, and resolution options should now save correctly. As a consequence, switching away from video options will now bring up a "Please Wait.." dialogue
 - Widescreen improvements; the GUI has been tweaked so that certain widescreen resolutions (mostly 16:9 ones) won't have disappearing elements in the GUI. Ultrawide is still unsupported at the moment.
-- Sellers St. Auditorium no longer displays the Colt Carbine text for New Equipment; it displays the UMP text instead.
+- Sellers St. Auditorium no longer displays the Colt Carbine text for New Equipment; it displays the UMP text correctly instead.
 - Speech Command Interface improvements:
   * Now distinguishes between "Mark with Lightstick" and "Drop Lightstick" properly
   * Added missing commands: SECURE EVIDENCE, RESTRAIN and all of the LEADER THROW commands.
+  * Added a new keybind to the Key Config menu: Toggle Speech Commands. This button turns off/on the speech command interface; which is good for streamers.
 
 Files modified:
 System/SwatGui.ini
