@@ -365,6 +365,7 @@ function LoadAmmoForWeapon( Pocket thePocket, class<FiredWeapon> WeaponClass )
     MyScrollAmmoLeftButton.SetActive( WeaponClass.default.PlayerAmmoOption.Length > 1 );
     MyScrollAmmoRightButton.SetActive( WeaponClass.default.PlayerAmmoOption.Length > 1 );
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200;
 
     if(thePocket == Pocket_PrimaryWeapon && ActivePocket == thePocket) {
@@ -633,6 +634,7 @@ private function InternalSelectorButtonOnClick(GUIComponent Sender)
         }
     }
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200; // temp
 
     UpdateIndex(ActivePocket);
@@ -653,6 +655,7 @@ private function InternalTabButtonOnClick(GUIComponent Sender)
         }
     }
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200; // temp
 
     DisplayTab( ActiveTab );
@@ -663,6 +666,7 @@ private function DisplayTab(int tabNum)
 {
     local int i;
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200; // temp
 
     for( i = 0; i < PocketTabs.Length; i++ )

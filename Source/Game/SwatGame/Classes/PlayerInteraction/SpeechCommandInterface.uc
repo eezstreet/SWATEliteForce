@@ -141,7 +141,7 @@ simulated function IssueTOCOrder()
 
   Player = SwatGamePlayerController(Level.GetLocalPlayerController());
 
-  log("[SPEECH] TOC order issued. Not complete feature.")
+  log("[SPEECH] TOC order issued. Not complete feature.");
 }
 
 simulated function GiveCommandSP()
