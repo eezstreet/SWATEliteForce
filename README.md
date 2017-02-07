@@ -432,6 +432,7 @@ This is a hotfix patch to address some common issues that have been raised.
   * You can now shout for compliance at civilians, suspects, etc using your voice. Try "Police!", "Put your hands up!", "Drop your weapons!" or for roleplay purposes, "Police! Search warrant!"
   * Commands involving "stinger" now use "sting" since this was often confused by the engine for "taser"
   * Various other misc improvements
+- Fixed chat in multiplayer pregame having the wrong number of lines (thanks to KevinL and Sokol for this fix)
 
 Files modified:
 System/DefSwatGui.ini
