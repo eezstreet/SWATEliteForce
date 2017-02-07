@@ -267,7 +267,7 @@ TotalAmmoString=200 pepper-balls
 RateOfFire=600 RPM
 
 [Wedge]
-Description=This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
+Description=While locking a door may slow a suspect down, it is not a surefire way of preventing movement through a door. The Door Wedge allows the operator to completely block a door from opening. This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
 FriendlyName=Door Wedge
 
 [Optiwand]

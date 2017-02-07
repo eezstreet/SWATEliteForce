@@ -433,6 +433,7 @@ This is a hotfix patch to address some common issues that have been raised.
   * Commands involving "stinger" now use "sting" since this was often confused by the engine for "taser"
   * Various other misc improvements
 - Fixed chat in multiplayer pregame having the wrong number of lines (thanks to KevinL and Sokol for this fix)
+- Updated wedge description to explain the difference between using a wedge and locking a door.
 
 Files modified:
 System/DefSwatGui.ini
