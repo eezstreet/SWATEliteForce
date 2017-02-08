@@ -84,8 +84,8 @@ simulated function OnGivenToOwner()
         assert( FirstPersonModel != None );
 
         FirstPersonModel.Skins[0] = GunShader;
-        //FirstPersonModel.Skins[1] = BlankScreen;
-		FirstPersonModel.Skins[1] = LCDShader;
+        FirstPersonModel.Skins[1] = BlankScreen;
+		//FirstPersonModel.Skins[1] = LCDShader;
 
         TimerFreq = 1.0/RefreshRate;
     }
@@ -122,6 +122,7 @@ simulated function bool   CanIssueCommands()
 simulated function OnBeginControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
+	
 	bInUse = true;
 }
 
@@ -129,7 +130,7 @@ simulated function OnEndControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
 
-    // Use the blank screen texture now
+	// Use the blank screen texture now
     //FirstPersonModel.Skins[1] = BlankScreen;
     FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,0,1 );
 	bInUse = false;
@@ -379,12 +380,12 @@ simulated latent protected function DoUsingHook()
 
     mplog( Self$" DoUsingHook() Latent function 5" );
     // Make sure the screen only starts rendering when going after we've played the animation to bring the optiwand screen up
-    /*if ( PlayerOwner != None )
+    if ( PlayerOwner != None )
     {
         LCDScreen.Revision++;
         // Use the scripted texture now...
         FirstPersonModel.Skins[1] = LCDShader;
-    }*/
+    }
 
     mplog( Self$" DoUsingHook() Latent function 6" );
     while( ShouldControlViewport() )
