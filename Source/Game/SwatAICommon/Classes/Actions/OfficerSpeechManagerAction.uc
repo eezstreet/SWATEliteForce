@@ -84,20 +84,20 @@ function TriggerHostageSpottedSpeech(Pawn Hostage)
 {
 	assert(Hostage.IsA('SwatHostage'));
 
-	if (ISwatHostage(Hostage).GetHostageCommanderAction().IsInDanger())
-	{
-		TriggerSpeech('ReportedHostageSpottedWithThreat', true);
-	}
-	else
-	{
-		TriggerSpeech('ReportedHostageSpottedNoThreat', true);
-	}
+	TriggerSpeech('ReportedCivilianSpotted', true);
 }
 
 function TriggerHostageDownSpeech(Pawn Hostage)
 {
-	// @NOTE: There is no generic speech for downed hostages
-	TriggerSpeech('ReportedHostageIncapacitated', true);
+	if (Hostage.IsIncapacitated())
+	{
+		TriggerSpeech('ReportedHostageIncapacitated', true);
+	}
+	else
+	{
+		TriggerSpeech('ReportedHostageDead', true);
+	}
+
 }
 
 function TriggerHostageWontComplySpeech(Pawn Hostage)

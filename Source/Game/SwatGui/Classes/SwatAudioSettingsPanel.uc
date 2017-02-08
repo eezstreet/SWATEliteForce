@@ -28,6 +28,7 @@ var() private float DefaultVOIPVolume;
 var() private float DefaultAmbientVolume;
 
 var private localized string SpeechRecognitionDisabledHelpString;
+var private localized string SpeechRecognitionHelpString;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -37,7 +38,7 @@ function InitComponent(GUIComponent MyOwner)
 	if (!PlayerOwner().Level.GetEngine().SpeechManager.IsInitialized())
 		RecognitionEnabled.Hint = SpeechRecognitionDisabledHelpString;
 	else
-		RecognitionEnabled.Hint = "";
+		RecognitionEnabled.Hint = SpeechRecognitionHelpString;
 
 	MyMusicVolumeSlider.OnChange=OnMusicVolumeChanged;
     MySoundVolumeSlider.OnChange=OnSoundVolumeChanged;
@@ -212,6 +213,7 @@ defaultproperties
 {
     ConfirmResetString="Are you sure that you wish to reset all audio settings to their defaults?"
 	SpeechRecognitionDisabledHelpString="Speech recognition could not be initialized. Please consult the manual for help."
+  SpeechRecognitionHelpString="If enabled, you may use an attached microphone to issue commands"
     DefaultMusicVolume=0.9
     DefaultSoundVolume=0.9
     DefaultVoiceVolume=0.9

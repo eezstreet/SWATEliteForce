@@ -98,6 +98,7 @@ event HandleParameters(string Param1, string Param2, optional int param3)
     Super.HandleParameters( Param1, Param2, param3 );
 
     SwatGuiController(Controller).SetPlayerNotReady();
+    bPressedReady = false;
     MyStartButton.EnableComponent();
 }
 

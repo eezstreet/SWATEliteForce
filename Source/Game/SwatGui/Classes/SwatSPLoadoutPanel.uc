@@ -39,6 +39,7 @@ var(SWATGui) config localized String NoLoadoutNameEntered;
 var(SWATGui) config localized String ConfirmOverwrite;
 var(SWATGui) config localized String ConfirmDelete;
 var(SWATGui) config localized String ConfirmApplyToAll;
+var(SWATGui) config localized String EquipmentNotUnlocked;
 
 var private bool bDontLoadCustom;
 var private bool bSavePopupOpen;
@@ -251,6 +252,17 @@ function bool CheckCampaignValid( class EquipmentClass )
 				return false;
 	}
 	return true;
+}
+
+// Returns true if this loadout has any equipment that cannot be unlocked.
+function bool CheckLoadoutForInvalidUnlocks(DynamicLoadOutSpec Loadout) {
+  local int i;
+  for(i = 0; i < Pocket.EnumCount; i++) {
+    if(!CheckCampaignValid(Loadout.LoadoutSpec[i])) {
+      return true;
+    }
+  }
+  return false;
 }
 
 ///////////////////////////
@@ -470,6 +482,14 @@ private function LoadCustomLoadout()
     CustomLO = PlayerOwner().Spawn( class'DynamicLoadOutSpec', None, name( LoadLoadoutName ) );
     log("Loading custom loadout: ("$LoadLoadoutName$" / "$CustomLO$"");
 
+    if(CheckLoadoutForInvalidUnlocks(CustomLO)) {
+      Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+      Controller.TopPage().OpenDlg( EquipmentNotUnlocked, QBTN_Ok, "EquipmentNotUnlocked" );
+
+      CustomLO.Destroy();
+      return;
+    }
+
     CopyLoadOutWeaponry(MyCurrentLoadOut,CustomLO);
     CustomLO.Destroy();
 
@@ -585,6 +605,8 @@ defaultproperties
     ConfirmOverwrite="A loadout named '%1' already exists; are you sure that you wish to overwrite it?"
     ConfirmDelete="Delete loadout '%1'?"
     ConfirmApplyToAll="Are you sure that you wish to apply the selected loadout to your entire team?"
+
+    EquipmentNotUnlocked="This loadout contains equipment that hasn't been unlocked yet. You are not able to use it until you have unlocked the equipment."
 
     OfficerInfo(0)="A recent transfer from Los Angeles, the Sergeant is cool under fire and always business like.  With a new element to command he will have to gain the respect of his squad while on the job."
     OfficerInfo(1)="A thirty year veteran of the force, and 25 year veteran of SWAT, Officer Reynolds is the most experienced member of the element.  His experience has taught him that staying calm can be the key to survival as a SWAT officer.  Realizing the value of his experience, he is always willing to give his advice to the element."

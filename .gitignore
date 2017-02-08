@@ -1,4 +1,6 @@
 System/*.u
+System/Packages.md5
+System/Packages.txt
 System/Promotional/*
 System/Running.ini
 *.bmp

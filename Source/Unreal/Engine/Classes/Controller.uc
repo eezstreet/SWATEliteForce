@@ -15,6 +15,7 @@
 // This is a built-in Unreal class and it shouldn't be modified.
 //=============================================================================
 class Controller extends Actor
+  config(User)
 	native
 	nativereplication
     dependsOn(HandheldEquipment)

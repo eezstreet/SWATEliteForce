@@ -12,6 +12,21 @@ I originally wanted to try and market this mod as a police officer trainer, but 
 
 I wish I could do more with the game. I'm not an artist by any means, so a lot of the other things that I wish I could do (TASER rounds for shotguns, fixing a lot of the bad bump maps and flat shaded textures) aren't in the pipes. I do plan on dabbling with maps at some point, so there may be a custom campaign. I may include some community maps as part of the new campaign.
 
+Since Version 3, the mod has gained a large following. I've since been able to enlist the help of others to work on the mod, and it's become a team effort in improving the game.
+
+# TABLE OF CONTENTS #
+1. How to Install
+2. Changes, Summarized
+3. Known Issues
+4. Other Minor Changes
+  - Gameplay
+  - GUI
+  - Equipment
+  - Mission Changes
+5. Version History
+6. Credits
+7. License
+
 # HOW TO INSTALL #
 Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
 By default this folder is located in C:/Program Files (x86)/SWAT 4 or C:/Program Files (x86)/Sierra/SWAT 4
@@ -24,7 +39,409 @@ You can make a shortcut to these .bat files for more convenience.
 
 The mod can be removed by deleting the SEF folder from your hard drive.
 
+NOTE: You may run into an issue with the game not saving your settings, or throwing an assertion failure at times in the Settings menu. This is mostly a problem with Windows Vista and up; try giving the folder write permissions or "Total Control". Alternatively you can make your SWAT4x.exe run in administrator mode.
+
+# CHANGES, SUMMARIZED #
+	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
+	* New EXTRA MISSIONS. These are a separate campaign that show in the Create Campaign menu dropdown (you'll have a choice, either SWAT 4 + TSS or EXTRA MISSIONS)
+	* Important QOL (quality-of-life) and playability features that are essential to playing the game.
+		** There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
+	* Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
+		** Suspects will also try to shoot at you as they're fleeing.
+	* Smarter Officer AI!
+		** Upon restraining a target, SWAT officers will now report it to TOC automatically!
+		** SWAT officers are much more efficient at moving through doorways and are better at engaging suspects
+	* Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
+		** This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
+	* New secondary objective: collect drug evidence. Static drug bags have been replaced with new ones that can be collected.
+		** The bags count towards the "Secure All Evidence" procedure.
+	* More equipment options. This includes a few cut equipment items, such as riot helmets.
+		** AI-controlled officers can carry more lightsticis.
+		** The player can carry armor and all helmet options in singleplayer.
+		** The player can select how many magazines they would like to bring in the mission.
+		** There is a new Advanced Information Panel in the loadout menu that lets you view information such as manufacturer, magazine size, etc.
+		** Heavy armor now shows a health percentage on the HUD. Heavy armor at 100% health can stop almost any bullet in the game, but as it takes damage, it loses the ability to protect you. It can only be shattered by bullets and sabot slugs, not buckshot or other rounds.
+		** All secondary weapons equippable as primaries, and some primaries equippable as secondaries.
+	* Equipment is also much more realistic.
+		** All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is.
+		** TASERs can kill or incapacitate drug users, the elderly, or people with compromised health.
+		** Less Lethal shotguns also realistically are lethal at close range. Put some distance between you and your target.
+		** Flashbangs can injure. The explosion they set off can also blow up objects such as Pipe-Bombs now much easier. They also stun people for a shorter duration.
+		** CS gas affects a wider area, takes longer to disperse, and affects people for longer. It has less of an effect on morale however. It also affects the player on Singleplayer, so wear a gas mask.
+		** C2 is much more dangerous. You might want to bring that breaching shotgun after all.
+		** Bullets of certain types (FMJ, buckshot) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
+		** Bullets are now subject to drag; they lose damage over distance.
+		** All equipment has been modified to use real values.
+	* Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
+		** Functions exactly the same as in the Speech Recognition Improvement mod by MulleDK9. Not all commands from that mod are present however.
+	* Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.
+		** You can now issue BREACH commands on unlocked doors.
+		** New CHECK FOR TRAPS command allows your AI companions to check doors for those all-important traps.
+		** LEADER THROW commands: Now you can be the one to throw the grenade!
+		** Lightsticks are broken into two commands: DROP LIGHTSTICK (where you order the nearest AI officer to drop a lightstick at their feet) and MARK WITH LIGHTSTICK (where you order an AI to drop a lightstick at what you're aiming at)
+	* Harsher penalties. Incapacitated hostages and suspects now need to be reported to TOC; deadly force is more scrutinized and can be incurred by more means (AI controlled officers using C2 and snipers are two good examples)
+		** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
+		** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
+	* The game reveals much more information to you. A warning will display when you have made a penalty, and a message will show when you have completed an objective.
+
+# KNOWN ISSUES #
+  * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
+  * Not working when you launch the .bat? The whole SEF folder is supposed to be copied to your SWAT 4 folder. Please review the HOW TO INSTALL section.
+  * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
+  * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
+  * The game sometimes freezes during loading. Hit ENTER a few times and it will clear itself up. The internal script garbage collector crashes for reasons unknown but it's completely harmless.
+  * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
+  * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
+  * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
+  * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
+  * MULTIPLAYER: "GUIBASE.ini incompatible with server" --> Make sure both you AND the server are using the same GUIBase.ini file.
+  * Meat Barn is a bit glitchy in CO-OP at the moment. It seems to freeze the server. Best to avoid it until it gets figured out.
+
+# OTHER MINOR CHANGES #
+
+## GAMEPLAY ##
+  * Maps may now alter themselves based on difficulty level, for instance adding more suspects or traps in Elite difficulty. Only a few maps use this feature currently.
+  * "Press ESC and debrief to exit the game" now shows on ALL missions, not just Food Wall, Fairfax Residence and Qwik Fuel.
+  * In multiplayer you can now unready yourself.
+  * Fixed an exploit that allowed player to access early campaign unlocks by saving a loadout and then reloading it in another campaign.
+  * You can now lock doors using the toolkit. Suspects cannot flee as easily through locked doors (they need to unlock them first)
+  * The toolkit interface no longer shows up for doors that cannot be locked
+  * Tasing your fellow officer and tripping traps now incurs a penalty
+  * Tweaked limb damage slightly. JHP does more "expansion" damage to account for drag.
+  * Incapacitation occurs at 30 health instead of 20.
+  * Using your Shout button on a restrained suspect will taunt them. Examples include "You have the right to remain silent," etc. Doesn't do anything, it's just an easter egg. Warning: The suspect may have some unkind words for you in return.
+  * Likewise, this works on restrained civilians as well. "It'll be okay," etc.
+  * Suspects now have a slight delay when firing upon the player.
+  * (Non-Insane/Non-Polite) suspects take twice as long before shooting hostages
+  * Added a new quality: Polite. Any suspect archetype with this quality won't attempt to shoot hostages.
+  * Added a new quality: Insane. Any suspect archetype with this quality will shoot hostages *much* faster (basically instantly) and ignores distance checks.
+
+### Score ###
+
+#### BONUSES ####
+- Mission Completed: Awarded when all of the mission objectives are completed. 
+ * Points: 45
+- Suspects Arrested: Bonus based on the amount of suspects secured. 
+ * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
+- Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
+ * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
+- Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
+ * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
+- No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
+ * Points: 5
+- No Officers Downed: Bonus based on the amount of incapacitated officers. 
+ * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
+- Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. 
+ * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
+- Report Status to TOC: Bonus based on the amount of reports to TOC. 
+ * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
+- All Evidence Secured: Bonus based on the amount of evidence collected. 
+ * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
+
+#### PENALTIES: ####
+- Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+ * Points: -5 per suspect.
+- Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+ * Points: -20 per suspect.
+- Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+ * Points: -20 per hostage.
+- Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission. 
+ * Points: -50 per hostage.
+- Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire. 
+ * Points: -10 per officer.
+- Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator. 
+ * Points: -25 per officer.
+- Tased a fellow officer: Given when an officer uses a taser another officer. 
+ * Points: -5 per infraction.
+- Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it. 
+ * Points: -10 per trap.
+- Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area. 
+ * Points: -5 per suspect.
+- Failed to report a downed officer: Given when a downed officer is not reported to TOC: 
+ * Points: -5 per downed officer
+- Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: 
+ * Points: -5 per downed suspect
+- Failed to report a downed hostage: Given when a downed hostage is not reported to TOC: 
+ * Points: -5 per downed hostage
+
+## GUI ##
+  * Training mission returns! New Features from the Expansion are gone.
+  * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
+  * "Mouse Smoothing" checkbox in Control Settings enables (default) or disables mouse smoothing.
+  * "Field of Vision" slider in Video Settings lets you change the field of vision.
+  * Maps in the Voting screen are now sorted alphabetically.
+  * 'Call Vote' will automatically succeed when you are the only one on the server.
+  * Host Game no longer precaches all of the maps at once; it goes to the menu and loads the maps while in the menu.
+  * Added Advanced Information tab to Equipment Panel. It now shows a weapon's manufacturer, manufacturer country, date manufactured, caliber, magazine size, maximum ammo carried, muzzle velocity and firing modes.
+  * New splash screen
+  * More advanced console. It will now show output of commands, and a console log. You need to press ESC to close the console now.
+  * Added 'Take Screenshot' key to Controls menu.
+  * Fixed an exploit that allowed the player to get unlocks early by saving a loadout with unlocked equipment and loading it later
+  * New main menu logo
+  * All evidence of Gamespy scrubbed
+  * Cleaned up appearance throughout
+  * You can now Un-Ready yourself in CO-OP games. You can only edit your equipment when you are not ready.
+  * OUT OF THE WAY now the default for General MP menu.
+  * Support in the menu for 5x as many resolutions, including many widescreen resolutions
+
+
+## EQUIPMENT ##
+All weapons have been changed to have correct muzzle velocities.
+* Grenade Launcher:
+	- Given real world name (HK69)
+	- Greatly increased damage dealt from direct impact
+	- May now be equipped as a secondary weapon
+* AK47 Machinegun:
+	- Fixed inaccurate description
+	- Fixed name (AKM)
+	- Unlockable in singleplayer
+* GB36s:
+	- Corrected wrong name (is now G36K)
+	- Updated description
+* 5.56mm Light Machine Gun
+	- Corrected wrong name (is now M249 SAW)
+	- Burst fire removed
+	- Unlockable in singleplayer
+* 5.7x28mm Submachine Gun
+	- Corrected wrong name (is now P90)
+	- Completely redid the description
+	- Burst fire removed
+* Gal Sub-machinegun
+	- Corrected wrong name (is now Silenced Uzi)
+	- Updated description
+	- Unlockable in singleplayer
+	- May now be equipped as a secondary weapon
+* 9mm SMG
+	- Corrected wrong names (MP5A2 and Silenced MP5A2)
+	- Added automatic firing mode
+	- Updated description
+	- Fixed incorrect magazine size for FMJ (holds 30 rounds, not 25)
+* .45 SMG
+	- Updated description
+	- 2-round burst mode added
+* M1911 Handgun
+	- May now be equipped as a Primary Weapon
+* 9mm Handgun
+	- Corrected wrong name (Glock 17)
+	- May now be equipped as a Primary Weapon
+* Mark 19 Semi-Automatic Pistol
+	- Corrected wrong name (Desert Eagle)
+	- Fixed typo in description
+	- May now be equipped as a Primary Weapon
+* 9mm Machine Pistol
+	- Corrected wrong name (TEC-DC9)
+	- Completely redid the description
+	- May now be equipped as a Primary Weapon
+	- Fixed broken reload sound
+* TASER Stun Gun:
+	- Cut TASER stun gun probe spread by 50%
+	- Changed the name (TASER M26C Stun Gun)
+	- Doubled the range (The M26C and its sister weapon have cartridge variations that can fire up to 35 feet)
+	- Has a chance to incapacitate or even KILL hostages if not used correctly. Avoid use on the elderly, drug-users and people with health conditions.
+	- Fixed typo in description
+	- May now be equipped as a Primary Weapon
+* Cobra Stun Gun:
+	- Changed the name (TASER C2 Series Stun Gun)
+	- Changed the description
+	- Reduced the range (The C2 series can only fire up to 15 feet)
+		This is good for balance too!
+	- Like the TASER stun gun, the Cobra stun gun has a chance to incapacitate or kill hostages.
+		The double fire mode doesn't increase the chance of cardiac arrest, but it does increase lethality. Use caution.
+	- May now be equipped as a Primary Weapon
+* Colt Python:
+	- Unlockable in Singleplayer
+	- May now be equipped as a Primary Weapon
+* Sting Grenade:
+	- Doubled the range and vastly increased damage to be more realistic
+	- All equipment that reduces the effect of sting grenades in MP also works in singleplayer
+	- Can detonate pipe bombs, oxygen tanks, and gas cans
+* Flashbang:
+	- Increased the damage and radius to be more realistic
+	- Can detonate pipe bombs, oxygen tanks, and gas cans
+* Added two new head armor items:
+	- Riot Helmet: Offers slightly less protection than the Helmet, but also reduces Pepper Spray and Gas durations
+	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
+* Helmet:
+	- Renamed to Tactical Helmet
+	- Provides protection against flashbangs in singleplayer
+* C2:
+	- Increased the damage radius, stun angle and stun radius. It is now more risky to use C2.
+* Pepperball Gun:
+	- May now be equipped as a Secondary Weapon
+	- Less effective in general now
+* M4Super90:
+	- Now fires in a spread that isn't dictated by crosshair accuracy
+	- May now be equipped as a Secondary Weapon
+	- Added new ammo type: 000 Buck
+	- Renamed "12 Gauge Slug" -> "Sabot Slug"
+	- Corrected magazine size (5 -> 7). SWAT 4 uses the magazine size from a civilian version of the shotgun. The Law Enforcement and Military models have 7 round magazines.
+* Nova Pump:
+	- Now fires in a spread that isn't dictated by crosshair accuracy
+	- Corrected invalid magazine size (8 -> 7)
+	- Added new ammo type: 000 Buck
+	- Renamed "12 Gauge Slug" -> "Sabot Slug"
+* Ammo Pouch:
+	- Removed.
+
+## MISSION CHANGES ##
+WARNING: This section contains spoilers
+Missions are listed in order that they occur
+Morale has been modified across the board.
+If an equipment is not listed as unlocked by a mission, it is unlocked by default.
+
+* Fairfax Residence
+	- CAUTION! May contain traps! (Evidence shows that they were cut from the original game on this mission)
+	- ELITE Difficulty: Always spawns a trap and the accomplice.
+	- Restored a cut conversation between Lead and TOC that triggers when tripping a trap
+	- Restored a cut conversation between Lead and TOC that triggers when arresting the accomplice
+	- Restored a cut conversation between Jackson and Fields 
+	- Gladys Fairfax is Fearless
+	- Gladys Fairfax has a chance to die from the taser
+	- Melinda Kline has a very small chance to die from the taser
+	- Corrected typo in mission briefing location info ("Information is specualtive regarding the basement." -> "Information is speculative regarding the basement.")
+	- Does not unlock any equipment
+* Food Wall Restaurant
+	- The armed waiter is Polite
+	- All patrons are Fearless
+	- Corrected typo in mission briefing timeline ("Alex Jimenez is observed entering Food Wall Restauraunt" -> "Alex Jimenez is observed entering Food Wall Restaurant")
+	- Unlocks the TASER stun gun
+* Qwik Fuel Convenience Store
+	- There are sometimes drugs on the map that need to be found (hint: look in bathrooms)
+	- The suspects on this mission may be carrying drug evidence.
+	- Alice Jenkins is Insane and has a moderate chance (50%) to die from a taser
+	- The other suspects have a decent chance (35%) to die from a taser
+	- Made loading screen text consistent with other missions ("3721 Pitkin Avenue, Qwik Fuel" -> "3721 Pitkin Ave., Qwik Fuel")
+	- Unlocks the M4 Super90 Shotgun
+* FunTime Amusements
+	- A penalty is no longer issued when suspects flush drugs
+	- Drug flushers are Polite
+	- Corrected missing loading screen text ("1401 Gower St., FunTime Amusement Arcade")
+	- Corrected a typo in briefing description
+	- Fixed loading screen text not being present
+	- Unlocks the Gas Mask
+* Victory Imports Auto Garage
+	- Made loading screen text consistent with other missions ("487 29th Avenue, Victory Imports" -> "487 29th Ave., Victory Imports")
+	- Unlocks the Beanbag Shotgun
+* Our Sisters of Mercy Hostel
+	- Restored a cut conversation between Lead and TOC that triggers upon rescuing some of the civilians.
+	- Restored a cut conversation between Lead and TOC that triggers upon eliminating certain suspects.
+	- Both entryway doors now correctly have MAKE ENTRY commands on them.
+	- Locked a bunch of doors
+	- The residents (elderly) have a very high chance of dying from a taser
+	- Removed objective: Rescue Lionel McArthur
+	- Fixed a bug with the suspects where they were holding the wrong weapon (code calls for M249 SAW, actual model displayed is M4 Carbine, and behavior makes sense in this context)
+	- Made loading screen text consistent with other missions ("Our Sisters of Mercy Halfway House, 796 Newbury St." -> "796 Newbury St., Our Sisters of Mercy")
+	- Unlocks the Pepperball Gun
+* A-Bomb Nightclub
+	- There are sometimes drugs on the map that need to be found (hint: look in bathrooms)
+	- The alley entry door now correctly has MAKE ENTRY commands on it.
+	- Unlocks the Riot Helmet
+* Northside Vending and Amusements
+	- CAUTION! May contain traps.
+	- Restored a cut conversation between Lead and TOC upon tripping a trap
+	- Restored a cut conversation where Red Two would muse about how much money the laundromat was making
+	- Some doors were opened that are now closed. Likewise, some doors that were closed by default are now open.
+	- Fixed a bug where the front door had MAKE ENTRY commands on the wrong side (unless you want to MAKE ENTRY into an alleyway..?)
+	- The laundromat door now has MAKE ENTRY commands assigned to it (since you are entering the laundromat, after all)
+	- Louis Baccus is Fearless
+	- All suspects are Polite
+	- Made loading screen text consistent with other missions ("1092 Westfield Road, Northside Vending" -> "1092 Westfield Rd., Northside Vending and Amusements")
+	- Unlocks the FN P90 PDW
+* Red Library Offices
+	- Made loading screen text consistent with other missions ("732 Gridley Street, Red Library Inc." -> "732 Gridley St., Red Library Inc.")
+	- Unlocks the Colt Accurized Rifle
+* Seller's Street Auditorium
+	- All of the static drug bags were removed. They have been replaced with drug evidence which can be collected.
+	- Andrew Norman is Insane and has a very small chance to die from the taser
+	- Made loading screen text consistent with other missions ("The Sellers Street Auditorium, 1801 Sellers St" -> "1801 Sellers St., The Sellers Street Auditorium")
+	- Unlocks the UMP 45
+* DuPlessi Wholesale Diamonds
+	- No changes
+	- Unlocks the Grenade Launcher
+* Children of Taronne Tenement
+	- CAUTION! May contain traps.
+	- All civilians are Fearless
+	- Andrew Taronne is Polite
+	- All civilians have a very small chance to die from the taser
+	- All suspects (except Andrew Taronne) have a very small chance to die from the taser
+	- Made loading screen text consistent with other missions ("2189 Carrols Road, Taronne Tenement" -> "2189 Carrols Rd., Taronne Tenement")
+	- Unlocks Night Vision Goggles
+* Department of Agriculture
+	- Restored cut conversation between Lead and TOC where TOC says how many bombs are present (kind of important, don't you think?)
+	- Made loading screen text consistent with other missions ("Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue" -> "2112 Geddy Ave., The Department of Agriculture")
+	- Unlocks the Colt Python
+* St. Micheal's Medical Center
+	- The Terrorists are Insane
+	- Hyun-Jun Park's Security Detail are Polite and will -never- attack
+	- Corrected various inconsistences in the mission strings (It's referred to as "Memorial Hospital" in the location info, and simply "St. Micheal's" in the loading screen, but "St. Micheal's Medical Center" in the voiceover)
+	- Unlocks the Silenced Uzi
+* The Wolcott Projects
+	- The homeless are Fearless
+	- The homeless have a very small chance to die from the taser
+	- The loading screen and dispatch are inconsistent. Dispatch says "1210 Canopy Road" while the loading screen and mission text say "Blakestone Avenue". Corrected the text to use the Canopy Road address instead.
+	- Unlocks the Tec-9
+* Stetchkov Drug Lab
+	- CAUTION! May contain traps!
+	- Cut content restored: Conversation where Fields makes a sarcastic remark about this stuff "making your balls shrink"
+	- Cut content restored: Conversation where the team talks about the smell of the place
+	- All of the static drug bags were removed. They have been replaced with drug evidence that can be collected.
+	- All of the external doors now correctly have MAKE ENTRY commands on them.
+	- Locked a bunch of doors
+	- The civilians are Fearless
+	- The civilians have a very small chance to die from the taser
+	- The suspects are Polite
+	- Made loading screen text consistent with other missions ("Stetchkov Drug Lab, 653 Tovanen St." -> "653 Tovanen St., Stetchkov Drug Lab")
+	- Unlocks the Blue Taser
+* Fresnal St. Station
+	- Cut content restored: Conversation where Lead tells TOC they found Officer Wilkins
+	- The elderly have a chance to die from the taser
+	- Fixed typos in briefing timeline ("First Units Arive" -> "First Units Arrive"; "First units arive and perimeter established" -> "First units arrive and perimeter established")
+	- Unlocks the ProTec Helmet
+* Stetchkov Warehouse
+	- CAUTION! May contain traps!
+	- All of the external doors now correctly have MAKE ENTRY commands on them.
+	- Locked a door
+	- The civilians are Fearless
+	- The suspects are Polite
+	- Made loading screen text consistent with other missions ("The Stetchkov Warehouse, 2770 Harrington Rd." -> "2770 Harrington Rd., The Stetchkov Warehouse")
+	- Unlocks the Desert Eagle
+* Old Granite Hotel
+	- Cut content restored: Conversation where Jackson says "The bomb squad missed all the fun."
+	- Cut content restored: Lines for when the player disables bombs.
+	- Fixed wrong snipers. Sierra 1 was where Sierra 2 is supposed to be, and vice versa.
+	- Unlocks the AK-47
+* Mt. Threshold Research Center
+	- The suspects are Insane
+	- Fixed a massive oversight (?) where the developers gave the suspects on this mission 9x more morale than they're supposed to.
+	- Unlocks the M249 SAW
+
+
 # VERSION HISTORY #
+
+### v4.1 ###
+This is a hotfix patch to address some common issues that have been raised.
+- The taunt feature has been improved significantly. You now have to be aiming at the target in order to taunt at them.
+- The FOV slider no longer freezes the game, and resolution options should now save correctly. (Review the updated installation instructions if it does not work.) Navigating away from the Video Options menu will bring up a "Please Wait..." dialogue as it saves settings.
+- Widescreen improvements; the GUI has been tweaked so that certain widescreen resolutions (mostly 16:9 ones) won't have disappearing elements in the GUI. Ultrawide is still unsupported at the moment and there might be a few issues I missed.
+- Sellers St. Auditorium no longer displays the Colt Carbine text for New Equipment; it displays the UMP text correctly instead.
+- Fixed an issue that caused magazine counts to "reset" themselves when switching away from a shotgun
+- Speech Command Interface improvements:
+  * Now distinguishes between "Mark with Lightstick" and "Drop Lightstick" properly
+  * Added missing commands: SECURE EVIDENCE, RESTRAIN and all of the LEADER THROW commands.
+  * Added a new keybind to the Key Config menu: Toggle Speech Commands. This button turns off/on the speech command interface; which is good for streamers.
+  * You can now shout for compliance at civilians, suspects, etc using your voice. Try "Police!", "Put your hands up!", "Drop your weapons!" or for roleplay purposes, "Police! Search warrant!"
+  * Commands involving "stinger" now use "sting" since this was often confused by the engine for "taser"
+  * Various other misc improvements
+- Fixed chat in multiplayer pregame having the wrong number of lines (thanks to KevinL and Sokol for this fix)
+- Updated wedge description to explain the difference between using a wedge and locking a door.
+
+Files modified:
+System/DefSwatGui.ini
+System/SpeechCommandGrammar.xml
+System/SwatEquipment.int
+System/SwatGui.ini
+System/transient.int
+Generated code
 
 ### v4 ###
 
@@ -55,12 +472,14 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 
 #### MINOR FEATURES / FULL CHANGES ####
 - Added Meat Barn Restaurant extra mission
+- Fixed CO-OP and tested. It works now, honest! Although it will see some improvements.
 - AI improvements: SWAT officers no longer stare down noncompliant civilians for days
 - AI improvements: SWAT officers will no longer form "death funnels" as easily in doors - they will engage with suspects while moving through doors.
 - AI improvements: Suspects are more likely to play a Get-Hit animation when they are injured and are less accurate in general
 - AI improvements: Suspects will no longer shoot instantaneously at SWAT officers. There is a small delay, dependent on skill level.
 - AI improvements: Suspects will now shoot at SWAT officers while on the move. The chance is dependent on the skill level of the suspect.
 - Fixed TSS bug/AI Improvements: Known locked/wedged doors weren't being taken into account when a suspect evaluates if it should flee.
+- Fixed TSS bug: Can save loadouts to work around the campaign unlocks (It will bring up a dialog box informing you that the loadout you want uses invalid equipment)
 - Fixed TSS bug: Glitchy arrests with No Armor
 - Fixed TSS bug: Optiwand glitchy in multiplayer when near doors (unverified)
 - Fixed TSS bug: Pregame not showing HTML styling of server name
@@ -68,26 +487,34 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 - Fixed TSS bug: Taser recoil applying to every player on the map
 - Fixed TSS bug: Server name field in Multiplayer Setup not matching the actual number of characters that could be used
 - Fixed TSS bug: When using Deploy C2 command, AI will pick the lock if they are out of C2
+- Fixed TSS bug: TEC-9 not having any reload sound effects
+- Fixed TSS bug: Hologen suspects having ridiculously high morale at times
 - Fixed SEF bug: Join Game button on menu not appearing
 - Fixed SEF bug: Officers picking locks on unlocked doors when ordered to breach and out of C2
 - Fixed SEF bug: Riot Helmet not protecting against pepper spray like it's supposed to.
 - Fixed SEF bug: Sniper rifle not accurate
 - Fixed SEF bug: Wrong resolution in options menu (1600x1050 -> 1680x1050)
 - Fixed SEF bug: Wrong window title ("MyMod" -> "SWAT: Elite Force")
+- Fixed SEF bug: Invisible traps in CO-OP
+- Fixed SEF bug: Invisible drug bags in CO-OP
 - Five new commands: LEADER THROW & CLEAR; OPEN, LEADER & CLEAR; OPEN, LEADER & MAKE ENTRY; BREACH, LEADER & CLEAR; BREACH, LEADER & MAKE ENTRY. These commands let you throw the grenade instead of the AI doing it.
 - Equipment is now affected by Weight and Bulk. Weight, which represents how heavy your equipment is, slows your character down, and Bulk, which represents how large your equipment is, slows down your actions.
 - The toolkit can now be used to lock doors.
+- Added an FOV slider (Video Options) and a Mouse Smoothing checkbox (Controls Settings)
 - The toolkit interface no longer shows up for doors that cannot be locked (e.g, all of the doors on St. Micheal's Medical Center)
 - FMJ and buckshot can now ricochet off of hard surfaces
 - Bullets are now affected by drag; they will lose momentum (and therefore lethality) over long distances. JHP is more susceptible to drag than FMJ rounds.
 - Heavy Armor now has "health". It will protect against rifle rounds almost perfectly but will lose that ability with successive shots.
 - JHP does slightly more bullet-expansion ("internal damage") damage to account for drag.
+- Restored cut content: AI-controlled officers will now report when they spot a civilian
+- Restored cut content: Suspects will now yell loudly as they shoot at doors
 - Redid all of the campaign progression/unlocks
 - Added "Take Screenshot" option to controls menu
 - Minor changes to the compliance system (see the detailed section below for a full list of changes)
 - Civilians are now not ridiculously noncompliant like they were before
 - Incapacitation health increased from 20 to 30, so incapacitation is more likely
 - All pistols are selectable in primary weapon slots.
+- CO-OP damage modifier reduced (2.0x -> 1.5x, same as Elite difficulty) and Easy damage modifier increased (0.5x -> 1.0x, same as Normal difficulty)
 - Ammo Bandolier item removed
 - VIP Colt M1911 removed
 - Officers get (by default) 3 primary magazines and 5 secondary magazines. The only exception is Jackson, who gets 25 shotgun shells.
@@ -97,6 +524,8 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 - Mapmakers now have the ability for Rosters (bombs/enemies/hostages/etc) to be based on difficulty level.
 - The scoring system has been changed. There is no longer a bonus for no suspects incapacitated or killed. Elite difficulty now requires 90 instead of 95 score to complete.
 - Moved a few strings from SwatProcedures.ini to SwatProcedures.int so they can be localized correctly
+- The Host Game menu no longer loads all of the maps in one go. Instead, the menu will load quickly, and parse all of the maps while in the menu. It will stutter for a bit while it loads all the maps; this is normal.
+- The Host Game menu now STRICTLY enforces CO-OP mode. Lots of options relating to Barricaded Suspects/VIP Escort/Smash and Grab have been removed.
 - Console upgrades: The console will no longer close after entering a command (use the ESC key)
 - Console upgrades: The console will show a log of commands used and show the output of commands
 - Console upgrades: New console command "history"
@@ -122,9 +551,9 @@ The scoring system has been altered:
 - Suspects Arrested: Bonus based on the amount of suspects secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
 - Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
+ * Points: (Number of suspects incapacitated)/(Total Number of suspects) x 13 (65% of 20).
 - Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
+ * Points: (Number of suspects neutralized)/(Total Number of suspects) x 4 (20% of 20).
 - No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
  * Points: 5
 - No Officers Downed: Bonus based on the amount of incapacitated officers. 
@@ -210,6 +639,10 @@ The scoring system has been altered:
 
 * Department of Agriculture
   * Cut content restored: Conversation between TOC and Lead about how many bombs are present
+  - Rita Winston: Max Morale (1.5 -> 1.2)
+  - Department of Agriculture Staff: Max Morale (0.9 -> 0.6)
+  - Angry Farmers: Min Morale (0.7 -> 0.5)
+  - Angry Farmers: Max Morale (0.9/1.1 -> 0.7/0.8)
 
 * Drug Lab
   - Drug Lab Workers (Civ): Max Morale (0.9 -> 1.0)
@@ -276,17 +709,7 @@ Weapon Stats
 - Colt Python: Fire Speed (1.00 -> 1.03)
 - Nova Pump: Fire Speed (1.00 -> 1.166667)
 
-Typos
-- "Tripped Trap (-10)" -> "Triggered Trap (-10)"
-- "Fleeing Suspect (-5)" -> "Suspect Escaped (-5)"
-- "Learn to play SWAT: Elite Forces" -> "Learn to play SWAT: Elite Force"
-- "Pepper-ball" -> "Pepper-ball Launcher"
-- "Less Lethal Shotgun" -> "Less-than-Lethal Shotgun"
-- "NIGHT VISION" -> "Night Vision"
-
 Other Hostages Not Listed
-- Rita Winston: Max Morale (1.5 -> 1.2)
-- Department of Agriculture Staff: Max Morale (0.9 -> 0.6)
 - Warehouse Civilians: Max Morale (1.2 -> 0.9)
 - Wolcott Homeless: Min Morale (0.5 -> 0.3)
 - Wolcott Homeless: Max Morale (1.33 -> 1.1)
@@ -303,8 +726,6 @@ Other Hostages Not Listed
 - Female Taronne Civilians max morale (1.33) now matches Male civilians (1.2)
 
 Other Suspects Not Listed
-- Angry Farmers: Min Morale (0.7 -> 0.5)
-- Angry Farmers: Max Morale (0.9/1.1 -> 0.7/0.8)
 - Kiril Stetchkov: Max Morale (2.0 -> 1.5)
 - Kiril Stetchkov: Taser Death Chance (0.35 -> 0.5)
 - Alex Jimenez: Max Morale (0.6 -> 0.8)
@@ -378,6 +799,8 @@ System/HostageArchetypes.ini
 System/Leadership.ini
 System/MissionObjectives.ini
 System/ObjectiveSpecs.ini
+System/Packages.md5
+System/Packages.txt
 System/PlayerInterface_Command_SP.ini
 System/PlayerInterface_Fire.ini
 System/SoundEffects.ini
@@ -463,373 +886,37 @@ Generated code
 ### v1 ###
 - First release
 
-# CHANGES, SUMMARIZED #
-NOTENOTE: This needs to be updated to match all of the changes in V4!!
-
-As mentioned before, there were many inaccuracies with the game. I went for those first, before addressing some of my other grievances with the game: mainly the cut content and clunky expansion pack content.
-Some of the changes are as follows.
-	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
-		** It always bothered me having to switch between the two games, so I have put them together. In the future, there will be a 'Custom Missions' campaign which have some user-created missions.
-	* Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
-		** There's still some room for improvement, but I found it incredibly unrealistic that Food Wall employees would shoot at their patrons, for example.
-	* Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
-		** This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time. Lots of replayability and rooted in real life scenarios.
-	* New secondary objective: collect drug evidence. Static drug bags have been replaced with new ones that can be collected.
-		** The bags count towards the "Secure All Evidence" procedure.
-	* More equipment options. This includes a few cut equipment items, such as riot helmets. You can equip your AI-controlled officers with armor of your choosing now, and they can drop more lightsticks.
-		** It seems odd to me that the player could use suspect equipment in CO-OP but not in the singleplayer campaign. Also weird: you can't equip gas masks yet you're immune to gas but not flashbangs. Really odd.
-	* More realistic reactions, from both suspects and civilians. Times have changed from 2004 - the public has a deeper sense of mistrust for police officers. This mod reflects that. Oh, and civilians won't scream like madmen at inappropriate times.
-		** Civilians would scream if they are in the same room as a suspect. This didn't make sense on a lot of maps, such as Children of Taronne Tenement or the other High Risk Warrant missions.
-	* Equipment is also much more realistic. Flashbangs are now very dangerous pieces of equipment, and TASERs can make the elderly or drug-addled go into cardiac arrest. Be careful of that.
-		** It's completely unrealistic for TASERs to work 100% of the time on a civilian without injuring them. TASERs have been known to cause deaths. You will be held to a realistic standard in my mod.
-	* Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
-		** Functions exactly the same as in the Speech Recognition Improvement mod by MulleDK9. Not all commands from that mod are present however.
-	* Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list. You can now issue BREACH commands on unlocked doors as well. MOVE and OPEN commands are now both available at the same time, so you can issue door commands through other doorways.
-		** There's also some new commands, such as CHECK FOR TRAPS.
-	* Harsher penalties. Incapacitated hostages and suspects now need to be reported to TOC; deadly force is more scrutinized and can be incurred by more means (AI controlled officers using C2 and snipers are two good examples)
-		** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
-		** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
-	* The game reveals much more information to you. A warning will display when you have made a penalty, and a message will show when you have completed an objective.
-		** Major gripe. I hate having to pause the menu to see if I've found all the civilians. Likewise, not finding out until the end of the game that a kill (which you might have forgotten about) was illegal is extremely frustrating.
-  * Multiplayer playability. For starters, annoying DRM preventing you from hosting a server has been removed. You can also use different texture packs (GEM, etc) while playing online. Tons of bugs regarding multiplayer stability have been addressed.
-	* Many many many many bugfixes.
-
-# KNOWN ISSUES #
-  * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
-  * No new missions in Additional Missions campaign. It's still a WIP.
-	* TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
-	* The game sometimes freezes during loading. Hit ENTER a few times and it will clear itself up. The internal script garbage collector crashes for reasons unknown but it's completely harmless.
-  * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
-  * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
-  * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
-
-# FULL LIST OF CHANGES #
-
-## GAMEPLAY ##
-### Missions ###
-	- The Stetchkov Syndicate missions have been merged with the original SWAT 4 missions to have one linear campaign.
-		* They are sprinkled in, not shoved afterwards.
-		* The original missions have some order differences, such as Fairfax Residence coming before Food Wall.
-	- Like The Stetchkov Syndicate introduced, each mission has equipment that is unlocked.
-		* See the section titled "Changes to specific missions" for more details on what has been changed
-	- When creating a new campaign, you have a choice of either using the new altered campaign or "additional missions" which were created by the community.
-		* Currently incomplete (there are no maps yet, but the framework for it is built)
-	- Some missions now contain traps! An (almost fully) working feature that was cut from the game for some reason.
-		* Traps can be disarmed using the Toolkit, or by an AI controlled officer with the Disable command.
-		* AI Controlled Officers can detect the presence of traps on a door with a new CHECK FOR TRAPS command.
-	- Some missions now contain extra drug evidence! You will need to collect these to get a perfect score.
-		* Drug evidence can be collected by AI controlled officers with a "Secure Evidence" command.
-	- "Press ESC and debrief to exit the game" now shows on ALL missions, not just Food Wall, Fairfax Residence and Qwik Fuel.
-	- When a mission objective is complete, it will notify in white text at the top of the screen.
-### Score ###
-	- Stiffened penalties and added new ones:
-		* AI-Controlled officers using C2 can now trigger "Incapacitated a Hostage", "Killed a Hostage", "Unauthorized Use of Force" and "Unauthorized Use of Deadly Force" penalties
-		* Snipers can now trigger "Incapacitated a Hostage", "Killed a Hostage", "Unauthorized Use of Force" and "Unauthorized Use of Deadly Force" penalties
-		* Not reporting a downed hostage or suspect will trigger a new penalty: "Failure to report downed civilian" or "Failure to report downed suspect"
-	- Removed the "Failure to prevent destruction of evidence" penalty on Funtime Amusements
-	- In singleplayer, penalties are displayed in the chat as they happen.
-	- Changed values of penalties:
-		* "Unauthorized use of deadly force": -10 -> -20
-		* "Incapacitated a hostage": -5 -> -25
-		* "Killed a hostage": -15 -> -50
-		* "Incapacitated a fellow officer" -15 -> -25
-		* "Injured a fellow officer": -5 -> -10
-		* All other penalties remain the same.
-### Singleplayer ###
-	- Added missing dialogue for "Open and Make Entry" command
-	- If one member of a team remains (ie, Jackson is the only one alive on Blue), Lead will say their name instead of their team (so, "Jackson - Mirror Under the door)
-	- Fixed a bug where AI-controlled officers could only drop one lightstick
-	- Players can suffer effects of CS gas if not properly protected
-		* Likewise, the player will not be harmed by flashbangs if they have a helmet
-		* (Previously, the player was immune to CS gas but not flashbangs, despite having the complete opposite equipment for this)
-	- AI-controlled officers will automatically report any suspects or civilians that they restrain.
-	- New Features removed, Training mission brought back.
-### Multiplayer ###
-  - Texture packs (such as SWAT 4: GEM) can now be used online without causing problems.
-### Suspects ###
-	- Modified morale alters:
-		"Weapon Drop" morale modifier increased substantially.
-		"Flashbang" morale modifier increased
-		"Gassed" morale modifier increased
-		"Stung" morale modifier increased
-		"Tased" morale modifier decreased
-		"C2 Stun" morale modifier decreased
-		"Shot" morale modifier substantially increased
-		"Killed Officer" morale modifier increased
-		"Nearby enemy killed" morale modifier increased for higher-skilled suspects
-	- Suspects will maintain suppressive fire for twice as long when they are barricaded
-	- Compliant suspects will wait longer before deciding to pick up their weapon
-	- (Non-Insane/Non-Polite) suspects take twice as long before shooting hostages
-	- Added a new quality: Polite. Any suspect archetype with this quality won't attempt to shoot hostages.
-		** NOTE: Does not apply to Quick Mission Maker
-	- Added a new quality: Insane. Any suspect archetype with this quality will shoot hostages *much* faster (basically instantly) and ignores distance checks.
-		** NOTE: Does not apply to Quick Mission Maker
-	- Using your Shout button on a restrained suspect will taunt them. Examples include "You have the right to remain silent," etc. Doesn't do anything, it's just an easter egg. Warning: The suspect may have some unkind words for you in return.
-### Civilans ###
-	- Greatly increased morale of all civilians, making them harder to give up
-	- Added a new quality: Fearless. Any civilian archetype with this quality won't scream when in the same room as a suspect - only if they are threatened or there is a gunshot.
-		** NOTE: Does not apply to Quick Mission Maker
-	- Using your Shout button on a restrained civilian will soothe them. Examples include "It's okay, we'll get you out of here," etc. Doesn't do anything, it's just an easter egg.
-
-## GUI ##
-* New splash screen
-* New Main Menu logo
-* Removed all trace of Gamespy (no logo at start, no logo in Host Game, no logo in Join Game, etc..)
-* Removed bugged DRM (Invalid CD-Key when hosting a game)
-### Equipment Menu (SP): ###
-	- Weapons now have a detailed information panel with statistics like their manufacturer, etc
-	- Can now select body armor for AI-controlled officers and yourself
-	- You can also select more choices for helmets, including riot helmets, terrorist helmets and gas masks
-	- Cleaned up the appearance of the top tabs
-	- Breaching tab on right is relabeled "BREACH AND PROTECTION" for clarity
-	- Corrected typo for label on Secondary tab
-		"Select secondary weapon and equipment" --> "Select secondary weapon and ammunition"
-### Graphic Command Interface (SP) ###
-	- Performed a drastic redesign of the menu to promote both speed and functionality
-		* "Open and ..." commands have been moved to a submenu: "OPEN >>>"
-		* STACK UP has been renamed to TRY LOCK
-		* New command: CHECK FOR TRAPS - officers will try the lock and will report if the door is trapped. Clunky, but it works.
-		* TRY LOCK, CHECK FOR TRAPS, Optiwand commands have been moved to a submenu: "INVESTIGATE >>>"
-		* Due to this design, when viewing a door through another doorway, you can issue both Move and Open commands with no ambiguity.
-	- Allowed the player to issue Breaching commands even when doors aren't locked
-		* These are available via OPEN >> submenu
-	- The GCI is now dynamic in that drop-down menus (such as "OPEN >>>") can only appear in certain contexts (OPEN will only show on doors)
-	- Deploy Lightstick has been moved out of the Deploy menu (Drop Lightstick command) so they can be dropped faster
-### Graphic Command Interface (MP) ###
-	- OUT OF THE WAY changed to be the default for the General menu
-### Career Menu ###
-	- Removed "-EXP-" tag before all TSS missions in the menu
-### Settings Menu ###
-	- Fixed a bug where the music would get glitched
-	- 'Display Subtitles' moved to Audio Options
-	- 'Use Speech Recognition' option added to Audio Options
-	- 'Disable Initial Dispatch' option added to Audio Options
-	- Support for ~5x as many resolutions (4 -> 22)
-
-
-## EQUIPMENT ##
-All weapons have been changed to have correct muzzle velocities.
-* Grenade Launcher:
-	- Given real world name (HK69 Grenade Launcher)
-	- Greatly increased damage dealt from direct impact
-	- May now be equipped as a secondary weapon
-* AK47 Machinegun:
-	- Fixed inaccurate description
-	- Fixed name (AK-47 Assault Rifle)
-	- Now selectable in Singleplayer
-	- 1 less magazine
-* GB36s:
-	- Corrected wrong name (is now H&K G36K)
-	- Updated description
-	- 1 extra magazine
-* 5.56mm Light Machine Gun
-	- Corrected wrong name (is now M249 SAW Light Machine Gun)
-	- Now selectable in Singleplayer
-* 5.7x28mm Submachine Gun
-	- Corrected wrong name (is now FN P90 Personal Defense Weapon)
-	- Completely redid the description (as it's totally wrong)
-* Gal Sub-machinegun
-	- Corrected wrong name (is now Silenced IMI Uzi)
-	- Updated description
-	- Now selectable in Singleplayer
-	- May now be equipped as a secondary weapon
-* 9mm SMG
-	- Corrected wrong names (H&K MP5A2 SMG and H&K MP5A2 SSD)
-	- Added automatic firing mode
-	- Updated description
-	- Fixed incorrect magazine size for FMJ (holds 30 rounds, not 25)
-* .45 SMG
-	- Corrected wrong name (H&K UMP SMG)
-	- Updated description
-* 9mm Handgun
-	- Corrected wrong name (Glock 17)
-	- 2 extra magazines
-* Mark 19 Semi-Automatic Pistol
-	- Corrected wrong name (Desert Eagle .50AE)
-		NOTE: The name is technically correct (as a Desert Eagle Mark XIX is designed to fire .50 AE rounds), but I felt the need to change it
-	- Fixed typo in description
-	- Slightly reduced recoil
-* 9mm Machine Pistol
-	- Corrected wrong name (TEC-DC9 Machine Pistol)
-	- Completely redid the description
-	- Now selectable in Singleplayer
-	- May now be equipped as a Primary Weapon
-	- 2 extra magazines
-* TASER Stun Gun:
-	- Cut TASER stun gun probe spread by 50%
-	- Changed the name (TASER M26C Stun Gun)
-	- Doubled the range (The M26C and its sister weapon have cartridge variations that can fire up to 35 feet)
-	- Has a chance to incapacitate or even KILL hostages if not used correctly. Avoid use on the elderly, drug-users and people with health conditions.
-	- Fixed typo in description
-		"The Taser stun gun works on the principal" -> "The Taser stun gun works on the principle"
-* Cobra Stun Gun:
-	- Changed the name (TASER C2 Series Stun Gun)
-	- Changed the description
-	- Reduced the range (The C2 series can only fire up to 15 feet)
-		This is good for balance too!
-	- Like the TASER stun gun, the Cobra stun gun has a chance to incapacitate or kill hostages.
-		The double fire mode doesn't increase the chance of cardiac arrest, but it does increase lethality. Use caution.
-* Colt Python:
-	- Now selectable in Singleplayer
-	- 3 extra magazines
-* VIP Colt M1911:
-	- Now selectable in Singleplayer
-* Sting Grenade:
-	- Doubled the range and vastly increased damage to be more realistic
-	- All equipment that reduces the effect of sting grenades in MP also works in singleplayer
-	- Can detonate pipe bombs, oxygen tanks, and gas cans
-* Flashbang:
-	- Increased the damage and radius to be more realistic
-	- Can detonate pipe bombs, oxygen tanks, and gas cans
-* Added two new head armor items:
-	- Riot Helmet: Offers slightly less protection than the Helmet, but also reduces Pepper Spray and Gas durations
-	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
-* Helmet:
-	- Renamed to Tactical Helmet
-	- Provides protection against flashbangs in singleplayer
-* C2:
-	- Increased the damage radius, stun angle and stun radius. It is now more risky to use C2.
-* Pepperball Gun:
-	- May now be equipped as a Secondary Weapon
-* M4Super90:
-  - Now fires in a spread that isn't dictated by crosshair accuracy
-	- May now be equipped as a Secondary Weapon
-	- Added new ammo type: 000 Buck
-	- Renamed "12 Gauge Slug" -> "Sabot Slug"
-	- Corrected magazine size (5 -> 7)
-		SWAT 4 uses the magazine size from a civilian version of the shotgun. The Law Enforcement and Military models have 7 round magazines.
-* Nova Pump:
-  - Now fires in a spread that isn't dictated by crosshair accuracy
-	- Corrected invalid magazine size (8 -> 7)
-	- Added new ammo type: 000 Buck
-	- Renamed "12 Gauge Slug" -> "Sabot Slug"
-* Ammo Pouch:
-	- Fixed misleading description (it gives ammo for all guns, not just the primary)
-	- No longer affects the Less Lethal Shotgun
-
-## MISSION CHANGES ##
-WARNING: This section contains spoilers
-Missions are listed in order that they occur
-Morale has been modified across the board.
-If an equipment is not listed as unlocked by a mission, it is unlocked by default.
-
-* Fairfax Residence
-	- CAUTION! May contain traps! (Evidence shows that they were cut from the original game on this mission)
-	- Restored a cut conversation between Lead and TOC that triggers when tripping a trap
-	- Restored a cut conversation between Lead and TOC that triggers when arresting the accomplice
-	- Gladys Fairfax is Fearless
-	- Gladys Fairfax has a chance to die from the taser
-	- Melinda Kline has a very small chance to die from the taser
-	- Corrected typo in mission briefing location info ("Information is specualtive regarding the basement." -> "Information is speculative regarding the basement.")
-	- Does not unlock any equipment
-* Food Wall Restaurant
-	- The armed waiter is Polite
-	- All patrons are Fearless
-	- Corrected typo in mission briefing timeline ("Alex Jimenez is observed entering Food Wall Restauraunt" -> "Alex Jimenez is observed entering Food Wall Restaurant")
-	- Unlocks the Nova Pump shotgun
-* Qwik Fuel Convenience Store
-	- Possible drugs that need collecting
-	- The suspects on this mission may be carrying drug evidence.
-	- Alice Jenkins is Insane and has a moderate chance (50%) to die from a taser
-	- The other suspects have a decent chance (35%) to die from a taser
-	- Made loading screen text consistent with other missions ("3721 Pitkin Avenue, Qwik Fuel" -> "3721 Pitkin Ave., Qwik Fuel")
-	- Unlocks the Less Lethal shotgun
-* FunTime Amusements
-	- A penalty is no longer issued when suspects flush drugs
-	- Drug flushers are Polite
-	- Corrected missing loading screen text ("1401 Gower St., FunTime Amusement Arcade")
-	- Corrected a typo in briefing description
-	- Unlocks the Gas Mask
-* Victory Imports Auto Garage
-	- Made loading screen text consistent with other missions ("487 29th Avenue, Victory Imports" -> "487 29th Ave., Victory Imports")
-	- Unlocks the Ammo Pouch
-* Our Sisters of Mercy Hostel
-	- Both entryway doors now correctly have MAKE ENTRY commands on them.
-	- Locked a bunch of doors
-	- The residents (elderly) have a very high chance of dying from a taser
-	- Removed objective: Rescue Lionel McArthur
-	- Made loading screen text consistent with other missions ("Our Sisters of Mercy Halfway House, 796 Newbury St." -> "796 Newbury St., Our Sisters of Mercy")
-	- Unlocks the TASER C2 Series
-* Old Granite Hotel
-	- Fixed wrong snipers. Sierra 1 was where Sierra 2 is supposed to be, and vice versa.
-	- Unlocks the Colt Python
-* A-Bomb Nightclub
-	- Possible drugs that need collecting
-	- Unlocks the Riot Helmet
-* Northside Vending and Amusements
-	- CAUTION! May contain traps. (Evidence shows that they were cut from the original game on this mission)
-	- Restored a cut conversation between Lead and TOC upon tripping a trap
-	- Restored a cut conversation where Red Two would muse about how much money the laundromat was making
-	- Some doors were opened that are now closed. Likewise, some doors that were closed by default are now open.
-	- Fixed a bug where the front door had MAKE ENTRY commands on the wrong side (unless you want to MAKE ENTRY into an alleyway..?)
-	- The laundromat door now has MAKE ENTRY commands assigned to it (since you are entering the laundromat, after all)
-	- Louis Baccus is Fearless
-	- All suspects are Polite
-	- Made loading screen text consistent with other missions ("1092 Westfield Road, Northside Vending" -> "1092 Westfield Rd., Northside Vending and Amusements")
-	- Unlocks the FN P90 PDW
-* Red Library Offices
-	- Made loading screen text consistent with other missions ("732 Gridley Street, Red Library Inc." -> "732 Gridley St., Red Library Inc.")
-	- Unlocks the Colt Accurized Rifle
-* Seller's Street Auditorium
-	- All of the static drug bags were removed. They have been replaced with drug evidence which can be collected.
-	- Andrew Norman is Insane and has a very small chance to die from the taser
-	- Made loading screen text consistent with other missions ("The Sellers Street Auditorium, 1801 Sellers St" -> "1801 Sellers St., The Sellers Street Auditorium")
-	- Unlocks the HK69 Grenade Launcher
-* DuPlessi Wholesale Diamonds
-	- No changes
-	- Unlocks the ProTec Helmet
-* Children of Taronne Tenement
-	- CAUTION! May contain traps. (Evidence shows that they were cut from the original game on this mission)
-	- All civilians are Fearless
-	- Andrew Taronne is Polite
-	- All civilians have a very small chance to die from the taser
-	- All suspects (except Andrew Taronne) have a very small chance to die from the taser
-	- Made loading screen text consistent with other missions ("2189 Carrols Road, Taronne Tenement" -> "2189 Carrols Rd., Taronne Tenement")
-	- Unlocks Night Vision Goggles
-* Department of Agriculture
-	- Made loading screen text consistent with other missions ("Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue" -> "2112 Geddy Ave., The Department of Agriculture")
-	- Unlocks the AK-47 Assault Rifle
-* St. Micheal's Medical Center
-	- The Terrorists are Insane
-	- Hyun-Jun Park's Security Detail are Polite and will -never- attack
-	- Corrected various inconsistences in the mission strings (It's referred to as "Memorial Hospital" in the location info, and simply "St. Micheal's" in the loading screen, but "St. Micheal's Medical Center" in the voiceover)
-	- Unlocks the Silenced IMI Uzi
-* The Wolcott Projects
-	- The homeless are Fearless
-	- The homeless have a very small chance to die from the taser
-	- The loading screen and dispatch are inconsistent. Dispatch says "1210 Canopy Road" while the loading screen and mission text say "Blakestone Avenue". Corrected the text to use the Canopy Road address instead.
-	- Does not unlock any new equipment
-* Stetchkov Drug Lab
-	- CAUTION! May contain traps!
-	- All of the static drug bags were removed. They have been replaced with drug evidence that can be collected.
-	- All of the external doors now correctly have MAKE ENTRY commands on them.
-	- Locked a bunch of doors
-	- The civilians are Fearless
-	- The civilians have a very small chance to die from the taser
-	- The suspects are Polite
-	- Made loading screen text consistent with other missions ("Stetchkov Drug Lab, 653 Tovanen St." -> "653 Tovanen St., Stetchkov Drug Lab")
-	- Unlocks the TEC-DC9 Machine Pistol
-* Fresnal St. Station
-	- The elderly have a chance to die from the taser
-	- Fixed typos in briefing timeline ("First Units Arive" -> "First Units Arrive"; "First units arive and perimeter established" -> "First units arrive and perimeter established")
-	- Unlocks the Desert Eagle .50AE
-* Stetchkov Warehouse
-	- CAUTION! May contain traps!
-	- All of the external doors now correctly have MAKE ENTRY commands on them.
-	- Locked a door
-	- The civilians are Fearless
-	- The suspects are Polite
-	- Made loading screen text consistent with other missions ("The Stetchkov Warehouse, 2770 Harrington Rd." -> "2770 Harrington Rd., The Stetchkov Warehouse")
-	- Unlocks the M249 SAW Light Machine Gun
-* Mt. Threshold Research Center
-	- The suspects are Insane
-	- Does not unlock equipment
-
-# CREDITS #
+# CREDITS/THANK-YOUS #
 Irrational Games and Sierra for the game.
 MulleDK9 for information regarding the Speech Recognition feature.
-Jose21Crisis helped a lot with weapon-related math and contributed much to the design.
-Anything else was my own work.
+KevinL for a tip about Voting Screen.
+sandman332 for a tip about audio
+BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
+Sebasien NovA for his modified SwatEd.exe
+
+Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
+Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
+
+PUBLICITY
+GOG.com (Ran a very nice overview of our mod, you should check it out!)
+PC Power Play (Also ran a nice overview of the mod)
+StrawberryClock (Streamer)
+Rangar (Streamer)
+
+TESTING
+TCR
+Oglogoth
+mezzokoko
+cjslax6
+Vylka
+
+WE ARE: ELITE SQUAD
+eezstreet: Programming, Map Editing
+Jose21Crisis: Programming, Weapons Analysis
+Rangar: Music (Composition), Textures
+
+
+.. if there is anyone I missed, feel free to send me a message and this will be corrected.
 
 # LICENSE #
-This software is licensed under the GNU General Public License v2. You can read it in more detail in LICENSE.md.
+This software is licensed under the GNU General Public License v2. You can read it in more detail in LICENSE

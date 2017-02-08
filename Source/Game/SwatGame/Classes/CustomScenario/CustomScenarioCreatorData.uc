@@ -51,6 +51,7 @@ var config localized string             NumberOfHostagesString; //The localized 
 var config localized string             NumberOfEnemiesString;  //The localized words "Number of enemies"
 var config localized string             CommaIncludingString;   //The localized string ", including"
 var config localized string             CampaignObjectivesString;   //The localized localized words "Campaign Objectives" for the end of a sentence
+var config array<name>                ExtraMissions;
 
 var config float                        DefaultTimeLimit;
 
@@ -58,6 +59,7 @@ var private SwatGUIConfig               GC;
 var private bool                        bCurrentMissionDirty;
 
 var array<CustomScenarioCreatorMissionSpecificData> MissionData;
+var private int ExtraMissionsStart;
 
 function bool IsCurrentMisisonDirty()
 {
@@ -87,6 +89,11 @@ function Init(SwatGUIConfig inGC)
         MissionData[i] = new (None, string(GC.CompleteMissionList[i])) class'CustomScenarioCreatorMissionSpecificData';
         assert(MissionData[i] != None);
     }
+
+    ExtraMissionsStart = MissionData.Length;
+    for(i = 0; i < ExtraMissions.Length; i++) {
+      MissionData[ExtraMissionsStart + i] = new(None, string(ExtraMissions[i])) class'CustomScenarioCreatorMissionSpecificData';
+    }
 }
 
 //TMC TODO optimize this by using a hashmap
@@ -101,6 +108,13 @@ function CustomScenarioCreatorMissionSpecificData GetMissionData_Slow(name inMis
             assert(MissionData.length > i);     //it should have been initialized in construct()
             return MissionData[i];
         }
+    }
+
+    // Extra Missions
+    for(i = 0; i < ExtraMissions.Length; i++) {
+      if(ExtraMissions[i] == inMission) {
+        return MissionData[ExtraMissionsStart + i];
+      }
     }
 
     assertWithDescription(false,

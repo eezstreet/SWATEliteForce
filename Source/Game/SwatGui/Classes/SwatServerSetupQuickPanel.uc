@@ -57,13 +57,56 @@ var() private config localized string LoadingMaplistString;
 var() private config localized string LANString;
 var() private config localized string GAMESPYString;
 
+///////////////////////////////////////////
+// New feature in SEFv4: Don't load the maps all in one go, instead process one map per Tick
+
+var private array<String> MapsToLoad;
+var private int CurrentMapLoadIndex;
+
+function LoadNextMap() {
+  local String NextMap;
+  local LevelSummary Summary;
+
+  NextMap = MapsToLoad[CurrentMapLoadIndex];
+
+  //remove the extension
+  if(Right(NextMap, 4) ~= ".s4m")
+    NextMap = Left(NextMap, Len(NextMap) - 4);
+
+  Summary = Controller.LoadLevelSummary(NextMap$".LevelSummary");
+
+  if( Summary == None )
+  {
+      log( "WARNING: Could not load a level summary for map '"$NextMap$".s4m'" );
+  }
+  else
+  {
+      FullMapList.Add( NextMap, Summary, Summary.Title );
+  }
+
+  LoadAvailableMaps( SwatServerSetupMenu.CurGameType );
+  LoadMapList( SwatServerSetupMenu.CurGameType );
+}
+
+event Timer() {
+  if(CurrentMapLoadIndex >= MapsToLoad.Length) {
+    bUpdatingMapLists = false;
+    return;
+  }
+
+  LoadNextMap();
+  SetTimer(0.03);
+  CurrentMapLoadIndex++;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // Initialization
 ///////////////////////////////////////////////////////////////////////////
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
-	Super.InitComponent(MyOwner);
+
+	  Super.InitComponent(MyOwner);
 
     FullMapList = GUIList(AddComponent("GUI.GUIList", self.Name$"_FullMapList", true ));
 
@@ -73,32 +116,35 @@ function InitComponent(GUIComponent MyOwner)
     MyUseGameSpyBox.AddItem( GAMESPYString );
 
     //set the available missions for the list box
-	for( i = 0; i < EMPMode.EnumCount; ++i )
-	{
-    	MyGameTypeBox.AddItem(GC.GetGameModeName(EMPMode(i)));
+    for(i = 0; i < EMPMode.EnumCount; i++) {
+      MyGameTypeBox.AddItem(GC.GetGameModeName(EMPMode(i)));
     }
-    MyGameTypeBox.SetIndex(0);
+
+    MyGameTypeBox.SetIndex(3 /*MPM_COOP*/);
 
     SelectedMaps.List.OnDblClick=OnSelectedMapsDblClicked;
     SelectedMaps.OnChange=  OnSelectedMapsChanged;
     AvailableMaps.OnChange= OnAvailableMapsChanged;
     DisplayOnlyMaps.OnChange=OnAvailableMapsChanged;
-    
+
     MyRemoveButton.OnClick= OnRemoveButtonClicked;
     MyAddButton.OnClick=    OnAddButtonClicked;
     MyUpButton.OnClick=     OnUpButtonClicked;
     MyDownButton.OnClick=   OnDownButtonClicked;
-    
+
     MyGameTypeBox.OnChange=InternalOnChange;
     MyUseGameSpyBox.OnChange=InternalOnChange;
     MyPasswordedButton.OnChange=InternalOnChange;
-    
+
     MyNameBox.OnChange=OnNameSelectionChanged;
     MyNameBox.MaxWidth = GC.MPNameLength;
     MyNameBox.AllowedCharSet = GC.MPNameAllowableCharSet;
 
     MyServerNameBox.OnChange=OnNameSelectionChanged;
     MyPasswordBox.OnChange=OnNameSelectionChanged;
+
+    SetTimer(0.03);
+    bUpdatingMapLists = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -124,8 +170,11 @@ function InternalOnChange(GUIComponent Sender)
         case MyUseGameSpyBox:
             SwatServerSetupMenu.bUseGameSpy = (MyUseGameSpyBox.List.Get() == GAMESPYString);
 		    SwatServerSetupMenu.RefreshEnabled();
-            break;      
+            break;
         case MyGameTypeBox:
+            if(MyGameTypeBox.GetIndex() != 3 && MyGameTypeBox.GetIndex() != 5) {
+              MyGameTypeBox.SetIndex(3);
+            }
             OnGameModeChanged( EMPMode(MyGameTypeBox.GetIndex()) );
             break;
     }
@@ -167,7 +216,7 @@ function SetSubComponentsEnabled( bool bSetEnabled )
     MyUseGameSpyBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
     MyGameTypeBox.SetEnabled( bSetEnabled );
     MyNameBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
-    
+
     MyRemoveButton.SetVisibility( bSetEnabled );
     MyAddButton.SetVisibility( bSetEnabled );
     MyUpButton.SetVisibility( bSetEnabled );
@@ -180,7 +229,7 @@ function SetSubComponentsEnabled( bool bSetEnabled )
 function DoRefreshEnabled()
 {
     MyPasswordBox.SetEnabled( MyPasswordedButton.bChecked && SwatServerSetupMenu.bIsAdmin );
-    
+
     MyRemoveButton.SetEnabled( SelectedMaps.GetIndex() >= 0 && SwatServerSetupMenu.bIsAdmin );
     MyUpButton.SetEnabled( SelectedMaps.GetIndex() > 0 && SwatServerSetupMenu.bIsAdmin );
     MyDownButton.SetEnabled( SelectedMaps.GetIndex() >= 0 && SelectedMaps.GetIndex() < SelectedMaps.Num()-1 && SwatServerSetupMenu.bIsAdmin );
@@ -193,7 +242,7 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
     if( NewMode == EMPMode.MPM_COOP || NewMode == EMPMode.MPM_COOPQMM )
     {
         MyQuickResetBox.SetChecked(false);
-        
+
         MyQuickResetBox.DisableComponent();
         MyTimeLimitBox.DisableComponent();
 
@@ -219,7 +268,7 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
         MyDeathLimitBox.DisableComponent();
         MyNoRespawnButton.DisableComponent();
     }
-    
+
     //Rapid deployment special
     if( NewMode == EMPMode.MPM_RapidDeployment )
     {
@@ -249,7 +298,7 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
 function LoadServerSettings( optional bool ReadOnly )
 {
     local ServerSettings Settings;
-    
+
     //
     // choose the correct settings:
     //    non-admin (read-only):  Current settings
@@ -259,7 +308,7 @@ function LoadServerSettings( optional bool ReadOnly )
         Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
     else
         Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
-    
+
     //
     // update the game type, (also loads the available maps)
     //
@@ -348,8 +397,8 @@ function SaveServerSettings()
     {
         SwatPlayerController(PlayerOwner()).ServerSetDirty( Settings );
     }
-    
-    
+
+
 
     //
     // Update admin server information
@@ -366,7 +415,7 @@ function SaveServerSettings()
 
 
 ///////////////////////////////////////////////////////////////////////////
-// GameMode Updates 
+// GameMode Updates
 ///////////////////////////////////////////////////////////////////////////
 function OnGameModeChanged( EMPMode NewMode )
 {
@@ -376,15 +425,15 @@ function OnGameModeChanged( EMPMode NewMode )
 
     //load the available map list
     LoadAvailableMaps( NewMode );
-    
+
     //load the Map rotation for the new game mode
     LoadMapList( NewMode );
-    
+
     SetSubComponentsEnabled( SwatServerSetupMenu.bIsAdmin );
     SwatServerSetupMenu.ResetDefaultsForGameMode( NewMode );
-    
+
     SwatServerSetupMenu.RefreshEnabled();
-    
+
     DisplayLevelSummary( LevelSummary( AvailableMaps.List.GetObject() ) );
 }
 
@@ -395,15 +444,15 @@ function LoadAvailableMaps( EMPMode NewMode )
 {
     local int i, j;
     local LevelSummary Summary;
-    
+
     bUpdatingMapLists = true;
 
     AvailableMaps.Clear();
-    
+
     for( i = 0; i < FullMapList.ItemCount; i++ )
     {
         Summary = LevelSummary( FullMapList.GetObjectAtIndex(i) );
-        
+
         for( j = 0; j < Summary.SupportedModes.Length; j++ )
         {
             if( Summary.SupportedModes[j] == NewMode )
@@ -416,17 +465,19 @@ function LoadAvailableMaps( EMPMode NewMode )
 
     AvailableMaps.List.Sort();
 
-    bUpdatingMapLists = false;
+    if(CurrentMapLoadIndex >= MapsToLoad.Length) {
+      bUpdatingMapLists = false;
+    }
 }
 
 function LoadMapList( EMPMode NewMode )
 {
     local int i, j;
-    
+
     bUpdatingMapLists = true;
-    
+
     SelectedMaps.Clear();
-    
+
     for( i = 0; i < GC.MapList[NewMode].NumMaps; i++ )
     {
         AvailableMaps.List.Find( GC.MapList[NewMode].Maps[i] );
@@ -438,19 +489,21 @@ function LoadMapList( EMPMode NewMode )
         SelectedMaps.List.AddElement( AvailableMaps.List.GetAtIndex(j) );
     }
 
-    SetSelectedMapsIndex( 0 );    
+    SetSelectedMapsIndex( 0 );
 
-    bUpdatingMapLists = false;
+    if(CurrentMapLoadIndex >= MapsToLoad.Length) {
+      bUpdatingMapLists = false;
+    }
 }
 
 function LoadServerMapList( GUIListBox MapListBox, ServerSettings Settings )
 {
     local int i, j;
-    
+
     bUpdatingMapLists = true;
-    
+
     MapListBox.Clear();
-    
+
     for( i = 0; i < Settings.NumMaps; i++ )
     {
         AvailableMaps.List.Find( Settings.Maps[i] );
@@ -462,42 +515,26 @@ function LoadServerMapList( GUIListBox MapListBox, ServerSettings Settings )
         MapListBox.List.AddElement( AvailableMaps.List.GetAtIndex(j) );
     }
 
-    bUpdatingMapLists = false;
+    if(CurrentMapLoadIndex >= MapsToLoad.Length) {
+      bUpdatingMapLists = false;
+    }
 }
 
 
 function LoadFullMapList()
 {
-	local LevelSummary Summary;
 	local string FileName;
 
-    Controller.OpenWaitDialog( LoadingMaplistString );
-
     FullMapList.Clear();
-    
+
     foreach FileMatchingPattern( "*.s4m", FileName )
     {
         //skip autoplay files (auto generated by UnrealEd)
         if( InStr( FileName, "autosave" ) != -1 )
             continue;
-    
-        //remove the extension
-        if(Right(FileName, 4) ~= ".s4m")
-			FileName = Left(FileName, Len(FileName) - 4);
 
-        Summary = Controller.LoadLevelSummary(FileName$".LevelSummary");
-        
-        if( Summary == None )
-        {
-            log( "WARNING: Could not load a level summary for map '"$FileName$".s4m'" );
-        }
-        else
-        {
-            FullMapList.Add( FileName, Summary, Summary.Title );
-        }
+        MapsToLoad[MapsToLoad.Length] = FileName;
     }
-    
-    Controller.CloseWaitDialog();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -507,16 +544,16 @@ function OnAddButtonClicked( GUIComponent Sender )
 {
     if( AvailableMaps.GetIndex() < 0 )
         return;
-        
+
     SelectedMaps.List.AddElement( AvailableMaps.List.GetElement() );
 }
 
 function OnRemoveButtonClicked( GUIComponent Sender )
 {
     local int index;
-    
+
     index = SelectedMaps.GetIndex();
-    
+
     if( index < 0 )
         return;
 
@@ -531,12 +568,12 @@ function OnRemoveButtonClicked( GUIComponent Sender )
 function OnUpButtonClicked( GUIComponent Sender )
 {
     local int index;
-    
+
     index = SelectedMaps.GetIndex();
-    
+
     if( index <= 0 )
         return;
-        
+
     SelectedMaps.List.SwapIndices( index, index-1 );
     SelectedMaps.SetIndex( index-1 );
 
@@ -549,12 +586,12 @@ function OnUpButtonClicked( GUIComponent Sender )
 function OnDownButtonClicked( GUIComponent Sender )
 {
     local int index;
-    
+
     index = SelectedMaps.GetIndex();
-    
+
     if( index < 0 || index >= SelectedMaps.Num()-1 )
         return;
-        
+
     SelectedMaps.List.SwapIndices( index, index+1 );
     SelectedMaps.SetIndex( index+1 );
 
@@ -568,7 +605,7 @@ function OnAvailableMapsChanged( GUIComponent Sender )
 {
     if( bUpdatingMapLists )
         return;
-        
+
     DisplayLevelSummary( LevelSummary( AvailableMaps.List.GetObject() ) );
 
     SwatServerSetupMenu.RefreshEnabled();
@@ -578,28 +615,28 @@ function OnSelectedMapsChanged( GUIComponent Sender )
 {
     if( bUpdatingMapLists )
         return;
-        
+
     MapListOnChange( SwatServerSetupMenu.CurGameType );
 
     if( SelectedMaps.Num() <= 1 )
         SetSelectedMapsIndex( 0 );
 
     DisplayLevelSummary( LevelSummary( SelectedMaps.List.GetObject() ) );
-    
+
     SwatServerSetupMenu.RefreshEnabled();
 }
 
 function MapListOnChange( EMPMode NewMode )
 {
     local int i;
-    
+
     GC.MapList[NewMode].ClearMaps();
-    
+
     for( i = 0; i < SelectedMaps.Num(); i++ )
     {
         GC.MapList[NewMode].AddMap( SelectedMaps.List.GetItemAtIndex(i) );
     }
-    
+
     GC.MapList[NewMode].SaveConfig();
 }
 
@@ -619,7 +656,7 @@ function UpdateSelectedIndexColoring( GUIListBox MapListBox )
 {
     local int i;
     local string CurrentDisplayString;
-    
+
     for( i = 0; i < MapListBox.Num(); i++ )
     {
         CurrentDisplayString = MapListBox.List.GetExtraAtIndex( i );
@@ -632,7 +669,7 @@ function UpdateSelectedIndexColoring( GUIListBox MapListBox )
 
     if( MapListBox.Num() <= SelectedIndex )
         return;
-    
+
     CurrentDisplayString = MapListBox.List.GetExtraAtIndex( SelectedIndex );
 
     if( InStr( CurrentDisplayString, SelectedIndexColorString ) == -1 )
@@ -649,7 +686,7 @@ function DisplayLevelSummary( LevelSummary Summary )
 {
     if( Summary == None )
         return;
-        
+
     if( Summary.Screenshot == None )
         MyLevelScreenshot.Image = NoScreenshotAvailableImage;
     else
@@ -671,12 +708,12 @@ defaultproperties
 
 	LANString="LAN"
 	GAMESPYString="Internet"
-    
+
     LevelTitleString="Map: %1"
     LevelAuthorString="Author: %1"
     IdealPlayerCountString="Recommended Players: %1 - %2"
-    
+
     SelectedIndexColorString="[c=00ff00]"
-    
+
 	LoadingMaplistString="Searching for available maps..."
  }

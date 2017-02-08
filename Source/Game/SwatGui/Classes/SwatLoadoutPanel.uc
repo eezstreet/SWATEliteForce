@@ -76,7 +76,7 @@ var(SWATGui) protected EditInline array<GUILabel> EquipmentLabel "These go next 
 var(SWATGui) protected EditInline array<GUIButton> EquipmentSelectionButton "These go next to the paperdoll figure";
 
 var private int     ActiveTab;
-var private Pocket  ActivePocket;
+var protected Pocket  ActivePocket;
 var private Pocket  ActiveAmmoPocket;
 var private int     FailedToValidate;
 
@@ -365,6 +365,7 @@ function LoadAmmoForWeapon( Pocket thePocket, class<FiredWeapon> WeaponClass )
     MyScrollAmmoLeftButton.SetActive( WeaponClass.default.PlayerAmmoOption.Length > 1 );
     MyScrollAmmoRightButton.SetActive( WeaponClass.default.PlayerAmmoOption.Length > 1 );
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200;
 
     if(thePocket == Pocket_PrimaryWeapon && ActivePocket == thePocket) {
@@ -472,6 +473,7 @@ function DisplayEquipment( Pocket thePocket )
 
       MyAmmoMagazineCountSpinner.SetVisibility(true);
       MyAmmoMagazineCountLabel.SetVisibility(true);
+      MyAmmoMagazineCountSpinner.SetActive(true);
     } else {
       MyAmmoMagazineCountSpinner.SetVisibility(false);
       MyAmmoMagazineCountLabel.SetVisibility(false);
@@ -575,7 +577,7 @@ function SaveCurrentLoadout()
 ///////////////////////////
 // Component delegates
 ///////////////////////////
-private function MagazineCountChange(GUIComponent Sender) {
+protected function MagazineCountChange(GUIComponent Sender) {
   local GUINumericEdit SenderEdit;
   SenderEdit = GUINumericEdit(Sender);
 
@@ -632,6 +634,7 @@ private function InternalSelectorButtonOnClick(GUIComponent Sender)
         }
     }
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200; // temp
 
     UpdateIndex(ActivePocket);
@@ -652,6 +655,7 @@ private function InternalTabButtonOnClick(GUIComponent Sender)
         }
     }
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200; // temp
 
     DisplayTab( ActiveTab );
@@ -662,6 +666,7 @@ private function DisplayTab(int tabNum)
 {
     local int i;
 
+    MyAmmoMagazineCountSpinner.MinValue = 1;
     MyAmmoMagazineCountSpinner.MaxValue = 200; // temp
 
     for( i = 0; i < PocketTabs.Length; i++ )

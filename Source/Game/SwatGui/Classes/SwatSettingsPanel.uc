@@ -56,7 +56,7 @@ final function ApplyDangerousSetting( String Passback, String Caption )
 {
 log("dkaplan >>> ApplyDangerousSetting( "$Passback$", "$Caption$")");
 
-    // Open the confirmation dialog, passing the string that will restore the 
+    // Open the confirmation dialog, passing the string that will restore the
     // current settings if necessary (in the Passback string)
     Controller.TopPage().OnDlgReturned=InternalDlgReturned;
     Controller.TopPage().OpenDlg( Caption, QBTN_YesNo, "Confirm"$Passback );
@@ -74,7 +74,7 @@ log("dkaplan >>> InternalDlgReturned( "$returnButton$", "$Passback$")");
         // Re-load the saved settings and re-apply them to the GUI
         bLoadingSettings=true;
         LoadSettings();
-        bLoadingSettings=false; 
+        bLoadingSettings=false;
 
         // If you're returning to this dialog because you hit cancel or the
         // dialog timed out, apply the "passback" string, which is the
@@ -88,8 +88,8 @@ log("dkaplan >>> InternalDlgReturned( "$returnButton$", "$Passback$")");
     else // user clicked "ok" at confirmation dialog
     {
         AssertWithDescription( returnButton == QBTN_OK || returnButton == QBTN_Yes, "Return value "$returnButton$" from confirmation dialog was not valid in SwatVideoSettingsPanel.");
-        
-        // If "Confirm" is in the passback string, then we just came back from the 
+
+        // If "Confirm" is in the passback string, then we just came back from the
         // Confirmation dialog as the result of clicking OK
         if( InStr( Passback, "Confirm" ) >= 0 )
         {
@@ -129,7 +129,7 @@ defaultproperties
     WinTop=0.21333
     WinHeight=0.66666
     WinWidth=0.875
-    
+
     ConfirmResetString="Are you sure that you wish to reset these settings to their defaults? This may take a few moments."
 
     ConfirmationTextSettingsChange="Do you wish to keep these new settings?"

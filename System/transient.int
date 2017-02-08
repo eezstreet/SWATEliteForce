@@ -5211,8 +5211,8 @@ TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
 TimeLineShortDescription=("Suspects Enter Auditorium","Patrol Cars Arrive","Perimeter Established"," CNT Arrive","Suspect Demands"," Shots Fired.")
 TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enter.")
 LoadingText=1801 Sellers St., The Sellers Street Auditorium
-NewEquipmentName=Colt M4A1 Carbine
-NewEquipmentDescription=The Colt M4A1 carbine is based on the tried and true design of the M16 assault rifle used by the United States Army.  The shorter carbine design makes it a more viable weapon than the M16 in close quarters situations.  Using .223 caliber rifle ammunition in both full metal jacket and jacketed hollow point configurations, the Colt carbine is the most powerful weapon available to SWAT officers.  It is equipped with a fire mode selector allowing semi-automatic as well as fully automatic firing.
+NewEquipmentName=H&K UMP .45 Submachine Gun
+NewEquipmentDescription=The UMP is the cheaper and lighter successor to the MP5.  Built largely of glass-fiber reinforced polymers, this lightweight submachine gun provides the same reliability as the MP5, but with the added punch of the larger .45 ACP caliber round.  The heavy bullet provides superior penetration of armored targets with FMJ rounds compared to its 9mm brethren, despite having a lower muzzle velocity and slower cyclical rate of fire.  This model is equipped with a fire mode selector allowing semi-automatic, two round burst and fully automatic firing modes.
 
 [SP-JewelryHeist]
 PrimarySpawnPoint=Front Door, Main Lobby
