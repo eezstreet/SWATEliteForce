@@ -84,8 +84,8 @@ simulated function OnGivenToOwner()
         assert( FirstPersonModel != None );
 
         FirstPersonModel.Skins[0] = GunShader;
-        //FirstPersonModel.Skins[1] = BlankScreen;
-		FirstPersonModel.Skins[1] = LCDShader;
+        FirstPersonModel.Skins[1] = BlankScreen;
+		//FirstPersonModel.Skins[1] = LCDShader;
 
         TimerFreq = 1.0/RefreshRate;
     }
@@ -122,6 +122,7 @@ simulated function bool   CanIssueCommands()
 simulated function OnBeginControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
+	FirstPersonModel.Skins[1] = LCDShader;
 	bInUse = true;
 }
 
