@@ -438,6 +438,7 @@ This is a hotfix patch to address some common issues that have been raised.
 Files modified:
 System/DefSwatGui.ini
 System/SpeechCommandGrammar.xml
+System/SwatEquipment.int
 System/SwatGui.ini
 System/transient.int
 Generated code
