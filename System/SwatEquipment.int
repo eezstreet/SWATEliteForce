@@ -1,3 +1,157 @@
+[Arwen37GL]
+Description=The ARWEN 37 (ARWEN being short for "Anti-Riot Weapon ENfield") was designed by request of the British Military for a capable riot control weapon. It certainly meets that criteria - boasting a five-round rotary drum and tactical flashlight, the ARWEN 37 is a solid choice in delivering ordinance. The weapon is heavier than the HK69 however, and is only designed to be used by a grenadier's role.
+FriendlyName=ARWEN 37
+Manufacturer=Royal Small Arms Factory
+Caliber=37mm
+CountryOfOrigin=Great Britain
+ProductionStart=1977
+FireModes=Semi-Automatic
+TotalAmmoString=25 shells
+RateOfFire=Unknown
+
+[BrowningHPHG]
+Description=
+FriendlyName=Browning Hi-Power
+Manufacturer=Browning
+Caliber=
+CountryOfOrigin=United States
+ProductionStart=
+FireModes=Semi-Automatic
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[SilencedBrowningHPHG]
+Description=
+FriendlyName=Suppressed Browning Hi-Power
+Manufacturer=Browning
+Caliber=
+CountryOfOrigin=United States
+ProductionStart=
+FireModes=Semi-Automatic
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[P226HG]
+Description=
+FriendlyName=P226
+Manufacturer=
+Caliber=
+CountryOfOrigin=
+ProductionStart=
+FireModes=Semi-Automatic
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[SilencedP226HG]
+Description=
+FriendlyName=Suppressed P226
+Manufacturer=
+Caliber=
+CountryOfOrigin=
+ProductionStart=
+FireModes=Semi-Automatic
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[HK33MG]
+Description=
+FriendlyName=HK33A2
+Manufacturer=Heckler & Koch
+Caliber=
+CountryOfOrigin=West Germany
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[HK33sMG]
+Description=
+FriendlyName=Scoped HK33A2
+Manufacturer=Heckler & Koch
+Caliber=
+CountryOfOrigin=West Germany
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[SG552MG]
+Description=
+FriendlyName=SG552 Commando
+Manufacturer=Sig Sauer
+Caliber=
+CountryOfOrigin=Switzerland
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[SilencedSG552MG]
+Description=
+FriendlyName=Suppressed SG552 Commando
+Manufacturer=Sig Sauer
+Caliber=
+CountryOfOrigin=Switzerland
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[M16A1MG]
+Description=
+FriendlyName=M16A1
+Manufacturer=Colt
+Caliber=
+CountryOfOrigin=United States
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[SilencedM16A1MG]
+Description=
+FriendlyName=Suppressed M16A1
+Manufacturer=Colt
+Caliber=
+CountryOfOrigin=United States
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[MP5SSDSMG]
+Description=
+FriendlyName=MP5SSD
+Manufacturer=Heckler & Koch
+Caliber=9mm
+CountryOfOrigin=Germany
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[MP5KSMG]
+Description=
+FriendlyName=MP5 Kurz
+Manufacturer=Heckler & Koch
+Caliber=9mm
+CountryOfOrigin=Germany
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
+[SilencedMP5KSMG]
+Description=
+FriendlyName=Suppressed MP5 Kurz
+Manufacturer=Heckler & Koch
+Caliber=9mm
+CountryOfOrigin=Germany
+ProductionStart=
+FireModes=
+TotalAmmoString=10 magazines
+RateOfFire=
+
 [M4Super90SG]
 Description=The Benelli M4 Super 90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its seven round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has one drawback.  Its bulk can make it difficult to handle in close quarters situations.
 FriendlyName=M4 Super 90
@@ -267,7 +421,7 @@ TotalAmmoString=200 pepper-balls
 RateOfFire=600 RPM
 
 [Wedge]
-Description=While locking a door may slow a suspect down, it is not a surefire way of preventing movement through a door. The Door Wedge allows the operator to completely block a door from opening. This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
+Description=This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
 FriendlyName=Door Wedge
 
 [Optiwand]
