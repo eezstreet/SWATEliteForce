@@ -308,7 +308,7 @@ replication
         ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
-		ServerRetryStatsAuth;
+		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2023,6 +2023,17 @@ function IssueMessage(string Message, name Type)
     Log("IssueMessage: "$Message);
     ClientMessage(Message, Type);
 }
+
+exec function ToggleSpeechManager()
+{
+  Level.GetEngine().SpeechManager.ToggleSpeech();
+  if(Level.GetEngine().SpeechManager.IsEnabled()) {
+    ClientMessage("[c=FFFFFF]Speech Recognition enabled", 'SpeechManagerNotification');
+  } else {
+    ClientMessage("[c=FFFFFF]Speech Recognition disabled", 'SpeechManagerNotification');
+  }
+}
+
 // ----------------------
 
 //for debugging only!  Normal gameplay should call Interact()
@@ -2512,6 +2523,11 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
 
     SetMPLoadOutPocketWeapon( Pocket_SecondaryWeapon, LoadOut.LoadOutSpec[Pocket.Pocket_SecondaryWeapon], LoadOut.LoadOutSpec[Pocket.Pocket_SecondaryAmmo] );
 
+    SetMPLoadOutPrimaryAmmo(LoadOut.GetPrimaryAmmoCount());
+    SetMPLoadOutSecondaryAmmo(LoadOut.GetSecondaryAmmoCount());
+
+    log("Loadout ammo: Primary ("$LoadOut.GetPrimaryAmmoCount()$"), secondary ("$LoadOut.GetSecondaryAmmoCount()$")");
+
     for( i = 4; i < Pocket.EnumCount; i++ )
     {
 		if( Pocket(i) == Pocket_CustomSkin )
@@ -2527,6 +2543,13 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
         UpdateVoiceType();
 }
 
+simulated function SetMPLoadOutPrimaryAmmo(int Amount) {
+  ServerSetMPLoadOutPrimaryAmmo(Amount);
+}
+
+simulated function SetMPLoadOutSecondaryAmmo(int Amount) {
+  ServerSetMPLoadOutSecondaryAmmo(Amount);
+}
 
 simulated function SetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class<actor> AmmoItem )
 {
@@ -2553,6 +2576,17 @@ simulated function SetMPLoadOutPocketItem( Pocket Pocket, class<actor> Item )
     ServerSetMPLoadOutPocketItem( Pocket, Item );
 }
 
+// Executes only on the server
+function ServerSetMPLoadOutPrimaryAmmo(int Amount)
+{
+  SwatRepoPlayerItem.SetPrimaryAmmoCount(Amount);
+}
+
+// Executes only on the server
+function ServerSetMPLoadOutSecondaryAmmo(int Amount)
+{
+  SwatRepoPlayerItem.SetSecondaryAmmoCount(Amount);
+}
 
 // Executes only on the server
 function ServerSetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class<actor> AmmoItem )
@@ -5177,12 +5211,16 @@ exec function IssueCompliance()
 	ServerIssueCompliance( string(PlayerTag) );
 }
 
-function ServerIssueCompliance( string VoiceTag )
+function ServerIssueCompliance( optional string VoiceTag )
 {
 	   local bool ACharacterHasAWeaponEquipped;
      local NetPlayer theNetPlayer;
-	   local int bTargetArrested;
-	   local int bTargetSuspect;
+     local int TargetIsSuspect;
+     local vector CameraLocation;
+     local rotator CameraRotation;
+     local Actor Candidate;
+
+     CalcViewForFocus(Candidate, CameraLocation, CameraRotation );
 
      if(ViewTarget != Pawn) {
        log("ServerIssueCompliance: ViewTarget ("$ViewTarget$") != Pawn ("$Pawn$")");
@@ -5204,24 +5242,25 @@ function ServerIssueCompliance( string VoiceTag )
         }
 
 	    // IssueCompliance returns true if any character that listens to us has a weapon equipped
-	    ACharacterHasAWeaponEquipped = SwatPawn(Pawn).IssueCompliance(bTargetArrested, bTargetSuspect);
+	    ACharacterHasAWeaponEquipped = SwatPawn(Pawn).IssueCompliance();
 
-	    if (ACharacterHasAWeaponEquipped)
-	    {
-		        Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
-	    }
-		else if(bTargetArrested == 1)
-		{
-			if(bTargetSuspect == 1) {
-				Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
-			} else {
-				Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag)); // TODO: check for aggressiveness
-			}
-		}
-	    else
-	    {
-	            Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
-	    }
+      if (VoiceTag != "") { // Might be legitimately None, because it could be issued through the Speech Command Interface
+        if (ACharacterHasAWeaponEquipped)
+        {
+            Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
+        }
+        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect)) {
+          Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
+        }
+        else if(TargetIsSuspect == 1) {
+          Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
+        }
+        else {
+          Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag)); // TODO: check for aggressiveness
+        }
+      } else {
+        log("[SPEECH] Issued compliance.");
+      }
     }
 }
 

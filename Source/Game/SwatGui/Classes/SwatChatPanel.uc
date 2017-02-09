@@ -155,6 +155,7 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
             MsgText = FormatTextString( EquipNotAvailableString, SlotNames[ int(StrA) ] );
             break;
 
+        case 'SpeechManagerNotification':
         case 'Caption':
             MsgText = StrA;
             break;

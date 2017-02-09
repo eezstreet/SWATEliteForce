@@ -56,13 +56,6 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     //we only expect to do this once per run
     assert(!HasSpawned || bTesting);
 
-    // Determine the difficulty level
-    if(Level.IsCOOPServer) {
-      DifficultyLevel = Difficulty_Elite; // Gloves are off in co-op mode..!
-    } else {
-      DifficultyLevel = Repo.GuiConfig.CurrentDifficulty;
-    }
-
     //reference any custom scenario
     CustomScenario = SwatGameInfo(Level.Game).GetCustomScenario();
     UsingCustomScenario = (CustomScenario != None);
@@ -71,6 +64,15 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     Repo = SwatRepo(Level.GetRepo());
     assert(Repo != None);
     StartPoint = Repo.GetDesiredEntryPoint();
+
+    // Determine the difficulty level
+    if(Level.IsCOOPServer) {
+      DifficultyLevel = Difficulty_Elite; // Gloves are off in co-op mode..!
+    } else {
+      DifficultyLevel = Repo.GuiConfig.CurrentDifficulty;
+    }
+
+    log("Difficulty level is "$DifficultyLevel$", spawning appropriate rosters...");
 
     //empty unallocated spawners list (we may be testing)
     UnallocatedSpawners.Remove(0, UnallocatedSpawners.length);

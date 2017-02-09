@@ -46,6 +46,7 @@ function InitComponent(GUIComponent MyOwner)
     SelectedIndex=-1;
 
     RestrictKeys();
+    GC.LocalizedCommandString[GC.LocalizedCommandString.Length] = "Toggle Speech Commands";
     GC.LocalizedCommandString[GC.LocalizedCommandString.Length] = "Take Screenshot"; // ಠ_ಠ
 }
 

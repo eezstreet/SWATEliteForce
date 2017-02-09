@@ -24,7 +24,7 @@ var private int PreferredTeamID;
 // until the round ends).
 var bool bHasEnteredFirstRound;
 
-// This is false until an entire loadout spec has been set, indicating that 
+// This is false until an entire loadout spec has been set, indicating that
 //   this player is ready to spawn
 var bool bIsReadyToSpawn;
 
@@ -37,6 +37,8 @@ var bool bIsAReconnectingClient;
 var bool bConnected;
 
 var class<actor> RepoLoadOutSpec[Pocket.EnumCount];
+var int RepoLoadOutPrimaryWeaponAmmo;
+var int RepoLoadOutSecondaryWeaponAmmo;
 
 var String CustomSkinClassName;
 
@@ -47,6 +49,14 @@ var String LastAdminPassword;
 //
 // Member functions
 //
+function SetPrimaryAmmoCount(int amount) {
+  RepoLoadOutPrimaryWeaponAmmo = amount;
+}
+
+function SetSecondaryAmmoCount(int amount) {
+  RepoLoadOutSecondaryWeaponAmmo = amount;
+}
+
 function SetPocketItemClass( Pocket Pocket, class<actor> ItemClass )
 {
     //log( self$" in SwatRepoPlayerItem::SetPocketItemClass(). Pocket="$Pocket$", Item="$ItemClass );
@@ -80,11 +90,21 @@ function class<actor> GetPocketItem( Pocket Pocket )
     return RepoLoadOutSpec[ Pocket ];
 }
 
+function int GetPrimaryAmmoCount()
+{
+  return RepoLoadOutPrimaryWeaponAmmo;
+}
+
+function int GetSecondaryAmmoCount()
+{
+  return RepoLoadOutSecondaryWeaponAmmo;
+}
+
 
 simulated function PrintLoadOutSpecToMPLog()
 {
     local int i;
- 
+
     mplog( "LoadOutSpec contains:" );
 
     for ( i = 0; i < Pocket.EnumCount; i++ )

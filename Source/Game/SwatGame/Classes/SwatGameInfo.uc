@@ -1117,6 +1117,10 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 				theNetPlayer.SetCustomSkinClassName( "SwatGame.DefaultCustomSkin" );
 
             LoadOutSpec = theNetPlayer.GetLoadoutSpec();
+
+            // Alter it *ex post facto* to have the correct ammo counts
+            LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
+            LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -2340,6 +2344,8 @@ function TogglePlayerReady( SwatGamePlayerController Player )
 
     if( SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus == STATUS_NotReady )
         SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus = STATUS_Ready;
+    else if(SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus == STATUS_Ready)
+        SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus = STATUS_NotReady;
     SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).TogglePlayerIsReady();
 
 #if !IG_THIS_IS_SHIPPING_VERSION

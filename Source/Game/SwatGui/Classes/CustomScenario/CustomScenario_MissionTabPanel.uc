@@ -58,7 +58,10 @@ function InitComponent(GUIComponent MyOwner)
 
 	//fill mission combo list
 	for (i=0; i<GC.CompleteMissionList.length; ++i)
-		cbo_mission.AddItem(string(GC.CompleteMissionList[i]),, GC.CompleteFriendlyNameList[i]);
+		cbo_mission.AddItem(string(GC.CompleteMissionList[i]),, GC.FriendlyName[i]);
+
+  // Add extra missions
+  cbo_mission.AddItem("SP-Meatbarn",, "Meat Barn Restaurant");
 
 	//fill difficulties
 	cbo_difficulty.AddItem("Any",, Data.AnyString);
@@ -380,7 +383,7 @@ function InitializeObjectives()
         if (CustomMissionObjectives.Objectives[i].name != 'Automatic_DoNot_Die')
             dlist_objectives.ListBoxA.List.Add(
                     string(CustomMissionObjectives.Objectives[i].name),
-                    , 
+                    ,
                     CustomMissionObjectives.Objectives[i].Description);
 }
 
@@ -447,7 +450,7 @@ function GatherScenarioFromFields()
     Scenario = CustomScenarioPage.GetCustomScenario();
 
     Scenario.LevelLabel = name(cbo_mission.List.Get());
-    
+
     //gather Objectives, including TimeLimit
 
     Scenario.UseCampaignObjectives = chk_campaign_objectives.bChecked;
@@ -459,7 +462,7 @@ function GatherScenarioFromFields()
         Scenario.ScenarioObjectives[i] = name(dlist_objectives.ListBoxB.List.GetItemAtIndex(i));
 
     Scenario.Difficulty = cbo_difficulty.List.Get();
-    
+
     Scenario.SpecifyStartPoint = !opt_either.bChecked;
     if (!opt_either.bChecked)
         Scenario.UseSecondaryStartPoint = opt_secondary.bChecked;

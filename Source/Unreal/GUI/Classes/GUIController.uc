@@ -23,7 +23,7 @@
 #define DEBUG_COMPONENT_LOADING 0 // ckline: debug component loading/autoloading time
 
 class GUIController extends Engine.BaseGUIController
-        Config(GuiBase)
+        Config(User)
         HideCategories(Menu,Object)
 		Native;
 
@@ -51,7 +51,7 @@ cpptext
         virtual void Modify(); //callback from the object browser
 
         void GroupAllControlsInBounds( UGUIMultiComponent* Ctrl, FLOAT top, FLOAT bottom, FLOAT left, FLOAT right );
-        
+
         void PreChangeActiveMenu();
 }
 
@@ -237,7 +237,7 @@ event InitializeController()
 	local int i;
 
 	GetGuiResolution();
-	
+
     FontStack.Remove(0,FontStack.Length);
     StyleStack.Remove(0,StyleStack.Length);
 	for (i=0;i<FontNames.Length;i++)
@@ -259,7 +259,7 @@ event InitializeController()
 	        MakeMoveGroup();
 	    }
 	}
-	
+
 	bActive = true;
 
 	AutoLoadMenus();
@@ -269,7 +269,7 @@ event InitializeController()
 event bool RegisterFont(String FontClass)
 {
     local GUIFont NewFont;
-    
+
 	NewFont = new(None, FontClass) class'GUI.GUIFont';
 
 	if (NewFont != None)
@@ -308,10 +308,10 @@ function SetControllerStatus(bool On)
 
 	// Attempt to Pause as well as show the windows mouse cursor.
     //	ViewportOwner.Actor.Level.Game.SetPause(On, ViewportOwner.Actor);
-	
+
 	//off, unless active page is a non-HUD menu
 	ViewportOwner.bShowWindowsMouse=(On && !ActivePage.bIsHUD);
-        
+
 	// Add code to pause/unpause/hide/etc the game here.
 
 	if (!On)
@@ -383,7 +383,7 @@ event GUIComponent CreateComponent(string ComponentClass,optional string Compone
         //no name passed in so construct a default one, based off of the class name
         ComponentName = Right(ComponentClass,Len(ComponentClass)-InStr(ComponentClass,".")-1);
 	}
-	
+
     ComponentName = FixGUIComponentName( ComponentName );
 
     NewComponent = FindPersistentComponent(ComponentName,true);
@@ -412,7 +412,7 @@ event GUIComponent CreateComponent(string ComponentClass,optional string Compone
 			log("Could not create requested component"@ComponentClass);
 				return None;
 		}
-						
+
 		// Save in PersistentStack if it's persistent.
 		if( NewComponent.bPersistent )
 		{
@@ -486,7 +486,7 @@ function OpenWaitDialog( optional String WaitString )
 
     if( WaitString == "" )
         WaitString = PleaseWaitString;
-        
+
     ActivePage.OnDlgReturned=None;
     ActivePage.OpenDlg( WaitString, 0, "WaitDialogueDoNotUse", 0.05 );
     PaintProgress();
@@ -533,7 +533,7 @@ event bool InternalOpenMenu( GUIPage NewMenu, optional string Param1, optional s
             if( !newMenu.bIsOverlay )
     		    ActivePage.Hide(); //only keep this active if new page is just an overlay
         }
-        
+
         //NEW MENU NOW ACTIVE PAGE!!!
 		ActivePage = NewMenu;
 		MenuStack[MenuStack.Length] = ActivePage;
@@ -584,9 +584,9 @@ event bool ReplaceMenu(string NewMenuName, optional string MenuNameOverride, opt
 
         //NEW MENU NOW ACTIVE PAGE!!!
 		ActivePage = NewMenu;
-    	
+
     	MenuStack[MenuStack.Length] = ActivePage;
-    	
+
         ActivePage.Show();
 		if( !ActivePage.bIsHUD )
             ActivePage.Activate();
@@ -607,7 +607,7 @@ event bool CloseMenu()	// Close the top menu.  returns true if success.
     local GUIPage oldPage;
 
 	log( self$" >>> Closing menu "$ActivePage );
-    
+
 	PreChangeActiveMenu();
 
 	if (MenuStack.Length <= 0)
@@ -655,7 +655,7 @@ event CloseAll()
 
 	if( MenuStack.Length <= 0 )
         return;
-        
+
 	for (i=0;i<MenuStack.Length-1;i++)
 	{
 	    if( MenuStack[i].bActiveInput )
@@ -774,7 +774,7 @@ event GroupControl( GUIComponent Ctrl, int group )
             return;
         }
     }
-        
+
     // not remove only, so group it
     MoveGroups[group].CtrlGroup[MoveGroups[group].CtrlGroup.Length]=Ctrl;
     Ctrl.MoveGroup = group;
@@ -788,7 +788,7 @@ event KillControlGroup( int group )
     {
         MoveGroups[group].CtrlGroup[i].MoveGroup = -1;
     }
-        
+
     // not remove only, so group it
     MoveGroups[group].CtrlGroup.Remove( 0, MoveGroups[group].CtrlGroup.Length );
 }
@@ -805,10 +805,10 @@ event AlignControlsInGroup( GUIComponent Ctrl, eComponentAlign align )
 {
     local int i;
     local GUIComponent ChangeCtrl;
-    
+
     if( Ctrl == None || Ctrl.MoveGroup < 0 )
         return;
-    
+
     for( i = 0; i < MoveGroups[Ctrl.MoveGroup].CtrlGroup.Length; i++ )
     {
         ChangeCtrl = MoveGroups[Ctrl.MoveGroup].CtrlGroup[i];
@@ -835,10 +835,10 @@ event SizeControlsInGroup( GUIComponent Ctrl, eComponentSize size )
 {
     local int i;
     local GUIComponent ChangeCtrl;
-    
+
     if( Ctrl == None || Ctrl.MoveGroup < 0 )
         return;
-    
+
     for( i = 0; i < MoveGroups[Ctrl.MoveGroup].CtrlGroup.Length; i++ )
     {
         ChangeCtrl = MoveGroups[Ctrl.MoveGroup].CtrlGroup[i];
@@ -860,27 +860,27 @@ event SpaceControlsInGroup( GUIComponent Ctrl, bool bVertical )
     local int i, j;
     local GUIComponent ChangeCtrl;
     local array<GUIComponent> OrderedCtrls;
-    
-    if( Ctrl == None || 
-        Ctrl.MoveGroup < 0 || 
+
+    if( Ctrl == None ||
+        Ctrl.MoveGroup < 0 ||
         MoveGroups[Ctrl.MoveGroup].CtrlGroup.Length <= 2 )
         return;
-    
+
     for( i = 0; i < MoveGroups[Ctrl.MoveGroup].CtrlGroup.Length; i++ )
     {
         ChangeCtrl = MoveGroups[Ctrl.MoveGroup].CtrlGroup[i];
-        
+
         //only update controls with the same scaling technique as the base Ctrl
         if( ChangeCtrl.bScaled != Ctrl.bScaled )
             continue;
-            
+
         for( j = 0; j < OrderedCtrls.Length; j++ )
         {
             if( ( bVertical && ChangeCtrl.WinTop < OrderedCtrls[j].WinTop ) ||
                 ( !bVertical && ChangeCtrl.WinLeft < OrderedCtrls[j].WinLeft ) )
                 break;
         }
-        
+
         OrderedCtrls.Insert( j, 1 );
         OrderedCtrls[j]=ChangeCtrl;
     }
@@ -894,14 +894,14 @@ event SpaceControlsInGroup( GUIComponent Ctrl, bool bVertical )
 
         if( bVertical )
         {
-            ChangeCtrl.WinTop = ( float(i) / float(OrderedCtrls.Length-1) ) * 
-                                ( OrderedCtrls[OrderedCtrls.Length-1].WinTop - OrderedCtrls[0].WinTop ) + 
+            ChangeCtrl.WinTop = ( float(i) / float(OrderedCtrls.Length-1) ) *
+                                ( OrderedCtrls[OrderedCtrls.Length-1].WinTop - OrderedCtrls[0].WinTop ) +
                                   OrderedCtrls[0].WinTop;
         }
         else
         {
-            ChangeCtrl.WinLeft = ( float(i) / float(OrderedCtrls.Length-1) ) * 
-                                 ( OrderedCtrls[OrderedCtrls.Length-1].WinLeft - OrderedCtrls[0].WinLeft ) + 
+            ChangeCtrl.WinLeft = ( float(i) / float(OrderedCtrls.Length-1) ) *
+                                 ( OrderedCtrls[OrderedCtrls.Length-1].WinLeft - OrderedCtrls[0].WinLeft ) +
                                    OrderedCtrls[0].WinLeft;
         }
 
@@ -912,10 +912,10 @@ event SpaceControlsInGroup( GUIComponent Ctrl, bool bVertical )
 event SelectNextControlInMoveGroup()
 {
     local int i;
-    
+
     if( MoveControl == None || MoveControl.MoveGroup < 0 )
         return;
-    
+
     for( i = 0; i < MoveGroups[MoveControl.MoveGroup].CtrlGroup.Length; i++ )
     {
         if( MoveControl == MoveGroups[MoveControl.MoveGroup].CtrlGroup[i] )
@@ -998,7 +998,7 @@ event GetGuiResolution()
 {
     local String CurrentRes;
 	local int i;
-	
+
     CurrentRes = ViewportOwner.Actor.ConsoleCommand( "GETCURRENTRES" );
     i = InStr( CurrentRes, "x" );
     if( i > 0 )
@@ -1017,7 +1017,7 @@ event OnResolutionChanged(int OldResolutionX, int OldResolutionY, int NewResolut
 
     for (i=0; i<InterestedResolutionChanged.length; ++i)
         InterestedResolutionChanged[i].OnResolutionChanged(OldResolutionX, OldResolutionY, ResolutionX, ResolutionY);
-        
+
     //force a full update whenever resolution changes
     bForceUpdate = true;
 }
@@ -1077,23 +1077,23 @@ function ResolutionToScale(GUIComponent Ctrl, optional bool bPropagate)
 private function DoScalingOnComponent( GUIComponent Ctrl, bool bScaleIt, optional bool bPropagate )
     {
     local int i;
-    
+
     if( !bScaleIt && Ctrl.bScaled )
     {
-        Ctrl.WinLeft *= ResolutionX;        
-        Ctrl.WinWidth *= ResolutionX;        
-        Ctrl.WinTop *= ResolutionY;        
-        Ctrl.WinHeight *= ResolutionY;        
+        Ctrl.WinLeft *= ResolutionX;
+        Ctrl.WinWidth *= ResolutionX;
+        Ctrl.WinTop *= ResolutionY;
+        Ctrl.WinHeight *= ResolutionY;
     }
     else if( bScaleIt && !Ctrl.bScaled )
     {
-        Ctrl.WinLeft /= float(ResolutionX);        
-        Ctrl.WinWidth /= float(ResolutionX);        
-        Ctrl.WinTop /= float(ResolutionY);        
-        Ctrl.WinHeight /= float(ResolutionY); 
+        Ctrl.WinLeft /= float(ResolutionX);
+        Ctrl.WinWidth /= float(ResolutionX);
+        Ctrl.WinTop /= float(ResolutionY);
+        Ctrl.WinHeight /= float(ResolutionY);
     }
-    Ctrl.bScaled = bScaleIt;        
-    
+    Ctrl.bScaled = bScaleIt;
+
     if( bPropagate && GUIMultiComponent(Ctrl) != None )
     {
         for( i = 0; i < GUIMultiComponent(Ctrl).Controls.Length; i++ )
@@ -1115,12 +1115,12 @@ function SnapToGrid(GUIComponent Ctrl, bool bResized)
 {
     local int i;
     local bool bWasScaled;
-    
+
     bWasScaled = Ctrl.bScaled;
 
     if( bWasScaled )
         ScaleToResolution(Ctrl);
-        
+
     //if width/height is same, snap t&l, else snap w&h
     if( !bResized )
     {
@@ -1134,7 +1134,7 @@ function SnapToGrid(GUIComponent Ctrl, bool bResized)
         else
         {
             Ctrl.WinTop=i;
-        }    
+        }
 
         i = int(Ctrl.WinLeft/GridSize)*GridSize;
         if( Ctrl.WinLeft-float(i) > float(GridSize)/2.0 )
@@ -1144,7 +1144,7 @@ function SnapToGrid(GUIComponent Ctrl, bool bResized)
         else
         {
             Ctrl.WinLeft=i;
-        }    
+        }
     }
     else
     {
@@ -1157,7 +1157,7 @@ function SnapToGrid(GUIComponent Ctrl, bool bResized)
         else
         {
             Ctrl.WinHeight=i;
-        }    
+        }
 
         i = int(Ctrl.WinWidth/GridSize)*GridSize;
         if( Ctrl.WinWidth-float(i) >= float(GridSize)/2.0 )
@@ -1167,7 +1167,7 @@ function SnapToGrid(GUIComponent Ctrl, bool bResized)
         else
         {
             Ctrl.WinWidth=i;
-        }    
+        }
     }
 
     if( bWasScaled )
@@ -1303,7 +1303,7 @@ function SizeOfControl( GUIComponent Ctrl, out float size )
         sizedH=Ctrl.WinHeight/float(ResolutionY);
     }
 
-    size = sqrt( sizedW * sizedH ); 
+    size = sqrt( sizedW * sizedH );
 }
 
 function bool HasMouseMoved()
@@ -1342,7 +1342,7 @@ event LogGUI()
 event LogGUIPage( GUIPage Page )
 {
     log( "LogGui: ***************************************************************" );
-    log( "LogGui: Logging GUI for"@Page.Name ); 
+    log( "LogGui: Logging GUI for"@Page.Name );
     log( "LogGui: " );
     LogGUIComponent( Page );
 }
@@ -1357,9 +1357,9 @@ event LogGUIComponent( GUIComponent Ctrl, optional int level )
     for( i = 0; i < level; i++ )
         Msg = Msg $ "    ";
     Msg = Msg $ " -> " $ Ctrl.Name;
-    
+
     Log( Msg );
-    
+
     MC = GUIMultiComponent(Ctrl);
     if( MC!=None )
         for( i = 0; i < MC.Controls.Length; i++ )

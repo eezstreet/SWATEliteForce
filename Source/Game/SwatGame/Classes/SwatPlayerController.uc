@@ -1,5 +1,5 @@
 class SwatPlayerController extends Engine.PlayerController
-    config(SwatGame)
+    config(User)
     dependsOn(SwatGuiConfig)
     native;
 

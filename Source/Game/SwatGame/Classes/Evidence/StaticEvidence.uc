@@ -77,8 +77,16 @@ function Spawner GetSpawner()
     return SpawnedFrom;
 }
 
+simulated function PostNetBeginPlay()
+{
+    Super.PostNetBeginPlay();
+
+    ReactToTriggered( None );
+}
+
 defaultproperties
 {
     bNoDelete=false
     RemoteRole=ROLE_DumbProxy
+    bAlwaysRelevant=true
 }

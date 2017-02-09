@@ -33,6 +33,7 @@ var private config name            BoneName;
 var private Vector                 MouseAccel;         // Mouseacceleration when controlling through the optiwand
 var private Rotator                DesiredViewRotation;// Desired rotation for the camera lens
 var private Rotator                BoneRotation;       // Actual rotation of the camera lens bone
+var private Rotator                LastBoneRotation;   // rotation, in idlemode
 var private Vector                 LastViewLocation;   // Used for contorlling
 var private float                  TimerFreq;          // How often in seconds to update the screen
 var private bool                   bMirroring;			// This is deceptively named..
@@ -54,7 +55,7 @@ simulated function float GetBulk() {
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    Disable('Tick');
+    //Disable('Tick');
 }
 
 // Helper function, this should really be in Object or something
@@ -84,8 +85,7 @@ simulated function OnGivenToOwner()
         assert( FirstPersonModel != None );
 
         FirstPersonModel.Skins[0] = GunShader;
-        //FirstPersonModel.Skins[1] = BlankScreen;
-		FirstPersonModel.Skins[1] = LCDShader;
+        FirstPersonModel.Skins[1] = LCDShader;
 
         TimerFreq = 1.0/RefreshRate;
     }
@@ -122,16 +122,14 @@ simulated function bool   CanIssueCommands()
 simulated function OnBeginControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
+	
 	bInUse = true;
 }
 
 simulated function OnEndControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
-
-    // Use the blank screen texture now
-    //FirstPersonModel.Skins[1] = BlankScreen;
-    FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,0,1 );
+	
 	bInUse = false;
 }
 
@@ -178,7 +176,7 @@ simulated function ResolveInitialLocationAndRotation( out Vector CameraLocation,
                 CameraLocation = FirstPersonModel.GetBoneCoords(BoneName, true).Origin;
             else
                 CameraLocation = Owner.Location;
-            PlayerViewRot = Pawn(Owner).GetViewRotation();
+			PlayerViewRot = Pawn(Owner).GetViewRotation();
         }
     }
 
@@ -191,11 +189,16 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
     local Object.Range YawRange, PitchRange;
 
     // Most of the time this is all we need to take care of
-	FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation(),,, 1);
+	FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation()+LastBoneRotation,,, 1);
     ResolveInitialLocationAndRotation( CameraLocation, PlayerViewRot );
+	
+	if (!bInUse) {
+		CameraRotation = FirstPersonModel.GetBoneRotation(BoneName, 1);
+		return;
+	}
 
     // Only handle this stuff when we're actually moving the mouse.
-    if ( VSize(MouseAccel) != 0 )
+    if ( VSize(MouseAccel) != 0)
     {
         DesiredViewRotation.Yaw += MouseAccel.X * LensTurnSpeed * LastDeltaTime;
         DesiredViewRotation.Pitch += MouseAccel.Y * LensTurnSpeed * LastDeltaTime;
@@ -296,7 +299,7 @@ simulated function InterruptUsing()
 		// Stop playing any sounds from looping...
         SoundEffectsSubsystem(EffectsSystem(Level.EffectsSystem).GetSubsystem('SoundEffectsSubsystem')).StopMySchemas(Pawn(Owner).GetHands());
         Pawn(Owner).GetHands().PlayAnim(EndAnim);
-        Disable('Tick');
+        //Disable('Tick');
     }
 }
 
@@ -347,7 +350,6 @@ simulated latent protected function DoUsingHook()
         return;
     }
 
-    Enable('Tick');
     mplog( Self$" DoUsingHook() Latent function 3" );
     if ( PlayerOwner != None )
     {
@@ -367,7 +369,7 @@ simulated latent protected function DoUsingHook()
             DesiredViewRotation = Pawn(Owner).GetViewRotation();
         }
     }
-    FirstPersonModel.SetBoneDirection(BoneName, DesiredViewRotation,,, 1);
+    //FirstPersonModel.SetBoneDirection(BoneName, DesiredViewRotation,,, 1);
 
     mplog( Self$" DoUsingHook() Latent function 4" );
     // Hands
@@ -387,11 +389,7 @@ simulated latent protected function DoUsingHook()
     }*/
 
     mplog( Self$" DoUsingHook() Latent function 6" );
-    while( ShouldControlViewport() )
-    {
-        Sleep(TimerFreq);
-        LCDScreen.Revision++;
-    }
+	while( ShouldControlViewport() ) {Sleep(TimerFreq);}
 
     /*if ( PlayerOwner != None )
     {
@@ -400,16 +398,16 @@ simulated latent protected function DoUsingHook()
     }*/
 
     mplog( Self$" DoUsingHook() Latent function 7" );
-    ViewRot = Pawn(Owner).GetViewRotation();
+    //ViewRot = Pawn(Owner).GetViewRotation();
     // Slerp the lens back to facing forward
-    while(VSize(vector(BoneRotation)-vector(ViewRot)) > 0.1)
+    /*while(VSize(vector(BoneRotation)-vector(ViewRot)) > 0.1)
     {
         Sleep(0);
         OldQuat = QuatFromRotator(FirstPersonModel.GetBoneRotation(BoneName, 1));
         NewQuat = QuatFromRotator(Pawn(Owner).GetViewRotation());
         BoneRotation = QuatToRotator(QuatSlerp(OldQuat, NewQuat, LensFinishSpeed));
         FirstPersonModel.SetBoneDirection( BoneName, BoneRotation,,1,1 );
-    }
+    }*/
 
     mplog( Self$" DoUsingHook() Latent function 8" );
     if (Hands != None)
@@ -417,11 +415,17 @@ simulated latent protected function DoUsingHook()
         Hands.PlayAnim(EndAnim);
         Hands.FinishAnim();
     }
-
+	
+	LastBoneRotation = BoneRotation-Pawn(Owner).GetViewRotation();
+	if (bMirroring) {
+		FirstPersonModel.SetBoneDirection( BoneName, Pawn(Owner).GetViewRotation(),,1,1 );
+		LastBoneRotation = rot(0,0,0);
+	}
+	
     bMirroring = false;
     MirroringDoor = None;
     CompletedUsing = true;
-    Disable('Tick');
+    //Disable('Tick');
 }
 
 
@@ -442,7 +446,17 @@ simulated event RenderTexture(ScriptedTexture inTexture)
 
 simulated function Tick(float DeltaTime)
 {
-    LastDeltaTime = DeltaTime;
+    local vector DrawLoc;	//dummies
+    local Rotator DrawRot;
+	
+	LastDeltaTime = DeltaTime;
+    
+	FirstPersonModel.Skins[1] = LCDShader;
+	LCDScreen.Revision++;
+    if (!CanUseNow()) {
+		FirstPersonModel.Skins[1] = BlankScreen;
+		ViewportCalcView(DrawLoc, DrawRot);
+	}
 }
 
 defaultproperties

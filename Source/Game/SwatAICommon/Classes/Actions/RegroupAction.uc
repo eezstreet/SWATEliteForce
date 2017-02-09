@@ -47,7 +47,7 @@ function initAction(AI_Resource r, AI_Goal goal)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 private function bool IsAnotherSwatEnemyAlive()
@@ -62,9 +62,9 @@ private function bool IsAnotherSwatEnemyAlive()
 	// find any swat enemy that isn't aware
 	// this function is slow
     for (PawnIter = Level.pawnList; PawnIter != None; PawnIter = PawnIter.nextPawn)
-    {	
-		if((PawnIter != m_Pawn) && 
-		    class'Pawn'.static.checkConscious(PawnIter) && PawnIter.IsA('SwatEnemy') && 
+    {
+		if((PawnIter != m_Pawn) &&
+		    class'Pawn'.static.checkConscious(PawnIter) && PawnIter.IsA('SwatEnemy') &&
 			!ISwatAI(PawnIter).IsCompliant() &&
 			!ISwatAI(PawnIter).IsArrested())
 		{
@@ -160,7 +160,7 @@ function float selectionHeuristic( AI_Goal goal )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -235,13 +235,20 @@ function bool ShouldAttackWhileRegrouping()
 {
 	assert(m_Pawn != None);
 	assert(m_Pawn.IsA('SwatEnemy'));
-	
+
 	return (ISwatAI(m_Pawn).HasUsableWeapon() && (FRand() < GetSkillSpecificAttackChance()));
 }
 
 function AttackWhileRegrouping()
 {
-	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy());
+  local Pawn Enemy;
+
+  Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+  if(Enemy == None) {
+    return;
+  }
+
+	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
     assert(CurrentAttackTargetGoal != None);
 	CurrentAttackTargetGoal.AddRef();
 
@@ -378,8 +385,8 @@ function CallForHelp()
 	{
 		// find any swat enemy that is conscious and in our room and let them know about our enemy!
 		for (PawnIter = Level.pawnList; PawnIter != None; PawnIter = PawnIter.nextPawn)
-		{	
-			if(class'Pawn'.static.checkConscious(PawnIter) && PawnIter.IsA('SwatEnemy') && 
+		{
+			if(class'Pawn'.static.checkConscious(PawnIter) && PawnIter.IsA('SwatEnemy') &&
 				(ISwatEnemy(PawnIter).GetCurrentState() < EnemyState_Aware) && PawnIter.IsInRoom(m_Pawn.GetRoomName()))
 			{
 				// if that current enemy is still alive, go after them
@@ -398,14 +405,14 @@ Begin:
 	{
 		AttackWhileRegrouping();
 	}
-	else 
+	else
 	{
 		// if we're not attacking while fleeing, use the full body flee (movement) animations
 		SwapInFullBodyFleeAnimations();
 	}
 
 	// move to the position
-    Regroup();    
+    Regroup();
 
     // let everyone know
 	CallForHelp();

@@ -67,3 +67,13 @@ function bool IsArmorShreddable() {
 simulated function float GetArmorHealthPercent() {
   return (CurrentMomentumToPenetrate - MinMomentumToPenetrate) / (MaxMomentumToPenetrate - MinMomentumToPenetrate);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Replication info
+
+Replication
+{
+  reliable if (bNetOwner)
+    CurrentMomentumToPenetrate, CurrentBulletMtP;
+}

@@ -81,6 +81,14 @@ simulated function ProcessRule(name Rule, name Value)
 			}
 			break;
 
+    case 'Actions':
+      if(Value == 'TOCReport') {
+        IssueTOCOrder();
+      } else if(Value == 'Compliance') {
+        IssueComplianceOrder();
+      }
+      break;
+
 		default:
 			log("[SPEECHCOMMAND] Unknown rule.");
 	}
@@ -116,6 +124,24 @@ simulated function bool ShouldSpeakTeam()
 simulated function bool ShouldSpeak()
 {
 	return false;
+}
+
+simulated function IssueComplianceOrder()
+{
+  local SwatGamePlayerController Player;
+
+  Player = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  Player.ServerIssueCompliance();
+}
+
+simulated function IssueTOCOrder()
+{
+  local SwatGamePlayerController Player;
+
+  Player = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  log("[SPEECH] TOC order issued. Not complete feature.");
 }
 
 simulated function GiveCommandSP()
@@ -179,7 +205,7 @@ simulated protected function Actor GetPendingCommandTargetActor()
 		log("[SPEECHCOMMAND] Try phrase start foci ("$PendingCommandFoci[0].Actor$")");
 		FocusActor = Super.GetPendingCommandTargetActor();
 	}
-	
+
 	return FocusActor;
 }
 

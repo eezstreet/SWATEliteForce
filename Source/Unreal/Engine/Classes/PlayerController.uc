@@ -94,7 +94,7 @@ var rotator OldCameraRot;
 var transient array<CameraEffect> CameraEffects;	// A stack of camera effects.
 
 #if IG_SWAT		//tcohen: weapon zoom
-var float BaseFOV;
+var globalconfig float BaseFOV;
 var float ZoomedFOV;
 var config private float ZoomTime;
 var config private float ZoomBezierPt1X;
@@ -1232,6 +1232,30 @@ exec function SetZoom(bool Zoom, optional bool Instantly)
         else
             ZoomAlpha = 0.0;
     }
+}
+
+exec function FOV(float F)
+{
+	local float fFOV;
+
+	if( (F >= 70.0) )
+	{
+		fFOV = FClamp(F, 70, 120);
+		BaseFOV = fFOV;
+	}
+}
+
+exec function SetFOVTemporary(float F)
+{
+	if(F >= 70.0)
+	{
+		BaseFOV = FClamp(F, 70, 120);
+	}
+}
+
+exec function SaveFOVSettings()
+{
+	SaveConfig();
 }
 
 function FixFOV();  //defunct for SWAT

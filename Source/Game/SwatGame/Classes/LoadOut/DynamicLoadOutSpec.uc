@@ -237,6 +237,12 @@ simulated function float GetBulkQualifyModifier() {
   return 0.0; // We don't care about this
 }
 
+replication
+{
+  reliable if(Role == ROLE_Authority)
+    PrimaryWeaponAmmoCount, SecondaryWeaponAmmoCount;
+}
+
 
 defaultproperties
 {

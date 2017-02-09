@@ -83,6 +83,22 @@ function ChangeLoadOut( Pocket thePocket )
     }
 }
 
+protected function MagazineCountChange(GUIComponent Sender) {
+  local GUINumericEdit SenderEdit;
+  SenderEdit = GUINumericEdit(Sender);
+
+  Super.MagazineCountChange(Sender);
+
+  if(ActivePocket == Pocket_PrimaryWeapon) {
+    SwatGUIController(Controller).SetMPLoadoutPrimaryAmmo(SenderEdit.Value);
+  } else if(ActivePocket == Pocket_SecondaryWeapon) {
+    SwatGUIController(Controller).SetMPLoadoutSecondaryAmmo(SenderEdit.Value);
+  }
+
+  SaveCurrentLoadout();
+}
+
+
 function bool CheckValidity( eNetworkValidity type )
 {
     return (type == NETVALID_MPOnly) || (Super.CheckValidity( type ));

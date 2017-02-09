@@ -103,9 +103,10 @@ final function Init()
 {
 }
 
-function EnableSpeech()
+function EnableSpeech(optional bool bNoLogMessage)
 {
-	log("EnableSpeech: "$ClientInterests.length$" interested clients.");
+  if(!bNoLogMessage)
+	   log("EnableSpeech: "$ClientInterests.length$" interested clients.");
 	default.Enabled = true;
 	if (ClientInterests.length > 0)
 		StartRecognition();
@@ -115,6 +116,15 @@ function DisableSpeech()
 {
 	default.Enabled = false;
 	StopRecognition();
+}
+
+function ToggleSpeech()
+{
+  if(default.Enabled) {
+    DisableSpeech();
+  } else {
+    EnableSpeech(true);
+  }
 }
 
 event OnPhraseStart()
