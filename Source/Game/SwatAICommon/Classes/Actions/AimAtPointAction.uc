@@ -45,6 +45,10 @@ latent function AimAtDesiredPoint()
     while (ISwatAI(m_pawn).AnimCanAimAtDesiredPoint(Point))
     {
         LatentAimAtPoint(Point);
+		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			ISwatEnemy(m_Pawn).BecomeAThreat();
+		}
 
 		yield();
     }
