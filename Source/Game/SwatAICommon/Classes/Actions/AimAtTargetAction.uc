@@ -62,6 +62,10 @@ latent function AimAtTarget()
     while (!bOnlyWhenCanHitTarget || (m_Pawn.CanHit(Target) && ((MinDistanceToTargetToAim == 0.0) || (VSize(Target.Location - m_Pawn.Location) < MinDistanceToTargetToAim))))
     {
         LatentAimAtActor(Target);
+		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			ISwatEnemy(m_Pawn).BecomeAThreat();
+		}
 		yield();
     }
 }
