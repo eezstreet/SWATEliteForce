@@ -39,6 +39,7 @@ var() private config localized string StringK;
 var() private config localized string StringL;
 var() private config localized string StringM;
 var() private config localized string StringN;
+var() private config localized string StringO;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -60,6 +61,7 @@ function InitComponent(GUIComponent MyOwner)
 	MyCampaignPathBox.Clear();
   MyCampaignPathBox.List.Add(StringM, , , 0);	// Original Missions
 	MyCampaignPathBox.List.Add(StringN, , , 1);	// SWAT 4 campaign
+  MyCampaignPathBox.List.Add(StringO, , , 2); // All missions
 
     MyCampaignSelectionBox.OnChange=InternalOnChange;
 	MyCampaignPathBox.OnChange=InternalOnChange;
@@ -265,4 +267,5 @@ defaultproperties
 	StringL="Mission Set:"
 	StringM="SWAT 4 + Expansion"
 	StringN="Extra Missions"
+  StringO="All Missions"
 }
