@@ -237,6 +237,10 @@ latent function AimAround()
 	CurrentAimAroundGoal.SetAimWeapon(true);
 
     CurrentAimAroundGoal.postGoal(self);
+	if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 }
 
 
@@ -354,6 +358,10 @@ latent function AimAtClosestDoor()
 		CurrentAimAtTargetGoal.SetShouldFinishOnSuccess(true);
 
 		CurrentAimAtTargetGoal.postGoal(self);
+		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			ISwatEnemy(m_Pawn).BecomeAThreat();
+		}
 		sleep(AimAtClosestDoorTime);
 		CurrentAimAtTargetGoal.unPostGoal(self);
 

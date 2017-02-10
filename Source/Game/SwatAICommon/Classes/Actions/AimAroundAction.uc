@@ -670,10 +670,6 @@ latent function AimAtBestPoint()
         {
             ISwatAI(m_pawn).AimAtActor(CurrentAimPoint);
             SetCurrentUpperBodyAnimBehavior();
-			if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
-			{
-				ISwatEnemy(m_Pawn).BecomeAThreat();
-			}
 
             // Hold this aim for the timed duration, or until our aim point is too
             // close to us.
