@@ -49,6 +49,13 @@ function InternalOnActivate()
         GC.ClearCurrentMission();
 
     bOpeningSubMenu = false;
+
+    // Megahack to deal with All Campaigns having greyed-out Briefing panel
+    if(SwatGUIControllerBase(Controller).GetCampaign().CampaignPath == 2) {
+      MyTabControl.MyTabs[2].TabHeader.DisableComponent();
+    } else {
+      MyTabControl.MyTabs[2].TabHeader.EnableComponent();
+    }
 }
 
 function OpenPopup( string ClassName, string ObjName )
