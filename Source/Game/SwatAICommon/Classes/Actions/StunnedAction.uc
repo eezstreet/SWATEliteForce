@@ -63,6 +63,10 @@ function initAction(AI_Resource r, AI_Goal goal)
 	{
 		SwatAIRepository(m_Pawn.Level.AIRepo).GetHive().NotifyEnemyStunned(m_Pawn);
 	}
+	if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
+	{
+		ISwatEnemy(m_Pawn).UnbecomeAThreat();
+	}
 }
 
 // subclasses should override

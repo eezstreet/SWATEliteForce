@@ -237,10 +237,6 @@ latent function AimAround()
 	CurrentAimAroundGoal.SetAimWeapon(true);
 
     CurrentAimAroundGoal.postGoal(self);
-	if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
-	{
-		ISwatEnemy(m_Pawn).BecomeAThreat();
-	}
 }
 
 
