@@ -52,6 +52,7 @@ function EnemySpeechManagerAction	GetEnemySpeechManagerAction();
 
 function bool		IsAThreat();
 function			BecomeAThreat();
+function			UnbecomeAThreat();
 
 ///////////////////////////////////////////////////////////////////////////////
 //

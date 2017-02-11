@@ -2,7 +2,8 @@
 // FleeAction.uc - FleeAction class
 // The Action that causes the AI to flee
 
-class FleeAction extends SwatCharacterAction;
+class FleeAction extends SwatCharacterAction
+	dependsOn(ISwatEnemy);
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EnemySkill from ISwatEnemy;
@@ -386,6 +387,10 @@ latent function Flee()
 
     // post the move to goal and wait for it to complete
     CurrentMoveToActorGoal.postGoal(self);
+	if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
+	{
+		ISwatEnemy(m_Pawn).UnbecomeAThreat();
+	}
     WaitForGoal(CurrentMoveToActorGoal);
 
     // remove the most to goal

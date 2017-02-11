@@ -1022,7 +1022,7 @@ function UnbecomeAThreat() //Not imaginative name, I know -J21C
 		bThreat = false;
 
 		// notify the hive that we've become a threat (so Officers deal with us appropriately)
-		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyBecameThreat(self);
+		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyUnbecameThreat(self);
 	}
 }
 
