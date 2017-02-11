@@ -31,6 +31,7 @@ var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignOfficerPermad
 var(SWATGui) private EditInline Config GUIComboBox          MyCampaignSelectionBox;
 var(SWATGui) private EditInline Config GUIButton		    MyDeleteCampaignButton;
 var(SWATGui) private EditInline Config GUIButton		    MyUseCampaignButton;
+var(SWATGui) private EditInline Config GUIButton        MyCoopCampaignButton;
 
 var() private config localized string StringA;
 var() private config localized string StringB;
@@ -46,6 +47,8 @@ var() private config localized string StringO;
 var() private config localized string DeadCampaignNotification;
 var() private config localized string PlayerPermadeathNotification;
 var() private config localized string KIAString;
+var() private config localized string NoPermadeathAllowed;
+var() private config localized string NoAllMissionsAllowed;
 
 var Campaign currentCampaign;
 
@@ -86,6 +89,7 @@ function InitComponent(GUIComponent MyOwner)
     MyCreateCampaignButton.OnClick=InternalOnClick;
     MyUseCampaignButton.OnClick=InternalOnClick;
     MyDeleteCampaignButton.OnClick=InternalOnClick;
+    MyCoopCampaignButton.OnClick=InternalOnClick;
 
     CampaignTabButton.bNeverFocus=false;
 }
@@ -103,7 +107,7 @@ private function InternalOnActivate()
     BriefingTabButton.DisableComponent();
     LoadoutTabButton.DisableComponent();
     StartButton.DisableComponent();
-	
+
 	if (SwatGUIController(Controller).coopcampaign) {LoadoutTabButton.Hide();}
 	else{LoadoutTabButton.Show();}
 
@@ -158,9 +162,23 @@ private function InternalOnClick(GUIComponent Sender)
           OpenDlg( DeadCampaignNotification, QBTN_OK, "DeadCampaignNotification" );
         } else {
           GC.SetCustomScenarioPackData( None );
+          SwatGuiController(Controller).CoopCampaign = false;
   			  Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
         }
 			break;
+    case MyCoopCampaignButton:
+      if(currentCampaign.PlayerPermadeath || currentCampaign.OfficerPermadeath) {
+        OnDlgReturned=InternalOnDlgReturned;
+        OpenDlg(NoPermadeathAllowed, QBTN_OK, "NoPermadeathAllowed");
+      } else if(currentCampaign.CampaignPath == 2) {
+        OnDlgReturned=InternalOnDlgReturned;
+        OpenDlg(NoAllMissionsAllowed, QBTN_OK, "NoAllMissionsAllowed");
+      } else {
+        GC.SetCustomScenarioPackData( None );
+        SwatGuiController(Controller).CoopCampaign = true;
+        Controller.OpenMenu("SwatGui.SwatMissionSetupMenu", "SwatMissionSetupMenu");
+      }
+      break;
 		case MyMainMenuButton:
             PerformClose(); break;
         case MyDeleteCampaignButton:
@@ -313,4 +331,6 @@ defaultproperties
   DeadCampaignNotification="This campaign was killed in action (KIA). You will still be able to view its stats, but you cannot play with it."
   PlayerPermadeathNotification="You are about to start a campaign with Player Permadeath enabled. Once you die, you cannot play with this campaign again. Are you sure you want to do this?"
   KIAString=" (KIA)"
+  NoPermadeathAllowed="You cannot play this campaign in Career CO-OP because it has a permadeath setting enabled. Try again with a different campaign."
+  NoAllMissionsAllowed="You cannot play an All Missions campaign in Career CO-OP. Try again with a different campaign."
 }
