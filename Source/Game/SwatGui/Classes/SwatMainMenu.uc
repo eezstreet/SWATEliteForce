@@ -11,7 +11,6 @@ class SwatMainMenu extends SwatGUIPage
 var(SWATGui) private EditInline Config GUIButton		    MyInstantActionButton;
 var(SWATGui) private EditInline Config GUIButton		    MyTrainingButton;
 var(SWATGui) private EditInline Config GUIButton		    MyCampaignButton;
-var(SWATGui) private EditInline Config GUIButton		    MyCoopCampaignButton;
 var(SWATGui) private EditInline Config GUIButton		    MyPlayCustomButton;
 var(SWATGui) private EditInline Config GUIButton		    MyCustomMissionButton;
 var(SWATGui) private EditInline Config GUIButton		    MyHostButton;
@@ -34,7 +33,6 @@ function InitComponent(GUIComponent MyOwner)
     MyInstantActionButton.OnClick=InternalOnClick;
     MyTrainingButton.OnClick=InternalOnClick;
     MyCampaignButton.OnClick=InternalOnClick;
-    MyCoopCampaignButton.OnClick=InternalOnClick;
     MyPlayCustomButton.OnClick=InternalOnClick;
     MyCustomMissionButton.OnClick=InternalOnClick;
     MyHostButton.OnClick=InternalOnClick;
@@ -59,8 +57,6 @@ function InternalOnActivate()
     Controller.bDontDisplayHelpText = !GC.bShowHelp;
     if( GC.SwatGameState == GAMESTATE_None )
     	SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_None );
-		
-	SwatGUIController(Controller).coopcampaign = false;
 }
 
 function InternalOnDlgReturned( int Selection, optional string Passback )
@@ -117,14 +113,20 @@ function InternalOnClick(GUIComponent Sender)
             GC.SetCurrentMission('SP-Training', TrainingFriendlyString);
             GameStart();
             break;
-		case MyCoopCampaignButton:
-			SwatGuiController(Controller).coopcampaign = true;
-			PlayCampaign();
-			break;
 		case MyCampaignButton:
-			SwatGuiController(Controller).coopcampaign = false;
-			PlayCampaign();
-			break;
+			// dbeswick: no training for expansion
+		    //if you have never played or clicked through training
+            if( !GC.bEverRanTraining )
+            {
+                OnDlgReturned=InternalOnDlgReturned;
+                OpenDlg( PromptToGotoTrainingFirstString, QBTN_YesNo, "FirstTrainingPrompt" );
+            }
+            else
+            {
+                SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Campaign );
+			          Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
+			     }
+			     break;
 		case MyPlayCustomButton:
             SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Custom );
 			Controller.OpenMenu("SwatGui.SwatCustomMenu", "SwatCustomMenu");
@@ -151,22 +153,6 @@ function InternalOnClick(GUIComponent Sender)
 		case MyQuitButton:
             Quit();
             break;
-	}
-}
-
-function PlayCampaign()
-{
-	// dbeswick: no training for expansion
-    //if you have never played or clicked through training
-    if( !GC.bEverRanTraining )
-    {
-        OnDlgReturned=InternalOnDlgReturned;
-        OpenDlg( PromptToGotoTrainingFirstString, QBTN_YesNo, "FirstTrainingPrompt" );
-    }
-    else
-    {
-        SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Campaign );
-	    Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
 	}
 }
 
