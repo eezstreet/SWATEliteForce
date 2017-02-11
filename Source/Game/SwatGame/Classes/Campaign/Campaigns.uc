@@ -27,7 +27,7 @@ final function Campaign GetCampaign(string inCampaign)
     local name CampaignName;
 
     CampaignName = CampaignStringToName(inCampaign);
-    
+
     for (i=0; i<Campaign.length; ++i)
         if (Campaign[i] == CampaignName)
             return Campaigns[i];
@@ -55,7 +55,7 @@ final function bool CampaignExists(string inCampaign)
 //call CampaignExists() first to find out.
 //note that more than one string may map to the same name.
 //returns the newly added Campaign
-final function Campaign AddCampaign(string inCampaign, int campPath)
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath)
 {
     local name CampaignName;
     local int i;
@@ -75,11 +75,13 @@ final function Campaign AddCampaign(string inCampaign, int campPath)
 
     Campaigns[i] = new(None, string(CampaignName)) class'SwatGame.Campaign';
     Campaigns[i].StringName = inCampaign;
-	Campaigns[i].CampaignPath = campPath;
+	  Campaigns[i].CampaignPath = campPath;
+    Campaigns[i].PlayerPermadeath = bPlayerPermadeath;
+    Campaigns[i].OfficerPermadeath = bOfficerPermadeath;
 
     SaveConfig();
     Campaigns[i].SaveConfig();
-    
+
     return Campaigns[i];
 }
 
@@ -101,7 +103,7 @@ final function DeleteCampaign(string inCampaign)
         $".  But no Campaign was found with that name.");
 
     Campaigns[i].PreDelete();
-    
+
     Campaign.Remove(i, 1);
     Campaigns.Remove(i, 1);
 
@@ -145,6 +147,6 @@ private final function name CampaignStringToName(string inString)
     //if string ends in an underscore then append to it
     if (Right(inString, 1) == "_")
         inString = inString $ "end";
-    
+
     return name(inString);
 }

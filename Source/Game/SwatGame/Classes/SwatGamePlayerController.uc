@@ -411,7 +411,6 @@ simulated function PostNetBeginPlay()
     }
 }
 
-
 simulated function InitializePlayerHUD()
 {
     local int ct;

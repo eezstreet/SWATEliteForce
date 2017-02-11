@@ -274,7 +274,11 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
                 }
 
-                OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
+                if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
+                  GameOver();
+                } else {
+                  OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
+                }
             }
             break;
         case GAMESTATE_ConnectionFailed:

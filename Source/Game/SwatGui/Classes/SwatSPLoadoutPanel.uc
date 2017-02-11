@@ -82,6 +82,8 @@ function InitComponent(GUIComponent MyOwner)
 
 event Activate()
 {
+    local Campaign theCampaign;
+
     if( bActiveInput )
     {
         InitialDisplay();
@@ -99,6 +101,26 @@ event Activate()
     SetOfficerInfo(ActiveLoadOutOwner);
 
     MyDeleteCustomButton.SetEnabled( !MyCustomLoadoutCombo.List.GetExtraBoolData() );
+    MyPlayerSelectorButtons[1].SetEnabled(true);
+    MyPlayerSelectorButtons[2].SetEnabled(true);
+    MyPlayerSelectorButtons[3].SetEnabled(true);
+    MyPlayerSelectorButtons[4].SetEnabled(true);
+
+    theCampaign = SwatGUIController(Controller).GetCampaign();
+    if(theCampaign != None && theCampaign.OfficerPermadeath) {
+      if(theCampaign.RedOneDead) {
+        MyPlayerSelectorButtons[1].SetEnabled(false);
+      }
+      if(theCampaign.RedTwoDead) {
+        MyPlayerSelectorButtons[2].SetEnabled(false);
+      }
+      if(theCampaign.BlueOneDead) {
+        MyPlayerSelectorButtons[3].SetEnabled(false);
+      }
+      if(theCampaign.BlueTwoDead) {
+        MyPlayerSelectorButtons[4].SetEnabled(false);
+      }
+    }
 
     SwatGUIController(Controller).SPLoadoutPanel = Self;
 }
