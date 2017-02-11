@@ -2625,10 +2625,10 @@ Hint=Set the time between rounds.
 Hint=Set the time between rounds.
 
 [SwatServerSetupAdvancedPanel_mpautobalancelabel]
-Caption=Show Enemy Names
+Caption=Enable Snipers
 
 [SwatServerSetupAdvancedPanel_mpautobalancecheckbox]
-Hint=Check this box to show enemy names.
+Hint=Check this box to enable Snipers.
 
 [SwatServerSetupAdvancedPanel_mpallowreferendumslabel]
 Caption=Allow Voting

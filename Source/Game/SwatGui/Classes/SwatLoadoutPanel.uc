@@ -184,6 +184,9 @@ function InitialDisplay()
         UpdateIndex( Pocket(i) );
 
         DisplayEquipment( Pocket(i) );
+		
+		Scrolled( Pocket(i), false);
+		Scrolled( Pocket(i), true );
     }
 
     DisplayTab(ActiveTab);
