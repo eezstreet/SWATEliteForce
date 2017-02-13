@@ -155,6 +155,37 @@ private function InternalOnActivate()
 	SetVotingEnabled(true);
 
 	SetTimer(1.0, true);
+	
+	if (SwatGUIController(Controller).coopcampaign)
+	{
+		SetVotingEnabled(false);
+		
+		MapList.Hide();
+		MapList.DisableComponent();
+		
+		GameTypes.Hide();
+		GameTypes.DisableComponent();
+		
+		MapButton.Hide();
+		MapButton.DisableComponent();
+		
+		BackgroundRight.Hide();
+		BackgroundRight.DisableComponent();
+	}
+	else 
+	{
+		MapList.Show();
+		MapList.EnableComponent();
+		
+		GameTypes.Show();
+		GameTypes.EnableComponent();
+		
+		MapButton.Show();
+		MapButton.EnableComponent();
+		
+		BackgroundRight.Show();
+		BackgroundRight.EnableComponent();
+	}
 }
 
 private function InternalOnDeActivate()

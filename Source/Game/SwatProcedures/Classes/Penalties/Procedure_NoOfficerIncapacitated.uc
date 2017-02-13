@@ -47,6 +47,8 @@ function OnOfficerIncapacitated(Pawn Pawn, Actor Incapacitator)
     Add( Pawn, IncapacitatedOfficers );
     ChatMessageEvent('PenaltyIssued');
 
+    GetGame().CheckForCampaignDeath(Pawn);
+
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name
             $" added "$Pawn.name

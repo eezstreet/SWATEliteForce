@@ -40,6 +40,7 @@ var config float PepperDeathChance;	// Chance that any hit with pepper spray may
 var config bool Fearless;   // Won't scream if in a room with a suspect
 var config bool Polite;     // Won't threaten hostages
 var config bool Insane;     // Will shoot hostages like their life depends on it
+var config bool Wanders;    // Doesn't patrol; instead it wanders
 
 var Mesh OfficerMesh;
 
@@ -198,6 +199,7 @@ function InitializeInstance(ArchetypeInstance inInstance)
   Instance.Fearless = Fearless;
   Instance.Polite = Polite;
   Instance.Insane = Insane;
+  Instance.Wandering = Wanders;
 
     Instance.UpdateInstancePrecachables();
 

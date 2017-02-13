@@ -62,6 +62,12 @@ function InternalOnActivate()
         //Assert( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Campaign );	// ok seriously? seriously?
 
         theCampaign = SwatGUIController(Controller).GetCampaign();
+
+        if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+          Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
+          return;
+        }
+        
         MyCampaignNameLabel.SetCaption(theCampaign.StringName);
 
         PopulateCampaignMissionList();

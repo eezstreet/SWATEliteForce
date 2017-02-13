@@ -24,11 +24,14 @@ var(SWATGui) private EditInline Config GUIButton		    StartButton;
 var(SWATGui) private EditInline Config GUIEditbox		    MyNameEntry;
 var(SWATGui) private EditInline Config GUIButton		    MyCreateCampaignButton;
 var(SWATGui) private EditInline Config GUIComboBox			MyCampaignPathBox;
+var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignPlayerPermadeathButton;
+var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignOfficerPermadeathButton;
 
 //load campaign panel
 var(SWATGui) private EditInline Config GUIComboBox          MyCampaignSelectionBox;
 var(SWATGui) private EditInline Config GUIButton		    MyDeleteCampaignButton;
 var(SWATGui) private EditInline Config GUIButton		    MyUseCampaignButton;
+var(SWATGui) private EditInline Config GUIButton        MyCoopCampaignButton;
 
 var() private config localized string StringA;
 var() private config localized string StringB;
@@ -40,6 +43,14 @@ var() private config localized string StringL;
 var() private config localized string StringM;
 var() private config localized string StringN;
 var() private config localized string StringO;
+
+var() private config localized string DeadCampaignNotification;
+var() private config localized string PlayerPermadeathNotification;
+var() private config localized string KIAString;
+var() private config localized string NoPermadeathAllowed;
+var() private config localized string NoAllMissionsAllowed;
+
+var Campaign currentCampaign;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -53,7 +64,12 @@ function InitComponent(GUIComponent MyOwner)
     MyCampaignSelectionBox.Clear();
 	for(index = 0;index < TheCampaigns.length;index++)
 	{
-   		MyCampaignSelectionBox.List.Add(TheCampaigns[index].StringName,TheCampaigns[index]);
+      if(TheCampaigns[index].PlayerPermadeath && TheCampaigns[index].PlayerDied) {
+        MyCampaignSelectionBox.List.Add(TheCampaigns[index].StringName$KIAString,TheCampaigns[index]);
+      } else {
+        MyCampaignSelectionBox.List.Add(TheCampaigns[index].StringName,TheCampaigns[index]);
+      }
+
 	}
     MyCampaignSelectionBox.List.Sort();
 
@@ -73,6 +89,7 @@ function InitComponent(GUIComponent MyOwner)
     MyCreateCampaignButton.OnClick=InternalOnClick;
     MyUseCampaignButton.OnClick=InternalOnClick;
     MyDeleteCampaignButton.OnClick=InternalOnClick;
+    MyCoopCampaignButton.OnClick=InternalOnClick;
 
     CampaignTabButton.bNeverFocus=false;
 }
@@ -90,6 +107,9 @@ private function InternalOnActivate()
     BriefingTabButton.DisableComponent();
     LoadoutTabButton.DisableComponent();
     StartButton.DisableComponent();
+
+	if (SwatGUIController(Controller).coopcampaign) {LoadoutTabButton.Hide();}
+	else{LoadoutTabButton.Show();}
 
 	MyCampaignPathBox.SetIndex(1);	// Use SWAT 4 missions as the default
 
@@ -137,9 +157,28 @@ private function InternalOnClick(GUIComponent Sender)
 			break;
 		case MyUseCampaignButton:
 		    //unset the pak for campaigns
-		    GC.SetCustomScenarioPackData( None );
-			Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
+        if(currentCampaign.PlayerPermadeath && currentCampaign.PlayerDied) {
+          OnDlgReturned=InternalOnDlgReturned;
+          OpenDlg( DeadCampaignNotification, QBTN_OK, "DeadCampaignNotification" );
+        } else {
+          GC.SetCustomScenarioPackData( None );
+          SwatGuiController(Controller).CoopCampaign = false;
+  			  Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
+        }
 			break;
+    case MyCoopCampaignButton:
+      if(currentCampaign.PlayerPermadeath || currentCampaign.OfficerPermadeath) {
+        OnDlgReturned=InternalOnDlgReturned;
+        OpenDlg(NoPermadeathAllowed, QBTN_OK, "NoPermadeathAllowed");
+      } else if(currentCampaign.CampaignPath == 2) {
+        OnDlgReturned=InternalOnDlgReturned;
+        OpenDlg(NoAllMissionsAllowed, QBTN_OK, "NoAllMissionsAllowed");
+      } else {
+        GC.SetCustomScenarioPackData( None );
+        SwatGuiController(Controller).CoopCampaign = true;
+        Controller.OpenMenu("SwatGui.SwatMissionSetupMenu", "SwatMissionSetupMenu");
+      }
+      break;
 		case MyMainMenuButton:
             PerformClose(); break;
         case MyDeleteCampaignButton:
@@ -157,14 +196,17 @@ private function InternalEntryCancelled(GUIComponent Sender)
 private function InternalOnDlgReturned( int Selection, String passback )
 {
     local string campName;
-	local int campPath;
+	  local int campPath;
+    local Campaign camp;
+
 
     switch (passback)
     {
         case "DeleteCampaign":
             if( Selection == QBTN_Yes )
             {
-                campName = MyCampaignSelectionBox.Get();
+                camp = Campaign(MyCampaignSelectionBox.GetObject());
+                campName = camp.StringName;
                 DeleteCampaign(campName);
 
                 MyCampaignSelectionBox.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
@@ -172,13 +214,22 @@ private function InternalOnDlgReturned( int Selection, String passback )
                 MyDeleteCampaignButton.SetEnabled( MyCampaignSelectionBox.List.ItemCount != 0 );
             }
             break;
+        case "PermadeathNotice":
+            if(Selection == QBTN_Yes) {
+              campName = MyNameEntry.GetText();
+              campPath = MyCampaignPathBox.GetInt();
+              CreateCampaign(campName, campPath, MyCampaignPlayerPermadeathButton.bChecked, MyCampaignOfficerPermadeathButton.bChecked);
+            }
+            break;
         case "OverwriteCampaign":
             if( Selection == QBTN_Yes )
             {
-                campName = MyNameEntry.GetText();
-				campPath = MyCampaignPathBox.GetInt();
                 DeleteCampaign(campName);
-                CreateCampaign(campName, campPath);
+                if(MyCampaignPlayerPermadeathButton.bChecked)
+                {
+                  OnDlgReturned=InternalonDlgReturned;
+                  OpenDlg(PlayerPermadeathNotification, QBTN_YesNo, "PermadeathNotice");
+                }
             }
             break;
     }
@@ -191,6 +242,8 @@ private function SetCampaign( Campaign theCampaign )
 {
     if( theCampaign == None )
         return;
+
+    currentCampaign = theCampaign;
     SwatGuiController(Controller).UseCampaign( theCampaign.StringName );
 }
 
@@ -206,16 +259,22 @@ private function AttemptCreateCampaign( string campName, int campPath )
         OnDlgReturned=InternalOnDlgReturned;
         OpenDlg( StringC$campName$StringE, QBTN_YesNo, "OverwriteCampaign" );
     }
-    else
-        CreateCampaign( campName, campPath );
+    else if(MyCampaignPlayerPermadeathButton.bChecked)
+    {
+      OnDlgReturned=InternalonDlgReturned;
+      OpenDlg(PlayerPermadeathNotification, QBTN_YesNo, "PermadeathNotice");
+    }
+    else {
+        CreateCampaign( campName, campPath, MyCampaignPlayerPermadeathButton.bChecked, MyCampaignOfficerPermadeathButton.bChecked );
+    }
 }
 
-private function CreateCampaign( string campName, int campPath )
+private function CreateCampaign( string campName, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath )
 {
     local Campaign NewCampaign;
 
     //create the new campaign
-    NewCampaign=SwatGuiController(Controller).AddCampaign(campName, campPath);
+    NewCampaign=SwatGuiController(Controller).AddCampaign(campName, campPath, bPlayerPermadeath, bOfficerPermadeath);
     AssertWithDescription( NewCampaign != None, "Could not create campaign with name: " $ campName );
 
     //... and add it to the campaign selection box
@@ -268,4 +327,10 @@ defaultproperties
 	StringM="SWAT 4 + Expansion"
 	StringN="Extra Missions"
   StringO="All Missions"
+
+  DeadCampaignNotification="This campaign was killed in action (KIA). You will still be able to view its stats, but you cannot play with it."
+  PlayerPermadeathNotification="You are about to start a campaign with Player Permadeath enabled. Once you die, you cannot play with this campaign again. Are you sure you want to do this?"
+  KIAString=" (KIA)"
+  NoPermadeathAllowed="You cannot play this campaign in Career CO-OP because it has a permadeath setting enabled. Try again with a different campaign."
+  NoAllMissionsAllowed="You cannot play an All Missions campaign in Career CO-OP. Try again with a different campaign."
 }

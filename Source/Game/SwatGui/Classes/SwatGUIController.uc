@@ -86,6 +86,8 @@ var() bool   EnteredChatGlobal;
 
 var() private config bool DispatchDisabled;
 
+var() bool coopcampaign;
+
 /////////////////////////////////////////////////////////////////////////////
 // Initialization
 /////////////////////////////////////////////////////////////////////////////
@@ -253,7 +255,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
         case GAMESTATE_PostGame:
             HUDPage(GetHudPage()).OnGameOver();
 
-            if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
+            if( (GuiConfig.SwatGameRole == GAMEROLE_MP_Host && !coopcampaign) ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
                 InternalOpenMenu( MPPopupMenu );
@@ -262,8 +264,8 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             {
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
 
-                if( GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
-                    Campaign != None )
+                if( (GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
+                    Campaign != None) || coopcampaign )
                 {
                     Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
                 }
@@ -274,7 +276,11 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
                 }
 
-                OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
+                if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
+                  GameOver();
+                } else {
+                  OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
+                }
             }
             break;
         case GAMESTATE_ConnectionFailed:
@@ -1062,4 +1068,6 @@ defaultproperties
 	VoteYesNoKeys="Vote yes = %1, Vote no = %2"
 
     CaptureScriptExec=true
+	
+	coopcampaign=false
 }
