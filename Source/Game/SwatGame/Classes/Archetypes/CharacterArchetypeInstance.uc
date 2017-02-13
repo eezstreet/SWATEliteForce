@@ -21,6 +21,7 @@ var bool PepperKillsMe; // Will pepper spray kill me?
 var bool Fearless;  // Will I scream if I'm in a room with a suspect?
 var bool Polite;  // Will I forgo shooting hostages?
 var bool Insane; // Will I kill basically everyone?
+var bool Wandering; // Will I wander instead of patrol?
 
 var class<Equipment> SelectedEquipment1Class;
 var class<Equipment> SelectedEquipment2Class;
@@ -85,4 +86,9 @@ function bool IsPolite()
 function bool IsInsane()
 {
   return Insane;
+}
+
+function bool Wanders()
+{
+  return Wandering;
 }

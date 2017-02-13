@@ -83,7 +83,7 @@ latent function MoveToPatrolDestination()
     CurrentMoveToActorGoal.postGoal(self);
     WaitForGoal(CurrentMoveToActorGoal);
 	CurrentMoveToActorGoal.unPostGoal(self);
-    
+
 	CurrentMoveToActorGoal.Release();
 	CurrentMoveToActorGoal = None;
 }
@@ -137,14 +137,42 @@ latent function IdleAtPatrolPoint()
 	}
 }
 
+function bool ShouldWander() {
+  return ISwatAICharacter(m_Pawn).Wanders();
+}
+
+function int PickRandomPatrolIndex(int Previous) {
+  local int Index;
+
+  Index = int(RandRange(0, Patrol.GetNumPatrolEntries()));
+
+  // If we've hit the same patrol index, try again until we find one that isn't the same
+  /*if(Index == Previous) {
+    return PickRandomPatrolIndex(Previous);
+  }*/
+
+  return Index;
+}
+
+function int PickNextSequentialPatrolIndex(int Previous) {
+  local int Index;
+
+  Index = Previous++;
+
+  // Start over if we reach the end
+  if(Index == Patrol.GetNumPatrolEntries()) {
+    Index = 0;
+  }
+
+  return 0;
+}
+
 function UpdatePatrolIndex()
 {
-    CurrentPatrolIndex++;
-
-    // if we're over the list length, start over
-    if (CurrentPatrolIndex == Patrol.GetNumPatrolEntries())
-    {
-        CurrentPatrolIndex = 0;
+    if(ShouldWander()) {
+      CurrentPatrolIndex = PickRandomPatrolIndex(CurrentPatrolIndex);
+    } else {
+      CurrentPatrolIndex = PickNextSequentialPatrolIndex(CurrentPatrolIndex);
     }
 }
 
@@ -160,14 +188,14 @@ Begin:
 //    log(self@" running at time"@Level.TimeSeconds);
     CurrentPatrolIndex = 0;
     goto('Patrolling');
-    
+
 Patrolling:
     MoveToPatrolDestination();
 
     if ((FRand() * 100) <= Patrol.GetPatrolEntry(CurrentPatrolIndex).IdleChance)
     {
 		IdleAtPatrolPoint();
-    }    
+    }
 
     UpdatePatrolIndex();
     goto('Patrolling');
