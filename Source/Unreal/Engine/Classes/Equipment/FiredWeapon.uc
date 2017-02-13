@@ -265,6 +265,17 @@ simulated function bool NeedsReload()
     return Ammo.NeedsReload();
 }
 
+simulated function bool ShouldReload()
+{
+    if (Ammo == None)
+    {
+        if (bDeleteMe)
+            return false;
+        assertWithDescription(false,
+            "[tcohen] FiredWeapon::ShouldReload() "$name$"'s Ammo is None.  J21C should fix this.");
+    }
+    return Ammo.ShouldReload();
+}
 simulated function float GetChoke();
 
 //this is the base FiredWeapon's implementation of firing a single shot.

@@ -3,6 +3,9 @@ interface IAmmunition;
 //returns true iff there is no ammo loaded (ie. weapon cannot currently be fired).  does not check IsEmpty or CanReload
 function bool NeedsReload();
 
+//returns true iff AI should reload this weapon.
+function bool ShouldReload();
+
 //returns true iff there is ammo remaining that is not loaded
 function bool CanReload();
 
