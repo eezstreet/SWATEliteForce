@@ -15,7 +15,11 @@ simulated function bool HandleBallisticImpact(
     Material ExitMaterial
     )
 {
-    if (Victim.IsA('SwatDoor'))
+	local vector PlayerToDoor;
+	local float MaxDoorDistance;
+	MaxDoorDistance = 99.45;		//1.5 meters in UU
+	PlayerToDoor = HitLocation - Owner.Location;
+    if (Victim.IsA('SwatDoor') && (PlayerToDoor Dot PlayerToDoor) < MaxDoorDistance*MaxDoorDistance)
         IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(
                 HitRegion, 
                 HitLocation, 
