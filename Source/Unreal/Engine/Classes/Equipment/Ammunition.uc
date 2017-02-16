@@ -26,6 +26,9 @@ simulated function float GetCurrentAmmoBulk();
 //returns true iff there is no ammo loaded (ie. weapon cannot currently be fired).  does not check IsEmpty or CanReload
 simulated function bool NeedsReload() { assert(false); return false; } //subclasses must implement
 
+//returns true iff AI should reload this weapon.
+simulated function bool ShouldReload() { assert(false); return false; } //subclasses must implement
+
 //returns true iff there is ammo remaining that is not loaded
 simulated function bool CanReload() { assert(false); return false; } //subclasses must implement
 
@@ -40,6 +43,9 @@ simulated function bool IsLastRound() { assert(false); return false; } //subclas
 
 //returns the number of rounds that can be shot before the clip or magazine is empty and must be reloaded
 simulated function int RoundsRemainingBeforeReload() { assert(false); return 0; }   //subclasses must implement
+
+//returns the number of rounds that the clip has. I need this one so that both Round and Clip weapons can be reloaded mid-magazine -J21C
+simulated function int RoundsComparedBeforeReload() { assert(false); return 0; }   //subclasses must implement
 
 simulated function OnRoundUsed(Pawn User, Equipment Launcher)  //subclasses must implement
 {

@@ -97,9 +97,37 @@ simulated function bool NeedsReload()
     return (CurrentRounds == 0);
 }
 
+simulated function bool ShouldReload()
+{
+    local RoundBasedWeapon Weapon;
+
+    Weapon = RoundBasedWeapon(Owner);
+    assert(Weapon != None);
+
+    //we should never have more rounds loaded than the weapon can hold
+    if (CurrentRounds <= (Weapon.MagazineSize/2))
+	{
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
+}
+
 simulated function int RoundsRemainingBeforeReload()
 {
     return GetCurrentRounds();
+}
+
+simulated function int RoundsComparedBeforeReload()
+{
+    local RoundBasedWeapon Weapon;
+
+    Weapon = RoundBasedWeapon(Owner);
+    assert(Weapon != None);
+
+    return Weapon.MagazineSize;
 }
 
 simulated function OnRoundUsed(Pawn User, Equipment Launcher)
