@@ -420,6 +420,30 @@ simulated function bool IsBoobyTrapped()
     return bIsBoobyTrapped;
 }
 
+simulated function bool TrapIsDisabledByC2()
+{
+	local BoobyTrap_Door Trap;
+
+	if(!IsBoobyTrapped()) {
+		return false;
+	}
+
+	Trap = BoobyTrap_Door(BoobyTrap);
+	assert(Trap != None);
+
+	return Trap.C2DisablesThis;
+}
+
+simulated function DisableBoobyTrap()
+{
+	if(!IsBoobyTrapped()) {
+		return;
+	}
+
+	BoobyTrap.ReactToUsed(self);
+	bIsBoobyTrapped = false;
+}
+
 simulated function SetBoobyTrap(BoobyTrap Trap)
 {
     BoobyTrap = Trap;
@@ -1397,7 +1421,11 @@ simulated state BeingBreached extends Moving
 
     simulated function StartMoving()
     {
-		NotifyRegistrantsDoorOpening();
+				if(IsBoobyTrapped() && TrapIsDisabledByC2()) {
+					DisableBoobyTrap();
+				}
+
+				NotifyRegistrantsDoorOpening();
 
         if (PendingPosition == DoorPosition_OpenLeft)
             PlayAnim('BreachedLeft');
@@ -1415,6 +1443,10 @@ simulated function PlayBreachedEffects();    //implemented in subclasses
 
 simulated function PlayDoorBreached( DeployedC2ChargeBase TheCharge )
 {
+		if(IsBoobyTrapped() && TrapIsDisabledByC2()) {
+			DisableBoobyTrap();
+		}
+
     Assert( Level.NetMode == NM_Client );
     TheCharge.OnDetonated();
 }
