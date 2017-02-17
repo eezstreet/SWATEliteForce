@@ -55,7 +55,7 @@ function PostBeginPlay()
     Super.PostBeginPlay();
 
 	// Snipers are disabled in multiplayer!
-    if ( Level.NetMode != NM_Standalone )
+    if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bShowEnemyNames))
     {
         Destroy();
         return;

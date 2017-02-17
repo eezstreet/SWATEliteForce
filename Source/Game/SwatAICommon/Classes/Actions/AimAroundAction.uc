@@ -118,7 +118,7 @@ function initAction(AI_Resource r, AI_Goal goal)
 
 	if (bAimWeapon)
 	{
-        CurrentUpperBodyAnimBehavior = kUBAB_AimWeapon;
+        CurrentUpperBodyAnimBehavior = kUBAB_AimWeapon;		
 	}
 	else
 	{

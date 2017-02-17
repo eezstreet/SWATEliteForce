@@ -87,6 +87,11 @@ simulated function float GetQualifyDuration()
     return ICanBeArrested(Other).GetQualifyTimeForArrest(Pawn(Owner)); // Don't apply
 }
 
+simulated function float GetQualifyModifier()
+{
+  return 1.0;
+}
+
 // IAmUsedOnOther implementation
 
 simulated protected function AssertOtherIsValid()

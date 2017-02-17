@@ -11,6 +11,7 @@ class FallInAction extends SwatCharacterAction;
 
 var private MoveInFormationGoal	CurrentMoveInFormationGoal;
 var private AimAroundGoal		CurrentAimAroundGoal;
+var private ReloadGoal			CurrentReloadGoal;
 
 var config float				FallInMinAimHoldTime; // 0.25
 var config float				FallInMaxAimHoldTime; // 1
@@ -37,6 +38,12 @@ function cleanup()
 	{
 		CurrentAimAroundGoal.Release();
 		CurrentAimAroundGoal = None;
+	}
+	
+	if (CurrentReloadGoal != None)
+	{
+		CurrentReloadGoal.Release();
+		CurrentReloadGoal = None;
 	}
 
 	// in case it's not unset
@@ -65,6 +72,15 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 //
 // State Code
 
+function ReloadWeapons()
+{
+	CurrentReloadGoal = new class'SwatAICommon.ReloadGoal'(AI_WeaponResource(m_Pawn.WeaponAI));
+	assert(CurrentReloadGoal != None);
+	CurrentReloadGoal.AddRef();	
+
+	CurrentReloadGoal.postGoal( self );
+}
+
 function AimAround()
 {
 	CurrentAimAroundGoal = new class'SwatAICommon.AimAroundGoal'(AI_WeaponResource(m_Pawn.WeaponAI), FallInMinAimHoldTime, FallInMaxAimHoldTime);
@@ -76,7 +92,7 @@ function AimAround()
 }
 
 latent function FollowPlayer()
-{
+{	
 	CurrentMoveInFormationGoal = new class'SwatAICommon.MoveInFormationGoal'(AI_MovementResource(m_Pawn.MovementAI), 90);
 	assert(CurrentMoveInFormationGoal != None);
 	CurrentMoveInFormationGoal.AddRef();	
@@ -93,6 +109,7 @@ state Running
 Begin:
 	SleepInitialDelayTime(true);		
 
+	ReloadWeapons();
 	AimAround();
 	FollowPlayer();
 

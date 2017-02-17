@@ -62,6 +62,12 @@ function InternalOnActivate()
         //Assert( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Campaign );	// ok seriously? seriously?
 
         theCampaign = SwatGUIController(Controller).GetCampaign();
+
+        if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+          Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
+          return;
+        }
+        
         MyCampaignNameLabel.SetCaption(theCampaign.StringName);
 
         PopulateCampaignMissionList();
@@ -163,6 +169,7 @@ private function ShowMissionDescription()
 {
     local int i;
     local string Content;
+    local LevelSummary LevelSummary;
 
     if( GC.CurrentMission.CustomScenario == None )
     {
@@ -180,8 +187,15 @@ private function ShowMissionDescription()
 
     MyMissionInfo.SetContent( Content );
 
-    MyThumbnail.Image = GC.CurrentMission.Thumbnail;
-    MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
+    if(theCampaign.CampaignPath == 2) {
+      LevelSummary = LevelSummary(MyMissionSelectionBox.List.GetObjectAtIndex(MyMissionSelectionBox.GetIndex()));
+      MyThumbnail.Image = LevelSummary.Screenshot;
+      MyMissionNameLabel.SetCaption(LevelSummary.Title);
+      GC.CurrentMission.MapName = MyMissionSelectionBox.List.GetItemAtIndex(MyMissionSelectionBox.GetIndex());
+    } else {
+      MyThumbnail.Image = GC.CurrentMission.Thumbnail;
+      MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
+    }
 }
 
 function MyDifficultySelector_OnChange(GUIComponent Sender)
@@ -189,6 +203,43 @@ function MyDifficultySelector_OnChange(GUIComponent Sender)
     GC.CurrentDifficulty=eDifficultyLevel(MyDifficultySelector.GetIndex());
     MyDifficultyLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(GC.CurrentDifficulty)] ) );
     GC.SaveConfig();
+}
+
+private function ListAllMissions()
+{
+  local String FileName;
+  local LevelSummary Summary;
+  local int i;
+  local int index;
+
+  foreach FileMatchingPattern("*.s4m", FileName) {
+    if(InStr(FileName, "autosave") != -1) {
+      continue; // Don't allow UnrealEd auto saves
+    }
+
+    if(InStr(FileName, "Autoplay") != -1) {
+      continue; // Don't allow Unreal Autoplay
+    }
+
+    // Remove the extension
+    if(Right(FileName, 4) ~= ".s4m") {
+      FileName = Left(FileName, Len(FileName) - 4);
+    }
+
+    Summary = Controller.LoadLevelSummary(FileName$".LevelSummary");
+    if(Summary == None) {
+      log("WARNING: No summary for map "$FileName);
+      continue;
+    }
+
+    for(i = 0; i < Summary.SupportedModes.Length; i++) {
+      if(Summary.SupportedModes[i] == MPM_COOP) {
+        MyMissionSelectionBox.List.Add(FileName, Summary, Summary.Title,index,,true);
+        index++;
+        break;
+      }
+    }
+  }
 }
 
 private function PopulateCustomScenarioList()
@@ -248,8 +299,19 @@ private function PopulateCampaignMissionList()
   				MyMissionSelectionBox.List.Add(string(ExtraMissionName[index]),,ExtraFriendlyName[index],index,,true);
   			}
   		}
-  	}
+  	} else if(theCampaign.CampaignPath == 2) {
+      Controller.OpenWaitDialog();
+      ListAllMissions();
+      Controller.CloseWaitDialog();
+    }
 
+
+    if(theCampaign.CampaignPath == 2) {
+      MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
+    } else {
+      MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+    }
+    MyMissionSelectionBox.List.UpdateSortFunction();
 	  MyMissionSelectionBox.List.bSortForward=true;
     MyMissionSelectionBox.List.Sort();
 
@@ -258,8 +320,10 @@ private function PopulateCampaignMissionList()
 
 private function CompletedCampaign()
 {
-    theCampaign.SetHasPlayedCreditsOnCampaignCompletion();
-	Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu");
+  if(theCampaign.CampaignPath != 2) {
+     theCampaign.SetHasPlayedCreditsOnCampaignCompletion();
+	   Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu");
+  }
 }
 
 defaultproperties

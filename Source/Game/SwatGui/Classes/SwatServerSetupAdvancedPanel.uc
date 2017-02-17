@@ -56,7 +56,7 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
         MyMaxPlayersBox.SetMaxValue( Clamp( COOPMaxPlayers, 0, 16 ) );
         MyMaxPlayersBox.SetValue( 10 );
         
-        MyShowEnemyButton.DisableComponent();
+        //MyShowEnemyButton.DisableComponent();
         MyEnemyFireButton.DisableComponent();
 
         MyFriendlyFireSlider.DisableComponent();

@@ -20,6 +20,7 @@ function bool IsFemale();
 function bool IsFearless();
 function bool IsPolite();
 function bool IsInsane();
+function bool Wanders();
 
 function SetCanBeArrested(bool Status);
 

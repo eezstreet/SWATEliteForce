@@ -517,10 +517,14 @@ function NotifyNearbyEnemyKilled(Pawn NearbyEnemy, Pawn Officer)
 	if (Officer != None)
 	{
 		ChangeMorale(- GetNearbyEnemyKilledMoraleModification(), "Nearby Enemy " $ NearbyEnemy.Name $ " Killed By " $ Officer.Name);
+	// do some speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDownedSuspectSpeech();
 	}
 	else
 	{
 		ChangeMorale(- GetNearbyEnemyKilledMoraleModification(), "Nearby Enemy " $ NearbyEnemy.Name $ " Killed By an inanimate object");
+	// do some speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDownedSuspectSpeech();
 	}
 }
 

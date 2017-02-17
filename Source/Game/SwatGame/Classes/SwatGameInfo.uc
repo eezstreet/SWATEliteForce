@@ -803,6 +803,12 @@ function bool CampaignObjectivesAreInEffect()
     return GetCustomScenario().UseCampaignObjectives;
 }
 
+// TODO: change incapacitations to death for swat officers
+function CheckForCampaignDeath(Pawn Incapacitated)
+{
+  Repo.UpdateCampaignPawnDied(Incapacitated);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -1731,10 +1737,29 @@ function InitVoiceReplicationInfo()
 		VoiceReplicationInfo.DefaultChannel = i;
 }
 
-private function bool ShouldSpawnOfficerRedOne()  { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedOne);  }
-private function bool ShouldSpawnOfficerRedTwo()  { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedTwo);  }
-private function bool ShouldSpawnOfficerBlueOne() { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueOne); }
-private function bool ShouldSpawnOfficerBlueTwo() { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueTwo); }
+private function bool ShouldSpawnOfficerRedOne()  {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(0);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedOne;
+}
+
+private function bool ShouldSpawnOfficerRedTwo()  {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(1);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedTwo;
+}
+
+private function bool ShouldSpawnOfficerBlueOne() {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(2);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueOne;
+}
+
+private function bool ShouldSpawnOfficerBlueTwo() {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(3);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueTwo;
+}
 
 private function bool ShouldSpawnOfficerAtStart(SwatOfficerStart OfficerStart, EEntryType DesiredEntryType)
 {

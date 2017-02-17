@@ -6,12 +6,21 @@ class Campaign extends Core.Object
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
 
 var config localized string StringName;
-var config int CampaignPath;
 
 var config array<Name> MissionResultNames;
 var array<MissionResults> MissionResults;
 var config private int availableIndex;  //the index of the highest mission that is unlocked in the Campaign
 var config private bool HACK_HasPlayedCreditsOnCampaignCompletion;
+
+// SEF additions
+var config int CampaignPath;  // Which campaign path we're on (0 = SWAT 4 + TSS, 1 = Extra Missions, 2 = All Missions)
+var config bool PlayerPermadeath; // Whether the campaign has player permadeath enabled
+var config bool PlayerDied; // Player permadeath only - true if the campaign is KIA
+var config bool OfficerPermadeath; // Whether the campaign has officer permadeath enabled
+var config bool RedOneDead; // Whether Red One is dead.
+var config bool RedTwoDead; // Whether Red Two is dead.
+var config bool BlueOneDead; // Whether Blue One is dead.
+var config bool BlueTwoDead; // Whether Blue Two is dead.
 
 overloaded function Construct()
 {
@@ -47,13 +56,13 @@ final function MissionEnded(name Mission, eDifficultyLevel difficulty, bool Comp
 
 log("[dkaplan] Adding Mission result for mission: "$Mission);
     index = GetMissionIndex(Mission);
-    
+
     if( (index >= MissionResults.length) ) //mission was never played before
     {
         MissionResults[index] = new(,(StringName$"_"$Mission)) class'SwatGame.MissionResults';
         MissionResultNames[index] = Mission;
     }
-    
+
     Assert( MissionResults[index] != None );
 
     //add this mission result

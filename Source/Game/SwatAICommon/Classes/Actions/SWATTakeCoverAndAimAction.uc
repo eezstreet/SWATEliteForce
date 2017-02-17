@@ -2,11 +2,9 @@
 // PlaceWedgeGoal.uc - PlaceWedgeGoal class
 // this goal is given to a Officer to place a wedge on a particular door
 
-class TakeCoverAndAttackAction extends TakeCoverAction
-    native;
+class SWATTakeCoverAndAimAction extends SWATTakeCoverAction;
 ///////////////////////////////////////////////////////////////////////////////
 
-import enum EnemySkill from ISwatEnemy;
 import enum ELeanState from Engine.Pawn;
 import enum EAICoverLocationType from AICoverFinder;
 
@@ -14,14 +12,11 @@ import enum EAICoverLocationType from AICoverFinder;
 //
 // Variables
 
-var private AttackTargetGoal			CurrentAttackTargetGoal;
+var(parameters) Pawn Opponent;
+var private AimAtTargetGoal				CurrentAimAtTargetGoal;
 var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
 var private MoveToOpponentGoal			CurrentMoveToOpponentGoal;
 var private AimAroundGoal				CurrentAimAroundGoal;
-
-var config private float				LowSkillAttackWhileTakingCoverChance;
-var config private float				MediumSkillAttackWhileTakingCoverChance;
-var config private float				HighSkillAttackWhileTakingCoverChance;
 
 var config private float				MinCrouchTime;
 var config private float				MaxCrouchTime;
@@ -31,23 +26,18 @@ var config private float				MaxStandTime;
 var config private float				MinLeanTime;
 var config private float				MaxLeanTime;
 
-var config private float				MinPassiveTakeCoverAndAttackPercentageChance;
-var config private float				MaxPassiveTakeCoverAndAttackPercentageChance;
-var config private float				MinAggressiveTakeCoverAndAttackPercentageChance;
-var config private float				MaxAggressiveTakeCoverAndAttackPercentageChance;
+var config private float				SWATMinTakeCoverAndAttackPercentageChance;
+var config private float				SWATMaxTakeCoverAndAttackPercentageChance;
 
-var config private float				LowSkillSuccessAfterFiringChance;
-var config private float				MediumSkillSuccessAfterFiringChance;
-var config private float				HighSkillSuccessAfterFiringChance;
-
-var private Rotator						AttackRotation;
-var private ELeanState					AttackLeanState;
-var private EAICoverLocationType		AttackCoverLocationType;
+var private Rotator						AimingRotation;
+var private ELeanState					AimingLeanState;
+var private EAICoverLocationType		AimingCoverLocationType;
 
 var private array<Pawn>					CachedSeenPawns;
 
 var private DistanceToOfficersSensor	DistanceToOfficersSensor;
-var config private float				MinDistanceToOfficersWhileTakingCover;
+var private TargetSensor				TargetSensor;
+var config private float				MinDistanceToTargetWhileTakingCover;
 
 var private float						MoveBrieflyChance;
 var config private float				MoveBrieflyChanceIncrement;
@@ -63,7 +53,7 @@ const kMoveTowardMaxTime = 2.0;
 //
 // Selection Heuristic
 
-private function bool CanTakeCoverAndAttack()
+private function bool CanTakeCoverAndAim()
 {
 	local Hive HiveMind;
 
@@ -74,8 +64,8 @@ private function bool CanTakeCoverAndAttack()
 	// if we have a weapon, cover is available, the distance is greater than the minimum required
 	// between us and the officers, and we can find cover to attack from
 	return (ISwatAI(m_Pawn).HasUsableWeapon() && AICoverFinder.IsCoverAvailable() &&
-		!HiveMind.IsPawnWithinDistanceOfOfficers(m_Pawn, MinDistanceToOfficersWhileTakingCover, true) &&
-		FindBestCoverToAttackFrom() &&
+		!HiveMind.IsPawnWithinDistanceOfOfficers(m_Pawn, MinDistanceToTargetWhileTakingCover, true) &&
+		FindBestCoverToAimingFrom() &&
 		!CoverIsInBadPosition());
 }
 
@@ -86,7 +76,7 @@ private function bool CoverIsInBadPosition()
 	for(i=0; i<CachedSeenPawns.Length; ++i)
 	{
 		// if the cover is too close to anyone we've seen, we can't use it
-		if (VSize(CoverResult.CoverLocation - CachedSeenPawns[i].Location) < MinDistanceToOfficersWhileTakingCover)
+		if (VSize(CoverResult.CoverLocation - CachedSeenPawns[i].Location) < MinDistanceToTargetWhileTakingCover)
 		{
 //			log("Cover is too close to a pawn we've seen");
 			return true;
@@ -112,22 +102,14 @@ function float selectionHeuristic( AI_Goal goal )
 		assert(m_Pawn != None);
 	}
 
-	assert(m_Pawn.IsA('SwatEnemy'));
+	assert(m_Pawn.IsA('SwatOfficer'));
 	AICoverFinder = ISwatAI(m_Pawn).GetCoverFinder();
 	assert(AICoverFinder != None);
 
-	if (CanTakeCoverAndAttack())
+	if (CanTakeCoverAndAim())
 	{
-		if (ISwatAI(m_Pawn).IsAggressive())
-		{
-			// return a random value that is above the minimum chance
-			return FClamp(FRand(), MinAggressiveTakeCoverAndAttackPercentageChance, MaxAggressiveTakeCoverAndAttackPercentageChance);
-		}
-		else
-		{
-			// return a random value that is at least the minimum chance
-			return FClamp(FRand(), MinPassiveTakeCoverAndAttackPercentageChance, MaxPassiveTakeCoverAndAttackPercentageChance);
-		}
+		// return a random value that is above the minimum chance
+		return 1.0;
 	}
 	else
 	{
@@ -143,10 +125,10 @@ function cleanup()
 {
 	super.cleanup();
 
-	if (CurrentAttackTargetGoal != None)
+	if (CurrentAimAtTargetGoal != None)
 	{
-		CurrentAttackTargetGoal.Release();
-		CurrentAttackTargetGoal = None;
+		CurrentAimAtTargetGoal.Release();
+		CurrentAimAtTargetGoal = None;
 	}
 
 	if (CurrentRotateTowardRotationGoal != None)
@@ -193,7 +175,7 @@ function goalAchievedCB( AI_Goal goal, AI_Action action )
 {
 	super.goalAchievedCB(goal, action);
 
-	if (goal == CurrentAttackTargetGoal)
+	if (goal == CurrentAimAtTargetGoal)
 	{
 		instantSucceed();
 	}
@@ -203,10 +185,20 @@ function goalAchievedCB( AI_Goal goal, AI_Action action )
 //
 // Sensor Messages
 
+private function ActivateTargetSensor()
+{
+	assert(Opponent != None);
+
+	TargetSensor = TargetSensor(class'AI_Sensor'.static.activateSensor( self, class'TargetSensor', characterResource(), 0, 1000000 ));
+	assert(TargetSensor != None);
+
+	TargetSensor.setParameters( Opponent );
+}
+
 function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData )
 {
 	if (m_Pawn.logTyrion)
-		log("TakeCoverAndAttackAction received sensor message from " $ sensor.name $ " value is "$ value.integerData);
+		log("TakeCoverAndAttackAim received sensor message from " $ sensor.name $ " value is "$ value.integerData);
 
 	// we only (currently) get messages from a distance sensor
 	assert(sensor == DistanceToOfficersSensor);
@@ -222,98 +214,37 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Attack Target Success Chance
-
-function float GetSkillSpecificSuccessAfterFiringChance()
-{
-	local EnemySkill CurrentEnemySkill;
-
-	CurrentEnemySkill = ISwatEnemy(m_Pawn).GetEnemySkill();
-
-	switch(CurrentEnemySkill)
-	{
-		case EnemySkill_Low:
-            return LowSkillSuccessAfterFiringChance;
-        case EnemySkill_Medium:
-            return MediumSkillSuccessAfterFiringChance;
-        case EnemySkill_High:
-            return HighSkillSuccessAfterFiringChance;
-        default:
-            assert(false);
-            return 0.0;
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
 // Attacking While Taking Cover
 
-function float GetSkillSpecificAttackChance()
-{
-	local EnemySkill CurrentEnemySkill;
-
-	CurrentEnemySkill = ISwatEnemy(m_Pawn).GetEnemySkill();
-
-	switch(CurrentEnemySkill)
-	{
-		case EnemySkill_Low:
-            return LowSkillAttackWhileTakingCoverChance;
-        case EnemySkill_Medium:
-            return MediumSkillAttackWhileTakingCoverChance;
-        case EnemySkill_High:
-            return HighSkillAttackWhileTakingCoverChance;
-        default:
-            assert(false);
-            return 0.0;
-	}
-}
-
-function bool ShouldAttackWhileTakingCover()
-{
-	assert(ISwatAI(m_Pawn).HasUsableWeapon());
-
-	return (FRand() < GetSkillSpecificAttackChance());
-}
-
 // easier than writing the accessor to commander
-private function Pawn GetEnemy()
+private function Pawn GetOpponent()
 {
-	return ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+	return ISwatOfficer(m_Pawn).GetOfficerCommanderAction().GetCurrentAssignment();
 }
 
-private function StopAttacking()
+private function StopAiming()
 {
-	if (CurrentAttackTargetGoal != None)
+	if (CurrentAimAtTargetGoal != None)
 	{
-		CurrentAttackTargetGoal.unPostGoal(self);
-		CurrentAttackTargetGoal.Release();
-		CurrentAttackTargetGoal = None;
+		CurrentAimAtTargetGoal.unPostGoal(self);
+		CurrentAimAtTargetGoal.Release();
+		CurrentAimAtTargetGoal = None;
 	}
 }
 
-private function Attack(Pawn Enemy, bool bCanSucceedAfterFiring)
+private function Aim(Pawn Opponent, bool bCanSucceedAfterFiring)
 {
-  if(Enemy == None) {
+  if(Opponent == None) {
     return;
   }
 
-	if (CurrentAttackTargetGoal == None)
+	if (CurrentAimAtTargetGoal == None)
 	{
-		CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
-		assert(CurrentAttackTargetGoal != None);
-		CurrentAttackTargetGoal.AddRef();
-
-		if (bCanSucceedAfterFiring)
-		{
-			// set the chance that the attack target completes after firing once
-			CurrentAttackTargetGoal.SetChanceToSucceedAfterFiring(GetSkillSpecificSuccessAfterFiringChance());
-		}
-
-		CurrentAttackTargetGoal.postGoal(self);
-		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
-		{
-			ISwatEnemy(m_Pawn).BecomeAThreat();
-		}
+		CurrentAimAtTargetGoal = new class'AimAtTargetGoal'(weaponResource(), Opponent);
+		assert(CurrentAimAtTargetGoal != None);
+		CurrentAimAtTargetGoal.AddRef();
+		
+		CurrentAimAtTargetGoal.postGoal(self);
 	}
 }
 
@@ -321,19 +252,19 @@ private function Attack(Pawn Enemy, bool bCanSucceedAfterFiring)
 //
 // State Code
 
-private function bool IsRotatedToAttackRotation()
+private function bool IsRotatedToAimingRotation()
 {
 	// note, this requires that the pawn's rotation be the aim rotation
-	return (m_Pawn.Rotation.Yaw == AttackRotation.Yaw);
+	return (m_Pawn.Rotation.Yaw == AimingRotation.Yaw);
 }
 
-latent private function RotateToAttackRotation(Pawn Enemy)
+latent private function RotateToAimingRotation(Pawn Opponent)
 {
 	assert(CurrentRotateTowardRotationGoal == None);
 
-	if ((Enemy != None) && !IsRotatedToAttackRotation() && !m_Pawn.CanHit(Enemy))
+	if ((Opponent != None) && !IsRotatedToAimingRotation() && !m_Pawn.CanHit(Opponent))
 	{
-		CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, AttackRotation);
+		CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, AimingRotation);
 		assert(CurrentRotateTowardRotationGoal != None);
 		CurrentRotateTowardRotationGoal.AddRef();
 
@@ -354,15 +285,15 @@ private function bool CanLeanAtCoverResult()
 	if (CoverResult.coverSide == kAICLS_Left)
 	{
 		// we will check and see if we can lean left
-		AttackLeanState = kLeanStateLeft;
+		AimingLeanState = kLeanStateLeft;
 	}
 	else
 	{
 		// we will check and see if we can lean right
-		AttackLeanState = kLeanStateRight;
+		AimingLeanState = kLeanStateRight;
 	}
 
-	return m_Pawn.CanLean(AttackLeanState, CoverResult.coverLocation, AttackRotation);
+	return m_Pawn.CanLean(AimingLeanState, CoverResult.coverLocation, AimingRotation);
 }
 
 // tests the current value in the cover result value to determine if a piece of cover is usable
@@ -384,7 +315,7 @@ private function bool CanUseCover()
 
 
 // returns true when we find cover and want to use it
-protected function bool FindBestCoverToAttackFrom()
+protected function bool FindBestCoverToAimingFrom()
 {
 #if !IG_THIS_IS_SHIPPING_VERSION
     // Used to track down a difficult-to-repro error
@@ -398,8 +329,8 @@ protected function bool FindBestCoverToAttackFrom()
 	assert(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor() != None);
 
 	CachedSeenPawns = SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns;
-	AttackCoverLocationType = kAICLT_NearestFront;
-    CoverResult = AICoverFinder.FindCover(CachedSeenPawns, AttackCoverLocationType);
+	AimingCoverLocationType = kAICLT_NearestFront;
+    CoverResult = AICoverFinder.FindCover(CachedSeenPawns, AimingCoverLocationType);
 
 	if (m_Pawn.logAI)
 		log("CoverResult.coverLocationInfo is: "$CoverResult.coverLocationInfo$"  CoverResult.coverActor is: " $CoverResult.coverActor);
@@ -416,8 +347,8 @@ protected function bool FindBestCoverToAttackFrom()
     if (! CanUseCover())
 	{
 
-		AttackCoverLocationType = kAICLT_NearFrontCorner;
-		CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AttackCoverLocationType);
+		AimingCoverLocationType = kAICLT_NearFrontCorner;
+		CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AimingCoverLocationType);
 
 	    // Unexpected. This happens so infrequently, we should notify in non-
         // shipping builds, but fail gracefully and not hard-assert.
@@ -431,8 +362,8 @@ protected function bool FindBestCoverToAttackFrom()
 
         if (! CanUseCover())
 		{
-			AttackCoverLocationType = kAICLT_FarFrontCorner;
-			CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AttackCoverLocationType);
+			AimingCoverLocationType = kAICLT_FarFrontCorner;
+			CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AimingCoverLocationType);
 			return CanUseCover();
 		}
 		else
@@ -463,19 +394,11 @@ protected latent function TakeCover()
 {
 //  log("Taking cover at: "$CoverResult.coverLocation);
 
-	if (ShouldAttackWhileTakingCover())
-	{
-		Attack(GetEnemy(), false);
-	}
-	else
-	{
-		SwapInFullBodyTakeCoverAnimations();
-	}
+		Aim(GetOpponent(), false);
 
 	MoveToTakeCover(CoverResult.coverLocation);
 
-	StopAttacking();
-	ResetFullBodyAnimations();
+	StopAiming();
 
     // if we're in low cover, we should crouch before rotation
     if (CoverResult.coverLocationInfo == kAICLI_InLowCover)
@@ -487,9 +410,9 @@ protected latent function TakeCover()
 }
 
 
-private latent function MoveTowardEnemyBriefly(Pawn Enemy)
+private latent function MoveTowardEnemyBriefly(Pawn Opponent)
 {
-	CurrentMoveToOpponentGoal = new class'MoveToOpponentGoal'(movementResource(), achievingGoal.priority, Enemy);
+	CurrentMoveToOpponentGoal = new class'MoveToOpponentGoal'(movementResource(), achievingGoal.priority, Opponent);
 	assert(CurrentMoveToOpponentGoal != None);
 	CurrentMoveToOpponentGoal.AddRef();
 
@@ -508,7 +431,7 @@ private latent function MoveTowardEnemyBriefly(Pawn Enemy)
 
 private latent function AimAroundBriefly()
 {
-	CurrentAimAroundGoal = new class'AimAroundGoal'(weaponResource(), CurrentAttackTargetGoal.priority - 1);
+	CurrentAimAroundGoal = new class'AimAroundGoal'(weaponResource(), CurrentAimAtTargetGoal.priority - 1);
 	assert(CurrentAimAroundGoal != None);
 	CurrentAimAroundGoal.AddRef();
 
@@ -519,10 +442,6 @@ private latent function AimAroundBriefly()
 	CurrentAimAroundGoal.SetDoOnce(true);
 
 	CurrentAimAroundGoal.postGoal(self);
-		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
-		{
-			ISwatEnemy(m_Pawn).BecomeAThreat();
-		}
 	WaitForGoal(CurrentAimAroundGoal);
 
 	CurrentAimAroundGoal.unPostGoal(self);
@@ -530,10 +449,10 @@ private latent function AimAroundBriefly()
 	CurrentAimAroundGoal = None;
 }
 
-private latent function AttackWhileCrouchingBehindCover(Pawn Enemy)
+private latent function AimingWhileCrouchingBehindCover(Pawn Opponent)
 {
-	// stand up if we can't see our enemy and we can't hit them
-	if (! m_Pawn.CanHit(Enemy))
+	// stand up if we can't see our Opponent and we can't hit them
+	if (! m_Pawn.CanHit(Opponent))
 	{
 		// stop crouching
 		m_pawn.ShouldCrouch(false);
@@ -541,8 +460,8 @@ private latent function AttackWhileCrouchingBehindCover(Pawn Enemy)
 		// stand up for a bit
 		sleep(RandRange(MinStandTime, MaxStandTime));
 
-		// if we can't currently attack our enemy, aim around or move briefly
-		if (! m_Pawn.CanHit(Enemy))
+		// if we can't currently attack our Opponent, aim around or move briefly
+		if (! m_Pawn.CanHit(Opponent))
 		{
 			if (FRand() > MoveBrieflyChance)
 			{
@@ -552,7 +471,7 @@ private latent function AttackWhileCrouchingBehindCover(Pawn Enemy)
 			}
 			else
 			{
-				MoveTowardEnemyBriefly(Enemy);
+				MoveTowardEnemyBriefly(Opponent);
 			}
 		}
 
@@ -565,7 +484,7 @@ private latent function AttackWhileCrouchingBehindCover(Pawn Enemy)
 
 private function Lean()
 {
-	if (AttackLeanState == kLeanStateLeft)
+	if (AimingLeanState == kLeanStateLeft)
 	{
 		m_Pawn.ShouldLeanRight(false);
 		m_Pawn.ShouldLeanLeft(true);
@@ -585,7 +504,7 @@ private function StopLeaning()
 
 private latent function ReEvaluateCover()
 {
-	if (FindBestCoverToAttackFrom())
+	if (FindBestCoverToAimingFrom())
 	{
 		TakeCover();
 	}
@@ -595,12 +514,12 @@ private latent function ReEvaluateCover()
 	}
 }
 
-private latent function AttackWhileLeaningBehindCover(Pawn Enemy)
+private latent function AimingWhileLeaningBehindCover(Pawn Opponent)
 {
 	local bool bReEvaluateCover;
 
-	// lean out if we can't hit our enemy
-	if (! m_Pawn.CanHit(Enemy))
+	// lean out if we can't hit our Opponent
+	if (! m_Pawn.CanHit(Opponent))
 	{
 		// start leaning
 		Lean();
@@ -608,8 +527,8 @@ private latent function AttackWhileLeaningBehindCover(Pawn Enemy)
 		// lean for a bit
 		sleep(RandRange(MinLeanTime, MaxLeanTime));
 
-		// if we can't hit our current enemy, we should re-evaluate our cover
-		if (! m_Pawn.CanHit(Enemy))
+		// if we can't hit our current Opponent, we should re-evaluate our cover
+		if (! m_Pawn.CanHit(Opponent))
 		{
 			if (m_Pawn.logAI)
 				log("re evaluate cover");
@@ -620,7 +539,7 @@ private latent function AttackWhileLeaningBehindCover(Pawn Enemy)
 		// stop leaning
 		StopLeaning();
 
-		if (! m_Pawn.CanHit(Enemy))
+		if (! m_Pawn.CanHit(Opponent))
 		{
 			AimAroundBriefly();
 		}
@@ -637,32 +556,32 @@ private latent function AttackWhileLeaningBehindCover(Pawn Enemy)
 	}
 }
 
-protected latent function AttackFromBehindCover()
+protected latent function AimingFromBehindCover()
 {
-	local Pawn Enemy;
+	local Pawn Opponent;
 
-	// while we can still attack (enemy is not dead)
+	// while we can still attack (Opponent is not dead)
 	do
 	{
-		Enemy = GetEnemy();
+		Opponent = GetOpponent();
 
-		Attack(Enemy, true);
+		Aim(Opponent, true);
 
 		// rotate to the attack orientation
-		AttackRotation.Yaw = CoverResult.coverYaw;
-		RotateToAttackRotation(Enemy);
+		AimingRotation.Yaw = CoverResult.coverYaw;
+		RotateToAimingRotation(Opponent);
 
 		if (CoverResult.coverLocationInfo == kAICLI_InLowCover)
 		{
-			AttackWhileCrouchingBehindCover(Enemy);
+			AimingWhileCrouchingBehindCover(Opponent);
 		}
 		else
 		{
-			AttackWhileLeaningBehindCover(Enemy);
+			AimingWhileLeaningBehindCover(Opponent);
 		}
 
 		yield();
-	} until (! class'Pawn'.static.checkConscious(Enemy));
+	} until (! class'Pawn'.static.checkConscious(Opponent));
 }
 
 state Running
@@ -673,7 +592,7 @@ state Running
 	// create a sensor so we fail if we get to close to the officers
 	DistanceToOfficersSensor = DistanceToOfficersSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceToOfficersSensor', characterResource(), 0, 1000000 ));
 	assert(DistanceToOfficersSensor != None);
-	DistanceToOfficersSensor.SetParameters(MinDistanceToOfficersWhileTakingCover, true);
+	DistanceToOfficersSensor.SetParameters(MinDistanceToTargetWhileTakingCover, true);
 
 	// we must have found cover in our selection heuristic for this to work
 	TakeCoverAtInitialCoverLocation();
@@ -684,7 +603,7 @@ state Running
 	{
 		// TODO: handle moving to the closest edge of the cover
 		// currently we just move to the closest area of cover
-		AttackFromBehindCover();
+		AimingFromBehindCover();
 
 		succeed();
 	}
@@ -697,5 +616,5 @@ state Running
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-	satisfiesGoal = class'EngageOfficerGoal'
+	satisfiesGoal = class'SWATTakeCoverAndAimGoal'
 }
