@@ -185,7 +185,7 @@ function InitialDisplay()
 
         DisplayEquipment( Pocket(i) );
 
-		if ( !CheckCampaignValidCheckCampaignValid( class<actor>(EquipmentList[Pocket(i)].GetObject() ) ) )
+		if ( !CheckCampaignValid( class<actor>(EquipmentList[Pocket(i)].GetObject() ) ) )
 		{Scrolled( Pocket(i), false);}
     }
 
