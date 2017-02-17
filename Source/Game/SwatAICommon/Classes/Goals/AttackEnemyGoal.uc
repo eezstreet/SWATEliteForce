@@ -26,7 +26,7 @@ overloaded function construct(AI_Resource r, Pawn inEnemy)
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-    Priority   = 85
+    Priority   = 90
     GoalName   = "AttackEnemy"
     bPermanent = false
 }

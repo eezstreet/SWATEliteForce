@@ -12,6 +12,6 @@ defaultproperties
     // we never stop
     bPermanent = true
 
-    priority   = 30
+    priority   = 35
     goalName   = "Idle"
 }
