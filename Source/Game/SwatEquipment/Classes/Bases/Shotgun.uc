@@ -24,9 +24,21 @@ simulated function bool HandleBallisticImpact(
 	
 	MaxDoorDistance = 99.45;		//1.5 meters in UU
 	PlayerToDoor = HitLocation - Owner.Location;
-	
-	//TODO: Figure out doortype and set BreachingChance
-	BreachingChance = WoodBreachingChance;
+
+	switch (HitMaterial.MaterialVisualType)
+	{
+	case MVT_ThinMetal:
+	case MVT_ThickMetal:
+	case MVT_Default:
+		BreachingChance = MetalBreachingChance;
+		break;
+	case MVT_Wood:
+		BreachingChance = WoodBreachingChance;
+		break;
+	default:
+		BreachingChance = 0;
+		break;
+	}
 	
     if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && FRand() < BreachingChance )
         IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(
@@ -52,6 +64,6 @@ simulated function bool HandleBallisticImpact(
 
 defaultproperties
 {
-	WoodBreachingChance = 0.5;
-	MetalBreachingChance = 0.4;
+	WoodBreachingChance = 0.1;
+	MetalBreachingChance = 0.05;
 }
