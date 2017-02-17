@@ -2,6 +2,9 @@
 class Shotgun extends RoundBasedWeapon;
 ///////////////////////////////////////////////////////////////////////////////
 
+var float WoodBreachingChance;
+var float MetalBreachingChance;
+
 simulated function bool HandleBallisticImpact(
     Actor Victim,
     vector HitLocation,
@@ -17,9 +20,15 @@ simulated function bool HandleBallisticImpact(
 {
 	local vector PlayerToDoor;
 	local float MaxDoorDistance;
+	local float BreachingChance;
+	
 	MaxDoorDistance = 99.45;		//1.5 meters in UU
 	PlayerToDoor = HitLocation - Owner.Location;
-    if (Victim.IsA('SwatDoor') && (PlayerToDoor Dot PlayerToDoor) < MaxDoorDistance*MaxDoorDistance)
+	
+	//TODO: Figure out doortype and set BreachingChance
+	BreachingChance = WoodBreachingChance;
+	
+    if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && FRand() < BreachingChance )
         IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(
                 HitRegion, 
                 HitLocation, 
@@ -39,4 +48,10 @@ simulated function bool HandleBallisticImpact(
         ExitLocation,
         ExitNormal,
         ExitMaterial);
+}
+
+defaultproperties
+{
+	WoodBreachingChance = 0.5;
+	MetalBreachingChance = 0.4;
 }

@@ -498,7 +498,7 @@ private function NotifyRegistrantsDoorOpening()
 
 simulated function bool CanInteract()
 {
-    return !IsBroken() && !IsWedged();
+    return /*!IsBroken() &&*/ !IsWedged();
 }
 
 //pass Force=true to interact even with a locked door
@@ -680,7 +680,7 @@ simulated function bool KnowsDoorIsLocked( int TeamNumber )
 private simulated function bool IsAntiPortalOn()
 {
 	// if this door doesn't act as an antiportal, the antiportal is never on
-	if (!bIsAntiPortal)
+	if (!bIsAntiPortal || bIsBroken)
 		return false;
 
 	if (DoorAntiPortal == None)
@@ -716,7 +716,7 @@ private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 	// Ignore if this door does not act as an antiportal
 	if (bIsAntiPortal && DoorAntiPortal != None)
     {
-	    if (Enabled)
+	    if (Enabled && !bIsBroken)
 	    {
 		    //Log("Changing AntiPortalActor.DrawType for Door '"$self$"' from "$GetEnum(EDrawType, DoorAntiPortal.DrawType)$" to DT_AntiPortal");
 		    DoorAntiPortal.SetDrawType(DT_AntiPortal);
@@ -727,7 +727,8 @@ private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 		    DoorAntiPortal.SetDrawType(DT_None);
 	    }
 
-	    assertWithDescription(!bIsAntiPortal || Enabled == IsAntiPortalOn(), "[ckline] After SetAntiPortalAndMPBlockingVolume("$Enabled$") on Door '"$self$"', IsAntiPortalOn() == "$(!Enabled)$" -- this is not right.");
+	    //assertWithDescription(!bIsAntiPortal || Enabled == IsAntiPortalOn(), "[ckline] After SetAntiPortalAndMPBlockingVolume("$Enabled$") on Door '"$self$"', IsAntiPortalOn() == "$(!Enabled)$" -- this is not right.");
+		//mezzo: We dont need this assertion really anymore
     }
 
     if (DoorBufferVolume != None)
@@ -813,7 +814,7 @@ simulated function Moved(optional bool Instantly, optional bool Force)
     else    //!Instantly
     {
         // Carlos: Closing is handled the same regardless of MoveReason
-        if (PendingPosition == DoorPosition_Closed)
+        if (PendingPosition == DoorPosition_Closed && !Force)
         {
             if (PositionIsBlocked(CurrentPosition))
             {
@@ -933,15 +934,9 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 // Note: In multiplayer function Blasted only happens on the server
 function Blasted(Pawn Instigator)
 {
-    if ( IsClosed() || IsClosing() )
-    {
-        if (ActorIsToMyLeft(Instigator))
-            SetPositionForMove( DoorPosition_OpenRight, MR_Blasted );
-        else
-            SetPositionForMove( DoorPosition_OpenLeft, MR_Blasted );
-
-        Moved(false, true); //not instantly, but force
-    }
+    SetPositionForMove( CurrentPosition, MR_Blasted );	//We want the lock to be obliterated, but we dont want the door to swing open
+    Moved(false, true); //not instantly, but force
+	OnUnlocked();
 }
 
 // Note: In multiplayer function Blasted only happens on the server
@@ -1367,16 +1362,16 @@ simulated state BeingBlasted extends Moving
     {
 		NotifyRegistrantsDoorOpening();
 
-        if (PendingPosition == DoorPosition_OpenLeft)
+        /*if (PendingPosition == DoorPosition_OpenLeft)
             PlayAnim('BlastedLeft');
         else
-            PlayAnim('BlastedRight');
+            PlayAnim('BlastedRight');*/
 
-						if ( IsBoobyTrapped() )
-		        {
-		            assert(BoobyTrap != None);
-		            BoobyTrap.OnTriggeredByDoor();
-		        }
+		if ( IsBoobyTrapped() )
+		{
+			assert(BoobyTrap != None);
+			BoobyTrap.OnTriggeredByDoor();
+		}
     }
 
     simulated function PlayBlastedEffects();    //implemented in subclasses
@@ -1404,11 +1399,11 @@ simulated state BeingBreached extends Moving
         else
             PlayAnim('BreachedRight');
 
-						if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
-		        {
-		            assert(BoobyTrap != None);
-		            BoobyTrap.OnTriggeredByDoor();
-		        }
+		if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+		{
+			assert(BoobyTrap != None);
+		    BoobyTrap.OnTriggeredByDoor();
+		}
     }
 }
 simulated function PlayBreachedEffects();    //implemented in subclasses
@@ -2470,7 +2465,7 @@ simulated function float GetQualifyTimeForC2Charge()
 simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vector HitNormal, int Damage, class<DamageType> DamageType, Actor Instigator)
 {
     //if a SwatDoor's REGION_Door_BreachingSpot is hit by a ShotgunDamageType, then the door has been blasted.
-    if (RegionHit == REGION_Door_BreachingSpot && ClassIsChildOf( DamageType, class'Shotgun' ) && !ClassIsChildOf( DamageType, class'LessLethalSG' ) )
+    if (RegionHit == REGION_Door_BreachingSpot && ClassIsChildOf( DamageType, class'Shotgun' ))
     {
         assertWithDescription(Instigator.IsA('SwatPawn'),
             "[tcohen] SwatDoor::OnSkeletalRegionHit() RegionHit is REGION_Door_BreachingSpot and DamageType is FrangibleBreachingAmmo, but Instigator is not a SwatPawn.");

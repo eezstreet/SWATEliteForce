@@ -41,4 +41,6 @@ defaultproperties
 {
     Slot=Slot_Invalid
 	bIsLessLethal=true
+	WoodBreachingChance = 0;
+	MetalBreachingChance = 0;
 }
