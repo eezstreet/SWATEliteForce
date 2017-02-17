@@ -980,6 +980,7 @@ function Breached(DeployedC2ChargeBase Charge)
         PlayBreachedEffects();
         Broken();
     }
+	OnUnlocked();
 }
 
 //
