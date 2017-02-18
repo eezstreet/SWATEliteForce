@@ -127,6 +127,10 @@ latent function PickUpWeapon()
 		m_Pawn.EnableCollisionAvoidance();
 
 		ISwatEnemy(m_Pawn).PickUpWeaponModel(WeaponModel);
+		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			ISwatEnemy(m_Pawn).BecomeAThreat();
+		}
 	}
 }
 

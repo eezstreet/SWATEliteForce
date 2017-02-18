@@ -65,6 +65,10 @@ function TriggerDownedOfficerSpeech()
 	TriggerSpeech('ReactedDownOfficer');
 }
 
+function TriggerDownedSuspectSpeech()
+{
+	TriggerSpeech('ReactedDownSuspect');
+}
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {

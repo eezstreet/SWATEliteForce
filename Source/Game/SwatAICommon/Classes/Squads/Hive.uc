@@ -162,6 +162,12 @@ function NotifyEnemyStunned(Pawn Enemy)
 	CheckUpdateOfficerAssignmentsForEnemy(Enemy);
 }
 
+// notification that an enemy has unbecome a threat
+function NotifyEnemyUnbecameThreat(Pawn Enemy)
+{
+	UpdateOfficerAssignments();
+}
+
 function NotifyEnemyFleeing(Pawn Enemy)
 {
 	assert(Enemy != None);

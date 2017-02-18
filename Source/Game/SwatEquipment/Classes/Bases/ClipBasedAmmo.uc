@@ -135,6 +135,18 @@ simulated function bool NeedsReload()
     return (ClipRoundsRemaining[CurrentClip] == 0);
 }
 
+simulated function bool ShouldReload()
+{
+    if (ClipRoundsRemaining[CurrentClip] <= ClipSize/2)
+	{
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
+}
+
 simulated function OnRoundUsed(Pawn User, Equipment Launcher)
 {
 	Super.OnRoundUsed(User, Launcher);
@@ -210,6 +222,11 @@ simulated function SetClip(int index, int amount)
 simulated function int RoundsRemainingBeforeReload()
 {
     return GetClip(CurrentClip);
+}
+
+simulated function int RoundsComparedBeforeReload()
+{
+    return ClipSize;
 }
 
 function string GetAmmoCountString()

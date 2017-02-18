@@ -545,6 +545,15 @@ simulated function bool IsInsane()
   return OurArchetypeInstance.Insane;
 }
 
+simulated function bool Wanders()
+{
+  local CharacterArchetypeInstance OurArchetypeInstance;
+
+  OurArchetypeInstance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  return OurArchetypeInstance.Wandering;
+}
+
 simulated function bool IsFemale()
 {
 	local SwatAIRepository SwatAIRepo;

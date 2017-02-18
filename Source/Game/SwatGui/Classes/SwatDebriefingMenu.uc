@@ -28,6 +28,7 @@ var() private config localized string MissionFailedString;
 var() private config localized string MissionCompletedDifficultyReqFailedString;
 var() private config localized string ContinueMissionCompletedString;
 var() private config localized string ContinueMissionFailedString;
+var() private config localized string ContinueMissionEndCampaignString;
 var() private config localized string MainMenuString;
 var() private config localized string ContinueString;
 
@@ -45,7 +46,11 @@ function InitComponent(GUIComponent MyOwner)
 
 function InternalOnActivate()
 {
+    local Campaign theCampaign;
+
     MyQuitButton.OnClick=InternalOnClick;
+
+    theCampaign = SwatGUIController(Controller).GetCampaign();
 
     //display mission info
     if( !(GC.CurrentMission.IsMissionFailed()) )
@@ -64,7 +69,19 @@ function InternalOnActivate()
     else
     {
         MyMissionOutcome.SetCaption( MissionFailedString );
-        MyContinueButton.SetCaption( ContinueMissionFailedString );
+
+        if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+          MyContinueButton.SetCaption(ContinueMissionEndCampaignString);
+        } else {
+          MyContinueButton.SetCaption( ContinueMissionFailedString );
+        }
+    }
+
+    MyRestartButton.SetEnabled(true);
+    MyLoadoutButton.SetEnabled(true);
+    if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+      MyRestartButton.SetEnabled(false);
+      MyLoadoutButton.SetEnabled(false);
     }
 
     if( GC.SwatGameRole == GAMEROLE_SP_Other )
@@ -161,4 +178,5 @@ defaultproperties
     MainMenuString="MAIN MENU"
     ContinueMissionCompletedString="NEXT MISSION"
     ContinueMissionFailedString="SELECT MISSION"
+    ContinueMissionEndCampaignString="END CAMPAIGN"
 }

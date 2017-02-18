@@ -1012,6 +1012,20 @@ function BecomeAThreat()
 	}
 }
 
+function UnbecomeAThreat() //Not imaginative name, I know -J21C
+{
+	if (bThreat)
+	{
+//		if (logTyrion)
+			log(Name $ " is not a Threat anymore!");
+
+		bThreat = false;
+
+		// notify the hive that we've become a threat (so Officers deal with us appropriately)
+		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyBecameThreat(self);
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Doors

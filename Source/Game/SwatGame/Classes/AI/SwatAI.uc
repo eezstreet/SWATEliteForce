@@ -2035,13 +2035,35 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 {
 	assert(Weapon != None);
 
-	if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
-	{
-		return FireMode_Single;
+	if(Weapon.Owner.IsA('SwatEnemy')) {
+    // the thing holding me is a suspect
+		if (Weapon.HasFireMode(FireMode_Burst))
+		{
+			return FireMode_Burst;
+		}
+		else if (Weapon.HasFireMode(FireMode_Auto))
+		{
+			return FireMode_Auto;
+		}
+		if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+		{
+			return FireMode_Single;
+		}
+		else
+		{
+ 		// sanity check!
+			assert(Weapon.HasFireMode(FireMode_DoubleTaser));
+	
+			return FireMode_DoubleTaser;
+		}
 	}
-	if (Weapon.HasFireMode(FireMode_Burst))
+	else if (Weapon.HasFireMode(FireMode_Burst))
 	{
 		return FireMode_Burst;
+	}
+	else if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+	{
+		return FireMode_Single;
 	}
 	else if (Weapon.HasFireMode(FireMode_Auto))
 	{
