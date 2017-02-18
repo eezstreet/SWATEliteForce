@@ -32,7 +32,7 @@ var() config localized array<string> SuspectName "The name of this Suspect";
 var() config localized array<string> SuspectVitals "A description of this Suspects vital stats";
 var() config localized array<string> SuspectDescription "A description of this Suspect";
 var() config array<Material> SuspectImage "A picture of this Suspect, default should be -no picture available-";
- 
+
 //Entry option info
 var() config localized array<string> EntryOptionTitle "The title (usually 1 word) of this entry option";
 var() config localized array<string> EntryDescription "The description of this entry option";
@@ -47,6 +47,9 @@ var() config localized array<string> TimeLineLongDescription "The description to
 var() config Material NewEquipmentImage "The image of the new piece of equipment available for this mission";
 var() config localized string NewEquipmentName "The name of the new piece of equipment available for this mission";
 var() config localized string NewEquipmentDescription "The description of the new piece of equipment available for this mission";
+var() config Material SecondEquipmentImage "The image of the second piece of new equipment for this mission";
+var() config localized string SecondEquipmentName "The name of the second piece of new equipment for this mission";
+var() config localized string SecondEquipmentDescription "The description of the second piece of new equipment for this mission";
 
 //Level Loading info
 var() config localized string LoadingText "Text that will be displayed for the mission on the Loading Screen";
@@ -60,7 +63,7 @@ var() config bool bHas911DispatchAudio;
 function Initialize( string theFriendlyName, CustomScenario inCustomScenario)
 {
     FriendlyName = theFriendlyName;
-    
+
     Objectives = new(None, string(self.Name), 0) class'MissionObjectives';
 
     CustomScenario = inCustomScenario;
@@ -80,7 +83,7 @@ function bool IsMissionCompleted()
             )
             return false;
     }
-    return true;    
+    return true;
 }
 
 function bool IsMissionFailed()
@@ -93,7 +96,7 @@ function bool IsMissionFailed()
             )
             return true;
     }
-    return false;    
+    return false;
 }
 
 function bool IsMissionTerminal()
@@ -106,7 +109,7 @@ function bool IsMissionTerminal()
             )
             return true;
     }
-    return false;    
+    return false;
 }
 
 function bool HasMetDifficultyRequirement()
@@ -122,4 +125,3 @@ function SetHasMetDifficultyRequirement( bool inSuccess )
 defaultproperties
 {
 }
-

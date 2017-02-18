@@ -137,19 +137,25 @@ function bool CheckCampaignValid( class EquipmentClass )
 	local int i;
 	local int CampaignPath;
 	local ServerSettings Settings;
-	
+
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
-	
+
 	MissionIndex = (Settings.ArrestRoundTimeDeduction & -65536) >> 16;
 	CampaignPath = Settings.ArrestRoundTimeDeduction & 65535;
 
 	log("mezzo: " $ CampaignPath $ ", " $ MissionIndex);
-	
+
 	// Any equipment above the MissionIndex is currently unavailable
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
-		for (i = MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
+    // Check first set of equipment
+		for (i = MissionIndex + 1; i < GC.MissionName.Length; ++i)
 			if (GC.MissionEquipment[i] == EquipmentClass)
 				return false;
+
+    // Check second set of equipment
+    for(i = GC.MissionName.Length + MissionIndex; i < GC.MissionEquipment.Length; ++i)
+      if(GC.MissionEquipment[i] == EquipmentClass)
+        return false;
 	}
 	return true;
 }

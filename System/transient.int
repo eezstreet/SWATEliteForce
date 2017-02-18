@@ -5027,8 +5027,6 @@ TimeLineTime=("23 Sept","19:42","19:55","20:24")
 TimeLineShortDescription=("Warrant issued","Suspect spotted","SWAT arrives","Tactical Entry")
 TimeLineLongDescription=(" - Food Wall placed under surveillance."," - Alex Jimenez is observed entering Food Wall Restaurant by Detective Carl Sheary. Sheary then notifies TCC."," - SWAT arrives on scene. High ground and Containment teams put in place."," - Decision is made to go tactical. Entry team is assembled.")
 LoadingText=1572 Norman St., Food Wall Restaurant
-NewEquipmentName=TASER M26C Stun Gun
-NewEquipmentDescription=Stun guns work on the principle of Electro-Muscular Disruption (EMD).  This projectile model fires small electrodes into the target and then sends a powerful electric charge down the thin wires.  The EMD effect causes involuntary contraction of the target's muscle tissue regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects.||EMD devices have three key drawbacks.  The first is that they have a relatively short range.  The second is that new electrodes must be loaded after each shot. Lastly, EMD poses numerous risks, including possible cardiac arrest in drug users, the elderly, or those with specific medical conditions.
 
 [SP-ConvenienceStore]
 PrimarySpawnPoint=Side Entrance
@@ -5050,8 +5048,6 @@ TimeLineTime=("06:15","06:30","06:45","07:15")
 TimeLineShortDescription=("911 Call","SWAT Arrives","CNT contacts suspects","Tactical entry begun")
 TimeLineLongDescription=(" - 911 call by customer, reporting a gunman and a potential hostage situation at the Qwik Fuel. Dispatch notifies emergency services. SWAT notified."," - SWAT arrives on scene. High ground established; containment perimeter confirmed."," - CNT (Crisis Negotiation Team) confirms presence of three hostages and at least 3 armed suspects. Entry team assembled."," - Shots fired. Decision made to go tactical.")
 LoadingText=3721 Pitkin Ave., Qwik Fuel
-NewEquipmentName=Benelli M4 Super90
-NewEquipmentDescription=The Benelli M4 Super90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its five round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has two drawbacks.  The first is that its bulk can make it difficult to handle in close quarters situations.  The second is its small magazine size.
 
 [SP-Arcade]
 PrimarySpawnPoint=Service Entrance
@@ -5074,8 +5070,6 @@ TimeLineTime=("16:26 ","16:33 ","16:51")
 TimeLineShortDescription=("911 Call","First units arrive","Tactical entry begun")
 TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol Units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
 LoadingText=1401 Gower St., FunTime Amusement Arcade
-NewEquipmentName=Gas Mask
-NewEquipmentDescription=The gas mask provides the wearer with immunity to CS gas, and greatly reduces the duration of the effect of pepper spray.  Unfortunately it causes restricted vision and offers no ballistic protection.
 
 [SP-AutoGarage]
 PrimarySpawnPoint=Parking Garage Entrance
@@ -5097,8 +5091,6 @@ TimeLineTime=("01:19","01:23","01:27","01:35","01:42","01:50","02:02","03:10","0
 TimeLineShortDescription=("911 Call","Multiple suspects seen","CP established","SWAT arrives","Surround & Call Out","CNT contacts","Demand: Allow escape","Demand: Kevlar vests","Threat to hostages","Tactical action taken")
 TimeLineLongDescription=(" - 911 reporting attempted auto theft at Victory Imports Auto Center.  32 Adam dispatched to investigate."," - 32 Adam reports multiple armed suspects."," - Patrol officers establish containment perimeter.  SWAT notified."," - SWAT arrives on site.  High ground and containment teams put in place."," - Suspects were ordered to leave the building.  No response."," - CNT makes contact with suspects by phone."," - Suspects demand to be allowed to go free by 0400."," - Suspects demand kevlar vests.  Request is denied."," - Suspects repeat demand to be freed by 0400.  Threaten hostage."," - Decision made to go tactical to ensure the safety of the hostage.  Entry team is assembled.")
 LoadingText=487 29th Ave., Victory Imports
-NewEquipmentName=Less-than-Lethal Shotgun
-NewEquipmentDescription=The less lethal shotgun is a Benelli Nova, pump-action shotgun which is always loaded with less than lethal beanbag rounds.  It is most often used on an uncooperative suspect or civilian.  The specially designated less lethal shotgun is necessary to eliminate errors that can occur from individually loading lethal or less than lethal munitions into the same weapon.  To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted green.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation.
 
 [SP-HalfwayHouse]
 PrimarySpawnPoint=Front Entrance
@@ -5120,8 +5112,6 @@ TimeLineTime=("9:04","9:22","9:47","11:32")
 TimeLineShortDescription=("911 Call","First Units Arrive"," CNT Attempts Contact ","Shots Heard - Tactical entry begun")
 TimeLineLongDescription=(" - 911 emergency call received from post office guard."," - Patrol officers arrive and establish containment perimeter.  SWAT and CNT notified."," - CNT (Crisis Negotiation Team) attempts contact without response.","  - Shots fired. Decision made to go tactical.")
 LoadingText=796 Newbury St., Our Sisters of Mercy
-NewEquipmentName=Pepper-ball Launcher
-NewEquipmentDescription=The Pepper-ball gun is based on technology originally designed for recreational paintball.  Compressed Carbon Dioxide ejects the ammunition at relatively high velocities.  The Pepper-ball gun allows officers to quickly deploy OC at specific targets, in more easily controlled quantities, and at significantly longer ranges than a grenade or standard pepper spray.  With the large ammunition hopper this weapon never needs to be reloaded under normal operating conditions.
 
 [SP-ABomb]
 PrimarySpawnPoint=Front Entrance
@@ -5142,8 +5132,6 @@ TimeLineTime=("23:27","23:30","23:42")
 TimeLineShortDescription=("Shots fired; 911 Calls","Perimeter established","SWAT arrives")
 TimeLineLongDescription=(" - First 911 calls logged reporting shooting at the club.  SWAT notified."," - Patrol Units arrive on scene and begin to set up a perimeter and perform first aid on initial victims.  Patrol radios for ambulances."," - SWAT arrives on scene.  Due to ongoing live fire, SWAT immediately goes tactical to neutralize the situation.")
 LoadingText=1536 Adelaide Ave., The A-Bomb
-NewEquipmentName=Riot Helmet
-NewEquipmentDescription=The riot helmet offers superior damage protection, while also reducing the effects of CS gas and pepper spray by reducing contact with the face. It does not, however, protect against flashbangs.
 
 [SP-Casino]
 PrimarySpawnPoint=Back Door
@@ -5165,8 +5153,6 @@ TimeLineTime=("14:03","15:30","16:30","17:05","17:28","17:32")
 TimeLineShortDescription=("Walsh checks in","Walsh's wire signal lost","Walsh's Lieutenant briefed","Warrants issued","SWAT arrives","Tactical entry begun")
 TimeLineLongDescription=(" - Detective Walsh checks in with his handler and notifies him that he will be entering the shop at 12:45."," - Walsh's wire suddenly goes to static with no clear indication of what the malfunction is."," - Lieutenant Collins is briefed of the situation and the missed call.  All officers involved believe Walsh has been made.  DA is notified."," - Arrest warrants are issued.  SWAT dispatched to scene."," - Containment perimeter and high ground established."," - Decision made to go tactical. Entry team assembled.")
 LoadingText=1092 Westfield Rd., Northside Vending and Amusements
-NewEquipmentName=FN P90 PDW
-NewEquipmentDescription=The P90 was developed by the Belgian company FN in conjunction with their Five-Seven in response to NATO's requests for a replacement to 9x19mm firearms. It began production in 1990 (hence the name P90), and features a futuristic and ambidextrous design. It remains in service in over 40 countries worldwide.||One of the unique features of the P90 is its top-loaded magazine. It can hold an abnormally large amount of ammunition due to its compact design.
 
 [SP-RedLibrary]
 PrimarySpawnPoint=Front Entrance
@@ -5188,8 +5174,6 @@ TimeLineTime=("14:02","14:24","14:30","14:34","14:45","15:03","16:22","18:03","1
 TimeLineShortDescription=("Gunmen sighted","SWAT Arrives","CNT contacts suspects","First demand issued","Hostages exchanged","Deadline passes","Hostages exchanged","Shots fired","Entry begun")
 TimeLineLongDescription=(" - Gunmen enter building."," - SWAT Arrives. Containment perimeter and high ground established."," - CNT makes first contact with suspects; no names given, no progress made."," - Demand for 5 million dollars and a helicopter made; deadline of 15:00."," - As a concession two hostages are exchanged for bulletproof vests."," - CNT convinces suspects that the first demand was unreasonable.  New demand for armored vehicle.  New deadline set at 18:00."," - In an effort to buy more time, CNT agrees to trade gas masks for the release of more hostages.  Suspects showing signs of fatigue and are becoming agitated."," - Suspect threatened hostage while on phone with CNT.  Civilian injuries are expected.  Phone went dead, gunfire continued.  Decision made to go tactical."," - Due to ongoing fire tactical entry begun.")
 LoadingText=732 Gridley St., Red Library Inc.
-NewEquipmentName=Colt Accurized Rifle
-NewEquipmentDescription=The Colt Accurized Rifle occupies the mid ground between an assault rifle and a dedicated sniper rifle. The CAR combines accurate fire at range with the large ammo capacity required for urban field use, plus mounting points for a variety of scopes. Firing a 5.56mm round from a 20 round magazine, the CAR is only capable of firing in semiautomatic mode. Its length can make it a difficult weapon to wield in close quarters.
 
 [SP-Backstage]
 PrimarySpawnPoint=Main Entrance
@@ -5211,8 +5195,6 @@ TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
 TimeLineShortDescription=("Suspects Enter Auditorium","Patrol Cars Arrive","Perimeter Established"," CNT Arrive","Suspect Demands"," Shots Fired.")
 TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enter.")
 LoadingText=1801 Sellers St., The Sellers Street Auditorium
-NewEquipmentName=H&K UMP .45 Submachine Gun
-NewEquipmentDescription=The UMP is the cheaper and lighter successor to the MP5.  Built largely of glass-fiber reinforced polymers, this lightweight submachine gun provides the same reliability as the MP5, but with the added punch of the larger .45 ACP caliber round.  The heavy bullet provides superior penetration of armored targets with FMJ rounds compared to its 9mm brethren, despite having a lower muzzle velocity and slower cyclical rate of fire.  This model is equipped with a fire mode selector allowing semi-automatic, two round burst and fully automatic firing modes.
 
 [SP-JewelryHeist]
 PrimarySpawnPoint=Front Door, Main Lobby
@@ -5233,8 +5215,6 @@ TimeLineTime=("16:57","16:59","17:05","17:11")
 TimeLineShortDescription=("Alarm triggers","SWAT notified","SWAT Arrives","Tactical entry begun")
 TimeLineLongDescription=(" - Alarm triggered at DuPlessis Wholesale. Dispatch notified patrol."," - 911 Call comes in. Dispatch notified emergency services; SWAT notified."," - SWAT Arrives. Containment perimeter and high ground established."," - Decision made to go tactical.")
 LoadingText=1725 Broadway, DuPlessis Wholesale Diamonds
-NewEquipmentName=HK69 Grenade Launcher
-NewEquipmentDescription=The grenade launcher has become a standard piece of police equipment for use in unusual situations such as hostage rescue or riot control. Its ability to fire a wide range of direct and indirect less-lethal ammunitions has proved it to be extremely versatile.
 
 [SP-Tenement]
 PrimarySpawnPoint=Front Door
@@ -5256,8 +5236,6 @@ TimeLineTime=("11:30","11:49","12:00","16:45")
 TimeLineShortDescription=("Warrant acquired","SWAT Arrives","Call out","Tactical entry begun")
 TimeLineLongDescription=(" - Warrant acquired for Andrew Taronne."," - SWAT Arrives. Containment perimeter and high ground established."," - Surround and call out.  No response."," - After hours with no response from inhabitants, the decision is made to go tactical. Entry team assembled.")
 LoadingText=2189 Carrols Rd., Taronne Tenement
-NewEquipmentName=Night Vision Goggles
-NewEquipmentDescription=NVGs work by amplifying available light and allow the wearer to see in dark areas. Due to their lack of color and limited field of vision, the goggles can make it more difficult to distinguish friend from foe.
 
 [SP-Office]
 PrimarySpawnPoint=Main Entrance
@@ -5279,8 +5257,6 @@ TimeLineTime=("17:12","17:19","17:26","17:41","17:48","17:59")
 TimeLineShortDescription=("Suspects Enter Building."," Bomb Detonates.","Police Units Arrive.","Fire Crews Arrive.","Rescue Crew Fired Upon, SWAT Called.","Tactical entry begun")
 TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire Crews Arrive."," - Fire under control, rescue crew fired upon."," - Swat officers make tactical entry ")
 LoadingText=2112 Geddy Ave., The Department of Agriculture
-NewEquipmentName=Ammo Bandolier
-NewEquipmentDescription=The ammo pouch allows for the operator to carry more ammunition for most weapons.
 
 [SP-Hospital]
 PrimarySpawnPoint=Approach to main foyer
@@ -5302,8 +5278,6 @@ TimeLineTime=("22:20","22:33","00:20","00:23","00:34")
 TimeLineShortDescription=("Initial Attack","Hyun-Jun Park at hospital","Hospital attacked","SWAT dispatched","Tactical entry begun")
 TimeLineLongDescription=(" - Initial attack on the diplomat and security personnel; Hyun-Jun Park injured, sent to St. Michael's Medical Center."," - Hyun-Jun Park admitted to the hospital."," - Gunmen attack the hospital; Alarm tripped."," - SWAT is sent to the scene instructed to follow rapid deployment tactics.  "," - SWAT arrives and immediately enters the building to bring order to chaos.")
 LoadingText=691 87th St., St. Michael's Medical Center
-NewEquipmentName=Silenced IMI Uzi
-NewEquipmentDescription=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel.  It has a very high rate of fire and can be hard to control when fired in full auto mode.  This model is equipped with a suppressor making it a more stealthy choice. Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
 
 [SP-ArmsDeal]
 PrimarySpawnPoint=Front yard
@@ -5325,8 +5299,6 @@ TimeLineTime=("13:12","22:00","23:47")
 TimeLineShortDescription=("Tip delivered","SWAT arrives","Tactical entry begun")
 TimeLineLongDescription=(" - Detective Jennings reports expected arms deal exchange to occur tonight at 23:45. OCCB authorizes arrests.  SWAT notified."," - SWAT arrives. Concealed containment perimeter and high ground put in place."," - The deal begins.  Entry team dispatched.")
 LoadingText=1210 Canopy Rd., The Wolcott Projects
-NewEquipmentName=TEC-DC9 Machine Pistol
-NewEquipmentDescription=This infamous machine pistol was developed by Intratech, a Miami offshoot of the Swedish company Interdynamic. The TEC-DC9 received noteriety after the Columbine and Cleveland school shootings. Criminals often modify this semi-automatic weapon for full automatic use, and it is banned in several US states by name.
 
 [SP-DrugLab]
 PrimarySpawnPoint=Front Door
@@ -5347,8 +5319,6 @@ TimeLineTime=("15:00","18:17","18:41","19:08")
 TimeLineShortDescription=("Search Warrant Issued.","Perimeter Established.","SWAT Arrives","SWAT Enter")
 TimeLineLongDescription=(" - Search Warrant Issued."," - Perimeter established."," - SWAT arrives on scene and makes initial assessment. "," - Swat officers make tactical entry ")
 LoadingText=653 Tovanen St., Stetchkov Drug Lab
-NewEquipmentName=TASER C2 Series Stun Gun
-NewEquipmentDescription=The C2 model is a dual-purpose less-lethal weapon. It possesses both a ranged means of Electro-Muscular Disruption (EMD) and a touch-stun mode. The electrical discharge causes involuntary contraction of the target's muscle tissue, regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. The C2 can fire darts in groups of four or two separate groups of two. It can also be used in touch-stun mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors. The main drawback is the reduced range of the C2 cartridges in comparison to the newer M26C model.
 
 [SP-Subway]
 PrimarySpawnPoint="Fresnal Street Entrance "
@@ -5370,8 +5340,6 @@ TimeLineTime=("17:04","17:16","17:33")
 TimeLineShortDescription=("911 Call"," First Units Arrive"," SWAT Enter")
 TimeLineLongDescription=(" - 911 Call received and SWAT notified"," - First units arrive and perimeter established and confirmed."," - SWAT goes tactical ")
 LoadingText=Fresnal St. Station
-NewEquipmentName=ProArmor Helmet
-NewEquipmentDescription=The ProArmor Helmet has a sleek, dual-layer design that provides the best head protection. It has no other benefits, however.
 
 [SP-Warehouse]
 PrimarySpawnPoint=Main Entrance
@@ -5393,8 +5361,6 @@ TimeLineTime=("19:04","19:27","19:35","19:47")
 TimeLineShortDescription=(" Arrest Warrant Issued.", "First units arrive.", "Perimeter Established.", "SWAT Entry.")
 TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
 LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
-NewEquipmentName=Desert Eagle .50AE
-NewEquipmentDescription=This semiautomatic pistol holds eight .50 Action Express rounds, providing the greatest stopping power of any handgun outside a revolver. Favored by criminals for its considerable intimidation potential, it is often eschewed as a practical combat weapon due to its low ammunition capacity and excessive weight.
 
 [SP-Hotel]
 PrimarySpawnPoint=Elevator Shaft
@@ -5416,8 +5382,6 @@ TimeLineTime=("12:30","14:17","14:40","14:53","15:12","15:47","17:57","18:12")
 TimeLineShortDescription=("Arranged meeting","Lost contact","Ransom demand","SWAT arrives","Additional demands","Additional demands","Negotiations fail","Tactical entry begun")
 TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - Charles Betincourt, owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 milllion dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
 LoadingText=1700 West 7th Ave., Old Granite Hotel
-NewEquipmentName=AK-47 Assault Rifle
-NewEquipmentDescription=The Kalashnikov AK-47 was designed in the Soviet Union in 1945 and began its field trials in 1946. It was officially accepted by the Soviet army in 1949 and became standard issue in 1951.  It has remained in service in many third world armies as well as terrorist organizations around the world due to its dependability and the ease at which it can be maintained.  It has a slower rate of fire and lower muzzle velocity than the Colt M4A1, but uses a higher caliber bullet which makes it comparable to its American counterpart at short ranges.  Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
 
 [SP-DNA]
 PrimarySpawnPoint=Front Door
@@ -5440,8 +5404,6 @@ TimeLineTime=("20:12","20:19","20:28","22:43","23:27","00:12","00:45")
 TimeLineShortDescription=("Alarm wires cut","Cruiser arrives","SWAT arrives","Negotiations begun ","CNT IDs Trouffant","Suspects make demands","Tactical entry approved")
 TimeLineLongDescription=(" - The security system connection to University Police is lost.  Patrol car is dispatched to investigate."," - University Police arrive and investigate, finding wires cut.  Shots are fired at Police from inside the building.  Dispatch is notified.  SWAT is requested."," - Containment perimeter and high ground are established."," - CNT contacts suspects."," - CNT contacts suspects and is able to identify Jean Trouffant.  Army of Faith manifesto is read to CNT over the phone, confirming connection to the group."," - Suspects demand additional supplies including food and ammunition.  CNT agrees to food, but not to ammunition.  Suspects unsatisfied and verbally threaten hostages."," - Repeated attempts to contact Trouffant fail.  CNT believes that the hostages may be in danger based on the last contact.  CNT suggests that it is time for a tactical entry.")
 LoadingText=72 Mt. Threshold Ave., Mt. Threshold Research Center
-NewEquipmentName=M249 SAW Light Machine Gun
-NewEquipmentDescription=This light support weapon is intended only for military operations; however as with most weapons some are available on the black market. The weapon is designed to be fired accurately from the hip or shoulder, though it is more commonly fired from a deployed bipod. It uses a box magazine holding 200 rounds of disintegrating-link ammunition.
 
 [Custom_Timed]
 Description=Debrief before the timer expires
