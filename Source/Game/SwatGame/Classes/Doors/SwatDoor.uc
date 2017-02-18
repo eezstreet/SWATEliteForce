@@ -2502,7 +2502,7 @@ simulated function float GetQualifyTimeForC2Charge()
 simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vector HitNormal, int Damage, class<DamageType> DamageType, Actor Instigator)
 {
     //if a SwatDoor's REGION_Door_BreachingSpot is hit by a ShotgunDamageType, then the door has been blasted.
-    if (RegionHit == REGION_Door_BreachingSpot && ClassIsChildOf( DamageType, class'Shotgun' ) && !ClassIsChildOf( DamageType, class'LessLethalSG' ) )
+    if (RegionHit == REGION_Door_BreachingSpot)
     {
         assertWithDescription(Instigator.IsA('SwatPawn'),
             "[tcohen] SwatDoor::OnSkeletalRegionHit() RegionHit is REGION_Door_BreachingSpot and DamageType is FrangibleBreachingAmmo, but Instigator is not a SwatPawn.");
