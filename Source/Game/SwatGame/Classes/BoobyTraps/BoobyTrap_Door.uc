@@ -1,7 +1,7 @@
 class BoobyTrap_Door extends BoobyTrap;
 
 // Base class of booby traps that are attached to doors
-
+var() config bool C2DisablesThis "If true, C2 disables the trap instead of triggering it";
 
 function OnBoobyTrapInitialize()
 {

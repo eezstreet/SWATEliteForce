@@ -145,6 +145,7 @@ function int PickRandomPatrolIndex(int Previous) {
   local int Index;
 
   Index = int(RandRange(0, Patrol.GetNumPatrolEntries()));
+  log("PickRandomPatrolIndex: picked "$Index$" from 0 to "$Patrol.GetNumPatrolEntries()$" points");
 
   // If we've hit the same patrol index, try again until we find one that isn't the same
   /*if(Index == Previous) {
@@ -186,7 +187,11 @@ Begin:
 	useResources(class'AI_Resource'.const.RU_ARMS);
 
 //    log(self@" running at time"@Level.TimeSeconds);
-    CurrentPatrolIndex = 0;
+    if(ShouldWander()) {
+      UpdatePatrolIndex();
+      log(self$" is a wandering character, so they have a new starting patrol index of "$CurrentPatrolIndex);
+    }
+
     goto('Patrolling');
 
 Patrolling:

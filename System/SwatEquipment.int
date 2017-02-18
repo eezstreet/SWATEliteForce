@@ -1,5 +1,173 @@
+﻿
+[Arwen37GL]
+Description=The ARWEN 37 (ARWEN being short for "Anti-Riot Weapon ENfield") was designed by request of the British Military for a capable riot control weapon. It certainly meets that criteria - boasting a five-round rotary drum and tactical flashlight, the ARWEN 37 is a solid choice in delivering ordinance. The weapon is heavier than the HK69 however, and is only designed to be used by a grenadier's role.
+FriendlyName=ARWEN 37
+Manufacturer=Royal Small Arms Factory
+Caliber=37mm
+CountryOfOrigin=Great Britain
+ProductionStart=1977
+FireModes=Semi-Automatic
+MagazineSizeString=5
+TotalAmmoString=25 shells
+RateOfFire=Unknown
+
+[BrowningHPHG]
+Description=The Browning Hi-Power is one of the most widely used pistols in history, having seen service in World War II, the Korean War, and more than a dozen other conflicts. The Browning Hi-Power started design by John Browning in 1914, but didn't see production until 1935, when it was finished by FN Herstal. The name alludes to its impressive 13-round magazine, which at the time, was double the standard pistol magazine-size. This variant in particular is chambered in 9x19mm Parabellum.
+FriendlyName=Browning Hi-Power
+Manufacturer=Browning
+Caliber=9x19mm
+CountryOfOrigin=United States
+ProductionStart=1935
+FireModes=Semi-Automatic
+MagazineSizeString=13
+TotalAmmoString=10 magazines
+RateOfFire=390 RPM
+
+[SilencedBrowningHPHG]
+Description=The Browning Hi-Power is one of the most widely used pistols in history, having seen service in World War II, the Korean War, and more than a dozen other conflicts. The Browning Hi-Power started design by John Browning in 1914, but didn't see production until 1935, when it was finished by FN Herstal. The name alludes to its impressive 13-round magazine, which at the time, was double the standard pistol magazine-size. This variant in particular is chambered in 9x19mm Parabellum and is equipped with a sound and flash suppressor for when stealth is paramount.
+FriendlyName=Suppressed Browning Hi-Power
+Manufacturer=Browning
+Caliber=Subsonic 9x19mm
+CountryOfOrigin=United States
+ProductionStart=
+FireModes=Semi-Automatic
+MagazineSizeString=13
+TotalAmmoString=10 magazines
+RateOfFire=390 RPM
+
+[P226HG]
+Description=The SIG Sauer P226 is the high capacity version of the P220, using double stacked, 20-round magazines instead of the latter's single stacked magazines. Chambered in 9x19mm, the P226 is widely used in police departments throughout the United States and Canada. 
+FriendlyName=P226
+Manufacturer=SIG Sauer
+Caliber=9x19mm
+CountryOfOrigin=Germany
+ProductionStart=1984
+FireModes=Semi-Automatic
+MagazineSizeString=20
+TotalAmmoString=10 magazines
+RateOfFire=390 RPM
+
+[SilencedP226HG]
+Description=The SIG Sauer P226 is the high capacity version of the P220, using double stacked, 20-round magazines instead of the latter's single stacked magazines. Chambered in 9x19mm, the P226 is widely used in police departments throughout the United States and Canada. This model is equipped with a sound and flash suppressor for when stealth is paramount.
+FriendlyName=Suppressed P226
+Manufacturer=SIG Sauer
+Caliber=Subsonic 9x19mm
+CountryOfOrigin=Germany
+ProductionStart=1984
+FireModes=Semi-Automatic
+MagazineSizeString=20
+TotalAmmoString=10 magazines
+RateOfFire=390 RPM
+
+[HK33MG]
+Description=While Heckler & Koch's MP5 submachine gun is more popular amongst SWAT, the company at this time developed three other firearms built on the highly successful G3 framework - one of them being the HK33. The HK33A2 bears a rigid synthetic stock and is based on the original G3 design, utilizing the same roller-delayed blowback operating mechanism but on a smaller 5.56x45mm NATO bullet.
+FriendlyName=HK33A2
+Manufacturer=Heckler & Koch
+Caliber=5.56x45mm NATO
+CountryOfOrigin=West Germany
+ProductionStart=1968
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
+[HK33sMG]
+Description=While Heckler & Koch's MP5 submachine gun is more popular amongst SWAT, the company at this time developed three other firearms built on the highly successful G3 framework - one of them being the HK33. The HK33A2 bears a rigid synthetic stock and is based on the original G3 design, utilizing the same roller-delayed blowback operating mechanism but on a smaller 5.56x45mm NATO bullet. This variant is equipped with a 4x scope for precision shots at long range.
+FriendlyName=Scoped HK33A2
+Manufacturer=Heckler & Koch
+Caliber=5.56x45mm NATO
+CountryOfOrigin=West Germany
+ProductionStart=1968
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
+[SG552MG]
+Description=The SIG SG 552 Commando is the smaller, carbine version of the SG 550. Because of its small size, and light weight, it is a very useful weapon for SWAT teams around the globe. This variant is chambered in 5.56x45mm NATO.
+FriendlyName=SG 552 Commando
+Manufacturer=Sig Sauer
+Caliber=5.56x45mm Mk.262
+CountryOfOrigin=Switzerland
+ProductionStart=1998
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=20
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
+[SilencedSG552MG]
+Description=The SIG SG 552 Commando is the smaller, carbine version of the SG 550. Because of its small size, and light weight, it is a very useful weapon for SWAT teams around the globe. This variant is chambered in 5.56x45mm NATO, and features a suppressor for when stealth is paramount.
+FriendlyName=Suppressed SG 552 Commando
+Manufacturer=Sig Sauer
+Caliber=5.56x45mm Mk.262
+CountryOfOrigin=Switzerland
+ProductionStart=1998
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=20
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
+[M16A1MG]
+Description=Originally designed in 1964 based on the Armalite AR-15 blueprints, the M16 rifle was first deployed in the jungles of Vietnam. The M16A1 was an incremental improvement, redesigning the muzzle to avoid catching on foliage and reducing the high failure rate of its predecessor's receiver. This particular variant is equipped with a tactical flashlight.
+FriendlyName=M16A1
+Manufacturer=Colt
+Caliber=5.56x45mm NATO
+CountryOfOrigin=United States
+ProductionStart=1967
+FireModes=Semi-Automatic, Full Auto
+MagazineSizeString=20
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
+[SilencedM16A1MG]
+Description=Originally designed in 1964 based on the Armalite AR-15 blueprints, the M16 rifle was first deployed in the jungles of Vietnam. The M16A1 was an incremental improvement, redesigning the muzzle to avoid catching on foliage and reducing the high failure rate of its predecessor's receiver. This particular variant is equipped with a suppressor and a tactical flashlight.
+FriendlyName=Suppressed M16A1
+Manufacturer=Colt
+Caliber=5.56x45mm NATO
+CountryOfOrigin=United States
+ProductionStart=1967
+FireModes=Semi-Automatic, Full Auto
+MagazineSizeString=20
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
+[MP5SSDSMG]
+Description=The MP5SD6 is a variant of the MP5 equipped with an integrated suppressor and collapsible stock. It is very popular among covert-ops forces and is deployed in stealth operations around the globe. This weapon is chambered in 9x19mm Parabellum rounds.
+FriendlyName=MP5SD6
+Manufacturer=Heckler & Koch
+Caliber=9x19mm
+CountryOfOrigin=Germany
+ProductionStart=1974
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=10 magazines
+RateOfFire=800 RPM
+
+[MP5KSMG]
+Description=The MP5KA4 (the K being "Kurz", German for "short") was designed as a close quarters combat version of the popular MP5 line of submachine guns. While it has minimal carry weight and a small form factor, it is difficult to use due to the lack of a stock. Despite this, it remains popular by security and special forces around the globe, including the British Special Air Service.
+FriendlyName=MP5KA4
+Manufacturer=Heckler & Koch
+Caliber=9x19mm
+CountryOfOrigin=Germany
+ProductionStart=1976
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=10 magazines
+RateOfFire=900 RPM
+
+[Remington870SG]
+Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This weapon can be modified with special breaching ammunition for quick room entries, or beanbags for a less-lethal approach.
+FriendlyName=M870
+Manufacturer=Remington
+Caliber=12 Gauge
+CountryOfOrigin=United States
+ProductionStart=1950
+FireModes=Pump-Action
+TotalAmmoString=50 shells
+RateOfFire=150 RPM
+
 [M4Super90SG]
-Description=The Benelli M4 Super 90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its seven round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has one drawback.  Its bulk can make it difficult to handle in close quarters situations.
+Description=The Benelli M4 Super 90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its seven round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has one drawback - its bulk can make it difficult to handle in close quarters situations.
 FriendlyName=M4 Super 90
 Manufacturer=Benelli
 Caliber=12 Gauge
@@ -102,7 +270,7 @@ ProductionStart=1974
 FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
 MagazineSizeString=30
 TotalAmmoString=10 magazines
-RateOfFire=900 RPM
+RateOfFire=800 RPM
 
 [SilencedMP5SMG]
 Description=This 9mm submachine gun was designed by H&K, a world renowned German manufacturer.  It is preferred by many para-military groups throughout the world for urban tactical engagements.  Firing either full metal jacket or jacketed hollow point 9x19mm ammunition it is versatile, but lacks the stopping power of an assault rifle.  Its key advantage is its compact design, which allows superior maneuverability in indoor situations.  This model is equipped with a fire mode selector allowing automatic, semi-automatic and three round burst firing modes.  It also sports a sound and flash suppressor for when stealth is paramount.
@@ -110,7 +278,7 @@ FriendlyName=Suppressed MP5A4
 Manufacturer=Heckler & Koch
 Caliber=Subsonic 9x19mm
 CountryOfOrigin=Germany
-ProductionStart=1964
+ProductionStart=1974
 FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
 MagazineSizeString=30
 TotalAmmoString=10 magazines
@@ -267,7 +435,7 @@ TotalAmmoString=200 pepper-balls
 RateOfFire=600 RPM
 
 [Wedge]
-Description=While locking a door may slow a suspect down, it is not a surefire way of preventing movement through a door. The Door Wedge allows the operator to completely block a door from opening. This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
+Description=This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
 FriendlyName=Door Wedge
 
 [Optiwand]

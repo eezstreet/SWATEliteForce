@@ -67,7 +67,7 @@ function Deactivate()
 
 function ReactToUsed(Actor Other)
 {
-    if ( bActive && Other.IsA('Toolkit') )
+    if ( bActive && (Other.IsA('Toolkit') || Other.IsA('SwatDoor')) )
     {
         Super.ReactToUsed(Other);
         Deactivate();

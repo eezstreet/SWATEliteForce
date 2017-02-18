@@ -43,14 +43,21 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 
 # CHANGES, SUMMARIZED #
 	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
-	* New EXTRA MISSIONS. These are a separate campaign that show in the Create Campaign menu dropdown (you'll have a choice, either SWAT 4 + TSS or EXTRA MISSIONS)
+	* New campaign options! Now you will have a good reason to create more than one campaign...
+		** A new EXTRA MISSIONS campaign. These are curated missions which have voice acting, full maps, and scripting, and they are designed to feel like part of the original game.
+		** Now you can create an ALL MISSIONS campaign. This pulls all of the installed maps from your hard drive and makes them into a campaign, albeit without briefings. Great for use with an installed custom map pack, such as the Mega Map Pack!
+		** ..and of course, the original SWAT 4 + TSS missions are a third campaign option.
+		** PERMADEATH. There are two Permadeath options, for the extra challenge. AI Permadeath makes slain SWAT officers never come back, and Player Permadeath ends your campaign once you die.
+		** CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath) campaign in multiplayer. Help your friends complete their campaigns!
 	* Important QOL (quality-of-life) and playability features that are essential to playing the game.
 		** There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
 	* Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
 		** Suspects will also try to shoot at you as they're fleeing.
+		** Suspects now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
 	* Smarter Officer AI!
 		** Upon restraining a target, SWAT officers will now report it to TOC automatically!
-		** SWAT officers are much more efficient at moving through doorways and are better at engaging suspects
+		** SWAT officers are much more efficient at clearing rooms
+		** SWAT officers can now take cover like suspects do (including leaning around corners)
 	* Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
 		** This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
 	* New secondary objective: collect drug evidence. Static drug bags have been replaced with new ones that can be collected.
@@ -82,7 +89,9 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 	* Harsher penalties. Incapacitated hostages and suspects now need to be reported to TOC; deadly force is more scrutinized and can be incurred by more means (AI controlled officers using C2 and snipers are two good examples)
 		** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
 		** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
-	* The game reveals much more information to you. A warning will display when you have made a penalty, and a message will show when you have completed an objective.
+		** The game reveals much more information to you. A warning will display when you have made a penalty, and a message will show when you have completed an objective.
+	* Multiplayer improvements!
+		** Snipers are now available in multiplayer.
 
 # KNOWN ISSUES #
   * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
@@ -92,10 +101,9 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
   * The game sometimes freezes during loading. Hit ENTER a few times and it will clear itself up. The internal script garbage collector crashes for reasons unknown but it's completely harmless.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
+  * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
   * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
   * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
-  * MULTIPLAYER: "GUIBASE.ini incompatible with server" --> Make sure both you AND the server are using the same GUIBase.ini file.
-  * Meat Barn is a bit glitchy in CO-OP at the moment. It seems to freeze the server. Best to avoid it until it gets figured out.
 
 # OTHER MINOR CHANGES #
 
@@ -417,6 +425,58 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 
 
 # VERSION HISTORY #
+
+### v5 ###
+
+#### MAJOR FEATURES ####
+- Campaign Co-op!
+  * You can now play any campaign in multiplayer. Beating missions in campaign co-op advances your singleplayer career. You will need to unlock equipment, just like in singleplayer, and there is a score requirement to win.
+  * Simply select a previously created campaign from the menu and hit the CAREER CO-OP button to begin.
+  * Some campaigns cannot be played in co-op (see below for restrictions)
+- Permadeath!
+  * AI Permadeath option will kill your AI officers permanently when they die.
+  * Player permadeath option will instantly end your campaign permanently when you die.
+  * Campaigns with permadeath options enabled cannot be played in Campaign co-op.
+- All Missions campaign!
+  * There is a new campaign path, titled All Missions. This includes every map you have on your hard drive, including customs, so you can play them in singleplayer.
+  * All Missions campaigns cannot be played in Campaign co-op.
+- AI improvements!
+  * Officers can now take cover while engaging suspects, and may lean/crouch while doing so.
+  * Suspects and civilians can now wander all over the map (this depends on the map mostly)
+- Equipment changes!
+  * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
+
+#### MINOR FEATURES ####
+- Snipers can now be used in multiplayer. Leaders can control the viewport, and all players receive notifications.
+
+#### SAS WEAPONS ####
+The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
+
+- Browning Hi-Power
+  * Pistol. Medium capacity 9mm pistol with decent stopping power.
+  * Has a silenced variant.
+- P226
+  * Pistol. High capacity 9mm pistol with low stopping power.
+  * Has a silenced variant.
+- MP5K
+  * Machine Pistol/SMG. 9mm, low accuracy and high recoil, but low weight and bulk. Comparable to the TEC-9.
+  * Has a silenced variant.
+- MP5SSD
+  * SMG.
+- ARWEN 37 Grenade Launcher
+  * Grenade Launcher. 5 round magazine, but it can only be equipped as a primary and it has high weight/bulk.
+- M16A1
+  * Assault Rifle. Better at range than the M4, but heavier.
+  * Has a silenced variant.
+  * Only available in Multiplayer CO-OP.
+- HK33
+  * Assault Rifle. Better at range than the G36C, but heavier.
+  * Has a scoped variant.
+- SG552 Commando
+  * Carbine. Lightweight; comparable to the G36C.
+  * Has a silenced variant.
+- Remington 870
+  * Lightweight, pump action shotgun. Lower stopping power than other shotguns.
 
 ### v4.1 ###
 This is a hotfix patch to address some common issues that have been raised.

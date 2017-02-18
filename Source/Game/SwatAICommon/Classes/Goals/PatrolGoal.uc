@@ -27,7 +27,7 @@ overloaded function construct( AI_Resource r, PatrolList inPatrol )
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-    priority           = 35
+    priority           = 30
     goalName           = "Patrol"
 	bTerminateIfStolen = true
 }
