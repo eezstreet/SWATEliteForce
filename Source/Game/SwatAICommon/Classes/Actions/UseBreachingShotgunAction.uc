@@ -203,7 +203,7 @@ latent function BreachDoorWithShotgun()
 
     // @NOTE: Pause for a brief moment before shooting to make the shot look
     // more deliberate
-    Sleep(0.4);
+    Sleep(1.0);
 
 	CheckBreachingShotgunAmmunition();
 
@@ -214,9 +214,10 @@ latent function BreachDoorWithShotgun()
 	BreachingShotgun.LatentUse();
 
 	// @HACK: If the door wasn't broken by the breaching shotgun, blast it anyways.
+	// Don't do hacks. Shoot the lock again. -J21C
 	if (! ISwatDoor(TargetDoor).IsBroken())
 	{
-		ISwatDoor(TargetDoor).Blasted(m_Pawn);
+		BreachingShotgun.LatentUse();
 	}
 }
 
@@ -247,6 +248,9 @@ Begin:
 
 		AimAtDoorKnob();
 		EquipBreachingShotgun();
+		
+		WaitForZulu();
+		
 		BreachDoorWithShotgun();
 
 		StopAimingAtDoorKnob();
