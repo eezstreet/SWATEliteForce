@@ -247,6 +247,13 @@ function ChangeLoadOut( Pocket thePocket )
 
 function bool CheckValidity( eNetworkValidity type )
 {
+    local int CampaignPath;
+
+    CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
+    if(CampaignPath == 2) {
+      return true;
+    }
+
     return (type == NETVALID_SPOnly) || (Super.CheckValidity( type ));
 }
 
@@ -261,6 +268,10 @@ function bool CheckCampaignValid( class EquipmentClass )
 	local int i;
 	local int CampaignPath;
 
+  if(EquipmentClass == None) {
+    return true;
+  }
+
 	assert(SwatGUIControllerBase(Controller) != None);
 	assertWithDescription(SwatGUIControllerBase(Controller).GetCampaign() != None, "GetCampaign() returned None. Campaign progression for equipment access wont work correctly.");
 
@@ -271,13 +282,17 @@ function bool CheckCampaignValid( class EquipmentClass )
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     // Check first set of equipment
 		for (i = MissionIndex + 1; i < GC.MissionName.Length; ++i)
-			if (GC.MissionEquipment[i] == EquipmentClass)
+			if (GC.MissionEquipment[i] == EquipmentClass) {
+        log("CheckCampaignValid failed on "$EquipmentClass);
 				return false;
+      }
 
     // Check second set of equipment
     for(i = GC.MissionName.Length + MissionIndex; i < GC.MissionEquipment.Length; ++i)
-      if(GC.MissionEquipment[i] == EquipmentClass)
+      if(GC.MissionEquipment[i] == EquipmentClass) {
+        log("CheckCampaignValid failed on "$EquipmentClass);
         return false;
+      }
 	}
 	return true;
 }
