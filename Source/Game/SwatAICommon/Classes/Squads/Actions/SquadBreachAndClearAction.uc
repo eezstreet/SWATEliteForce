@@ -76,10 +76,63 @@ protected function bool ShouldStackUpIfOfficersInRoomToClear() { return true; }
 //
 // State Code
 
+protected function Pawn GetFirstOfficerWithC2()
+{
+	local int i;
+	local Pawn Officer;
+	local Pawn Found;
+
+	for(i = 0; i < OfficersInStackUpOrder.Length; i++) {
+		Officer = OfficersInStackUpOrder[i];
+
+		if(class'Pawn'.static.checkConscious(Officer) && CanOfficerBreachWithC2(Officer)) {
+			Found = Officer;
+			break;
+		}
+	}
+
+	return Found;
+}
+
+protected function Pawn GetFirstOfficerWithBSG()
+{
+	local int i;
+	local Pawn Officer;
+	local Pawn Found;
+
+	for(i = 0; i < OfficersInStackUpOrder.Length; i++) {
+		Officer = OfficersInStackUpOrder[i];
+
+		if(class'Pawn'.static.checkConscious(Officer) && CanOfficerBreachWithShotgun(Officer)) {
+			Found = Officer;
+			break;
+		}
+	}
+
+	return Found;
+}
+
 protected function SetBreacher()
 {
-	// breacher is ALWAYS the first officer
-	Breacher = GetFirstOfficer();
+	local int BreachingMethod;
+
+	BreachingMethod = SquadBreachAndClearGoal(achievingGoal).GetBreachingMethod();
+
+	switch(BreachingMethod) {
+		case 0: // first available
+			Breacher = GetFirstOfficer();
+			break;
+		case 1: // C2
+			Breacher = GetFirstOfficerWithC2();
+			break;
+		case 2: // BreachingShotgun
+			Breacher = GetFirstOfficerWithBSG();
+			break;
+	}
+
+	if(Breacher == None) {
+		instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE);
+	}
 }
 
 protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
