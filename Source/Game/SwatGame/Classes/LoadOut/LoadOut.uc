@@ -302,10 +302,13 @@ simulated private function class<actor> DLOClassForPocket( Pocket pock, int inde
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function bool CheckValidity( eNetworkValidity type )  //may be further subclassed
 {
+
     if(type == NETVALID_All)
         return true;
     if(type == NETVALID_None)
         return false;
+    if(type == NETVALID_MPOnly)
+        return true;
 
     return ( ( type == NETVALID_MPOnly ) ==
              ( GC.SwatGameRole == GAMEROLE_MP_Host ||

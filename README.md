@@ -461,8 +461,8 @@ The following weapons have been added from the SAS mod. All of them have a tacti
 - MP5K
   * Machine Pistol/SMG. 9mm, low accuracy and high recoil, but low weight and bulk. Comparable to the TEC-9.
   * Has a silenced variant.
-- MP5SSD
-  * SMG.
+- MP5SD6
+  * SMG. 9mm, integrally suppressed. Quieter but weaker compared to the Suppressed MP5
 - ARWEN 37 Grenade Launcher
   * Grenade Launcher. 5 round magazine, but it can only be equipped as a primary and it has high weight/bulk.
 - M16A1
@@ -476,7 +476,7 @@ The following weapons have been added from the SAS mod. All of them have a tacti
   * Carbine. Lightweight; comparable to the G36C.
   * Has a silenced variant.
 - Remington 870
-  * Lightweight, pump action shotgun. Lower stopping power than other shotguns.
+  * Lightweight, pump action shotgun. Wider spread than other shotguns.
 
 ### v4.1 ###
 This is a hotfix patch to address some common issues that have been raised.

@@ -101,9 +101,7 @@ state Running
 Begin:
 	StackUpSquad(true);
 
-	WaitForZulu();
-
-	DeployShotgun();
+	DeployShotgun();	//<-- WaitforZulu() happens in UseBreachingShotgun action
     succeed();
 }
 
