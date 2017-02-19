@@ -165,7 +165,7 @@ function NotifyEnemyStunned(Pawn Enemy)
 // notification that an enemy has unbecome a threat
 function NotifyEnemyUnbecameThreat(Pawn Enemy)
 {
-	UpdateOfficerAssignments();
+	CheckUpdateOfficerAssignmentsForEnemy(Enemy);
 }
 
 function NotifyEnemyFleeing(Pawn Enemy)
@@ -544,7 +544,7 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 
 function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost)
 {
-	//Keep doing nothing for now
+	// do nothing for now.
 }
 
 function bool HasTurnedOnPlayer()
@@ -664,19 +664,6 @@ private function OfficerSawHostage(Pawn OfficerViewer, Pawn SeenHostage)
 	}
 }
 
-private function OfficerLostHostage(Pawn OfficerViewer, Pawn LostHostage)
-{
-	Blackboard.UpdateHostage(LostHostage);
-
-	// only say something if the hostage is not already arrested or compliant
-	if (! ISwatAI(LostHostage).IsCompliant() &&
-		! ISwatAI(LostHostage).IsArrested())
-	{
-		// trigger a sound for the viewer to say
-		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerLostTargetSpeech();
-	}
-}
-
 private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 {
 	Blackboard.UpdateEnemy(SeenEnemy);
@@ -687,19 +674,6 @@ private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 	{
 		// trigger a sound for the viewer to say
 		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectSpottedSpeech();
-	}
-}
-
-private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy)
-{
-	Blackboard.UpdateEnemy(LostEnemy);
-
-	// only say something if the hostage is not already arrested or compliant
-	if (! ISwatAI(LostEnemy).IsCompliant() &&
-		! ISwatAI(LostEnemy).IsArrested())
-	{
-		// trigger a sound for the viewer to say
-		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerLostTargetSpeech();
 	}
 }
 

@@ -222,8 +222,7 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 		if (CanOfficerBreachWithShotgun(Breacher))
 		{
 			PreTargetDoorBreached();
-			WaitForZulu();
-			UseBreachingShotgun();
+			UseBreachingShotgun();	// <-- "WaitForZulu" happens here
 			PostTargetDoorBreached();
 		}
 		else if (CanOfficerBreachWithC2(Breacher))
