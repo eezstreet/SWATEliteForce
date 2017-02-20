@@ -97,7 +97,7 @@ function SetServerSettings( PlayerController PC,
                             int newRoundTimeLimit, 
                             int newMPMissionReadyTime, 
                             bool newbShowTeammateNames, 
-                            bool newbShowEnemyNames,			//Carries the entrypoint in Coop Campaign
+                            bool newbShowEnemyNames,
 							bool newbAllowReferendums,
                             bool newbNoRespawn, 
                             bool newbQuickRoundReset, 
