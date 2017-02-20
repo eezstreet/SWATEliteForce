@@ -15,6 +15,7 @@ var(SWATGui) private EditInline Config GUIButton    MyStartButton;
 var(SWATGui) private EditInline Config GUIButton    MyBackButton;
 var(SWATGui) private EditInline Config GUIButton    MyMainMenuButton;
 var(SWATGui) private EditInline Config GUIButton    MyLoadoutButton;
+var(SWATGui) private EditInline Config GUIButton		MyServerSetupButton;
 var(SWATGui) private EditInline Config GUITabControl	MyTabControl;
 
 var() private config localized string CampaignString;
@@ -33,6 +34,7 @@ function InternalOnShow()
     MyStartButton.OnClick=InternalOnClick;
     MyBackButton.OnClick=InternalOnClick;
     MyMainMenuButton.OnClick=InternalOnClick;
+		MyServerSetupButton.OnClick=InternalOnClick;
 
     if( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom )
     {
@@ -50,13 +52,17 @@ function InternalOnActivate()
 	{
 		MyLoadoutButton.Hide();
 		MyLoadoutButton.DisableComponent();
+		MyServerSetupButton.Show();
+		MyServerSetupButton.EnableComponent();
 	}
-	else 
+	else
 	{
 		MyLoadoutButton.Show();
 		MyLoadoutButton.EnableComponent();
+		MyServerSetupButton.Hide();
+		MyServerSetupButton.DisableComponent();
 	}
-	
+
 	if( !bOpeningSubMenu )
         GC.ClearCurrentMission();
 
@@ -87,6 +93,9 @@ function InternalOnClick(GUIComponent Sender)
 	    case MyQuitButton:
             Quit();
             break;
+			case MyServerSetupButton:
+						MyTabControl.OpenTab(3);
+						break;
 		case MyStartButton:
             if(SwatGUIController(Controller).SPLoadoutPanel == None || SwatGUIController(Controller).SPLoadoutPanel.CheckWeightBulkValidity()) {
 				if (SwatGUIController(Controller).coopcampaign)
@@ -95,9 +104,9 @@ function InternalOnClick(GUIComponent Sender)
 					CampaignPath = SwatGUIController(Controller).GetCampaign().CampaignPath;
 					MissionIndex = SwatGUIController(Controller).GetCampaign().GetAvailableIndex() << 16;
 					CampaignInfo = MissionIndex | CampaignPath;
-					
+
 					SwatPlayerController(PlayerOwner()).ServerSetSettings(
-						Settings, 
+						Settings,
 						EMPMode.MPM_COOP,
 						0, 1, 5, 0, 60, 1, 10,
 						true, true, false, true, true,
