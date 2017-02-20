@@ -49,6 +49,9 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     local int HighPriority;
     local eDifficultyLevel DifficultyLevel;
     local bool ThisRosterNotAllowed;
+	local bool isCampaignCoop;
+	
+	isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
 
     // DoSpawning() should only be called in standalone games.
     assert( Level.NetMode == NM_Standalone || Level.IsCOOPServer );
@@ -66,8 +69,8 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     StartPoint = Repo.GetDesiredEntryPoint();
 
     // Determine the difficulty level
-    if(Level.IsCOOPServer) {
-      DifficultyLevel = Difficulty_Elite; // Gloves are off in co-op mode..!
+    if(Level.IsCOOPServer && !isCampaignCoop) {	//Are we coop & is campaign disabled?
+      DifficultyLevel = Difficulty_Elite; // Gloves are off in (normal) co-op mode..!
     } else {
       DifficultyLevel = Repo.GuiConfig.CurrentDifficulty;
     }
