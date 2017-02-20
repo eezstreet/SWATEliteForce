@@ -97,13 +97,13 @@ function SetServerSettings( PlayerController PC,
                             int newRoundTimeLimit, 
                             int newMPMissionReadyTime, 
                             bool newbShowTeammateNames, 
-                            bool newbShowEnemyNames,
+                            bool newbShowEnemyNames,			//Carries the entrypoint in Coop Campaign
 							bool newbAllowReferendums,
                             bool newbNoRespawn, 
                             bool newbQuickRoundReset, 
                             float newFriendlyFireAmount, 
                             float newEnemyFireAmount,
-							float newArrestRoundTimeDeduction,
+							float newArrestRoundTimeDeduction,	//Carries Campaigninfo in Coop Campaign
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
 							bool newbUseStatTracking,
@@ -241,6 +241,11 @@ private function LoadMapListForGameType()
 function bool ShouldUseStatTracking()
 {
 	return !bLan && bUseStatTracking && GameType != MPM_COOP && GameType != MPM_COOPQMM;
+}
+
+function bool IsCampaignCoop()
+{
+	return ArrestRoundTimeDeduction != (-1^0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
