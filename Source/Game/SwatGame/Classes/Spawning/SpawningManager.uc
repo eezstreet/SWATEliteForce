@@ -50,7 +50,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     local eDifficultyLevel DifficultyLevel;
     local bool ThisRosterNotAllowed;
 	local bool isCampaignCoop;
-	
+
 	isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
 
     // DoSpawning() should only be called in standalone games.
@@ -122,7 +122,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         if (Spawner.StartPointDependent > StartPoint_Any)
         {
 			// dbeswick: don't use these spawns during coop games, frequently both spawns are in use
-			if ( Level.IsCOOPServer )
+			if ( Level.IsCOOPServer && !isCampaignCoop )
 				continue;
 
             if  (
