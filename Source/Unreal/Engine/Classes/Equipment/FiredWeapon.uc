@@ -547,14 +547,7 @@ simulated function bool HandleBallisticImpact(
 
     if (Victim.IsA('SwatDoor') || Victim.Owner.IsA('SwatDoor'))	//Handle this case on its own, because we dont wanna trigger the skeletal hit, we do that in the shotgun code
     {															//We also still wanna draw the decals
-		Ammo.SetLocation(HitLocation);
-		Ammo.SetRotation(rotator(HitNormal));
-		Ammo.TriggerEffectEvent('BulletHit', Protection, HitMaterial);
-		
-		Ammo.SetLocation( ExitLocation );
-        Ammo.SetRotation( rotator(ExitNormal) );
-        Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
-		return true;
+		return HandleDoorImpact(Victim, HitLocation, HitNormal, HitMaterial, ExitLocation, ExitNormal, ExitMaterial);
 	}
 	
 	// officers don't hit other officers, or the player (unless we're attacking them)
@@ -774,6 +767,26 @@ simulated function bool HandleBallisticImpact(
         SpawnBloodEffects( Ammo, ExitLocation, Damage, NormalizedBulletDirection );
 #endif // IG_EFFECTS
     return PenetratesVictim;
+}
+
+simulated function bool HandleDoorImpact(
+    Actor Victim,
+    vector HitLocation,
+    vector HitNormal,
+    Material HitMaterial,
+    vector ExitLocation,
+    vector ExitNormal,
+    Material ExitMaterial
+    )
+{
+	Ammo.SetLocation(HitLocation);
+	Ammo.SetRotation(rotator(HitNormal));
+	Ammo.TriggerEffectEvent('BulletHit', None, HitMaterial);
+		
+	Ammo.SetLocation( ExitLocation );
+    Ammo.SetRotation( rotator(ExitNormal) );
+    Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
+	return true;
 }
 
 simulated function bool  ShouldSpawnBloodForVictim( Pawn PawnVictim, int Damage )

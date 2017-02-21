@@ -19,6 +19,8 @@ var(AdvancedDescription) protected localized config string RateOfFire           
 var() public config float Weight;
 var() public config float Bulk;
 
+var bool bPenetratesDoors;
+
 simulated function float GetWeight() {
   return Weight;
 }
@@ -95,6 +97,26 @@ static function string GetTotalAmmoString()
   return "Maximum Ammo: "$default.TotalAmmoString;
 }
 
+simulated function bool HandleDoorImpact(
+    Actor Victim,
+    vector HitLocation,
+    vector HitNormal,
+    Material HitMaterial,
+    vector ExitLocation,
+    vector ExitNormal,
+    Material ExitMaterial
+    )
+{
+	Ammo.SetLocation(HitLocation);
+	Ammo.SetRotation(rotator(HitNormal));
+	Ammo.TriggerEffectEvent('BulletHit', None, HitMaterial);
+		
+	Ammo.SetLocation( ExitLocation );
+    Ammo.SetRotation( rotator(ExitNormal) );
+    Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
+	return bPenetratesDoors;
+}
+
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?
 
 defaultproperties
@@ -110,4 +132,5 @@ defaultproperties
   TotalAmmoString="Unknown"
   Choke = 0.0
   Slot=Slot_Invalid
+  bPenetratesDoors=true
 }
