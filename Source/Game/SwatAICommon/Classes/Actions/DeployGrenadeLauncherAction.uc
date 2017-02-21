@@ -70,11 +70,9 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 latent function EquipGrenadeLauncher()
 {
     GrenadeLauncher = FiredWeapon(ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_PrimaryWeapon));
-    if(!GrenadeLauncher.IsA('HK69GrenadeLauncher'))
+    if(GrenadeLauncher == None || !GrenadeLauncher.IsA('GrenadeLauncherBase'))
       GrenadeLauncher = FiredWeapon(ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_SecondaryWeapon));
-    if(GrenadeLauncher == None)
-      return;
-    assert(GrenadeLauncher != None && GrenadeLauncher.IsA('HK69GrenadeLauncher'));
+    assert(GrenadeLauncher != None && GrenadeLauncher.IsA('GrenadeLauncherBase'));
     GrenadeLauncher.LatentWaitForIdleAndEquip();
 }
 

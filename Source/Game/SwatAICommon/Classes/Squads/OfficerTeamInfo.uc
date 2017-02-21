@@ -491,17 +491,18 @@ event function bool CanDeployPepperSpray()
 
 event function bool CanDeployTaser()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Taser');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Taser') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Taser');
 }
 
 event function bool CanDeployLessLethalShotgun()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'LessLethalSG');
+
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'BeanbagShotgunBase') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'BeanbagShotgunBase');
 }
 
 event function bool CanDeployGrenadeLauncher()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'HK69GrenadeLauncher') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'HK69GrenadeLauncher');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'GrenadeLauncherBase') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'GrenadeLauncherBase');
 }
 
 event function bool CanDeployPepperBallGun()

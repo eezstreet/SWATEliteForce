@@ -2578,7 +2578,7 @@ private function DirectHitByGrenade(
                     Location,							  // vector HitLocation
                     vect(0,0,0),                          // vector Momentum
 														  // class<DamageType> DamageType
-                    class<DamageType>(DynamicLoadObject("SwatEquipment.HK69GrenadeLauncher", class'Class')) );
+                    class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')) );
     }
 }
 
@@ -2587,6 +2587,9 @@ private function DirectHitByGrenade(
 //
 
 function ReactToLessLeathalShotgun(
+    Pawn Instigator,
+    float Damage,
+    Vector MomentumVector,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -2600,6 +2603,17 @@ function ReactToLessLeathalShotgun(
 	// The OnAdded call is a side effect of RefreshCameraEffects in ApplyDazedEffect called below.
 	LastStingWeapon = LessLethalShotgun;
 	ApplyDazedEffect(PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration);
+
+  if (Damage > 0.0)
+  {
+      // event Actor::TakeDamage()
+      TakeDamage( Damage,                               // int Damage
+                  Instigator,                           // Pawn EventInstigator
+                  Location,							  // vector HitLocation
+                  MomentumVector,                          // vector Momentum
+                            // class<DamageType> DamageType
+                  class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+  }
 }
 
 function ReactToGLTripleBaton(
