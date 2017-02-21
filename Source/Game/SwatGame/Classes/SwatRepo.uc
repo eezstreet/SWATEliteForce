@@ -220,6 +220,7 @@ event Tick( Float DeltaSeconds )
 					{
 						CumulativeDelta = 0;
 						GetSGRI().ServerCountdownTime = 0;
+						CheckAllPlayersReady();
 						break;
 					}
 					
