@@ -103,7 +103,7 @@ function SetServerSettings( PlayerController PC,
                             bool newbQuickRoundReset, 
                             float newFriendlyFireAmount, 
                             float newEnemyFireAmount,
-							float newArrestRoundTimeDeduction,
+							float newArrestRoundTimeDeduction,	//Carries Campaigninfo in Coop Campaign
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
 							bool newbUseStatTracking,
@@ -241,6 +241,11 @@ private function LoadMapListForGameType()
 function bool ShouldUseStatTracking()
 {
 	return !bLan && bUseStatTracking && GameType != MPM_COOP && GameType != MPM_COOPQMM;
+}
+
+function bool IsCampaignCoop()
+{
+	return ArrestRoundTimeDeduction != (-1^0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

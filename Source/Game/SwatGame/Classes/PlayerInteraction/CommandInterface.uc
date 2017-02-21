@@ -134,7 +134,7 @@ enum ECommand
 
     //Command Menu
 
-	Command_Zulu,
+	  Command_Zulu,
 
     Command_StackUpAndTryDoor,
     Command_PickLock,
@@ -193,22 +193,22 @@ enum ECommand
     Command_Deploy_PepperSpray,
     Command_Deploy_C2Charge,
     Command_Deploy_CSBallLauncher,
-	Command_Deploy_Lightstick,
+	  Command_Deploy_Lightstick,
 
     //
     // All Static Commands have their ECommand set to Command_Static
     //
 
-	Command_Open,
-	Command_Breach,
-	Command_Investigate,
-  Command_Move,
-	Command_Response_PosNegPage,	// MP only
-	Command_Response_MovingPage,	// MP only
-	Command_Response_Mirror,	// MP only
+	  Command_Open,
+	  Command_Breach,
+	  Command_Investigate,
+    Command_Move,
+	  Command_Response_PosNegPage,	// MP only
+	  Command_Response_MovingPage,	// MP only
+	  Command_Response_Mirror,	// MP only
 
-  Command_StackUpMP,        // MP only - because "Stack Up" was renamed "Try Lock"
-  Command_Preferences,
+    Command_StackUpMP,        // MP only - because "Stack Up" was renamed "Try Lock"
+    Command_Preferences,
 
     //
     // New commands - Leader Throws Grenade
@@ -218,6 +218,30 @@ enum ECommand
     Command_BreachLeaderThrowAndMakeEntry,
     Command_OpenLeaderThrowAndClear,
     Command_OpenLeaderThrowAndMakeEntry,
+
+    //
+    // v5 - Separate Breach commands (originals still available via Speech interface)
+    //
+    Command_C2AndClear,
+    Command_C2BangAndClear,
+    Command_C2GasAndClear,
+    Command_C2StingAndClear,
+    Command_C2LeaderThrowAndClear,
+    Command_C2AndMakeEntry,
+    Command_C2BangAndMakeEntry,
+    Command_C2GasAndMakeEntry,
+    Command_C2StingAndMakeEntry,
+    Command_C2LeaderThrowAndMakeEntry,
+    Command_ShotgunAndClear,
+    Command_ShotgunBangAndClear,
+    Command_ShotgunGasAndClear,
+    Command_ShotgunStingAndClear,
+    Command_ShotgunLeaderThrowAndClear,
+    Command_ShotgunAndMakeEntry,
+    Command_ShotgunBangAndMakeEntry,
+    Command_ShotgunGasAndMakeEntry,
+    Command_ShotgunStingAndMakeEntry,
+    Command_ShotgunLeaderThrowAndMakeEntry,
 
     Command_Static,
 };
@@ -230,8 +254,12 @@ simulated function PreBeginPlay()
 
     Super.PreBeginPlay();
 
-    //always start on the Command page
-    CurrentPage = Page_Command;
+    //always start on the Command page...if on Singleplayer.
+    if( Level.NetMode == NM_Standalone ) {
+      CurrentPage = Page_Command;
+    } else {
+      CurrentPage = Page_Response;
+    }
     SetMainPage(Page_Command);
 
     //Other PlayerFocusInterfaces have their "Context" and "DoorRelatedContext" lists
@@ -701,6 +729,113 @@ simulated final function Deactivate()
 //let subclasses react to this change of state
 simulated protected function PostDeactivated();
 
+// Specific usecases where we should be greying things out --eez
+simulated function bool IsLeaderThrowCommand(Command Command) {
+  switch(Command.Command) {
+    case Command_LeaderThrowAndClear:
+    case Command_OpenLeaderThrowAndClear:
+    case Command_OpenLeaderThrowAndMakeEntry:
+    case Command_C2LeaderThrowAndClear:
+    case Command_C2LeaderThrowAndMakeEntry:
+    case Command_ShotgunLeaderThrowAndClear:
+    case Command_ShotgunLeaderThrowAndMakeEntry:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandUsesFlashbang(Command Command) {
+  switch(Command.Command) {
+    case Command_Deploy_Flashbang:
+    case Command_OpenBangAndClear:
+    case Command_OpenBangAndMakeEntry:
+    case Command_BreachBangAndClear:
+    case Command_BreachBangAndMakeEntry:
+    case Command_C2BangAndClear:
+    case Command_C2BangAndMakeEntry:
+    case Command_ShotgunBangAndClear:
+    case Command_ShotgunBangAndMakeEntry:
+    case Command_BangAndClear:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandUsesGas(Command Command) {
+  switch(Command.Command) {
+    case Command_Deploy_CSGas:
+    case Command_OpenGasAndClear:
+    case Command_OpenGasAndMakeEntry:
+    case Command_BreachGasAndClear:
+    case Command_BreachGasAndMakeEntry:
+    case Command_C2GasAndClear:
+    case Command_C2GasAndMakeEntry:
+    case Command_ShotgunGasAndClear:
+    case Command_ShotgunGasAndMakeEntry:
+    case Command_GasAndClear:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandUsesStinger(Command Command) {
+  switch(Command.Command) {
+    case Command_Deploy_StingGrenade:
+    case Command_OpenStingAndClear:
+    case Command_OpenStingAndMakeEntry:
+    case Command_BreachStingAndClear:
+    case Command_BreachStingAndMakeEntry:
+    case Command_C2StingAndClear:
+    case Command_C2StingAndMakeEntry:
+    case Command_ShotgunStingAndClear:
+    case Command_ShotgunStingAndMakeEntry:
+    case Command_StingAndClear:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandUsesC2(Command Command) {
+  switch(Command.Command) {
+    case Command_Deploy_C2Charge:
+    case Command_C2AndClear:
+    case Command_C2AndMakeEntry:
+    case Command_C2BangAndClear:
+    case Command_C2BangAndMakeEntry:
+    case Command_C2GasAndClear:
+    case Command_C2GasAndMakeEntry:
+    case Command_C2StingAndClear:
+    case Command_C2StingAndMakeEntry:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandUsesShotgun(Command Command) {
+  switch(Command.Command) {
+    case Command_Deploy_BreachingShotgun:
+    case Command_ShotgunAndClear:
+    case Command_ShotgunAndMakeEntry:
+    case Command_ShotgunBangAndClear:
+    case Command_ShotgunBangAndMakeEntry:
+    case Command_ShotgunGasAndClear:
+    case Command_ShotgunGasAndMakeEntry:
+    case Command_ShotgunStingAndClear:
+    case Command_ShotgunStingAndMakeEntry:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandUsesLightstick(Command Command) {
+  switch(Command.Command) {
+    case Command_Drop_Lightstick:
+    case Command_Deploy_Lightstick:
+      return true;
+  }
+  return false;
+}
+
 //set the MenuPadStatus for the specified Command
 simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
 {
@@ -712,34 +847,23 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
     if (Command.Command == Command_Preferences) {
       // Makes sense in every context
       Status = Pad_Normal;
-    } else if (Command.Command == Command_Deploy_CSGas) {
-      if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
-        Status = Pad_Normal;
-      } else {
-        Status = Pad_GreyedOut;
-      }
-    } else if(Command.Command == Command_Deploy_Flashbang) {
-      if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Flashbang)) {
-        Status = Pad_Normal;
-      } else {
-        Status = Pad_GreyedOut;
-      }
-    } else if(Command.Command == Command_Deploy_StingGrenade) {
-      if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_StingGrenade)) {
-        Status = Pad_Normal;
-      } else {
-        Status = Pad_GreyedOut;
-      }
-    } else if(Command.Command == Command_Drop_Lightstick || Command.Command == Command_Deploy_Lightstick) {
-      if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Lightstick)) {
-        Status = Pad_Normal;
-      } else {
-        Status = Pad_GreyedOut;
-      }
-    } else if(Command.Command == Command_BreachLeaderThrowAndClear || Command.Command == Command_BreachLeaderThrowAndMakeEntry ||
-      Command.Command == Command_OpenLeaderThrowAndClear || Command.Command == Command_OpenLeaderThrowAndMakeEntry ||
-      Command.Command == Command_LeaderThrowAndClear) {
-        Status = Pad_Normal; // FIXME
+    } else if (CommandUsesGas(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
+      Status = Pad_GreyedOut;
+    } else if (CommandUsesFlashbang(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Flashbang)) {
+      Status = Pad_GreyedOut;
+    } else if (CommandUsesStinger(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_StingGrenade)) {
+      Status = Pad_GreyedOut;
+    } else if (CommandUsesLightstick(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Lightstick)) {
+      Status = Pad_GreyedOut;
+    } else if (CommandUsesC2(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Breaching)) {
+      Status = Pad_GreyedOut;
+    } else if (CommandUsesShotgun(Command)) {
+      // BIG OL FIXME
+      Status = Pad_Normal;
+    } else if (IsLeaderThrowCommand(Command)) {
+      Status = Pad_Normal;
+    } else if (CommandUsesC2(Command) || CommandUsesShotgun(Command)) {
+      Status = Pad_Normal;
     }
     else if  (
             Command.IsCancel
@@ -1760,12 +1884,11 @@ simulated function SendCommandToOfficers()
 
         case Command_BreachAndClear:
         case Command_BreachAndMakeEntry:
-			assert(true);
-			if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
-			{
-				bCommandIssued = PendingCommandTeam.BreachAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
-			}
-			break;
+			     if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+			     {
+				         bCommandIssued = PendingCommandTeam.BreachAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
+			     }
+			     break;
         case Command_OpenAndClear:
         case Command_OpenAndMakeEntry:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
@@ -1773,6 +1896,22 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
+            break;
+
+        case Command_C2AndClear:
+        case Command_C2AndMakeEntry:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 1);
+            }
+            break;
+
+        case Command_ShotgunAndClear:
+        case Command_ShotgunAndMakeEntry:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 2);
+            }
             break;
 
         //clear with bang
@@ -1787,11 +1926,11 @@ simulated function SendCommandToOfficers()
 
         case Command_BreachBangAndClear:
         case Command_BreachBangAndMakeEntry:
-			if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
-			{
-				bCommandIssued = PendingCommandTeam.BreachBangAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
-			}
-			break;
+			     if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+			     {
+				         bCommandIssued = PendingCommandTeam.BreachBangAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
+			     }
+			     break;
         case Command_OpenBangAndClear:
         case Command_OpenBangAndMakeEntry:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
@@ -1799,6 +1938,22 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
+            break;
+
+        case Command_C2BangAndClear:
+        case Command_C2BangAndMakeEntry:
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachBangAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 1);
+            }
+            break;
+
+        case Command_ShotgunBangAndClear:
+        case Command_ShotgunBangAndMakeEntry:
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachBangAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 2);
+            }
             break;
 
         //clear with gas
@@ -1813,11 +1968,11 @@ simulated function SendCommandToOfficers()
 
         case Command_BreachGasAndClear:
         case Command_BreachGasAndMakeEntry:
-			if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
-			{
-				bCommandIssued = PendingCommandTeam.BreachGasAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
-			}
-			break;
+			     if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+			     {
+				         bCommandIssued = PendingCommandTeam.BreachGasAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
+			     }
+			     break;
         case Command_OpenGasAndClear:
         case Command_OpenGasAndMakeEntry:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
@@ -1825,6 +1980,22 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
+            break;
+
+        case Command_C2GasAndClear:
+        case Command_C2GasAndMakeEntry:
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachGasAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 1);
+            }
+            break;
+
+        case Command_ShotgunGasAndClear:
+        case Command_ShotgunGasAndMakeEntry:
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachGasAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 2);
+            }
             break;
 
         //clear with sting
@@ -1839,11 +2010,11 @@ simulated function SendCommandToOfficers()
 
         case Command_BreachStingAndClear:
         case Command_BreachStingAndMakeEntry:
-			if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
-			{
-				bCommandIssued = PendingCommandTeam.BreachStingAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
-			}
-			break;
+			     if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+			     {
+				         bCommandIssued = PendingCommandTeam.BreachStingAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true);
+			     }
+			     break;
         case Command_OpenStingAndClear:
         case Command_OpenStingAndMakeEntry:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
@@ -1851,6 +2022,22 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
+            break;
+
+        case Command_C2StingAndClear:
+        case Command_C2StingAndMakeEntry:
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachStingAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 1);
+            }
+            break;
+
+        case Command_ShotgunStingAndClear:
+        case Command_ShotgunStingAndMakeEntry:
+            if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachStingAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 2);
+            }
             break;
 
         // clear with leader-thrown grenade
@@ -1880,6 +2067,22 @@ simulated function SendCommandToOfficers()
                   Level.GetLocalPlayerController().Pawn,
                   PendingCommandOrigin,
                   SwatDoor(PendingCommandTargetActor));
+            }
+            break;
+
+        case Command_C2LeaderThrowAndClear:
+        case Command_C2LeaderThrowAndMakeEntry:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachLeaderThrowAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 1);
+            }
+            break;
+
+        case Command_ShotgunLeaderThrowAndClear:
+        case Command_ShotgunLeaderThrowAndMakeEntry:
+            if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+            {
+              bCommandIssued = PendingCommandTeam.BreachLeaderThrowAndClear(Level.GetLocalPlayerController().Pawn, PendingCommandOrigin, SwatDoor(PendingCommandTargetActor), true, 2);
             }
             break;
 
@@ -2074,6 +2277,26 @@ simulated protected function Actor GetPendingCommandTargetActor()
         case Command_OpenLeaderThrowAndMakeEntry:
         case Command_BreachLeaderThrowAndClear:
         case Command_BreachLeaderThrowAndMakeEntry:
+        case Command_C2AndClear:
+        case Command_C2AndMakeEntry:
+        case Command_C2BangAndClear:
+        case Command_C2BangAndMakeEntry:
+        case Command_C2GasAndClear:
+        case Command_C2GasAndMakeEntry:
+        case Command_C2StingAndClear:
+        case Command_C2StingAndMakeEntry:
+        case Command_C2LeaderThrowAndClear:
+        case Command_C2LeaderThrowAndMakeEntry:
+        case Command_ShotgunAndClear:
+        case Command_ShotgunAndMakeEntry:
+        case Command_ShotgunBangAndClear:
+        case Command_ShotgunBangAndMakeEntry:
+        case Command_ShotgunGasAndClear:
+        case Command_ShotgunGasAndMakeEntry:
+        case Command_ShotgunStingAndClear:
+        case Command_ShotgunStingAndMakeEntry:
+        case Command_ShotgunLeaderThrowAndClear:
+        case Command_ShotgunLeaderThrowAndMakeEntry:
             return GetDoorFocus();
 
         //cases where we prefer an open door

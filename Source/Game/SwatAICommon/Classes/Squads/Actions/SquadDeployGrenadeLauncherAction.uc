@@ -35,9 +35,9 @@ latent function DeployGrenadeLauncherOnTarget()
 {
 	local Pawn Officer;
 
-	Officer = GetClosestOfficerWithEquipment(TargetLocation, Slot_PrimaryWeapon, 'HK69GrenadeLauncher');
+	Officer = GetClosestOfficerWithEquipment(TargetLocation, Slot_PrimaryWeapon, 'GrenadeLauncherBase');
 	if(Officer == None)
-		Officer = GetClosestOfficerWithEquipment(TargetLocation, Slot_SecondaryWeapon, 'HK69GrenadeLauncher');
+		Officer = GetClosestOfficerWithEquipment(TargetLocation, Slot_SecondaryWeapon, 'GrenadeLauncherBase');
 
 	CurrentDeployGrenadeLauncherGoal = new class'DeployGrenadeLauncherGoal'(AI_Resource(Officer.characterAI), TargetActor, TargetLocation);
 	assert(CurrentDeployGrenadeLauncherGoal != None);

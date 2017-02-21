@@ -67,7 +67,9 @@ function InternalOnActivate()
           Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
           return;
         }
-        
+
+        MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
+
         MyCampaignNameLabel.SetCaption(theCampaign.StringName);
 
         PopulateCampaignMissionList();

@@ -3,7 +3,7 @@
 class SquadDeployLessLethalShotgunAction extends OfficerSquadAction;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 var private DeployLessLethalShotgunGoal CurrentDeployLessLethalShotgunGoal;
@@ -34,7 +34,9 @@ latent function DeployLessLethalShotgunOnTarget()
 {
 	local Pawn Officer;
 
-	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_PrimaryWeapon, 'LessLethalSG');
+	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_PrimaryWeapon, 'BeanbagShotgunBase');
+	if(Officer == None)
+		Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_SecondaryWeapon, 'BeanbagShotgunBase');
 
 	CurrentDeployLessLethalShotgunGoal = new class'DeployLessLethalShotgunGoal'(AI_Resource(Officer.characterAI), TargetPawn);
 	assert(CurrentDeployLessLethalShotgunGoal != None);

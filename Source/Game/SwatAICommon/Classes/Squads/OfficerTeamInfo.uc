@@ -491,17 +491,18 @@ event function bool CanDeployPepperSpray()
 
 event function bool CanDeployTaser()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Taser');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Taser') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Taser');
 }
 
 event function bool CanDeployLessLethalShotgun()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'LessLethalSG');
+
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'BeanbagShotgunBase') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'BeanbagShotgunBase');
 }
 
 event function bool CanDeployGrenadeLauncher()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'HK69GrenadeLauncher') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'HK69GrenadeLauncher');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'GrenadeLauncherBase') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'GrenadeLauncherBase');
 }
 
 event function bool CanDeployPepperBallGun()
@@ -956,7 +957,7 @@ function bool LeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 //  |-> The door is locked AND an Officer has the means (shotgun, C2, toolkit) to make it open -> The Officers will breach and clear normally
 //  \-> The door is locked AND an Officer does not have the means (see above) to make it open -> The Officers will report that they do not have the necessary equipment
 
-function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachAndClearGoal SquadBreachAndClearGoal;
 
@@ -970,7 +971,7 @@ function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door Targe
 			{
 				if (CanBreachAndClearLockedDoor())
 				{
-					SquadBreachAndClearGoal = new class'SquadBreachAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachAndClearGoal = new class'SquadBreachAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachAndClearGoal);
@@ -1007,7 +1008,7 @@ function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door Targe
 	return false;
 }
 
-function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachBangAndClearGoal SquadBreachBangAndClearGoal;
 
@@ -1035,7 +1036,7 @@ function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door T
 				else
 				{
 					// we can execute this command
-					SquadBreachBangAndClearGoal = new class'SquadBreachBangAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachBangAndClearGoal = new class'SquadBreachBangAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachBangAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachBangAndClearGoal);
@@ -1067,7 +1068,7 @@ function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door T
 	return false;
 }
 
-function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachGasAndClearGoal SquadBreachGasAndClearGoal;
 
@@ -1091,7 +1092,7 @@ function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door Ta
 				}
 				else
 				{
-					SquadBreachGasAndClearGoal = new class'SquadBreachGasAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachGasAndClearGoal = new class'SquadBreachGasAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachGasAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachGasAndClearGoal);
@@ -1123,7 +1124,7 @@ function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door Ta
 	return false;
 }
 
-function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachStingAndClearGoal SquadBreachStingAndClearGoal;
 
@@ -1147,7 +1148,7 @@ function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 				}
 				else
 				{
-					SquadBreachStingAndClearGoal = new class'SquadBreachStingAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachStingAndClearGoal = new class'SquadBreachStingAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachStingAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachStingAndClearGoal);
@@ -1179,7 +1180,7 @@ function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 	return false;
 }
 
-function bool BreachLeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment) {
+function bool BreachLeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod) {
 	local SquadBreachLeaderThrowAndClearGoal SquadGoal;
 
 	if(CanExecuteCommand()) {
@@ -1188,7 +1189,7 @@ function bool BreachLeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin,
 				if(!CanBreachAndClearLockedDoor()) {
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
 				} else {
-					SquadGoal = new class'SquadBreachLeaderThrowAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadGoal = new class'SquadBreachLeaderThrowAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadGoal != None);
 
 					PostCommandGoal(SquadGoal);

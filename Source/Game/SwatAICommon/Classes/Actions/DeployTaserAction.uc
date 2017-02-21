@@ -17,7 +17,7 @@ var private AttackTargetGoal	CurrentAttackTargetGoal;
 var private HandheldEquipment Taser;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -27,7 +27,7 @@ function cleanup()
         CurrentMoveToOpponentGoal.Release();
         CurrentMoveToOpponentGoal = None;
     }
-	
+
 	if (CurrentAttackTargetGoal != None)
     {
         CurrentAttackTargetGoal.Release();
@@ -67,6 +67,8 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 latent function EquipTaser()
 {
     Taser = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_SecondaryWeapon);
+    if(Taser == None || !Taser.IsA('Taser'))
+      Taser = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_PrimaryWeapon);
     assert(Taser != None && Taser.IsA('Taser'));
     Taser.LatentWaitForIdleAndEquip();
 }
@@ -120,7 +122,7 @@ state Running
 Begin:
     // let the officers know that the target exists
     SwatAIRepository(Level.AIRepo).GetHive().NotifyOfficersOfTarget(TargetPawn);
-	
+
 	// trigger the appropriate speech
 	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingTaserSpeech();
 

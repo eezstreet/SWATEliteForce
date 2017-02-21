@@ -3,7 +3,7 @@
 class SquadDeployTaserAction extends OfficerSquadAction;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 var private DeployTaserGoal CurrentDeployTaserGoal;
@@ -35,6 +35,9 @@ latent function DeployTaserOnTarget()
 	local Pawn Officer;
 
 	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_SecondaryWeapon, 'Taser');
+	if(Officer == None) {
+		Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_PrimaryWeapon, 'Taser');
+	}
 
 	CurrentDeployTaserGoal = new class'DeployTaserGoal'(AI_Resource(Officer.characterAI), TargetPawn);
 	assert(CurrentDeployTaserGoal != None);
