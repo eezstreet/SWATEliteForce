@@ -2053,7 +2053,7 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 		{
 			// sanity check!
 			assert(Weapon.HasFireMode(FireMode_DoubleTaser));
-	
+
 			return FireMode_DoubleTaser;
 		}
 	}
@@ -2300,20 +2300,13 @@ function NotifyHit(float Damage, Pawn HitInstigator);
 function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vector HitNormal, int Damage, class<DamageType> DamageType, Actor Instigator)
 {
 	local Pawn Attacker;
-	local bool bIsLessLethalHit;
 
 	log("OnSkeletalRegionHit on " $ Name $ " Damage type: " $ DamageType);
 
 	Attacker = Pawn(Instigator);
 
-	if (Attacker != None)
-	{
-		if ((Attacker.GetActiveItem() != None) && Attacker.GetActiveItem().IsA('LessLethalSG'))
-			bIsLessLethalHit = true;
-	}
-
 	// don't react if we're a client or if we got hit by a less lethal
-	if ((Level.NetMode != NM_Client) && !bIsLessLethalHit)
+	if (Level.NetMode != NM_Client)
 	{
 		// a check for being incapacitated is done in the commander
 		GetCommanderAction().OnSkeletalRegionHit(RegionHit, HitLocation, HitNormal, Damage, DamageType);

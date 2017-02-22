@@ -143,8 +143,6 @@ function bool CheckCampaignValid( class EquipmentClass )
 	MissionIndex = (Settings.ArrestRoundTimeDeduction & -65536) >> 16;
 	CampaignPath = Settings.ArrestRoundTimeDeduction & 65535;
 
-	log("mezzo: " $ CampaignPath $ ", " $ MissionIndex);
-
 	// Any equipment above the MissionIndex is currently unavailable
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     // Check first set of equipment

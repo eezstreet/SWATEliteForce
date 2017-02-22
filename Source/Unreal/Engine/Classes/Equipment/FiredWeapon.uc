@@ -418,6 +418,11 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
       Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - HitLocation);
       Ammo.BallisticsLog("Momentum (after drag): "$Momentum);
 
+      if(Momentum < 0.0) {
+        Ammo.BallisticsLog("Momentum went < 0. Not impacting with anything (LOST BULLET)");
+        break;
+      }
+
       if(Ammo.CanRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount)) {
         // the bullet ricocheted from the material
         DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount);
@@ -476,6 +481,11 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         Ammo.BallisticsLog("IMPACT: Momentum before drag: "$Momentum);
         Momentum -= Ammo.GetDrag() * VSize(HitLocation - StartTrace);
         Ammo.BallisticsLog("IMPACT: Momentum after drag: "$Momentum);
+
+        if(Momentum < 0.0) {
+          Ammo.BallisticsLog("Momentum went < 0. Not impacting with anything (LOST BULLET)");
+          break;
+        }
 
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
         if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {

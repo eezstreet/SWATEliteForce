@@ -20,7 +20,7 @@ var private HandheldEquipment	CSBallLauncher;		// the pepper ball gun
 var config int					MaxNumberPepperBallsToFire;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -30,7 +30,7 @@ function cleanup()
         CurrentMoveToOpponentGoal.Release();
         CurrentMoveToOpponentGoal = None;
     }
-	
+
 	if (CurrentAttackTargetGoal != None)
     {
         CurrentAttackTargetGoal.Release();
@@ -41,7 +41,7 @@ function cleanup()
 	{
 		CSBallLauncher.AIInterrupt();
 	}
-	
+
 	// make sure the fired weapon is re-equipped
 	ISwatOfficer(m_Pawn).InstantReEquipFiredWeapon();
 
@@ -70,7 +70,7 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 latent function EquipCSBallLauncher()
 {
     CSBallLauncher = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_PrimaryWeapon);
-	if(!CSBallLauncher.IsA('CSBallLauncher'))
+	if(CSBallLauncher == None || !CSBallLauncher.IsA('CSBallLauncher'))
 	{
 		// It's possibly a secondary weapon, so check that. --eez
 		CSBallLauncher = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_SecondaryWeapon);

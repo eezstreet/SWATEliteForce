@@ -223,6 +223,10 @@ protected function bool ShouldReactToNonLethals()
     return true;
 }
 
+///////////////////////////////////////
+
+function UnbecomeAThreat();
+
 ///////////////////////////////////////////////////////////////////////////////
 
 simulated private function SpawnRestrainedHandcuffs()
@@ -649,11 +653,14 @@ private function DirectHitByGrenade(Pawn Instigator, float Damage, float AISting
 	if ( CantBeDazed() )
         return;
 
-	if (Damage > 0.0)
+	if (Damage > 0.0) {
 		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0),
-				   class<DamageType>(DynamicLoadObject("SwatEquipment.HK69GrenadeLauncher", class'Class')));
+				   class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')));
+  }
 
-	ApplyDazedEffect(None, Location, AIStingDuration);
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health <= GetIncapacitatedDamageAmount() && IsAThreat())
+	 ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -661,6 +668,9 @@ private function DirectHitByGrenade(Pawn Instigator, float Damage, float AISting
 // IReactToDazingWeapon implementation
 
 function ReactToLessLeathalShotgun(
+    Pawn Instigator,
+    float Damage,
+    Vector MomentumVector,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -669,7 +679,20 @@ function ReactToLessLeathalShotgun(
     if ( CantBeDazed() )
         return;
 
-	ApplyDazedEffect(None, Location, AIStingDuration);
+        if (Damage > 0.0)
+        {
+            // event Actor::TakeDamage()
+            TakeDamage( Damage,                               // int Damage
+                        Instigator,                           // Pawn EventInstigator
+                        Location,							  // vector HitLocation
+                        MomentumVector,                          // vector Momentum
+                                  // class<DamageType> DamageType
+                        class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+        }
+
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health <= GetIncapacitatedDamageAmount() && IsAThreat())
+	   ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 // Triple baton rounds are launched from the grenade launcher but are handle differently than a direct hit from a launched grenade
@@ -709,10 +732,13 @@ function ReactToMeleeAttack(
         return;
 
 	// Only apply damage if the damage wont kill the target. You can't kill someone with the melee attack.
-    if (Damage > 0.0 && Damage < Health)
+    if (Damage > 0.0 && Damage < Health) {
         TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), MeleeDamageType);
+    }
 
-	ApplyDazedEffect(None, Location, AIStingDuration);
+  // Don't apply the dazed effect if we are a threat and we got incapacitated
+  if(Health <= IncapacitatedHealthAmount && IsAThreat())
+	 ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
