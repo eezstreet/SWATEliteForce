@@ -67,6 +67,11 @@ function initAction(AI_Resource r, AI_Goal goal)
 	{
 		ISwatEnemy(m_Pawn).UnbecomeAThreat();
 	}
+	// if we're running on an hostage, let the hive know -J21C
+	if (m_Pawn.IsA('SwatHostage'))
+	{
+		SwatAIRepository(m_Pawn.Level.AIRepo).GetHive().NotifyHostageStunned(m_Pawn);
+	}
 }
 
 // subclasses should override

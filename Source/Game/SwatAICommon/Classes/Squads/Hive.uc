@@ -150,6 +150,24 @@ private function CheckUpdateOfficerAssignmentsForEnemy(Pawn Enemy)
 	}
 }
 
+private function CheckUpdateOfficerAssignmentsForHostage(Pawn Hostage)
+{
+	local int i;
+
+	assert(Hostage != None);
+	assert(Hostage.IsA('SwatHostage'));
+
+	for(i=0; i<Blackboard.EncounteredHostages.Length; ++i)
+	{
+		// if we have encountered this hostage, update officer assignments so that we deal with him
+		if (Blackboard.EncounteredHostages[i] == Hostage)
+		{
+			UpdateOfficerAssignments();
+			break;
+		}
+	}
+}
+
 // notification that an enemy has become a threat
 function NotifyEnemyBecameThreat(Pawn Enemy)
 {
@@ -160,6 +178,12 @@ function NotifyEnemyBecameThreat(Pawn Enemy)
 function NotifyEnemyStunned(Pawn Enemy)
 {
 	CheckUpdateOfficerAssignmentsForEnemy(Enemy);
+}
+
+// notification that a hostage is stunned
+function NotifyHostageStunned(Pawn Hostage)
+{
+	CheckUpdateOfficerAssignmentsForHostage(Hostage);
 }
 
 // notification that an enemy has unbecome a threat
