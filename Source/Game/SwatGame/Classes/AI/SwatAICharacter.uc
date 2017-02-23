@@ -659,7 +659,7 @@ private function DirectHitByGrenade(Pawn Instigator, float Damage, float AISting
   }
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
-  if(Health > GetIncapacitatedDamageAmount() && IsAThreat())
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
 	 ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
@@ -691,7 +691,7 @@ function ReactToLessLeathalShotgun(
         }
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
-  if(Health > GetIncapacitatedDamageAmount() && IsAThreat())
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
 	   ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
@@ -737,7 +737,7 @@ function ReactToMeleeAttack(
     }
 
   // Don't apply the dazed effect if we are a threat and we got incapacitated
-  if(Health > IncapacitatedHealthAmount && IsAThreat())
+  if(Health > IncapacitatedHealthAmount || !IsAThreat())
 	 ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
