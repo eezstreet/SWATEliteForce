@@ -86,6 +86,8 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
 
     Context = FireInterfaceDoorRelatedContext(inContext);
 
+	if (!PlayerController.SwatPlayer.GetActiveItem().IsA(Context.HasA)) {return;}
+	
     if(Context.SideEffect == 'OnlyOnLockable') {
       // Hijacking the unused SideEffect system to pass whatever parameter we want!
       theDoor = Door(Target);
