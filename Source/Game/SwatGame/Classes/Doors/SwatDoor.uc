@@ -1198,6 +1198,8 @@ simulated function Broken()
         LockedKnowledge[1] = 0;
         LockedKnowledge[2] = 0;
 
+		bIsPushable = true;
+		
 		// allow subclasses to extend functionality
         PostBroken();
     }
