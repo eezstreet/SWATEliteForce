@@ -492,7 +492,7 @@ protected latent function NavigateThroughDoor(Door Target)
 
 //	log(m_Pawn.Name $ " finished waiting - PendingDoorInteractor " $ PendingDoorInteractor $ " IsClosed " $ Target.IsClosed() $ " IsBroken " $ SwatDoorTarget.IsBroken() $ " IsOpening " $ Target.IsOpening());
 
-	if (Target.IsClosed() && !SwatDoorTarget.IsBroken() && !Target.IsOpening() &&
+	if (Target.IsClosed() && /*!SwatDoorTarget.IsBroken() &&*/ !Target.IsOpening() &&
 		((PendingDoorInteractor == None) || (PendingDoorInteractor == m_Pawn)))
 	{
 		PostOpenDoorGoal(Target);
