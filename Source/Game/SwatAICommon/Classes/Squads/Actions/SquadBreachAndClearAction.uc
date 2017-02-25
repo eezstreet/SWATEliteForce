@@ -13,6 +13,7 @@ class SquadBreachAndClearAction extends SquadMoveAndClearAction
 // behaviors we use
 var private UseBreachingShotgunGoal CurrentUseBreachingShotgunGoal;
 var private UseBreachingChargeGoal  CurrentUseBreachingChargeGoal;
+var protected OpenDoorGoal				CurrentOpenDoorGoal;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -32,6 +33,11 @@ function cleanup()
 	{
 		CurrentUseBreachingChargeGoal.Release();
 		CurrentUseBreachingChargeGoal = None;
+	}
+	if (CurrentOpenDoorGoal != None)
+	{
+		CurrentOpenDoorGoal.Release();
+		CurrentOpenDoorGoal = None;
 	}
 }
 
@@ -54,6 +60,12 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 		CurrentUseBreachingChargeGoal.unPostGoal(self);
 		CurrentUseBreachingChargeGoal.Release();
 		CurrentUseBreachingChargeGoal = None;
+	}
+	if (goal == CurrentOpenDoorGoal)
+	{
+		CurrentOpenDoorGoal.unPostGoal(self);
+		CurrentOpenDoorGoal.Release();
+		CurrentOpenDoorGoal = None;
 	}
 }
 
@@ -167,8 +179,8 @@ latent function UseBreachingShotgun()
 
 	CurrentUseBreachingShotgunGoal.postGoal(self);
 
-	// if we have a second officer, pause and wait for the door to open
-	if (GetSecondOfficer() != None)
+	// if we have a first officer, pause and wait for the door to be breached
+	if (GetFirstOfficer() != None)
 	{
 		pause();
 	}
@@ -181,6 +193,30 @@ latent function UseBreachingShotgun()
 
 	CurrentUseBreachingShotgunGoal.Release();
 	CurrentUseBreachingShotgunGoal = None;
+	
+	// have him open the door
+	CurrentOpenDoorGoal = new class'OpenDoorGoal'(AI_Resource(Breacher.MovementAI), TargetDoor);
+	assert(CurrentOpenDoorGoal != None);
+	CurrentOpenDoorGoal.AddRef();
+
+	CurrentOpenDoorGoal.SetPreferSides();
+
+	CurrentOpenDoorGoal.postGoal(self);
+	
+	// if we have a second officer, pause and wait for the door to be opened
+	if (GetSecondOfficer() != None)
+	{
+		pause();
+	}
+	else
+	{
+		WaitForGoal(CurrentOpenDoorGoal);
+	}
+	
+	CurrentOpenDoorGoal.unPostGoal(self);
+
+	CurrentOpenDoorGoal.Release();
+	CurrentOpenDoorGoal = None;
 }
 
 protected function bool CanOfficerBreachWithC2(Pawn Officer)
