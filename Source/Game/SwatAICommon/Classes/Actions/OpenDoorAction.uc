@@ -60,7 +60,7 @@ function bool ShouldContinueToOpenDoor()
 
 	PendingDoorInteractor = SwatDoorTarget.GetPendingInteractor();
 
-	return (TargetDoor.IsClosed() && !SwatDoorTarget.IsBroken() && !TargetDoor.IsOpening() && !TargetDoor.IsClosing() &&
+	return (TargetDoor.IsClosed() && /*!SwatDoorTarget.IsBroken() &&*/ !TargetDoor.IsOpening() && !TargetDoor.IsClosing() &&
 		((PendingDoorInteractor == None) || (PendingDoorInteractor == m_Pawn)));
 }
 
@@ -174,7 +174,7 @@ state Running
 	// if it was blocked, try opening again soon
 	if (! bIsDoorBlockedBeforeOpen)
 	{
-		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !SwatDoorTarget.IsBroken() && !SwatDoorTarget.IsWedged())
+		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && /*!SwatDoorTarget.IsBroken() &&*/ !SwatDoorTarget.IsWedged())
 		{
 			yield();
 		}
