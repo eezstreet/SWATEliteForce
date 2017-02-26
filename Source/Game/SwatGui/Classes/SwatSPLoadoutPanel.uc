@@ -394,8 +394,6 @@ function SetRadioGroup(GUIRadioButton group)
         InitialDisplay();
         MyScrollLeftButton.DisableComponent();
         MyScrollRightButton.DisableComponent();
-        MyScrollAmmoLeftButton.DisableComponent();
-        MyScrollAmmoRightButton.DisableComponent();
         MySaveCustomButton.DisableComponent();
         MyLoadDefaultButton.DisableComponent();
         MyCustomLoadoutCombo.DisableComponent();
@@ -406,8 +404,6 @@ function SetRadioGroup(GUIRadioButton group)
     {
         MyScrollLeftButton.EnableComponent();
         MyScrollRightButton.EnableComponent();
-        MyScrollAmmoLeftButton.EnableComponent();
-        MyScrollAmmoRightButton.EnableComponent();
         MySaveCustomButton.EnableComponent();
         MyLoadDefaultButton.EnableComponent();
         MyCustomLoadoutCombo.EnableComponent();
