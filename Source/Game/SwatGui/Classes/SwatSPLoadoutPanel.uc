@@ -257,11 +257,6 @@ function bool CheckValidity( eNetworkValidity type )
     return (type == NETVALID_SPOnly) || (Super.CheckValidity( type ));
 }
 
-function bool CheckTeamValidity( eTeamValidity type )
-{
-	return true; // Team checks are not done in single player
-}
-
 function bool CheckCampaignValid( class EquipmentClass )
 {
 	local int MissionIndex;

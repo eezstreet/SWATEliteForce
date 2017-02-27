@@ -79,6 +79,9 @@ var(SWATGui) protected EditInline array<GUIList> EquipmentList "these are the li
 var(SWATGui) protected EditInline array<GUILabel> EquipmentLabel "These go next to the paperdoll figure";
 var(SWATGui) protected EditInline array<GUIButton> EquipmentSelectionButton "These go next to the paperdoll figure";
 
+var() protected EditInline config WeaponEquipClass DefaultPrimaryClass;
+var() protected EditInline config WeaponEquipClass DefaultSecondaryClass;
+
 var protected array< class<SwatWeapon> > AllWeapons;           // All of the weapons that are available for picking, period
 var protected array< class<SwatWeapon> > UnlockedWeapons;      // The weapons we have unlocked at this stage
 var protected array< class<SwatWeapon> > CandidateWeapons;     // The weapons that match the category
@@ -234,9 +237,9 @@ function InitialDisplay()
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
 	    if( !CheckValidity( GC.AvailableEquipmentPockets[i].DisplayValidity ) )
-	        Continue;
-
-		  ValidatePocketForSelection( Pocket(i) );
+	    {
+        continue;
+      }
 
       UpdateIndex( Pocket(i) );
 
@@ -248,18 +251,6 @@ function InitialDisplay()
     CachedAvailableSecondaryTypes.Length = 0;
     PopulateUnlockedEquipment();
     DisplayTab(ActiveTab);
-}
-
-function ValidatePocketForSelection( Pocket thePocket )
-{
-	if( EquipmentList[thePocket] == None )
-        return;
-
-	if( !CheckTeamValidity(GetTeamValidity(thePocket, class<actor>(EquipmentList[thePocket].GetObject()))) )
-	{
-		EquipmentList[thePocket].SetIndex( 0 );
-		ChangeLoadOut( thePocket );
-	}
 }
 
 ///////////////////////////
@@ -369,42 +360,9 @@ function bool CheckValidity( eNetworkValidity type )  //should be further subcla
     return (type == NETVALID_All);
 }
 
-function bool CheckTeamValidity( eTeamValidity type )  //should be further subclassed
-{
-	return (type == TEAMVALID_ALL);
-}
-
 function bool CheckCampaignValid( class EquipmentClass )  //should be further subclassed
 {
 	return true;
-}
-
-function eTeamValidity GetTeamValidity(Pocket pock, class<Actor> CheckClass)
-{
-	local string ClassName;
-	local class<Actor> DLOClass;
-	local int i;
-	local ServerSettings Settings;
-
-	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
-
-	// Custom skins always need to be team checked. All other team specific stuff can be disabled
-	if( pock != Pocket.Pocket_CustomSkin && Settings != None && Settings.bDisableTeamSpecificWeapons )
-		return TEAMVALID_ALL;
-
-	for( i = 0; i < GC.AvailableEquipmentPockets[pock].EquipmentClassName.Length; ++i )
-	{
-		ClassName = GC.AvailableEquipmentPockets[pock].EquipmentClassName[i];
-
-		DLOClass = class<Actor>(DynamicLoadObject(ClassName, class'class'));
-
-		AssertWithDescription( DLOClass != None, self.Name$":  Could not DLO invalid equipment class "$ClassName$" specified in the pocket specifications section of SwatEquipment.ini." );
-
-		if (DLOClass == CheckClass)
-			return GC.AvailableEquipmentPockets[pock].TeamValidity[i];
-	}
-
-	return TEAMVALID_ALL;
 }
 
 ///////////////////////////
@@ -579,7 +537,6 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
 
     //if the item that would be selected is invalid given other items in the loadout and the players team, select the next item
     if( !MyCurrentLoadOut.ValidForLoadoutSpec( class<actor>(EquipmentList[thePocket].GetObject()), thePocket ) ||
-		!CheckTeamValidity( GetTeamValidity(thePocket, class<actor>(EquipmentList[thePocket].GetObject()) ) ) ||
 		!CheckCampaignValid( class<actor>(EquipmentList[thePocket].GetObject()) ) )
     {
         if( FailedToValidate >= 0 )
@@ -709,7 +666,6 @@ private function InternalComboBoxOnSelection(GUIComponent Sender)
           ActivePocket = Pocket_SecondaryWeapon;
           ActiveAmmoPocket = Pocket_SecondaryAmmo;
       }
-      ValidatePocketForSelection(ActivePocket);
       ChangeLoadOut(ActivePocket);
       RepopulateAmmoInformationForNewWeapon(class<SwatWeapon>(MyCurrentLoadout.LoadoutSpec[ActivePocket]));
 
@@ -737,19 +693,16 @@ private function InternalComboBoxOnSelection(GUIComponent Sender)
         } else {
           ActivePocket = Pocket_SecondaryAmmo;
         }
-        ValidatePocketForSelection(ActivePocket);
         ChangeLoadOut(ActivePocket);
       }
       else {
         if(ActiveTab == 0) {
           ActivePocket = Pocket_PrimaryWeapon;
-          ValidatePocketForSelection(Pocket_PrimaryAmmo);
           ChangeLoadOut(Pocket_PrimaryAmmo);
           UpdateIndex(Pocket_PrimaryAmmo);
           DisplayEquipment(Pocket_PrimaryAmmo);
         } else {
           ActivePocket = Pocket_SecondaryWeapon;
-          ValidatePocketForSelection(Pocket_SecondaryAmmo);
           ChangeLoadOut(Pocket_SecondaryAmmo);
           UpdateIndex(Pocket_SecondaryAmmo);
           DisplayEquipment(Pocket_SecondaryAmmo);
@@ -790,6 +743,7 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   local class<SwatAmmo> CurrentAmmo;
   local WeaponEquipClass CurrentWeaponEquipClass;
   local int i, j;
+  local int CategoryNum, WeaponNum;
 
   //log("Ascertain the weapon information...");
   if(bPrimaryWeapon) {
@@ -872,8 +826,22 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
 
   //log("Set the selected weapon...");
-  MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
-  MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
+  CategoryNum = MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
+  WeaponNum = MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
+
+  if(CategoryNum == -1 || WeaponNum == -1) {
+    // The equipment failed to validate. Try again.
+    WeaponNum = 0;
+    if(bPrimaryWeapon) {
+      CurrentWeaponEquipClass = DefaultPrimaryClass;
+    } else {
+      CurrentWeaponEquipClass = DefaultSecondaryClass;
+    }
+    MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
+    RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
+    MyWeaponBox.SetIndex(0);
+    MyAmmoBox.SetIndex(0);
+  }
 }
 
 // We have selected a new weapon category, reset the weapon list
@@ -1047,4 +1015,7 @@ defaultproperties
   EquipmentCategoryNames[7]="Less Lethal"
   EquipmentCategoryNames[8]="Grenade Launchers"
   EquipmentCategoryNames[9]="Uncategorized"
+
+  DefaultPrimaryClass=WeaponClass_AssaultRifle
+  DefaultSecondaryClass=WeaponClass_Pistol
 }
