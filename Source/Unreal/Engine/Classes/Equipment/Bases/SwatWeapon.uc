@@ -1,5 +1,35 @@
 class SwatWeapon extends FiredWeapon;
 
+/*
+ * Describes which "equip type" a weapon is a part of.
+ * This is pretty self-explanatory.
+ */
+enum WeaponEquipType
+{
+  WeaponEquip_PrimaryOnly,
+  WeaponEquip_SecondaryOnly,
+  WeaponEquip_Either
+};
+
+/*
+ * Describes which "equip class" a weapon is a part of.
+ * This determines the category of weapon for the GUI, nothing more.
+ * If a class has no valid weapons for the slot, the category won't appear.
+ */
+enum WeaponEquipClass
+{
+  WeaponClass_AssaultRifle,             // Assault Rifles (M4, M16, AKM, etc.)
+  WeaponClass_MarksmanRifle,            // Marksman Rifles (scoped rifles)
+  WeaponClass_SubmachineGun,            // Submachine Guns (MP5, G36C, Uzi, etc.)
+  WeaponClass_Shotgun,                  // Shotguns (M4, Nova, M870, BSG)
+  WeaponClass_LightMachineGun,          // Light Machine Guns (M249 SAW)
+  WeaponClass_MachinePistol,            // Machine Pistols; SMGs that don't have a stock (MP5K, TEC-9)
+  WeaponClass_Pistol,                   // Pistols (Desert Eagle, M1911, Glock, ... but not tasers!)
+  WeaponClass_LessLethal,               // Less-lethal shotguns, tasers, and pepperball
+  WeaponClass_GrenadeLauncher,          // Grenade Launchers (ARWEN 37, HK69)
+  WeaponClass_Uncategorized             // Not categorized! Find one!
+};
+
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
 // Manufacturer Information
@@ -14,6 +44,9 @@ var(AdvancedDescription) protected localized config string TotalAmmoString      
 var(AdvancedDescription) protected localized config string FireModes            "Human-readable firing mode string for Advanced Information panel (localized)";
 // Muzzle velocity
 var(AdvancedDescription) protected localized config string RateOfFire           "Human-readable RoF string for Advanced Information panel (localized)";
+
+var(Categorization) public config WeaponEquipClass WeaponCategory            "Which category this weapon belongs to in the GUI.";
+var(Categorization) public config WeaponEquipType AllowedSlots               "Which slots this weapon is allowed to be equipped in";
 
 // Weight/bulk
 var() public config float Weight;
@@ -93,6 +126,16 @@ static function string GetRateOfFire()
 static function string GetTotalAmmoString()
 {
   return "Maximum Ammo: "$default.TotalAmmoString;
+}
+
+static function WeaponEquipClass GetEquipClass()
+{
+  return default.WeaponCategory;
+}
+
+static function WeaponEquipType GetEquipType()
+{
+  return default.AllowedSlots;
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?

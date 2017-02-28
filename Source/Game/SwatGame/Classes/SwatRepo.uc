@@ -215,7 +215,15 @@ event Tick( Float DeltaSeconds )
 						break;
                 case GAMESTATE_PostGame:
                     CumulativeDelta += DeltaSeconds;
-
+					
+					if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+					{
+						CumulativeDelta = 0;
+						GetSGRI().ServerCountdownTime = 0;
+						CheckAllPlayersReady();
+						break;
+					}
+					
                     if( GetSGRI().ServerCountdownTime <= 0 )
                     {
                         CumulativeDelta = 0;
