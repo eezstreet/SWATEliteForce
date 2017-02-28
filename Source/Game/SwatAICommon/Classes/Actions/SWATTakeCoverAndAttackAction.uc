@@ -12,7 +12,6 @@ import enum EAICoverLocationType from AICoverFinder;
 //
 // Variables
 
-var private HiveBlackboard				Blackboard;
 var(parameters) private Pawn Enemy;
 var private AttackTargetGoal			CurrentAttackTargetGoal;
 var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
@@ -50,16 +49,6 @@ var config private float				AimAroundMaxAimTime;
 
 const kMoveTowardMinTime = 1.0;
 const kMoveTowardMaxTime = 2.0;
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Constructor
-
-overloaded function construct()
-{
-    Blackboard = new(None) class'HiveBlackboard';
-    assert(Blackboard != None);
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -347,8 +336,10 @@ protected function bool FindBestCoverToAttackFrom()
     m_tookCover = false;
 
 	assert(m_Pawn != None);
+	assert(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction != None);
+	assert(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor() != None);
 
-	CachedSeenPawns = Blackboard.EncounteredEnemies;
+	CachedSeenPawns = SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns;
 	AttackCoverLocationType = kAICLT_NearestFront;
     CoverResult = AICoverFinder.FindCover(CachedSeenPawns, AttackCoverLocationType);
 
