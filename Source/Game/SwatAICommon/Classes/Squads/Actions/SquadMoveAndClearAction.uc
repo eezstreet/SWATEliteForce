@@ -775,7 +775,7 @@ protected latent function MoveUpThrower()
 				OriginalThrower = Thrower;
 				SecondOfficer   = GetSecondOfficer();
 
-				SwapOfficerRoles(OriginalThrower, SecondOfficer);
+				SwapOfficerRoles(OriginalThrower, SecondOfficer);	//(Thrower, Breacher)
 				SwapStackUpPositions(OriginalThrower, SecondOfficer);
 			}
 		}
@@ -1110,7 +1110,7 @@ protected function SetupOfficerRoles()
 protected function SetThrower();
 
 // allows sublcasses to set the breacher
-protected function SetBreacher();
+protected function SetBreacher(optional bool skipBreacher);
 
 latent function MoveFirstTwoOfficersThroughDoor()
 {
