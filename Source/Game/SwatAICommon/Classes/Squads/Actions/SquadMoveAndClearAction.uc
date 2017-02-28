@@ -775,7 +775,7 @@ protected latent function MoveUpThrower()
 				OriginalThrower = Thrower;
 				SecondOfficer   = GetSecondOfficer();
 
-				SwapOfficerRoles(OriginalThrower, SecondOfficer);	//(Thrower, Breacher)
+				SwapOfficerRoles(OriginalThrower, SecondOfficer);
 				SwapStackUpPositions(OriginalThrower, SecondOfficer);
 			}
 		}
