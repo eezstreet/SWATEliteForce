@@ -1742,7 +1742,7 @@ simulated function bool CanIssueComplianceTo(Pawn otherPawn)
 	if (otherPawn.IsA('SwatAICharacter') &&
 		(VSize(otherPawn.Location - Location) <= MaxComplianceIssueDistance) &&
 		LineOfSightTo(otherPawn) &&
-    otherPawn.PlayerCanSeeMe() &&
+//    otherPawn.PlayerCanSeeMe() &&
         SwatCharacterResource(otherPawn.characterAI).CommonSensorAction.GetComplySensor() != None)
 	{
 		return true;

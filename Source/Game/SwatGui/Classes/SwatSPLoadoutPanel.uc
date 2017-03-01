@@ -257,11 +257,6 @@ function bool CheckValidity( eNetworkValidity type )
     return (type == NETVALID_SPOnly) || (Super.CheckValidity( type ));
 }
 
-function bool CheckTeamValidity( eTeamValidity type )
-{
-	return true; // Team checks are not done in single player
-}
-
 function bool CheckCampaignValid( class EquipmentClass )
 {
 	local int MissionIndex;
@@ -394,8 +389,6 @@ function SetRadioGroup(GUIRadioButton group)
         InitialDisplay();
         MyScrollLeftButton.DisableComponent();
         MyScrollRightButton.DisableComponent();
-        MyScrollAmmoLeftButton.DisableComponent();
-        MyScrollAmmoRightButton.DisableComponent();
         MySaveCustomButton.DisableComponent();
         MyLoadDefaultButton.DisableComponent();
         MyCustomLoadoutCombo.DisableComponent();
@@ -406,8 +399,6 @@ function SetRadioGroup(GUIRadioButton group)
     {
         MyScrollLeftButton.EnableComponent();
         MyScrollRightButton.EnableComponent();
-        MyScrollAmmoLeftButton.EnableComponent();
-        MyScrollAmmoRightButton.EnableComponent();
         MySaveCustomButton.EnableComponent();
         MyLoadDefaultButton.EnableComponent();
         MyCustomLoadoutCombo.EnableComponent();

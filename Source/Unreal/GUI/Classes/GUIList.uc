@@ -660,6 +660,22 @@ function int FindExtraIntData(int TheIntToFind, optional bool bDontSetIndex, opt
 	return -1;
 }
 
+// returns the index of the found element
+function int FindObjectData(object TheObjectToFind, optional bool bDontSetIndex, optional bool bDontReAlign)
+{
+  local int i;
+  for(i = 0; i < ItemCount; i++)
+  {
+    if(TheObjectToFind == Elements[i].ExtraData)
+    {
+      if(!bDontSetIndex)
+        SetIndex(i, false, bDontReAlign);
+      return i;
+    }
+  }
+  return -1;
+}
+
 defaultproperties
 {
 	bSortForward=True

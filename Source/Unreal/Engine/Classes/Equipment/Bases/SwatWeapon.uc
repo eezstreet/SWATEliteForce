@@ -45,8 +45,8 @@ var(AdvancedDescription) protected localized config string FireModes            
 // Muzzle velocity
 var(AdvancedDescription) protected localized config string RateOfFire           "Human-readable RoF string for Advanced Information panel (localized)";
 
-var(Categorization) protected config WeaponEquipClass WeaponCategory            "Which category this weapon belongs to in the GUI.";
-var(Categorization) protected config WeaponEquipType AllowedSlots               "Which slots this weapon is allowed to be equipped in";
+var(Categorization) public config WeaponEquipClass WeaponCategory            "Which category this weapon belongs to in the GUI.";
+var(Categorization) public config WeaponEquipType AllowedSlots               "Which slots this weapon is allowed to be equipped in";
 
 // Weight/bulk
 var() public config float Weight;
