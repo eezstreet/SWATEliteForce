@@ -636,9 +636,9 @@ protected function MagazineCountChange(GUIComponent Sender) {
   local GUINumericEdit SenderEdit;
   SenderEdit = GUINumericEdit(Sender);
 
-  if(ActivePocket == Pocket_PrimaryWeapon) {
+  if(ActivePocket == Pocket_PrimaryWeapon || ActivePocket == Pocket_PrimaryAmmo) {
     MyCurrentLoadOut.SetPrimaryAmmoCount(SenderEdit.Value);
-  } else if(ActivePocket == Pocket_SecondaryWeapon) {
+  } else if(ActivePocket == Pocket_SecondaryWeapon || ActivePocket == Pocket_SecondaryAmmo) {
     MyCurrentLoadOut.SetSecondaryAmmoCount(SenderEdit.Value);
   }
   UpdateWeights();
