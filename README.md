@@ -132,9 +132,9 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 - Suspects Arrested: Bonus based on the amount of suspects secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
 - Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
+ * Points: (Number of suspects incapacitated)/(Total Number of suspects) x 13 (65% of 20).
 - Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
+ * Points: (Number of suspects neutralized)/(Total Number of suspects) x 4 (20% of 20).
 - No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
  * Points: 5
 - No Officers Downed: Bonus based on the amount of incapacitated officers. 
