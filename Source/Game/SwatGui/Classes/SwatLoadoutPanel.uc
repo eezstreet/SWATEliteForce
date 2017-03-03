@@ -515,9 +515,17 @@ function DisplayEquipment( Pocket thePocket )
       MyAmmoMagazineCountSpinner.SetVisibility(true);
       MyAmmoMagazineCountLabel.SetVisibility(true);
       MyAmmoMagazineCountSpinner.SetActive(true);
+
+      MyWeaponCategoryBox.EnableComponent();
+      MyWeaponBox.EnableComponent();
+      MyAmmoBox.EnableComponent();
     } else {
       MyAmmoMagazineCountSpinner.SetVisibility(false);
       MyAmmoMagazineCountLabel.SetVisibility(false);
+
+      MyWeaponCategoryBox.DisableComponent();
+      MyWeaponBox.DisableComponent();
+      MyAmmoBox.DisableComponent();
     }
 
     if(BodyArmorClass != None && HeadgearClass != None)
