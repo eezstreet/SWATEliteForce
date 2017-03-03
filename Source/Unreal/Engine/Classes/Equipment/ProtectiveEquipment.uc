@@ -68,6 +68,21 @@ static function class<Actor> GetRenderableActorClass()
     return default.Class;
 }
 
+static function String GetProtectionRating()
+{
+   return "None";
+}
+
+static function String GetSpecialProtection()
+{
+  return "None";
+}
+
+static function String GetMtPString()
+{
+  return string(default.MomentumToPenetrate);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Armor shredding mechanic
