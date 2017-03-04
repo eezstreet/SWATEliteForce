@@ -90,6 +90,20 @@ var protected array<WeaponEquipClass> CachedAvailableSecondaryTypes; // A cache 
 var protected array<string> AllAmmoNames;
 var protected array< class<SwatAmmo> > AllAmmo;
 
+// Extra Information panel for protection tab
+var(SWATGui) protected EditInline config GUILabel AdvancedInfoHeadgearTitle;
+var(SWATGui) protected EditInline config GUILabel AdvancedInfoBodyArmorTitle;
+var(SWATGui) protected EditInline config GUILabel AdvancedInfoHeadgearRating;
+var(SWATGui) protected EditInline config GUILabel AdvancedInfoHeadgearWeight;
+var(SWATGui) protected EditInline config GUIScrollTextBox AdvancedInfoHeadgearSpecial;
+var(SWATGui) protected EditInline config GUILabel AdvancedInfoBodyArmorRating;
+var(SWATGui) protected EditInline config GUILabel AdvancedInfoBodyArmorWeight;
+var(SWATGui) protected EditInline config GUIScrollTextBox AdvancedInfoBodyArmorSpecial;
+
+var localized config string RatingString;
+var localized config string WeightString;
+var localized config string SpecialString;
+
 var private int     ActiveTab;
 var protected Pocket  ActivePocket;
 var private Pocket  ActiveAmmoPocket;
@@ -444,6 +458,8 @@ function DisplayEquipment( Pocket thePocket )
 {
     local class<ICanBeSelectedInTheGUI> Equipment;
     local class<SwatWeapon> EquipmentWeaponClass;
+    local class<ProtectiveEquipment> HeadgearClass;
+    local class<ProtectiveEquipment> BodyArmorClass;
 
 
     if( EquipmentList[thePocket] == None )
@@ -466,14 +482,22 @@ function DisplayEquipment( Pocket thePocket )
     {
         case Pocket_PrimaryWeapon:
         case Pocket_PrimaryAmmo:
-            EquipmentWeaponClass = class<SwatWeapon>(EquipmentList[0].GetObject());
+            EquipmentWeaponClass = class<SwatWeapon>(EquipmentList[Pocket.Pocket_PrimaryWeapon].GetObject());
             break;
         case Pocket_SecondaryWeapon:
         case Pocket_SecondaryAmmo:
-            EquipmentWeaponClass = class<SwatWeapon>(EquipmentList[2].GetObject());
+            EquipmentWeaponClass = class<SwatWeapon>(EquipmentList[Pocket.Pocket_SecondaryWeapon].GetObject());
+            break;
+        case Pocket_HeadArmor:
+        case Pocket_BodyArmor:
+            HeadgearClass = class<ProtectiveEquipment>(EquipmentList[Pocket.Pocket_HeadArmor].GetObject());
+            BodyArmorClass = class<ProtectiveEquipment>(EquipmentList[Pocket.Pocket_BodyArmor].GetObject());
             break;
         default:
+            HeadgearClass = None;
+            BodyArmorClass = None;
             EquipmentWeaponClass = None;
+            break;
     }
 
     if(EquipmentWeaponClass != None)
@@ -491,9 +515,27 @@ function DisplayEquipment( Pocket thePocket )
       MyAmmoMagazineCountSpinner.SetVisibility(true);
       MyAmmoMagazineCountLabel.SetVisibility(true);
       MyAmmoMagazineCountSpinner.SetActive(true);
+
+      MyWeaponCategoryBox.EnableComponent();
+      MyWeaponBox.EnableComponent();
+      MyAmmoBox.EnableComponent();
     } else {
       MyAmmoMagazineCountSpinner.SetVisibility(false);
       MyAmmoMagazineCountLabel.SetVisibility(false);
+
+      MyWeaponCategoryBox.DisableComponent();
+      MyWeaponBox.DisableComponent();
+      MyAmmoBox.DisableComponent();
+    }
+
+    if(BodyArmorClass != None && HeadgearClass != None)
+    {
+      AdvancedInfoHeadgearRating.SetCaption(RatingString$HeadgearClass.static.GetProtectionRating());
+      //AdvancedInfoHeadgearWeight.SetCaption(WeightString$HeadgearClass.static.GetWeight()$"kg");  // FIXME
+      AdvancedInfoHeadgearSpecial.SetContent(SpecialString$HeadgearClass.static.GetSpecialProtection());
+      AdvancedInfoBodyArmorRating.SetCaption(RatingString$BodyArmorClass.static.GetProtectionRating());
+      //AdvancedInfoBodyArmorWeight.SetCaption(WeightString$string(BodyArmorClass.static.GetWeight())$"kg");  // FIXME
+      AdvancedInfoBodyArmorSpecial.SetContent(SpecialString$BodyArmorClass.static.GetSpecialProtection());
     }
 
     switch(thePocket)
@@ -594,9 +636,9 @@ protected function MagazineCountChange(GUIComponent Sender) {
   local GUINumericEdit SenderEdit;
   SenderEdit = GUINumericEdit(Sender);
 
-  if(ActivePocket == Pocket_PrimaryWeapon) {
+  if(ActivePocket == Pocket_PrimaryWeapon || ActivePocket == Pocket_PrimaryAmmo) {
     MyCurrentLoadOut.SetPrimaryAmmoCount(SenderEdit.Value);
-  } else if(ActivePocket == Pocket_SecondaryWeapon) {
+  } else if(ActivePocket == Pocket_SecondaryWeapon || ActivePocket == Pocket_SecondaryAmmo) {
     MyCurrentLoadOut.SetSecondaryAmmoCount(SenderEdit.Value);
   }
   UpdateWeights();
@@ -880,7 +922,10 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
         break;
       }
     }
-    assert(Ammo != None);
+    if(Ammo == None) {
+      log("ASSERTION FAILURE!! Ammo == None on weapon "$TheNewWeapon);
+      assert(Ammo != None);
+    }
     MyAmmoBox.AddItem(Ammo.static.GetFriendlyName(), Ammo);
     Ammo = None;
   }
@@ -934,6 +979,16 @@ private function DisplayTab(int tabNum)
             MyEquipmentFireModesLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
             MyEquipmentMuzzleVelocityLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
             MyEquipmentRateOfFireLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+
+            // Protection information
+            AdvancedInfoHeadgearTitle.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoBodyArmorTitle.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoHeadgearRating.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoHeadgearWeight.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoHeadgearSpecial.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoBodyArmorRating.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoBodyArmorWeight.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
+            AdvancedInfoBodyArmorSpecial.SetVisibility(ActivePocket == Pocket.Pocket_BodyArmor || ActivePocket == Pocket.Pocket_HeadArmor);
 
             MyAmmoImage.SetVisibility( ActiveAmmoPocket != Pocket.Pocket_Invalid );
 
@@ -1018,4 +1073,8 @@ defaultproperties
 
   DefaultPrimaryClass=WeaponClass_AssaultRifle
   DefaultSecondaryClass=WeaponClass_Pistol
+
+  RatingString="NIJ 0101.05 Rating: "
+  WeightString="Weight: "
+  SpecialString="Extra Protection: "
 }
