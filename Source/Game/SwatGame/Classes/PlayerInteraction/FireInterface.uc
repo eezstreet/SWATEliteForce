@@ -84,19 +84,26 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
     local HUDPageBase HUD;
     local Door theDoor;
 
+    Player = SwatGamePlayerController(Level.GetLocalPlayerController());
+
     Context = FireInterfaceDoorRelatedContext(inContext);
 
-	if (!PlayerController.SwatPlayer.GetActiveItem().IsA(Context.HasA)) {return;}
-	
-    if(Context.SideEffect == 'OnlyOnLockable') {
+    if(Context.SideEffect == 'C2SideEffect') {
+      if(Player.SwatPlayer.GetActiveItem().IsA('Shotgun')) {
+        return;
+      }
+    }
+    else if(Context.SideEffect == 'OnlyOnLockable') {
       // Hijacking the unused SideEffect system to pass whatever parameter we want!
       theDoor = Door(Target);
       if(!theDoor.CanBeLocked()) {
         return;
       }
+      if(Player.SwatPlayer.GetActiveItem().IsA('Shotgun')) {
+        return;
+      }
     }
 
-    Player = SwatGamePlayerController(Level.GetLocalPlayerController());
     HUD = Player.GetHUDPage();
 
     HUD.Feedback.FireText = Context.FireFeedbackText;
@@ -109,6 +116,7 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
     switch (Context.SideEffect)
     {
         case 'OnlyOnLockable':
+        case 'C2SideEffect':
         case '':
             break;  //no side effect
 
