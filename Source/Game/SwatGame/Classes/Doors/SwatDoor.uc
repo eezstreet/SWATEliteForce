@@ -1300,7 +1300,7 @@ simulated state Opening extends Moving
     {
 		NotifyRegistrantsDoorOpening();
 
-        if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+        if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') && !GetLastInteractor().IsA('SwatHostage') )
         {
             assert(BoobyTrap != None);
             BoobyTrap.OnTriggeredByDoor();
@@ -1415,6 +1415,8 @@ simulated state BeingBreached extends Moving
             PlayBreachedEffects();
 //            TriggerEffectEvent('Breached');
             Broken();
+						if (IsWedged())
+		            DeployedWedge.OnRemoved();
         }
     }
 
@@ -1431,7 +1433,7 @@ simulated state BeingBreached extends Moving
         else
             PlayAnim('BreachedRight');
 
-		if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+		if ( IsBoobyTrapped() )
 		{
 			assert(BoobyTrap != None);
 		    BoobyTrap.OnTriggeredByDoor();
