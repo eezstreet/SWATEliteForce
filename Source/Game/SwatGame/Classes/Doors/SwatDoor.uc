@@ -2450,7 +2450,7 @@ simulated function OnUsedByWedge()
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatDoor::OnUsedByWedge()." );
 
-    CanDoorBeWedgedNow = IsClosed() && !IsOpening() && !IsBroken();
+    CanDoorBeWedgedNow = IsClosed() && !IsOpening();
     if ( !CanDoorBeWedgedNow  )
     {
 		if (Level.GetEngine().EnableDevTools)
