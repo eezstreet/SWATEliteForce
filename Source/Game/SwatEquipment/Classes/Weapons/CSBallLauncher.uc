@@ -35,4 +35,5 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 defaultproperties
 {
 	bIsLessLethal=true
+	bPenetratesDoors=false
 }

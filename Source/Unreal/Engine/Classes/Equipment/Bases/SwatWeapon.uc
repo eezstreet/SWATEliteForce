@@ -52,6 +52,8 @@ var(Categorization) public config WeaponEquipType AllowedSlots               "Wh
 var() public config float Weight;
 var() public config float Bulk;
 
+var bool bPenetratesDoors;
+
 simulated function float GetWeight() {
   return Weight;
 }
@@ -128,6 +130,26 @@ static function string GetTotalAmmoString()
   return "Maximum Ammo: "$default.TotalAmmoString;
 }
 
+simulated function bool HandleDoorImpact(
+    Actor Victim,
+    vector HitLocation,
+    vector HitNormal,
+    Material HitMaterial,
+    vector ExitLocation,
+    vector ExitNormal,
+    Material ExitMaterial
+    )
+{
+	Ammo.SetLocation(HitLocation);
+	Ammo.SetRotation(rotator(HitNormal));
+	Ammo.TriggerEffectEvent('BulletHit', None, HitMaterial);
+		
+	Ammo.SetLocation( ExitLocation );
+    Ammo.SetRotation( rotator(ExitNormal) );
+    Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
+	return bPenetratesDoors;
+}
+
 static function WeaponEquipClass GetEquipClass()
 {
   return default.WeaponCategory;
@@ -153,4 +175,5 @@ defaultproperties
   TotalAmmoString="Unknown"
   Choke = 0.0
   Slot=Slot_Invalid
+  bPenetratesDoors=true
 }

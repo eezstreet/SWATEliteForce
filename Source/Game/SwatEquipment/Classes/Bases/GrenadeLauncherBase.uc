@@ -32,3 +32,8 @@ function BallisticFire(vector StartTrace, vector EndTrace)
 
     Grenade.Velocity = ShotVector * MuzzleVelocity;
 }
+
+defaultproperties
+{
+  bPenetratesDoors=false
+}
