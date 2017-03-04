@@ -1188,8 +1188,9 @@ simulated function Broken()
         bIsBroken = true;
 
         //remove any wedge
-        if (IsWedged())
-            DeployedWedge.OnRemoved();
+        //if (IsWedged())
+        //    DeployedWedge.OnRemoved();
+				// eez- don't remove wedges unless we are blown up by C2
 
 		// update officer door knowledge in standalone
 		UpdateOfficerDoorKnowledge();
@@ -1199,7 +1200,7 @@ simulated function Broken()
         LockedKnowledge[2] = 0;
 
 		bIsPushable = true;
-		
+
 		// allow subclasses to extend functionality
         PostBroken();
     }
@@ -1394,11 +1395,11 @@ simulated state BeingBlasted extends Moving
         else
             PlayAnim('BlastedRight');*/
 
-		if ( IsBoobyTrapped() )
+		/*if ( IsBoobyTrapped() )
 		{
 			assert(BoobyTrap != None);
 			BoobyTrap.OnTriggeredByDoor();
-		}
+		}*/
     }
 
     simulated function PlayBlastedEffects();    //implemented in subclasses
