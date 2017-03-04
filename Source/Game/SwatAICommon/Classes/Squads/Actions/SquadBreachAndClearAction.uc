@@ -13,6 +13,7 @@ class SquadBreachAndClearAction extends SquadMoveAndClearAction
 // behaviors we use
 var private UseBreachingShotgunGoal CurrentUseBreachingShotgunGoal;
 var private UseBreachingChargeGoal  CurrentUseBreachingChargeGoal;
+var protected OpenDoorGoal			CurrentOpenDoorGoal;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -32,6 +33,11 @@ function cleanup()
 	{
 		CurrentUseBreachingChargeGoal.Release();
 		CurrentUseBreachingChargeGoal = None;
+	}
+	if (CurrentOpenDoorGoal != None)
+	{
+		CurrentOpenDoorGoal.Release();
+		CurrentOpenDoorGoal = None;
 	}
 }
 
@@ -55,6 +61,12 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 		CurrentUseBreachingChargeGoal.Release();
 		CurrentUseBreachingChargeGoal = None;
 	}
+	if (goal == CurrentOpenDoorGoal)
+	{
+		CurrentOpenDoorGoal.unPostGoal(self);
+		CurrentOpenDoorGoal.Release();
+		CurrentOpenDoorGoal = None;
+	}
 }
 
 function NotifyDetonatorEquipping()
@@ -76,7 +88,7 @@ protected function bool ShouldStackUpIfOfficersInRoomToClear() { return true; }
 //
 // State Code
 
-protected function Pawn GetFirstOfficerWithC2()
+protected function Pawn GetFirstOfficerWithC2(optional bool skipBreacher)
 {
 	local int i;
 	local Pawn Officer;
@@ -85,7 +97,7 @@ protected function Pawn GetFirstOfficerWithC2()
 	for(i = 0; i < OfficersInStackUpOrder.Length; i++) {
 		Officer = OfficersInStackUpOrder[i];
 
-		if(class'Pawn'.static.checkConscious(Officer) && CanOfficerBreachWithC2(Officer)) {
+		if(class'Pawn'.static.checkConscious(Officer) && CanOfficerBreachWithC2(Officer) && (!skipBreacher || Officer != Breacher)) {
 			Found = Officer;
 			break;
 		}
@@ -94,7 +106,7 @@ protected function Pawn GetFirstOfficerWithC2()
 	return Found;
 }
 
-protected function Pawn GetFirstOfficerWithBSG()
+protected function Pawn GetFirstOfficerWithBSG(optional bool skipBreacher)
 {
 	local int i;
 	local Pawn Officer;
@@ -103,7 +115,7 @@ protected function Pawn GetFirstOfficerWithBSG()
 	for(i = 0; i < OfficersInStackUpOrder.Length; i++) {
 		Officer = OfficersInStackUpOrder[i];
 
-		if(class'Pawn'.static.checkConscious(Officer) && CanOfficerBreachWithShotgun(Officer)) {
+		if(class'Pawn'.static.checkConscious(Officer) && CanOfficerBreachWithShotgun(Officer) && (!skipBreacher || Officer != Breacher)) {
 			Found = Officer;
 			break;
 		}
@@ -112,7 +124,7 @@ protected function Pawn GetFirstOfficerWithBSG()
 	return Found;
 }
 
-protected function SetBreacher()
+protected function SetBreacher(optional bool skipBreacher)
 {
 	local int BreachingMethod;
 
@@ -123,10 +135,10 @@ protected function SetBreacher()
 			Breacher = GetFirstOfficer();
 			break;
 		case 1: // C2
-			Breacher = GetFirstOfficerWithC2();
+			Breacher = GetFirstOfficerWithC2(skipBreacher);
 			break;
 		case 2: // BreachingShotgun
-			Breacher = GetFirstOfficerWithBSG();
+			Breacher = GetFirstOfficerWithBSG(skipBreacher);
 			break;
 	}
 
@@ -167,8 +179,8 @@ latent function UseBreachingShotgun()
 
 	CurrentUseBreachingShotgunGoal.postGoal(self);
 
-	// if we have a second officer, pause and wait for the door to open
-	if (GetSecondOfficer() != None)
+	// if we have a first officer, pause and wait for the door to be breached
+	if (GetFirstOfficer() != None)
 	{
 		pause();
 	}
@@ -181,6 +193,30 @@ latent function UseBreachingShotgun()
 
 	CurrentUseBreachingShotgunGoal.Release();
 	CurrentUseBreachingShotgunGoal = None;
+	
+	// have him open the door
+	CurrentOpenDoorGoal = new class'OpenDoorGoal'(AI_Resource(Breacher.MovementAI), TargetDoor);
+	assert(CurrentOpenDoorGoal != None);
+	CurrentOpenDoorGoal.AddRef();
+
+	CurrentOpenDoorGoal.SetPreferSides();
+
+	CurrentOpenDoorGoal.postGoal(self);
+	
+	// if we have a second officer, pause and wait for the door to be opened
+	if (GetSecondOfficer() != None)
+	{
+		pause();
+	}
+	else
+	{
+		WaitForGoal(CurrentOpenDoorGoal);
+	}
+	
+	CurrentOpenDoorGoal.unPostGoal(self);
+
+	CurrentOpenDoorGoal.Release();
+	CurrentOpenDoorGoal = None;
 }
 
 protected function bool CanOfficerBreachWithC2(Pawn Officer)
@@ -305,6 +341,124 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 		}
 
 		yield();
+	}
+}
+
+// return the first officer we find with the grenade
+function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
+{
+	local int i;
+	local Pawn Officer;
+
+	// if the door is an empty doorway, is open, is opening, or is broken, try to use the first officer
+	// otherwise use the second officer
+	if (ShouldThrowerBeFirstOfficer())
+	{
+		i = 0;
+	}
+	else
+	{
+		i = 1;
+	}
+
+//	log("get throwing officer - starting i is: " $ i);
+
+	while(i<OfficersInStackupOrder.Length)
+	{
+//		log("get throwing officer - i is: " $ i);
+
+		Officer = OfficersInStackupOrder[i];
+
+		if (class'Pawn'.static.checkConscious(Officer) && (Officer != Breacher))
+		{
+			if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+			{
+				if (Officer.logAI)
+				
+				log("Officer to throw is: " $ Officer);
+				return Officer;
+			}
+		}
+
+		++i;
+	}
+
+	// now try the first officer
+	Officer = OfficersInStackupOrder[0];
+
+	if (class'Pawn'.static.checkConscious(Officer)  && (Officer != Breacher))
+	{
+		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+		{
+			log("Officer to throw is: " $ Officer);
+			return Officer;
+		}
+	}
+	
+	if (class'Pawn'.static.checkConscious(Breacher))
+	{
+		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+		{
+			//well shit, gotta find a new breacher
+			SetBreacher(true);
+			
+			i=0;
+			while(i<OfficersInStackupOrder.Length)
+			{
+
+				Officer = OfficersInStackupOrder[i];
+	
+				if (class'Pawn'.static.checkConscious(Officer) && (Officer != Breacher))
+				{
+					if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+					{
+						if (Officer.logAI)
+						
+						log("Officer to throw is: " $ Officer);
+						return Officer;
+					}
+				}
+	
+				++i;
+			}
+		}
+	}
+
+	// didn't find an alive officer with the thrown weapon available
+	return None;
+}
+
+protected latent function MoveUpThrower()
+{
+	local Pawn FirstOfficer, SecondOfficer, OriginalThrower;
+	if (Thrower != None)
+	{
+		if (ShouldThrowerBeFirstOfficer())
+		{
+			if (Thrower != GetFirstOfficer())
+			{
+				TriggerThrowGrenadeMoveUpSpeech();
+
+				OriginalThrower = Thrower;
+				FirstOfficer    = GetFirstOfficer();
+
+				SwapOfficerRoles(OriginalThrower, FirstOfficer);
+				SwapStackUpPositions(OriginalThrower, FirstOfficer);
+			}
+		}
+		else
+		{
+			if ((GetSecondOfficer() != None) && (Thrower != GetSecondOfficer()))
+			{
+				TriggerThrowGrenadeMoveUpSpeech();
+
+				OriginalThrower = Thrower;
+				SecondOfficer   = GetSecondOfficer();
+
+				if (SecondOfficer != Breacher) {SwapOfficerRoles(OriginalThrower, SecondOfficer);}
+				SwapStackUpPositions(OriginalThrower, SecondOfficer);
+			}
+		}
 	}
 }
 

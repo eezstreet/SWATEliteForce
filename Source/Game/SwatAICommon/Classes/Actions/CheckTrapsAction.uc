@@ -134,7 +134,7 @@ latent function TryDoor()
 
 private function bool CanInteractWithTargetDoor()
 {
-	return (! TargetDoor.IsEmptyDoorWay() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !ISwatDoor(TargetDoor).IsBroken());
+	return (! TargetDoor.IsEmptyDoorWay() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() /*&& !ISwatDoor(TargetDoor).IsBroken()*/);
 }
 
 state Running

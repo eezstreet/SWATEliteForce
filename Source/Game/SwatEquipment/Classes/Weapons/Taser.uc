@@ -1061,4 +1061,5 @@ defaultproperties
     ThirdPersonProbeOffset[1]=(X=0,Y=-11,Z=5.5)
 
 	bIsLessLethal=true
+	bPenetratesDoors=false
 }
