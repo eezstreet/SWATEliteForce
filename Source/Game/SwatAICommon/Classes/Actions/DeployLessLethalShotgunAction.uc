@@ -119,6 +119,9 @@ Begin:
     // let the officers know that the target exists
     SwatAIRepository(Level.AIRepo).GetHive().NotifyOfficersOfTarget(TargetPawn);
 
+	// trigger the speech
+	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLessLethalShotgunSpeech();
+	
     EquipLessLethalShotgun();
     AttackWithLessLethalShotgun();
     UnequipLessLethalShotgun();

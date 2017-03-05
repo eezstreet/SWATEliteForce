@@ -124,6 +124,29 @@ function bool WasHostageSpawnedIncapacitated()
 	return bSpawnedAsIncapacitated;
 }
 
+function NotifyBecameIncapacitated(Pawn Incapacitator)
+{
+	// notify the commander of the incapacitation
+	if (Incapacitator != None)
+		NotifyNearbyHostagesOfIncap();
+
+}
+simulated function NotifyNearbyHostagesOfIncap()
+{
+	local Pawn Iter;
+
+	for (Iter = Level.pawnList; Iter != None; Iter = Iter.nextPawn)
+	{
+		if ((Iter != self) && Iter.IsA('SwatHostage'))
+		{
+			if (LineOfSightTo(Iter))
+			{
+				SwatHostage(Iter).GetHostageCommanderAction().NotifyNearbyHostageDowned(self);
+			}
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // ISwatHostage implementation

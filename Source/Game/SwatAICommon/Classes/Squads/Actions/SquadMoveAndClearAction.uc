@@ -615,6 +615,8 @@ private function vector GetTargetThrowPoint(vector ThrowOrigin)
 	return TargetThrowPoint;
 }
 
+protected function TriggerDeployingGrenadeSpeech();
+
 latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThrowGrenade)
 {
 	local vector TargetThrowPoint, ThrowFromPoint, CenterPoint;
@@ -701,6 +703,8 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 	CurrentThrowGrenadeGoal.SetWaitToThrowGrenade(TargetDoor.IsClosed() && ! TargetDoor.IsOpening() && bWaitToThrowGrenade);
 	CurrentThrowGrenadeGoal.RegisterForGrenadeThrowing(self);
 	CurrentThrowGrenadeGoal.postGoal(self);
+	
+	TriggerDeployingGrenadeSpeech();
 
 	// pause and wait for the character to be ready to throw the grenade
 	pause();

@@ -21,6 +21,11 @@ function TriggerUncompliantSpeech()
 	TriggerSpeech('AnnouncedNonCompliant', true);
 }
 
+function TriggerDownedHostageSpeech()
+{
+	TriggerSpeech('ReactedHostageDown');
+}
+
 function TriggerDoorBlockedSpeech()
 {
 	TriggerSpeech('DoorBlocked', true);

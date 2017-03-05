@@ -142,6 +142,9 @@ Begin:
 		SwatAIRepository(Level.AIRepo).GetHive().NotifyOfficersOfTarget(TargetPawn);
 	}
 
+	// trigger the speech
+	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingGrenadeLauncherSpeech();
+	
     EquipGrenadeLauncher();
     AttackWithGrenadeLauncher();
     UnequipGrenadeLauncher();

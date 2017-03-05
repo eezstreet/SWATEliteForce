@@ -1769,7 +1769,7 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 // returns true if we should issue a taunt to the subject
 // returns false otherwise
 // out bool says if it's a suspect
-simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect)
+simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect, out int bIsAggressiveHostage)
 {
   local Actor TraceActor;
   local Actor CandidateActor;
@@ -1781,6 +1781,8 @@ simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRot
   TraceEnd = TraceStart + (CameraRotation * TraceDistance);
 
   bIsSuspect = 0; // This should be filled out first
+  bIsAggressiveHostage = 0; // This should be filled out first
+
 
   foreach TraceActors(
     class'Actor',
@@ -1804,10 +1806,22 @@ simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRot
       return false;
     }
 
-    if(CandidateActor.IsA('SwatEnemy')) {
+    if(CandidateActor.IsA('SwatEnemy')) 
+	{
       bIsSuspect = 1;
-    } else {
+    } 
+	else 
+	{
       bIsSuspect = 0;
+    }
+	
+    if(CandidateActor.IsA('SwatHostage') && (ISwatAI(CandidateActor).IsAggressive())) 
+	{
+      bIsAggressiveHostage = 1;
+    } 
+	else 
+	{
+      bIsAggressiveHostage = 0;
     }
 
     if(SwatPawn(CandidateActor).bArrested) {
