@@ -23,6 +23,7 @@ function OnPawnTased(Pawn Pawn, Actor Taser)
 
 	numInfractions++;
 	ChatMessageEvent('PenaltyIssued');
+	GetGame().CampaignStats_TrackPenaltyIssued();
 }
 
 function string Status()

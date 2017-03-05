@@ -31,6 +31,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
     AssertNotInArray( Pawn, KilledHostages, 'KilledHostages' );
     Add( Pawn, KilledHostages );
     ChatMessageEvent('PenaltyIssued');
+    GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

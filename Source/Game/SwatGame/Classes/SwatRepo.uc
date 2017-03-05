@@ -215,7 +215,7 @@ event Tick( Float DeltaSeconds )
 						break;
                 case GAMESTATE_PostGame:
                     CumulativeDelta += DeltaSeconds;
-					
+
 					if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
 					{
 						CumulativeDelta = 0;
@@ -223,7 +223,7 @@ event Tick( Float DeltaSeconds )
 						CheckAllPlayersReady();
 						break;
 					}
-					
+
                     if( GetSGRI().ServerCountdownTime <= 0 )
                     {
                         CumulativeDelta = 0;
@@ -643,6 +643,11 @@ log("[dkaplan] >>> RoleChange of "$self$", newRole == "$GetEnum(eSwatGameRole,ne
         SwatGUIControllerBase(GUIController).OnRoleChange( oldRole, newRole );
     if( PlayerController != None )
         PlayerController.OnRoleChange( oldRole, newRole );
+}
+
+function Campaign GetCampaign()
+{
+  return SwatGUIControllerBase(GUIController).GetCampaign();
 }
 
 function UpdateCampaignPawnDied(Pawn Died) {
