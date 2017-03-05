@@ -4,8 +4,12 @@ class Procedures extends Core.Object
 
 var private config array< class<Procedure> > ProcedureClass;
 
+var private config class<StatTrackerBase> StatTrackerClass;
+
 //dkaplan: made public to allow SwatGameInfo to update the GameReplicationInfo
 var array<Procedure> Procedures;
+
+var StatTrackerBase CampaignStatTracking;
 
 var private transient SwatGameInfo Game;
 
@@ -41,18 +45,22 @@ final function Init(SwatGameInfo GameInfo)
     {
         Procedures[i].Init(Game);
     }
+
+    if(GameInfo.ShouldTrackCampaignStats()) {
+      CampaignStatTracking = new(None, "SwatProcedures.StatTracker", 0) StatTrackerClass;
+      CampaignStatTracking.Init(Game);
+    }
 }
 
 function bool ProceduresMaxed()
 {
     local int i;
-    
+
     for( i = 0; i < Procedures.Length; i++ )
     {
         if( !Procedures[i].IsMaxed() )
             return false;
     }
-    
+
     return true;
 }
-

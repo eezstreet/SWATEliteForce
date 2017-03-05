@@ -26,4 +26,5 @@ function OnSuspectEscaped(SwatPawn Who)
 {
     Add( Who, Escaped );
 		ChatMessageEvent('PenaltyIssued');
+		GetGame().CampaignStats_TrackPenaltyIssued();
 }

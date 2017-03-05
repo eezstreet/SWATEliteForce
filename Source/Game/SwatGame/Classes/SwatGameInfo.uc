@@ -2731,6 +2731,172 @@ function ProcessServerTravel(string URL, bool bItems)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
+// Campaign stat interface
+
+function bool ShouldTrackCampaignStats() {
+  local bool OutValue;
+
+  OutValue = Level.NetMode == NM_Standalone &&
+         GetCustomScenario() == None &&
+         Repo.GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign;
+
+  if(OutValue == false) {
+    log("ShouldTrackCampaignStats() returned false, won't track campaign stats for this session.");
+  }
+  return OutValue;
+}
+
+function CampaignStats_TrackMissionCompleted()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.MissionsCompleted++;
+}
+
+function CampaignStats_TrackPlayerIncapacitation()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.TimesIncapacitated++;
+}
+
+function CampaignStats_TrackPlayerInjury()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.TimesInjured++;
+}
+
+function CampaignStats_TrackOfficerIncapacitation()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.OfficersIncapacitated++;
+}
+
+function CampaignStats_TrackPenaltyIssued()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.PenaltiesIssued++;
+}
+
+function CampaignStats_TrackSuspectRemoved()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsRemoved++;
+}
+
+function CampaignStats_TrackSuspectNeutralized()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsNeutralized++;
+
+  CampaignStats_TrackSuspectRemoved(); // Also add to the "Threats Removed" stat
+}
+
+function CampaignStats_TrackSuspectIncapacitated()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsIncapacitated++;
+
+  CampaignStats_TrackSuspectRemoved(); // Also add to the "Threats Removed" stat
+}
+
+function CampaignStats_TrackSuspectArrested()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsArrested++;
+
+  CampaignStats_TrackSuspectRemoved(); // Also add to the "Threats Removed" stat
+}
+
+function CampaignStats_TrackCivilianRestrained()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.CiviliansRestrained++;
+}
+
+function CampaignStats_TrackTOCReport()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.TOCReports++;
+}
+
+function CampaignStats_TrackEvidenceSecured()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.EvidenceSecured++;
+}
+
+////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////

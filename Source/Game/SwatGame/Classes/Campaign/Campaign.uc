@@ -22,6 +22,19 @@ var config bool RedTwoDead; // Whether Red Two is dead.
 var config bool BlueOneDead; // Whether Blue One is dead.
 var config bool BlueTwoDead; // Whether Blue Two is dead.
 
+var(Stats) config int MissionsCompleted; // The number of missions that have been successfully completed
+var(Stats) config int TimesIncapacitated; // Number of times that you have been incapacitated in this campaign
+var(Stats) config int TimesInjured; // Number of times that you have been injured in this campaign
+var(Stats) config int OfficersIncapacitated; // Total number of officers that have been incapacitated in this campaign
+var(Stats) config int PenaltiesIssued; // The number of penalties that have been issued on your campaign
+var(Stats) config int SuspectsRemoved; // Total number of suspects "removed" (neutralized, incapacitated, arrested)
+var(Stats) config int SuspectsNeutralized; // Total number of suspects neutralized
+var(Stats) config int SuspectsIncapacitated; // Total number of suspects incapacitated
+var(Stats) config int SuspectsArrested; // Total number of suspects arrested
+var(Stats) config int CiviliansRestrained; // Total number of civilians restrained
+var(Stats) config int TOCReports; // Total number of reports filed to TOC
+var(Stats) config int EvidenceSecured; // Total number of evidence secured
+
 overloaded function Construct()
 {
     local int i;

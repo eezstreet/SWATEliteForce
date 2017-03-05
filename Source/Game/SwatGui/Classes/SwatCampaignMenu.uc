@@ -33,6 +33,35 @@ var(SWATGui) private EditInline Config GUIButton		    MyDeleteCampaignButton;
 var(SWATGui) private EditInline Config GUIButton		    MyUseCampaignButton;
 var(SWATGui) private EditInline Config GUIButton        MyCoopCampaignButton;
 
+// Campaign Stats
+var(SWATGui) private EditInline Config GUILabel         Stat_MissionsCompletedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_TimesIncapacitatedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_TimesInjuredLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_OfficersIncapacitatedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_PenaltiesIssuedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_SuspectsRemovedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_SuspectsNeutralizedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_SuspectsIncapacitatedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_SuspectsArrestedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_CiviliansRestrainedLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_TOCReportsLabel;
+var(SWATGui) private EditInline Config GUILabel         Stat_EvidenceSecuredLabel;
+
+// Stat Strings
+var() private config localized string StatStringA;
+var() private config localized string StatStringB;
+var() private config localized string StatStringC;
+var() private config localized string StatStringD;
+var() private config localized string StatStringE;
+var() private config localized string StatStringF;
+var() private config localized string StatStringG;
+var() private config localized string StatStringH;
+var() private config localized string StatStringI;
+var() private config localized string StatStringJ;
+var() private config localized string StatStringK;
+var() private config localized string StatStringL;
+
+// Other Strings
 var() private config localized string StringA;
 var() private config localized string StringB;
 var() private config localized string StringC;
@@ -243,8 +272,24 @@ private function SetCampaign( Campaign theCampaign )
     if( theCampaign == None )
         return;
 
+    if(!IsCampaignNameValid(theCampaign.StringName))
+        return;
+
     currentCampaign = theCampaign;
     SwatGuiController(Controller).UseCampaign( theCampaign.StringName );
+
+    Stat_MissionsCompletedLabel.SetCaption(StatStringA $ theCampaign.MissionsCompleted);
+    Stat_TimesIncapacitatedLabel.SetCaption(StatStringB $ theCampaign.TimesIncapacitated);
+    Stat_TimesInjuredLabel.SetCaption(StatStringC $ theCampaign.TimesInjured);
+    Stat_OfficersIncapacitatedLabel.SetCaption(StatStringD $ theCampaign.OfficersIncapacitated);
+    Stat_PenaltiesIssuedLabel.SetCaption(StatStringE $ theCampaign.PenaltiesIssued);
+    Stat_SuspectsRemovedLabel.SetCaption(StatStringF $ theCampaign.SuspectsRemoved);
+    Stat_SuspectsNeutralizedLabel.SetCaption(StatStringG $ theCampaign.SuspectsNeutralized);
+    Stat_SuspectsIncapacitatedLabel.SetCaption(StatStringH $ theCampaign.SuspectsIncapacitated);
+    Stat_SuspectsArrestedLabel.SetCaption(StatStringI $ theCampaign.SuspectsArrested);
+    Stat_CiviliansRestrainedLabel.SetCaption(StatStringJ $ theCampaign.CiviliansRestrained);
+    Stat_TOCReportsLabel.SetCaption(StatStringK $ theCampaign.TOCReports);
+    Stat_EvidenceSecuredLabel.SetCaption(StatStringL $ theCampaign.EvidenceSecured);
 }
 
 private function AttemptCreateCampaign( string campName, int campPath )
@@ -316,6 +361,19 @@ defaultproperties
 {
     OnFocused=InternalOnFocused
 	OnActivate=InternalOnActivate
+
+  StatStringA="Missions Completed: "
+  StatStringB="Times Incapacitated: "
+  StatStringC="Times Injured: "
+  StatStringD="Officers Down: "
+  StatStringE="Penalties Issued: "
+  StatStringF="Threats Removed: "
+  StatStringG="Suspects Neutralized: "
+  StatStringH="Suspects Incapacitated: "
+  StatStringI="Suspects Arrested: "
+  StatStringJ="Civilians Restrained: "
+  StatStringK="Reports to TOC: "
+  StatStringL="Evidence Secured: "
 
 	StringA=" is not a valid campaign name."
 	StringB="Campaign: "

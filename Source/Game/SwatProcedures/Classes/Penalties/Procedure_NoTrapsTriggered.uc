@@ -17,6 +17,7 @@ function OnBoobyTrapTriggered(SwatGame.BoobyTrap Pawn, Actor Triggerer)
 {
   NumTrapsTriggered++;
   ChatMessageEvent('PenaltyIssued');
+  GetGame().CampaignStats_TrackPenaltyIssued();
 
   if (GetGame().DebugLeadership)
       log("[LEADERSHIP] "$class.name

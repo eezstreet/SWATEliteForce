@@ -453,6 +453,30 @@ simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
     //mplog( "...Skins[3]="$Skins[3] );
 }
 
+simulated function bool PrimaryIsA(name HandheldEquipmentName) {
+  local FiredWeapon PrimaryWeapon;
+
+  PrimaryWeapon = LoadOut.GetPrimaryWeapon();
+
+  return PrimaryWeapon.IsA(HandheldEquipmentName);
+}
+
+simulated function bool SecondaryIsA(name HandheldEquipmentName) {
+  local FiredWeapon BackupWeapon;
+
+  BackupWeapon = LoadOut.GetBackupWeapon();
+
+  return BackupWeapon.IsA(HandheldEquipmentName);
+}
+
+simulated function bool HasAWeaponOfType(name WeaponType) {
+  local FiredWeapon PrimaryWeapon, BackupWeapon;
+
+  PrimaryWeapon = LoadOut.GetPrimaryWeapon();
+  BackupWeapon = LoadOut.GetBackupWeapon();
+
+  return PrimaryWeapon.IsA(WeaponType) || BackupWeapon.IsA(WeaponType);
+}
 
 simulated function DoDefaultEquip()
 {

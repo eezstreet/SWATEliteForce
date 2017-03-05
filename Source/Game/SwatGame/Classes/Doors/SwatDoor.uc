@@ -1188,8 +1188,9 @@ simulated function Broken()
         bIsBroken = true;
 
         //remove any wedge
-        if (IsWedged())
-            DeployedWedge.OnRemoved();
+        //if (IsWedged())
+        //    DeployedWedge.OnRemoved();
+				// eez- don't remove wedges unless we are blown up by C2
 
 		// update officer door knowledge in standalone
 		UpdateOfficerDoorKnowledge();
@@ -1199,7 +1200,7 @@ simulated function Broken()
         LockedKnowledge[2] = 0;
 
 		bIsPushable = true;
-		
+
 		// allow subclasses to extend functionality
         PostBroken();
     }
@@ -1299,7 +1300,7 @@ simulated state Opening extends Moving
     {
 		NotifyRegistrantsDoorOpening();
 
-        if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+        if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') && !GetLastInteractor().IsA('SwatHostage') )
         {
             assert(BoobyTrap != None);
             BoobyTrap.OnTriggeredByDoor();
@@ -1394,11 +1395,11 @@ simulated state BeingBlasted extends Moving
         else
             PlayAnim('BlastedRight');*/
 
-		if ( IsBoobyTrapped() )
+		/*if ( IsBoobyTrapped() )
 		{
 			assert(BoobyTrap != None);
 			BoobyTrap.OnTriggeredByDoor();
-		}
+		}*/
     }
 
     simulated function PlayBlastedEffects();    //implemented in subclasses
@@ -1414,6 +1415,8 @@ simulated state BeingBreached extends Moving
             PlayBreachedEffects();
 //            TriggerEffectEvent('Breached');
             Broken();
+						if (IsWedged())
+		            DeployedWedge.OnRemoved();
         }
     }
 
@@ -1430,7 +1433,7 @@ simulated state BeingBreached extends Moving
         else
             PlayAnim('BreachedRight');
 
-		if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+		if ( IsBoobyTrapped() )
 		{
 			assert(BoobyTrap != None);
 		    BoobyTrap.OnTriggeredByDoor();
@@ -2447,7 +2450,7 @@ simulated function OnUsedByWedge()
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatDoor::OnUsedByWedge()." );
 
-    CanDoorBeWedgedNow = IsClosed() && !IsOpening() && !IsBroken();
+    CanDoorBeWedgedNow = IsClosed() && !IsOpening();
     if ( !CanDoorBeWedgedNow  )
     {
 		if (Level.GetEngine().EnableDevTools)
