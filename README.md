@@ -441,13 +441,47 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
   * There is a new campaign path, titled All Missions. This includes every map you have on your hard drive, including customs, so you can play them in singleplayer.
   * All Missions campaigns cannot be played in Campaign co-op.
 - AI improvements!
-  * Officers can now take cover while engaging suspects, and may lean/crouch while doing so.
+  * Officers can now take cover while engaging suspects, and may lean or crouch while doing so.
   * Suspects and civilians can now wander all over the map (this depends on the map mostly)
+  * A lot of cut speech got restored.
 - Equipment changes!
   * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
+  * New ammo types: JSP (jacketed soft point) and AP (armor penetrating).
+- Breaching improvements
+  * All shotguns can now breach through doors. The Breaching Shotgun can break through any door with one shot, but other shotguns (particularly when dealing with metal doors) may take two or three shots to break open. (AI-controlled officers cannot breach with anything other than a Breaching Shotgun)
+  * Broken doors can now be closed and/or wedged.
+  * C2 can now blow up alarm traps on the other side of a door, preventing them from going off.
+  * You can now tell the officers which breaching method you want them to use on a door (C2 & CLEAR vs SHOTGUN & CLEAR)
 
-#### MINOR FEATURES ####
+#### MINOR/ALL CHANGES ####
+- Added campaign co-op
+- Added SAS weapons
+- Added Less Lethal Remington M870 (Less Lethal version of an SAS weapon)
+- Added JSP and AP ammunition
+- Added player permadeath option
+- Added officer permadeath option
+- Officers may now take cover and crouch
+- Doors breached with the shotgun are not "swung open." Only C2 can "blast a door open."
+- Broken doors can now be closed and wedged
+- Shotguns no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
+- C2 can now break door alarms
+- The equipment menu has been changed to use dropdown boxes for the weapon and ammo types, determined by category
+- Added advanced information panel to Armor equipment tab
+- Added campaign statistics information to Campaign Selection menu
+- Completely redid the New Equipment menu to handle two unlocks properly
+- Suspects can now employ a "wandering" behavior that allows them to pick patrol points randomly.
 - Snipers can now be used in multiplayer. Leaders can control the viewport, and all players receive notifications.
+- Suspect equipment is only available in Multiplayer and All Missions campaigns now
+- Issuing a FALL IN command will now have the officers reload their weapons automatically
+- Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
+- Fixed SEF bug: SWAT officers using full auto; suspects not using full auto
+- Fixed SEF bug: Handcuffs not playing sound properly and popping back up during use
+- Fixed SEF bug: Civilians can trigger traps
+- Fixed SEF bug: Manager on Meat Barn having glasses on backwards
+- Fixed SEF bug: Office workers on Department of Agriculture having broken morale levels
+- Fixed SEF bug: Bullets that lose all of their momentum due to drag cause bleeding/impact effects
+- Fixed SEF bug: Less Lethal Shotgun, Grenade Launcher causing penalties when it's not supposed to
+
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
