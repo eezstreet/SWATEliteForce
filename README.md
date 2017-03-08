@@ -473,6 +473,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Snipers can now be used in multiplayer. Leaders can control the viewport, and all players receive notifications.
 - Suspect equipment is only available in Multiplayer and All Missions campaigns now
 - Issuing a FALL IN command will now have the officers reload their weapons automatically
+- Added new voting configuration options for server hosts: TiesWin, CallCastVote, MinVoters, and NonVotersAreNo. You can edit them in Swat4x.ini/Swat4xDedicatedServer.ini. See Default.ini for more information.
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Fixed SEF bug: SWAT officers using full auto; suspects not using full auto
 - Fixed SEF bug: Handcuffs not playing sound properly and popping back up during use

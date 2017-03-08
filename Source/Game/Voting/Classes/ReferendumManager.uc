@@ -8,6 +8,10 @@ var private int NoVotes;							// The current tally of no votes
 var private array<int> Voters;						// A list of PlayerIds that have submitted a vote
 
 var private globalconfig float ReferendumDuration;	// How long the referendum will allow votes to be cast
+var private globalconfig bool TiesWin;							// Whether ties count as a vote succeed
+var private globalconfig bool CallCastVote;					// Whether calling a vote automatically counts as a "yes" vote
+var private globalconfig int MinVoters;							// Minimum number of voters required for a referendum to succeed
+var private globalconfig bool NonVotersAreNo;				// Whether Non-Voters count as "no" votes
 var private float TimeRemaining;					// How much time remains before the referendum expires
 
 struct CooldownTimer
@@ -147,9 +151,6 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, IReferendum R
 		return false;
 	}
 
-	// Start a cooldown for PlayerId to start another referendum
-	AddVoterToCooldownList(PRI.PlayerId);
-
 	if (bDontUseTeam)
 		ReferendumTeam = None;
 	else
@@ -162,6 +163,13 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, IReferendum R
 
 	TimeRemaining = ReferendumDuration;
 	CurrentReferendumType = ReferendumType;
+
+	if(CallCastVote) {
+		SubmitYesVote(PRI.PlayerId, PRI.Team);
+	}
+
+	// Start a cooldown for PlayerId to start another referendum
+	AddVoterToCooldownList(PRI.PlayerId);
 
 	return true;
 }
@@ -289,7 +297,24 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 // Returns true if the Yes voters have won the referendum
 private function bool YesVotesWin()
 {
-	return (Voters.Length > 1 && YesVotes > (MaxPossibleVoters() - YesVotes)) || Voters.Length == 1;
+	local int YesVotersTotal, NoVotersTotal;
+
+	if(Voters.Length < MinVoters) {
+		return false;
+	}
+
+	YesVotersTotal = YesVotes;
+	if(TiesWin) {
+		YesVotersTotal++;
+	}
+
+	if(NonVotersAreNo) {
+		NoVotersTotal = (MaxPossibleVoters() - YesVotes);
+	} else {
+		NoVotersTotal = NoVotes;
+	}
+
+	return YesVotersTotal > NoVotersTotal;
 }
 
 private function EndReferendum()
