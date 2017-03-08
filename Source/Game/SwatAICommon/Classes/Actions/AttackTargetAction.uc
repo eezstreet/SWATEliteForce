@@ -181,6 +181,10 @@ latent function AttackTarget()
 {
   local FiredWeapon CurrentWeapon;
 
+	if(Target == None) {
+		instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE); // Possibly fixes a bug (?)
+	}
+
 	StartActionTime = Level.TimeSeconds;
 
 	ReadyWeapon();
