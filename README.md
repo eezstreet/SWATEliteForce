@@ -446,7 +446,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
   * A lot of cut speech got restored.
 - Equipment changes!
   * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
-  * New ammo types: JSP (jacketed soft point) and AP (armor penetrating).
+  * New rifle/pistol ammo types: JSP (jacketed soft point) and AP (armor penetrating).
 - Breaching improvements
   * All shotguns can now breach through doors. The Breaching Shotgun can break through any door with one shot, but other shotguns (particularly when dealing with metal doors) may take two or three shots to break open. (AI-controlled officers cannot breach with anything other than a Breaching Shotgun)
   * Broken doors can now be closed and/or wedged.
@@ -482,6 +482,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Fixed SEF bug: Office workers on Department of Agriculture having broken morale levels
 - Fixed SEF bug: Bullets that lose all of their momentum due to drag cause bleeding/impact effects
 - Fixed SEF bug: Less Lethal Shotgun, Grenade Launcher causing penalties when it's not supposed to
+- Fixed SEF bug: Log being spammed with messages about trap penalties
 
 
 #### SAS WEAPONS ####
