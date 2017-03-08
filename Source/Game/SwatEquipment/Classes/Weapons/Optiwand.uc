@@ -122,14 +122,14 @@ simulated function bool   CanIssueCommands()
 simulated function OnBeginControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
-	
+
 	bInUse = true;
 }
 
 simulated function OnEndControlling()
 {
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
-	
+
 	bInUse = false;
 }
 
@@ -191,7 +191,7 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
     // Most of the time this is all we need to take care of
 	FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation()+LastBoneRotation,,, 1);
     ResolveInitialLocationAndRotation( CameraLocation, PlayerViewRot );
-	
+
 	if (!bInUse) {
 		CameraRotation = FirstPersonModel.GetBoneRotation(BoneName, 1);
 		return;
@@ -265,7 +265,6 @@ simulated function bool CanUseNow()
         GetAxes( Owner.Rotation, X, Y, Z );
         if ( !FastTrace( Owner.Location + X * kOptiwandLength, Owner.Location ) )
         {
-            log("fast trace blocked!");
             return false;
         }
     }
@@ -415,13 +414,13 @@ simulated latent protected function DoUsingHook()
         Hands.PlayAnim(EndAnim);
         Hands.FinishAnim();
     }
-	
+
 	LastBoneRotation = BoneRotation-Pawn(Owner).GetViewRotation();
 	if (bMirroring) {
 		FirstPersonModel.SetBoneDirection( BoneName, Pawn(Owner).GetViewRotation(),,1,1 );
 		LastBoneRotation = rot(0,0,0);
 	}
-	
+
     bMirroring = false;
     MirroringDoor = None;
     CompletedUsing = true;
@@ -448,9 +447,9 @@ simulated function Tick(float DeltaTime)
 {
     local vector DrawLoc;	//dummies
     local Rotator DrawRot;
-	
+
 	LastDeltaTime = DeltaTime;
-    
+
 	FirstPersonModel.Skins[1] = LCDShader;
 	LCDScreen.Revision++;
     if (!CanUseNow()) {
