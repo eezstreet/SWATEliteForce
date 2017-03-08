@@ -16,6 +16,7 @@ import enum EquipmentSlot from Engine.HandheldEquipment;
 var private ThrowGrenadeGoal		CurrentThrowGrenadeGoal;
 
 var private MoveToActorGoal			CurrentMoveToActorGoal;
+var protected Pawn					ThrowingOfficer;
 
 // copied from our goal
 var(parameters) EquipmentSlot		ThrownItemSlot;
@@ -25,6 +26,28 @@ var(parameters) vector				TargetThrowLocation;
 var private Actor					ThrowFrom;
 
 const kMinDistanceToTarget = 64.0;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Events
+
+protected function TriggerDeployingGrenadeSpeech()
+{
+	switch(ThrownItemSlot)
+	{
+		case Slot_Flashbang:
+			ISwatOfficer(ThrowingOfficer).GetOfficerSpeechManagerAction().TriggerDeployingFlashbangSpeech();
+			break;
+
+		case Slot_CSGasGrenade:
+			ISwatOfficer(ThrowingOfficer).GetOfficerSpeechManagerAction().TriggerDeployingGasSpeech();
+			break;
+
+		case Slot_StingGrenade:
+			ISwatOfficer(ThrowingOfficer).GetOfficerSpeechManagerAction().TriggerDeployingStingSpeech();
+			break;
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -97,7 +120,8 @@ latent function DeployThrownItem()
 
 		if (PointToThrowFrom != None)
 		{
-			MoveOfficerToThrowingPosition(ThrowingOfficer, PointToThrowFrom);
+			MoveOfficerToThrowingPosition(ThrowingOfficer, PointToThrowFrom);	
+			TriggerDeployingGrenadeSpeech();
 			ThrowGrenadeAtTargetLocation(ThrowingOfficer, ThrownItemSlot);
 		}
 		else

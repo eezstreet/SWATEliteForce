@@ -12,9 +12,25 @@ class OfficerSpeechManagerAction extends CharacterSpeechManagerAction;
 // Speech Requests
 
 // Officers
-function TriggerOfficerDownSpeech()
+function TriggerOfficerDownSpeech(pawn Officer)
 {
-	TriggerSpeech('ReportedOfficerDown', true);
+//	TriggerSpeech('ReportedOfficerDown', true);
+	if (Officer.IsA('OfficerBlueOne'))
+	{
+		TriggerSpeech('ReportedB1Down');
+	}
+	else if (Officer.IsA('OfficerBlueTwo'))
+	{
+		TriggerSpeech('ReportedB1Down');
+	}
+	else if (Officer.IsA('OfficerRedOne'))
+	{
+		TriggerSpeech('ReportedR1Down');
+	}
+	else
+	{
+		TriggerSpeech('ReportedR2Down');
+	}
 }
 
 function TriggerLeadDownSpeech()
@@ -229,14 +245,24 @@ function TriggerDoorIsAlreadyWedgedSpeech()
 	TriggerSpeech('AnnouncedDoorIsAlreadyWedged');
 }
 
+function TriggerDeployingLessLethalShotgunSpeech()
+{
+	TriggerSpeech('ReportedDeployingBeanBag');
+}
+
 function TriggerLessLethalShotgunUnavailableSpeech()
 {
 	TriggerSpeech('ReportedBeanBagUnavailable');
 }
 
+function TriggerDeployingGrenadeLauncherSpeech()
+{
+	TriggerSpeech('RepliedDeployingGL');
+}
+
 function TriggerGrenadeLauncherUnavailableSpeech()
 {
-	TriggerSpeech('ReportedBeanBagUnavailable');
+	TriggerSpeech('RepliedCantDeployGL');
 }
 
 function TriggerDeployingPepperBallSpeech()
@@ -254,14 +280,29 @@ function TriggerWedgeUnavailableSpeech()
 	TriggerSpeech('ReportedWedgesUnavailable');
 }
 
+function TriggerDeployingFlashbangSpeech()
+{
+	TriggerSpeech('ReportedDeployingFlashbang');
+}
+
 function TriggerFlashbangUnavailableSpeech()
 {
 	TriggerSpeech('ReportedFlashbangUnavailable');
 }
 
+function TriggerDeployingGasSpeech()
+{
+	TriggerSpeech('ReportedDeployingGas');
+}
+
 function TriggerGasUnavailableSpeech()
 {
 	TriggerSpeech('ReportedGasUnavailable');
+}
+
+function TriggerDeployingStingSpeech()
+{
+	TriggerSpeech('ReportedDeployingSting');
 }
 
 function TriggerStingUnavailableSpeech()
@@ -297,6 +338,11 @@ function TriggerShotgunUnavailableSpeech()
 function TriggerPepperSprayUnavailableSpeech()
 {
 	TriggerSpeech('ReportedPepperUnavailable');
+}
+
+function TriggerDeployingPepperSpraySpeech()
+{
+	TriggerSpeech('ReportedDeployingPepper');
 }
 
 function TriggerMirrorUnavailableSpeech()

@@ -533,8 +533,31 @@ simulated function EAnimationSet GetUMPLowReadyAimPoseSet() { return GetSubMachi
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Death / Incapacitation
+// Damage / Death / Incapacitation
 
+function NotifyHit(float Damage, Pawn HitInstigator)
+{
+	local SwatEnemy EnemyInstigator;
+    local bool       IsHitByEnemy;
+
+    IsHitByEnemy = HitInstigator.IsA( 'SwatEnemy' );
+
+	// the following doesn't need to be networked because we have no Officers in Coop
+	if (IsHitByEnemy) 
+	{
+    EnemyInstigator = SwatEnemy(HitInstigator);
+    assert(EnemyInstigator != None);
+	}
+
+	if ((EnemyInstigator != None) && !IsIncapacitated())
+	{
+		// if we are a god we don't attack the player (request by paul)
+		if (! Controller.bGodMode)
+		{
+			SwatEnemy(HitInstigator).GetEnemyCommanderAction().NotifyEnemyShotByEnemy(self, Damage, EnemyInstigator);
+		}
+	}
+}
 // enemies drop their weapons before they ragdoll
 simulated function NotifyReadyToRagdoll()
 {

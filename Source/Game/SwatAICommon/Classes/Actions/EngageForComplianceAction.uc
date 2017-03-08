@@ -13,9 +13,9 @@ class EngageForComplianceAction extends SwatCharacterAction;
 var(parameters) Pawn					TargetPawn;
 
 // our behaviors
-var private SWATTakeCoverAndAimGoal		CurrentSWATTakeCoverAndAimGoal;
+//var private SWATTakeCoverAndAimGoal		CurrentSWATTakeCoverAndAimGoal;
 var private OrderComplianceGoal			CurrentOrderComplianceGoal;
-//var protected MoveOfficerToEngageGoal   CurrentMoveOfficerToEngageGoal;
+var protected MoveOfficerToEngageGoal   CurrentMoveOfficerToEngageGoal;
 
 // config variables
 var config float						MinComplianceOrderSleepTime;
@@ -38,17 +38,17 @@ function cleanup()
 		CurrentOrderComplianceGoal = None;
 	}
 
-	if (CurrentSWATTakeCoverAndAimGoal != None)
-	{
-		CurrentSWATTakeCoverAndAimGoal.Release();
-		CurrentSWATTakeCoverAndAimGoal = None;
-	}
-	
-//	if (CurrentMoveOfficerToEngageGoal != None)
+//	if (CurrentSWATTakeCoverAndAimGoal != None)
 //	{
-//		CurrentMoveOfficerToEngageGoal.Release();
-//		CurrentMoveOfficerToEngageGoal = None;
+//		CurrentSWATTakeCoverAndAimGoal.Release();
+//		CurrentSWATTakeCoverAndAimGoal = None;
 //	}
+	
+	if (CurrentMoveOfficerToEngageGoal != None)
+	{
+		CurrentMoveOfficerToEngageGoal.Release();
+		CurrentMoveOfficerToEngageGoal = None;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 	super.goalNotAchievedCB(goal, child, errorCode);
 
 //	if ((goal == CurrentOrderComplianceGoal) || (goal == CurrentMoveOfficerToEngageGoal) || (goal == CurrentSWATTakeCoverGoal))
-	if ((goal == CurrentOrderComplianceGoal) || (goal == CurrentSWATTakeCoverAndAimGoal))
+	if ((goal == CurrentOrderComplianceGoal) || (goal == CurrentMoveOfficerToEngageGoal))
 	{
 		// if ordering compliance or movement fails, we succeed so we don't get reposted, 
 		// the OfficerCommanderAction will figure out what to do
@@ -74,63 +74,57 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 
 // we only move to engage the target for compliance if we should 
 // (not in the middle of executing a move and clear!)
-//private function bool ShouldMoveTowardsComplianceTarget()
-//{
-//	local SwatAIRepository SwatAIRepo;
-//	SwatAIRepo = SwatAIRepository(Level.AIRepo);
-//
-//	// test to see if we're moving and clearing
-//	if(TargetPawn.IsA(SwatHostage))
-//	{
-//		return (! SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
-//	}
-//	else
-//	{
-//		return false
-//	}
-//}
-
-private function bool ShouldTakeCover()
+private function bool ShouldMoveTowardsComplianceTarget()
 {
 	local SwatAIRepository SwatAIRepo;
 	SwatAIRepo = SwatAIRepository(Level.AIRepo);
 
 	// test to see if we're moving and clearing
-	return (! SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
 
+	return (! SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
 }
 
-//private function MoveTowardsComplianceTarget()
+//private function bool ShouldTakeCover()
 //{
-//	if (m_Pawn.logAI)
-//		log(m_Pawn.Name $ " will move to engage the target for compliance");
+//	local SwatAIRepository SwatAIRepo;
+//	SwatAIRepo = SwatAIRepository(Level.AIRepo);
 //
-//	assert(CurrentMoveOfficerToEngageGoal == None);
+//	// test to see if we're moving and clearing
+//	return (! SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
 //
-//	CurrentMoveOfficerToEngageGoal = new class'MoveOfficerToEngageGoal'(movementResource(), achievingGoal.Priority, TargetPawn);
-//	assert(CurrentMoveOfficerToEngageGoal != None);
-//	CurrentMoveOfficerToEngageGoal.AddRef();
-//
-//	CurrentMoveOfficerToEngageGoal.SetRotateTowardsPointsDuringMovement(true);
-//
-//	// post the move to goal and wait for it to complete
-//	CurrentMoveOfficerToEngageGoal.postGoal(self);
 //}
 
-private function TakeCoverRelativeToTarget()
+private function MoveTowardsComplianceTarget()
 {
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " will move to engage the target for compliance");
 
-	assert(CurrentSWATTakeCoverAndAimGoal == None);
+	assert(CurrentMoveOfficerToEngageGoal == None);
 
-	CurrentSWATTakeCoverAndAimGoal = new class'SWATTakeCoverAndAimGoal'(movementResource(), achievingGoal.Priority, TargetPawn);
-	assert(CurrentSWATTakeCoverAndAimGoal != None);
-	CurrentSWATTakeCoverAndAimGoal.AddRef();
+	CurrentMoveOfficerToEngageGoal = new class'MoveOfficerToEngageGoal'(movementResource(), achievingGoal.Priority, TargetPawn);
+	assert(CurrentMoveOfficerToEngageGoal != None);
+	CurrentMoveOfficerToEngageGoal.AddRef();
+
+	CurrentMoveOfficerToEngageGoal.SetRotateTowardsPointsDuringMovement(true);
 
 	// post the move to goal and wait for it to complete
-	CurrentSWATTakeCoverAndAimGoal.postGoal(self);
+	CurrentMoveOfficerToEngageGoal.postGoal(self);
 }
+
+//private function TakeCoverRelativeToTarget()
+//{
+//	if (m_Pawn.logAI)
+//		log(m_Pawn.Name $ " will move to engage the target for compliance");
+
+//	assert(CurrentSWATTakeCoverAndAimGoal == None);
+
+//	CurrentSWATTakeCoverAndAimGoal = new class'SWATTakeCoverAndAimGoal'(movementResource(), achievingGoal.Priority, TargetPawn);
+//	assert(CurrentSWATTakeCoverAndAimGoal != None);
+//	CurrentSWATTakeCoverAndAimGoal.AddRef();
+
+	// post the move to goal and wait for it to complete
+//	CurrentSWATTakeCoverAndAimGoal.postGoal(self);
+//}
 
 private function OrderTargetToComply()
 {
@@ -150,14 +144,14 @@ state Running
 	
 	while (! CurrentOrderComplianceGoal.hasCompleted())
 	{
-//		if ((CurrentMoveOfficerToEngageGoal == None) && ShouldMoveTowardsComplianceTarget())
-//		{
-//			MoveTowardsComplianceTarget();
-//		}
-		if ((CurrentSWATTakeCoverAndAimGoal == None) && ShouldTakeCover())
+		if ((CurrentMoveOfficerToEngageGoal == None) && ShouldMoveTowardsComplianceTarget())
 		{
-			TakeCoverRelativeToTarget();
+			MoveTowardsComplianceTarget();
 		}
+//		if ((CurrentSWATTakeCoverAndAimGoal == None) && ShouldTakeCover())
+//		{
+//			TakeCoverRelativeToTarget();
+//		}
 
 		sleep(RandRange(kMinComplianceUpdateTime, kMaxComplianceUpdateTime));
 	}

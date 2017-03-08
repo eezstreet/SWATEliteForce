@@ -60,6 +60,11 @@ function TriggerUncompliantSpeech()
 	TriggerSpeech('AnnouncedNonCompliant', true);
 }
 
+function TriggerShotAFriendSpeech()
+{
+	TriggerSpeech('ShotAFriend');
+}
+
 function TriggerDownedOfficerSpeech()
 {
 	TriggerSpeech('ReactedDownOfficer');

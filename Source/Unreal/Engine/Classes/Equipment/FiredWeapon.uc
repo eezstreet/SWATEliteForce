@@ -657,6 +657,10 @@ simulated function bool HandleBallisticImpact(
 
 	// damage pawns
     PawnVictim = Pawn(Victim);
+    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)    
+	{
+		Damage = 0;
+    }
     if( Damage > 0 && SkeletalRegionInformation != None && PawnVictim != None)
     {
 		// dbeswick: stats

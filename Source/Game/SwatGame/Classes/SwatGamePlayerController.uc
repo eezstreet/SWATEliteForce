@@ -5224,6 +5224,7 @@ function ServerIssueCompliance( optional string VoiceTag )
 	   local bool ACharacterHasAWeaponEquipped;
      local NetPlayer theNetPlayer;
      local int TargetIsSuspect;
+     local int TargetIsAggressiveHostage;
      local vector CameraLocation;
      local rotator CameraRotation;
      local Actor Candidate;
@@ -5257,16 +5258,24 @@ function ServerIssueCompliance( optional string VoiceTag )
         {
             Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
         }
-        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect)) {
+        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage)) 
+		{
           Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
         }
-        else if(TargetIsSuspect == 1) {
+        else if(TargetIsSuspect == 1) 
+		{
           Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
         }
-        else {
-          Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag)); // TODO: check for aggressiveness
+        else if((TargetIsSuspect == 0) && (TargetIsAggressiveHostage == 1)) 
+		{
+          Pawn.BroadcastEffectEvent('ReassuredAggressiveHostage',,,,,,,,name(VoiceTag));
         }
-      } else {
+        else 
+		{
+          Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag));
+        }
+      } else 
+	  {
         log("[SPEECH] Issued compliance.");
       }
     }

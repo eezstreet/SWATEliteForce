@@ -658,6 +658,19 @@ function LostPawnTimerTriggered()
 	InterruptCurrentEngagement();
 }
 
+function NotifyEnemyShotByEnemy(Pawn EnemyShot, float Damage, Pawn EnemyInstigator)
+{
+	assert(EnemyInstigator != None);
+	assert(EnemyShot != None);
+
+	TriggerShotAFriendSpeech(EnemyInstigator);
+}
+
+private function TriggerShotAFriendSpeech(Pawn EnemyInstigator)
+{
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerShotAFriendSpeech();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Hearing Response
@@ -866,7 +879,8 @@ function bool WasSurprised()
 	if (bWasSurprised)
 	{
 		// we're no longer surprised!
-		bWasSurprised = false;
+		// Bad.....you are still surprised -J21C
+		//bWasSurprised = false;
 		return true;
 	}
 }
