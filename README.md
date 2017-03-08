@@ -457,7 +457,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Added campaign co-op
 - Added SAS weapons
 - Added Less Lethal Remington M870 (Less Lethal version of an SAS weapon)
-- Added JSP and AP ammunition
+- Added JSP, AP, 0 buck, 1 buck, 4 buck ammo types
 - Added player permadeath option
 - Added officer permadeath option
 - Officers may now take cover and crouch
@@ -474,7 +474,13 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Suspect equipment is only available in Multiplayer and All Missions campaigns now
 - Issuing a FALL IN command will now have the officers reload their weapons automatically
 - Added new voting configuration options for server hosts: TiesWin, CallCastVote, MinVoters, and NonVotersAreNo. You can edit them in Swat4x.ini/Swat4xDedicatedServer.ini. See Default.ini for more information.
+- Taunt feature now differentiates between belligerent and passive hostages
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
+- Cut dialogue restored: Suspects will now apologize when shooting each other
+- Cut dialogue restored: Hostages will now freak out when other hostages die
+- Cut dialogue restored: Officers will now correctly report when they do not have grenade launcher ammo
+- Cut dialogue restored: Officers will now report when they are using grenades
+- Cut dialogue restored: Officers will now report when they are using pepper spray, less lethal shotgun, or grenade launcher
 - Fixed SEF bug: SWAT officers using full auto; suspects not using full auto
 - Fixed SEF bug: Handcuffs not playing sound properly and popping back up during use
 - Fixed SEF bug: Civilians can trigger traps
@@ -483,7 +489,11 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Fixed SEF bug: Bullets that lose all of their momentum due to drag cause bleeding/impact effects
 - Fixed SEF bug: Less Lethal Shotgun, Grenade Launcher causing penalties when it's not supposed to
 - Fixed SEF bug: Log being spammed with messages about trap penalties
-
+- Fixed SEF bug: Log being spammed with "Fast trace blocked!"
+- Fixed SEF bug: AI-controlled officers not shouting for compliance correctly in some situations
+- Fixed SEF bug: Possible crash fix
+- Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
+- Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
