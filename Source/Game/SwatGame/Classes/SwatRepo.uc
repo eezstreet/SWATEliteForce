@@ -843,6 +843,11 @@ function FinalizeStats()
 ///////////////////////////////////////////////////////////////////////////////
 function NetSwitchLevels( optional bool bAdvanceToNextMap )
 {
+    local SwatGameReplicationInfo SGRI;
+    local int NextMapIndex;
+
+    SGRI = GetSGRI();
+
     log("[dkaplan] >>> NetSwitchLevels()" );
 
     Assert( Level.NetMode != NM_Client );
@@ -854,6 +859,11 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
         if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
             ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
     }
+    NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+    if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
+      NextMapIndex = 0;
+    }
+    SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
 
     ServerSettings(Level.CurrentServerSettings).SaveConfig();
 
@@ -937,9 +947,20 @@ function NetRoundStart()
     local Controller Controller;
     local SwatGamePlayerController SwatController;
     local SwatGameInfo SGI;
+    local SwatGameReplicationInfo SGRI;
+    local int NextMapIndex;
+
 log("[dkaplan] >>> NetRoundStart()" );
 
     log( "SwatRepo::NetRoundStart() called." );
+
+    SGRI = GetSGRI();
+
+    NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+    if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
+      NextMapIndex = 0;
+    }
+    SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
 
     SGI = SwatGameInfo(Level.Game);
     assert( SGI != None );

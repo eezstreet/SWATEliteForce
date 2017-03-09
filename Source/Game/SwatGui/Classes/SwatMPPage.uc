@@ -57,6 +57,9 @@ var() private config localized string LoadMapString;
 var() private config localized string DownloadString;
 #endif
 
+var(SWATGui) private EditInline Config GUILabel MyNextMapLabel;
+var() private config localized string NextMapString;
+
 var(SWATGui) private EditInline Config GUIImage         LoadingImage;
 var(SWATGui) private            config array<Material>  DefaultImages;
 
@@ -125,6 +128,9 @@ private function bool IsAdminable()
 private function SetupPopup()
 {
     local bool bAdminable;
+    local SwatGameReplicationInfo SGRI;
+
+    SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
 
     OpenScores();
 
@@ -150,6 +156,8 @@ private function SetupPopup()
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+        MyNextMapLabel.Hide();
     }
     else if( GC.SwatGameState == GAMESTATE_MidGame && bPopup )
     {
@@ -184,6 +192,8 @@ private function SetupPopup()
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+      MyNextMapLabel.Hide();
     }
     else if( GC.SwatGameState == GAMESTATE_MidGame && !bPopup )
     {
@@ -201,6 +211,8 @@ private function SetupPopup()
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+        MyNextMapLabel.Hide();
     }
     else if( GC.SwatGameState == GAMESTATE_PostGame )
     {
@@ -233,6 +245,10 @@ private function SetupPopup()
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+        MyNextMapLabel.Show();
+
+        MyNextMapLabel.SetCaption(NextMapString $ SGRI.NextMap);
     }
     else if( GC.SwatGameState == GAMESTATE_ClientTravel )
     {
@@ -288,6 +304,8 @@ private function SetupPopup()
         MissionLoadingProgressBar.Show();
         MissionLoadingStatusText.Show();
 #endif
+
+        MyNextMapLabel.Hide();
     }
     else
     {
@@ -304,16 +322,18 @@ function InternalOnActivate()
     MyMPLoadoutPanel.LoadMultiPlayerLoadout();
 
     SetTimer( 1.0, true );
-	
+
 	if (SwatGUIController(Controller).coopcampaign)
 	{
 		MyServerSettingsButton.Hide();
 		MyServerSettingsButton.DisableComponent();
+    MyNextMapLabel.Hide();
 	}
-	else 
+	else
 	{
 		MyServerSettingsButton.Show();
 		MyServerSettingsButton.EnableComponent();
+
 	}
 }
 
@@ -638,6 +658,7 @@ defaultproperties
     WaitForConnectionString="Connecting..."
     LoadMapString="Loading..."
     DownloadString="Downloading..."
+    NextMapString="Next Map: "
 
     bPressedReady = false;
 

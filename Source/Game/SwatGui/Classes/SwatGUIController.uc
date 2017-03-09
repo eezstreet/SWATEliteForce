@@ -258,6 +258,15 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             if( (GuiConfig.SwatGameRole == GAMEROLE_MP_Host && !coopcampaign) ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
+                // TODO: Check if in a campaign coop game on client, to set score as green
+                InternalOpenMenu( MPPopupMenu );
+            }
+            else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
+            {
+                GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
+                if(Campaign != None) {
+                  Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                }
                 InternalOpenMenu( MPPopupMenu );
             }
             else
@@ -1068,6 +1077,6 @@ defaultproperties
 	VoteYesNoKeys="Vote yes = %1, Vote no = %2"
 
     CaptureScriptExec=true
-	
+
 	coopcampaign=false
 }

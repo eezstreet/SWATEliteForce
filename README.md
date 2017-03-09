@@ -475,6 +475,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Issuing a FALL IN command will now have the officers reload their weapons automatically
 - Added new voting configuration options for server hosts: TiesWin, CallCastVote, MinVoters, and NonVotersAreNo. You can edit them in Swat4x.ini/Swat4xDedicatedServer.ini. See Default.ini for more information.
 - Taunt feature now differentiates between belligerent and passive hostages
+- At the end of a multiplayer game, the next map is listed just above the Ready button
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
 - Cut dialogue restored: Hostages will now freak out when other hostages die
@@ -484,8 +485,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Fixed SEF bug: SWAT officers using full auto; suspects not using full auto
 - Fixed SEF bug: Handcuffs not playing sound properly and popping back up during use
 - Fixed SEF bug: Civilians can trigger traps
-- Fixed SEF bug: Manager on Meat Barn having glasses on backwards
-- Fixed SEF bug: Office workers on Department of Agriculture having broken morale levels
+- Fixed SEF bug: Manager on Meat Barn having glasses on backwards (special thanks to sandman332 for this fix)
 - Fixed SEF bug: Bullets that lose all of their momentum due to drag cause bleeding/impact effects
 - Fixed SEF bug: Less Lethal Shotgun, Grenade Launcher causing penalties when it's not supposed to
 - Fixed SEF bug: Log being spammed with messages about trap penalties
@@ -494,6 +494,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Fixed SEF bug: Possible crash fix
 - Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
 - Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
+- Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
@@ -540,14 +541,6 @@ This is a hotfix patch to address some common issues that have been raised.
   * Various other misc improvements
 - Fixed chat in multiplayer pregame having the wrong number of lines (thanks to KevinL and Sokol for this fix)
 - Updated wedge description to explain the difference between using a wedge and locking a door.
-
-Files modified:
-System/DefSwatGui.ini
-System/SpeechCommandGrammar.xml
-System/SwatEquipment.int
-System/SwatGui.ini
-System/transient.int
-Generated code
 
 ### v4 ###
 
@@ -863,68 +856,6 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Old Granite Hotel (AK-47)
 - Mt. Threshold Research Center (M249 SAW)
 
-#### FILES MODIFIED ####
-Content/Classes/SwatEffects.u
-Content/Classes/SwatProtectiveEquipment.u
-Content/Classes/SwatProtectiveEquipment2.u
-Content/Classes/SwatAmmo.u
-Content/Classes/SwatAmmo2.u
-Content/HavokData/SP-DrugLab.mopp
-Content/HavokData/SP-MeatBarn.mopp
-Content/Maps/SP-ABomb.s4m
-Content/Maps/SP-Casino.s4m
-Content/Maps/SP-DrugLab.s4m
-Content/Maps/SP-FairfaxResidence.s4m
-Content/Maps/SP-HalfwayHouse.s4m
-Content/Maps/SP-Hotel.s4m
-Content/Maps/SP-Office.s4m
-Content/Maps/SP-MeatBarn.s4m
-Content/Maps/SP-Subway.s4m
-Content/Sounds/Sierra1/s1_lostcontact_extm01_1.ogg
-Content/Sounds/Sierra1/s1_lostcontact_extm01_2.ogg
-Content/Sounds/Sierra1/s1_lostcontact_extm01_3.ogg
-Content/Sounds/Sierra1/s1_spottedcontact_extm01_1.ogg
-Content/Sounds/Sierra1/s1_spottedcontact_extm01_2.ogg
-Content/Sounds/Sierra1/s1_spottedcontact_extm01_3.ogg
-Content/Sounds/StreamingAudio/01-meatbarn_packing01.ogg
-Content/Sounds/StreamingAudio/01-meatbarn_packingDyn01.ogg
-Content/Sounds/StreamingAudio/01-meatbarn01.ogg
-Content/Sounds/StreamingAudio/01-meatbarnDyn01.ogg
-Content/Sounds/StreamingAudio/01-meatbarnDyn02.ogg
-Content/Sounds/StreamingAudio/01-meatbarnDyn03.ogg
-Content/Textures/gui_tex3.utx
-Content/Textures/MaleCasualArmorTex.utx
-Content/Textures/MaleGang1Tex.utx
-System/AI.ini
-System/Core.dll
-System/CustomScenarioCreator.ini
-System/DefSwatGuiState.ini
-System/DynamicLoadout.ini
-System/EnemyArchetypes.ini
-System/HostageArchetypes.ini
-System/Leadership.ini
-System/MissionObjectives.ini
-System/ObjectiveSpecs.ini
-System/Packages.md5
-System/Packages.txt
-System/PlayerInterface_Command_SP.ini
-System/PlayerInterface_Fire.ini
-System/SoundEffects.ini
-System/Startup.ini
-System/StaticLoadout.ini
-System/SwatAmmo.int
-System/SwatEquipment.ini
-System/SwatEquipment.int
-System/SwatGame.int
-System/SwatGui.ini
-System/SwatGuiState.ini
-System/SwatMissions.ini
-System/SwatPawn.ini
-System/SwatProcedures.int
-System/TrainingText.ini
-System/transient.int
-Generated code
-
 ### v3 ###
 MAJOR FEATURES
 - Multiplayer fixed. You can now play in CO-OP again.
@@ -949,16 +880,6 @@ MINOR FEATURES / FULL CHANGES
 - Modified main menu logo
 - Added missing texture: gui_tex2.audio_Processing (related to speech recognition)
 - Included startup.ini because I am bad
-Files modified:
-Content/Textures/gui_tex2.utx
-System/CommandInterfaceMenus_SP.ini
-System/CommandInterfaceMenus_MP.ini
-System/PlayerInterface_Command_SP.ini
-System/PlayerInterface_Command_MP.ini
-System/SwatGui.ini
-System/startup.ini
-System/transient.int
-Generated code
 
 ### v2 ###
 - New Feature: Speech Recognition. Enable it in Audio Options
@@ -976,18 +897,6 @@ Generated code
 - Fixed: Children of Taronne has a trap on the wrong side
 - Fixed: Missing drug rosters on Stetchkov Drug Lab
 - 'Show Subtitles' moved to Audio Options
-Files modified:
-Content/Maps/SP-DrugLab.s4m
-Content/Maps/SP-Tenement.s4m
-System/SpeechCommandGrammar.xml
-System/CommandInterfaceMenus_SP.ini
-System/PlayerInterface_Command_SP.ini
-System/PlayerInterface_Use.ini
-System/SoundEffects.ini
-System/StaticLoadout.ini
-System/SwatGui.ini
-System/SwatGuiState.ini
-Generated code
 
 ### v1 ###
 - First release
@@ -1003,6 +912,12 @@ Sebasien NovA for his modified SwatEd.exe
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
 
+ELITE SUPPORTERS
+These people have generously donated money to Elite Force via Patreon. If you are interested in helping out, you can find our Patreon page here: https://www.patreon.com/user?u=4885526
+TheTCREngineer
+Jake Robinson/sandman332
+Evan Derickson
+
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
 PC Power Play (Also ran a nice overview of the mod)
@@ -1010,16 +925,16 @@ StrawberryClock (Streamer)
 Rangar (Streamer)
 
 TESTING
-TCR
 Oglogoth
-mezzokoko
 cjslax6
 Vylka
 
 WE ARE: ELITE SQUAD
 eezstreet: Programming, Map Editing
 Jose21Crisis: Programming, Weapons Analysis
+mezzokoko: Programming
 Rangar: Music (Composition), Textures
+TheTCREngineer: Models
 
 
 .. if there is anyone I missed, feel free to send me a message and this will be corrected.
