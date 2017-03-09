@@ -59,12 +59,16 @@ var() private config localized string DownloadString;
 
 var(SWATGui) private EditInline Config GUILabel MyNextMapLabel;
 var() private config localized string NextMapString;
+var() private config localized string HostNeedsToPickMapString;
 
 var(SWATGui) private EditInline Config GUIImage         LoadingImage;
 var(SWATGui) private            config array<Material>  DefaultImages;
 
 var() private config localized string ConfirmAbortString;
 var() private config localized string WaitingForPlayersString;
+
+var() private config localized string ServerSetupString;
+var() private config localized string CampaignSetupString;
 
 var private EMPMode CachedGameMode;
 var private string CachedTitle;
@@ -87,7 +91,7 @@ function InitComponent(GUIComponent MyOwner)
     MyGameSettingsButton.OnClick=CommonOnClick;
     MyServerSettingsButton.OnClick=CommonOnClick;
 
-    CachedGameMode = MPM_BarricadedSuspects;
+    CachedGameMode = MPM_COOP;
     MyGameInfoLabel.SetCaption( GC.GetGameModeName(MPM_BarricadedSuspects) );
     MyServerInfoBox.SetContent( GC.GetGameDescription(MPM_BarricadedSuspects) );
 }
@@ -135,6 +139,13 @@ private function SetupPopup()
     OpenScores();
 
     bAdminable = IsAdminable();
+
+    // The Server Setup button becomes a Campaign button where you can pick the next mission
+    if(SwatGUIController(Controller).coopcampaign) {
+      MyServerSettingsButton.SetCaption(CampaignSetupString);
+    } else {
+      MyServerSettingsButton.SetCaption(ServerSetupString);
+    }
 
     //big state check to determin component visibility/activity
     if( GC.SwatGameState == GAMESTATE_PreGame )
@@ -248,7 +259,11 @@ private function SetupPopup()
 
         MyNextMapLabel.Show();
 
-        MyNextMapLabel.SetCaption(NextMapString $ SGRI.NextMap);
+        if(SGRI.NextMap == "") {
+          MyNextMapLabel.SetCaption(HostNeedsToPickMapString);
+        } else {
+          MyNextMapLabel.SetCaption(NextMapString $ SGRI.NextMap);
+        }
     }
     else if( GC.SwatGameState == GAMESTATE_ClientTravel )
     {
@@ -658,7 +673,12 @@ defaultproperties
     WaitForConnectionString="Connecting..."
     LoadMapString="Loading..."
     DownloadString="Downloading..."
+
     NextMapString="Next Map: "
+    HostNeedsToPickMapString="Waiting for host to pick next map..."
+
+    ServerSetupString="SERVER SETUP"
+    CampaignSetupString="CAMPAIGN"
 
     bPressedReady = false;
 
