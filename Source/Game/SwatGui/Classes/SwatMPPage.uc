@@ -32,6 +32,7 @@ var(SWATGui) private EditInline Config GUIButton MyVotingButton;
 var(SWATGui) private EditInline Config SwatMPLoadoutPanel  MyMPLoadoutPanel;
 var(SWATGui) private EditInline Config SwatMPScoresPanel  MyMPScoresPanel;
 var(SWATGui) private EditInline Config SwatMPVotingPanel  MyMPVotingPanel;
+var(SWATGui) private EditInline Config SwatCampaignCoopMapPanel MyCampaignPanel;
 
 var(SWATGui) private EditInline Config GUIButton		    MyGameSettingsButton;
 var(SWATGui) private EditInline Config GUIButton		    MyServerSettingsButton;
@@ -86,14 +87,14 @@ function InitComponent(GUIComponent MyOwner)
 
     MyLoadoutButton.OnClick=CommonOnClick;
     MyScoresButton.OnClick=CommonOnClick;
-	MyVotingButton.OnClick=CommonOnClick;
+	  MyVotingButton.OnClick=CommonOnClick;
 
     MyGameSettingsButton.OnClick=CommonOnClick;
     MyServerSettingsButton.OnClick=CommonOnClick;
 
     CachedGameMode = MPM_COOP;
-    MyGameInfoLabel.SetCaption( GC.GetGameModeName(MPM_BarricadedSuspects) );
-    MyServerInfoBox.SetContent( GC.GetGameDescription(MPM_BarricadedSuspects) );
+    MyGameInfoLabel.SetCaption( GC.GetGameModeName(MPM_COOP) );
+    MyServerInfoBox.SetContent( GC.GetGameDescription(MPM_COOP) );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -123,7 +124,7 @@ event PostActivate()
 
 private function bool IsAdminable()
 {
-    return ( GC.SwatGameRole == GAMEROLE_MP_Host &&
+    return ( /*GC.SwatGameRole == GAMEROLE_MP_Host &&*/
              ( GC.SwatGameState == GAMESTATE_PreGame ||
                GC.SwatGameState == GAMESTATE_MidGame ||
                GC.SwatGameState == GAMESTATE_PostGame ) );
@@ -258,12 +259,6 @@ private function SetupPopup()
 #endif
 
         MyNextMapLabel.Show();
-
-        if(SGRI.NextMap == "") {
-          MyNextMapLabel.SetCaption(HostNeedsToPickMapString);
-        } else {
-          MyNextMapLabel.SetCaption(NextMapString $ SGRI.NextMap);
-        }
     }
     else if( GC.SwatGameState == GAMESTATE_ClientTravel )
     {
@@ -340,15 +335,7 @@ function InternalOnActivate()
 
 	if (SwatGUIController(Controller).coopcampaign)
 	{
-		MyServerSettingsButton.Hide();
-		MyServerSettingsButton.DisableComponent();
     MyNextMapLabel.Hide();
-	}
-	else
-	{
-		MyServerSettingsButton.Show();
-		MyServerSettingsButton.EnableComponent();
-
 	}
 }
 
@@ -370,6 +357,15 @@ function DisplayGameInfo()
 
     if( SGRI == None || Settings == None )
         return;
+
+    if(GC.SwatGameState == GAMESTATE_PostGame)
+    {
+        if(SGRI.NextMap == "") {
+          MyNextMapLabel.SetCaption(HostNeedsToPickMapString);
+        } else {
+          MyNextMapLabel.SetCaption(NextMapString $ SGRI.NextMap);
+        }
+    }
 
     MyServerNameLabel.SetCaption( Settings.ServerName );
 
@@ -460,11 +456,15 @@ function CommonOnClick(GUIComponent Sender)
             OpenVoting();
             break;
 		case MyGameSettingsButton:
-			OpenGameSettings();
-			break;
+			      OpenGameSettings();
+			      break;
 		case MyServerSettingsButton:
-			Controller.OpenMenu("SwatGui.SwatServerSetupMenu", "SwatServerSetupMenu", "InGame");
-			break;
+            if(SwatGUIControllerBase(Controller).coopcampaign) {
+              OpenCampaign();
+            } else {
+			        Controller.OpenMenu("SwatGui.SwatServerSetupMenu", "SwatServerSetupMenu", "InGame");
+            }
+			      break;
 	}
 }
 
@@ -499,6 +499,23 @@ function ResumeGame()
 	Controller.CloseMenu();
 }
 
+private function OpenCampaign()
+{
+  MyCampaignPanel.Show();
+  MyCampaignPanel.Activate();
+  MyMPVotingPanel.Hide();
+  MyMPVotingPanel.DeActivate();
+  MyMPScoresPanel.Hide();
+  MyMPScoresPanel.DeActivate();
+  MyMPLoadoutPanel.Hide();
+  MyMPLoadoutPanel.DeActivate();
+
+  MyServerSettingsButton.Focus();
+  MyScoresButton.EnableComponent();
+  MyLoadoutButton.EnableComponent();
+  MyVotingButton.EnableComponent();
+}
+
 private function OpenVoting()
 {
 	MyMPVotingPanel.Show();
@@ -507,6 +524,8 @@ private function OpenVoting()
     MyMPScoresPanel.DeActivate();
 	MyMPLoadoutPanel.Hide();
     MyMPLoadoutPanel.DeActivate();
+  MyCampaignPanel.Hide();
+  MyCampaignPanel.DeActivate();
 
 	MyVotingButton.Focus();
 	MyScoresButton.EnableComponent();
@@ -531,6 +550,8 @@ private function OpenScores()
     MyMPScoresPanel.Activate();
     MyMPLoadoutPanel.Hide();
     MyMPLoadoutPanel.DeActivate();
+    MyCampaignPanel.Hide();
+    MyCampaignPanel.DeActivate();
 
 	MyVotingButton.EnableComponent();
     MyScoresButton.Focus();
@@ -551,6 +572,8 @@ private function OpenLoadout()
     MyMPScoresPanel.DeActivate();
     MyMPLoadoutPanel.Show();
     MyMPLoadoutPanel.Activate();
+    MyCampaignPanel.Hide();
+    MyCampaignPanel.DeActivate();
 
 	MyVotingButton.EnableComponent();
     MyScoresButton.EnableComponent();
