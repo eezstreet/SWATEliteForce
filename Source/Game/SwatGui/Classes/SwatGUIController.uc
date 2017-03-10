@@ -264,6 +264,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
                 if(Campaign != None) {
                   Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings), Campaign.CampaignPath, Campaign.GetAvailableIndex());
                 }
                 InternalOpenMenu( MPPopupMenu );
             }

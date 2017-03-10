@@ -26,7 +26,7 @@ var int VOIPIgnoreStaticArray[MAX_PLAYERS];	//list of PlayerIDs ignored by this 
 replication
 {
     reliable if( Role<ROLE_Authority )
-        ServerSetSettings, ServerSetAdminSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart;
+        ServerSetSettings, ServerSetAdminSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
@@ -380,6 +380,11 @@ exec function ToggleIDs()
 {
     if( SwatPlayerReplicationInfo(PlayerReplicationInfo).IsAdmin() )
         ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
+}
+
+function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
+{
+  Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

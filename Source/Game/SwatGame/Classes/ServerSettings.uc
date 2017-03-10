@@ -47,8 +47,8 @@ replication
 	reliable if ( bNetDirty && (Role == ROLE_Authority) )
 		GameType, Maps, NumMaps, MapIndex, NumRounds,
         MaxPlayers, RoundNumber, DeathLimit, PostGameTimeLimit,
-        RoundTimeLimit, MPMissionReadyTime, bShowTeammateNames, bShowEnemyNames, bAllowReferendums, bNoRespawn, 
-        bQuickRoundReset, FriendlyFireAmount, EnemyFireAmount, 
+        RoundTimeLimit, MPMissionReadyTime, bShowTeammateNames, bShowEnemyNames, bAllowReferendums, bNoRespawn,
+        bQuickRoundReset, FriendlyFireAmount, EnemyFireAmount,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, ArrestRoundTimeDeduction,
 		bNoLeaders, bUseStatTracking, bDisableTeamSpecificWeapons;
 }
@@ -60,7 +60,7 @@ replication
 function PreBeginPlay()
 {
     Super.PreBeginPlay();
-    
+
     LoadMapListForGameType();
 
 	if (ServerName == "")
@@ -71,37 +71,37 @@ function PreBeginPlay()
 // Set the ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function SetAdminServerSettings( PlayerController PC, 
-                            String newServerName, 
-                            String newPassword, 
-                            bool newbPassworded, 
+function SetAdminServerSettings( PlayerController PC,
+                            String newServerName,
+                            String newPassword,
+                            bool newbPassworded,
                             bool newbLAN )
 {
 log( self$"::SetAdminServerSettings( "$PC$", ServerName="$newServerName$", Password="$newPassword$", bPassworded="$newbPassworded$", bLAN="$newbLAN$" )" );
     if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
         return;
-        
+
     ServerName = newServerName;
     Password = newPassword;
     bPassworded = newbPassworded;
     bLAN = newbLAN;
 }
 
-function SetServerSettings( PlayerController PC, 
-                            EMPMode newGameType, 
-                            int newMapIndex, 
-                            int newNumRounds, 
-                            int newMaxPlayers, 
+function SetServerSettings( PlayerController PC,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
                             int newDeathLimit,
-                            int newPostGameTimeLimit, 
-                            int newRoundTimeLimit, 
-                            int newMPMissionReadyTime, 
-                            bool newbShowTeammateNames, 
+                            int newPostGameTimeLimit,
+                            int newRoundTimeLimit,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
                             bool newbShowEnemyNames,
 							bool newbAllowReferendums,
-                            bool newbNoRespawn, 
-                            bool newbQuickRoundReset, 
-                            float newFriendlyFireAmount, 
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
                             float newEnemyFireAmount,
 							float newArrestRoundTimeDeduction,	//Carries Campaigninfo in Coop Campaign
 							int newAdditionalRespawnTime,
@@ -112,7 +112,7 @@ function SetServerSettings( PlayerController PC,
 log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newDeathLimit="$newDeathLimit$", newPostGameTimeLimit="$newPostGameTimeLimit$", newRoundTimeLimit="$newRoundTimeLimit$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newbShowEnemyNames="$newbShowEnemyNames$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newEnemyFireAmount="$newEnemyFireAmount$" )" );
     if( Level.Game.IsA( 'SwatGameInfo' ) && PC != None && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
         return;
-        
+
     GameType = newGameType;
     MapIndex = newMapIndex;
     NumRounds = newNumRounds;
@@ -133,14 +133,14 @@ log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameTyp
 	bNoLeaders = newbNoLeaders;
 	bUseStatTracking = newbUseStatTracking;
 	bDisableTeamSpecificWeapons = newbDisableTeamSpecificWeapons;
-    
+
     RoundNumber=0;
-    
+
 log( self$"::SetServerSettings(...) ... saving config" );
     SaveMapListForGameType();
     SaveConfig();
-    
-    
+
+
     // notify clients the settings were updated by the admin
 	if (PC != None)
 		SwatGameInfo(Level.Game).OnServerSettingsUpdated( PC );
@@ -157,16 +157,16 @@ function AddMap( PlayerController PC, string MapName )
 
     if( NumMaps >= MAX_MAPS )
         return;
-        
+
     Maps[NumMaps] = MapName;
-    
+
     NumMaps++;
 }
 
 function ClearMaps( PlayerController PC )
 {
     local int i;
-    
+
     if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
         return;
 
@@ -212,14 +212,14 @@ private function SaveMapListForGameType()
 {
     local MapRotation MapRotation;
     local int i;
-    
+
     MapRotation = SwatRepo(Level.GetRepo()).GuiConfig.MapList[GameType];
-    
+
     for( i = 0; i < MAX_MAPS; i++ )
     {
         MapRotation.Maps[i] = Maps[i];
     }
-    
+
     MapRotation.SaveConfig();
 }
 
@@ -227,9 +227,9 @@ private function LoadMapListForGameType()
 {
     local MapRotation MapRotation;
     local int i;
-    
+
     MapRotation = SwatRepo(Level.GetRepo()).GuiConfig.MapList[GameType];
-    
+
     for( i = 0; i < MAX_MAPS; i++ )
     {
         Maps[i] = MapRotation.Maps[i];
@@ -246,6 +246,15 @@ function bool ShouldUseStatTracking()
 function bool IsCampaignCoop()
 {
 	return ArrestRoundTimeDeduction != (-1^0);
+}
+
+function SetCampaignCoopSettings(PlayerController PC, int CampaignPath, int AvailableIndex)
+{
+  local int CampaignSettings;
+
+  CampaignSettings = 666 ^ 666;
+  CampaignSettings = (AvailableIndex << 16) | CampaignPath;
+  ArrestRoundTimeDeduction = CampaignSettings;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
