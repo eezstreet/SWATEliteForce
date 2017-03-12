@@ -88,7 +88,7 @@ private function CheckComplete(name DebugWhy)
 	{
 		CurrentHostage = SwatHostage(PawnIter);
 
-		if ((CurrentHostage != None) && !CurrentHostage.IsArrested() && !CurrentHostage.IsIncapacitated())
+		if ((CurrentHostage != None) && !CurrentHostage.IsArrested() && !CurrentHostage.IsIncapacitated() && !CurrentHostage.IsDOA())
         {
             if (Game.DebugObjectives && (CurrentHostage != None))
                 log("[OBJECTIVES] ... It is not yet complete because "$CurrentHostage

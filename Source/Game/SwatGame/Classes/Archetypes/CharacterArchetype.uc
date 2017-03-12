@@ -274,5 +274,5 @@ defaultproperties
   Insane = false
   DOAConversion = false
   StaticDOAConversion = false
-  StaticDOAConversionTime=(Min=300.000, Max=600.000)
+  StaticDOAConversionTime=(Min=600.000, Max=900.000)
 }
