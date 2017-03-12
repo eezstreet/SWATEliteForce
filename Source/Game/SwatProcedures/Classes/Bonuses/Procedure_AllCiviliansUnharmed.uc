@@ -1,9 +1,9 @@
-class Procedure_PlayerUninjured extends SwatGame.Procedure
-    implements  IInterested_GameEvent_PawnDamaged;
+class Procedure_AllCiviliansUnharmed extends SwatGame.Procedure
+  implements  IInterested_GameEvent_PawnDamaged;
 
 var config int Bonus;
 
-var array<SwatPawn> InjuredPlayers;
+var array<SwatPawn> InjuredCivilians;
 
 function PostInitHook()
 {
@@ -16,15 +16,15 @@ function PostInitHook()
 //interface IInterested_GameEvent_PawnDamaged implementation
 function OnPawnDamaged(Pawn Pawn, Actor Damager)
 {
-    if (!Pawn.IsA('SwatPlayer')) return;
+    if (!Pawn.IsA('SwatHostage')) return;
 
-    Add( Pawn, InjuredPlayers );
+    Add( Pawn, InjuredCivilians );
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name
             $" added "$Pawn.name
-            $" to its list of InjuredPlayers because it was injured."
-            $" InjuredPlayers.length="$InjuredPlayers.length);
+            $" to its list of InjuredCivilians because it was injured."
+            $" InjuredPlayers.length="$InjuredCivilians.length);
 }
 
 //interface IProcedure implementation
@@ -34,14 +34,14 @@ function int GetCurrentValue()
     local int total;
     local int NumPlayers;
 
-    NumPlayers = GetNumActors( class'SwatPlayer' );
-    Modifier = float(NumPlayers-InjuredPlayers.length)/float(NumPlayers);
+    NumPlayers = GetNumActors( class'SwatHostage' );
+    Modifier = float(NumPlayers-InjuredCivilians.length)/float(NumPlayers);
     total = int(float(Bonus)*Modifier);
 
     if (GetGame().DebugLeadershipStatus)
         log("[LEADERSHIP] "$class.name
-            $" Bonus = "$Bonus$", NumPlayers = "$NumPlayers$", InjuredPlayers.length = "$InjuredPlayers.length
-            $" Modifier = ( (NumPlayers-InjuredPlayers.length)/NumPlayers ) = "$Modifier
+            $" Bonus = "$Bonus$", NumHostages = "$NumPlayers$", InjuredCivilians.length = "$InjuredCivilians.length
+            $" Modifier = ( (NumHostages-InjuredCivilians.length)/NumHostages ) = "$Modifier
             $" ... returning CurrentValue = Bonus * Modifier = "$total );
 
     return total;
@@ -51,11 +51,11 @@ function int GetCurrentValue()
 
 function string Status()
 {
-    local int NumSwatPlayers;
+    local int NumHostages;
 
-    NumSwatPlayers = GetNumActors( class'SwatPlayer' );
-    return (NumSwatPlayers - InjuredPlayers.length)
-        $"/"$NumSwatPlayers;
+    NumHostages = GetNumActors( class'SwatHostage' );
+    return (NumHostages - InjuredCivilians.length)
+        $"/"$NumHostages;
 }
 
 ///////////////////////////////////////
