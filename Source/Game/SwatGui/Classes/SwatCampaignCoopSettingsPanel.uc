@@ -79,6 +79,10 @@ function InternalOnActivate()
 {
   local ServerSettings Settings;
 
+  Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+
+  MyPasswordedButton.SetChecked(Settings.bPassworded);
+  MyPasswordBox.SetText(Settings.Password);
   MyDifficultyComboBox.SetIndex(GC.CurrentDifficulty);
   MyEntryComboBox.SetIndex(GC.GetDesiredEntryPoint());
   MyMapNameLabel.SetCaption(GC.CurrentMission.FriendlyName);
