@@ -25,4 +25,3 @@ var config bool IsLookingThruGlass;
 
 var config localized string UseFeedbackText;
 var config localized string OtherFeedbackText;
-

@@ -3079,13 +3079,22 @@ simulated function String UniqueID()
     return String(SpawnedFromName);
 }
 
+simulated function bool IsDOA()
+{
+  return false;
+}
+
 ///////////////////////////////////////
 // IAmReportableCharacter implementation
 
 // Provides the effect event name to use when this ai is being reported to TOC
 simulated final function name GetEffectEventForReportingToTOC()
 {
-    if (IsDead())
+    if (IsDOA())
+    {
+        return 'ReportedDOA';
+    }
+    else if (IsDead())
     {
         return GetEffectEventForReportingToTOCWhenDead();
     }
@@ -3107,7 +3116,11 @@ simulated final function name GetEffectEventForReportingToTOC()
 // about this ai
 simulated final function name GetEffectEventForReportResponseFromTOC()
 {
-    if (IsIncapacitated())
+    if (IsDOA())
+    {
+       return 'RepliedDOAReported';
+    }
+    else if (IsIncapacitated())
     {
         return GetEffectEventForReportResponseFromTOCWhenIncapacitated();
     }
