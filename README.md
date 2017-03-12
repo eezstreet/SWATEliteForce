@@ -485,13 +485,14 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Equipment changes!
   * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
   * New rifle/pistol ammo types: JSP (jacketed soft point) and AP (armor penetrating).
+  * New shotgun ammo types: 0 buck, 1 buck, 4 buck
 - Breaching improvements
   * All shotguns can now breach through doors. The Breaching Shotgun can break through any door with one shot, but other shotguns (particularly when dealing with metal doors) may take two or three shots to break open. (AI-controlled officers cannot breach with anything other than a Breaching Shotgun)
   * Broken doors can now be closed and/or wedged.
   * C2 can now blow up alarm traps on the other side of a door, preventing them from going off.
   * You can now tell the officers which breaching method you want them to use on a door (C2 & CLEAR vs SHOTGUN & CLEAR)
 - DOA conversions
-  * Hostages who start out as incapacitated may become a DOA after 5-10 minutes. 
+  * Hostages who start out as incapacitated may become a DOA after 10-15 minutes. 
   * Allowing hostages to become DOA may reduce your score.
   * This is a sort of bonus to complete the mission quickly.
 
