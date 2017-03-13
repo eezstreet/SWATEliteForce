@@ -88,9 +88,9 @@ function InternalOnClick(GUIComponent Sender)
 	local float CampaignInfo;
 	local int CampaignPath, MissionIndex;
 	local SwatCampaignCoopSettingsPanel ServerPanel;
-	
-	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
-	
+
+	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+
 	switch (Sender)
 	{
 	    case MyQuitButton:
@@ -104,12 +104,20 @@ function InternalOnClick(GUIComponent Sender)
 				if (SwatGUIController(Controller).coopcampaign)
 				{
 					ServerPanel = SwatCampaignCoopSettingsPanel(MyTabControl.GetTab(3).TabPanel);
-					
+
 					CampaignInfo = 666 ^ 666;
 					CampaignPath = SwatGUIController(Controller).GetCampaign().CampaignPath;
 					MissionIndex = SwatGUIController(Controller).GetCampaign().GetAvailableIndex() << 16;
 					CampaignInfo = MissionIndex | CampaignPath;
 
+					SwatPlayerController(PlayerOwner()).ServerSetDirty(Settings);
+					SwatPlayerController(PlayerOwner()).ServerSetAdminSettings(
+						Settings,
+						GC.MPName $ " Coop Campaign",
+						ServerPanel.MyPasswordBox.VisibleText,
+						ServerPanel.MyPasswordedButton.bChecked,
+						ServerPanel.MyPublishModeBox.GetIndex() == 0
+					);
 					SwatPlayerController(PlayerOwner()).ServerSetSettings(
 						Settings,
 						EMPMode.MPM_COOP,
@@ -124,13 +132,7 @@ function InternalOnClick(GUIComponent Sender)
 						false,
 						true
 					);
-					SwatPlayerController(PlayerOwner()).ServerSetAdminSettings(
-						Settings,
-						GC.MPName $ " Coop Campaign",
-						ServerPanel.MyPasswordBox.VisibleText,
-						ServerPanel.MyPasswordedButton.bChecked,
-						true
-					);
+					GC.SaveConfig();
 					SwatGUIController(Controller).LoadLevel(GC.CurrentMission.Name $ "?listen");
 				}
 				else {GameStart();}

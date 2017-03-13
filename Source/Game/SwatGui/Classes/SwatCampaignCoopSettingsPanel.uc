@@ -12,6 +12,7 @@ var(SWATGui) EditInline Config GUINumericEdit MyMaxPlayersSpinner;
 var(SWATGui) EditInline Config GUIComboBox MyDifficultyComboBox;
 var(SWATGui) EditInline Config GUIComboBox MyEntryComboBox;
 var(SWATGui) EditInline Config GUILabel MyDifficultySuccessLabel;
+var(SWATGui) EditInline Config GUIComboBox MyPublishModeBox;
 
 // Server Info Panel
 var(SWATGui) EditInline Config GUILabel MyServerNameLabel;
@@ -23,6 +24,8 @@ var protected localized config string PrimaryEntranceLabel;
 var protected localized config string SecondaryEntranceLabel;
 var protected localized config string DifficultyString;
 var protected localized config string DifficultyLabelString;
+var() private config localized string LANString;
+var() private config localized string GAMESPYString;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -37,6 +40,9 @@ function InitComponent(GUIComponent MyOwner)
 
   MyEntryComboBox.AddItem(PrimaryEntranceLabel);
   MyEntryComboBox.AddItem(SecondaryEntranceLabel);
+
+  MyPublishModeBox.AddItem(LANString);
+  MyPublishModeBox.AddItem(GAMESPYString);
 
   MyNameBox.MaxWidth = GC.MPNameLength;
   MyNameBox.AllowedCharSet = GC.MPNameAllowableCharSet;
@@ -72,6 +78,9 @@ function ComboBoxOnChange(GUIComponent Sender)
     case MyEntryComboBox:
       GC.SetDesiredEntryPoint(EEntryType(Element.GetIndex()));
       break;
+    case MyPublishModeBox:
+    // This doesn't alter anything directly
+      break;
   }
 }
 
@@ -87,6 +96,11 @@ function InternalOnActivate()
   MyEntryComboBox.SetIndex(GC.GetDesiredEntryPoint());
   MyMapNameLabel.SetCaption(GC.CurrentMission.FriendlyName);
   MyCampaignNameLabel.SetCaption(SwatGUIController(Controller).GetCampaign().StringName);
+  if(Settings.bLAN) {
+    MyPublishModeBox.SetIndex(0);
+  } else {
+    MyPublishModeBox.SetIndex(1);
+  }
 
   MyMaxPlayersSpinner.SetValue(Settings.MaxPlayers, true);
   MyNameBox.SetText(GC.MPName);
@@ -139,4 +153,7 @@ defaultproperties
   SecondaryEntranceLabel="Secondary"
   DifficultyString="Difficulty: "
   DifficultyLabelString="Score of [b]%1[\\b] required to advance."
+
+  LANString="LAN"
+  GAMESPYString="Internet"
 }

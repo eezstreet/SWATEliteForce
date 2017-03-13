@@ -78,8 +78,10 @@ function SetAdminServerSettings( PlayerController PC,
                             bool newbLAN )
 {
 log( self$"::SetAdminServerSettings( "$PC$", ServerName="$newServerName$", Password="$newPassword$", bPassworded="$newbPassworded$", bLAN="$newbLAN$" )" );
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) ) {
+      log("Couldn't set admin settings: not an admin");
+      return;
+    }
 
     ServerName = newServerName;
     Password = newPassword;
