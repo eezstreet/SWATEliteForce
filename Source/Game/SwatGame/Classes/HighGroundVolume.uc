@@ -259,9 +259,9 @@ final function PlayConditionEffect( HighGroundCondition inCondition )
 
     log( "Highground: Condition "$ConditionToString( inCondition )$", is playing it's effect event!" );
 
-    //if ( Level.NetMode == NM_Standalone )
-    //    GetAnySwatPlayer().TriggerEffectEvent( GetEffectName(inCondition), ,,,,,,Self, RoomName );
-    //else
+    if ( Level.NetMode == NM_Standalone )
+        GetAnySwatPlayer().TriggerEffectEvent( GetEffectName(inCondition), ,,,,,,Self, RoomName );
+    else
         GetAnySwatPlayer().BroadcastEffectEvent( GetEffectName(inCondition),,,,,,, Self, RoomName );
     bStillPlaying = true;
     SetTimer( inCondition.Delay, false );
