@@ -86,8 +86,6 @@ var() bool   EnteredChatGlobal;
 
 var() private config bool DispatchDisabled;
 
-var() bool coopcampaign;
-
 /////////////////////////////////////////////////////////////////////////////
 // Initialization
 /////////////////////////////////////////////////////////////////////////////
@@ -258,6 +256,16 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             if( (GuiConfig.SwatGameRole == GAMEROLE_MP_Host && !coopcampaign) ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
+                // TODO: Check if in a campaign coop game on client, to set score as green
+                InternalOpenMenu( MPPopupMenu );
+            }
+            else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
+            {
+                GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
+                if(Campaign != None) {
+                  Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings), Campaign.CampaignPath, Campaign.GetAvailableIndex());
+                }
                 InternalOpenMenu( MPPopupMenu );
             }
             else
@@ -371,7 +379,6 @@ private function ClearChatHistory()
 function bool OnMessageRecieved( String Msg, Name Type )
 {
 //log( "[dkaplan]: >>>OnMessageRecieved: Msg = "$Msg$", Type = "$Type$", ViewportOwner.Actor = "$ViewportOwner.Actor);
-    ViewportOwner.Actor.ConsoleMessage("OnMessageReceived("$Type$"): "$Msg);
     switch (Type)
     {
         case 'Connected':
@@ -1068,6 +1075,6 @@ defaultproperties
 	VoteYesNoKeys="Vote yes = %1, Vote no = %2"
 
     CaptureScriptExec=true
-	
+
 	coopcampaign=false
 }

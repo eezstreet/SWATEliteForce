@@ -435,7 +435,7 @@ latent private function LatentMoveOfficerToActor(Pawn Officer, Actor Destination
 // returns false if the door is closed
 protected function bool ShouldRunToStackupPoint()
 {
-	return TargetDoor.IsEmptyDoorWay() || !TargetDoor.IsClosed() || TargetDoor.IsOpening() || TargetDoor.IsBroken();
+	return TargetDoor.IsEmptyDoorWay() || !TargetDoor.IsClosed() || TargetDoor.IsOpening()/* || TargetDoor.IsBroken()*/;
 }
 
 // @TODO: there's a few things we can't implement yet.
@@ -468,7 +468,7 @@ function FirstOfficerReadyToOpenDoor();
 
 protected function bool ShouldThrowerBeFirstOfficer()
 {
-	return (TargetDoor.IsEmptyDoorWay() || ISwatDoor(TargetDoor).IsOpen() || TargetDoor.IsOpening() || ISwatDoor(TargetDoor).IsBroken());
+	return (TargetDoor.IsEmptyDoorWay() || ISwatDoor(TargetDoor).IsOpen() || TargetDoor.IsOpening()/* || ISwatDoor(TargetDoor).IsBroken()*/);
 }
 
 // return the first officer we find with the grenade
@@ -703,7 +703,7 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 	CurrentThrowGrenadeGoal.SetWaitToThrowGrenade(TargetDoor.IsClosed() && ! TargetDoor.IsOpening() && bWaitToThrowGrenade);
 	CurrentThrowGrenadeGoal.RegisterForGrenadeThrowing(self);
 	CurrentThrowGrenadeGoal.postGoal(self);
-	
+
 	TriggerDeployingGrenadeSpeech();
 
 	// pause and wait for the character to be ready to throw the grenade
@@ -712,7 +712,7 @@ latent function PrepareToThrowGrenade(EquipmentSlot GrenadeSlot, bool bWaitToThr
 
 latent function ThrowGrenade()
 {
-	if (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !TargetDoor.IsBroken() && !TargetDoor.IsEmptyDoorway())
+	if (TargetDoor.IsClosed() && !TargetDoor.IsOpening()/* && !TargetDoor.IsBroken()*/ && !TargetDoor.IsEmptyDoorway())
 	{
 		// start over again because the door isn't open or opening
 		instantFail(ACT_GENERAL_FAILURE);
@@ -886,7 +886,7 @@ latent function OpenDoorForThrowingGrenade()
 	{
 		WaitToFinishOpeningDoor();
 	}
-	else if (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !ISwatDoor(TargetDoor).IsBroken())
+	else if (TargetDoor.IsClosed() && !TargetDoor.IsOpening() /*&& !ISwatDoor(TargetDoor).IsBroken()*/)
 	{
 		pause();
 	}
@@ -1579,17 +1579,23 @@ Begin:
 	// stack up the squad if the door is closed (and not broken)
 	if (bShouldStackUpBeforeClearing)
 	{
+		log("SquadMoveAndClearAction: StackUpSquad()");
 		StackUpSquad(true);
 
 		// set up who's doing what
+		log("SquadMoveAndClearAction: SetupOfficerRoles()");
 		SetupOfficerRoles();
 
+		log("SquadMoveAndClearAction: PrepareToMoveSquad()");
 		PrepareToMoveSquad();			// <-- "WaitForZulu" happens in here
 
+		log("SquadMoveAndClearAction: FinishUpThrowBehavior()");
 		FinishUpThrowBehavior();
 
+		log("SquadMoveAndClearAction: ClearOutStackedUpGoals()");
 		ClearOutStackedUpGoals();
 
+		log("SquadMoveAndClearAction: MoveStackedUpSquad()");
 		MoveStackedUpSquad();
 	}
 	else

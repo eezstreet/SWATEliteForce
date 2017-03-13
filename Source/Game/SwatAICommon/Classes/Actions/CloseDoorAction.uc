@@ -7,7 +7,7 @@ class CloseDoorAction extends MoveToDoorAction;
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 // copied from our goal
@@ -18,7 +18,7 @@ var(parameters) bool	CloseDoorFromLeft;
 var private ISwatDoor	SwatDoorTarget;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -51,7 +51,7 @@ private function bool ShouldContinueToCloseDoor()
 
 	PendingDoorInteractor = SwatDoorTarget.GetPendingInteractor();
 
-	return (!TargetDoor.IsEmptyDoorway() && !TargetDoor.IsClosed() && !SwatDoorTarget.IsBroken() && 
+	return (!TargetDoor.IsEmptyDoorway() && !TargetDoor.IsClosed() /*&& !SwatDoorTarget.IsBroken()*/ && 
 		    ((PendingDoorInteractor == None) || (PendingDoorInteractor == m_Pawn)));
 }
 
@@ -63,7 +63,7 @@ latent function CloseDoor()
 
 	SwatDoorTarget = ISwatDoor(TargetDoor);
 	assert(SwatDoorTarget != None);
-	
+
 	PendingDoorInteractor = SwatDoorTarget.GetPendingInteractor();
 
 	while (TargetDoor.IsOpening())
@@ -117,7 +117,7 @@ latent function CloseDoor()
 state Running
 {
  Begin:
-	CloseDoor();	
+	CloseDoor();
 	succeed();
 }
 

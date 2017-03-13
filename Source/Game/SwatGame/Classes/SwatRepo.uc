@@ -216,13 +216,13 @@ event Tick( Float DeltaSeconds )
                 case GAMESTATE_PostGame:
                     CumulativeDelta += DeltaSeconds;
 
-					if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
-					{
-						CumulativeDelta = 0;
-						GetSGRI().ServerCountdownTime = 0;
-						CheckAllPlayersReady();
-						break;
-					}
+					          if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+					          {
+						                CumulativeDelta = 0;
+						                GetSGRI().ServerCountdownTime = 0;
+						                CheckAllPlayersReady();
+						                break;
+					          }
 
                     if( GetSGRI().ServerCountdownTime <= 0 )
                     {
@@ -791,7 +791,17 @@ function SwapServerSettings()
 //
 function NetNextRound()
 {
-log("[dkaplan] >>> NetNextRound()" );
+    local SwatGameReplicationInfo SGRI;
+
+    SGRI = GetSGRI();
+
+    if(SwatGUIControllerBase(GUIController).coopcampaign && SGRI.NextMap == "")
+    {
+      // we CANNOT go to a next map until the host has picked a new map!
+      return;
+    }
+
+    log("[dkaplan] >>> NetNextRound()" );
 
     SwapServerSettings();
 
@@ -843,16 +853,29 @@ function FinalizeStats()
 ///////////////////////////////////////////////////////////////////////////////
 function NetSwitchLevels( optional bool bAdvanceToNextMap )
 {
+    local SwatGameReplicationInfo SGRI;
+    local int NextMapIndex;
+
+    SGRI = GetSGRI();
+
     log("[dkaplan] >>> NetSwitchLevels()" );
 
     Assert( Level.NetMode != NM_Client );
 
     //don't advance to the next round if the server settings changed and a round was selected
-    if( bAdvanceToNextMap )
+    if(!SwatGuiControllerBase(GUIController).coopcampaign)
     {
-        ServerSettings(Level.CurrentServerSettings).MapIndex++;
-        if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
-            ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
+      if( bAdvanceToNextMap )
+      {
+          ServerSettings(Level.CurrentServerSettings).MapIndex++;
+          if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
+              ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
+      }
+      NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+      if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
+        NextMapIndex = 0;
+      }
+      SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
     }
 
     ServerSettings(Level.CurrentServerSettings).SaveConfig();
@@ -862,7 +885,14 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
 
     log( "Beginning a new Map... ServerSettings(Level.CurrentServerSettings).RoundNumber="$ServerSettings(Level.CurrentServerSettings).RoundNumber$", ServerSettings(Level.CurrentServerSettings).NumRounds="$ServerSettings(Level.CurrentServerSettings).NumRounds$", ServerSettings(Level.CurrentServerSettings).MapIndex="$ServerSettings(Level.CurrentServerSettings).MapIndex );
 
-    Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
+    if(SwatGuiControllerBase(GUIController).coopcampaign)
+    {
+      Level.ServerTravel( SGRI.NextMap, false );
+    }
+    else
+    {
+      Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
+    }
 }
 
 function NetSwitchLevelsFromMapVote( String URL )
@@ -937,9 +967,27 @@ function NetRoundStart()
     local Controller Controller;
     local SwatGamePlayerController SwatController;
     local SwatGameInfo SGI;
+    local SwatGameReplicationInfo SGRI;
+    local int NextMapIndex;
+
 log("[dkaplan] >>> NetRoundStart()" );
 
     log( "SwatRepo::NetRoundStart() called." );
+
+    SGRI = GetSGRI();
+
+    if(!SwatGUIControllerBase(GUIController).coopcampaign)
+    {
+      NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+      if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
+        NextMapIndex = 0;
+      }
+      SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
+    }
+    else
+    {
+      SGRI.NextMap = "";
+    }
 
     SGI = SwatGameInfo(Level.Game);
     assert( SGI != None );

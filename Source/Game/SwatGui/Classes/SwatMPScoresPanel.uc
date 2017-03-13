@@ -63,9 +63,11 @@ function InternalOnActivate()
 {
     local int i;
     local bool bPlayingCOOP;
-    
+    local bool bCampaignCoop;
+
     bPlayingCOOP = SwatGUIController(Controller).Repo.Level.IsPlayingCOOP;
 	bSelectThisPlayer = true;		 // start off by selecting local player
+  bCampaignCoop = SwatGUIController(Controller).coopcampaign;
 
 	MyChangeTeamButton.SetVisibility(!bPlayingCOOP && GC.SwatGameState != GAMESTATE_ClientTravel );
 	MyChangeTeamButton.SetActive(!bPlayingCOOP && GC.SwatGameState != GAMESTATE_ClientTravel );
@@ -77,21 +79,21 @@ function InternalOnActivate()
 	MyCOOPToggleVOIPIgnoreButton.SetActive(bPlayingCOOP && GC.SwatGameState != GAMESTATE_ClientTravel );
 
 	SetTimer( GC.MPPollingDelay, true );
-    
-	DeployInfoLabel.SetVisibility( bPlayingCOOP && GC.SwatGameState != GAMESTATE_ClientTravel );
+
+	DeployInfoLabel.SetVisibility( bPlayingCOOP && GC.SwatGameState != GAMESTATE_ClientTravel && !bCampaignCoop );
 
     MyObjectivesPanel.SetVisibility( bPlayingCOOP );
     MyObjectivesPanel.SetActive( bPlayingCOOP );
-    
+
     MyLeadershipPanel.SetVisibility( bPlayingCOOP && GC.SwatGameState != GAMESTATE_PostGame );
     MyLeadershipPanel.SetActive( bPlayingCOOP && GC.SwatGameState != GAMESTATE_PostGame );
-    
+
     MyDebriefingLeadershipPanel.SetVisibility( bPlayingCOOP && GC.SwatGameState == GAMESTATE_PostGame );
     MyDebriefingLeadershipPanel.SetActive( bPlayingCOOP && GC.SwatGameState == GAMESTATE_PostGame );
-    
+
     MyMapPanel.SetVisibility( bPlayingCOOP && GC.SwatGameState != GAMESTATE_PostGame );
     MyMapPanel.SetActive( bPlayingCOOP && GC.SwatGameState != GAMESTATE_PostGame );
-    
+
     MyOfficerStatusPanel.SetVisibility( bPlayingCOOP );
     MyOfficerStatusPanel.SetActive( bPlayingCOOP );
 
@@ -108,7 +110,7 @@ function InternalOnActivate()
         MyTeamBoxes[i].SetVisibility( !bPlayingCOOP );
         MyTeamHeaders[i].SetVisibility( !bPlayingCOOP );
     }
-    
+
     MyBorderImageSWATLeft.SetVisibility( !bPlayingCOOP );
     MyBorderImageSWATRight.SetVisibility( !bPlayingCOOP );
     MyBorderImageSuspectLeft.SetVisibility( !bPlayingCOOP );
@@ -137,9 +139,9 @@ private function UpdateChangeTeamsButton()
     local bool Enabled;
     local bool bPlayingCOOP;
 	local GUIButton Button;
-    
+
     Enabled = false;
-    
+
     bPlayingCOOP = SwatGUIController(Controller).Repo.Level.IsPlayingCOOP;
 	if (bPlayingCOOP)
 	{
@@ -163,7 +165,7 @@ private function UpdateChangeTeamsButton()
         else            //GameState is MidGame, not VIP
         {
             assert(SwatGamePlayerController(PlayerOwner()) != None);
-            
+
             if (SwatGamePlayerController(PlayerOwner()).SwatPlayer == None)
             {
                 Enabled = true;
@@ -182,7 +184,7 @@ private function UpdateChangeTeamsButton()
             }
         }
     }
-    
+
     //do not update back to blurry if this is already pressed
     if( !Enabled || Button.MenuState != MSAT_Pressed )
 	{
@@ -214,25 +216,25 @@ private function int ObjScore( NetScoreInfo a )
         a.GetVIPPlayerEscaped() +
         a.GetArrestedVIP() +
         a.GetBombsDiffused() +
-        a.GetRDCrybaby() + 
+        a.GetRDCrybaby() +
 		a.GetSGCrybaby() +
 		a.GetEscapedSG();
 }
 
 private function bool GreaterScoreThan( NetScoreInfo a, NetScoreInfo b )
 {
-    return 
+    return
         ( a.GetScore() > b.GetScore() ||
             ( a.GetScore() == b.GetScore() &&
                 ( ObjScore( a ) > ObjScore( b ) ||
-                    ( ObjScore( a ) == ObjScore( b ) && 
+                    ( ObjScore( a ) == ObjScore( b ) &&
                         ( a.GetArrests() > b.GetArrests() ||
-                            ( a.GetArrests() == b.GetArrests() && 
+                            ( a.GetArrests() == b.GetArrests() &&
                                 ( a.GetTimesDied() < b.GetTimesDied() ||
-                                    ( a.GetTimesDied() == b.GetTimesDied() && 
+                                    ( a.GetTimesDied() == b.GetTimesDied() &&
                                         ( a.GetEnemyKills() > b.GetEnemyKills() ||
-                                            ( a.GetEnemyKills() == b.GetEnemyKills() && 
-                                                ( a.GetTimesArrested() < b.GetTimesArrested() 
+                                            ( a.GetEnemyKills() == b.GetEnemyKills() &&
+                                                ( a.GetTimesArrested() < b.GetTimesArrested()
         )   )   )   )   )   )   )   )   )   )   );
 }
 
@@ -248,15 +250,15 @@ function DisplayScores()
 	local SwatPlayerController PC;
 
     SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
-    
+
     if( SGRI == None )
         return;
-        
+
     //set the headers and clear the team boxes
     for( i = 0; i < 2; ++i)
     {
         MyTeamHeaders[i].SetCaption( FormatTextString( TeamScoreFormatString, SGRI.Teams[i].TeamName, NetTeam(SGRI.Teams[i]).NetScoreInfo.GetScore(), NetTeam(SGRI.Teams[i]).NetScoreInfo.GetRoundsWon() ) );
-        
+
         //lastTop[i]=MyTeamBoxes[i].MyActiveList.Top;
         //lastSelected[i]=MyTeamBoxes[i].GetIndex();
         MyTeamBoxes[i].Clear();
@@ -269,7 +271,7 @@ function DisplayScores()
         if (PlayerInfo != None)
         {
             PlayerInfo.NetScoreInfo.Ranking = 1;
-            
+
             //populate the players into their team boxes, sorted by score
             for (j = 0; j < i; j++)
             {
@@ -304,7 +306,7 @@ function DisplayScores()
 				// use different color for players waiting for respawn
                 PlayerName = MakeColorCode( WaitingForRespawnColor )$PlayerName;
             }
-            
+
             if( PC.ShouldDisplayPRIIds )
             {
                 PlayerName = "[b]["$i$"][\\b]"$PlayerName;
@@ -389,7 +391,7 @@ function InternalOnClick(GUIComponent Sender)
 			break;
 		case MyAbortGameButton:
 		    MyAbortGameButton.DisableComponent();
-		
+
 		    if( !SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).IsAdmin() )
 		    {
 		        Controller.TopPage().OnPopupReturned=InternalOnPasswordPopupReturned;

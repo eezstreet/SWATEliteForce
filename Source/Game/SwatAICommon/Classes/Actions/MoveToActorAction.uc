@@ -55,7 +55,7 @@ latent function MoveToActor()
 	local bool bCloseFromLeft;
 
     // Perform santity checks and cache variables we'll need
-    
+
     destination = GetDestinationActor();
 
     if (destination != none)
@@ -104,7 +104,7 @@ latent function MoveToActor()
                 if (currentDestination.IsA('Door'))
                 {
                     // save off which side to close door from (the opposite side from where we are now)
-                    // in case we move to the door but aren't yet on the left or right side 
+                    // in case we move to the door but aren't yet on the left or right side
                     // (because of the inaccuracies of movement)
                     bCloseFromLeft = ! ISwatDoor(currentDestination).PointIsToMyLeft(m_Pawn.Location);
 
@@ -116,7 +116,7 @@ latent function MoveToActor()
                     // in case it changed
                     m_pawn.controller.moveTarget = currentDestination;
 
-                    if (Door(currentDestination).IsClosed() && !Door(currentDestination).IsOpening() && !ISwatDoor(CurrentDestination).IsBroken())
+                    if (Door(currentDestination).IsClosed() && !Door(currentDestination).IsOpening() /*&& !ISwatDoor(CurrentDestination).IsBroken()*/)
                     {
                         yield();
                         continue;
@@ -156,7 +156,7 @@ latent function MoveToActor()
                 }
 
                 ResetOverriddenMoveToThreshold();
-    
+
                 if (bSucceeded)
                     break;
             }

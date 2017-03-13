@@ -59,10 +59,12 @@ var int ProcedureValue[MAX_PROCEDURES];
 
 var SwatReferendumManager RefMgr;
 
+var String NextMap;
+
 replication
 {
 	reliable if ( bNetDirty && (Role == ROLE_Authority) )
-		ServerCountdownTime, ShowTeammateNames, ShowEnemyNames,
+		NextMap, ServerCountdownTime, ShowTeammateNames, ShowEnemyNames,
         TotalNumberOfBombs, DiffusedBombs,
         ObjectiveHidden, ObjectiveNames, ObjectiveStatus, ProcedureCalculations, ProcedureValue,
         RoundTime, SpecialTime, TimedObjectiveIndex, bWaitingForPlayers,

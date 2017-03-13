@@ -17,7 +17,12 @@ function UnRegisterGameEventsHook()
 //IInterested_GameEvent_PawnDied Implementation
 function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 {
+    local SwatHostage Hostage;
+
     if  (!Pawn.IsA('SwatHostage')) return; //we don't care
+
+    Hostage = SwatHostage(Pawn);
+    if(Hostage.IsDOA()) return; // It's a DOA, it doesn't count towards the objective
 
     if (Game.DebugObjectives)
         log("[OBJECTIVES] The "$class.name

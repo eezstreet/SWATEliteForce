@@ -25,6 +25,9 @@ import enum EMPMode from Engine.Repo;
 // how long since we last polled
 var private Float CumulativeDelta;
 
+// Whether this is a coop campaign
+var() bool coopcampaign;
+
 function bool GetDispatchDisabled();
 function SetDispatchDisabled(bool newValue);
 

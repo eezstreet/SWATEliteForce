@@ -64,7 +64,8 @@ var protected FiredWeapon	PrimaryWeapon;
 var protected FiredWeapon	BackupWeapon;
 var WieldableEvidenceEquipment	HeldEvidence;
 
-var private EnemySpawner	SpawnedFrom;   // the EnemySpawner that I was spawned from
+var private transient SwatAIData AIData;
+//var private EnemySpawner	SpawnedFrom;   // the EnemySpawner that I was spawned from
 
 var class<FiredWeapon> ReplicatedPrimaryWeaponClass;
 var class<Ammunition> ReplicatedPrimaryWeaponAmmoClass;
@@ -176,6 +177,8 @@ simulated event OnDesiredAIEquipmentChanged()
 simulated event Destroyed()
 {
     Super.Destroyed();
+
+    AIData = None;
 }
 
 
@@ -232,7 +235,8 @@ function InitializeFromSpawner(Spawner Spawner)
 	SetIdleCategory(EnemySpawner.IdleCategoryOverride);
 
     //remember the spawner that I was spawned from
-    SpawnedFrom = EnemySpawner;
+    AIData = new(None) class'SwatGame.SwatAIData';
+    AIData.SpawnedFrom = EnemySpawner;
 
     InitializePatrolling(EnemySpawner.EnemyPatrol);
     InitializeInvestigationFromSpawner(EnemySpawner);
@@ -543,7 +547,7 @@ function NotifyHit(float Damage, Pawn HitInstigator)
     IsHitByEnemy = HitInstigator.IsA( 'SwatEnemy' );
 
 	// the following doesn't need to be networked because we have no Officers in Coop
-	if (IsHitByEnemy) 
+	if (IsHitByEnemy)
 	{
     EnemyInstigator = SwatEnemy(HitInstigator);
     assert(EnemyInstigator != None);
@@ -1084,7 +1088,7 @@ function bool IsNeutralized()
 
 function Spawner GetSpawner()
 {
-    return SpawnedFrom;
+    return AIData.SpawnedFrom;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 class SwatHostage extends SwatAICharacter
     implements SwatAICommon.ISwatHostage,
-               ICanBeSpawned
+               ICanBeSpawned,
+               IInterested_GameEvent_ReportableReportedToTOC
     native;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,12 +26,14 @@ cpptext
 
 ///////////////////////////////////////////////////////////////////////////////
 
-var private HostageSpawner SpawnedFrom;   //the HostageSpawner that I was spawned from
+//var private HostageSpawner SpawnedFrom;   //the HostageSpawner that I was spawned from
 var private HostageState   CurrentState;
 var private bool		   bSpawnedAsIncapacitated;
 
+var private noexport SwatAIData AIData;
+
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Animation
 
 simulated function EAnimationSet GetStandingWalkAnimSet()		{ return kAnimationSetCivilianWalk; }
@@ -38,7 +41,7 @@ simulated function EAnimationSet GetStandingRunAnimSet()		{ return kAnimationSet
 simulated function EAnimationSet GetCrouchingAnimSet()	    { return kAnimationSetCrouching; }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Resource Construction
 
 // Create SwatHostage specific abilities
@@ -47,11 +50,11 @@ protected function ConstructCharacterAI()
     local AI_Resource characterResource;
     characterResource = AI_Resource(characterAI);
     assert(characterResource != none);
-    
+
 	characterResource.addAbility(new class'SwatAICommon.ComplianceAction');
 	characterResource.addAbility(new class'SwatAICommon.HostageCommanderAction');
 	characterResource.addAbility(new class'SwatAICommon.HostageSpeechManagerAction');
-	characterResource.addAbility(new class'SwatAICommon.FleeAction');    
+	characterResource.addAbility(new class'SwatAICommon.FleeAction');
 	characterResource.addAbility(new class'SwatAICommon.HostageReactionToOfficersAction');
 	characterResource.addAbility(new class'SwatAICommon.CowerAction');
 	characterResource.addAbility(new class'SwatAICommon.RestrainedAction');
@@ -67,20 +70,27 @@ protected function ConstructCharacterAI()
 event bool IgnoresSeenPawnsOfType(class<Pawn> SeenType)
 {
     // we can see enemies, officers, or players
-    return (ClassIsChildOf(SeenType, class'SwatGame.SwatHostage') || 
-			ClassIsChildOf(SeenType, class'SwatGame.SwatTrainer') || 
+    return (ClassIsChildOf(SeenType, class'SwatGame.SwatHostage') ||
+			ClassIsChildOf(SeenType, class'SwatGame.SwatTrainer') ||
 			ClassIsChildOf(SeenType, class'SwatGame.SniperPawn'));
 }
 
 function InitializeFromSpawner(Spawner Spawner)
 {
     local HostageSpawner HostageSpawner;
+    local CharacterArchetypeInstance Archetype;
 
     Super.InitializeFromSpawner(Spawner);
+
+    SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Register(self);
 
     //we may not have a Spawner, for example, if
     //  the console command 'summonarchetype' was used.
     if (Spawner == None) return;
+
+    AIData = new class'SwatGame.SwatAIData';
+
+    Archetype = CharacterArchetypeInstance(GetArchetypeInstance());
 
     HostageSpawner = HostageSpawner(Spawner);
     assert(HostageSpawner != None);
@@ -88,9 +98,14 @@ function InitializeFromSpawner(Spawner Spawner)
 	// set our idle category (it's ok to be '', which most likely it will be)
 	SetIdleCategory(HostageSpawner.IdleCategoryOverride);
 
-    //remember the spawner that I was spawned from
-    SpawnedFrom = HostageSpawner;
+  //remember the spawner that I was spawned from
+  AIData.SpawnedFrom = HostageSpawner;
 	bSpawnedAsIncapacitated = HostageSpawner.SpawnIncapacitated;
+
+  // Assign other important AI datas
+  AIData.DOATimer = new class'Timer';
+  AIData.DOATimer.TimerDelegate = DoDOAConversion;
+  // Don't set the timer just yet
 
 	if (! bSpawnedAsIncapacitated)
 	{
@@ -100,9 +115,14 @@ function InitializeFromSpawner(Spawner Spawner)
 	{
 		// set our health to be somewhere between the default incapacitated amount and 1
 		Health = Rand(IncapacitatedHealthAmount) + 1;
-		
+
 		// incapacitate the hostage
 		BecomeIncapacitated(HostageSpawner.IdleCategoryOverride);
+
+    // if we use Static DOA Conversions, set a timer for them to go DOA
+    if(Archetype.ConvertsToDOA_Static()) {
+        AIData.DOATimer.StartTimer(Archetype.GetDOAConversionTime_Static(), false);
+    }
 	}
 }
 
@@ -112,7 +132,32 @@ function InitializeFromSpawner(Spawner Spawner)
 
 function Spawner GetSpawner()
 {
-    return SpawnedFrom;
+    return AIData.SpawnedFrom;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// DOA conversion
+
+function DoDOAConversion()
+{
+  log("[DOA Conversions] "$self$" went DOA");
+  AIData.TreatAsDOA = true;
+  log("[DOA Conversions] TreatAsDOA is now "$AIData.TreatAsDOA);
+  TakeDamage(100000, None, vect(0,0,0), vect(0,0,0), class'DamageType');
+}
+
+function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
+{
+  // Freeze the timer!
+  log("[DOA Conversions] "$self$" was reported to TOC, so we can freeze timer "$AIData.DOATimer);
+  AIData.DOATimer.TimerDelegate = None;
+  AIData.DOATimer.StopTimer();
+}
+
+simulated function bool IsDOA()
+{
+  return AIData.TreatAsDOA;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -205,12 +250,12 @@ simulated function name GetEffectEventForReportResponseFromTOCWhenNotIncapacitat
 // proper name instead of "SwatHostage12" or some other auto-generated name
 simulated function String GetHumanReadableName()
 {
-	if (Level.NetMode == NM_StandAlone) 
+	if (Level.NetMode == NM_StandAlone)
     {
-	    // ckline FIXME: right now we don't have to display a 
+	    // ckline FIXME: right now we don't have to display a
 	    // human-readable name for hostages in single-player games.
 		// If it becomes necessary to do this, we should associated a localized
-		// human-readable name with each archetype, and then return 
+		// human-readable name with each archetype, and then return
 		// the human-readable name associated with this pawn's archetype.
 		//
 		// But for now we're ignoring the problem, and just returning "Hostage".
@@ -221,9 +266,14 @@ simulated function String GetHumanReadableName()
     return Super.GetHumanReadableName();
 }
 
+simulated function Destroyed()
+{
+  Super.Destroyed();
+
+  AIData = None;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
 }
-

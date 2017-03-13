@@ -42,13 +42,13 @@ function cleanup()
 		CurrentMoveToLocationGoal.Release();
 		CurrentMoveToLocationGoal = None;
 	}
-	
+
 	if (CurrentRotateTowardRotationGoal != None)
 	{
 		CurrentRotateTowardRotationGoal.Release();
 		CurrentRotateTowardRotationGoal = None;
 	}
-	
+
 	if (CurrentUseOptiwandGoal != None)
 	{
 		CurrentUseOptiwandGoal.Release();
@@ -65,7 +65,7 @@ function cleanup()
 
 function SetMirroringType()
 {
-	if (!TargetDoor.IsEmptyDoorway() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !TargetDoor.IsBroken())
+	if (!TargetDoor.IsEmptyDoorway() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() /*&& !TargetDoor.IsBroken()*/)
 	{
 		bMirrorAroundCorner   = false;
 		bCrouchWhileMirroring = true;
@@ -81,7 +81,7 @@ function SetMirroringOrientation()
 {
 	local vector CenterOpenPoint;
 	local rotator CenterOpenRotation;
-	
+
 	// get the center mirroring point no matter what
 	SwatTargetDoor.GetOpenPositions(m_Pawn, false, CenterOpenPoint, CenterOpenRotation);
 
