@@ -95,7 +95,7 @@ latent function MoveToLocation()
 				if (currentDestination.IsA('Door'))
 				{
 					// save off which side to close door from (the opposite side from where we are now)
-					// in case we move to the door but aren't yet on the left or right side 
+					// in case we move to the door but aren't yet on the left or right side
 					// (because of the inaccuracies of movement)
 					bCloseFromLeft = ! ISwatDoor(currentDestination).PointIsToMyLeft(m_Pawn.Location);
 
@@ -107,7 +107,7 @@ latent function MoveToLocation()
 					// in case it changed
 					m_pawn.controller.moveTarget = currentDestination;
 
-					if (Door(currentDestination).IsClosed() && !Door(currentDestination).IsOpening() && !ISwatDoor(CurrentDestination).IsBroken())
+					if (Door(currentDestination).IsClosed() && !Door(currentDestination).IsOpening() /*&& !ISwatDoor(CurrentDestination).IsBroken()*/)
 					{
 						yield();
 						continue;
@@ -131,7 +131,7 @@ latent function MoveToLocation()
 				{
 					succeeded = true;
 					break;
-				}	
+				}
             }
             else
             {
