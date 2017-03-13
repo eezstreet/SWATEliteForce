@@ -2,7 +2,8 @@
 class SwatHostage extends SwatAICharacter
     implements SwatAICommon.ISwatHostage,
                ICanBeSpawned,
-               IInterested_GameEvent_ReportableReportedToTOC
+               IInterested_GameEvent_ReportableReportedToTOC,
+               IInterested_GameEvent_PostGameStarted
     native;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,6 +84,7 @@ function InitializeFromSpawner(Spawner Spawner)
     Super.InitializeFromSpawner(Spawner);
 
     SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Register(self);
+    SwatGameInfo(Level.Game).GameEvents.PostGameStarted.Register(self);
 
     //we may not have a Spawner, for example, if
     //  the console command 'summonarchetype' was used.
@@ -121,7 +123,7 @@ function InitializeFromSpawner(Spawner Spawner)
 
     // if we use Static DOA Conversions, set a timer for them to go DOA
     if(Archetype.ConvertsToDOA_Static()) {
-        AIData.DOATimer.StartTimer(Archetype.GetDOAConversionTime_Static(), false);
+        AIData.DOATimer.SetTime(Archetype.GetDOAConversionTime_Static());
     }
 	}
 }
@@ -147,6 +149,15 @@ function DoDOAConversion()
   TakeDamage(100000, None, vect(0,0,0), vect(0,0,0), class'DamageType');
 }
 
+simulated function bool IsDOA()
+{
+  return AIData.TreatAsDOA;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IInterested_GameEvent_ReportableReportedToTOC implementation (part of DOA conversion)
+
 function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
 {
   // Freeze the timer!
@@ -155,10 +166,18 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
   AIData.DOATimer.StopTimer();
 }
 
-simulated function bool IsDOA()
+///////////////////////////////////////////////////////////////////////////////
+//
+// IInterested_GameEvent_GameStarted implementation (part of DOA conversion)
+
+function OnPostGameStarted()
 {
-  return AIData.TreatAsDOA;
+  if(bSpawnedAsIncapacitated)
+  {
+    AIData.DOATimer.StartTimer(, false);
+  }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
