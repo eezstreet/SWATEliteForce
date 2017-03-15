@@ -91,12 +91,14 @@ function protected SetStatus(ObjectiveStatus newStatus)
     switch newStatus
     {
         case ObjectiveStatus_Completed:
+              log("Objective "$self$" was completed");
               Game.OnMissionObjectiveCompleted(self);
               if (Time > 0)
                   StopTimer();
             break;
 
         case ObjectiveStatus_Failed:
+            log("Objective "$self$" was failed");
             Game.OnMissionObjectiveFailed(self);
             if (Time > 0)
                 StopTimer();

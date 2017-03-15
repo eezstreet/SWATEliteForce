@@ -1937,13 +1937,13 @@ exec function ShowViewport(string ViewportType)
 		else
 		{
 			SavedReplicatedViewportTeammate = ReplicatedViewportTeammate;
-	
+
 			// Ask the server to choose the next viewport teammate. The teammate's
 			// pawn is assigned to the replicated variable
 			// ReplicatedViewportTeammate. OnReplicatedViewportTeammateChanged is
 			// called on the client whenever that variable changes.
 			ServerActivateOfficerViewport( true );
-	
+
 			// If we're on a listen server, PostNetReceive is not called on us so we'll
 			// never detect a change in ReplicatedViewportTeammate there, like we do
 			// for clients. Therefore, we perform the test here, and just show the
@@ -5258,23 +5258,23 @@ function ServerIssueCompliance( optional string VoiceTag )
         {
             Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
         }
-        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage)) 
+        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage))
 		{
           Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
         }
-        else if(TargetIsSuspect == 1) 
+        else if(TargetIsSuspect == 1)
 		{
           Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
         }
-        else if((TargetIsSuspect == 0) && (TargetIsAggressiveHostage == 1)) 
+        else if((TargetIsSuspect == 0) && (TargetIsAggressiveHostage == 1))
 		{
           Pawn.BroadcastEffectEvent('ReassuredAggressiveHostage',,,,,,,,name(VoiceTag));
         }
-        else 
+        else
 		{
           Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag));
         }
-      } else 
+      } else
 	  {
         log("[SPEECH] Issued compliance.");
       }

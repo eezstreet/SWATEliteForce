@@ -25,7 +25,7 @@ var(parameters) private NavigationPoint			SafeLocation;
 var(parameters) IInterestedInDetonatorEquipping InterestedInDetonatorEquippingClient;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -216,7 +216,7 @@ latent function UseBreachingCharge()
 	{
 		yield();
 	}
-	
+
 	if (! BreachingCharge.IsEquipped())
 	{
 		BreachingCharge.LatentWaitForIdleAndEquip();
@@ -235,7 +235,7 @@ latent function MoveToSafeLocation()
 	CurrentMoveToActorGoal.AddRef();
 
 	CurrentMoveToActorGoal.SetRotateTowardsPointsDuringMovement(true);
-	
+
 	CurrentMoveToActorGoal.postGoal(self);
 
 	EquipDetonator();
@@ -254,13 +254,13 @@ function EquipDetonator()
     assert(Officer != None);
 
 	Detonator = Officer.GetItemAtSlot(Slot_Detonator);
-	assert(Detonator != None); 
+	assert(Detonator != None);
 
 	if (InterestedInDetonatorEquippingClient != None)
 	{
 		InterestedInDetonatorEquippingClient.NotifyDetonatorEquipping();
 	}
-	
+
 	Detonator.AIInstantEquip();
 }
 
@@ -272,7 +272,7 @@ latent function BlowDoor()
     assert(Officer != None);
 
     Officer.SetDoorToBlowC2On(TargetDoor);
-	
+
 	assert(Detonator != None);
 
 	// if the detonator is being equipped, wait for that to finish
@@ -308,7 +308,7 @@ function TriggerReportedDeployingC2Speech()
 state Running
 {
  Begin:
-	if (TargetDoor.IsClosed() && ! TargetDoor.IsOpening() && ! TargetDoor.IsBroken())
+	if (TargetDoor.IsClosed() && ! TargetDoor.IsOpening() /*&& ! TargetDoor.IsBroken()*/)
 	{
 		ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
 
@@ -321,7 +321,7 @@ state Running
 			EquipBreachingCharge();
 
 			MoveToDeployPoint();
-	    	
+
 			// no avoiding collision while we're breaching the door!
 			m_Pawn.DisableCollisionAvoidance();
 

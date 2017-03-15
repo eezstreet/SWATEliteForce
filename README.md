@@ -56,7 +56,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 		** Suspects now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
 	* Smarter Officer AI!
 		** Upon restraining a target, SWAT officers will now report it to TOC automatically!
-		** SWAT officers are much more efficient at clearing rooms
+		** SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
 		** SWAT officers can now take cover like suspects do (including leaning around corners)
 	* Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
 		** This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
@@ -71,27 +71,35 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 		** All secondary weapons equippable as primaries, and some primaries equippable as secondaries.
 	* Equipment is also much more realistic.
 		** All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is.
-		** TASERs can kill or incapacitate drug users, the elderly, or people with compromised health.
-		** Less Lethal shotguns also realistically are lethal at close range. Put some distance between you and your target.
-		** Flashbangs can injure. The explosion they set off can also blow up objects such as Pipe-Bombs now much easier. They also stun people for a shorter duration.
-		** CS gas affects a wider area, takes longer to disperse, and affects people for longer. It has less of an effect on morale however. It also affects the player on Singleplayer, so wear a gas mask.
-		** C2 is much more dangerous. You might want to bring that breaching shotgun after all.
-		** Bullets of certain types (FMJ, buckshot) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
+		** Bullets of certain types (FMJ, buckshot, etc) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
 		** Bullets are now subject to drag; they lose damage over distance.
+		** Less lethal equipment is now actually LESS LETHAL. Some equipment (tasers, beanbag shotgun) can incapacitate or kill if used incorrectly.
 		** All equipment has been modified to use real values.
+		** For more information, see the EQUIPMENT section.
+	* Doors behave more realistically
+		** Any shotgun can be used to breach any door.
+		** A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The Breaching Shotgun can breach any door in one shot.
+		** When doors are breached with shotguns, they do not swing open like when breached with C2. You have to shoot the knob and then open the door.
+		** Broken doors can now be closed and/or wedged.
 	* Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
 		** Functions exactly the same as in the Speech Recognition Improvement mod by MulleDK9. Not all commands from that mod are present however.
 	* Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.
 		** You can now issue BREACH commands on unlocked doors.
+		** You can now pick which style of BREACH you would like - either C2 & CLEAR or SHOTGUN & CLEAR
 		** New CHECK FOR TRAPS command allows your AI companions to check doors for those all-important traps.
 		** LEADER THROW commands: Now you can be the one to throw the grenade!
 		** Lightsticks are broken into two commands: DROP LIGHTSTICK (where you order the nearest AI officer to drop a lightstick at their feet) and MARK WITH LIGHTSTICK (where you order an AI to drop a lightstick at what you're aiming at)
-	* Harsher penalties. Incapacitated hostages and suspects now need to be reported to TOC; deadly force is more scrutinized and can be incurred by more means (AI controlled officers using C2 and snipers are two good examples)
+	* Harsher penalties.
+		** Hostages that are incapacitated at the start can now become DOAs if not reported in time. This has an impact on your score.
+		** Hostages and suspects that become incapacitated or killed now need to be reported to TOC
+		** AI controlled officers can now trigger Unauthorized Use of Force when they use C2.
+		** Snipers can now trigger Unauthorized Use of Force and Unauthorized Use of Deadly Force.
 		** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
 		** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
 		** The game reveals much more information to you. A warning will display when you have made a penalty, and a message will show when you have completed an objective.
 	* Multiplayer improvements!
 		** Snipers are now available in multiplayer.
+		** New options available for server hosts for voting; see Default.ini for more information
 
 # KNOWN ISSUES #
   * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
@@ -128,15 +136,15 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 
 #### BONUSES ####
 - Mission Completed: Awarded when all of the mission objectives are completed. 
- * Points: 45
+ * Points: 40
 - Suspects Arrested: Bonus based on the amount of suspects secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
 - Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
 - Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
-- No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
- * Points: 5
+- All Civilians Unharmed: Bonus based on the number of civilians that have been uninjured, and not DOA.
+ * Points: (Number of civilians unharmed)/(Total number of civilians) x 10
 - No Officers Downed: Bonus based on the amount of incapacitated officers. 
  * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
 - Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. 
@@ -169,7 +177,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
  * Points: -5 per downed officer
 - Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: 
  * Points: -5 per downed suspect
-- Failed to report a downed hostage: Given when a downed hostage is not reported to TOC: 
+- Failed to report a downed hostage: Given when a downed or DOA hostage is not reported to TOC: 
  * Points: -5 per downed hostage
 
 ## GUI ##
@@ -178,12 +186,12 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
   * "Mouse Smoothing" checkbox in Control Settings enables (default) or disables mouse smoothing.
   * "Field of Vision" slider in Video Settings lets you change the field of vision.
   * Maps in the Voting screen are now sorted alphabetically.
-  * 'Call Vote' will automatically succeed when you are the only one on the server.
   * Host Game no longer precaches all of the maps at once; it goes to the menu and loads the maps while in the menu.
-  * Added Advanced Information tab to Equipment Panel. It now shows a weapon's manufacturer, manufacturer country, date manufactured, caliber, magazine size, maximum ammo carried, muzzle velocity and firing modes.
+  * Added Advanced Information tab to Equipment Panel. It now shows a weapon's manufacturer, manufacturer country, date manufactured, caliber, magazine size, maximum ammo carried, muzzle velocity and firing modes. It also shows advanced information for protective equipment.
+  * Weapons are now selected by dropdown menus, for faster selection
   * New splash screen
   * More advanced console. It will now show output of commands, and a console log. You need to press ESC to close the console now.
-  * Added 'Take Screenshot' key to Controls menu.
+  * Added 'Take Screenshot' and 'Toggle Speech Interface' key to Controls menu.
   * Fixed an exploit that allowed the player to get unlocks early by saving a loadout with unlocked equipment and loading it later
   * New main menu logo
   * All evidence of Gamespy scrubbed
@@ -200,39 +208,49 @@ All weapons have been changed to have correct muzzle velocities.
 	- Greatly increased damage dealt from direct impact
 	- May now be equipped as a secondary weapon
 * AK47 Machinegun:
+	- New ammo types: AP, JSP
 	- Fixed inaccurate description
 	- Fixed name (AKM)
-	- Unlockable in singleplayer
 * GB36s:
-	- Corrected wrong name (is now G36K)
+	- New ammo types: AP, JSP
+	- Corrected wrong name (is now G36C)
 	- Updated description
 * 5.56mm Light Machine Gun
+	- New ammo type: JSP
 	- Corrected wrong name (is now M249 SAW)
 	- Burst fire removed
-	- Unlockable in singleplayer
+	- Corrected wrong looking first person
 * 5.7x28mm Submachine Gun
+	- New ammo types: AP, JSP
 	- Corrected wrong name (is now P90)
 	- Completely redid the description
 	- Burst fire removed
+	- Corrected wrong looking first person
 * Gal Sub-machinegun
+	- New ammo types: AP, JSP
 	- Corrected wrong name (is now Silenced Uzi)
 	- Updated description
-	- Unlockable in singleplayer
 	- May now be equipped as a secondary weapon
 * 9mm SMG
+	- New ammo types: AP, JSP
 	- Corrected wrong names (MP5A2 and Silenced MP5A2)
 	- Added automatic firing mode
 	- Updated description
 	- Fixed incorrect magazine size for FMJ (holds 30 rounds, not 25)
 * .45 SMG
+	- New ammo types: AP, JSP
+	- Given real world name (UMP)
 	- Updated description
 	- 2-round burst mode added
 * M1911 Handgun
+	- New ammo types: AP, JSP
 	- May now be equipped as a Primary Weapon
 * 9mm Handgun
+	- New ammo types: AP, JSP
 	- Corrected wrong name (Glock 17)
 	- May now be equipped as a Primary Weapon
 * Mark 19 Semi-Automatic Pistol
+	- New ammo type: JSP
 	- Corrected wrong name (Desert Eagle)
 	- Fixed typo in description
 	- May now be equipped as a Primary Weapon
@@ -257,6 +275,7 @@ All weapons have been changed to have correct muzzle velocities.
 		The double fire mode doesn't increase the chance of cardiac arrest, but it does increase lethality. Use caution.
 	- May now be equipped as a Primary Weapon
 * Colt Python:
+	- New ammo types: AP, JSP
 	- Unlockable in Singleplayer
 	- May now be equipped as a Primary Weapon
 * Sting Grenade:
@@ -266,9 +285,10 @@ All weapons have been changed to have correct muzzle velocities.
 * Flashbang:
 	- Increased the damage and radius to be more realistic
 	- Can detonate pipe bombs, oxygen tanks, and gas cans
-* Added two new head armor items:
-	- Riot Helmet: Offers slightly less protection than the Helmet, but also reduces Pepper Spray and Gas durations
-	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
+* CS Gas:
+	- Increased area of effect
+	- Reduced morale modification
+	- Can affect the player in singleplayer.
 * Helmet:
 	- Renamed to Tactical Helmet
 	- Provides protection against flashbangs in singleplayer
@@ -277,17 +297,35 @@ All weapons have been changed to have correct muzzle velocities.
 * Pepperball Gun:
 	- May now be equipped as a Secondary Weapon
 	- Less effective in general now
+* Less Lethal Shotgun:
+	- Now called the Less Lethal Nova
+	- Can incapacitate or kill subjects at point blank range
 * M4Super90:
 	- Now fires in a spread that isn't dictated by crosshair accuracy
 	- May now be equipped as a Secondary Weapon
-	- Added new ammo type: 000 Buck
+	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
 	- Corrected magazine size (5 -> 7). SWAT 4 uses the magazine size from a civilian version of the shotgun. The Law Enforcement and Military models have 7 round magazines.
 * Nova Pump:
 	- Now fires in a spread that isn't dictated by crosshair accuracy
 	- Corrected invalid magazine size (8 -> 7)
-	- Added new ammo type: 000 Buck
+	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
+* Added two new head armor items:
+	- Riot Helmet: Offers slightly less protection than the Helmet, but also reduces Pepper Spray and Gas durations
+	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
+* Added new weapons (from SAS mod):
+	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine.
+	- SG552 Commando: Versatile assault rifle (including a silenced version)
+	- HK33: Heavy-duty assault rifle (including a marksman version)
+	- M16: The original assault rifle. Only available in Multiplayer (including a silenced version)
+	- MP5SSD6: A silenced-only version of the MP5 with a better suppressor.
+	- MP5K: A more tactical machine pistol
+	- Browning Hi-Power: Higher-powered 9mm pistol (including a silenced version)
+	- P226: A well-rounded 9mm pistol
+	- Remington M870 Shotgun: Shortened shotgun that can be equipped as primary or secondary weapon
+* Added new weapons (exclusive to this mod):
+	- Less Lethal M870: Beanbag shotgun available as a secondary.
 * Ammo Pouch:
 	- Removed.
 
@@ -441,13 +479,70 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
   * There is a new campaign path, titled All Missions. This includes every map you have on your hard drive, including customs, so you can play them in singleplayer.
   * All Missions campaigns cannot be played in Campaign co-op.
 - AI improvements!
-  * Officers can now take cover while engaging suspects, and may lean/crouch while doing so.
+  * Officers can now take cover while engaging suspects, and may lean or crouch while doing so.
   * Suspects and civilians can now wander all over the map (this depends on the map mostly)
+  * A lot of cut speech got restored.
 - Equipment changes!
   * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
+  * New rifle/pistol ammo types: JSP (jacketed soft point) and AP (armor penetrating).
+  * New shotgun ammo types: 0 buck, 1 buck, 4 buck
+- Breaching improvements
+  * All shotguns can now breach through doors. The Breaching Shotgun can break through any door with one shot, but other shotguns (particularly when dealing with metal doors) may take two or three shots to break open. (AI-controlled officers cannot breach with anything other than a Breaching Shotgun)
+  * Broken doors can now be closed and/or wedged.
+  * C2 can now blow up alarm traps on the other side of a door, preventing them from going off.
+  * You can now tell the officers which breaching method you want them to use on a door (C2 & CLEAR vs SHOTGUN & CLEAR)
+- DOA conversions
+  * Hostages who start out as incapacitated may become a DOA after 10-15 minutes. 
+  * Allowing hostages to become DOA may reduce your score.
+  * This is a sort of bonus to complete the mission quickly.
 
-#### MINOR FEATURES ####
+#### MINOR/ALL CHANGES ####
+- Added campaign co-op
+- Added SAS weapons
+- Added Less Lethal Remington M870 (Less Lethal version of an SAS weapon)
+- Added JSP, AP, 0 buck, 1 buck, 4 buck ammo types
+- Added player permadeath option
+- Added officer permadeath option
+- Civilians who are incapacitated at the start of the level can now become DOA after 5-10 minutes. Allowing a hostage to become DOA will have a negative effect on your score.
+- Officers may now take cover and crouch
+- Doors breached with the shotgun are not "swung open." Only C2 can "blast a door open."
+- Broken doors can now be closed and wedged
+- Shotguns no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
+- C2 can now break door alarms
+- The equipment menu has been changed to use dropdown boxes for the weapon and ammo types, determined by category
+- Added advanced information panel to Armor equipment tab
+- Added campaign statistics information to Campaign Selection menu
+- Completely redid the New Equipment menu to handle two unlocks properly
+- Suspects can now employ a "wandering" behavior that allows them to pick patrol points randomly.
 - Snipers can now be used in multiplayer. Leaders can control the viewport, and all players receive notifications.
+- Suspect equipment is only available in Multiplayer and All Missions campaigns now
+- Issuing a FALL IN command will now have the officers reload their weapons automatically
+- Added new voting configuration options for server hosts: TiesWin, CallCastVote, MinVoters, and NonVotersAreNo. You can edit them in Swat4x.ini/Swat4xDedicatedServer.ini. See Default.ini for more information.
+- Taunt feature now differentiates between belligerent and passive hostages
+- At the end of a multiplayer game, the next map is listed just above the Ready button
+- Mission Completed accounts for 40 points in the score, instead of 45.
+- No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed.
+- Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
+- Cut dialogue restored: Suspects will now apologize when shooting each other
+- Cut dialogue restored: Hostages will now freak out when other hostages die
+- Cut dialogue restored: Officers will now correctly report when they do not have grenade launcher ammo
+- Cut dialogue restored: Officers will now report when they are using grenades
+- Cut dialogue restored: Officers will now report when they are using pepper spray, less lethal shotgun, or grenade launcher
+- Fixed SEF bug: SWAT officers using full auto; suspects not using full auto
+- Fixed SEF bug: Handcuffs not playing sound properly and popping back up during use
+- Fixed SEF bug: Civilians can trigger traps
+- Fixed SEF bug: Manager on Meat Barn having glasses on backwards (special thanks to sandman332 for this fix)
+- Fixed SEF bug: Bullets that lose all of their momentum due to drag cause bleeding/impact effects
+- Fixed SEF bug: Less Lethal Shotgun, Grenade Launcher causing penalties when it's not supposed to
+- Fixed SEF bug: Log being spammed with messages about trap penalties
+- Fixed SEF bug: Log being spammed with "Fast trace blocked!"
+- Fixed SEF bug: AI-controlled officers not shouting for compliance correctly in some situations
+- Fixed SEF bug: Possible crash fix
+- Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
+- Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
+- Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
+- Fixed TSS bug: P90 having bad first person position
+- Fixed TSS bug: M249 SAW having bad first person position
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
@@ -494,14 +589,6 @@ This is a hotfix patch to address some common issues that have been raised.
   * Various other misc improvements
 - Fixed chat in multiplayer pregame having the wrong number of lines (thanks to KevinL and Sokol for this fix)
 - Updated wedge description to explain the difference between using a wedge and locking a door.
-
-Files modified:
-System/DefSwatGui.ini
-System/SpeechCommandGrammar.xml
-System/SwatEquipment.int
-System/SwatGui.ini
-System/transient.int
-Generated code
 
 ### v4 ###
 
@@ -817,68 +904,6 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Old Granite Hotel (AK-47)
 - Mt. Threshold Research Center (M249 SAW)
 
-#### FILES MODIFIED ####
-Content/Classes/SwatEffects.u
-Content/Classes/SwatProtectiveEquipment.u
-Content/Classes/SwatProtectiveEquipment2.u
-Content/Classes/SwatAmmo.u
-Content/Classes/SwatAmmo2.u
-Content/HavokData/SP-DrugLab.mopp
-Content/HavokData/SP-MeatBarn.mopp
-Content/Maps/SP-ABomb.s4m
-Content/Maps/SP-Casino.s4m
-Content/Maps/SP-DrugLab.s4m
-Content/Maps/SP-FairfaxResidence.s4m
-Content/Maps/SP-HalfwayHouse.s4m
-Content/Maps/SP-Hotel.s4m
-Content/Maps/SP-Office.s4m
-Content/Maps/SP-MeatBarn.s4m
-Content/Maps/SP-Subway.s4m
-Content/Sounds/Sierra1/s1_lostcontact_extm01_1.ogg
-Content/Sounds/Sierra1/s1_lostcontact_extm01_2.ogg
-Content/Sounds/Sierra1/s1_lostcontact_extm01_3.ogg
-Content/Sounds/Sierra1/s1_spottedcontact_extm01_1.ogg
-Content/Sounds/Sierra1/s1_spottedcontact_extm01_2.ogg
-Content/Sounds/Sierra1/s1_spottedcontact_extm01_3.ogg
-Content/Sounds/StreamingAudio/01-meatbarn_packing01.ogg
-Content/Sounds/StreamingAudio/01-meatbarn_packingDyn01.ogg
-Content/Sounds/StreamingAudio/01-meatbarn01.ogg
-Content/Sounds/StreamingAudio/01-meatbarnDyn01.ogg
-Content/Sounds/StreamingAudio/01-meatbarnDyn02.ogg
-Content/Sounds/StreamingAudio/01-meatbarnDyn03.ogg
-Content/Textures/gui_tex3.utx
-Content/Textures/MaleCasualArmorTex.utx
-Content/Textures/MaleGang1Tex.utx
-System/AI.ini
-System/Core.dll
-System/CustomScenarioCreator.ini
-System/DefSwatGuiState.ini
-System/DynamicLoadout.ini
-System/EnemyArchetypes.ini
-System/HostageArchetypes.ini
-System/Leadership.ini
-System/MissionObjectives.ini
-System/ObjectiveSpecs.ini
-System/Packages.md5
-System/Packages.txt
-System/PlayerInterface_Command_SP.ini
-System/PlayerInterface_Fire.ini
-System/SoundEffects.ini
-System/Startup.ini
-System/StaticLoadout.ini
-System/SwatAmmo.int
-System/SwatEquipment.ini
-System/SwatEquipment.int
-System/SwatGame.int
-System/SwatGui.ini
-System/SwatGuiState.ini
-System/SwatMissions.ini
-System/SwatPawn.ini
-System/SwatProcedures.int
-System/TrainingText.ini
-System/transient.int
-Generated code
-
 ### v3 ###
 MAJOR FEATURES
 - Multiplayer fixed. You can now play in CO-OP again.
@@ -903,16 +928,6 @@ MINOR FEATURES / FULL CHANGES
 - Modified main menu logo
 - Added missing texture: gui_tex2.audio_Processing (related to speech recognition)
 - Included startup.ini because I am bad
-Files modified:
-Content/Textures/gui_tex2.utx
-System/CommandInterfaceMenus_SP.ini
-System/CommandInterfaceMenus_MP.ini
-System/PlayerInterface_Command_SP.ini
-System/PlayerInterface_Command_MP.ini
-System/SwatGui.ini
-System/startup.ini
-System/transient.int
-Generated code
 
 ### v2 ###
 - New Feature: Speech Recognition. Enable it in Audio Options
@@ -930,18 +945,6 @@ Generated code
 - Fixed: Children of Taronne has a trap on the wrong side
 - Fixed: Missing drug rosters on Stetchkov Drug Lab
 - 'Show Subtitles' moved to Audio Options
-Files modified:
-Content/Maps/SP-DrugLab.s4m
-Content/Maps/SP-Tenement.s4m
-System/SpeechCommandGrammar.xml
-System/CommandInterfaceMenus_SP.ini
-System/PlayerInterface_Command_SP.ini
-System/PlayerInterface_Use.ini
-System/SoundEffects.ini
-System/StaticLoadout.ini
-System/SwatGui.ini
-System/SwatGuiState.ini
-Generated code
 
 ### v1 ###
 - First release
@@ -953,9 +956,16 @@ KevinL for a tip about Voting Screen.
 sandman332 for a tip about audio
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
 Sebasien NovA for his modified SwatEd.exe
+Ryo Ohki for a tip about P90 and SAW animations
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
+
+ELITE SUPPORTERS
+These people have generously donated money to Elite Force via Patreon. If you are interested in helping out, you can find our Patreon page here: https://www.patreon.com/user?u=4885526
+TheTCREngineer
+Jake Robinson/sandman332
+Evan Derickson
 
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
@@ -964,16 +974,16 @@ StrawberryClock (Streamer)
 Rangar (Streamer)
 
 TESTING
-TCR
 Oglogoth
-mezzokoko
 cjslax6
 Vylka
 
 WE ARE: ELITE SQUAD
 eezstreet: Programming, Map Editing
 Jose21Crisis: Programming, Weapons Analysis
+mezzokoko: Programming
 Rangar: Music (Composition), Textures
+TheTCREngineer: Models
 
 
 .. if there is anyone I missed, feel free to send me a message and this will be corrected.

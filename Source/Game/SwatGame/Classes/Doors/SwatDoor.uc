@@ -838,7 +838,7 @@ simulated function Moved(optional bool Instantly, optional bool Force)
     else    //!Instantly
     {
         // Carlos: Closing is handled the same regardless of MoveReason
-        if (PendingPosition == DoorPosition_Closed && !Force)
+        if (PendingPosition == DoorPosition_Closed)
         {
             if (PositionIsBlocked(CurrentPosition))
             {
@@ -959,8 +959,8 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 function Blasted(Pawn Instigator)
 {
     SetPositionForMove( CurrentPosition, MR_Blasted );	//We want the lock to be obliterated, but we dont want the door to swing open
-    Moved(false, true); //not instantly, but force
-	OnUnlocked();
+		Broken();
+		OnUnlocked();
 }
 
 // Note: In multiplayer function Blasted only happens on the server
@@ -2521,14 +2521,14 @@ simulated event DesiredPositionChanged()
 		mplog( "...CurrentPosition="$CurrentPosition );
 		mplog( "...PendingPosition="$PendingPosition );
 		mplog( "...DesiredPosition="$DesiredPosition );
-    }
+  }
 
-    // We don't want sounds to be played on empty doorways.
-    if ( !IsEmptyDoorway() )
-    {
-        PendingPosition = DesiredPosition;
-        Moved( false, true );
-    }
+  // We don't want sounds to be played on empty doorways.
+  if ( !IsEmptyDoorway() )
+  {
+      PendingPosition = DesiredPosition;
+      Moved( false, true );
+  }
 }
 
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games

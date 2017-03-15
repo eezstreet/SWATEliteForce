@@ -42,6 +42,11 @@ var config bool Polite;     // Won't threaten hostages
 var config bool Insane;     // Will shoot hostages like their life depends on it
 var config bool Wanders;    // Doesn't patrol; instead it wanders
 
+var config bool DOAConversion;  // Whether to convert incapacitated subjects to DOAs
+var config bool StaticDOAConversion; // Whether to convert starting incapacitations to DOAs
+var config Range StaticDOAConversionTime;
+var config Range DOAConversionTime;
+
 var Mesh OfficerMesh;
 
 //initialize this archetype
@@ -201,6 +206,11 @@ function InitializeInstance(ArchetypeInstance inInstance)
   Instance.Insane = Insane;
   Instance.Wandering = Wanders;
 
+  Instance.DOAConversion = DOAConversion;
+  Instance.StaticDOAConversion = StaticDOAConversion;
+  Instance.DOAConversionTime = RandRange(DOAConversionTime.Min, DOAConversionTime.Max);
+  Instance.StaticDOAConversionTime = RandRange(StaticDOAConversionTime.Min, StaticDOAConversionTime.Max);
+
     Instance.UpdateInstancePrecachables();
 
     //TMC TODO select values from CharacterArchetype
@@ -257,9 +267,12 @@ defaultproperties
 	OfficerMesh=Mesh'SWATMaleAnimation2.SwatOfficer'
 
 	// There's only really a small handful of archetypes that can cause issues here. Probably best we leave this at zero.
-	TaserDeathChance = 0.0;
-	PepperDeathChance = 0.0;
-  Fearless = false;
-  Polite = false;
-  Insane = false;
+	TaserDeathChance = 0.0
+	PepperDeathChance = 0.0
+  Fearless = false
+  Polite = false
+  Insane = false
+  DOAConversion = false
+  StaticDOAConversion = false
+  StaticDOAConversionTime=(Min=600.000, Max=900.000)
 }

@@ -89,6 +89,12 @@ function LoadNextMap() {
 }
 
 event Timer() {
+  // Don't update the map list if it's not a valid gametype
+  if(MyGameTypeBox.List.GetExtraIntData() != EMPMode.MPM_COOP && MyGameTypeBox.List.GetExtraIntData() != EMPMode.MPM_COOPQMM) {
+    bUpdatingMapLists = false;
+    return;
+  }
+
   if(CurrentMapLoadIndex >= MapsToLoad.Length) {
     bUpdatingMapLists = false;
     return;
@@ -117,10 +123,10 @@ function InitComponent(GUIComponent MyOwner)
     /*for(i = 0; i < EMPMode.EnumCount; i++) {
       MyGameTypeBox.AddItem(GC.GetGameModeName(EMPMode(i)));
     }*/
-	MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOP));
-	MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOPQMM));
+	  MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOP),,, EMPMode.MPM_COOP);
+	  MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOPQMM),,, EMPMode.MPM_COOPQMM);
 
-    MyGameTypeBox.SetIndex(0 /*MPM_COOP*/);
+    MyGameTypeBox.List.FindExtraIntData(EMPMode.MPM_COOP);
 
     SelectedMaps.List.OnDblClick=OnSelectedMapsDblClicked;
     SelectedMaps.OnChange=  OnSelectedMapsChanged;
@@ -172,8 +178,7 @@ function InternalOnChange(GUIComponent Sender)
 		    SwatServerSetupMenu.RefreshEnabled();
             break;
         case MyGameTypeBox:
-            if(MyGameTypeBox.GetIndex() > 1 ) {MyGameTypeBox.SetIndex(0);}
-            OnGameModeChanged( EMPMode(2*MyGameTypeBox.GetIndex()+3) );
+            OnGameModeChanged( EMPMode(MyGameTypeBox.GetInt()) );
             break;
     }
 }
@@ -433,6 +438,9 @@ function OnGameModeChanged( EMPMode NewMode )
     SwatServerSetupMenu.RefreshEnabled();
 
     DisplayLevelSummary( LevelSummary( AvailableMaps.List.GetObject() ) );
+
+    SetTimer(0.03);
+    bUpdatingMapLists = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////
