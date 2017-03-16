@@ -63,7 +63,7 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// 
+//
 
 private function ReportResultsToTeam()
 {
@@ -144,6 +144,16 @@ latent function TryDoor()
 	m_Pawn.FinishAnim(AnimSpecialChannel);
 }
 
+function bool DoorIsLockable()
+{
+	local ISwatDoor SwatDoorTarget;
+
+	SwatDoorTarget = ISwatDoor(TargetDoor);
+	assert(SwatDoorTarget != None);
+
+	return !SwatDoorTarget.IsBroken();
+}
+
 private function bool CanInteractWithTargetDoor()
 {
 	return (! TargetDoor.IsEmptyDoorWay() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() /*&& !ISwatDoor(TargetDoor).IsBroken()*/);
@@ -162,7 +172,11 @@ Begin:
 		useResources(class'AI_Resource'.const.RU_LEGS);
 
 		// test again to see if we can interact with this door
-		if (CanInteractWithTargetDoor())
+		if (!DoorIsLockable())
+		{
+			ReportResultsToTeam();
+		}
+		else if (CanInteractWithTargetDoor())
 		{
 			// keep us facing the correct direction
 			ISwatAI(m_Pawn).AimToRotation(TryDoorUsageRotation);
