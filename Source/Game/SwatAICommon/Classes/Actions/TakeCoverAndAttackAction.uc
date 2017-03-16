@@ -310,10 +310,10 @@ private function Attack(Pawn Enemy, bool bCanSucceedAfterFiring)
 		}
 
 		CurrentAttackTargetGoal.postGoal(self);
-		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
-		{
-			ISwatEnemy(m_Pawn).BecomeAThreat();
-		}
+	if (m_Pawn.IsA('SwatEnemy') && ((!m_Pawn.IsA('SwatUndercover') || (!m_Pawn.IsA('SwatGuard')) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))))
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 	}
 }
 
@@ -519,10 +519,10 @@ private latent function AimAroundBriefly()
 	CurrentAimAroundGoal.SetDoOnce(true);
 
 	CurrentAimAroundGoal.postGoal(self);
-		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
-		{
-			ISwatEnemy(m_Pawn).BecomeAThreat();
-		}
+	if (m_Pawn.IsA('SwatEnemy') && ((!m_Pawn.IsA('SwatUndercover') || (!m_Pawn.IsA('SwatGuard')) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))))
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 	WaitForGoal(CurrentAimAroundGoal);
 
 	CurrentAimAroundGoal.unPostGoal(self);
