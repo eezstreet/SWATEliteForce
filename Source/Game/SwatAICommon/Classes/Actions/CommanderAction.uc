@@ -464,7 +464,7 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 			// don't listen for compliance until morale changes
 			bListeningForCompliance = false;
 			// and if we are armed suspects, become threats
-	if (m_Pawn.IsA('SwatEnemy') && ((!m_Pawn.IsA('SwatUndercover') || (!m_Pawn.IsA('SwatGuard')) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))))
+	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard')) || (!m_Pawn.IsA('SwatHostage'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
 	{
 		ISwatEnemy(m_Pawn).BecomeAThreat();
 	}
