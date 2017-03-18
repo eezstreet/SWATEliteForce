@@ -591,7 +591,10 @@ simulated function NotifyNearbyEnemiesOfDeath(Pawn Killer)
 			if ((VSize2D(Iter.Location - Location) < MinDistanceToAffectMoraleOfOtherEnemiesUponDeath) &&
 				LineOfSightTo(Iter))
 			{
-				SwatEnemy(Iter).GetEnemyCommanderAction().NotifyNearbyEnemyKilled(self, Killer);
+        if(Killer.IsA('SwatOfficer') || Killer.IsA('SwatPlayer') || Killer.IsA('NetPlayer'))
+				    SwatEnemy(Iter).GetEnemyCommanderAction().NotifyNearbyEnemyKilled(self, Killer);
+        else if(Killer.IsA('SwatEnemy'))
+            SwatEnemy(Iter).GetEnemyCommanderAction().NotifyEnemyShotByEnemy(self, /*The actual damage is not used*/ 0.0, Killer);
 			}
 		}
 	}
