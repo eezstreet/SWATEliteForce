@@ -1,4 +1,4 @@
-class ExternalViewportManager extends Engine.Actor 
+class ExternalViewportManager extends Engine.Actor
     implements IInterested_GameEvent_GameStarted,
                IInterested_GameEvent_MissionEnded,
                IControllableViewport
@@ -6,10 +6,10 @@ class ExternalViewportManager extends Engine.Actor
 
 // =============================================================================
 // ExternalVieportManager
-// 
+//
 // The ExternalViewportManager handles managing the external viewports of each of your
 // swat members.  Each SWAT team member is equipped with a helmet cam that the player
-// can view through the viewport.  The player can also issue commands through the 
+// can view through the viewport.  The player can also issue commands through the
 // viewport...
 //
 // =============================================================================
@@ -17,8 +17,8 @@ class ExternalViewportManager extends Engine.Actor
 // Consts (can be set from a config file though)...
 var private config const float kDefaultSizeX;   // Percentage of the screen for the default width of the viewport
 var private config const float kDefaultSizeY;   // Percentage of the screen for the default height of the viewport
-var private config const float kActiveSizeX;    // Percentage of the screen for the default width of the commanding viewport 
-var private config const float kActiveSizeY;    // Percentage of the screen for the default height of the commanding viewport 
+var private config const float kActiveSizeX;    // Percentage of the screen for the default width of the commanding viewport
+var private config const float kActiveSizeY;    // Percentage of the screen for the default height of the commanding viewport
 var private config const float kZoomRate ;      // Rate per second for zooming
 var private config const float kViewportFOV;    // FOV for this viewport
 var private config const float kViewportRightPadding;   // How much to pad the viewport on the right hand side of the screen
@@ -30,15 +30,15 @@ var private int                iCurrentControllable; // Index to the current off
 var private array<IControllableThroughViewport> AllControllable;  // List of all controllable objects
 var private array<IControllableThroughViewport> CurrentControllables; // List of all controllables in the current filter
 var private string             Filter;          // Filter for what type of officer to display in the viewport (red/blue/sniper)
-var private string             InitialControllable; // Name of First Controllable actor found when this filter was set.  If cycling every 
+var private string             InitialControllable; // Name of First Controllable actor found when this filter was set.  If cycling every
                                                     // comes back to this Controllable, the viewport will close
 var private float CurrentSizeX;                 // In percentage of the screen (0..1)
 var private float CurrentSizeY;                 // In percentage of the screen (0..1)
-var private float CurrentWidth;                 // In actual screen dimensions (0..SizeX)   
+var private float CurrentWidth;                 // In actual screen dimensions (0..SizeX)
 var private float CurrentHeight;                // In actual screen dimensions (0..ClipY)
 
 var private float LastDeltaTime;                // Last delta time, for smoothing
-var private class<Actor> BaseControllableClass; // Base class for which there could be possible IControllableThroughViewport implementors, 
+var private class<Actor> BaseControllableClass; // Base class for which there could be possible IControllableThroughViewport implementors,
                                                 // used as an optimization so we don't have to look through all actors in script.
 var private GUIExternalViewport  GUIParent;                // Reference to the GUI component
 var private Material  DeadTexture;              // Material to use when the viewport is viewing a dead pawn
@@ -59,7 +59,7 @@ simulated function PostBeginPlay()
     Super.PostBeginPlay();
 
     //register for notification that the game has started
-	// COOP: We'll need to revisit this after we decide what we're doing for 
+	// COOP: We'll need to revisit this after we decide what we're doing for
     // replication of game events
 	if ( Level.Netmode == NM_Standalone )
     {
@@ -89,12 +89,12 @@ simulated function ShowViewport(string inFilter, optional string inSpecificContr
 	log("[dkaplan] ShowViewport: inFilter = "$inFilter$", inSpecificControllableFilter = "$inSpecificControllableFilter );
 #endif
     if ( !SetFilter(inFilter) || inSpecificControllableFilter != "" )
-        CycleControllableViewport(inSpecificControllableFilter);  
+        CycleControllableViewport(inSpecificControllableFilter);
 #if DEBUG_OFFICERVIEWPORTS
     mplog( "Showing viewport on controllable: "$GetCurrentControllable().GetViewportName() );
 #endif
     if ( GetCurrentControllable() != None )
-    {    
+    {
         OriginalRotation = GetCurrentControllable().GetOriginalDirection();
         LastViewRotation = OriginalRotation;
         LastViewLocation = GetCurrentControllable().GetViewportLocation();
@@ -112,7 +112,7 @@ simulated function bool SetFilter(string inFilter)
     if ( Filter != inFilter )
     {
         Filter = inFilter;
-        
+
         iCurrentControllable = 0;
         CurrentControllables.Remove( 0, CurrentControllables.Length );
         // Build a list of all the Controllables in this filter
@@ -128,7 +128,7 @@ simulated function bool SetFilter(string inFilter)
                     CurrentControllables.Insert( CurrentControllables.Length, 1 );
                     CurrentControllables[CurrentControllables.Length-1] = AllControllable[ct];
                 }
-            }   
+            }
         }
         return true;
     }
@@ -142,7 +142,38 @@ simulated function string GetFilter()
 
 simulated function bool ShouldControlViewport()
 {
-	return (Level.NetMode == NM_Standalone || Filter ~= "sniper") && SwatGamePlayerController(Owner) != None && SwatGamePlayerController(Owner).bControlViewport != 0 && GetCurrentControllable().ShouldDrawViewport();
+  local SwatGamePlayerController Controller;
+  local SwatPlayerReplicationInfo PlayerReplicationInfo;
+
+  if(!GetCurrentControllable().ShouldDrawViewport())
+  {
+    return false;
+  }
+
+  Controller = SwatGamePlayerController(Owner);
+  if(Controller == None)
+  {
+    return false;
+  }
+  if(Controller.bControlViewport == 0)
+  {
+    return false;
+  }
+
+  if(Level.NetMode != NM_Standalone)
+  {
+    PlayerReplicationInfo = SwatPlayerReplicationInfo(Controller.PlayerReplicationInfo);
+    if(!(Filter ~= "sniper"))
+    {
+      return false;
+    }
+    if(!PlayerReplicationInfo.IsLeader)
+    {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 simulated function Initialize()
@@ -155,7 +186,7 @@ simulated function Initialize()
 #endif
     AllControllable.Length = 0;
     foreach DynamicActors( BaseControllableClass, TestControllable)
-    {        
+    {
 #if DEBUG_OFFICERVIEWPORTS
         mplog( "ExternalViewportManager::Initialize() testing: "$TestControllable$" to see if it is a IControllableThroughViewport.  Is it? "$IControllableThroughViewport(TestControllable) );
 #endif
@@ -220,7 +251,7 @@ simulated function SetCurrentControllable( IControllableThroughViewport NewContr
     }
 
     if ( GetCurrentControllable() != None )
-    {    
+    {
         OriginalRotation = GetCurrentControllable().GetOriginalDirection();
         LastViewRotation = OriginalRotation;
         LastViewLocation = GetCurrentControllable().GetViewportLocation();
@@ -235,7 +266,7 @@ simulated function IControllableThroughViewport GetCurrentControllable()
     if (iCurrentControllable < CurrentControllables.length)
         controllable = CurrentControllables[iCurrentControllable];
     else
-        controllable = None; 
+        controllable = None;
 
     //log( "Current officer returning: "$AllControllable[iCurrentControllable].Officer );
     return controllable;
@@ -265,7 +296,7 @@ simulated function bool IncrementControllableAndTestValidity()
 }
 
 // Handle Cycling through officers in the viewport.  This has to take into account what type of
-// officer we're interested in, determined by the filter string.  
+// officer we're interested in, determined by the filter string.
 simulated function CycleControllableViewport( optional string SpecificControllableFilter )
 {
 #if DEBUG_OFFICERVIEWPORTS
@@ -277,9 +308,9 @@ simulated function CycleControllableViewport( optional string SpecificControllab
         {
             if ( !IncrementControllableAndTestValidity() )
                 return;
-        } 
+        }
     }
-    else 
+    else
     {
         if ( !IncrementControllableAndTestValidity() )
             return;
@@ -314,7 +345,7 @@ simulated private function UpdateGeometry(Canvas inCanvas, float inDeltaTime, ou
         CurrentSizeX = Lerp( inDeltaTime * kZoomRate, CurrentSizeX, kDefaultSizeX );
         CurrentSizeY = Lerp( inDeltaTime * kZoomRate, CurrentSizeY, kDefaultSizeY );
     }
-    
+
     // Convert from the percentage of the screen, to actual screen dimensions
     CurrentWidth = inCanvas.SizeX * CurrentSizeX;
     CurrentHeight = inCanvas.ClipY * CurrentSizeY;
@@ -336,19 +367,19 @@ simulated private function DrawOfficerName(Canvas inCanvas)
 
     // Setup the canvas
     if ( CurrentHeight < 100 )
-        return; 
-    inCanvas.SetPos(    int( kNegativeFontXOffset * float( inCanvas.SizeX ) / 800.0 ), 
+        return;
+    inCanvas.SetPos(    int( kNegativeFontXOffset * float( inCanvas.SizeX ) / 800.0 ),
         CurrentHeight - int( kNegativeFontYOffset * float( inCanvas.SizeY ) / 600.0 ) );
     inCanvas.Font = GUIParent.Controller.GetMenuFont(OfficerFontName).GetFont(inCanvas.SizeX);
 
     // Set draw color based on team affiliation
     if ( InStr(Caps(GetCurrentControllable().GetViewportName()), "BLUE") >= 0 )
     {
-        inCanvas.SetDrawColor( 0, 0, 135 ); 
-    } 
+        inCanvas.SetDrawColor( 0, 0, 135 );
+    }
     else if ( InStr(Caps(GetCurrentControllable().GetViewportName()), "RED") >= 0 )
         inCanvas.SetDrawColor( 175, 0, 0 );
-    else 
+    else
         inCanvas.SetDrawColor( 255, 255, 255 );
 
     inCanvas.DrawText( Caps(GetCurrentControllable().GetViewportName()) @ GetCurrentControllable().GetViewportDescription() );
@@ -358,9 +389,9 @@ simulated function Render(Canvas inCanvas)
 {
     local int X, Y, W, H;
 
-    // Do any updating... 
+    // Do any updating...
     UpdateGeometry(inCanvas, FClamp(LastDeltaTime, 0.01, 0.3), X, Y, W, H);
-    
+
     inCanvas.SetOrigin( X, Y );
 
     // Render the components
@@ -369,11 +400,11 @@ simulated function Render(Canvas inCanvas)
 
     if ( ShouldControlViewport() && GetCurrentControllable().ShouldDrawReticle())
         DrawReticle(inCanvas);
-    
+
     inCanvas.SetOrigin(0,0);
     inCanvas.ClipX = inCanvas.SizeX;
     inCanvas.ClipY = inCanvas.SizeY;
-} 
+}
 
 
 simulated function name   GetControllingStateName()
@@ -388,7 +419,7 @@ simulated function bool   CanIssueCommands()
 }
 
 simulated private function DrawReticle( Canvas inCanvas )
-{  
+{
     inCanvas.bNoSmooth = False;
     inCanvas.Style = ERenderStyle.STY_Alpha;
     inCanvas.SetDrawColor(255,255,255);
@@ -397,12 +428,12 @@ simulated private function DrawReticle( Canvas inCanvas )
     inCanvas.DrawTile(ReticleTexture, 96, 96, 0, 0, 256, 256);
 }
 
-simulated function int DegreesToUnreal( INT inDegrees ) 
-{ 
-    return (65536*inDegrees)/360; 
+simulated function int DegreesToUnreal( INT inDegrees )
+{
+    return (65536*inDegrees)/360;
 }
 
-// Can be called in place of PlayerCalcView for the proper 
+// Can be called in place of PlayerCalcView for the proper
 simulated function ViewportCalcView(out Vector CameraLocation, out Rotator CameraRotation )
 {
     local Object.Range YawRange, PitchRange;
@@ -416,10 +447,10 @@ simulated function ViewportCalcView(out Vector CameraLocation, out Rotator Camer
     {
         CameraRotation = LastViewRotation;
         GetCurrentControllable().SetRotationToViewport( CameraRotation );
-    } else        
+    } else
     {
         CameraRotation = GetCurrentControllable().GetViewportDirection();
-    }        
+    }
     CameraLocation = GetCurrentControllable().GetViewportLocation();
 
     if ( ShouldControlViewport() )
@@ -435,7 +466,7 @@ simulated function ViewportCalcView(out Vector CameraLocation, out Rotator Camer
         CameraRotation.Yaw += MouseAccel.X * GetCurrentControllable().GetViewportYawSpeed();
         CameraRotation.Pitch += MouseAccel.Y * GetCurrentControllable().GetViewportPitchSpeed();
 
-        ViewRotation = OriginalRotation;    
+        ViewRotation = OriginalRotation;
 
 		// A zero pitch clamp value means no restrictions
         if ( GetCurrentControllable().GetViewportYawClamp() != 0 )
@@ -443,7 +474,7 @@ simulated function ViewportCalcView(out Vector CameraLocation, out Rotator Camer
             YawRange.Min = ViewRotation.Yaw     - DegreesToUnreal(GetCurrentControllable().GetViewportYawClamp());
             YawRange.Max = ViewRotation.Yaw     + DegreesToUnreal(GetCurrentControllable().GetViewportYawClamp());
             CameraRotation.Yaw    = Clamp( CameraRotation.Yaw, YawRange.Min, YawRange.Max );
-        }        
+        }
 
         // A zero pitch clamp value means no restrictions
         if ( GetCurrentControllable().GetViewportPitchClamp() != 0 )
@@ -452,14 +483,14 @@ simulated function ViewportCalcView(out Vector CameraLocation, out Rotator Camer
             PitchRange.Max = ViewRotation.Pitch + DegreesToUnreal(GetCurrentControllable().GetViewportPitchClamp());
             CameraRotation.Pitch  = Clamp( CameraRotation.Pitch, PitchRange.Min, PitchRange.Max );
         }
-    }  
-    
+    }
+
 
     if ( ShouldControlViewport() )
         GetCurrentControllable().OffsetViewportRotation( CameraRotation );
 
     // Lerp to the desired rotation and location
-    CameraRotation = RotatorLerp( LastViewRotation, CameraRotation, ViewLerpAlpha * LastDeltaTime ); 
+    CameraRotation = RotatorLerp( LastViewRotation, CameraRotation, ViewLerpAlpha * LastDeltaTime );
     CameraLocation = LastViewLocation + (LocLerpAlpha * LastDeltaTime *  (CameraLocation - LastViewLocation));
 
     LastViewRotation = CameraRotation;
@@ -505,7 +536,7 @@ simulated private function DrawViewport( Canvas inCanvas, int X, int Y, int W, i
         FOV = GetCurrentControllable().GetFOV();
         if ( FOV == 0 )
             FOV = kViewportFOV;
-      
+
         inCanvas.DrawPortal( X, Y, W, H, GetCurrentControllable().GetViewportOwner(), ViewLocation, ViewRotation, FOV, true);
 
         if ( !GetCurrentControllable().ShouldDrawViewport() )
@@ -539,7 +570,7 @@ simulated event Destroyed()
 {
     SwatGameInfo(Level.Game).GameEvents.GameStarted.UnRegister(Self);
     SwatGameInfo(Level.Game).GameEvents.MissionEnded.UnRegister(Self);
-    
+
     Super.Destroyed();
 }
 
@@ -551,14 +582,14 @@ defaultproperties
     ReticleTexture=Material'HUD.ToolReticle'
     CurrentSizeX=0.3
     CurrentSizeY=0.25
-    kDefaultSizeX=0.3   
+    kDefaultSizeX=0.3
     kDefaultSizeY=0.25
-    kActiveSizeX=0.55                   
-    kActiveSizeY=0.5                    
-    kZoomRate=0.7                    
-    kViewportFOV=109                        
-    kViewportRightPadding=0.02             
-    kViewportTopPadding=0.05               
+    kActiveSizeX=0.55
+    kActiveSizeY=0.5
+    kZoomRate=0.7
+    kViewportFOV=109
+    kViewportRightPadding=0.02
+    kViewportTopPadding=0.05
     BaseControllableClass=class'SwatGame.SwatPawn'
     ViewportFont=Font'SwatFonts.Pix800X600'
     RemoteRole=ROLE_None
