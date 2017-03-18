@@ -586,7 +586,7 @@ simulated function NotifyNearbyEnemiesOfDeath(Pawn Killer)
 
 	for (Iter = Level.pawnList; Iter != None; Iter = Iter.nextPawn)
 	{
-		if ((Iter != self) && Iter.IsA('SwatEnemy'))
+		if ((Iter != self) && Iter.IsA('SwatEnemy') && SwatEnemy(Iter).IsConscious())
 		{
 			if ((VSize2D(Iter.Location - Location) < MinDistanceToAffectMoraleOfOtherEnemiesUponDeath) &&
 				LineOfSightTo(Iter))
