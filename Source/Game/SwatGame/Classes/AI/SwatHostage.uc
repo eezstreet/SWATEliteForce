@@ -120,11 +120,6 @@ function InitializeFromSpawner(Spawner Spawner)
 
 		// incapacitate the hostage
 		BecomeIncapacitated(HostageSpawner.IdleCategoryOverride);
-
-    // if we use Static DOA Conversions, set a timer for them to go DOA
-    if(Archetype.ConvertsToDOA_Static()) {
-        AIData.DOATimer.SetTime(Archetype.GetDOAConversionTime_Static());
-    }
 	}
 }
 
@@ -143,7 +138,7 @@ function Spawner GetSpawner()
 
 function DoDOAConversion()
 {
-  log("[DOA Conversions] "$self$" went DOA");
+  log("[DOA Conversions] At time "$Level.TimeSeconds$", "$self$" went DOA");
   AIData.TreatAsDOA = true;
   log("[DOA Conversions] TreatAsDOA is now "$AIData.TreatAsDOA);
   TakeDamage(100000, None, vect(0,0,0), vect(0,0,0), class'DamageType');
@@ -161,9 +156,12 @@ simulated function bool IsDOA()
 function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
 {
   // Freeze the timer!
-  log("[DOA Conversions] "$self$" was reported to TOC, so we can freeze timer "$AIData.DOATimer);
-  AIData.DOATimer.TimerDelegate = None;
-  AIData.DOATimer.StopTimer();
+  if(ReportedCharacter == self)
+  {
+    log("[DOA Conversions] "$self$" was reported to TOC, so we can freeze timer "$AIData.DOATimer);
+    AIData.DOATimer.TimerDelegate = None;
+    AIData.DOATimer.StopTimer();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -172,9 +170,13 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
 
 function OnPostGameStarted()
 {
-  if(bSpawnedAsIncapacitated)
+  local CharacterArchetypeInstance Instance;
+
+  Instance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  if(bSpawnedAsIncapacitated && Instance.ConvertsToDOA_Static())
   {
-    AIData.DOATimer.StartTimer(, false);
+    AIData.DOATimer.StartTimer(Instance.GetDOAConversionTime_Static(), false);
   }
 }
 

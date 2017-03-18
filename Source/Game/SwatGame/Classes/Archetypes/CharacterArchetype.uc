@@ -44,8 +44,10 @@ var config bool Wanders;    // Doesn't patrol; instead it wanders
 
 var config bool DOAConversion;  // Whether to convert incapacitated subjects to DOAs
 var config bool StaticDOAConversion; // Whether to convert starting incapacitations to DOAs
-var config Range StaticDOAConversionTime;
-var config Range DOAConversionTime;
+var config float StaticDOAConversionTimeMin;
+var config float StaticDOAConversionTimeMax;
+var config float DOAConversionTimeMin;
+var config float DOAConversionTimeMax;
 
 var Mesh OfficerMesh;
 
@@ -169,6 +171,7 @@ function ValidateEquipment(
 function InitializeInstance(ArchetypeInstance inInstance)
 {
     local CharacterArchetypeInstance Instance;
+    local float StaticDOAConversionTimePicked;
 
     Instance = CharacterArchetypeInstance(inInstance);
 
@@ -208,8 +211,14 @@ function InitializeInstance(ArchetypeInstance inInstance)
 
   Instance.DOAConversion = DOAConversion;
   Instance.StaticDOAConversion = StaticDOAConversion;
-  Instance.DOAConversionTime = RandRange(DOAConversionTime.Min, DOAConversionTime.Max);
-  Instance.StaticDOAConversionTime = RandRange(StaticDOAConversionTime.Min, StaticDOAConversionTime.Max);
+
+  if(Instance.StaticDOAConversion)
+  {
+    StaticDOAConversionTimePicked = RandRange(StaticDOAConversionTimeMin, StaticDOAConversionTimeMax);
+    log("[DOA Conversions] ArchetypeInstance "$self$" has range between "$StaticDOAConversionTimeMin$" and "$StaticDOAConversionTimeMax$". Selected time = "$StaticDOAConversionTimePicked);
+    Instance.StaticDOAConversionTime = StaticDOAConversionTimePicked;
+  }
+  Instance.DOAConversionTime = RandRange(DOAConversionTimeMin, DOAConversionTimeMax);
 
     Instance.UpdateInstancePrecachables();
 
@@ -274,5 +283,6 @@ defaultproperties
   Insane = false
   DOAConversion = false
   StaticDOAConversion = false
-  StaticDOAConversionTime=(Min=600.000, Max=900.000)
+  StaticDOAConversionTimeMin=600.0
+  StaticDOAConversionTimeMax=900.0
 }
