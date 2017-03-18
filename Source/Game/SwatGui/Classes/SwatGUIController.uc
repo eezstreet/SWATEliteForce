@@ -167,6 +167,7 @@ log("[dkaplan] >>> OnRoleChange of (SwatGUIController) "$self);
 function OnStateChange( eSwatGameState oldState, eSwatGameState newState, optional EMPMode CurrentGameMode )
 {
     local string CustomMissionLabel;
+    local ServerSettings Settings;
 log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
 //LogMenuStack();
 //LogStorageStack();
@@ -261,10 +262,17 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             }
             else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
             {
+
+
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
                 if(Campaign != None) {
                   Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings), Campaign.CampaignPath, Campaign.GetAvailableIndex());
+
+                  Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
+                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+
+                  Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
+                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
                 }
                 InternalOpenMenu( MPPopupMenu );
             }
