@@ -43,7 +43,8 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
         return;   //we only care about officers
 
     if(ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedHostageKilled' &&
-        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedInjCivilianSecured') {
+        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedInjCivilianSecured' &&
+        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedDOA') {
         // We're reporting them, but not for the reason we SHOULD be reporting them.
         return;
     }

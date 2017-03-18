@@ -929,10 +929,8 @@ simulated event InitiateViewportUse( IControllableViewport inNewViewport )
 // This client->server RPC will, if ShouldActivate is true, choose the next
 // available teammate to use as the viewport target. Or, reset the viewport
 // if ShouldActivate is false.
-function ServerActivateOfficerViewport( bool ShouldActivate )
+function ServerActivateOfficerViewport( bool ShouldActivate, optional string ViewportType )
 {
-    local string ViewportType;
-
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"--ServerActivateOfficerViewport - ShouldActivate: "$ShouldActivate );
 
@@ -955,10 +953,11 @@ function ServerActivateOfficerViewport( bool ShouldActivate )
         if (Level.GetEngine().EnableDevTools)
             mplog( "Setting viewporttype manually for netgame");
 
-        if ( NetPlayer(Pawn) != None )
-		{
-            ViewportType = NetPlayer(Pawn).GetViewportType();
-		}
+        // We need to convert the viewport type into co-op teams
+        if(ViewportType ~= "Red")
+          ViewportType = "TeamA";
+        else if(ViewportType ~= "Blue")
+          ViewportType = "TeamB";
 
         if (Level.GetEngine().EnableDevTools)
             mplog( "Setting viewporttype manually for netgame to "$ViewportType );
@@ -1928,32 +1927,23 @@ exec function ShowViewport(string ViewportType)
 
     if ( Level.NetMode != NM_Standalone )
     {
-		if ( ViewportType ~= "sniper" && SwatPlayerReplicationInfo(PlayerReplicationInfo).IsLeader )
-		{
-            SpecificOfficer = SniperAlertFilter;
-            GetHUDPage().ExternalViewport.Show();
-            ViewportManager.ShowViewport(ViewportType, SpecificOfficer);
-		}
-		else
-		{
-			SavedReplicatedViewportTeammate = ReplicatedViewportTeammate;
+  		SavedReplicatedViewportTeammate = ReplicatedViewportTeammate;
 
-			// Ask the server to choose the next viewport teammate. The teammate's
-			// pawn is assigned to the replicated variable
-			// ReplicatedViewportTeammate. OnReplicatedViewportTeammateChanged is
-			// called on the client whenever that variable changes.
-			ServerActivateOfficerViewport( true );
+  		// Ask the server to choose the next viewport teammate. The teammate's
+  		// pawn is assigned to the replicated variable
+  		// ReplicatedViewportTeammate. OnReplicatedViewportTeammateChanged is
+  		// called on the client whenever that variable changes.
+  		ServerActivateOfficerViewport( true, ViewportType );
 
-			// If we're on a listen server, PostNetReceive is not called on us so we'll
-			// never detect a change in ReplicatedViewportTeammate there, like we do
-			// for clients. Therefore, we perform the test here, and just show the
-			// viewport if it's changed.
-			if (Level.NetMode == NM_ListenServer &&
-				SavedReplicatedViewportTeammate != ReplicatedViewportTeammate)
-			{
-				GetHUDPage().ExternalViewport.Show();
-			}
-		}
+  		// If we're on a listen server, PostNetReceive is not called on us so we'll
+  		// never detect a change in ReplicatedViewportTeammate there, like we do
+  		// for clients. Therefore, we perform the test here, and just show the
+  		// viewport if it's changed.
+  		if (Level.NetMode == NM_ListenServer &&
+  			SavedReplicatedViewportTeammate != ReplicatedViewportTeammate)
+  		{
+  			GetHUDPage().ExternalViewport.Show();
+  		}
     }
     else
     {

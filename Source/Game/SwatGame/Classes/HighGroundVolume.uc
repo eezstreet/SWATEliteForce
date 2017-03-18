@@ -1,5 +1,5 @@
 class HighGroundVolume extends Engine.PhysicsVolume
-    implements IEffectObserver, 
+    implements IEffectObserver,
     IInterested_GameEvent_PawnDied,
     IInterested_GameEvent_PawnArrested,
     IInterested_GameEvent_PawnIncapacitated,
@@ -8,13 +8,13 @@ class HighGroundVolume extends Engine.PhysicsVolume
 
 // =============================================================================
 //  HighGroundVolume
-//  
+//
 //  A HighGroundVolume is a physics volume that in fiction allows the TOC to inform
 //  the SWAT team about events that are happening in other parts of the map.  Generally
 //  HGV's are placed in front of windows, or places that TOC can logically see through.
 //  The implementation is a PhysicsVolume that reacts to things happening inside of it
 //  by triggering different effect events.  There is a list of possible events that the
-//  designers fill.  
+//  designers fill.
 //
 // ==============================================================================
 
@@ -26,15 +26,15 @@ struct HighGroundCondition
     var() config Name   Archetype;                  // What archetype the Subject has to be
     var() config Name   Action;                     // What actually happened
     var() config Name   Object;                     // Who it happened to
-    
+
     var() config int    Priority;                   // Priority that it takes place in
     var() config float  Delay;                      // Time delay between when this event gets announced, and when the next one can
-    var() config bool   bShrinkOnAction;              
+    var() config bool   bShrinkOnAction;
     var          Name   Instance;                   // Instance specific data
 };
 
 
-var() name RoomName;                                // Name of the specific room this highgroundvolume responds to.                   
+var() name RoomName;                                // Name of the specific room this highgroundvolume responds to.
 var() config array<HighGroundCondition> Conditions; // Designer generated list conditions
 
 var transient array<HighGroundCondition> PriorityQueue; // Transient priority queue of active conditions
@@ -47,14 +47,14 @@ var bool bGameStarted;
 function PostBeginPlay()
 {
     Super.PostBeginPlay();
- 
+
     if ( Level.NetMode == NM_Standalone )
     {
         SwatGameInfo(Level.Game).GameEvents.PostGameStarted.Register(self);
         SwatGameInfo(Level.Game).GameEvents.PawnDied.Register(self);
         SwatGameInfo(Level.Game).GameEvents.PawnArrested.Register(self);
         SwatGameInfo(Level.Game).GameEvents.PawnIncapacitated.Register(self);
-    } 
+    }
     else
     {
         OnPostGameStarted();
@@ -66,7 +66,7 @@ function OnPostGameStarted()
     local int ct;
 
     bGameStarted = true;
-    
+
     for ( ct = 0; ct < Touching.Length; ++ct )
     {
         if ( Touching[ct] != None && Touching[ct].IsA( 'Pawn' ) )
@@ -187,7 +187,7 @@ final private function HighGroundCondition FindCondition( Actor inSubject, Name 
                     }
                 }*/
                 return Conditions[ct];
-            } 
+            }
         }
     }
     return NullCondition;
@@ -217,7 +217,7 @@ final private function PlayCondition(Actor inSubject, Name inAction, Actor inObj
     local HighGroundCondition Condition;
 
     Condition = FindCondition( inSubject, inAction, inObject );
-    
+
     if ( Condition != NullCondition )
     {
         Condition.Instance = inSubject.Name;
@@ -225,7 +225,7 @@ final private function PlayCondition(Actor inSubject, Name inAction, Actor inObj
         if ( IsConditionQueued( Condition.Subject, Condition.Action, Condition.Object ) )
         {
 #if DEBUG_HIGHGROUNDVOLUME
-            log( "Highground: Condition "$ConditionToString( Condition )$", not playing because something similair is already playing" );       
+            log( "Highground: Condition "$ConditionToString( Condition )$", not playing because something similair is already playing" );
 #endif
             return;
         }
@@ -257,9 +257,7 @@ final function PlayConditionEffect( HighGroundCondition inCondition )
     if ( ShouldRejectCondition(inCondition) )
         return;
 
-#if DEBUG_HIGHGROUNDVOLUME
-    log( "Highground: Condition "$ConditionToString( inCondition )$", is playing it's effect event!" );       
-#endif
+    log( "Highground: Condition "$ConditionToString( inCondition )$", is playing it's effect event!" );
 
     if ( Level.NetMode == NM_Standalone )
         GetAnySwatPlayer().TriggerEffectEvent( GetEffectName(inCondition), ,,,,,,Self, RoomName );
@@ -286,7 +284,7 @@ event Timer()
         PlayingCondition = NullCondition;
     } else
     {
-        PlayConditionEffect( QueuedCondition );     
+        PlayConditionEffect( QueuedCondition );
     }
 }
 
@@ -309,7 +307,7 @@ simulated function OnEffectInitialized(Actor inInitializedEffect);
 simulated function SwatPlayer GetAnySwatPlayer()
 {
     local SwatPlayer Player;
-    
+
     foreach AllActors(class 'SwatPlayer', Player)
         return Player;
 }
@@ -360,7 +358,7 @@ function OnPawnArrested( Pawn Arrestee, Pawn Arrester )
         PlayCondition( Arrestee, 'Restrained', Arrestee );
 }
 
-function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)  
+function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 {
     if ( Pawn.IsInVolume( Self ) )
         PlayCondition( Incapacitator, 'Incapacitated', Pawn );
@@ -371,7 +369,7 @@ simulated event Destroyed()
     SwatGameInfo(Level.Game).GameEvents.PawnDied.UnRegister(self);
     SwatGameInfo(Level.Game).GameEvents.PawnArrested.UnRegister(self);
     SwatGameInfo(Level.Game).GameEvents.PawnIncapacitated.UnRegister(self);
-    
+
     Super.Destroyed();
 }
 

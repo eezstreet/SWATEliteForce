@@ -2,7 +2,8 @@
 class SwatHostage extends SwatAICharacter
     implements SwatAICommon.ISwatHostage,
                ICanBeSpawned,
-               IInterested_GameEvent_ReportableReportedToTOC
+               IInterested_GameEvent_ReportableReportedToTOC,
+               IInterested_GameEvent_PostGameStarted
     native;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,6 +84,7 @@ function InitializeFromSpawner(Spawner Spawner)
     Super.InitializeFromSpawner(Spawner);
 
     SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Register(self);
+    SwatGameInfo(Level.Game).GameEvents.PostGameStarted.Register(self);
 
     //we may not have a Spawner, for example, if
     //  the console command 'summonarchetype' was used.
@@ -118,11 +120,6 @@ function InitializeFromSpawner(Spawner Spawner)
 
 		// incapacitate the hostage
 		BecomeIncapacitated(HostageSpawner.IdleCategoryOverride);
-
-    // if we use Static DOA Conversions, set a timer for them to go DOA
-    if(Archetype.ConvertsToDOA_Static()) {
-        AIData.DOATimer.StartTimer(Archetype.GetDOAConversionTime_Static(), false);
-    }
 	}
 }
 
@@ -141,24 +138,48 @@ function Spawner GetSpawner()
 
 function DoDOAConversion()
 {
-  log("[DOA Conversions] "$self$" went DOA");
+  log("[DOA Conversions] At time "$Level.TimeSeconds$", "$self$" went DOA");
   AIData.TreatAsDOA = true;
   log("[DOA Conversions] TreatAsDOA is now "$AIData.TreatAsDOA);
   TakeDamage(100000, None, vect(0,0,0), vect(0,0,0), class'DamageType');
-}
-
-function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
-{
-  // Freeze the timer!
-  log("[DOA Conversions] "$self$" was reported to TOC, so we can freeze timer "$AIData.DOATimer);
-  AIData.DOATimer.TimerDelegate = None;
-  AIData.DOATimer.StopTimer();
 }
 
 simulated function bool IsDOA()
 {
   return AIData.TreatAsDOA;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IInterested_GameEvent_ReportableReportedToTOC implementation (part of DOA conversion)
+
+function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
+{
+  // Freeze the timer!
+  if(ReportedCharacter == self)
+  {
+    log("[DOA Conversions] "$self$" was reported to TOC, so we can freeze timer "$AIData.DOATimer);
+    AIData.DOATimer.TimerDelegate = None;
+    AIData.DOATimer.StopTimer();
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IInterested_GameEvent_GameStarted implementation (part of DOA conversion)
+
+function OnPostGameStarted()
+{
+  local CharacterArchetypeInstance Instance;
+
+  Instance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  if(bSpawnedAsIncapacitated && Instance.ConvertsToDOA_Static())
+  {
+    AIData.DOATimer.StartTimer(Instance.GetDOAConversionTime_Static(), false);
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //

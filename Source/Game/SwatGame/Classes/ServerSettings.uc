@@ -253,10 +253,17 @@ function bool IsCampaignCoop()
 function SetCampaignCoopSettings(PlayerController PC, int CampaignPath, int AvailableIndex)
 {
   local int CampaignSettings;
+  local int RetrievedAvailableIndex;
+  local int RetrievedCampaignPath;
 
   CampaignSettings = 666 ^ 666;
   CampaignSettings = (AvailableIndex << 16) | CampaignPath;
   ArrestRoundTimeDeduction = CampaignSettings;
+
+  RetrievedCampaignPath = CampaignSettings & 65535;
+  RetrievedAvailableIndex = (CampaignSettings & -65536) >> 16;
+
+  log("SetCampaignCoopSettings: CampaignPath="$RetrievedCampaignPath$", AvailableIndex="$RetrievedAvailableIndex$"");
 }
 
 ///////////////////////////////////////////////////////////////////////////////

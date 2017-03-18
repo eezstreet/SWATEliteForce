@@ -124,7 +124,7 @@ function bool CheckCampaignValid( class EquipmentClass )
 				return false;
 
     // Check second set of equipment
-    for(i = GC.MissionName.Length + MissionIndex; i < GC.MissionEquipment.Length; ++i)
+    for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
       if(GC.MissionEquipment[i] == EquipmentClass)
         return false;
 	}

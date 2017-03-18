@@ -23,9 +23,10 @@ Since Version 3, the mod has gained a large following. I've since been able to e
   - GUI
   - Equipment
   - Mission Changes
-5. Version History
-6. Credits
-7. License
+5. How to play in Multiplayer
+6. Version History
+7. Credits
+8. License
 
 # HOW TO INSTALL #
 Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
@@ -106,7 +107,6 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
   * Not working when you launch the .bat? The whole SEF folder is supposed to be copied to your SWAT 4 folder. Please review the HOW TO INSTALL section.
   * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
-  * The game sometimes freezes during loading. Hit ENTER a few times and it will clear itself up. The internal script garbage collector crashes for reasons unknown but it's completely harmless.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
@@ -199,6 +199,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
   * You can now Un-Ready yourself in CO-OP games. You can only edit your equipment when you are not ready.
   * OUT OF THE WAY now the default for General MP menu.
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
+  * You no longer need a CD-key to publish a game to the Internet server browser.
 
 
 ## EQUIPMENT ##
@@ -350,14 +351,14 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- The armed waiter is Polite
 	- All patrons are Fearless
 	- Corrected typo in mission briefing timeline ("Alex Jimenez is observed entering Food Wall Restauraunt" -> "Alex Jimenez is observed entering Food Wall Restaurant")
-	- Unlocks the TASER stun gun
+	- Unlocks the TASER stun gun (X26)
 * Qwik Fuel Convenience Store
 	- There are sometimes drugs on the map that need to be found (hint: look in bathrooms)
 	- The suspects on this mission may be carrying drug evidence.
 	- Alice Jenkins is Insane and has a moderate chance (50%) to die from a taser
 	- The other suspects have a decent chance (35%) to die from a taser
 	- Made loading screen text consistent with other missions ("3721 Pitkin Avenue, Qwik Fuel" -> "3721 Pitkin Ave., Qwik Fuel")
-	- Unlocks the M4 Super90 Shotgun
+	- Unlocks the Remington M870 Shotgun
 * FunTime Amusements
 	- A penalty is no longer issued when suspects flush drugs
 	- Drug flushers are Polite
@@ -367,7 +368,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- Unlocks the Gas Mask
 * Victory Imports Auto Garage
 	- Made loading screen text consistent with other missions ("487 29th Avenue, Victory Imports" -> "487 29th Ave., Victory Imports")
-	- Unlocks the Beanbag Shotgun
+	- Unlocks the Less Lethal Nova and the Less Lethal M870
 * Our Sisters of Mercy Hostel
 	- Restored a cut conversation between Lead and TOC that triggers upon rescuing some of the civilians.
 	- Restored a cut conversation between Lead and TOC that triggers upon eliminating certain suspects.
@@ -377,7 +378,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- Removed objective: Rescue Lionel McArthur
 	- Fixed a bug with the suspects where they were holding the wrong weapon (code calls for M249 SAW, actual model displayed is M4 Carbine, and behavior makes sense in this context)
 	- Made loading screen text consistent with other missions ("Our Sisters of Mercy Halfway House, 796 Newbury St." -> "796 Newbury St., Our Sisters of Mercy")
-	- Unlocks the Pepperball Gun
+	- Unlocks the Pepperball Gun and the Suppressed Browning Hi-Power
 * A-Bomb Nightclub
 	- There are sometimes drugs on the map that need to be found (hint: look in bathrooms)
 	- The alley entry door now correctly has MAKE ENTRY commands on it.
@@ -400,7 +401,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- All of the static drug bags were removed. They have been replaced with drug evidence which can be collected.
 	- Andrew Norman is Insane and has a very small chance to die from the taser
 	- Made loading screen text consistent with other missions ("The Sellers Street Auditorium, 1801 Sellers St" -> "1801 Sellers St., The Sellers Street Auditorium")
-	- Unlocks the UMP 45
+	- Unlocks the UMP 45 and the MP5SSD6
 * DuPlessi Wholesale Diamonds
 	- No changes
 	- Unlocks the Grenade Launcher
@@ -415,17 +416,17 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 * Department of Agriculture
 	- Restored cut conversation between Lead and TOC where TOC says how many bombs are present (kind of important, don't you think?)
 	- Made loading screen text consistent with other missions ("Government Plaza, Offices of the Department of Agriculture, 2112 Geddy Avenue" -> "2112 Geddy Ave., The Department of Agriculture")
-	- Unlocks the Colt Python
+	- Unlocks the SG552 Commando and the Suppressed SG552 Commando
 * St. Micheal's Medical Center
 	- The Terrorists are Insane
 	- Hyun-Jun Park's Security Detail are Polite and will -never- attack
 	- Corrected various inconsistences in the mission strings (It's referred to as "Memorial Hospital" in the location info, and simply "St. Micheal's" in the loading screen, but "St. Micheal's Medical Center" in the voiceover)
-	- Unlocks the Silenced Uzi
+	- Unlocks the P226 and the Suppressed P226 pistols
 * The Wolcott Projects
 	- The homeless are Fearless
 	- The homeless have a very small chance to die from the taser
 	- The loading screen and dispatch are inconsistent. Dispatch says "1210 Canopy Road" while the loading screen and mission text say "Blakestone Avenue". Corrected the text to use the Canopy Road address instead.
-	- Unlocks the Tec-9
+	- Unlocks the ProArmor Helmet
 * Stetchkov Drug Lab
 	- CAUTION! May contain traps!
 	- Cut content restored: Conversation where Fields makes a sarcastic remark about this stuff "making your balls shrink"
@@ -437,12 +438,12 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- The civilians have a very small chance to die from the taser
 	- The suspects are Polite
 	- Made loading screen text consistent with other missions ("Stetchkov Drug Lab, 653 Tovanen St." -> "653 Tovanen St., Stetchkov Drug Lab")
-	- Unlocks the Blue Taser
+	- Unlocks the Taser C2 Series Stun Gun
 * Fresnal St. Station
 	- Cut content restored: Conversation where Lead tells TOC they found Officer Wilkins
 	- The elderly have a chance to die from the taser
 	- Fixed typos in briefing timeline ("First Units Arive" -> "First Units Arrive"; "First units arive and perimeter established" -> "First units arrive and perimeter established")
-	- Unlocks the ProTec Helmet
+	- Unlocks the HK33 and the Scoped HK33 rifles
 * Stetchkov Warehouse
 	- CAUTION! May contain traps!
 	- All of the external doors now correctly have MAKE ENTRY commands on them.
@@ -450,17 +451,30 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- The civilians are Fearless
 	- The suspects are Polite
 	- Made loading screen text consistent with other missions ("The Stetchkov Warehouse, 2770 Harrington Rd." -> "2770 Harrington Rd., The Stetchkov Warehouse")
-	- Unlocks the Desert Eagle
+	- Unlocks the ARWEN37 grenade launcher and the Colt Python pistol
 * Old Granite Hotel
 	- Cut content restored: Conversation where Jackson says "The bomb squad missed all the fun."
 	- Cut content restored: Lines for when the player disables bombs.
 	- Fixed wrong snipers. Sierra 1 was where Sierra 2 is supposed to be, and vice versa.
-	- Unlocks the AK-47
+	- Unlocks the MP5K Machine Pistol
 * Mt. Threshold Research Center
 	- The suspects are Insane
 	- Fixed a massive oversight (?) where the developers gave the suspects on this mission 9x more morale than they're supposed to.
-	- Unlocks the M249 SAW
+	- Does not unlock equipment. Use all of your acquired technology!
 
+# HOW TO PLAY IN MULTIPLAYER #
+SWAT: Elite Force v4 was the first version of this mod to allow for multiplayer play. v5 introduced Campaign CO-OP and allowed for publishing of games to Swat4Stats without a CD-key (removing DRM that GOG didn't).
+
+If you want to join a game:
+If the game you want is not hosted via LAN, then you will need the SWAT4Stats server browser plugin. It's available at http://swat4stats.com - make sure you get the TSS version. 
+After it is installed, your server list will show all of the servers, including the ones that are on different mods. Just join the one you want. There are a number of 24/7 SEF servers out there.
+If the game you want is hosted via LAN, or you cannot find the server in the list, you will need the host's external IP address (have the host look this up on http://myexternalip.com). You can then join the game from the Join Game menu using the IP address.
+
+If you want to host a game:
+First, you will need to open some ports on your router: 10480 - 10483, TCP/UDP. If you aren't sure how to do this, the following article explains it well: https://www.howtogeek.com/66214/how-to-forward-ports-on-your-router/
+OPTIONAL: If you want your game to be publically visible on the master server list (on swat4stats), you will need to install the Swat4Stats server browser plugin, available at http://swat4stats.com - You'll also want to set your game to be "Internet" and not "LAN" for this to work.
+If you aren't playing an Internet/Swat4Stats enabled game, you will need your external IP address for other players to connect. You can look this up on http://myexternalip.com
+Lastly, you need to determine what type of game you want to play. Regular CO-OP is handled through the Host Game menu ingame, but Campaign CO-OP is done through the Career menu - select a campaign and hit Career CO-OP. The "Equipment" panel will change to a "Settings" panel where you can configure a password, etc just like in Host Game.
 
 # VERSION HISTORY #
 
@@ -486,6 +500,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
   * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
   * New rifle/pistol ammo types: JSP (jacketed soft point) and AP (armor penetrating).
   * New shotgun ammo types: 0 buck, 1 buck, 4 buck
+  * The weapon handling (accuracy) received significant changes
 - Breaching improvements
   * All shotguns can now breach through doors. The Breaching Shotgun can break through any door with one shot, but other shotguns (particularly when dealing with metal doors) may take two or three shots to break open. (AI-controlled officers cannot breach with anything other than a Breaching Shotgun)
   * Broken doors can now be closed and/or wedged.
@@ -494,9 +509,10 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - DOA conversions
   * Hostages who start out as incapacitated may become a DOA after 10-15 minutes. 
   * Allowing hostages to become DOA may reduce your score.
-  * This is a sort of bonus to complete the mission quickly.
+  * This is an incentive to complete the mission quickly.
 
 #### MINOR/ALL CHANGES ####
+- Publishing Multiplayer games to Internet no longer requires a CD-key.
 - Added campaign co-op
 - Added SAS weapons
 - Added Less Lethal Remington M870 (Less Lethal version of an SAS weapon)
@@ -514,7 +530,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - Added campaign statistics information to Campaign Selection menu
 - Completely redid the New Equipment menu to handle two unlocks properly
 - Suspects can now employ a "wandering" behavior that allows them to pick patrol points randomly.
-- Snipers can now be used in multiplayer. Leaders can control the viewport, and all players receive notifications.
+- Snipers can now be used in multiplayer. All players can view the sniper viewport but only Leaders can control them.
 - Suspect equipment is only available in Multiplayer and All Missions campaigns now
 - Issuing a FALL IN command will now have the officers reload their weapons automatically
 - Added new voting configuration options for server hosts: TiesWin, CallCastVote, MinVoters, and NonVotersAreNo. You can edit them in Swat4x.ini/Swat4xDedicatedServer.ini. See Default.ini for more information.
@@ -522,6 +538,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 - At the end of a multiplayer game, the next map is listed just above the Ready button
 - Mission Completed accounts for 40 points in the score, instead of 45.
 - No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed.
+- The MP viewports now make sense - Red Viewport (Insert key) will cycle between Red players, Blue Viewport (Home key) will cycle between Blue players and Sniper Viewport (Page Up) will cycle between snipers.
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
 - Cut dialogue restored: Hostages will now freak out when other hostages die

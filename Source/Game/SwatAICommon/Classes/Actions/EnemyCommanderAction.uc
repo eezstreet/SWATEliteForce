@@ -668,7 +668,7 @@ function NotifyEnemyShotByEnemy(Pawn EnemyShot, float Damage, Pawn EnemyInstigat
 
 private function TriggerShotAFriendSpeech(Pawn EnemyInstigator)
 {
-	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerShotAFriendSpeech();
+	ISwatEnemy(EnemyInstigator).GetEnemySpeechManagerAction().TriggerShotAFriendSpeech();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
