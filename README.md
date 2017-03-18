@@ -486,6 +486,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
   * The SAS mod has generously allowed us to use some of their weapons in the mod. See the SAS weapons section for more details.
   * New rifle/pistol ammo types: JSP (jacketed soft point) and AP (armor penetrating).
   * New shotgun ammo types: 0 buck, 1 buck, 4 buck
+  * The weapon handling (accuracy) received significant changes
 - Breaching improvements
   * All shotguns can now breach through doors. The Breaching Shotgun can break through any door with one shot, but other shotguns (particularly when dealing with metal doors) may take two or three shots to break open. (AI-controlled officers cannot breach with anything other than a Breaching Shotgun)
   * Broken doors can now be closed and/or wedged.
