@@ -1,3 +1,4 @@
+// StaticEvidence is fixed in place and does not respond to physics
 class StaticEvidence extends RWOSupport.ReactiveStaticMesh
     implements IEvidence, ICanBeSpawned, IUseArchetype
     abstract;
@@ -57,9 +58,6 @@ function InitializeFromSpawner(Spawner Spawner)
 {
     SpawnedFrom = InanimateSpawner(Spawner);
     SpawnedFromName = Spawner.Name;
-    SetPhysics(PHYS_Falling);
-  	bCollideWorld=true;
-  	SetCollision(true,true,true);
 }
 
 function Internal_InitializeFromArchetypeInstance(ArchetypeInstance inInstance)  //FINAL!

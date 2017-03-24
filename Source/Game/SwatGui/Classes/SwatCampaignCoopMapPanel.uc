@@ -34,8 +34,11 @@ private function SetMap()
   SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
 
   SGRI.NextMap = CurrentMap;
-  GC.SetDesiredEntryPoint(CurrentEntry);
+  GC.SetDesiredEntryPoint(eEntryType(MyEntryBox.GetIndex()));
   GC.CurrentDifficulty = CurrentDifficulty;
+  GC.SaveConfig();
+
+  log(self$": SetMap(): SGRI.NextMap = "$CurrentMap$", GC.DesiredEntryPoint = "$CurrentEntry$", GC.CurrentDifficulty = "$CurrentDifficulty$"");
 }
 
 private function ClearMap()
@@ -56,11 +59,6 @@ private function DifficultyChanged()
 {
   CurrentDifficulty = eDifficultyLevel(MyDifficultyBox.GetIndex());
   MyRequirementLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(CurrentDifficulty)] ) );
-}
-
-private function EntryChanged()
-{
-  CurrentEntry = eEntryType(MyEntryBox.GetIndex());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -89,9 +87,6 @@ function CommonOnChange(GUIComponent Sender)
       break;
     case MyDifficultyBox:
       DifficultyChanged();
-      break;
-    case MyEntryBox:
-      EntryChanged();
       break;
   }
 }

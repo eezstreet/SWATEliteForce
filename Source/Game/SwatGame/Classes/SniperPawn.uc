@@ -6,9 +6,9 @@ class SniperPawn extends SwatPawn
 // =============================================================================
 // SniperPawn
 //
-// The SniperPawn is a SwatPawn that is a member of the SWAT team and uses a SniperRifle. 
+// The SniperPawn is a SwatPawn that is a member of the SWAT team and uses a SniperRifle.
 // The player can control him through a viewport, and snipe enemies from his vantage point.
-// Designers place these in the level and be off and running.  
+// Designers place these in the level and be off and running.
 //
 // =============================================================================
 
@@ -16,10 +16,10 @@ var() private int      YawClampAngle "How many degrees this sniper is allowed to
 var() private int      PitchClampAngle "How many degrees this sniper is allowed to rotate on Pitch.";
 var        string      SniperName "Set this to either \"Sierra 1\" or \"Sierra 2\" based on which sniper team this pawn represents.";
 
-var private config Material SniperOverlay;              // Texture overlay used for the scope 
+var private config Material SniperOverlay;              // Texture overlay used for the scope
 var private config class<FiredWeapon> SniperRifleClass; // Class of the sniperrifle weapon
 var private FiredWeapon SniperRifle;                    // Instance of this Sniper's SniperRifle
-    
+
 var private float        CurrentFOV;                    // The actual current FOV which lerps to the different FOVLevels
 var() private config array<float> FOVLevels;              // The different FOV levels that pressing the right mouse button will cycle through
 var() private config array<float> NoiseAmplitudeByFOVLevel;
@@ -50,22 +50,32 @@ var private config const float kSniperHorizontalNoiseDamping;
 var private float ScaledMovementAmplitude;
 var private float AddedMovementFrequency;
 
-function PostBeginPlay()
+replication
+{
+  reliable if(Role == ROLE_Authority)
+    SniperName, ReloadTimer, ReloadSoundTimer, bReloading, SniperRifle, InitialRotation, FOVIndex, CurrentFOV, CreateSniperRifle;
+}
+
+simulated function CreateSniperRifle()
+{
+  // Create my SniperRifle
+  SniperRifle = Spawn(SniperRifleClass, Self);
+  SniperRifle.OnGivenToOwner();
+  SniperRifle.Equip();
+  //log("SniperOverlay is: "$SniperOverlay);
+}
+
+simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
-	// Snipers are disabled in multiplayer!
     if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bShowEnemyNames))
     {
         Destroy();
         return;
     }
 
-    // Create my SniperRifle
-    SniperRifle = Spawn(SniperRifleClass, Self);
-    SniperRifle.OnGivenToOwner();
-    SniperRifle.Equip();
-    //log("SniperOverlay is: "$SniperOverlay);
+    CreateSniperRifle();
 
     InitialRotation = Rotation;
 
@@ -74,13 +84,13 @@ function PostBeginPlay()
 
 }
 
-function OnReloadSoundTimer()
+simulated function OnReloadSoundTimer()
 {
     SniperRifle.TriggerEffectEvent( 'Reloaded' );
 
     // optimization: destroy the timer that called this callback
-    // so it's not hanging around waiting for another shot to be 
-    // fired; we'll create a new one in HandleFire if the user 
+    // so it's not hanging around waiting for another shot to be
+    // fired; we'll create a new one in HandleFire if the user
     // fires again
 	//log("Destroying ReloadSoundTimer "$ReloadSoundTimer);
     ReloadSoundTimer.Destroy();
@@ -95,13 +105,13 @@ function OnReloadSoundTimer()
     ReloadTimer.StartTimer( ReloadTime );
 }
 
-function OnReloadTimer()
+simulated function OnReloadTimer()
 {
     bReloading = false;
 
     // optimization: destroy the timer that called this callback
-    // so it's not hanging around waiting for another shot to be 
-    // fired; we'll create a new one in HandleFire if the user 
+    // so it's not hanging around waiting for another shot to be
+    // fired; we'll create a new one in HandleFire if the user
     // fires again
 	//log("Destroying ReloadTimer "$ReloadTimer);
     ReloadTimer.Destroy();
@@ -111,17 +121,17 @@ function OnReloadTimer()
 //======================================================================
 // IControllableThroughViewport Interface
 //======================================================================
-function Actor GetViewportOwner()
+simulated function Actor GetViewportOwner()
 {
     return Self;
 }
 
-function string  GetViewportType()
+simulated function string  GetViewportType()
 {
     return string(name);
 }
 
-function string  GetViewportName()
+simulated function string  GetViewportName()
 {
     return SniperName;
 }
@@ -134,7 +144,7 @@ simulated function            OnMouseAccelerated( out Vector MouseAccel )
 }
 
 // Called whenever the mouse is moving (and this controllable is being controlled)
-function            AdjustMouseAcceleration( out Vector MouseAccel )
+simulated function            AdjustMouseAcceleration( out Vector MouseAccel )
 {
     MouseAccel.X += PerlinNoiseYaw.Noise1( Level.TimeSeconds * (kSniperBaseFrequency + AddedMovementFrequency) ) * GetScaledNoiseAmplitude() * kSniperHorizontalNoiseDamping;
     MouseAccel.Y += PerlinNoisePitch.Noise1( Level.TimeSeconds * (kSniperBaseFrequency + AddedMovementFrequency) ) * GetScaledNoiseAmplitude();
@@ -144,7 +154,7 @@ function            AdjustMouseAcceleration( out Vector MouseAccel )
     //log("ScaledMovementAmplitude: "$ScaledMovementAmplitude);
 }
 
-function float GetScaledNoiseAmplitude()
+simulated function float GetScaledNoiseAmplitude()
 {
     return ((NoiseAmplitudeByFOVLevel[FOVIndex] + ScaledMovementAmplitude)  // Combined amplitude of the base amplitude plus any movement penalty
             * 1024                                                             // Scaled by 1024 to give a reasonable scale of about 3 degrees for every amplitude unit
@@ -152,14 +162,14 @@ function float GetScaledNoiseAmplitude()
 }
 
 // Possibly offset from the controlled direction
-function OffsetViewportRotation( out Rotator ViewportRotation )
+simulated function OffsetViewportRotation( out Rotator ViewportRotation )
 {
     return;
  }
 
-function string  GetViewportDescription()
+simulated function string  GetViewportDescription()
 {
-    return "x" $ (FovIndex+1);                             
+    return "x" $ (FovIndex+1);
 }
 
 simulated function bool   CanIssueCommands()
@@ -167,62 +177,63 @@ simulated function bool   CanIssueCommands()
     return false;
 }
 
-function Vector  GetViewportLocation()
+simulated function Vector  GetViewportLocation()
 {
     return Location;
 }
-function Rotator GetViewportDirection()
+simulated function Rotator GetViewportDirection()
 {
     return Rotation;
 }
 
-function  SetRotationToViewport(Rotator inNewRotation)
+simulated function  SetRotationToViewport(Rotator inNewRotation)
 {
     SetRotation(inNewRotation);
 }
 
-function float   GetViewportPitchClamp()
+simulated function float   GetViewportPitchClamp()
 {
     return PitchClampAngle;
 }
 
-function float   GetViewportYawClamp()
+simulated function float   GetViewportYawClamp()
 {
     return YawClampAngle;
 }
 
-function Material GetViewportOverlay()
+simulated function Material GetViewportOverlay()
 {
     return SniperOverlay;
 }
 
-function bool   ShouldDrawViewport()
+simulated function bool   ShouldDrawViewport()
 {
     return !bDeleteMe;
 }
 
 // Snipers have their reticle in their overlay!
-function bool   ShouldDrawReticle()
+simulated function bool   ShouldDrawReticle()
 {
     return false;
 }
 
-function float   GetFOV()
+simulated function float   GetFOV()
 {
     CurrentFOV = lerp( 0.3, CurrentFOV, FOVLevels[FOVIndex]);
     return CurrentFOV;
 }
 
-function HandleReload()
+simulated function HandleReload()
 {
     // Note: we have to call ReloadedHook() here because the Reload code in FiredWeapon is heavily reliant on having an animation played to reload, the sniper rifle and sniper pawn
-    // however have no mesh associated, and no animations.  Technically this is only possible because ReloadedHook isn't declared as protected, though it probably should be, but I won't say anything if you don't *wink*. 
+    // however have no mesh associated, and no animations.  Technically this is only possible because ReloadedHook isn't declared as protected, though it probably should be, but I won't say anything if you don't *wink*.
     if ( SniperRifle.CanReload() )
         SniperRifle.ReloadedHook();
 }
 
-function HandleFire()
+simulated function HandleFire()
 {
+    log("SniperPawn("$self$")::HandleFire: SniperRifle("$SniperRifle$").NeedsReload("$SniperRifle.NeedsReload()$"), bReloading("$bReloading$")");
     if ( !SniperRifle.NeedsReload() && !bReloading )
     {
         SniperRifle.TriggerEffectEvent('Fired');
@@ -248,51 +259,57 @@ function HandleFire()
     }
 }
 
-function HandleAltFire()
+simulated function HandleAltFire()
 {
     FOVIndex = (FOVIndex + 1) % FOVLevels.Length;
     SniperRifle.TriggerEffectEvent('ZoomModeChanged');
 }
 
 // Return the original rotation...
-function Rotator    GetOriginalDirection()
+simulated function Rotator    GetOriginalDirection()
 {
     return InitialRotation;
 }
 
 // For controlling...
-function float      GetViewportPitchSpeed()
+simulated function float      GetViewportPitchSpeed()
 {
     return 0.5;
 }
 
 // For controlling...
-function float      GetViewportYawSpeed()
+simulated function float      GetViewportYawSpeed()
 {
     return 0.5;
 }
 
-function            OnBeginControlling()
+simulated function            OnBeginControlling()
 {
     PerlinNoiseYaw.Reinitialize();
     PerlinNoisePitch.Reinitialize();
     SetRotation(InitialRotation);
 }
 
-function            OnEndControlling();
+simulated function            OnEndControlling();
 
 //======================================================================
 
-function Tick(float DeltaTime)
+simulated function Tick(float DeltaTime)
 {
     LastDeltaTime = DeltaTime;
 }
+
+//======================================================================
+
+
 
 defaultproperties
 {
     Physics=PHYS_None
     bStasis=false
     bHidden=true
+    bAlwaysRelevant=true
+    RemoteRole=ROLE_AutonomousProxy
     bCollideActors              = false
     bCollideWorld               = false
     bBlockPlayers               = false
@@ -312,11 +329,12 @@ defaultproperties
     YawClampAngle=45
     PitchClampAngle=45
     SniperName="Sierra 1"
+    SniperRifleClass=Class'SwatEquipment.SniperRifle'
     ReloadTime=1
     ReloadSoundTime=1
 // frequency of the noise that gets applied when the sniper view isn't moved
     kSniperBaseFrequency=0.75
-// this frequency gets added to the base frequency above whenever the viewport is moved 
+// this frequency gets added to the base frequency above whenever the viewport is moved
     kSniperMovementAddedFrequency=0.0
 // Base amplitude for the noise that gets applied when the sniper view isn't moved
 // Each unit is about 3 times the current zoom mode degrees.

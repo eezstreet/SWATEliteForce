@@ -1,4 +1,5 @@
-class KarmaEvidence extends RWOSupport.ReactiveKarmaActor
+// ReactiveEvidence falls down when spawned, and can be tossed around via flashbangs, etc
+class ReactiveEvidence extends RWOSupport.ReactiveStaticMesh
     implements IEvidence, ICanBeSpawned, IUseArchetype
     abstract;
 
@@ -8,6 +9,8 @@ var private Name SpawnedFromName;
 var protected ArchetypeInstance ArchetypeInstance;
 
 var private bool Secured;
+
+var() config bool DropOnSpawn "Whether this piece of evidence falls upon spawning";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +60,13 @@ function InitializeFromSpawner(Spawner Spawner)
 {
     SpawnedFrom = InanimateSpawner(Spawner);
     SpawnedFromName = Spawner.Name;
+    if(DropOnSpawn)
+    {
+      SetRotation(Rot(0,0,0));
+      SetPhysics(PHYS_Falling);
+      bCollideWorld=true;
+      SetCollision(true,true,true);
+    }
 }
 
 function Internal_InitializeFromArchetypeInstance(ArchetypeInstance inInstance)  //FINAL!
@@ -74,9 +84,20 @@ function Spawner GetSpawner()
     return SpawnedFrom;
 }
 
+simulated function PostNetBeginPlay()
+{
+    Super.PostNetBeginPlay();
+
+    ReactToTriggered( None );
+}
+
 defaultproperties
 {
     bNoDelete=false
     RemoteRole=ROLE_DumbProxy
     bAlwaysRelevant=true
+    DropOnSpawn=true
+    CollisionRadius=20
+  	CollisionHeight=5
+    bStatic=false
 }

@@ -52,7 +52,7 @@ var private Rotator   OriginalRotation;
 const ViewLerpAlpha = 8;
 const LocLerpAlpha = 6;
 
-#define DEBUG_OFFICERVIEWPORTS 0
+#define DEBUG_OFFICERVIEWPORTS 1
 
 simulated function PostBeginPlay()
 {
@@ -91,7 +91,7 @@ simulated function ShowViewport(string inFilter, optional string inSpecificContr
     if ( !SetFilter(inFilter) || inSpecificControllableFilter != "" )
         CycleControllableViewport(inSpecificControllableFilter);
 #if DEBUG_OFFICERVIEWPORTS
-    mplog( "Showing viewport on controllable: "$GetCurrentControllable().GetViewportName() );
+  log( "Showing viewport on controllable: "$GetCurrentControllable().GetViewportName() );
 #endif
     if ( GetCurrentControllable() != None )
     {
@@ -107,7 +107,7 @@ simulated function bool SetFilter(string inFilter)
 {
     local int ct;
 #if DEBUG_OFFICERVIEWPORTS
-    mplog(" SetFilter: inFilter = "$inFilter );
+    log(" SetFilter: inFilter = "$inFilter );
 #endif
     if ( Filter != inFilter )
     {
@@ -123,7 +123,7 @@ simulated function bool SetFilter(string inFilter)
                 if ( ControllableMatchesFilter( AllControllable[ct], Filter ) )
                 {
 #if DEBUG_OFFICERVIEWPORTS
-                    mplog("[dkaplan] ... Adding Controllable: "$AllControllable[ct] );
+                    log("[dkaplan] ... Adding Controllable: "$AllControllable[ct] );
 #endif
                     CurrentControllables.Insert( CurrentControllables.Length, 1 );
                     CurrentControllables[CurrentControllables.Length-1] = AllControllable[ct];
@@ -163,7 +163,7 @@ simulated function bool ShouldControlViewport()
   if(Level.NetMode != NM_Standalone)
   {
     PlayerReplicationInfo = SwatPlayerReplicationInfo(Controller.PlayerReplicationInfo);
-    if(!(Filter ~= "sniper"))
+    if(Filter ~= "sniper")
     {
       return false;
     }
@@ -182,13 +182,13 @@ simulated function Initialize()
     local int   NumOfficers;
 
 #if DEBUG_OFFICERVIEWPORTS
-    mplog( "searching through all actors of class: "$BaseControllableClass );
+    log( "searching through all actors of class: "$BaseControllableClass );
 #endif
     AllControllable.Length = 0;
     foreach DynamicActors( BaseControllableClass, TestControllable)
     {
 #if DEBUG_OFFICERVIEWPORTS
-        mplog( "ExternalViewportManager::Initialize() testing: "$TestControllable$" to see if it is a IControllableThroughViewport.  Is it? "$IControllableThroughViewport(TestControllable) );
+        log( "ExternalViewportManager::Initialize() testing: "$TestControllable$" to see if it is a IControllableThroughViewport.  Is it? "$IControllableThroughViewport(TestControllable) );
 #endif
         if ( IControllableThroughViewport(TestControllable) != None && IControllableThroughViewport(TestControllable).GetViewportOwner() != Controller(Owner).Pawn )
         {
@@ -204,13 +204,13 @@ simulated function Initialize()
         return;
     }
 
-    if ( Level.NetMode == NM_Standalone || (Level.GetLocalPlayerController() == Owner) )
-    {
+//    if ( Level.NetMode == NM_Standalone || (Level.GetLocalPlayerController() == Owner) )
+//    {
         // Initialize the HUD GUI component corresponding to this viewport
         GUIParent =  SwatGamePlayerController(Owner).GetHUDPage().ExternalViewport;
         GUIParent.OnClientDraw = Render;    // Rendering will be handled by this class
         GUIParent.Hide();
-    }
+//    }
 }
 
 simulated function bool HasOfficers( string ViewportType )
@@ -218,12 +218,12 @@ simulated function bool HasOfficers( string ViewportType )
     local int ct;
 
 #if DEBUG_OFFICERVIEWPORTS
-    mplog( "ExternalViewportManager::HasOfficers(" $ViewportType$ "), AllControllable: "$AllControllable.Length );
+    log( "ExternalViewportManager::HasOfficers(" $ViewportType$ "), AllControllable: "$AllControllable.Length );
 #endif
     for ( ct = 0; ct < AllControllable.Length; ++ct )
     {
 #if DEBUG_OFFICERVIEWPORTS
-        mplog( "Testing "$AllControllable[ct].GetViewportType()$", against type: "$ViewportType );
+        log( "Testing "$AllControllable[ct].GetViewportType()$", against type: "$ViewportType );
 #endif
         if ( InStr( Caps(AllControllable[ct].GetViewportType()), Caps(ViewportType) ) >= 0 )
         {
@@ -237,7 +237,7 @@ simulated function bool HasOfficers( string ViewportType )
 simulated function SetCurrentControllable( IControllableThroughViewport NewControllable )
 {
 #if DEBUG_OFFICERVIEWPORTS
-    mplog( "SetCurrentControllable: "$NewControllable );
+    log( "SetCurrentControllable: "$NewControllable );
 #endif
     iCurrentControllable = 0;
     if ( NewControllable != None )
@@ -300,7 +300,7 @@ simulated function bool IncrementControllableAndTestValidity()
 simulated function CycleControllableViewport( optional string SpecificControllableFilter )
 {
 #if DEBUG_OFFICERVIEWPORTS
-    mplog("CycleControllableViewport: SpecificControllableFilter = "$SpecificControllableFilter );
+    log("CycleControllableViewport: SpecificControllableFilter = "$SpecificControllableFilter );
 #endif
     if ( SpecificControllableFilter != "" )
     {
@@ -572,6 +572,12 @@ simulated event Destroyed()
     SwatGameInfo(Level.Game).GameEvents.MissionEnded.UnRegister(Self);
 
     Super.Destroyed();
+}
+
+replication
+{
+  reliable if(Role == ROLE_Authority)
+    Filter;
 }
 
 defaultproperties

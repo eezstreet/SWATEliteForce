@@ -405,7 +405,7 @@ var config float FirstPersonFOV;
 var protected Hands Hands;
 var bool bRenderHands; // if false, the first person Hands (and hence weapon) will not be rendered
 
-var private HandheldEquipment ActiveItem;   //access with GetActiveItem(), set by the equipping process
+var protected HandheldEquipment ActiveItem;   //access with GetActiveItem(), set by the equipping process
 
 //The PendingItem is the item that will be equipped as soon as
 //  the ActiveItem is finished being UnEquipped.
@@ -472,7 +472,7 @@ replication
          Controller, GroundSpeed, WaterSpeed, AirSpeed, AccelRate, JumpZ, AirControl;   //TMC removed SelectedItem,
          //ActiveItem, PendingItem;
 	reliable if( bNetDirty && Role==ROLE_Authority )
-         Health, DesiredItemPocket;
+         Health, DesiredItemPocket, ActiveItem;
     unreliable if ( !bNetOwner && Role==ROLE_Authority )
 #if IG_SWAT
 		DesiredLeanState,

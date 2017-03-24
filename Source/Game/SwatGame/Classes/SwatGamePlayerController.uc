@@ -953,11 +953,13 @@ function ServerActivateOfficerViewport( bool ShouldActivate, optional string Vie
         if (Level.GetEngine().EnableDevTools)
             mplog( "Setting viewporttype manually for netgame");
 
+        log(self$"--ServerActivateOfficerViewport - ShouldActivate :"$ShouldActivate$", ViewportType = "$ViewportType);
+
         // We need to convert the viewport type into co-op teams
         if(ViewportType ~= "Red")
-          ViewportType = "TeamA";
-        else if(ViewportType ~= "Blue")
           ViewportType = "TeamB";
+        else if(ViewportType ~= "Blue")
+          ViewportType = "TeamA";
 
         if (Level.GetEngine().EnableDevTools)
             mplog( "Setting viewporttype manually for netgame to "$ViewportType );
@@ -1059,12 +1061,12 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
 {
     ActiveViewport = inNewViewport;
 
-    //log ( "ActiveViewport actor is: "$Actor(ActiveViewport) );
-    //log ( "IControllableViewport of Actor is: "$IControllableViewport(Actor(ActiveViewport)) );
+    log ( "ActiveViewport actor is: "$Actor(ActiveViewport) );
+    log ( "IControllableViewport of Actor is: "$IControllableViewport(Actor(ActiveViewport)) );
 
     if ( ActiveViewport != None )
     {
-        //log("Going to state: "$ActiveViewport.GetControllingStateName());
+        log("Going to state: "$ActiveViewport.GetControllingStateName());
         GotoState(ActiveViewport.GetControllingStateName());
     }
 }
@@ -1921,6 +1923,8 @@ exec function ShowViewport(string ViewportType)
 {
     local string SpecificOfficer;
     local IControllableThroughViewport SavedReplicatedViewportTeammate;
+
+    log("ShowViewport: "$ViewportType);
 
     if ( !GetHUDPage().ExternalViewport.bVisible )
         bControlViewport = 0;

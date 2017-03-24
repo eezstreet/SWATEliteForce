@@ -738,6 +738,28 @@ private simulated function ReactivateNearbyRagdolls()
 private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 {
 	// Ignore if this door does not act as an antiportal
+	SetAntiportal(Enabled);
+
+  SetMPBlockingVolume(Enabled);
+}
+
+simulated function SetMPBlockingVolume(bool Enabled)
+{
+	if (DoorBufferVolume != None)
+	{
+			if (Enabled)
+			{
+					DoorBufferVolume.EnableRepulsion();
+			}
+			else
+			{
+					DoorBufferVolume.DisableRepulsion();
+			}
+	}
+}
+
+simulated function SetAntiportal(bool Enabled)
+{
 	if (bIsAntiPortal && DoorAntiPortal != None)
     {
 	    if (Enabled && !bIsBroken)
@@ -753,18 +775,6 @@ private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 
 	    //assertWithDescription(!bIsAntiPortal || Enabled == IsAntiPortalOn(), "[ckline] After SetAntiPortalAndMPBlockingVolume("$Enabled$") on Door '"$self$"', IsAntiPortalOn() == "$(!Enabled)$" -- this is not right.");
 		//mezzo: We dont need this assertion really anymore
-    }
-
-    if (DoorBufferVolume != None)
-    {
-        if (Enabled)
-        {
-            DoorBufferVolume.EnableRepulsion();
-        }
-        else
-        {
-            DoorBufferVolume.DisableRepulsion();
-        }
     }
 }
 
@@ -1191,6 +1201,9 @@ simulated function Broken()
         //if (IsWedged())
         //    DeployedWedge.OnRemoved();
 				// eez- don't remove wedges unless we are blown up by C2
+
+				// [eez] remove the antiportal (#66)
+				SetAntiportal(false);
 
 		// update officer door knowledge in standalone
 		UpdateOfficerDoorKnowledge();
