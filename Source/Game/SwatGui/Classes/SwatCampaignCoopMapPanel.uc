@@ -52,7 +52,24 @@ private function ClearMap()
 
 private function MapChanged()
 {
+  local SwatMission MissionInfo;
+  local int i;
+
   CurrentMap = MyMapsList.List.Get();
+  MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
+
+  MyEntryBox.Clear();
+  for(i = 0; i < MissionInfo.EntryOptionTitle.Length; i++)
+  {
+    if(i == 0)
+    {
+      MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Primary)");
+    }
+    else
+    {
+      MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Secondary)");
+    }
+  }
 }
 
 private function DifficultyChanged()

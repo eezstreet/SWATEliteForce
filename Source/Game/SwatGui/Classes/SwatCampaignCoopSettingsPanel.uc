@@ -38,9 +38,6 @@ function InitComponent(GUIComponent MyOwner)
     MyDifficultyComboBox.AddItem(GC.DifficultyString[i]);
   }
 
-  MyEntryComboBox.AddItem(PrimaryEntranceLabel);
-  MyEntryComboBox.AddItem(SecondaryEntranceLabel);
-
   MyPublishModeBox.AddItem(LANString);
   MyPublishModeBox.AddItem(GAMESPYString);
 
@@ -78,15 +75,13 @@ function ComboBoxOnChange(GUIComponent Sender)
     case MyEntryComboBox:
       GC.SetDesiredEntryPoint(EEntryType(Element.GetIndex()));
       break;
-    case MyPublishModeBox:
-    // This doesn't alter anything directly
-      break;
   }
 }
 
 function InternalOnActivate()
 {
   local ServerSettings Settings;
+  local int i;
 
   Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 
@@ -104,6 +99,19 @@ function InternalOnActivate()
 
   MyMaxPlayersSpinner.SetValue(Settings.MaxPlayers, true);
   MyNameBox.SetText(GC.MPName);
+
+  MyEntryComboBox.Clear();
+  for(i = 0; i < GC.CurrentMission.EntryOptionTitle.Length; i++)
+  {
+    if(i == 0)
+    {
+      MyEntryComboBox.AddItem(GC.CurrentMission.EntryOptionTitle[i] $ " (Primary)");
+    }
+    else
+    {
+      MyEntryComboBox.AddItem(GC.CurrentMission.EntryOptionTitle[i] $ " (Secondary)");
+    }
+  }
 
   PopulateCampaignUnlocks();
 }
