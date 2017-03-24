@@ -104,10 +104,14 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 
 # KNOWN ISSUES #
   * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
+  * If you're missing equipment in Singleplayer, note that you need to unlock it first.
   * Not working when you launch the .bat? The whole SEF folder is supposed to be copied to your SWAT 4 folder. Please review the HOW TO INSTALL section.
   * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
+  * You can't actually fire the sniper rifle in Multiplayer yet.
+  * Sometimes crashes with a RotateActorAction, for reasons that aren't known.
+  * Officers sometimes won't shoot suspects if they're very close to them. It's a problem in the original game as well.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
   * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
@@ -539,6 +543,8 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Mission Completed accounts for 40 points in the score, instead of 45.
 - No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed.
 - The MP viewports now make sense - Red Viewport (Insert key) will cycle between Red players, Blue Viewport (Home key) will cycle between Blue players and Sniper Viewport (Page Up) will cycle between snipers.
+- Clarified some text in the Training mission
+- Adjusted the positions of some drug evidence in Sellers Street Auditorium so that it doesn't fall through the floor as easily.
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
 - Cut dialogue restored: Hostages will now freak out when other hostages die
@@ -554,7 +560,9 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: Log being spammed with messages about trap penalties
 - Fixed SEF bug: Log being spammed with "Fast trace blocked!"
 - Fixed SEF bug: AI-controlled officers not shouting for compliance correctly in some situations
-- Fixed SEF bug: Possible crash fix
+- Fixed SEF bug: CS gas turning black in some situations
+- Fixed SEF bug: Officers not spawning with any equipment in the Training mission
+- Fixed SEF bug: Briefcase on Mt. Threshold Research Center sometimes falling through the floor
 - Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
 - Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
 - Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
