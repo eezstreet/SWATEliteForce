@@ -11,7 +11,6 @@ var protected ArchetypeInstance ArchetypeInstance;
 var private bool Secured;
 
 var() config bool DropOnSpawn "Whether this piece of evidence falls upon spawning";
-var() config bool RandomizeYaw "Whether to randomize the yaw angle when this object is spawned.";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -63,14 +62,7 @@ function InitializeFromSpawner(Spawner Spawner)
     SpawnedFromName = Spawner.Name;
     if(DropOnSpawn)
     {
-      if(RandomizeYaw)
-      {
-        SetRotation(Rot(0, RandRange(0, 360), 0));
-      }
-      else
-      {
-        SetRotation(Rot(0,0,0));
-      }
+      SetRotation(Rot(0,0,0));
       SetPhysics(PHYS_Falling);
       bCollideWorld=true;
       SetCollision(true,true,true);
