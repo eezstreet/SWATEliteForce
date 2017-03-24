@@ -13,6 +13,7 @@ var(SWATGui) EditInline Config GUIComboBox MyDifficultyComboBox;
 var(SWATGui) EditInline Config GUIComboBox MyEntryComboBox;
 var(SWATGui) EditInline Config GUILabel MyDifficultySuccessLabel;
 var(SWATGui) EditInline Config GUIComboBox MyPublishModeBox;
+var(SWATGui) EditInline Config GUIScrollTextBox MyEntryDescription;
 
 // Server Info Panel
 var(SWATGui) EditInline Config GUILabel MyServerNameLabel;
@@ -74,6 +75,7 @@ function ComboBoxOnChange(GUIComponent Sender)
       break;
     case MyEntryComboBox:
       GC.SetDesiredEntryPoint(EEntryType(Element.GetIndex()));
+      MyEntryDescription.SetContent(GC.CurrentMission.EntryDescription[Element.GetIndex()]);
       break;
   }
 }

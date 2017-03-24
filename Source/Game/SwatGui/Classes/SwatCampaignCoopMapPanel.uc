@@ -10,6 +10,7 @@ var(SWATGui) private EditInline config GUIComboBox MyEntryBox;
 var(SWATGui) private EditInline config GUILabel MyRequirementLabel;
 var(SWATGui) private EditInline config GUIButton MySetMapButton;
 var(SWATGui) private EditInline config GUIButton MyClearMapButton;
+var(SWATGui) private EditInline config GUIScrollTextBox MyEntryDescription;
 
 var() localized config string PrimaryEntranceLabel;
 var() localized config string SecondaryEntranceLabel;
@@ -69,6 +70,7 @@ private function MapChanged()
     {
       MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Secondary)");
     }
+    MyEntryDescription.SetContent(MissionInfo.EntryDescription[i]);
   }
 }
 
@@ -76,6 +78,15 @@ private function DifficultyChanged()
 {
   CurrentDifficulty = eDifficultyLevel(MyDifficultyBox.GetIndex());
   MyRequirementLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(CurrentDifficulty)] ) );
+}
+
+private function EntryChanged(int ChangedTo)
+{
+  local SwatMission MissionInfo;
+
+  MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
+
+  MyEntryDescription.SetContent(MissionInfo.EntryDescription[ChangedTo]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,6 +115,9 @@ function CommonOnChange(GUIComponent Sender)
       break;
     case MyDifficultyBox:
       DifficultyChanged();
+      break;
+    case MyEntryBox:
+      EntryChanged(MyEntryBox.GetIndex());
       break;
   }
 }
@@ -197,14 +211,12 @@ function InitComponent(GUIComponent MyOwner)
 
   MyDifficultyBox.OnChange=CommonOnChange;
   MyMapsList.OnChange=CommonOnChange;
+  MyEntryBox.OnChange=CommonOnChange;
 
   for(i = 0; i < eDifficultyLevel.EnumCount; i++)
   {
     MyDifficultyBox.AddItem(GC.DifficultyString[i]);
   }
-
-  MyEntryBox.AddItem(PrimaryEntranceLabel);
-  MyEntryBox.AddItem(SecondaryEntranceLabel);
 }
 
 private function InternalOnActivate()
