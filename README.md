@@ -523,6 +523,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Added JSP, AP, 0 buck, 1 buck, 4 buck ammo types
 - Added player permadeath option
 - Added officer permadeath option
+- Added custom voice acting (by Grimith) to Adam Moretti so he actually speaks now
 - Civilians who are incapacitated at the start of the level can now become DOA after 5-10 minutes. Allowing a hostage to become DOA will have a negative effect on your score.
 - Officers may now take cover and crouch
 - Doors breached with the shotgun are not "swung open." Only C2 can "blast a door open."
@@ -563,6 +564,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: CS gas turning black in some situations
 - Fixed SEF bug: Officers not spawning with any equipment in the Training mission
 - Fixed SEF bug: Briefcase on Mt. Threshold Research Center sometimes falling through the floor
+- Fixed SEF bug: Adam Moretti (Meat Barn enemy) appears as "Simon Gowan" in the subtitles
 - Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
 - Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
 - Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
@@ -985,6 +987,7 @@ Ryo Ohki for a tip about P90 and SAW animations
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
+Adam Moretti Voice-Over: Grimith
 
 ELITE SUPPORTERS
 These people have generously donated money to Elite Force via Patreon. If you are interested in helping out, you can find our Patreon page here: https://www.patreon.com/user?u=4885526
