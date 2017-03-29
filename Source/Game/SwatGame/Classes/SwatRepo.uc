@@ -219,12 +219,10 @@ event Tick( Float DeltaSeconds )
 					          if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
 					          {
 						                CumulativeDelta = 0;
-						                GetSGRI().ServerCountdownTime = 0;
 						                CheckAllPlayersReady();
-						                break;
 					          }
 
-                    if( GetSGRI().ServerCountdownTime <= 0 )
+                    else if( GetSGRI().ServerCountdownTime <= 0 )
                     {
                         CumulativeDelta = 0;
                         AllPlayersReady();
