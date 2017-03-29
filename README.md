@@ -565,6 +565,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: Officers not spawning with any equipment in the Training mission
 - Fixed SEF bug: Briefcase on Mt. Threshold Research Center sometimes falling through the floor
 - Fixed SEF bug: Adam Moretti (Meat Barn enemy) appears as "Simon Gowan" in the subtitles
+- Fixed TSS bug: M249 SAW, P90 and TEC-9 making the same sound effect as the MP5 when heard in third person.
 - Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
 - Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
 - Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
