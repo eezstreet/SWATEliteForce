@@ -549,6 +549,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Added an icon to the Riot Helmet
 - Added an icon to the ProArmor Helmet
 - Adjusted the positions of some drug evidence in Sellers Street Auditorium so that it doesn't fall through the floor as easily.
+- Armed, Insane suspects are now considered threats *at all times* after having been shouted at, even if they are running - they could be running to shoot hostages
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
 - Cut dialogue restored: Hostages will now freak out when other hostages die
