@@ -1046,8 +1046,9 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
     }
     else if (Instigator.IsA('SwatAI'))
     {
-		outLocation  = Instigator.GetAimOrigin();
-		outDirection = Instigator.GetAimRotation();
+      outLocation = Instigator.GetAimLocation(self);
+		    //outLocation  = Instigator.GetAimOrigin();
+		  outDirection = Instigator.GetAimRotation();
     }
     else
 		assertWithDescription(false,
