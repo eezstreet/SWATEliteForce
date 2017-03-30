@@ -523,17 +523,17 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Added JSP, AP, 0 buck, 1 buck, 4 buck ammo types
 - Added player permadeath option
 - Added officer permadeath option
-- Added custom voice acting (by Grimith) to Adam Moretti so he actually speaks now
-- Civilians who are incapacitated at the start of the level can now become DOA after 5-10 minutes. Allowing a hostage to become DOA will have a negative effect on your score.
+- Added custom voice acting (by GrimithM) to Adam Moretti so he actually speaks now
+- Civilians who are incapacitated at the start of the level can now become DOA after 10-15 minutes. Allowing a hostage to become DOA will have a negative effect on your score.
 - Officers may now take cover and crouch
 - Doors breached with the shotgun are not "swung open." Only C2 can "blast a door open."
 - Broken doors can now be closed and wedged
 - Shotguns no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
 - C2 can now break door alarms
-- The equipment menu has been changed to use dropdown boxes for the weapon and ammo types, determined by category
-- Added advanced information panel to Armor equipment tab
+- The equipment menu has been changed to use dropdown boxes for the weapon and ammo types. It has a category system to pick weapons easier.
+- Added advanced information panel to Armor equipment tab - it shows armor rating and what special protection the armor provides.
 - Added campaign statistics information to Campaign Selection menu
-- Completely redid the New Equipment menu to handle two unlocks properly
+- Completely redid the New Equipment menu to look better and handle two unlocks at the same time
 - Suspects can now employ a "wandering" behavior that allows them to pick patrol points randomly.
 - Snipers can now be used in multiplayer. All players can view the sniper viewport but only Leaders can control them.
 - Suspect equipment is only available in Multiplayer and All Missions campaigns now
@@ -542,9 +542,12 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Taunt feature now differentiates between belligerent and passive hostages
 - At the end of a multiplayer game, the next map is listed just above the Ready button
 - Mission Completed accounts for 40 points in the score, instead of 45.
-- No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed.
-- The MP viewports now make sense - Red Viewport (Insert key) will cycle between Red players, Blue Viewport (Home key) will cycle between Blue players and Sniper Viewport (Page Up) will cycle between snipers.
+- No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed. This counts towards 10 points instead of 5.
+- The MP viewport binds now function identical to the singleplayer ones, instead of all the viewport binds doing the same thing.
+- You can now see the viewports of the other team in CO-OP.
 - Clarified some text in the Training mission
+- Added an icon to the Riot Helmet
+- Added an icon to the ProArmor Helmet
 - Adjusted the positions of some drug evidence in Sellers Street Auditorium so that it doesn't fall through the floor as easily.
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
@@ -988,13 +991,14 @@ Ryo Ohki for a tip about P90 and SAW animations
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
-Adam Moretti Voice-Over: Grimith
+Adam Moretti Voice-Over: GrimithM (go check out his YouTube channel!)
 
 ELITE SUPPORTERS
 These people have generously donated money to Elite Force via Patreon. If you are interested in helping out, you can find our Patreon page here: https://www.patreon.com/user?u=4885526
 TheTCREngineer
 Jake Robinson/sandman332
 Evan Derickson
+
 
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
