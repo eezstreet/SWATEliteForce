@@ -71,7 +71,7 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 
 function NotifyDetonatorEquipping()
 {
-	if (isIdle() && (Breacher != Thrower))
+	if (isIdle() && Breacher != Thrower)
 		runAction();
 }
 
@@ -124,6 +124,11 @@ protected function Pawn GetFirstOfficerWithBSG(optional bool skipBreacher)
 	return Found;
 }
 
+protected function bool ShouldThrowerBeFirstOfficer()
+{
+	return Super.ShouldThrowerBeFirstOfficer();
+}
+
 protected function SetBreacher(optional bool skipBreacher)
 {
 	local int BreachingMethod;
@@ -145,6 +150,7 @@ protected function SetBreacher(optional bool skipBreacher)
 	if(Breacher == None) {
 		instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE);
 	}
+
 }
 
 protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
@@ -169,6 +175,7 @@ protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
 
 latent function UseBreachingShotgun()
 {
+	log("SquadBreachAndClearAction::UseBreachingShotgun()");
 	assert(Breacher != None);
 
 	ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
@@ -179,15 +186,7 @@ latent function UseBreachingShotgun()
 
 	CurrentUseBreachingShotgunGoal.postGoal(self);
 
-	// if we have a first officer, pause and wait for the door to be breached
-	if (GetFirstOfficer() != None)
-	{
-		pause();
-	}
-	else
-	{
-		WaitForGoal(CurrentUseBreachingShotgunGoal);
-	}
+	WaitForGoal(CurrentUseBreachingShotgunGoal);
 
 	CurrentUseBreachingShotgunGoal.unPostGoal(self);
 
@@ -203,20 +202,28 @@ latent function UseBreachingShotgun()
 
 	CurrentOpenDoorGoal.postGoal(self);
 
-	// if we have a second officer, pause and wait for the door to be opened
-	if (GetSecondOfficer() != None)
+	// if the thrower is not the same as the breacher, wait for the door to open
+	if(Thrower != Breacher)
 	{
-		pause();
+		WaitForGoal(CurrentOpenDoorGoal);
+		CurrentOpenDoorGoal.unPostGoal(self);
+
+		CurrentOpenDoorGoal.Release();
+		CurrentOpenDoorGoal = None;
 	}
 	else
 	{
-		WaitForGoal(CurrentOpenDoorGoal);
+		// pause to wait for the detonator to be equipped
+		pause();
+
+		// prepare the grenade
+		PreTargetDoorBreached();
+
+		// just wait for the door to open
+		while (TargetDoor.IsClosed() /*&& ! ISwatDoor(TargetDoor).IsBroken()*/ && !TargetDoor.IsOpening())
+			yield();
+
 	}
-
-	CurrentOpenDoorGoal.unPostGoal(self);
-
-	CurrentOpenDoorGoal.Release();
-	CurrentOpenDoorGoal = None;
 }
 
 protected function bool CanOfficerBreachWithC2(Pawn Officer)
@@ -261,8 +268,22 @@ latent function PlaceAndUseBreachingCharge()
 
 	ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
 
-	// Get the post-breaching location to move to -- at this point the breacher is ALWAYS the first officer
-	SafeLocation = StackUpPoints[0];
+	if(Breacher == GetFirstOfficer())
+	{
+		SafeLocation = StackUpPoints[0];
+	}
+	else if(Breacher == GetSecondOfficer())
+	{
+		SafeLocation = StackUpPoints[1];
+	}
+	else if(Breacher == GetThirdOfficer())
+	{
+		SafeLocation = StackUpPoints[2];
+	}
+	else if(Breacher == GetFourthOfficer())
+	{
+		SafeLocation = StackUpPoints[3];
+	}
 	assert(SafeLocation != None);
 
 	CurrentUseBreachingChargeGoal = new class'UseBreachingChargeGoal'(AI_Resource(Breacher.characterAI), TargetDoor, SafeLocation);
@@ -303,7 +324,7 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 
 	bForceBreachAction = SquadBreachAndClearGoal(achievingGoal).DoWeUseBreachingCharge();
 
-	log("SquadBreachAndClearAction: Super.PrepareToMoveSquad()");
+	log("SquadBreachAndClearAction: Super.PrepareToMoveSquad(): Thrower = "$Thrower$", Breacher = "$Breacher);
     Super.PrepareToMoveSquad(true);
 
 	SwatDoorTarget = ISwatDoor(TargetDoor);
@@ -313,6 +334,7 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 	{
 		if (CanOfficerBreachWithShotgun(Breacher))
 		{
+			log("CanOfficerBreachWithShotgun()");
 			PreTargetDoorBreached();
 			UseBreachingShotgun();	// <-- "WaitForZulu" happens here
 			PostTargetDoorBreached();
@@ -375,7 +397,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 		Officer = OfficersInStackupOrder[i];
 
-		if (class'Pawn'.static.checkConscious(Officer) && (Officer != Breacher))
+		if (class'Pawn'.static.checkConscious(Officer))
 		{
 			if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
 			{
@@ -392,7 +414,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 	// now try the first officer
 	Officer = OfficersInStackupOrder[0];
 
-	if (class'Pawn'.static.checkConscious(Officer)  && (Officer != Breacher))
+	if (class'Pawn'.static.checkConscious(Officer))
 	{
 		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
 		{
@@ -461,7 +483,9 @@ protected latent function MoveUpThrower()
 				OriginalThrower = Thrower;
 				SecondOfficer   = GetSecondOfficer();
 
-				if (SecondOfficer != Breacher) {SwapOfficerRoles(OriginalThrower, SecondOfficer);}
+				if (SecondOfficer != Breacher && Breacher != Thrower) {
+					SwapOfficerRoles(OriginalThrower, SecondOfficer);
+				}
 				SwapStackUpPositions(OriginalThrower, SecondOfficer);
 			}
 		}

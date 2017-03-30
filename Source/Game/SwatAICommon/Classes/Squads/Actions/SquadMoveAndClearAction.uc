@@ -496,7 +496,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 		Officer = OfficersInStackupOrder[i];
 
-		if (class'Pawn'.static.checkConscious(Officer) && (Officer != Breacher))
+		if (class'Pawn'.static.checkConscious(Officer))
 		{
 			if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
 			{
