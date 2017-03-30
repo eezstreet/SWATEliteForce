@@ -389,7 +389,10 @@ final function OnMissionObjectiveCompleted(Objective Objective)
     //TODO/COOP: Broadcast message to all clients, have the clients internally dispatchMessage
     dispatchMessage(new class'MessageMissionObjectiveCompleted'(Objective.name));
 
-    if( Repo.GuiConfig.CurrentMission.IsMissionCompleted() )
+    log("Repo("$Repo$").GuiConfig("$Repo.GuiConfig$").CurrentMission("$Repo.GuiConfig.CurrentMission$").Objectives("$Repo.GuiConfig.CurrentMission.Objectives$")");
+    log("Repo("$Repo$").MissionObjectives("$Repo.MissionObjectives$")");
+
+    if( Repo.GuiConfig.CurrentMission.IsMissionCompleted(Repo.MissionObjectives) )
     {
         if( !bAlreadyCompleted && !bAlreadyFailed )
             MissionCompleted();
@@ -465,7 +468,7 @@ final function MissionEnded()
         Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Client &&
         Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host )
     {
-        if( Repo.GuiConfig.CurrentMission.IsMissionCompleted() )
+        if( Repo.GuiConfig.CurrentMission.IsMissionCompleted(Repo.MissionObjectives) )
             MissionCompleted();
         else
         MissionFailed();
