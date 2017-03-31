@@ -6,6 +6,8 @@ class IdleDefinition extends Core.Object
 //
 // IdleDefinition Enumerations
 
+import enum EIdleWeaponStatus from SwatWeapon;
+
 enum EIdleCharacterType
 {
     AllTypesIdle,
@@ -29,22 +31,6 @@ enum EIdleCharacterAggression
 	AggressiveCharactersOnly
 };
 
-enum EIdleWeaponStatus
-{
-	IdleWeaponDoesNotMatter,
-    IdleWithSAW,
-    IdleWithMachineGun,
-	IdleWithG36,
-	IdleWithSubMachineGun,
-	IdleWithUMP,
-    IdleWithHandgun,
-	IdleWithShotgun,
-	IdleWithPaintballGun,
-	IdleWithGrenade,
-	IdleWithAnyWeapon,
-    IdleWithoutWeapon
-};
-
 enum ECharacterIdlePosition
 {
 	IdlePositionDoesNotMatter,
@@ -62,4 +48,3 @@ var config ECharacterIdlePosition	CharacterIdlePosition;
 var config name						IdleCategory;
 var config EIdleCharacterAggression IdleCharacterAggression;
 var config float					Weight;
-

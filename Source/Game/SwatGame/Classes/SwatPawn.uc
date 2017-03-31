@@ -13,6 +13,8 @@ class SwatPawn extends Engine.Pawn
 
 import enum EAnimationSet from AnimationSetManager;
 import enum AimPenaltyType from FiredWeapon;
+import enum WeaponAimAnimationType from SwatWeapon;
+import enum WeaponLowReadyAnimationType from SwatWeapon;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -554,6 +556,7 @@ simulated function EAnimationSet GetCuffedAimPoseSet()                  { return
 simulated function EAnimationSet GetEquipmentAimSet()
 {
     local HandheldEquipment Equipment;
+    local SwatWeapon Weapon;
 
     if (ShouldUseCuffedAnims())
     {
@@ -561,51 +564,42 @@ simulated function EAnimationSet GetEquipmentAimSet()
     }
 
     Equipment = GetActiveItem();
+    Weapon = SwatWeapon(Equipment);
     if (GetActiveItem() != None)
     {
-        if (Equipment.IsA('Handgun') || Equipment.IsA('Taser'))
+        if(Weapon != None)
         {
-            return GetHandgunAimPoseSet();
-        }
-        // Special (weird) case for P90
-        else if (Equipment.IsA('FNP90SMG'))
-        {
-            return GetP90AimPoseSet();
-        }
-        // Special (weird) case aim pose for the m4 the swat officers use
-        else if (Equipment.IsA('M4A1MG'))
-        {
-            return GetM4AimPoseSet();
-        }
-		// Special (weird) case aim pose for the m4 the suspects use
-        else if (Equipment.IsA('M4MG'))
-        {
-            return GetM4AimPoseSet();
-        }
-        // Special (weird) case aim pose for the UMP
-        else if (Equipment.IsA('UMP45SMG'))
-        {
-            return GetUMPAimPoseSet();
-        }
-        else if (Equipment.IsA('SubMachineGun'))
-        {
-            return GetSubMachineGunAimPoseSet();
-        }
-        else if (Equipment.IsA('MachineGun'))
-        {
-            return GetMachineGunAimPoseSet();
-        }
-		    else if (Equipment.IsA('ColtAccurizedRifle'))
-		    {
-			      return GetMachineGunAimPoseSet();
-		    }
-		    else if (Equipment.IsA('HK69GrenadeLauncher'))
-		    {
-			      return GetMachineGunAimPoseSet();
-		    }
-        else if (Equipment.IsA('Shotgun'))
-        {
-            return GetShotgunAimPoseSet();
+          switch(Weapon.GetAimAnimation())
+          {
+            case WeaponAnimAim_Handgun:
+              return GetHandgunAimPoseSet();
+            case WeaponAnimAim_SubmachineGun:
+              return GetSubMachineGunAimPoseSet();
+            case WeaponAnimAim_MachineGun:
+              return GetMachineGunAimPoseSet();
+            case WeaponAnimAim_Shotgun:
+              return GetShotgunAimPoseSet();
+            case WeaponAnimAim_Grenade:
+              return GetThrownWeaponAimPoseSet();
+            case WeaponAnimAim_TacticalAid:
+              return GetTacticalAidAimPoseSet();
+            case WeaponAnimAim_TacticalAidUse:
+              return GetTacticalAidUseAimPoseSet();
+            case WeaponAnimAim_PepperSpray:
+              return GetPepperSprayAimPoseSet();
+            case WeaponAnimAim_M4:
+              return GetM4AimPoseSet();
+            case WeaponAnimAim_UMP:
+              return GetUMPAimPoseSet();
+            case WeaponAnimAim_P90:
+              return GetP90AimPoseSet();
+            case WeaponAnimAim_Optiwand:
+              return GetOptiwandAimPoseSet();
+            case WeaponAnimAim_Paintball:
+              return GetPaintballAimPoseSet();
+            case WeaponAnimAim_Cuffed:
+              return GetCuffedAimPoseSet();
+          }
         }
         else if (Equipment.IsA('ThrownWeapon'))
         {
@@ -633,10 +627,6 @@ simulated function EAnimationSet GetEquipmentAimSet()
         else if (Equipment.IsA('Optiwand'))
         {
             return GetOptiwandAimPoseSet();
-        }
-        else if (Equipment.IsA('CSBallLauncher'))
-        {
-            return GetPaintballAimPoseSet();
         }
         else if (Equipment.IsA('IAmCuffed'))
         {
@@ -687,6 +677,8 @@ simulated function EAnimationSet GetPaintballLowReadyAimPoseSet()       { if (!b
 simulated function EAnimationSet GetLowReadySet()
 {
     local HandheldEquipment Equipment;
+    local SwatWeapon Weapon;
+
     assert(bIsLowReady == true);
 
     // No low-ready while cuffed
@@ -696,54 +688,38 @@ simulated function EAnimationSet GetLowReadySet()
     }
 
     Equipment = GetActiveItem();
+    Weapon = SwatWeapon(Equipment);
     if (GetActiveItem() != None)
     {
-        if (Equipment.IsA('Handgun') || Equipment.IsA('Taser'))
+        if(Weapon != None)
         {
-            return GetHandgunLowReadyAimPoseSet();
-        }
-        else if (Equipment.IsA('SubMachineGun'))
-        {
-            // Special case aim pose for the UMP
-            if (Equipment.IsA('UMP45SMG'))
-            {
-                return GetUMPLowReadyAimPoseSet();
-            }
-			// Special case aim pose for the P90
-            else if (Equipment.IsA('FNP90SMG'))
-            {
-                return GetP90LowReadyAimPoseSet();
-            }
-            else
-            {
-                return GetSubMachineGunLowReadyAimPoseSet();
-            }
-        }
-        else if (Equipment.IsA('MachineGun'))
-        {
-            // Special case aim pose for the m4 the swat officers use
-            if (Equipment.IsA('M4A1MG'))
-            {
-                return GetM4LowReadyAimPoseSet();
-            }
-            // Special case aim pose for the m4 the suspects use
-            else if (Equipment.IsA('M4MG'))
-            {
-                return GetM4LowReadyAimPoseSet();
-            }
-            // Special case aim pose for the ak the swat officers use
-            else if (Equipment.IsA('AK47MG'))
-            {
-                return GetMachineGunLowReadyAimPoseSet();
-            }
-            else
-            {
-                return GetMachineGunLowReadyAimPoseSet();
-            }
-        }
-        else if (Equipment.IsA('Shotgun'))
-        {
-            return GetShotgunLowReadyAimPoseSet();
+          switch(Weapon.GetLowReadyAnimation())
+          {
+            case WeaponAnimLowReady_Handgun:
+              return GetHandgunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_SubmachineGun:
+              return GetSubMachineGunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_MachineGun:
+              return GetMachineGunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_Shotgun:
+              return GetShotgunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_Grenade:
+              return GetThrownWeaponLowReadyAimPoseSet();
+            case WeaponAnimLowReady_TacticalAid:
+              return GetTacticalAidLowReadyAimPoseSet();
+            case WeaponAnimLowReady_PepperSpray:
+              return GetPepperSprayLowReadyAimPoseSet();
+            case WeaponAnimLowReady_M4:
+              return GetM4LowReadyAimPoseSet();
+            case WeaponAnimLowReady_UMP:
+              return GetUMPLowReadyAimPoseSet();
+            case WeaponAnimLowReady_P90:
+              return GetP90LowReadyAimPoseSet();
+            case WeaponAnimLowReady_Optiwand:
+              return GetOptiwandLowReadyAimPoseSet();
+            case WeaponAnimLowReady_Paintball:
+              return GetPaintballLowReadyAimPoseSet();
+          }
         }
         else if (Equipment.IsA('ThrownWeapon'))
         {
@@ -764,10 +740,6 @@ simulated function EAnimationSet GetLowReadySet()
         else if (Equipment.IsA('Optiwand'))
         {
             return GetOptiwandLowReadyAimPoseSet();
-        }
-        else if (Equipment.IsA('CSBallLauncher'))
-        {
-            return GetPaintballLowReadyAimPoseSet();
         }
     }
 
@@ -1806,20 +1778,20 @@ simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRot
       return false;
     }
 
-    if(CandidateActor.IsA('SwatEnemy')) 
+    if(CandidateActor.IsA('SwatEnemy'))
 	{
       bIsSuspect = 1;
-    } 
-	else 
+    }
+	else
 	{
       bIsSuspect = 0;
     }
-	
-    if(CandidateActor.IsA('SwatHostage') && (ISwatAI(CandidateActor).IsAggressive())) 
+
+    if(CandidateActor.IsA('SwatHostage') && (ISwatAI(CandidateActor).IsAggressive()))
 	{
       bIsAggressiveHostage = 1;
-    } 
-	else 
+    }
+	else
 	{
       bIsAggressiveHostage = 0;
     }

@@ -576,6 +576,9 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
 - Fixed TSS bug: P90 having bad first person position
 - Fixed TSS bug: M249 SAW having bad first person position
+- Fixed TSS bug: Colt Accurized Rifle doesn't have lowready animations in third person
+- Fixed TSS bug: Grenade Launcher doesn't have lowready animations in first person
+- Fixed TSS bug: Officers weren't animating correctly with the Colt Accurized Rifle or the P90
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
