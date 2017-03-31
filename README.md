@@ -528,7 +528,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Officers may now take cover and crouch
 - Doors breached with the shotgun are not "swung open." Only C2 can "blast a door open."
 - Broken doors can now be closed and wedged
-- Shotguns no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
+- Shotguns (except ones that fire beanbags) no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
 - C2 can now break door alarms
 - The equipment menu has been changed to use dropdown boxes for the weapon and ammo types. It has a category system to pick weapons easier.
 - Added advanced information panel to Armor equipment tab - it shows armor rating and what special protection the armor provides.
@@ -550,6 +550,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Added an icon to the ProArmor Helmet
 - Adjusted the positions of some drug evidence in Sellers Street Auditorium so that it doesn't fall through the floor as easily.
 - Armed, Insane suspects are now considered threats *at all times* after having been shouted at, even if they are running - they could be running to shoot hostages
+- The language now defaults to International (int) instead of English (eng) to prevent issues with gui_tex version mismatch in multiplayer.
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
 - Cut dialogue restored: Hostages will now freak out when other hostages die
@@ -579,6 +580,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed TSS bug: Colt Accurized Rifle doesn't have lowready animations in third person
 - Fixed TSS bug: Grenade Launcher doesn't have lowready animations in first person
 - Fixed TSS bug: Officers weren't animating correctly with the Colt Accurized Rifle or the P90
+- Fixed TSS bug: AKM ammo types simply listed as "FMJ" or "JHP" instead of listing the caliber
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
