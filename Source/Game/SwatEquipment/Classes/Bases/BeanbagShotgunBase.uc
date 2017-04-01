@@ -1,4 +1,4 @@
-class BeanbagShotgunBase extends Shotgun
+class BeanbagShotgunBase extends RoundBasedWeapon
   config(SwatEquipment);
 
 var config float Damage;

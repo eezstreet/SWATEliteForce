@@ -104,10 +104,14 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 
 # KNOWN ISSUES #
   * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
+  * If you're missing equipment in Singleplayer, note that you need to unlock it first.
   * Not working when you launch the .bat? The whole SEF folder is supposed to be copied to your SWAT 4 folder. Please review the HOW TO INSTALL section.
   * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
+  * You can't actually fire the sniper rifle in Multiplayer yet.
+  * Sometimes crashes with a RotateActorAction, for reasons that aren't known.
+  * Officers sometimes won't shoot suspects if they're very close to them. It's a problem in the original game as well.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
   * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
@@ -519,16 +523,17 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Added JSP, AP, 0 buck, 1 buck, 4 buck ammo types
 - Added player permadeath option
 - Added officer permadeath option
-- Civilians who are incapacitated at the start of the level can now become DOA after 5-10 minutes. Allowing a hostage to become DOA will have a negative effect on your score.
+- Added custom voice acting (by GrimithM) to Adam Moretti so he actually speaks now
+- Civilians who are incapacitated at the start of the level can now become DOA after 10-15 minutes. Allowing a hostage to become DOA will have a negative effect on your score.
 - Officers may now take cover and crouch
 - Doors breached with the shotgun are not "swung open." Only C2 can "blast a door open."
 - Broken doors can now be closed and wedged
-- Shotguns no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
+- Shotguns (except ones that fire beanbags) no longer show the Pick Lock or Deploy C2 fire interfaces - firing will try to blast open the door instead.
 - C2 can now break door alarms
-- The equipment menu has been changed to use dropdown boxes for the weapon and ammo types, determined by category
-- Added advanced information panel to Armor equipment tab
+- The equipment menu has been changed to use dropdown boxes for the weapon and ammo types. It has a category system to pick weapons easier.
+- Added advanced information panel to Armor equipment tab - it shows armor rating and what special protection the armor provides.
 - Added campaign statistics information to Campaign Selection menu
-- Completely redid the New Equipment menu to handle two unlocks properly
+- Completely redid the New Equipment menu to look better and handle two unlocks at the same time
 - Suspects can now employ a "wandering" behavior that allows them to pick patrol points randomly.
 - Snipers can now be used in multiplayer. All players can view the sniper viewport but only Leaders can control them.
 - Suspect equipment is only available in Multiplayer and All Missions campaigns now
@@ -537,8 +542,15 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Taunt feature now differentiates between belligerent and passive hostages
 - At the end of a multiplayer game, the next map is listed just above the Ready button
 - Mission Completed accounts for 40 points in the score, instead of 45.
-- No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed.
-- The MP viewports now make sense - Red Viewport (Insert key) will cycle between Red players, Blue Viewport (Home key) will cycle between Blue players and Sniper Viewport (Page Up) will cycle between snipers.
+- No civilians injured bonus removed, replaced with All Civilians Uninjured which awards points based on the number of civilians that were rescued unharmed. This counts towards 10 points instead of 5.
+- The MP viewport binds now function identical to the singleplayer ones, instead of all the viewport binds doing the same thing.
+- You can now see the viewports of the other team in CO-OP.
+- Clarified some text in the Training mission
+- Added an icon to the Riot Helmet
+- Added an icon to the ProArmor Helmet
+- Adjusted the positions of some drug evidence in Sellers Street Auditorium so that it doesn't fall through the floor as easily.
+- Armed, Insane suspects are now considered threats *at all times* after having been shouted at, even if they are running - they could be running to shoot hostages
+- The language now defaults to International (int) instead of English (eng) to prevent issues with gui_tex version mismatch in multiplayer.
 - Cut dialogue restored: Suspects will now mourn the death of their fellow suspects
 - Cut dialogue restored: Suspects will now apologize when shooting each other
 - Cut dialogue restored: Hostages will now freak out when other hostages die
@@ -554,12 +566,21 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: Log being spammed with messages about trap penalties
 - Fixed SEF bug: Log being spammed with "Fast trace blocked!"
 - Fixed SEF bug: AI-controlled officers not shouting for compliance correctly in some situations
-- Fixed SEF bug: Possible crash fix
+- Fixed SEF bug: CS gas turning black in some situations
+- Fixed SEF bug: Officers not spawning with any equipment in the Training mission
+- Fixed SEF bug: Briefcase on Mt. Threshold Research Center sometimes falling through the floor
+- Fixed SEF bug: Adam Moretti (Meat Barn enemy) appears as "Simon Gowan" in the subtitles
+- Fixed SEF bug: Suspects or civilians who had become incapacitated, reported, and then died later counted towards the "Failed to report downed Civilian/Suspect" penalty.
+- Fixed TSS bug: M249 SAW, P90 and TEC-9 making the same sound effect as the MP5 when heard in third person.
 - Fixed TSS bug: Night vision goggles alerting AIs. The idle hum sound effect can alert AIs from around corners etc
 - Fixed TSS bug: Explosion effects (from gas cans, nitrogen cans etc) not alerting AIs
 - Fixed TSS bug: Office workers on Department of Agriculture having broken morale levels (special thanks to sandman332 for this fix)
 - Fixed TSS bug: P90 having bad first person position
 - Fixed TSS bug: M249 SAW having bad first person position
+- Fixed TSS bug: Colt Accurized Rifle doesn't have lowready animations in third person
+- Fixed TSS bug: Grenade Launcher doesn't have lowready animations in first person
+- Fixed TSS bug: Officers weren't animating correctly with the Colt Accurized Rifle or the P90
+- Fixed TSS bug: AKM ammo types simply listed as "FMJ" or "JHP" instead of listing the caliber
 
 #### SAS WEAPONS ####
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
@@ -977,12 +998,14 @@ Ryo Ohki for a tip about P90 and SAW animations
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
+Adam Moretti Voice-Over: GrimithM (go check out his YouTube channel!)
 
 ELITE SUPPORTERS
 These people have generously donated money to Elite Force via Patreon. If you are interested in helping out, you can find our Patreon page here: https://www.patreon.com/user?u=4885526
 TheTCREngineer
 Jake Robinson/sandman332
 Evan Derickson
+
 
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)

@@ -30,8 +30,66 @@ enum WeaponEquipClass
   WeaponClass_Uncategorized             // Not categorized! Find one!
 };
 
+/*
+ * Determines what animation set the weapon should use while equipped.
+ */
+enum WeaponAimAnimationType
+{
+  WeaponAnimAim_Handgun,
+  WeaponAnimAim_SubmachineGun,
+  WeaponAnimAim_MachineGun,
+  WeaponAnimAim_Shotgun,
+  WeaponAnimAim_Grenade,
+  WeaponAnimAim_TacticalAid,
+  WeaponAnimAim_TacticalAidUse,
+  WeaponAnimAim_PepperSpray,
+  WeaponAnimAim_M4,
+  WeaponAnimAim_UMP,
+  WeaponAnimAim_P90,
+  WeaponAnimAim_Optiwand,
+  WeaponAnimAim_Paintball,
+  WeaponAnimAim_Cuffed
+};
+
+enum WeaponLowReadyAnimationType
+{
+  WeaponAnimLowReady_Handgun,
+  WeaponAnimLowReady_SubmachineGun,
+  WeaponAnimLowReady_MachineGun,
+  WeaponAnimLowReady_Shotgun,
+  WeaponAnimLowReady_Grenade,
+  WeaponAnimLowReady_TacticalAid,
+  WeaponAnimLowReady_PepperSpray,
+  WeaponAnimLowReady_M4,
+  WeaponAnimLowReady_UMP,
+  WeaponAnimLowReady_P90,
+  WeaponAnimLowReady_Optiwand,
+  WeaponAnimLowReady_Paintball
+};
+
+enum EIdleWeaponStatus
+{
+	IdleWeaponDoesNotMatter,
+  IdleWithSAW,
+  IdleWithMachineGun,
+	IdleWithG36,
+	IdleWithSubMachineGun,
+	IdleWithUMP,
+  IdleWithHandgun,
+	IdleWithShotgun,
+	IdleWithPaintballGun,
+	IdleWithGrenade,
+  IdleWithP90,
+	IdleWithAnyWeapon,
+  IdleWithoutWeapon
+};
+
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
+var(Firing) config WeaponAimAnimationType AimAnimation;
+var(Firing) config WeaponLowReadyAnimationType LowReadyAnimation;
+var(Firing) config array<EIdleWeaponStatus> IdleWeaponCategory;
+
 // Manufacturer Information
 var(AdvancedDescription) protected localized config string Manufacturer         "The Manufacturer in the Advanced Information panel (localized)";
 var(AdvancedDescription) protected localized config string CountryOfOrigin      "The Country of Origin in the Advanced Information panel (localized)";
@@ -143,7 +201,7 @@ simulated function bool HandleDoorImpact(
 	Ammo.SetLocation(HitLocation);
 	Ammo.SetRotation(rotator(HitNormal));
 	Ammo.TriggerEffectEvent('BulletHit', None, HitMaterial);
-		
+
 	Ammo.SetLocation( ExitLocation );
     Ammo.SetRotation( rotator(ExitNormal) );
     Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
@@ -158,6 +216,30 @@ static function WeaponEquipClass GetEquipClass()
 static function WeaponEquipType GetEquipType()
 {
   return default.AllowedSlots;
+}
+
+function WeaponAimAnimationType GetAimAnimation()
+{
+  return AimAnimation;
+}
+
+function WeaponLowReadyAnimationType GetLowReadyAnimation()
+{
+  return LowReadyAnimation;
+}
+
+function bool ValidIdleCategory(EIdleWeaponStatus DesiredStatus)
+{
+  local int i;
+
+  for(i = 0; i < IdleWeaponCategory.Length; i++)
+  {
+    if(IdleWeaponCategory[i] == DesiredStatus)
+    {
+      return true;
+    }
+  }
+  return false; // This isn't a valid idle category for this weapon
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?

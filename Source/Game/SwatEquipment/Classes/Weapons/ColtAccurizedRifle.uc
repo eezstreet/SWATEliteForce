@@ -24,3 +24,8 @@ simulated function float GetBaseAimError()
 
 	return BaseAimError;
 }
+
+defaultproperties
+{
+
+}

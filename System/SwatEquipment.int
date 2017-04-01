@@ -143,6 +143,18 @@ MagazineSizeString=30
 TotalAmmoString=10 magazines
 RateOfFire=800 RPM
 
+[SilencedMP5KSMG]
+Description=The MP5KA4 (the K being "Kurz", German for "short") was designed as a close quarters combat version of the popular MP5 line of submachine guns. While it has minimal carry weight and a small form factor, it is difficult to use due to the lack of a stock. Despite this, it remains popular by security and special forces around the globe, including the British Special Air Service.||This model is equipped with a sound and flash suppressor for when stealth is paramount.
+FriendlyName=Suppressed MP5KA4
+Manufacturer=Heckler & Koch
+Caliber=9x19mm
+CountryOfOrigin=Germany
+ProductionStart=1976
+FireModes=Semi-Automatic, 3-rd. Burst, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=10 magazines
+RateOfFire=900 RPM
+
 [MP5KSMG]
 Description=The MP5KA4 (the K being "Kurz", German for "short") was designed as a close quarters combat version of the popular MP5 line of submachine guns. While it has minimal carry weight and a small form factor, it is difficult to use due to the lack of a stock. Despite this, it remains popular by security and special forces around the globe, including the British Special Air Service.
 FriendlyName=MP5KA4

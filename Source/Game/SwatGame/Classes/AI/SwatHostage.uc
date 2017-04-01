@@ -43,6 +43,15 @@ simulated function EAnimationSet GetCrouchingAnimSet()	    { return kAnimationSe
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// replication
+replication
+{
+  reliable if(Role == ROLE_Authority)
+    AIData;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // Resource Construction
 
 // Create SwatHostage specific abilities

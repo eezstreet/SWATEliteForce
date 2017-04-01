@@ -64,9 +64,19 @@ GUIImage=Texture'gui_tex.ammo_lesslethal'
 
 [AK47MG_FMJ]
 GUIImage=Texture'gui_tex.ammo_762cal_FMJ'
+FriendlyName=7.62 FMJ
 
 [AK47MG_JHP]
 GUIImage=Texture'gui_tex.ammo_762cal_JHP'
+FriendlyName=7.62 JHP
+
+[AK47MG_AP]
+GUIImage=Texture'gui_tex.ammo_762cal_AP'
+FriendlyName=7.62 AP
+
+[AK47MG_JSP]
+GUIImage=Texture'gui_tex.ammo_762cal_JSP'
+FriendlyName=7.62 JSP
 
 [UZISMG_FMJ]
 GUIImage=Texture'gui_tex.ammo_9mm_FMJ'

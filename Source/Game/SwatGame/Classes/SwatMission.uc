@@ -7,7 +7,7 @@ var() config string MapName "Name of the map that corresponds with this mission"
 var() Editconst string FriendlyName "Name of the mission that will be displayed in the GUI";
 
 //the Mission Objectives
-var() EditConst Editinline MissionObjectives Objectives "The objectives for this mission";
+var() public EditConst Editinline MissionObjectives Objectives "The objectives for this mission";
 
 //Generic mission info
 var() config localized array<string> MissionDescription "A generic description of this mission (for the mission selection screen)";
@@ -72,11 +72,19 @@ function Initialize( string theFriendlyName, CustomScenario inCustomScenario)
         CustomScenario.MutateMissionObjectives(Objectives);
 }
 
-function bool IsMissionCompleted()
+function bool IsMissionCompleted(optional MissionObjectives Pass)
 {
     local int i;
+
+    if(Objectives == None)
+    {
+      Objectives = Pass;
+    }
+
+    log(self$"::IsMissionCompleted: Objectives.Length = "$Objectives.Objectives.Length);
     for (i=0; i<Objectives.Objectives.length; i++)
     {
+        log("SwatMission("$self$"): Objectives["$i$"]: "$Objectives.Objectives[i]$": IsPrimaryObjective("$Objectives.Objectives[i].IsPrimaryObjective$"): Status:"$Objectives.Objectives[i].GetStatus());
         if  (   Objectives.Objectives[i].IsA('Objective_Do')    //completion of 'Objective_Do's is required for mission success
                 && Objectives.Objectives[i].IsPrimaryObjective  //only primary objectives count
                 && Objectives.Objectives[i].GetStatus() != ObjectiveStatus_Completed
@@ -86,9 +94,15 @@ function bool IsMissionCompleted()
     return true;
 }
 
-function bool IsMissionFailed()
+function bool IsMissionFailed(optional MissionObjectives Pass)
 {
     local int i;
+
+    if(Objectives == None)
+    {
+      Objectives = Pass;
+    }
+
     for (i=0; i<Objectives.Objectives.length; i++)
     {
         if  ( Objectives.Objectives[i].IsPrimaryObjective  //only primary objectives count
@@ -99,9 +113,15 @@ function bool IsMissionFailed()
     return false;
 }
 
-function bool IsMissionTerminal()
+function bool IsMissionTerminal(optional MissionObjectives Pass)
 {
     local int i;
+
+    if(Objectives == None)
+    {
+      Objectives = Pass;
+    }
+
     for (i=0; i<Objectives.Objectives.length; i++)
     {
         if  ( Objectives.Objectives[i].IsTerminal  //only terminal objectives count

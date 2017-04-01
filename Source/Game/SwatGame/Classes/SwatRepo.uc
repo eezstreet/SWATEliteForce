@@ -219,12 +219,10 @@ event Tick( Float DeltaSeconds )
 					          if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
 					          {
 						                CumulativeDelta = 0;
-						                GetSGRI().ServerCountdownTime = 0;
 						                CheckAllPlayersReady();
-						                break;
 					          }
 
-                    if( GetSGRI().ServerCountdownTime <= 0 )
+                    else if( GetSGRI().ServerCountdownTime <= 0 )
                     {
                         CumulativeDelta = 0;
                         AllPlayersReady();
@@ -565,7 +563,10 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 bDelayedFinish=false;
-                GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).MPMissionReadyTime + PRECACHING_FUDGE;
+                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+                  GetSGRI().ServerCountdownTime = 0;
+                else
+                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).MPMissionReadyTime + PRECACHING_FUDGE;
                 //Level.Game.SetPause( true, PlayerController );
 
                 UpdateRoundsWon( 0 );
@@ -577,7 +578,10 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 NetRoundInProgress = true;
-                GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).RoundTimeLimit;
+                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+                  GetSGRI().ServerCountdownTime = 0;
+                else
+                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).RoundTimeLimit;
                 //Level.Game.SetPause( false, PlayerController );
             }
             break;
@@ -598,7 +602,10 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
 
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
-                GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).PostGameTimeLimit;
+                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+                  GetSGRI().ServerCountdownTime = 0;
+                else
+                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).PostGameTimeLimit;
             }
 
             NetRoundInProgress = false;
