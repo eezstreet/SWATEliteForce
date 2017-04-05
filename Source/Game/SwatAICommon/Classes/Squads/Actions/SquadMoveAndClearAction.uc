@@ -61,6 +61,10 @@ var config float						FormationWalkThreshold;
 
 var config float						DoorOpenedFromSideDelayTime;
 
+var config float						CSGrenadeDelayTime;
+
+var private float						PostGrenadeThrowDelayTime;
+
 var private SwatGrenadeProjectile		Projectile;
 
 const kLeaderClearPointIndex      = 1;
@@ -736,10 +740,18 @@ latent function FinishUpThrowBehavior()
 {
 	if (CurrentThrowGrenadeGoal != None)
 	{
+		PostGrenadeThrowDelayTime = 0;
+		
+		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_CSGasGrenade) {
+			PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
+		}
+	
 		while (! CurrentThrowGrenadeGoal.hasCompleted() && class'Pawn'.static.checkConscious(Thrower))
 		{
 			yield();
 		}
+		
+		sleep(PostGrenadeThrowDelayTime);
 
 		CurrentThrowGrenadeGoal.unPostGoal(self);
 		CurrentThrowGrenadeGoal.Release();
