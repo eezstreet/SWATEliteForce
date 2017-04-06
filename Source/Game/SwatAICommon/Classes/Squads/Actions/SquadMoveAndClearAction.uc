@@ -63,7 +63,7 @@ var config float						DoorOpenedFromSideDelayTime;
 
 var config float						CSGrenadeDelayTime;
 
-var private float						PostGrenadeThrowDelayTime;
+var protected float						PostGrenadeThrowDelayTime;
 
 var private SwatGrenadeProjectile		Projectile;
 
