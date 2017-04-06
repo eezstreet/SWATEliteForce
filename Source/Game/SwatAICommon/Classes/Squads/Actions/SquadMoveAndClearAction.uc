@@ -62,6 +62,8 @@ var config float						FormationWalkThreshold;
 var config float						DoorOpenedFromSideDelayTime;
 
 var config float						CSGrenadeDelayTime;
+var config float						CSGrenadeDelayTimeRiotHelmet;
+var config float						CSGrenadeDelayTimeGasMask;
 
 var protected float						PostGrenadeThrowDelayTime;
 
@@ -741,16 +743,27 @@ latent function FinishUpThrowBehavior()
 	if (CurrentThrowGrenadeGoal != None)
 	{
 		PostGrenadeThrowDelayTime = 0;
-		
+
 		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
+			if(DoAllOfficersHave(Pocket_HeadArmor, 'gasMask'))
+			{
+				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
+			}
+			else if(DoAllOfficersHave(Pocket_HeadArmor, 'RiotHelmet'))
+			{
+				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeRiotHelmet;
+			}
+			else
+			{
+				PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
+			}
 		}
-	
+
 		while (! CurrentThrowGrenadeGoal.hasCompleted() && class'Pawn'.static.checkConscious(Thrower))
 		{
 			yield();
 		}
-		
+
 		sleep(PostGrenadeThrowDelayTime);
 
 		CurrentThrowGrenadeGoal.unPostGoal(self);

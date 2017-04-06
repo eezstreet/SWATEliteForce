@@ -8,6 +8,7 @@ class OfficerTeamInfo extends AICommon.SquadInfo
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EquipmentSlot from Engine.HandheldEquipment;
+import enum Pocket from Engine.HandheldEquipment;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -388,6 +389,44 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 	// no Officer has the equipment
 	return false;
 }
+
+// Returns true if all officers have this piece of protective equipment
+function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
+{
+	local int i;
+	local Pawn Officer;
+
+	for(i = 0; i < pawns.length; i++)
+	{
+		Officer = pawns[i];
+
+		if(!ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+// Returns true if an officer has this piece of equipment
+function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
+{
+	local int i;
+	local Pawn Officer;
+
+	for(i = 0; i < pawns.length; i++)
+	{
+		Officer = pawns[i];
+
+		if(ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+// Returns true if an officer has this piece of protective equipment
 
 event function bool CanPickLock()
 {

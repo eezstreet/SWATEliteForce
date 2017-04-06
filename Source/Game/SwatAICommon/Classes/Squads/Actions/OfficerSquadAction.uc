@@ -6,6 +6,7 @@ class OfficerSquadAction extends Tyrion.AI_SquadAction;
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EquipmentSlot from Engine.HandheldEquipment;
+import enum Pocket from Engine.HandheldEquipment;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -54,6 +55,20 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 	assert(squad().IsA('OfficerTeamInfo'));
 
 	return OfficerTeamInfo(squad()).DoesAnOfficerHaveUsableEquipment(Slot, EquipmentClassName);
+}
+
+function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
+{
+	assert(squad().IsA('OfficerTeamInfo'));
+
+	return OfficerTeamInfo(squad()).DoAllOfficersHave(Slot, EquipmentClassName);
+}
+
+function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
+{
+	assert(squad().IsA('OfficerTeamInfo'));
+
+	return OfficerTeamInfo(squad()).DoesAnOfficerHave(Slot, EquipmentClassName);
 }
 
 function Pawn GetFirstOfficer()
@@ -108,4 +123,3 @@ latent function WaitForZulu(optional Door TargetDoor)
 		yield();
 	}
 }
-

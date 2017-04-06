@@ -40,7 +40,7 @@ protected latent function WaitForGrenadeToBeThrown()
 	while(!grenadeThrown) {
 		yield();
 	}
-	
+
 	sleep(PostGrenadeThrowDelayTime);
 }
 
@@ -66,10 +66,22 @@ protected latent function PrepareToMoveThroughOpenDoorway()
 function GrenadeGotDetonated(Pawn PawnThrower, EquipmentSlot ThrownItemSlot) {
 	if(PawnThrower == Thrower) {
 		PostGrenadeThrowDelayTime = 0;
-			
+
 		if (ThrownItemSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
+			if(DoAllOfficersHave(Pocket_HeadArmor, 'gasMask'))
+			{
+				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
+			}
+			else if(DoAllOfficersHave(Pocket_HeadArmor, 'RiotHelmet'))
+			{
+				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeRiotHelmet;
+			}
+			else
+			{
+				PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
+			}
 		}
+
 		grenadeThrown = true;
 	}
 }
