@@ -1,4 +1,5 @@
-class SwatWeapon extends FiredWeapon;
+class SwatWeapon extends FiredWeapon
+    config(SwatEquipment);
 
 /*
  * Describes which "equip type" a weapon is a part of.
@@ -109,6 +110,12 @@ var(Categorization) public config WeaponEquipType AllowedSlots               "Wh
 // Weight/bulk
 var() public config float Weight;
 var() public config float Bulk;
+
+var config vector IronSightLocationOffset;
+var config vector PlayerViewOffset;
+var config Rotator IronSightRotationOffset;
+var config Rotator PlayerViewRotation;
+var config float ZoomedAimErrorModifier;
 
 var bool bPenetratesDoors;
 
@@ -242,6 +249,85 @@ function bool ValidIdleCategory(EIdleWeaponStatus DesiredStatus)
   return false; // This isn't a valid idle category for this weapon
 }
 
+simulated function vector GetIronsightsLocationOffset()
+{	
+    return IronSightLocationOffset;
+}
+
+simulated function Rotator GetIronsightsRotationOffset()
+{
+    return IronSightRotationOffset;
+}
+
+simulated function vector GetPlayerViewOffset()
+{
+	local vector ViewOffset;
+	local Pawn OwnerPawn;
+	local PlayerController OwnerController;
+
+	ViewOffset = PlayerViewOffset;
+
+	OwnerPawn = Pawn(Owner);
+
+	if (OwnerPawn!= None)
+	{
+		OwnerController = PlayerController(OwnerPawn.Controller);
+
+		if (OwnerController != None && OwnerController.WantsZoom)
+		{
+			return IronSightLocationOffset;
+		}
+	}
+
+	return ViewOffset;
+}
+
+simulated function rotator GetPlayerViewRotation()
+{
+	local Rotator ViewRotation;
+	local Pawn OwnerPawn;
+	local PlayerController OwnerController;
+
+	ViewRotation = PlayerViewRotation;
+
+	OwnerPawn = Pawn(Owner);
+
+	if (OwnerPawn!= None)
+	{
+		OwnerController = PlayerController(OwnerPawn.Controller);
+
+		if (OwnerController != None && OwnerController.WantsZoom)
+		{
+			return IronSightRotationOffset;
+		}
+	}
+
+	return ViewRotation;
+}
+
+simulated function float GetBaseAimError()
+{
+	local float BaseAimError;
+	local Pawn OwnerPawn;
+	local PlayerController OwnerController;
+
+	BaseAimError = super.GetBaseAimError();
+
+	OwnerPawn = Pawn(Owner);
+
+	if (OwnerPawn!= None)
+	{
+		OwnerController = PlayerController(OwnerPawn.Controller);
+
+		if (OwnerController != None && OwnerController.WantsZoom)
+		{
+			return BaseAimError * ZoomedAimErrorModifier;
+		}
+	}
+
+	return BaseAimError;
+}
+
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?
 
 defaultproperties
@@ -258,4 +344,5 @@ defaultproperties
   Choke = 0.0
   Slot=Slot_Invalid
   bPenetratesDoors=true
+  ZoomedAimErrorModifier = 0.75
 }

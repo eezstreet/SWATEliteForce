@@ -1,5 +1,7 @@
 class SwatGrenade extends ThrownWeapon;
 
+var() config vector PlayerViewOffset;
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // IHaveWeight implementation
@@ -19,4 +21,14 @@ simulated function float GetBulk() {
 simulated function EquipmentSlot GetSlotForReequip()
 {
     return Slot_PrimaryWeapon;
+}
+
+simulated function vector GetPlayerViewOffset()
+{	
+    return PlayerViewOffset;
+}
+
+defaultproperties
+{
+  PlayerViewOffset = (X=-22,Y=7,Z=-12)
 }

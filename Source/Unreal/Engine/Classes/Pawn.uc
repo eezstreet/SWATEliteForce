@@ -883,14 +883,25 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 simulated function vector CalcDrawOffset()
 {
 	local vector DrawOffset;
+	local PlayerController OwnerController;
+    local HandheldEquipment EquippedItem;
 
     AssertWithDescription(Hands != None,
         "[tcohen] The Pawn named "$name$" was called to CalcDrawOffset().  But it has no Hands.");
 
 	if ( Controller == None )
 		return (Hands.PlayerViewOffset >> Rotation) + BaseEyeHeight * vect(0,0,1);
+	
+	EquippedItem = GetActiveItem();
 
-	DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
+	if (EquippedItem.IsA('FiredWeapon'))
+	{
+		DrawOffset = ((90/FirstPersonFOV * EquippedItem.GetPlayerViewOffset()) >> GetViewRotation() );
+	}
+	else
+	{
+		DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
+	}	
 	if ( !IsLocallyControlled() )
 		DrawOffset.Z += BaseEyeHeight;
 	else

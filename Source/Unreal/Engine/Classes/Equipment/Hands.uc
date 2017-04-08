@@ -64,6 +64,7 @@ simulated function onMessage(Message m)
 simulated function UpdateHandsForRendering()
 {
     local Pawn PawnOwner;
+	local PlayerController OwnerController;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
@@ -75,13 +76,66 @@ simulated function UpdateHandsForRendering()
         AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
     }
 
-    NewRotation = PawnOwner.GetViewRotation();
+	NewRotation = PawnOwner.GetViewRotation();
 
-    NewLocation = 
-        PawnOwner.Location + 
-        PawnOwner.CalcDrawOffset() + 
-        PawnOwner.ViewLocationOffset(NewRotation);
+	NewLocation = 
+		PawnOwner.Location + 
+		PawnOwner.CalcDrawOffset() + 
+		PawnOwner.ViewLocationOffset(NewRotation);
+		
+    // Implement "showhands" command in SwatCheatManager.
+    // Native code sets bHidden on hands/gun every tick, so we hide
+    // the hands in native code. But we need to hide/show the first person
+    // model each tick here.
+    EquippedItem = PawnOwner.GetActiveItem();
+    if (EquippedItem != None)
+    {
+        EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
+        if (EquippedFirstPersonModel != None)
+        {
+            EquippedFirstPersonModel.bOwnerNoSee = !PawnOwner.bRenderHands;        
+        }
+    }
 
+    bOwnerNoSee = !PawnOwner.bRenderHands;
+
+	// Special-case exception: even if hands/weapon rendering is disabled,
+	// the hands and weapon should be shown when the optiwand is equipped
+	// (otherwise you can't see the optiwand screen)
+	if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
+	{
+		if (EquippedFirstPersonModel != None)
+		{
+			EquippedFirstPersonModel.bOwnerNoSee = false;        
+		}
+		bOwnerNoSee = false;
+	}
+
+	SetLocation(NewLocation);
+    SetRotation(NewRotation);
+}
+
+simulated function UpdateHandsForRenderingWithZoom()
+{
+    local Pawn PawnOwner;
+    local vector NewLocation;
+    local rotator NewRotation;
+    local HandheldEquipmentModel EquippedFirstPersonModel;
+    local HandheldEquipment EquippedItem;
+    
+    PawnOwner = Pawn(Owner);
+    if (PawnOwner == None)
+    {
+        AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
+    }	
+	NewRotation = PawnOwner.GetViewRotation();
+
+	NewLocation = 
+		PawnOwner.Location + 
+		PawnOwner.CalcDrawOffset() + 
+		PawnOwner.ViewLocationOffset(NewRotation) +
+		EquippedItem.GetIronsightsLocationOffset();
+		
     // Implement "showhands" command in SwatCheatManager.
     // Native code sets bHidden on hands/gun every tick, so we hide
     // the hands in native code. But we need to hide/show the first person
@@ -118,36 +172,42 @@ simulated function OnEquipKeyFrame()
 {
 //    log( self$" in Hands::OnEquipKeyFrame()" );
     Pawn(Owner).OnEquipKeyFrame();
+    UpdateHandsForRendering();
 }
 
 simulated function OnUnequipKeyFrame()
 {
 //    log( self$" in Hands::OnUnequipKeyFrame()" );
     Pawn(Owner).OnUnequipKeyFrame();
+    UpdateHandsForRendering();
 }
 
 simulated function OnUseKeyFrame()
 {
 //    log( self$" in Hands::OnUseKeyFrame()" );
     Pawn(Owner).OnUseKeyFrame();
+    UpdateHandsForRendering();
 }
 
 simulated function OnLightstickKeyFrame()
 {
 //    log( self$" in Hands::OnUseKeyFrame()" );
     Pawn(Owner).OnLightstickKeyFrame();
+    UpdateHandsForRendering();
 }
 
 simulated function OnMeleeKeyFrame()
 {
 //    log( self$" in Hands::OnMeleeKeyFrame()" );
     Pawn(Owner).OnMeleeKeyFrame();
+    UpdateHandsForRendering();
 }
 
 simulated function OnReloadKeyFrame()
 {
 //    log( self$" in Hands::OnReloadKeyFrame()" );
     Pawn(Owner).OnReloadKeyFrame();
+    UpdateHandsForRendering();
 }
 
 //hands idle
@@ -155,6 +215,7 @@ event AnimEnd( int Channel )
 {
     if (Level.GetLocalPlayerController().HandsShouldIdle())
         IdleHoldingEquipment();
+		UpdateHandsForRendering();
 }
 
 //activeItem should be non-None and Idle
@@ -217,6 +278,7 @@ function PlayNewAnim(name Sequence, float Rate, float TweenTime)
 {
     if (!IsAnimating() || GetAnimName() != Sequence)
         PlayAnim(Sequence, Rate, TweenTime);
+		UpdateHandsForRendering();
 }
 
 //called by SwatPlayer::SetLowReady() only when low-ready changes
@@ -226,11 +288,13 @@ function SetLowReady(bool bEnable)
         return;
 
     bIsLowReady = bEnable;
+    UpdateHandsForRendering();
 
     if (Level.GetLocalPlayerController().HandsShouldIdle())
     {
         SetNextIdleTweenTime(0.2);  //we're immediately transitioning, so tween
         IdleHoldingEquipment();
+		UpdateHandsForRendering();
     }
 }
 

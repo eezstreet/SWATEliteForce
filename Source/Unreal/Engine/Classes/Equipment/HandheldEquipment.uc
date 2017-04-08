@@ -1217,6 +1217,34 @@ static function class<Actor> GetRenderableActorClass()
     return default.ThirdPersonModelClass;
 }
 
+simulated function vector GetIronsightsLocationOffset()
+{
+	local vector IronsightsLocation;
+	
+    return IronsightsLocation;
+}
+
+simulated function vector GetPlayerViewOffset()
+{
+	local vector PlayerViewOffset;
+	
+    return PlayerViewOffset;
+}
+
+simulated function Rotator GetIronsightsRotationOffset()
+{
+	local Rotator IronsightsRotation;
+	
+    return IronsightsRotation;
+}
+
+simulated function rotator GetPlayerViewRotation()
+{
+	local rotator PlayerViewRotation;
+	
+    return PlayerViewRotation;
+}
+
 event Destroyed()
 {
     if (FirstPersonModel != None)
