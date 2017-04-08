@@ -482,6 +482,32 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 # VERSION HISTORY #
 
+### v5.1 ###
+
+#### WEAPON CHANGES ####
+All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
+-Pistols: Increased recovery speed.
+-SMGs: Increased recovery speed, with some exceptions:
+	-Suppressed UZI: Reduced recovery speed.
+	-MP5SD6: Reduced recovery speed.
+	-Suppressed MP5K: Adjusted accuracy, recoil and recovery stats.
+	-Suppressed MP5A4: Reduced recovery speed.
+	-UMP: Reduced recovery speed.
+-Rifles: Increased recovery speed, with some exceptions.
+	-M16A1 and Suppressed M16A1: Reduced recovery speed.
+	-HK33A2: Reduced recovery speed.
+	-Scoped HK33A2: Reduced recovery speed. Increased zoom.
+	-Suppressed Accurized: Reduced recovery speed.
+-Shotguns: Reduced recovery speed, with some exceptions.
+	-Remington M870, Less Lethal and Breaching Variants: Increased recovery speed.
+-Grenade Launchers:
+	-HK69: Reduced recovery speed.
+	-ARWEN 37: Increased recovery speed.
+-Other weapons:
+	-M249 SAW: Reduced recovery speed.
+	-Pepperball Launcher: Increased recovery speed.
+	-Taser X26P and X2: Increased recovery speed.
+
 ### v5 ###
 
 #### MAJOR FEATURES ####
