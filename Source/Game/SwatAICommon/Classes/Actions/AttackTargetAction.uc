@@ -177,6 +177,28 @@ private function bool ShouldSucceed()
 	return (FRand() < ChanceToSucceedAfterFiring);
 }
 
+latent function SetGunDirection( Actor aTarget ) // possible bug fixer
+{
+    local rotator rDirection;
+    local vector  vDirection;
+    local Coords  cTarget;
+    local vector  vTarget;
+
+    if( aTarget != none)
+    {
+        cTarget = aTarget.GetBoneCoords('Bip01_Spine2');
+        vTarget = cTarget.Origin;
+
+        // Find the pitch between the gun and the target
+        vDirection = vTarget - m_pawn.Location;
+        rDirection = rotator(vDirection);
+
+        //m_pawn.m_wWantedAimingPitch = rDirection.Pitch/256;
+        //m_pawn.m_rFiringRotation = rDirection;
+		ISwatAI(m_pawn).AimToRotation(rDirection);
+    }
+}
+
 latent function AttackTarget()
 {
   local FiredWeapon CurrentWeapon;
@@ -208,7 +230,7 @@ latent function AttackTarget()
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 	}
 
-	AimAtActor(Target);
+	SetGunDirection(Target);
 
   // @HACK: See comments in ISwatAI::LockAim for more info.
   ISwatAI(m_pawn).LockAim();
@@ -327,7 +349,7 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 
-	LatentAimAtActor(Target);
+	SetGunDirection(Target);
 
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
@@ -336,12 +358,26 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 		Sleep(MandatedWait - TimeElapsed);
 	}
 
+  SetGunDirection(Target);
   ShootWeaponAt(Target);
 }
 
 protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 {
+	local float TimeElapsed;
+	local float MandatedWait;
+	// allows us to change our fire mode
 	SetFireMode(CurrentWeapon);
+
+	if (WaitTimeBeforeFiring > 0)
+		Sleep(WaitTimeBeforeFiring);
+
+	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
+	TimeElapsed = Level.TimeSeconds - StartActionTime;
+	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
+	if(TimeElapsed < MandatedWait) {
+		Sleep(MandatedWait - TimeElapsed);
+	}
 
 	ShootWeaponAt(Target);	// (actual shooting in aim direction is handled in "GetAimRotation"
 }
