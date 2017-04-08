@@ -32,7 +32,6 @@
         <LIST PROPNAME="Command">
             <PHRASE VALSTR="Command_StackUpAndTryDoor">Stack up ...</PHRASE>
             <PHRASE VALSTR="Command_StackUpAndTryDoor">... the lock ...</PHRASE>
-            <PHRASE VALSTR="Command_PickLock">Lock ...</PHRASE>
             <PHRASE VALSTR="Command_PickLock">Unlock ...</PHRASE>
             <PHRASE VALSTR="Command_PickLock">Pick ...</PHRASE>
             <PHRASE VALSTR="Command_PickLock">Take care ... lock</PHRASE>
@@ -58,8 +57,8 @@
             <PHRASE VALSTR="Command_GasAndClear">Gas and clear.</PHRASE>
 			<PHRASE VALSTR="Command_GasAndClear">CS and clear.</PHRASE>
 			<PHRASE VALSTR="Command_GasAndClear">See yes and clear.</PHRASE>
-            <PHRASE VALSTR="Command_BangAndClear">Clear ?it ?the ?that ?room with ?a gas ?grenade.</PHRASE>
-			<PHRASE VALSTR="Command_BangAndClear">Clear ?it ?the ?that ?room with ?a see yes ... ?grenade.</PHRASE>
+            <PHRASE VALSTR="Command_GasAndClear">Clear ?it ?the ?that ?room with ?a gas ?grenade.</PHRASE>
+			<PHRASE VALSTR="Command_GasAndClear">Clear ?it ?the ?that ?room with ?a see yes ... ?grenade.</PHRASE>
             <PHRASE VALSTR="Command_BreachGasAndClear">Breach, gas, and clear.</PHRASE>
 			<PHRASE VALSTR="Command_BreachGasAndClear">Breach, ... CS ..., and clear.</PHRASE>
 			<PHRASE VALSTR="Command_BreachGasAndClear">Breach, see yes, and clear.</PHRASE>

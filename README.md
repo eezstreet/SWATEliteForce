@@ -84,6 +84,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 		** Broken doors can now be closed and/or wedged.
 	* Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
 		** Functions exactly the same as in the Speech Recognition Improvement mod by MulleDK9. Not all commands from that mod are present however.
+		** See the SpeechCommands.txt file for more information on how to issue orders using the Speech Command Interface.
 	* Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.
 		** You can now issue BREACH commands on unlocked doors.
 		** You can now pick which style of BREACH you would like - either C2 & CLEAR or SHOTGUN & CLEAR
