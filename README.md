@@ -484,6 +484,13 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 ### v5.1 ###
 
+#### CHANGES
+- Adjusted the weapon accuracies
+- Improved the Speech Command grammar slightly (thanks to kevinfoley for this change)
+- AI will now wait before entering a room after a gas grenade goes off. The amount of time depends on what equipment your officers have equipped. (thanks to kevinfoley for this change)
+- Fixed SEF bug: The AI could "miss" and not break a door with the breaching shotgun. They will now fire up to two times, and if they miss both times, the door will break on its own.
+- Fixed TSS/SEF bug: Enemies could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
+
 #### WEAPON CHANGES ####
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
 -Pistols: Increased recovery speed.
@@ -1018,6 +1025,7 @@ Irrational Games and Sierra for the game.
 MulleDK9 for information regarding the Speech Recognition feature.
 KevinL for a tip about Voting Screen.
 sandman332 for a tip about audio
+kevinfoley for some pull requests
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
 Sebasien NovA for his modified SwatEd.exe
 Ryo Ohki for a tip about P90 and SAW animations
