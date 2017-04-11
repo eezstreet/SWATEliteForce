@@ -137,24 +137,30 @@ simulated function IssueComplianceOrder()
 
 simulated function IssueTOCOrder()
 {
-	local SwatGamePlayerController Player;
+	local SwatGamePlayerController PlayerController;
+	local SwatPlayer Player;
 	local Actor Target;
 	local SwatAI TargetAI;
 	local array<IInterested_GameEvent_ReportableReportedToTOC> Interested;
 	local Procedure_ReportCharactersToTOC Procedure;
 	local int i;
+	local name EffectEventName;
 
-	Player = SwatGamePlayerController(Level.GetLocalPlayerController());
+	PlayerController = SwatGamePlayerController(Level.GetLocalPlayerController());
+	if (PlayerController == None) return;
+	Player.GetSwatPlayer();
+	if (Player == None) return;
 	
 	Target = GetPendingTOCReportTargetActor();
 	TargetAI = SwatAI(Target);
 	
-	//if the target is an AI and can be used, report them to TOC _without triggering the sound effects_
+	//if the target is an AI and can be used, report them to TOC _without triggering the report effect_
+	//(we still get the sound effect for the response from TOC)
 	if (TargetAI == None) {
-		//Player.IssueMessage("No valid TargetAI", 'SpeechManagerNotification'); //for easy debugging
+		//PlayerController.IssueMessage("No valid TargetAI", 'SpeechManagerNotification'); //for easy debugging
 	} else {
 		if (!TargetAI.CanBeUsedNow()) {
-			//Player.IssueMessage("This AI can't be used now", 'SpeechManagerNotification'); //for easy debugging
+			//PlayerController.IssueMessage("This AI can't be used now", 'SpeechManagerNotification'); //for easy debugging
 		} else {
 			//get the array of all listeners that have been registered to the TOC event
 			Interested = SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Interested;
@@ -164,9 +170,16 @@ simulated function IssueTOCOrder()
 				Procedure = Procedure_ReportCharactersToTOC(Interested[i]);
 				//we found the Procedure. report the target to TOC. by only calling this function on the procedure
 				//instead of triggering the event, we report the target without playing any sound effects
-				if (Procedure != None) {
-					Procedure.OnReportableReportedToTOC(TargetAI, Player.GetSwatPlayer());
+				if (Procedure != None) 
+				{
+					Procedure.OnReportableReportedToTOC(TargetAI, Player);
 					TargetAI.PostUsed(); //mark the target as reported
+					//try to play the response-from-toc sound effect
+					EffectEventName = TargetAI.GetEffectEventForReportResponseFromTOC();
+					if (EffectEventName != None) 
+					{
+						Player.TriggerEffectEvent(EffectEventName, Actor(TargetAI), , , , , , , 'TOC');
+					}
 				}
 			}
 		}
