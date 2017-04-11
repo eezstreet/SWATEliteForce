@@ -31,7 +31,9 @@
     <RULE NAME="Command" TOPLEVEL="ACTIVE">
         <LIST PROPNAME="Command">
             <PHRASE VALSTR="Command_StackUpAndTryDoor">Stack up ...</PHRASE>
-            <PHRASE VALSTR="Command_StackUpAndTryDoor">... the lock ...</PHRASE>
+            <PHRASE VALSTR="Command_StackUpAndTryDoor">Try the lock.</PHRASE>
+		   <PHRASE VALSTR="Command_StackUpAndTryDoor">Try the door.</PHRASE>
+		   <PHRASE VALSTR="Command_StackUpAndTryDoor">Check the door.</PHRASE>
             <PHRASE VALSTR="Command_PickLock">Unlock ...</PHRASE>
             <PHRASE VALSTR="Command_PickLock">Pick ...</PHRASE>
             <PHRASE VALSTR="Command_PickLock">Take care ... lock</PHRASE>
@@ -242,6 +244,8 @@
 			<PHRASE VALSTR="Compliance">... SWAT ...</PHRASE>
 			<PHRASE VALSTR="Compliance">... search warrant ...</PHRASE>
 			<PHRASE VALSTR="Compliance">... Drop ?your ?the weapon ...</PHRASE>
+			<PHRASE VALSTR="Compliance">... see your hands ...</PHRASE>
+			<PHRASE VALSTR="Compliance">Show ?me ?us your hands.</PHRASE>
 		</LIST>
     </RULE>
 
