@@ -148,7 +148,7 @@ simulated function IssueTOCOrder()
 
 	PlayerController = SwatGamePlayerController(Level.GetLocalPlayerController());
 	if (PlayerController == None) return;
-	Player.GetSwatPlayer();
+	Player = PlayerController.GetSwatPlayer();
 	if (Player == None) return;
 	
 	Target = GetPendingTOCReportTargetActor();
@@ -176,9 +176,9 @@ simulated function IssueTOCOrder()
 					TargetAI.PostUsed(); //mark the target as reported
 					//try to play the response-from-toc sound effect
 					EffectEventName = TargetAI.GetEffectEventForReportResponseFromTOC();
-					if (EffectEventName != None) 
+					if (EffectEventName != '') 
 					{
-						Player.TriggerEffectEvent(EffectEventName, Actor(TargetAI), , , , , , , 'TOC');
+						Player.TriggerEffectEvent(EffectEventName, TargetAI, , , , , , , 'TOC');
 					}
 				}
 			}
