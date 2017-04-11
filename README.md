@@ -30,7 +30,7 @@ Since Version 3, the mod has gained a large following. I've since been able to e
 
 # HOW TO INSTALL #
 Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
-By default this folder is located in C:/Program Files (x86)/SWAT 4 or C:/Program Files (x86)/Sierra/SWAT 4
+By default, this folder is located in C:/Program Files (x86)/SWAT 4 or C:/Program Files (x86)/Sierra/SWAT 4
 
 !!! CAUTION !!!
 Do not extract the SEF folder *into* your Content or ContentExpansion folders (and therefore overwrite things), otherwise the mod will not work correctly.
@@ -64,7 +64,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 	* New secondary objective: collect drug evidence. Static drug bags have been replaced with new ones that can be collected.
 		** The bags count towards the "Secure All Evidence" procedure.
 	* More equipment options. This includes a few cut equipment items, such as riot helmets.
-		** AI-controlled officers can carry more lightsticis.
+		** AI-controlled officers can carry more lightsticks.
 		** The player can carry armor and all helmet options in singleplayer.
 		** The player can select how many magazines they would like to bring in the mission.
 		** There is a new Advanced Information Panel in the loadout menu that lets you view information such as manufacturer, magazine size, etc.
@@ -123,7 +123,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 ## GAMEPLAY ##
   * Maps may now alter themselves based on difficulty level, for instance adding more suspects or traps in Elite difficulty. Only a few maps use this feature currently.
   * "Press ESC and debrief to exit the game" now shows on ALL missions, not just Food Wall, Fairfax Residence and Qwik Fuel.
-  * In multiplayer you can now unready yourself.
+  * In multiplayer, you can now unready yourself.
   * Fixed an exploit that allowed player to access early campaign unlocks by saving a loadout and then reloading it in another campaign.
   * You can now lock doors using the toolkit. Suspects cannot flee as easily through locked doors (they need to unlock them first)
   * The toolkit interface no longer shows up for doors that cannot be locked
@@ -142,21 +142,21 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 #### BONUSES ####
 - Mission Completed: Awarded when all of the mission objectives are completed. 
  * Points: 40
-- Suspects Arrested: Bonus based on the amount of suspects secured. 
+- Suspects Arrested: Bonus based on the number of suspects secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
-- Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
+- Suspects Incapacitated: Bonus based on the number of suspects incapacitated and secured. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
-- Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
+- Suspects Neutralized: Bonus based on the number of suspects neutralized. 
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
 - All Civilians Unharmed: Bonus based on the number of civilians that have been uninjured, and not DOA.
  * Points: (Number of civilians unharmed)/(Total number of civilians) x 10
-- No Officers Downed: Bonus based on the amount of incapacitated officers. 
+- No Officers Downed: Bonus based on the number of incapacitated officers. 
  * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
-- Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. 
+- Player Uninjured: Bonus based on the number of players that sustained no injuries during a mission. 
  * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
-- Report Status to TOC: Bonus based on the amount of reports to TOC. 
+- Report Status to TOC: Bonus based on the number of reports to TOC. 
  * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
-- All Evidence Secured: Bonus based on the amount of evidence collected. 
+- All Evidence Secured: Bonus based on the number of evidence collected. 
  * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
 
 #### PENALTIES: ####
@@ -299,7 +299,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- Renamed to Tactical Helmet
 	- Provides protection against flashbangs in singleplayer
 * C2:
-	- Increased the damage radius, stun angle and stun radius. It is now more risky to use C2.
+	- Increased the damage radius, stun angle and stun radius. It is riskier to use C2.
 * Pepperball Gun:
 	- May now be equipped as a Secondary Weapon
 	- Less effective in general now
@@ -425,7 +425,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 * St. Micheal's Medical Center
 	- The Terrorists are Insane
 	- Hyun-Jun Park's Security Detail are Polite and will -never- attack
-	- Corrected various inconsistences in the mission strings (It's referred to as "Memorial Hospital" in the location info, and simply "St. Micheal's" in the loading screen, but "St. Micheal's Medical Center" in the voiceover)
+	- Corrected various inconsistencies in the mission strings (It's referred to as "Memorial Hospital" in the location info, and simply "St. Micheal's" in the loading screen, but "St. Micheal's Medical Center" in the voiceover)
 	- Unlocks the P226 and the Suppressed P226 pistols
 * The Wolcott Projects
 	- The homeless are Fearless
@@ -477,7 +477,7 @@ If the game you want is hosted via LAN, or you cannot find the server in the lis
 
 If you want to host a game:
 First, you will need to open some ports on your router: 10480 - 10483, TCP/UDP. If you aren't sure how to do this, the following article explains it well: https://www.howtogeek.com/66214/how-to-forward-ports-on-your-router/
-OPTIONAL: If you want your game to be publically visible on the master server list (on swat4stats), you will need to install the Swat4Stats server browser plugin, available at http://swat4stats.com - You'll also want to set your game to be "Internet" and not "LAN" for this to work.
+OPTIONAL: If you want your game to be publicly visible on the master server list (on swat4stats), you will need to install the Swat4Stats server browser plugin, available at http://swat4stats.com - You'll also want to set your game to be "Internet" and not "LAN" for this to work.
 If you aren't playing an Internet/Swat4Stats enabled game, you will need your external IP address for other players to connect. You can look this up on http://myexternalip.com
 Lastly, you need to determine what type of game you want to play. Regular CO-OP is handled through the Host Game menu ingame, but Campaign CO-OP is done through the Career menu - select a campaign and hit Career CO-OP. The "Equipment" panel will change to a "Settings" panel where you can configure a password, etc just like in Host Game.
 
@@ -1032,10 +1032,11 @@ Irrational Games and Sierra for the game.
 MulleDK9 for information regarding the Speech Recognition feature.
 KevinL for a tip about Voting Screen.
 sandman332 for a tip about audio
-kevinfoley for some pull requests
+kevinfoley for some help with Speech Recognition
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
 Sebasien NovA for his modified SwatEd.exe
 Ryo Ohki for a tip about P90 and SAW animations
+Dc247 for typo corrections in this document
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
@@ -1060,7 +1061,7 @@ cjslax6
 Vylka
 
 WE ARE: ELITE SQUAD
-eezstreet: Programming, Map Editing
+eezstreet: Team Lead, Programming, Map Editing
 Jose21Crisis: Programming, Weapons Analysis
 mezzokoko: Programming
 Rangar: Music (Composition), Textures
