@@ -5577,6 +5577,22 @@ simulated function OnOneMinWarning()
     }
 }
 
+//Used by SpeechCommand interface
+simulated function SwatPlayer GetSwatPlayer()
+{
+	local SwatPlayer Player;
+
+	if( pawn != None )
+    {
+        Player = SwatPlayer(Pawn);
+    }
+    if( Player == None && ViewTarget != None )
+    {
+        Player = SwatPlayer(ViewTarget);
+    }
+	
+    return Player;
+}
 
 simulated function bool IsLocationFrozen()
 {

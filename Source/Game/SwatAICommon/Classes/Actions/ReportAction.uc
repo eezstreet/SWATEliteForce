@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-// RestrainAndReportAction.uc - StackUpAction class
+// ReportAction.uc - StackUpAction class
 // The Action that causes the Officers to report something to TOC
 
 class ReportAction extends SwatCharacterAction;
