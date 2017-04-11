@@ -142,9 +142,11 @@ simulated function IssueTOCOrder()
 	local Actor Target;
 	local SwatAI TargetAI;
 	local array<IInterested_GameEvent_ReportableReportedToTOC> Interested;
-	local Procedure_ReportCharactersToTOC Procedure;
+	local Procedure SwatProcedure;
+	local IInterested_GameEvent_ReportableReportedToTOC Reportable;
 	local int i;
 	local name EffectEventName;
+	local bool IsReported;
 
 	PlayerController = SwatGamePlayerController(Level.GetLocalPlayerController());
 	if (PlayerController == None) return;
@@ -167,19 +169,25 @@ simulated function IssueTOCOrder()
 			//loop through the listeners and find the Procedure that handles TOC reports
 			for (i=0; i<Commands.Length - 1; ++i)
 			{
-				Procedure = Procedure_ReportCharactersToTOC(Interested[i]);
-				//we found the Procedure. report the target to TOC. by only calling this function on the procedure
-				//instead of triggering the event, we report the target without playing any sound effects
-				if (Procedure != None) 
+				//if we find a relevant procedure, report the target to TOC
+				SwatProcedure = Procedure(Interested[i]);
+				if (SwatProcedure != None) //filter by procedures so we don't trigger sound effects
 				{
-					Procedure.OnReportableReportedToTOC(TargetAI, Player);
-					TargetAI.PostUsed(); //mark the target as reported
-					//try to play the response-from-toc sound effect
-					EffectEventName = TargetAI.GetEffectEventForReportResponseFromTOC();
-					if (EffectEventName != '') 
+					Reportable = IInterested_GameEvent_ReportableReportedToTOC(SwatProcedure);
+					if (Reportable != None) //this is a reportable procedure
 					{
-						Player.TriggerEffectEvent(EffectEventName, TargetAI, , , , , , , 'TOC');
+						Reportable.OnReportableReportedToTOC(TargetAI, Player);
+						IsReported = true;
 					}
+				}
+			}
+			if (IsReported) {
+				TargetAI.PostUsed(); //mark the target as reported
+				//try to play the response-from-toc sound effect
+				EffectEventName = TargetAI.GetEffectEventForReportResponseFromTOC();
+				if (EffectEventName != '') 
+				{
+					Player.TriggerEffectEvent(EffectEventName, TargetAI, , , , , , , 'TOC');
 				}
 			}
 		}
