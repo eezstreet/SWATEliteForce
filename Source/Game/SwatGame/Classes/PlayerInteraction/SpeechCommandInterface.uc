@@ -143,10 +143,11 @@ simulated function IssueTOCOrder()
 	local SwatAI TargetAI;
 	local array<IInterested_GameEvent_ReportableReportedToTOC> Interested;
 	local Procedure SwatProcedure;
-	local IInterested_GameEvent_ReportableReportedToTOC Reportable;
 	local int i;
 	local name EffectEventName;
 	local bool IsReported;
+	local SwatAI AIListener;
+	local SwatPlayer PlayerListener;
 
 	PlayerController = SwatGamePlayerController(Level.GetLocalPlayerController());
 	if (PlayerController == None) return;
@@ -166,19 +167,16 @@ simulated function IssueTOCOrder()
 		} else {
 			//get the array of all listeners that have been registered to the TOC event
 			Interested = SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Interested;
-			//loop through the listeners and find the Procedure that handles TOC reports
+			//loop through the listeners and call the ones that don't trigger sound effects
 			for (i=0; i<Commands.Length - 1; ++i)
 			{
-				//if we find a relevant procedure, report the target to TOC
-				SwatProcedure = Procedure(Interested[i]);
-				if (SwatProcedure != None) //filter by procedures so we don't trigger sound effects
+				//listeners on SwatAI and on the Player will trigger sound effects, so we don't trigger them
+				AIListener = SwatAI(Interested[i]);
+				PlayerListener = SwatPlayer(Interested[i]);
+				if (AIListener == None && PlayerListener == None)
 				{
-					Reportable = IInterested_GameEvent_ReportableReportedToTOC(SwatProcedure);
-					if (Reportable != None) //this is a reportable procedure
-					{
-						Reportable.OnReportableReportedToTOC(TargetAI, Player);
-						IsReported = true;
-					}
+					Interested[i].OnReportableReportedToTOC(TargetAI, Player);
+					IsReported = true;
 				}
 			}
 			if (IsReported) {
