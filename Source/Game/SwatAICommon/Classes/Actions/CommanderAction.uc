@@ -463,11 +463,11 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 
 			// don't listen for compliance until morale changes
 			bListeningForCompliance = false;
-			// and if we are armed, insane suspects, become threats
-			if(m_Pawn.IsA('SwatEnemy') && !m_Pawn.IsA('SwatGuard') && m_Pawn.GetActiveItem() != None && ISwatAICharacter(m_Pawn).IsInsane())
-			{
-				ISwatEnemy(m_Pawn).BecomeAThreat();
-			}
+			// and if we are armed, insane suspects, become threats (SANITY CHECKS DAMN IT!)
+            if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard')) || (!m_Pawn.IsA('SwatHostage'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None) && ISwatAICharacter(m_Pawn).IsInsane())
+            {
+                ISwatEnemy(m_Pawn).BecomeAThreat();
+            }
 
 			// reset how many compliance orders we've ignored
 			ComplianceOrdersIgnored = 0;

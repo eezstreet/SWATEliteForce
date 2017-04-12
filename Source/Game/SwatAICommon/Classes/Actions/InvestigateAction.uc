@@ -129,10 +129,6 @@ latent function AimAtInvestigationLocation()
 
 	// post the aim at point goal
 	CurrentAimAtPointGoal.postGoal(self);
-	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
-	{
-		ISwatEnemy(m_Pawn).BecomeAThreat();
-	}
 }
 
 function AimAround(float InnerFOVDegrees, float OuterFOVDegrees, bool bOnlyAimIfMoving)
@@ -155,10 +151,6 @@ function AimAround(float InnerFOVDegrees, float OuterFOVDegrees, bool bOnlyAimIf
 	CurrentAimAroundGoal.SetAimWeapon(true);
 	CurrentAimAroundGoal.SetOnlyAimIfMoving(bOnlyAimIfMoving);
     CurrentAimAroundGoal.postGoal(self);
-	if (m_Pawn.IsA('SwatEnemy') && ((!m_Pawn.IsA('SwatUndercover') || (!m_Pawn.IsA('SwatGuard')) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))))
-	{
-		ISwatEnemy(m_Pawn).BecomeAThreat();
-	}
 }
 
 function bool CanLookAtInvestigateLocation()

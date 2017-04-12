@@ -387,10 +387,6 @@ latent function Flee()
 
     // post the move to goal and wait for it to complete
     CurrentMoveToActorGoal.postGoal(self);
-	if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
-	{
-		ISwatEnemy(m_Pawn).UnbecomeAThreat();
-	}
     WaitForGoal(CurrentMoveToActorGoal);
 
     // remove the most to goal
