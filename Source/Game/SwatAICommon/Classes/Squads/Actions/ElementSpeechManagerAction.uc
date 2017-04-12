@@ -90,7 +90,22 @@ function TriggerOfficerDownSpeech(Pawn Officer)
 	// they're all dead if this is the case
 	if (ClosestOfficer != None)
 	{
-		ISwatOfficer(ClosestOfficer).GetOfficerSpeechManagerAction().TriggerOfficerDownSpeech(Officer);
+		if (Officer.IsA('OfficerBlueOne'))
+		{
+			ISwatOfficer(ClosestOfficer).GetOfficerSpeechManagerAction().TriggerBlueOneDownSpeech(Officer);
+		}
+		else if (Officer.IsA('OfficerBlueTwo'))
+		{
+			ISwatOfficer(ClosestOfficer).GetOfficerSpeechManagerAction().TriggerBlueTwoDownSpeech(Officer);
+		}
+		else if (Officer.IsA('OfficerRedOne'))
+		{
+			ISwatOfficer(ClosestOfficer).GetOfficerSpeechManagerAction().TriggerRedOneDownSpeech(Officer);
+		}
+		else
+		{
+			ISwatOfficer(ClosestOfficer).GetOfficerSpeechManagerAction().TriggerRedTwoDownSpeech(Officer);
+		}
 	}
 }
 

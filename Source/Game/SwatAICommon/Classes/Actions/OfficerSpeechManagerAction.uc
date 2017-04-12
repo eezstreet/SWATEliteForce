@@ -14,23 +14,27 @@ class OfficerSpeechManagerAction extends CharacterSpeechManagerAction;
 // Officers
 function TriggerOfficerDownSpeech(pawn Officer)
 {
-//	TriggerSpeech('ReportedOfficerDown', true);
-	if (Officer.IsA('OfficerBlueOne'))
-	{
-		TriggerSpeech('ReportedB1Down');
-	}
-	else if (Officer.IsA('OfficerBlueTwo'))
-	{
-		TriggerSpeech('ReportedB1Down');
-	}
-	else if (Officer.IsA('OfficerRedOne'))
-	{
-		TriggerSpeech('ReportedR1Down');
-	}
-	else
-	{
-		TriggerSpeech('ReportedR2Down');
-	}
+	TriggerSpeech('ReportedOfficerDown', true);
+}
+
+function TriggerBlueOneDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedB1Down', true);
+}
+
+function TriggerBlueTwoDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedB2Down', true);
+}
+
+function TriggerRedOneDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedR1Down', true);
+}
+
+function TriggerRedTwoDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedR2Down', true);
 }
 
 function TriggerLeadDownSpeech()
