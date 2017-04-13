@@ -54,6 +54,12 @@ var config float						LowSkillFullBodyHitChance;
 var config float						MediumSkillFullBodyHitChance;
 var config float						HighSkillFullBodyHitChance;
 
+//can't run game with these vars compiled in; throws a
+//'native class size does not match scripted class size' error -K.F.
+//var config float						LowSkillComplyInstantDropChance;
+//var config float						MediumSkillComplyInstantDropChance;
+//var config float						HighSkillComplyInstantDropChance;
+
 var bool								bEnteredFleeSafeguard;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -675,6 +681,23 @@ function EnemySpeechManagerAction GetEnemySpeechManagerAction()
 	return EnemySpeechManagerAction(GetSpeechManagerAction());
 }
 
+simulated final function DropActiveWeapon(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude)
+{
+	local HandheldEquipment ActiveItem;
+	
+	if ( Level.IsCoopServer )
+        NotifyClientsToDropActiveWeapon();
+
+	ActiveItem = GetActiveItem();
+	
+	if (ActiveItem == None) return;
+	
+	if (ActiveItem == GetPrimaryWeapon() || ActiveItem == GetBackupWeapon())
+	{
+		DropWeapon(ActiveItem, WeaponSpaceDropDirection*DropImpulseMagnitude);
+	}
+}
+
 simulated final function DropAllWeapons(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude)
 {
 	local HandheldEquipment PrimaryWeapon, BackupWeapon;
@@ -747,6 +770,27 @@ function NotifyClientsToDropAllWeapons()
         if ( current != None && current != theLocalPlayerController )
         {
             current.ClientAIDroppedAllWeapons( self );
+        }
+    }
+}
+
+function NotifyClientsToDropActiveWeapon()
+{
+    local Controller i;
+    local Controller theLocalPlayerController;
+    local SwatGamePlayerController current;
+
+    Assert( Level.NetMode == NM_ListenServer || Level.NetMode == NM_DedicatedServer );
+
+    mplog( self$"$---SwatEnemy::NotifyClientsToDropAllWeapons()." );
+
+    theLocalPlayerController = Level.GetLocalPlayerController();
+    for ( i = Level.ControllerList; i != None; i = i.NextController )
+    {
+        current = SwatGamePlayerController( i );
+        if ( current != None && current != theLocalPlayerController )
+        {
+            current.ClientAIDroppedActiveWeapon( self );
         }
     }
 }
@@ -1003,9 +1047,11 @@ simulated private function name GetThrowWeaponDownAnimation()
 
 simulated latent final function ThrowWeaponDown()
 {
+	local float AnimationRate;
 	if (GetActiveItem() != None)
 	{
-		AnimPlaySpecial(GetThrowWeaponDownAnimation(), 0.1);
+		AnimationRate = RandRange(1.1, 1.6);
+		AnimPlaySpecial(GetThrowWeaponDownAnimation(), 0.1, '', AnimationRate);
 		AnimFinishSpecial();
 	}
 }
@@ -1022,6 +1068,28 @@ function HandHeldEquipmentModel FindNearbyWeaponModel()
  	}
 
 	return None;
+}
+
+//Suspects who are beginning to comply have a chance to drop weapon instantly
+function bool ShouldDropWeaponInstantly()
+{
+	local float Chance;
+
+	switch(Skill)
+	{
+		//note: new ComplyInstantDropChance vars cause errors, so re-using
+		//FullyBodyHitChance vars as a temporary hack
+		case EnemySkill_High:
+			//Chance = HighSkillComplyInstantDropChance;
+			Chance = HighSkillFullBodyHitChance;
+		case EnemySkill_Medium:
+			//Chance = MediumSkillComplyInstantDropChance;
+			Chance = MediumSkillFullBodyHitChance;
+		case EnemySkill_Low:
+			//Chance = LowSkillComplyInstantDropChance;
+			Chance = LowSkillFullBodyHitChance;
+	}
+	return (FRand() < Chance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
