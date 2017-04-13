@@ -10,7 +10,7 @@ class ElementSpeechManagerAction extends OfficerSquadAction;
 //
 // Utility functions
 
-function Pawn GetClosestOfficerToOfficer(Pawn Officer)
+function Pawn GetClosestOfficerToOfficer(Pawn Officer, optional bool OnlyAlive)
 {
 	local int i;
 	local float IterDistance, ClosestDistance;
@@ -21,7 +21,7 @@ function Pawn GetClosestOfficerToOfficer(Pawn Officer)
 	{
 		IterOfficer = squad().pawns[i];
 
-		if (IterOfficer != Officer)
+		if (IterOfficer != Officer && (!OnlyAlive || (OnlyAlive && class'Pawn'.static.checkConscious(IterOfficer))))
 		{
 			IterDistance = VSize(Officer.Location - IterOfficer.Location);
 
@@ -58,7 +58,7 @@ function TriggerEnemyFleeingSpeech(Pawn Enemy)
 }
 
 function TriggerSuspectDownSpeech(Pawn Enemy)
-{	
+{
 	local Pawn ClosestOfficer;
 
 	ClosestOfficer = GetClosestOfficerTo(Enemy, true);
@@ -70,7 +70,7 @@ function TriggerSuspectDownSpeech(Pawn Enemy)
 }
 
 function TriggerHostageDownSpeech(Pawn Hostage)
-{	
+{
 	local Pawn ClosestOfficer;
 
 	ClosestOfficer = GetClosestOfficerTo(Hostage, true);
@@ -83,9 +83,9 @@ function TriggerHostageDownSpeech(Pawn Hostage)
 
 function TriggerOfficerDownSpeech(Pawn Officer)
 {
-	local Pawn ClosestOfficer;	
+	local Pawn ClosestOfficer;
 
-	ClosestOfficer = GetClosestOfficerTo(Officer, true);
+	ClosestOfficer = GetClosestOfficerToOfficer(Officer, true);
 
 	// they're all dead if this is the case
 	if (ClosestOfficer != None)
@@ -111,7 +111,7 @@ function TriggerOfficerDownSpeech(Pawn Officer)
 
 function TriggerLeadDownSpeech(Pawn Lead)
 {
-	local Pawn ClosestOfficer;	
+	local Pawn ClosestOfficer;
 
 	ClosestOfficer = GetClosestOfficerTo(Lead, true);
 
@@ -124,7 +124,7 @@ function TriggerLeadDownSpeech(Pawn Lead)
 
 function TriggerSuspectWontComplySpeech(Pawn Suspect)
 {
-	local Pawn ClosestOfficer;	
+	local Pawn ClosestOfficer;
 
 	ClosestOfficer = GetClosestOfficerTo(Suspect, true);
 
@@ -137,7 +137,7 @@ function TriggerSuspectWontComplySpeech(Pawn Suspect)
 
 function TriggerHostageWontComplySpeech(Pawn Hostage)
 {
-	local Pawn ClosestOfficer;	
+	local Pawn ClosestOfficer;
 
 	ClosestOfficer = GetClosestOfficerTo(Hostage, true);
 
@@ -152,7 +152,7 @@ function TriggerReactedFirstShotSpeech(Pawn OfficerShot)
 {
 	local Pawn ClosestOfficer;
 
-	ClosestOfficer = GetClosestOfficerToOfficer(OfficerShot);
+	ClosestOfficer = GetClosestOfficerToOfficer(OfficerShot, true);
 
 	// they're all dead if this is the case
 	if (ClosestOfficer != None)
@@ -165,7 +165,7 @@ function TriggerReactedSecondShotSpeech(Pawn OfficerShot)
 {
 	local Pawn ClosestOfficer;
 
-	ClosestOfficer = GetClosestOfficerToOfficer(OfficerShot);
+	ClosestOfficer = GetClosestOfficerToOfficer(OfficerShot, true);
 
 	// they're all dead if this is the case
 	if (ClosestOfficer != None)
@@ -178,7 +178,7 @@ function TriggerReactedThirdShotSpeech(Pawn OfficerShot)
 {
 	local Pawn ClosestOfficer;
 
-	ClosestOfficer = GetClosestOfficerToOfficer(OfficerShot);
+	ClosestOfficer = GetClosestOfficerToOfficer(OfficerShot, true);
 
 	// they're all dead if this is the case
 	if (ClosestOfficer != None)
