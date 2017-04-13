@@ -494,6 +494,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Reduced the drag of beanbag ammo by 25% so it can hit more distant targets
 - AI will now wait before entering a room after a gas grenade goes off. The amount of time depends on what equipment your officers have equipped. (thanks to kevinfoley for this change)
 - Halved the melee range (170 -> 85)
+- The delete loadout button went missing. It's back now.
 - Fixed SEF bug: Investigating enemies were considered threats.
 - Fixed SEF bug: Fleeing suspects who were attacking were *not* considered threats.
 - Fixed SEF bug: Rare glitch where SWAT AI could shoot hostages intentionally
