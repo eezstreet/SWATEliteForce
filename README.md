@@ -485,7 +485,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 ### v5.1 ###
 
-#### CHANGES
+#### CHANGES ####
 - Some additional improvements to speech commands (thanks to kevinfoley for these changes):
   * You can now report things to TOC using your voice!
   * Improved the speech commands with CS gas
@@ -495,6 +495,8 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - AI will now wait before entering a room after a gas grenade goes off. The amount of time depends on what equipment your officers have equipped. (thanks to kevinfoley for this change)
 - Halved the melee range (170 -> 85)
 - The delete loadout button went missing. It's back now.
+- Suspects have a high chance to drop their weapon before raising their arms to surrender. This makes it harder to accidentally shoot a suspect who is surrendering (thanks to kevinfoley for this change)
+- Reduced the morale of civilians on FunTime Amusements Arcade
 - Fixed SEF bug: Investigating enemies were considered threats.
 - Fixed SEF bug: Fleeing suspects who were attacking were *not* considered threats.
 - Fixed SEF bug: Rare glitch where SWAT AI could shoot hostages intentionally
@@ -503,6 +505,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: Beanbag shotguns had wrong compliance animation for AI-controlled officers
 - Fixed SEF bug: M16A1 had 30 round magazine for JSP and JHP ammo and 20 round magazine for others (now it's 20 rounds for all)
 - Fixed SEF bug: Manager on Meat Barn had a ridiculously high amount of morale (3.0)
+- Fixed SEF bug: Officers would report Fields as being down instead of Jackson
 - Fixed TSS/SEF bug: Suspects could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
 - (possibly) fixed TSS bug: Suspects weren't alerted when they got hit by a less lethal effect like a taser, so you could stand behind them and spam the taser without them even being aware of your presence.
 - Fixed TSS bug: Grenade launchers had wrong compliance animation for AI-controlled officers
