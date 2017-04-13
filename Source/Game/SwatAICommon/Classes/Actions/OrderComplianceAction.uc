@@ -12,6 +12,7 @@ class OrderComplianceAction extends SwatWeaponAction
 
 import enum EUpperBodyAnimBehavior from ISwatAI;
 import enum EUpperBodyAnimBehaviorClientId from UpperBodyAnimBehaviorClients;
+import enum EComplianceWeaponAnimation from SwatWeapon;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,24 +133,31 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 function name GetComplyOrderAnimName()
 {
 	local HandheldEquipment ActiveItem;
+	local SwatWeapon EquippedWeapon;
 
 	ActiveItem = m_Pawn.GetActiveItem();
+	EquippedWeapon = SwatWeapon(ActiveItem);
 
-	if (ActiveItem.IsA('MachineGun'))
+	if(EquippedWeapon != None)
 	{
-		return ComplyMGOrderAnims[Rand(ComplyMGOrderAnims.Length)];
-	}
-	else if (ActiveItem.IsA('Shotgun'))
-	{
-		return ComplySGOrderAnims[Rand(ComplySGOrderAnims.Length)];
-	}
-	else if (ActiveItem.IsA('SubMachineGun'))
-	{
-		return ComplySMGOrderAnims[Rand(ComplySMGOrderAnims.Length)];
-	}
-	else if (ActiveItem.IsA('CSBallLauncher'))
-	{
-		return ComplyPepperBallOrderAnims[Rand(ComplyPepperBallOrderAnims.Length)];
+		switch(EquippedWeapon.ComplianceAnimation)
+		{
+			case Compliance_Machinegun:
+				return ComplyMGOrderAnims[Rand(ComplyMGOrderAnims.Length)];
+
+			case Compliance_Shotgun:
+				return ComplySGOrderAnims[Rand(ComplySGOrderAnims.Length)];
+
+			case Compliance_SubmachineGun:
+				return ComplySMGOrderAnims[Rand(ComplySMGOrderAnims.Length)];
+
+			case Compliance_CSBallLauncher:
+				return ComplyPepperBallOrderAnims[Rand(ComplyPepperBallOrderAnims.Length)];
+
+			case Compliance_Handgun:
+			default:
+				return ComplyHGOrderAnims[Rand(ComplyHGOrderAnims.Length)];
+		}
 	}
 	else
 	{

@@ -499,10 +499,12 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: Rare glitch where SWAT AI could shoot hostages intentionally
 - Fixed SEF bug: The AI could "miss" and not break a door with the breaching shotgun. They will now fire up to two times, and if they miss both times, the door will break on its own.
 - Fixed SEF bug: Colt Accurized Rifle, HK69, HK33, M16A1, AKM, G36C and Commando Rifle had wrong animations for AI-controlled officers
+- Fixed SEF bug: Beanbag shotguns had wrong compliance animation for AI-controlled officers
 - Fixed SEF bug: M16A1 had 30 round magazine for JSP and JHP ammo and 20 round magazine for others (now it's 20 rounds for all)
 - Fixed SEF bug: Manager on Meat Barn had a ridiculously high amount of morale (3.0)
 - Fixed TSS/SEF bug: Suspects could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
 - (possibly) fixed TSS bug: Suspects weren't alerted when they got hit by a less lethal effect like a taser, so you could stand behind them and spam the taser without them even being aware of your presence.
+- Fixed TSS bug: Grenade launchers had wrong compliance animation for AI-controlled officers
 
 #### WEAPON CHANGES ####
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
