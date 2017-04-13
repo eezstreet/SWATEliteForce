@@ -486,11 +486,17 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 ### v5.1 ###
 
 #### CHANGES
+- Some additional improvements to speech commands (thanks to kevinfoley for these changes):
+  * You can now report things to TOC using your voice!
+  * Improved the speech commands with CS gas
+  * A new SpeechCommands.md file has been provided which lists all the things you can say to trigger voice commands.
 - Adjusted the weapon accuracies (see Weapon Changes for more information)
 - Reduced the drag of beanbag ammo by 25% so it can hit more distant targets
-- Improved the Speech Command grammar slightly (thanks to kevinfoley for this change)
 - AI will now wait before entering a room after a gas grenade goes off. The amount of time depends on what equipment your officers have equipped. (thanks to kevinfoley for this change)
 - Halved the melee range (170 -> 85)
+- Fixed SEF bug: Investigating enemies were considered threats.
+- Fixed SEF bug: Fleeing suspects who were attacking were *not* considered threats.
+- Fixed SEF bug: Rare glitch where SWAT AI could shoot hostages intentionally
 - Fixed SEF bug: The AI could "miss" and not break a door with the breaching shotgun. They will now fire up to two times, and if they miss both times, the door will break on its own.
 - Fixed SEF bug: Colt Accurized Rifle, HK69, HK33, M16A1, AKM, G36C and Commando Rifle had wrong animations for AI-controlled officers
 - Fixed SEF bug: M16A1 had 30 round magazine for JSP and JHP ammo and 20 round magazine for others (now it's 20 rounds for all)
