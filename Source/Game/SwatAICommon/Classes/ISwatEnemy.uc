@@ -62,10 +62,16 @@ function FiredWeapon GetBackupWeapon();
 
 function PickUpWeaponModel(HandHeldEquipmentModel HHEModel);
 
+// Tell the enemy to drop his active weapon, and give the
+// falling weapon the specified impulse (in weapon-local space). 
+function DropActiveWeapon(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude);
 // Tell the enemy to drop all of his weapons, if it is being shown, and give the
 // falling weapon the specified impulse (in weapon-local space).
 function DropAllWeapons(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude);
 function ThrowWeaponDown();
+
+//Get whether the suspect chooses to drop his/her weapon instantly when complying
+function bool ShouldDropWeaponInstantly();
 
 // Tell the enemy to drop any evidence he is holding
 function DropAllEvidence(bool bIsDestroying);

@@ -1239,6 +1239,16 @@ simulated function ClientAIDroppedAllWeapons( SwatEnemy theDropper )
     }
 }
 
+simulated function ClientAIDroppedActiveWeapon( SwatEnemy theDropper )
+{
+    mplog( "---SGPC::ClientAIDroppedActiveWeapon(). dropper="$theDropper );
+
+    if ( theDropper != None )
+    {
+        theDropper.DropActiveWeapon();
+    }
+}
+
 simulated function ClientAIDroppedAllEvidence( SwatEnemy theDropper, bool bIsDestroying )
 {
     mplog( "---SGPC::ClientAIDroppedAllEvidence(). dropper="$theDropper );
