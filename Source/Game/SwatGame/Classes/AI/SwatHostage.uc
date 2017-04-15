@@ -132,6 +132,10 @@ function InitializeFromSpawner(Spawner Spawner)
 	}
 }
 
+function BecomeAware()
+{
+}
+
 //
 // ICanBeSpawned Implementation
 //

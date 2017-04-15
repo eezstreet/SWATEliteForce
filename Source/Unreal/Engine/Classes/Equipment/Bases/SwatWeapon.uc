@@ -68,6 +68,10 @@ enum WeaponLowReadyAnimationType
   WeaponAnimLowReady_Paintball
 };
 
+/*
+ * Determines what animations the AI-controlled officers should use when idling
+ */
+
 enum EIdleWeaponStatus
 {
 	IdleWeaponDoesNotMatter,
@@ -85,11 +89,25 @@ enum EIdleWeaponStatus
   IdleWithoutWeapon
 };
 
+/*
+ * Determines what animations the AI-controlled officers should use when ordering compliance
+ */
+
+enum EComplianceWeaponAnimation
+{
+  Compliance_Machinegun,
+  Compliance_Shotgun,
+  Compliance_SubmachineGun,
+  Compliance_CSBallLauncher,
+  Compliance_Handgun
+};
+
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
 var(Firing) config WeaponAimAnimationType AimAnimation;
 var(Firing) config WeaponLowReadyAnimationType LowReadyAnimation;
 var(Firing) config array<EIdleWeaponStatus> IdleWeaponCategory;
+var(Firing) config EComplianceWeaponAnimation ComplianceAnimation;
 
 // Manufacturer Information
 var(AdvancedDescription) protected localized config string Manufacturer         "The Manufacturer in the Advanced Information panel (localized)";
@@ -250,7 +268,7 @@ function bool ValidIdleCategory(EIdleWeaponStatus DesiredStatus)
 }
 
 simulated function vector GetIronsightsLocationOffset()
-{	
+{
     return IronSightLocationOffset;
 }
 
@@ -345,4 +363,5 @@ defaultproperties
   Slot=Slot_Invalid
   bPenetratesDoors=true
   ZoomedAimErrorModifier = 0.75
+  ComplianceAnimation=Compliance_Handgun
 }

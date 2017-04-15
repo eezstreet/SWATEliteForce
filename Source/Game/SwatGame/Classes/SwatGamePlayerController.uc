@@ -1239,6 +1239,16 @@ simulated function ClientAIDroppedAllWeapons( SwatEnemy theDropper )
     }
 }
 
+simulated function ClientAIDroppedActiveWeapon( SwatEnemy theDropper )
+{
+    mplog( "---SGPC::ClientAIDroppedActiveWeapon(). dropper="$theDropper );
+
+    if ( theDropper != None )
+    {
+        theDropper.DropActiveWeapon();
+    }
+}
+
 simulated function ClientAIDroppedAllEvidence( SwatEnemy theDropper, bool bIsDestroying )
 {
     mplog( "---SGPC::ClientAIDroppedAllEvidence(). dropper="$theDropper );
@@ -5577,6 +5587,22 @@ simulated function OnOneMinWarning()
     }
 }
 
+//Used by SpeechCommand interface
+simulated function SwatPlayer GetSwatPlayer()
+{
+	local SwatPlayer Player;
+
+	if( pawn != None )
+    {
+        Player = SwatPlayer(Pawn);
+    }
+    if( Player == None && ViewTarget != None )
+    {
+        Player = SwatPlayer(ViewTarget);
+    }
+	
+    return Player;
+}
 
 simulated function bool IsLocationFrozen()
 {

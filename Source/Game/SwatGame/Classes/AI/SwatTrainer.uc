@@ -68,6 +68,13 @@ function bool ShouldPlayFullBodyHitAnimation()
 	return false;
 }
 
+///////////////////////////////////////
+
+// the trainer has no awareness, so we don't need to worry about this
+function BecomeAware()
+{
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 cpptext

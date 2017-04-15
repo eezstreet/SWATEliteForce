@@ -303,7 +303,7 @@ latent function RunFromStunningDevice()
     }
 }
 
-// These two have to set an idle rather than using the special animation channel, 
+// These two have to set an idle rather than using the special animation channel,
 //  otherwise we get a hitch in the animation
 
 // subclasses must override
@@ -316,10 +316,10 @@ function name GetReactionAnimation()
 latent function PlayReactionAnimation()
 {
 	local int AnimSpecialChannel;
-	
+
 	bPlayedAnimation = true;
 
-	AnimSpecialChannel = m_Pawn.AnimPlaySpecial(GetReactionAnimation(), 0.1);    	
+	AnimSpecialChannel = m_Pawn.AnimPlaySpecial(GetReactionAnimation(), 0.1);
 	m_Pawn.FinishAnim(AnimSpecialChannel);
 
 	bPlayedAnimation = false;
@@ -338,8 +338,8 @@ latent function PlayAffectedAnimation()
 
 	bPlayedAnimation = true;
 
-	AnimSpecialChannel = m_Pawn.AnimLoopSpecial(GetAffectedAnimation(), 0.1);    
-	
+	AnimSpecialChannel = m_Pawn.AnimLoopSpecial(GetAffectedAnimation(), 0.1);
+
 	// wait until we're supposed to be done
 	while (Level.TimeSeconds < EndTime)
 	{
@@ -365,7 +365,7 @@ latent function PlayRecoveryAnimation()
 	bPlayedAnimation = true;
 	bRecovering      = true;
 
-	AnimSpecialChannel = m_Pawn.AnimPlaySpecial(GetRecoveryAnimation(), 0.1);    
+	AnimSpecialChannel = m_Pawn.AnimPlaySpecial(GetRecoveryAnimation(), 0.1);
 	m_Pawn.FinishAnim(AnimSpecialChannel);
 
 	bPlayedAnimation = false;
@@ -437,9 +437,10 @@ Begin:
 		RunFromStunningDevice();
 	}
 
+	ISwatAICharacter(m_Pawn).BecomeAware();
 	m_Pawn.DisableCollisionAvoidance();
 	PlayAffectedAnimation();
-	
+
 	NotifyFinishedAffectedAnimation();
 
 	PlayRecoveryAnimation();
@@ -463,7 +464,7 @@ Begin:
 	// wait until the required resources are available before trying to start again, or if time runs out
 	while ((Level.TimeSeconds < EndTime) &&
 		  !resource.requiredResourcesAvailable(achievingGoal.priority, achievingGoal.priority))
-	{	
+	{
 //		log(Name $ " WaitToAchieve - Level.TimeSeconds: " $ Level.TimeSeconds $ " EndTime: " $ EndTime $ " achievingGoal.priority: " $ achievingGoal.priority);
 		yield();
 	}

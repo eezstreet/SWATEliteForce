@@ -1220,28 +1220,28 @@ static function class<Actor> GetRenderableActorClass()
 simulated function vector GetIronsightsLocationOffset()
 {
 	local vector IronsightsLocation;
-	
+
     return IronsightsLocation;
 }
 
 simulated function vector GetPlayerViewOffset()
 {
 	local vector PlayerViewOffset;
-	
+
     return PlayerViewOffset;
 }
 
 simulated function Rotator GetIronsightsRotationOffset()
 {
 	local Rotator IronsightsRotation;
-	
+
     return IronsightsRotation;
 }
 
 simulated function rotator GetPlayerViewRotation()
 {
 	local rotator PlayerViewRotation;
-	
+
     return PlayerViewRotation;
 }
 
@@ -1350,7 +1350,7 @@ defaultproperties
     UseAnimationRate=1.0
 	MeleeAnimationRate=1.0
 
-	MeleeRange=170
+	MeleeRange=85
 	MeleeDamage=5
 	MeleePlayerStingDuration=1.5
 	MeleeHeavilyArmoredPlayerStingDuration=0.5

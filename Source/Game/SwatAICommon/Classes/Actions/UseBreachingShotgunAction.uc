@@ -25,7 +25,7 @@ var(parameters) private Door            TargetDoor;
 var(parameters) private NavigationPoint PostBreachPoint;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Init / Cleanup
 
 function initAction(AI_Resource r, AI_Goal goal)
@@ -64,7 +64,7 @@ function cleanup()
 
 	// re-enable collision avoidance (if it isn't already)
 	m_Pawn.EnableCollisionAvoidance();
-	
+
 	if ((BreachingShotgun != None) && !BreachingShotgun.IsIdle())
 	{
 		BreachingShotgun.AIInterrupt();
@@ -214,10 +214,10 @@ latent function BreachDoorWithShotgun()
 	BreachingShotgun.LatentUse();
 
 	// @HACK: If the door wasn't broken by the breaching shotgun, blast it anyways.
-	// Don't do hacks. Shoot the lock again. -J21C
 	if (! ISwatDoor(TargetDoor).IsBroken())
 	{
 		BreachingShotgun.LatentUse();
+		ISwatDoor(TargetDoor).Blasted(m_Pawn);
 	}
 }
 
@@ -248,9 +248,9 @@ Begin:
 
 		AimAtDoorKnob();
 		EquipBreachingShotgun();
-		
+
 		WaitForZulu();
-		
+
 		BreachDoorWithShotgun();
 
 		StopAimingAtDoorKnob();
