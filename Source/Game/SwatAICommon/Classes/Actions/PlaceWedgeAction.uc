@@ -160,7 +160,7 @@ latent function PlaceWedge()
 state Running
 {
 Begin:
-	if (TargetDoor.IsClosed() && ! TargetDoor.IsOpening() && ! TargetDoor.IsBroken())
+	if (TargetDoor.IsClosed() && ! TargetDoor.IsOpening())
 	{
 		ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
 
