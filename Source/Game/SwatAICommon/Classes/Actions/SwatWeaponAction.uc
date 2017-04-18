@@ -210,6 +210,32 @@ final function AimAtActor(Actor Target)
 	}
 }
 
+latent function SetGunDirection( Actor Target ) // possible bug fixer
+{
+    local rotator rDirection;
+    local vector  vDirection;
+    local Coords  cTarget;
+    local vector  vTarget;
+
+    if( Target != none)
+    {
+		if (m_Pawn.IsA('SwatEnemy') && !ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			ISwatEnemy(m_Pawn).BecomeAThreat();
+		}
+		UpdateThreatToTarget(Target);
+        cTarget = Target.GetBoneCoords('Bip01_Spine2');
+        vTarget = cTarget.Origin;
+
+        // Find the pitch between the gun and the target
+        vDirection = vTarget - m_pawn.Location;
+        rDirection = rotator(vDirection);
+
+        //m_pawn.m_wWantedAimingPitch = rDirection.Pitch/256;
+        //m_pawn.m_rFiringRotation = rDirection;
+		ISwatAI(m_pawn).AimToRotation(rDirection);
+    }
+}
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Firing

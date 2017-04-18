@@ -177,28 +177,6 @@ private function bool ShouldSucceed()
 	return (FRand() < ChanceToSucceedAfterFiring);
 }
 
-latent function SetGunDirection( Actor aTarget ) // possible bug fixer
-{
-    local rotator rDirection;
-    local vector  vDirection;
-    local Coords  cTarget;
-    local vector  vTarget;
-
-    if( aTarget != none)
-    {
-        cTarget = aTarget.GetBoneCoords('Bip01_Spine2');
-        vTarget = cTarget.Origin;
-
-        // Find the pitch between the gun and the target
-        vDirection = vTarget - m_pawn.Location;
-        rDirection = rotator(vDirection);
-
-        //m_pawn.m_wWantedAimingPitch = rDirection.Pitch/256;
-        //m_pawn.m_rFiringRotation = rDirection;
-		ISwatAI(m_pawn).AimToRotation(rDirection);
-    }
-}
-
 latent function AttackTarget()
 {
   local FiredWeapon CurrentWeapon;
