@@ -63,6 +63,8 @@ var(PREGAME) protected config Name MissionEndSequenceBName;
 var(PREGAME) protected config Name MissionStartSequenceAName;
 var(PREGAME) protected config Name MissionStartSequenceBName;
 
+var config bool SkipOpeningCinematic;
+
 var(PREGAME) protected bool bInCinematic; //true while doing a cinematic repositioning
 var() int NumTicks;
 
@@ -169,13 +171,21 @@ function OnGameStarted()
 
 function OnTick( float Delta )
 {
+	local int MaxTicks;
+	if (SkipOpeningCinematic) 
+	{
+		MaxTicks = 1;
+	} else {
+		MaxTicks = 25;
+	}
+
 	if (NumTicks >= 0)
 	{
 		NumTicks++;
 
-		if (NumTicks > 25/* && Controller.TopPage() == self*/)
+		if (NumTicks > MaxTicks/* && Controller.TopPage() == self*/)
 		{
-			if( SwatGUIControllerBase(Controller).GuiConfig.CurrentMission == None ||
+			if( SkipOpeningCinematic || SwatGUIControllerBase(Controller).GuiConfig.CurrentMission == None ||
 				SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None ||
         SwatGUIControllerBase(Controller).GetDispatchDisabled() )
 				FinishStartRoundSequence();
