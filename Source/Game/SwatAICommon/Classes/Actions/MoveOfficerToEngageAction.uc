@@ -13,6 +13,9 @@ class MoveOfficerToEngageAction extends MoveToOpponentAction;
 // copied from our goal
 var(parameters) Pawn Opponent;
 
+// sensor we use to determine if we can hit the target
+var private TargetSensor		TargetSensor;
+
 // where we attack from - a member variable in case latent function to determine it is required
 var private NavigationPoint		PointToEngageFrom;
 
@@ -39,6 +42,12 @@ function cleanup()
 {
 	super.cleanup();
 
+	if (TargetSensor != None)
+	{
+		TargetSensor.deactivateSensor(self);
+		TargetSensor = None;
+	}
+
 	if (PointToEngageFrom != None)
 	{
 		SwatAIRepository(Level.AIRepo).GetHive().ClearEngagingPointForOfficer(m_Pawn);
@@ -46,6 +55,28 @@ function cleanup()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//
+// Sensors
+
+private function ActivateTargetSensor()
+{
+	assert(Opponent != None);
+
+	TargetSensor = TargetSensor(class'AI_Sensor'.static.activateSensor( self, class'TargetSensor', characterResource(), 0, 1000000 ));
+	assert(TargetSensor != None);
+
+	TargetSensor.setParameters( Opponent );
+}
+
+function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData )
+{
+	if (m_Pawn.logTyrion)
+		log("MoveOfficerToEngageAction received sensor message from " $ sensor.name $ " value is "$ value.objectData);
+
+	if ((value.objectData == None) && isIdle())
+		runAction();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Movement Test
@@ -136,13 +167,15 @@ private latent function MoveToPointToEngageFrom()
 state Running
 {
  Begin:
+	ActivateTargetSensor();
+
  RunningLoop:
 	bSucceeded = false;
 
 	// stop moving while we can hit the target
 	// otherwise we try to find a point in the room we're in that we can engage from
 	// and if we don't find a point, we just don't move
-	if (m_Pawn.CanHit(Opponent))
+	if (TargetSensor.bCanHitTarget)
 	{
 		pause();
 	}
