@@ -1124,6 +1124,11 @@ function UnbecomeAThreat() //Not imaginative name, I know -J21C
 	}
 }
 
+function bool IAmThreat()
+{
+	return bThreat;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Doors
