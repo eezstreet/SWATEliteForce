@@ -208,10 +208,10 @@ latent function AttackTarget()
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 	}
 
-	if(bHavePerfectAim)
+//	if(bHavePerfectAim)
 		AimAtActor(Target);
-	else
-		SetGunDirection(Target);
+//	else
+//		SetGunDirection(Target);
 
   // @HACK: See comments in ISwatAI::LockAim for more info.
   ISwatAI(m_pawn).LockAim();
@@ -330,10 +330,10 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 
-  if(bHavePerfectAim)
+//  if(bHavePerfectAim)
 		LatentAimAtActor(Target);
-	else
-		SetGunDirection(Target);
+//	else
+//		SetGunDirection(Target);
 
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
@@ -342,8 +342,8 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 		Sleep(MandatedWait - TimeElapsed);
 	}
 
-	if(!bHavePerfectAim)
-  	SetGunDirection(Target);
+//	if(!bHavePerfectAim)
+//  	SetGunDirection(Target);
 
   ShootWeaponAt(Target);
 }
