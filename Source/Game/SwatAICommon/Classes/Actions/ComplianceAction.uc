@@ -189,6 +189,11 @@ latent final function Comply()
 	{
 		Enemy.DropAllWeapons();
 		Enemy.DropAllEvidence(false);
+		// make sure we are not a threat anymore
+		if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			Enemy.UnbecomeAThreat();
+		}
 	}
 }
 
