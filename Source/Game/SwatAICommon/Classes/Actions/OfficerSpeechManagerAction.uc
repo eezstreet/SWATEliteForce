@@ -63,6 +63,11 @@ function TriggerSuspectSpottedSpeech()
 	TriggerSpeech('ReportedSuspectSpotted', true);
 }
 
+function TriggerSuspectLostSpeech()
+{
+	TriggerSpeech('AnnouncedLostTarget', true);
+}
+
 function TriggerSuspectDownSpeech(Pawn Suspect)
 {
 	if (Suspect.IsIncapacitated())
