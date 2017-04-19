@@ -568,7 +568,37 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 
 function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost)
 {
-	// do nothing for now.
+	assert(OfficerViewer != None);
+	assert(Lost != None);
+
+	if (Lost.IsA('SwatPlayer'))
+	{
+		if (CanAssignAnyOfficerToTarget(Lost))
+		{
+			// this may need to be moved because this will be called every time we see a Enemy or Hostage 
+			// (then it will be called too often I think)
+			UpdateOfficerAssignments();
+		}
+	}
+	else
+	{
+		if (Blackboard.HasAIBeenEncountered(Lost))
+		{
+			if (Lost.IsA('SwatEnemy'))
+			{
+				OfficerLostEnemy(OfficerViewer, Lost);
+				Blackboard.RemoveAssignedTarget(Lost);
+			}
+			else
+			{
+				// sanity check
+				assert(Lost.IsA('SwatHostage'));
+
+				OfficerLostHostage(OfficerViewer, Lost);
+				Blackboard.RemoveAssignedTarget(Lost);
+			}
+		}
+	}
 }
 
 function bool HasTurnedOnPlayer()
@@ -688,6 +718,11 @@ private function OfficerSawHostage(Pawn OfficerViewer, Pawn SeenHostage)
 	}
 }
 
+private function OfficerLostHostage(Pawn OfficerViewer, Pawn LostHostage)
+{
+	Blackboard.UpdateHostage(LostHostage);
+}
+
 private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 {
 	Blackboard.UpdateEnemy(SeenEnemy);
@@ -701,6 +736,18 @@ private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 	}
 }
 
+private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy)
+{
+	Blackboard.UpdateEnemy(LostEnemy);
+	
+	// only say something if the hostage is not already arrested or compliant
+	if (! ISwatAI(LostEnemy).IsCompliant() &&
+		! ISwatAI(LostEnemy).IsArrested())
+	{
+		// trigger a sound for the viewer to say
+		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectLostSpeech();
+	}
+}
 private function ClearCommandGoalsForOfficer(Pawn Officer)
 {
 	if (Officer.logTyrion)
