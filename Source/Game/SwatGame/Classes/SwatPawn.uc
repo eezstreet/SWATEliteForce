@@ -1778,7 +1778,7 @@ simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRot
       return false;
     }
 
-    if(CandidateActor.IsA('SwatEnemy'))
+    if(CandidateActor.IsA('SwatEnemy') && !CandidateActor.IsA('SwatUndercover'))
 	{
       bIsSuspect = 1;
     }
