@@ -17,16 +17,17 @@ Since Version 3, the mod has gained a large following. I've since been able to e
 # TABLE OF CONTENTS #
 1. How to Install
 2. Changes, Summarized
-3. Known Issues
-4. Other Minor Changes
+3. Frequently Asked Questions (FAQ)
+4. Known Issues
+5. Other Minor Changes
   - Gameplay
   - GUI
   - Equipment
   - Mission Changes
-5. How to play in Multiplayer
-6. Version History
-7. Credits
-8. License
+6. How to play in Multiplayer
+7. Version History
+8. Credits
+9. License
 
 # HOW TO INSTALL #
 Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
@@ -103,6 +104,70 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 		** Snipers are now available in multiplayer.
 		** New options available for server hosts for voting; see Default.ini for more information
 
+
+# FREQUENTLY ASKED QUESTIONS (FAQ) #
+
+ * How do I install the mod?
+ * How do I use the speech recognition?
+ * What's the difference between "MARK WITH LIGHTSTICK" and "DROP LIGHTSTICK"?
+ * How can I check for traps in multiplayer?
+ * How can I play in Multiplayer? Are there any servers?
+ * How can I report a bug?
+ * Why can't I play in Barricaded Suspects, VIP Escort, Smash and Grab, or Rapid Deployment?
+ * Are you going to add AI officers in CAREER CO-OP?
+ * Does this mod work with other mods?
+ * Are there more missions for Extra Missions coming out?
+
+## HOW DO I INSTALL THE MOD?
+Please read the How to Install section of this README. :)
+
+## HOW DO I USE THE SPEECH RECOGNITION?
+First, you will need to ensure that your operating system supports Speech Recognition. What you'll need is the Microsoft Speech Recognition API, which is available here: https://www.microsoft.com/en-us/download/details.aspx?id=27224
+If your system meets the requirements, the 'Use Speech Recognition' checkbox will be available.
+You can also bind a key to toggle the functionality ingame, which is good when you're speaking for a Let's Play, for example.
+A list of trigger words is provided, starting with Patch 5.1. See SpeechCommands.md for more information.
+
+## WHAT'S THE DIFFERENCE BETWEEN "MARK WITH LIGHTSTICK" AND "DROP LIGHTSTICK"?
+MARK WITH LIGHTSTICK orders the nearest officer to go to the location and drop a lightstick. DROP LIGHTSTICK orders the nearest officer to drop a lightstick at their feet.
+
+## HOW CAN I CHECK FOR TRAPS IN MULTIPLAYER?
+Use the Optiwand, and aim up at the doorknob. The AI in singleplayer don't use the optiwand because they're super duper pros at it, and pulling out the optiwand is slower.
+
+## HOW CAN I PLAY IN MULTIPLAYER? ARE THERE ANY SERVERS?
+Please read the How to Play in Multiplayer section of this README. :)
+
+## HOW CAN I REPORT A BUG?
+The best, and preferred method is to post it directly on our GitHub issues page: https://github.com/eezstreet/SWATEliteForce/issues
+However, since doing so requires a GitHub account, it's not the most desirable option. You can also post on the Moddb page, which doesn't require an account.
+Additionally, you can check us out on Discord, and chat with the developers: https://discord.gg/RfujTnF
+
+## WHY CAN'T I PLAY IN BARRICADED SUSPECTS, VIP ESCORT, SMASH AND GRAB, OR RAPID DEPLOYMENT?
+This mod uses very realistic values for the weapons, and ultimately it doesn't play well in PvP modes for those reasons.
+Personally I would recommend playing these PvP modes on the original SWAT 4, non-TSS, since the PvP balance is as good as it can get.
+
+## ARE YOU GOING TO ADD AI OFFICERS IN CAREER CO-OP?
+Possibly.
+
+## DOES THIS MOD WORK WITH OTHER MODS?
+Here's a good list of mods that will generally work out of the box, without any kind of issues:
+- Any kind of custom map, including the Mega Map Pack
+- Any kind of added custom skin
+- Any kind of texture mod, like SWAT 4: GEM
+
+Here's a good list of mods that will work, with tinkering:
+- The Mega Map Campaign Mod. This will work if you don't include the changes to the System folder. The maps themselves will work in an All Missions campaign without further modding.
+- SWAT 4: Remake. The weapons can be merged into SEF, but this requires some modding knowledge. They have a guide somewhere about merging the two mods.
+- Any kind of custom weapon model mod, like Brettskie's M4 mod. Again, this will require some modding knowledge but it's possible to merge them.
+
+Here's a good list of mods that won't work, even with tinkering:
+- Any kind of code mod (11-99 enhancement mod, SSF, ...)
+- SAS mod; the weapons from that mod are included with SEF though.
+- Speech Recognition Improvement; the Speech Recognition feature is available but not all of the commands from that mod are present.
+
+## ARE THERE MORE MISSIONS FOR EXTRA MISSIONS COMING OUT?
+Yes! There are two more confirmed missions in Extra Missions: Brewer County Courthouse and Enverstar Power Plant. On top of that, we are gathering suggestions for custom maps.
+
+
 # KNOWN ISSUES #
   * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
   * If you're missing equipment in Singleplayer, note that you need to unlock it first.
@@ -110,7 +175,7 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
   * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
-  * You can't actually fire the sniper rifle in Multiplayer yet.
+  * You can't actually fire the sniper rifle in Multiplayer yet. It's bugged and we aren't 100% sure how to fix it. In the meantime, it provides important scouting information.
   * Sometimes crashes with a RotateActorAction, for reasons that aren't known.
   * Officers sometimes won't shoot suspects if they're very close to them. It's a problem in the original game as well.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
@@ -485,7 +550,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 ### v5.1 ###
 
-#### CHANGES ####
+#### CHANGES
 - Some additional improvements to speech commands (thanks to kevinfoley for these changes):
   * You can now report things to TOC using your voice!
   * Improved the speech commands with CS gas
@@ -494,23 +559,15 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Reduced the drag of beanbag ammo by 25% so it can hit more distant targets
 - AI will now wait before entering a room after a gas grenade goes off. The amount of time depends on what equipment your officers have equipped. (thanks to kevinfoley for this change)
 - Halved the melee range (170 -> 85)
-- The delete loadout button went missing. It's back now.
-- Suspects have a high chance to drop their weapon before raising their arms to surrender. This makes it harder to accidentally shoot a suspect who is surrendering (thanks to kevinfoley for this change)
-- Reduced the morale of civilians on FunTime Amusements Arcade
 - Fixed SEF bug: Investigating enemies were considered threats.
 - Fixed SEF bug: Fleeing suspects who were attacking were *not* considered threats.
 - Fixed SEF bug: Rare glitch where SWAT AI could shoot hostages intentionally
 - Fixed SEF bug: The AI could "miss" and not break a door with the breaching shotgun. They will now fire up to two times, and if they miss both times, the door will break on its own.
 - Fixed SEF bug: Colt Accurized Rifle, HK69, HK33, M16A1, AKM, G36C and Commando Rifle had wrong animations for AI-controlled officers
-- Fixed SEF bug: Beanbag shotguns had wrong compliance animation for AI-controlled officers
 - Fixed SEF bug: M16A1 had 30 round magazine for JSP and JHP ammo and 20 round magazine for others (now it's 20 rounds for all)
 - Fixed SEF bug: Manager on Meat Barn had a ridiculously high amount of morale (3.0)
-- Fixed SEF bug: Officers would report Fields as being down instead of Jackson
-- Fixed SEF bug: AI-controlled officers could not place wedges on broken doors
-- Fixed TSS/SEF bug: Taunts and AI officers restraining Officer Jennings or Hyun-Jun Park's security detail were overly rude/told them to shut up. They now treat them the same as civilians.
 - Fixed TSS/SEF bug: Suspects could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
 - (possibly) fixed TSS bug: Suspects weren't alerted when they got hit by a less lethal effect like a taser, so you could stand behind them and spam the taser without them even being aware of your presence.
-- Fixed TSS bug: Grenade launchers had wrong compliance animation for AI-controlled officers
 
 #### WEAPON CHANGES ####
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
