@@ -506,6 +506,8 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed SEF bug: M16A1 had 30 round magazine for JSP and JHP ammo and 20 round magazine for others (now it's 20 rounds for all)
 - Fixed SEF bug: Manager on Meat Barn had a ridiculously high amount of morale (3.0)
 - Fixed SEF bug: Officers would report Fields as being down instead of Jackson
+- Fixed SEF bug: AI-controlled officers could not place wedges on broken doors
+- Fixed TSS/SEF bug: Taunts and AI officers restraining Officer Jennings or Hyun-Jun Park's security detail were overly rude/told them to shut up. They now treat them the same as civilians.
 - Fixed TSS/SEF bug: Suspects could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
 - (possibly) fixed TSS bug: Suspects weren't alerted when they got hit by a less lethal effect like a taser, so you could stand behind them and spam the taser without them even being aware of your presence.
 - Fixed TSS bug: Grenade launchers had wrong compliance animation for AI-controlled officers
