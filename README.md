@@ -559,15 +559,20 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Reduced the drag of beanbag ammo by 25% so it can hit more distant targets
 - AI will now wait before entering a room after a gas grenade goes off. The amount of time depends on what equipment your officers have equipped. (thanks to kevinfoley for this change)
 - Halved the melee range (170 -> 85)
-- Fixed SEF bug: Investigating enemies were considered threats.
-- Fixed SEF bug: Fleeing suspects who were attacking were *not* considered threats.
+- Reduced the damage done by torso shots against all targets
+- Increased the damage done by 9mm AP and .223 ammunition
+- Suspects have a chance to drop their weapon immediately upon surrendering, making it less likely to shoot them accidentally
+- Added a "grace period" to compliance. If a suspect becomes compliant and you accidentally shoot them within a moment of their surrender, no penalty is ensued.
+- Restored cut dialogue: Officers will report when they've lost sight of a suspect.
+- Fixed SEF bug: Investigating enemies were considered threats (for the purposes of penalties and officer AI)
+- Fixed SEF bug: Fleeing suspects who were attacking were *not* considered threats (for the purposes of penalties and officer AI)
 - Fixed SEF bug: Rare glitch where SWAT AI could shoot hostages intentionally
 - Fixed SEF bug: The AI could "miss" and not break a door with the breaching shotgun. They will now fire up to two times, and if they miss both times, the door will break on its own.
 - Fixed SEF bug: Colt Accurized Rifle, HK69, HK33, M16A1, AKM, G36C and Commando Rifle had wrong animations for AI-controlled officers
 - Fixed SEF bug: M16A1 had 30 round magazine for JSP and JHP ammo and 20 round magazine for others (now it's 20 rounds for all)
 - Fixed SEF bug: Manager on Meat Barn had a ridiculously high amount of morale (3.0)
 - Fixed TSS/SEF bug: Suspects could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
-- (possibly) fixed TSS bug: Suspects weren't alerted when they got hit by a less lethal effect like a taser, so you could stand behind them and spam the taser without them even being aware of your presence.
+- Fixed TSS bug: Punching a restrained suspect would make them stand up.
 
 #### WEAPON CHANGES ####
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
