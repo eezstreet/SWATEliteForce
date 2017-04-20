@@ -45,7 +45,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 //       return; //the force was authorized
 //    }
 	
-    if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IsAThreat())
+    if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat())
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name

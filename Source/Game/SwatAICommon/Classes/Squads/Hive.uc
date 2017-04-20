@@ -742,7 +742,7 @@ private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy)
 	
 	// only say something if the hostage is not already arrested or compliant
 	if (! ISwatAI(LostEnemy).IsCompliant() &&
-		! ISwatAI(LostEnemy).IsArrested())
+		! ISwatAI(LostEnemy).IsArrested() && class'Pawn'.static.checkConscious(LostEnemy))
 	{
 		// trigger a sound for the viewer to say
 		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectLostSpeech();

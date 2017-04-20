@@ -50,6 +50,7 @@ function EnemySpeechManagerAction	GetEnemySpeechManagerAction();
 // Threat
 
 function bool		IsAThreat();
+function bool		IAmThreat();
 function			BecomeAThreat();
 function			UnbecomeAThreat();
 
