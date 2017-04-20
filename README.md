@@ -574,6 +574,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed TSS/SEF bug: Suspects could be "juked" by running in a circle around them and/or spamming crouch, which would foil their AI and prevent them from firing. This was more pronounced in SEF since enemies take longer to fire their weapon.
 - Fixed TSS bug: Punching a restrained suspect would make them stand up.
 - Fixed TSS bug: Punching while changing weapons (or when finishing an arrest) would cause weird bugs, including turning your weapon invisible and going into a T-pose
+- Fixed TSS bug: Compliant/arrested "Wild Gunner" AIs (the kind with M249 SAWs) would be sweeping back and forth still, which looked odd (they still do this while they are stunned, but it'll require some reorganization of the code to fix this properly)
 
 #### WEAPON CHANGES ####
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
