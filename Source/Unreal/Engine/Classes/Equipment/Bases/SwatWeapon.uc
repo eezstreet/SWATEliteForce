@@ -277,52 +277,6 @@ simulated function Rotator GetIronsightsRotationOffset()
     return IronSightRotationOffset;
 }
 
-simulated function vector GetPlayerViewOffset()
-{
-	local vector ViewOffset;
-	local Pawn OwnerPawn;
-	local PlayerController OwnerController;
-
-	ViewOffset = PlayerViewOffset;
-
-	OwnerPawn = Pawn(Owner);
-
-	if (OwnerPawn!= None)
-	{
-		OwnerController = PlayerController(OwnerPawn.Controller);
-
-		if (OwnerController != None && OwnerController.WantsZoom)
-		{
-			return IronSightLocationOffset;
-		}
-	}
-
-	return ViewOffset;
-}
-
-simulated function rotator GetPlayerViewRotation()
-{
-	local Rotator ViewRotation;
-	local Pawn OwnerPawn;
-	local PlayerController OwnerController;
-
-	ViewRotation = PlayerViewRotation;
-
-	OwnerPawn = Pawn(Owner);
-
-	if (OwnerPawn!= None)
-	{
-		OwnerController = PlayerController(OwnerPawn.Controller);
-
-		if (OwnerController != None && OwnerController.WantsZoom)
-		{
-			return IronSightRotationOffset;
-		}
-	}
-
-	return ViewRotation;
-}
-
 simulated function float GetBaseAimError()
 {
 	local float BaseAimError;

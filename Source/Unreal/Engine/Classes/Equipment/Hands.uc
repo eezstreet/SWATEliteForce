@@ -63,94 +63,50 @@ simulated function onMessage(Message m)
 
 simulated function UpdateHandsForRendering()
 {
-    local Pawn PawnOwner;
+    local Pawn OwnerPawn;
 	local PlayerController OwnerController;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
     local HandheldEquipment EquippedItem;
+	local vector Offset;
     
-    PawnOwner = Pawn(Owner);
-    if (PawnOwner == None)
+    OwnerPawn = Pawn(Owner);
+    if (OwnerPawn == None)
     {
         AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
     }
-
-	NewRotation = PawnOwner.GetViewRotation();
-
-	NewLocation = 
-		PawnOwner.Location + 
-		PawnOwner.CalcDrawOffset() + 
-		PawnOwner.ViewLocationOffset(NewRotation);
-		
-    // Implement "showhands" command in SwatCheatManager.
+	
+	 // Implement "showhands" command in SwatCheatManager.
     // Native code sets bHidden on hands/gun every tick, so we hide
     // the hands in native code. But we need to hide/show the first person
     // model each tick here.
-    EquippedItem = PawnOwner.GetActiveItem();
+    EquippedItem = OwnerPawn.GetActiveItem();
     if (EquippedItem != None)
     {
         EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
         if (EquippedFirstPersonModel != None)
         {
-            EquippedFirstPersonModel.bOwnerNoSee = !PawnOwner.bRenderHands;        
+            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands;        
         }
     }
-
-    bOwnerNoSee = !PawnOwner.bRenderHands;
-
-	// Special-case exception: even if hands/weapon rendering is disabled,
-	// the hands and weapon should be shown when the optiwand is equipped
-	// (otherwise you can't see the optiwand screen)
-	if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
-	{
-		if (EquippedFirstPersonModel != None)
-		{
-			EquippedFirstPersonModel.bOwnerNoSee = false;        
-		}
-		bOwnerNoSee = false;
+	
+	NewRotation = OwnerPawn.GetViewRotation();
+	
+	//if the player is zooming, add the iron sight offset to the new location
+	OwnerController = PlayerController(OwnerPawn.Controller);
+	if (OwnerController != None && OwnerController.WantsZoom) {
+		//this converts local offset to world coordinates
+		Offset = EquippedItem.GetIronsightsLocationOffset() >> NewRotation;
 	}
 
-	SetLocation(NewLocation);
-    SetRotation(NewRotation);
-}
-
-simulated function UpdateHandsForRenderingWithZoom()
-{
-    local Pawn PawnOwner;
-    local vector NewLocation;
-    local rotator NewRotation;
-    local HandheldEquipmentModel EquippedFirstPersonModel;
-    local HandheldEquipment EquippedItem;
-    
-    PawnOwner = Pawn(Owner);
-    if (PawnOwner == None)
-    {
-        AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
-    }	
-	NewRotation = PawnOwner.GetViewRotation();
-
 	NewLocation = 
-		PawnOwner.Location + 
-		PawnOwner.CalcDrawOffset() + 
-		PawnOwner.ViewLocationOffset(NewRotation) +
-		EquippedItem.GetIronsightsLocationOffset();
-		
-    // Implement "showhands" command in SwatCheatManager.
-    // Native code sets bHidden on hands/gun every tick, so we hide
-    // the hands in native code. But we need to hide/show the first person
-    // model each tick here.
-    EquippedItem = PawnOwner.GetActiveItem();
-    if (EquippedItem != None)
-    {
-        EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
-        if (EquippedFirstPersonModel != None)
-        {
-            EquippedFirstPersonModel.bOwnerNoSee = !PawnOwner.bRenderHands;        
-        }
-    }
+		OwnerPawn.Location + 
+		OwnerPawn.CalcDrawOffset() + 
+		OwnerPawn.ViewLocationOffset(NewRotation) +
+		Offset;
 
-    bOwnerNoSee = !PawnOwner.bRenderHands;
+    bOwnerNoSee = !OwnerPawn.bRenderHands;
 
 	// Special-case exception: even if hands/weapon rendering is disabled,
 	// the hands and weapon should be shown when the optiwand is equipped
