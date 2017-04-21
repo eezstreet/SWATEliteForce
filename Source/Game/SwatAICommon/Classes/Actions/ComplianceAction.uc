@@ -29,6 +29,11 @@ var config array<name>	StandingArmsUpAnimations;
 var config array<name>	CrouchingStunnedArmsUpAnimations;
 var config array<name>	StandingStunnedArmsUpAnimations;
 
+var config float 		MinArmsUpAnimationRate;
+var config float		MaxArmsUpAnimationRate;
+var config float		MinKneelAnimationRate;
+var config float		MaxKneelAnimationRate;
+
 var private bool		bJustComplied;
 
 const kPostComplianceGoalPriority = 91;	// lower than being stunned or shot
@@ -141,12 +146,12 @@ latent final function PreComply()
 	local float AnimationRate;
 	
 	// play the arms up animation
-	AnimationRate = RandRange(1.1, 1.6);
+	AnimationRate = RandRange(MinArmsUpAnimationRate, MaxArmsUpAnimationRate);
 	ComplyAnimChannel = m_Pawn.AnimPlaySpecial(GetPreComplyAnimation(), 0.1, '', AnimationRate);
     m_Pawn.FinishAnim(ComplyAnimChannel);
 
 	// play the compliance animation
-	AnimationRate = RandRange(1.0, 1.4);
+	AnimationRate = RandRange(MinKneelAnimationRate, MaxKneelAnimationRate);
     ComplyAnimChannel = m_Pawn.AnimPlaySpecial(GetComplianceAnimation(), 0, '', AnimationRate);
     m_Pawn.FinishAnim(ComplyAnimChannel);
 }
