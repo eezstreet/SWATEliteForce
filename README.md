@@ -548,6 +548,13 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 # VERSION HISTORY #
 
+### v5.2 ###
+
+#### CHANGES
+- Corrected the grenade throwing animation at high FOVs
+- Tweaked the speed of the surrender animation so it plays slower (thanks to kevinfoley for this change)
+
+
 ### v5.1 ###
 
 #### CHANGES
