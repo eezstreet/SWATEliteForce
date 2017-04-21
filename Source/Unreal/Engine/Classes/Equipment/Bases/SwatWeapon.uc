@@ -134,6 +134,7 @@ var config vector PlayerViewOffset;
 var config Rotator IronSightRotationOffset;
 var config Rotator PlayerViewRotation;
 var config float ZoomedAimErrorModifier;
+var config float ViewInertia;
 
 var bool bPenetratesDoors;
 
@@ -275,6 +276,11 @@ simulated function vector GetIronsightsLocationOffset()
 simulated function Rotator GetIronsightsRotationOffset()
 {
     return IronSightRotationOffset;
+}
+
+simulated function float GetViewInertia() 
+{
+	return ViewInertia;
 }
 
 simulated function float GetBaseAimError()

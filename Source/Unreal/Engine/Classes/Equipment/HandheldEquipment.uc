@@ -1224,13 +1224,6 @@ simulated function vector GetIronsightsLocationOffset()
     return IronsightsLocation;
 }
 
-simulated function vector GetPlayerViewOffset()
-{
-	local vector PlayerViewOffset;
-
-    return PlayerViewOffset;
-}
-
 simulated function Rotator GetIronsightsRotationOffset()
 {
 	local Rotator IronsightsRotation;
@@ -1238,11 +1231,11 @@ simulated function Rotator GetIronsightsRotationOffset()
     return IronsightsRotation;
 }
 
-simulated function rotator GetPlayerViewRotation()
+simulated function float GetViewInertia() 
 {
-	local rotator PlayerViewRotation;
-
-    return PlayerViewRotation;
+	local float Inertia;
+	
+	return Inertia;
 }
 
 event Destroyed()

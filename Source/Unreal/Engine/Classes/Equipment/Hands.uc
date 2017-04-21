@@ -65,11 +65,13 @@ simulated function UpdateHandsForRendering()
 {
     local Pawn OwnerPawn;
 	local PlayerController OwnerController;
-    local vector NewLocation;
+    local vector TargetLocation;
+	local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
     local HandheldEquipment EquippedItem;
 	local vector Offset;
+	local float ViewInertia;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
@@ -93,18 +95,23 @@ simulated function UpdateHandsForRendering()
 	
 	NewRotation = OwnerPawn.GetViewRotation();
 	
+	TargetLocation = 
+		OwnerPawn.Location + 
+		OwnerPawn.CalcDrawOffset() + 
+		OwnerPawn.ViewLocationOffset(NewRotation);
+	
 	//if the player is zooming, add the iron sight offset to the new location
 	OwnerController = PlayerController(OwnerPawn.Controller);
 	if (OwnerController != None && OwnerController.WantsZoom) {
 		//this converts local offset to world coordinates
 		Offset = EquippedItem.GetIronsightsLocationOffset() >> NewRotation;
+		TargetLocation = TargetLocation + Offset;
 	}
-
-	NewLocation = 
-		OwnerPawn.Location + 
-		OwnerPawn.CalcDrawOffset() + 
-		OwnerPawn.ViewLocationOffset(NewRotation) +
-		Offset;
+	
+	//interpolate towards our target location. inertia controls how quickly the weapon 
+	//visually responds to our movements
+	ViewInertia = EquippedItem.GetViewInertia();
+	NewLocation = (Location * ViewInertia + TargetLocation * (1 - ViewInertia));
 
     bOwnerNoSee = !OwnerPawn.bRenderHands;
 
