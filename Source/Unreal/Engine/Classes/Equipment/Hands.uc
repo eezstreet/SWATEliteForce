@@ -64,22 +64,22 @@ simulated function onMessage(Message m)
 simulated function UpdateHandsForRendering()
 {
     local Pawn OwnerPawn;
-	local PlayerController OwnerController;
+    local PlayerController OwnerController;
     local vector TargetLocation;
-	local vector NewLocation;
+    local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
     local HandheldEquipment EquippedItem;
-	local vector Offset;
-	local float ViewInertia;
+    local vector Offset;
+    local float ViewInertia;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
     {
         AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
     }
-	
-	 // Implement "showhands" command in SwatCheatManager.
+    
+    // Implement "showhands" command in SwatCheatManager.
     // Native code sets bHidden on hands/gun every tick, so we hide
     // the hands in native code. But we need to hide/show the first person
     // model each tick here.
@@ -89,7 +89,7 @@ simulated function UpdateHandsForRendering()
         EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
         if (EquippedFirstPersonModel != None)
         {
-            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands;        
+            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands;
         }
     }
 	
@@ -103,6 +103,8 @@ simulated function UpdateHandsForRendering()
 	//if the player is zooming, add the iron sight offset to the new location
 	OwnerController = PlayerController(OwnerPawn.Controller);
 	if (OwnerController != None && OwnerController.WantsZoom) {
+		NewRotation += EquippedItem.GetIronsightsRotationOffset();
+	
 		//this converts local offset to world coordinates
 		Offset = EquippedItem.GetIronsightsLocationOffset() >> NewRotation;
 		TargetLocation = TargetLocation + Offset;
@@ -113,7 +115,7 @@ simulated function UpdateHandsForRendering()
 	ViewInertia = EquippedItem.GetViewInertia();
 	NewLocation = (Location * ViewInertia + TargetLocation * (1 - ViewInertia));
 
-    bOwnerNoSee = !OwnerPawn.bRenderHands;
+	bOwnerNoSee = !OwnerPawn.bRenderHands;
 
 	// Special-case exception: even if hands/weapon rendering is disabled,
 	// the hands and weapon should be shown when the optiwand is equipped
@@ -127,7 +129,7 @@ simulated function UpdateHandsForRendering()
 		bOwnerNoSee = false;
 	}
 
-	SetLocation(NewLocation);
+    SetLocation(NewLocation);
     SetRotation(NewRotation);
 }
 
