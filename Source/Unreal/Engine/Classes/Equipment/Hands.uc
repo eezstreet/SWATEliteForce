@@ -192,7 +192,9 @@ simulated function IdleHoldingEquipment()
     local HandheldEquipmentModel Model;
     local HandheldEquipment theActiveItem;
     local float SavedTweenTime;
-
+    local Pawn OwnerPawn;
+    local PlayerController OwnerController;
+    
     //only use a tween time once each time it is set
     SavedTweenTime = NextIdleTweenTime;
     SetNextIdleTweenTime(0.0);
@@ -200,6 +202,18 @@ simulated function IdleHoldingEquipment()
     theActiveItem = GetActiveItem();
     if ( theActiveItem == None )
         return;
+
+	//if the player is zooming, don't play the idle animation unless it changes our lowReady state
+	OwnerPawn = Pawn(Owner);
+	//if SavedTweenTime is 0, this is a generic idle animation, not a lowReady transitioning
+	if (SavedTweenTime == 0 && OwnerPawn != None)
+	{
+		OwnerController = PlayerController(OwnerPawn.Controller);
+		if (OwnerController != None && OwnerController.WantsZoom)
+		{
+			return;
+		}
+	}
 
     Model = theActiveItem.GetFirstPersonModel();
     
