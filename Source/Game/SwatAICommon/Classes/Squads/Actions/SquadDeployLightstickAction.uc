@@ -271,6 +271,7 @@ latent function DropLightstick(vector DropPoint)
 	MakeOfficerUnavailable(Officer);
 
 	CurrentDropLightstickGoal = new class'DropLightstickGoal'(AI_Resource(Officer.characterAI), DropPoint);
+	CurrentDropLightStickGoal.SetPlaySpeech(SquadDeployLightstickGoal(achievingGoal).GetPlaySpeech());
 	assert(CurrentDropLightstickGoal != None);
 	CurrentDropLightstickGoal.AddRef();
 	CurrentDropLightstickGoals[CurrentDropLightstickGoals.Length] = CurrentDropLightstickGoal;
@@ -317,8 +318,8 @@ state Running
 {
 Begin:	
 	PopulateAvailableOfficers();
-
-	if (! bHasBeenCopied)
+	
+	if (! bHasBeenCopied && SquadDeployLightstickGoal(achievingGoal).GetPlaySpeech())
 		TriggerReplyToOrderSpeech();
 
 	WaitForZulu();

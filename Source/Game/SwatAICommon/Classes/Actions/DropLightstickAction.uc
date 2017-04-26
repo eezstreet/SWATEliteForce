@@ -86,7 +86,9 @@ latent function DropLightstick()
 	}
 
 	log("[eezstreet] droplightstick() successful");
-	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLightstickSpeech();
+	if (DropLightstickGoal(achievingGoal).GetPlaySpeech()) {
+		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLightstickSpeech();
+	}
 	Lightstick.LatentUse();
 }
 

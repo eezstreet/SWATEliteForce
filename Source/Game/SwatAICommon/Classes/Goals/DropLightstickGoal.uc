@@ -10,6 +10,7 @@ class DropLightstickGoal extends SwatCharacterGoal;
 // Variables
 
 var(parameters) vector			DropPoint;
+var bool						bPlaySpeech;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -23,8 +24,23 @@ overloaded function construct( AI_Resource r, vector inDropPoint)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//
+// Other
+
+function SetPlaySpeech(bool play)
+{
+	bPlaySpeech = play;
+}
+
+function bool GetPlaySpeech()
+{
+	return bPlaySpeech;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
 	priority = 80
 	goalName = "DropLightstick"
+	bPlaySpeech = true;
 }
