@@ -1435,6 +1435,30 @@ exec function NextFireMode()
         FiredWeapon(ActiveItem).NextFireMode();
 }
 
+exec function SetWeaponViewOffset(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.DefaultLocationOffset = offset;
+	}
+}
+
+exec function SetWeaponViewRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.DefaultRotationOffset = Rotation;
+	}
+}
+
 exec function SetIronSightOffset(vector offset)
 {
 	local HandheldEquipment ActiveItem;

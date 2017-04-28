@@ -129,6 +129,8 @@ var(Categorization) public config WeaponEquipType AllowedSlots               "Wh
 var() public config float Weight;
 var() public config float Bulk;
 
+var config vector DefaultLocationOffset;
+var config Rotator DefaultRotationOffset;
 var config vector IronSightLocationOffset;
 var config vector PlayerViewOffset;
 var config Rotator IronSightRotationOffset;
@@ -266,6 +268,16 @@ function bool ValidIdleCategory(EIdleWeaponStatus DesiredStatus)
     }
   }
   return false; // This isn't a valid idle category for this weapon
+}
+
+simulated function vector GetDefaultLocationOffset()
+{
+    return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+    return DefaultRotationOffset;
 }
 
 simulated function vector GetIronsightsLocationOffset()

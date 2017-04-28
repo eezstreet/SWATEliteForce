@@ -107,8 +107,12 @@ simulated function UpdateHandsForRendering()
 	
 		//this converts local offset to world coordinates
 		Offset = EquippedItem.GetIronsightsLocationOffset() >> NewRotation;
-		TargetLocation = TargetLocation + Offset;
+	} else {
+		//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
+		NewRotation += EquippedItem.GetDefaultRotationOffset();
+		Offset = EquippedItem.GetDefaultLocationOffset() >> NewRotation;
 	}
+	TargetLocation = TargetLocation + Offset;
 	
 	//interpolate towards our target location. inertia controls how quickly the weapon 
 	//visually responds to our movements

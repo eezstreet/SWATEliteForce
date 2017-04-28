@@ -1217,6 +1217,20 @@ static function class<Actor> GetRenderableActorClass()
     return default.ThirdPersonModelClass;
 }
 
+simulated function vector GetDefaultLocationOffset()
+{
+	local vector DefaultLocationOffset;
+	
+	return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+	local Rotator DefaultRotationOffset;
+	
+	return DefaultRotationOffset;
+}
+
 simulated function vector GetIronsightsLocationOffset()
 {
 	local vector IronsightsLocation;
