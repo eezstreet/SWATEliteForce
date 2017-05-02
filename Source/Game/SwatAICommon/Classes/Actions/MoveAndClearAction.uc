@@ -45,7 +45,7 @@ var config float									MaxHoldClearPositionTime;
 var private DistanceToUncomplaintCharactersSensor	DistanceToUncomplaintCharactersSensor; 
 
 // constants
-const kClearedRoomUpdateTime = 0.333;
+const kClearedRoomUpdateTime = 0.1;
 const kDummyBehaviorPriority = 84;
 
 ///////////////////////////////////////////////////////////////////////////////
