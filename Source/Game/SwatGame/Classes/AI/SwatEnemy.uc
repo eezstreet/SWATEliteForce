@@ -685,8 +685,10 @@ simulated final function DropActiveWeapon(optional vector WeaponSpaceDropDirecti
 {
 	local HandheldEquipment ActiveItem;
 	
+	mplog( self$"---SwatEnemy::DropActiveWeapon()." );
+	
 	if ( Level.IsCoopServer )
-        NotifyClientsToDropActiveWeapon();
+		NotifyClientsToDropActiveWeapon();
 
 	ActiveItem = GetActiveItem();
 	
@@ -782,7 +784,7 @@ function NotifyClientsToDropActiveWeapon()
 
     Assert( Level.NetMode == NM_ListenServer || Level.NetMode == NM_DedicatedServer );
 
-    mplog( self$"$---SwatEnemy::NotifyClientsToDropAllWeapons()." );
+    mplog( self$"$---SwatEnemy::NotifyClientsToDropActiveWeapon()." );
 
     theLocalPlayerController = Level.GetLocalPlayerController();
     for ( i = Level.ControllerList; i != None; i = i.NextController )
