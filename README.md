@@ -551,7 +551,8 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 ### v5.2 ###
 
 #### CHANGES
-- Corrected the grenade throwing animation at high FOVs
+- Fixed a very frequent crash in multiplayer that was introduced in 5.1
+- Corrected glitches in the grenade animations which appeared at high FOVs
 - Tweaked the speed of the surrender animation so it plays slower (thanks to kevinfoley for this change)
 
 
