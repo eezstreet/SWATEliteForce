@@ -296,7 +296,7 @@ replication
 		ClientPreQuickRoundRestart,
 		ClientStartConversation, ClientSetTrainingText, ClientTriggerDynamicMusic,
         ClientReceiveCommand, /*ClientOnTargetUsed,*/
-        ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedAllEvidence,
+        ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedActiveWeapon, ClientAIDroppedAllEvidence,
         ClientInterruptAndGotoState, ClientInterruptState, ClientSetObjectiveVisibility, ClientReportableReportedToTOC,
         ClientAddPrecacheableMaterial, ClientAddPrecacheableMesh, ClientAddPrecacheableStaticMesh, ClientPrecacheAll,
         ClientViewFromLocation, ClientForceObserverCam, ReplicatedObserverCamTarget, ReplicatedViewportTeammate;
