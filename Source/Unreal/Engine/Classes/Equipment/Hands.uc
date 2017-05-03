@@ -66,12 +66,14 @@ simulated function UpdateHandsForRendering()
     local Pawn OwnerPawn;
     local PlayerController OwnerController;
     local vector TargetLocation;
+	local float AnimationPosition;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
     local HandheldEquipment EquippedItem;
     local vector Offset;
     local float ViewInertia;
+    local float ADSInertia;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
@@ -95,30 +97,40 @@ simulated function UpdateHandsForRendering()
 	
 	NewRotation = OwnerPawn.GetViewRotation();
 	
+	//Location of the weapon if it stayed at our hip without any inertia or ADS effects
 	TargetLocation = 
 		OwnerPawn.Location + 
 		OwnerPawn.CalcDrawOffset() + 
 		OwnerPawn.ViewLocationOffset(NewRotation);
 	
+	AnimationPosition = EquippedItem.GetIronSightAnimationPosition();
+	//ViewInertia controls how much weapon sways when we move
+	ViewInertia = EquippedItem.GetViewInertia();
+	//ADSInertia controls how fast we aim down sight
+	ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
+	
 	//if the player is zooming, add the iron sight offset to the new location
 	OwnerController = PlayerController(OwnerPawn.Controller);
 	if (OwnerController != None && OwnerController.WantsZoom) {
+		AnimationPosition = (AnimationPosition * ADSInertia + 1 * (1 - ADSInertia));
 		NewRotation += EquippedItem.GetIronsightsRotationOffset();
-	
-		//this converts local offset to world coordinates
-		Offset = EquippedItem.GetIronsightsLocationOffset() >> NewRotation;
 	} else {
+		AnimationPosition = (AnimationPosition * ADSInertia + 0 * (1 - ADSInertia));
 		//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
 		NewRotation += EquippedItem.GetDefaultRotationOffset();
-		Offset = EquippedItem.GetDefaultLocationOffset() >> NewRotation;
+		Offset = EquippedItem.GetDefaultLocationOffset();
 	}
+	EquippedItem.SetIronSightAnimationPosition(AnimationPosition);
+	//apply progress of iron sight animation
+	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationPosition);
+	//this converts local offset to world coordinates
+	Offset = Offset >> NewRotation;
 	TargetLocation = TargetLocation + Offset;
 	
 	//interpolate towards our target location. inertia controls how quickly the weapon 
 	//visually responds to our movements
-	ViewInertia = EquippedItem.GetViewInertia();
-	NewLocation = (Location * ViewInertia + TargetLocation * (1 - ViewInertia));
-
+	NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
+	
 	bOwnerNoSee = !OwnerPawn.bRenderHands;
 
 	// Special-case exception: even if hands/weapon rendering is disabled,

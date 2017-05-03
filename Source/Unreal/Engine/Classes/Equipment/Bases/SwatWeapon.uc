@@ -138,6 +138,10 @@ var config Rotator PlayerViewRotation;
 var config float ZoomedAimErrorModifier;
 var config float ViewInertia;
 
+//a bit of a hack since we can't add vars to Hands.uc - K.F.
+var float IronSightAnimationPosition;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
+var vector ViewLocationLastFrame;
+
 var bool bPenetratesDoors;
 
 simulated function float GetWeight() {
@@ -293,6 +297,28 @@ simulated function Rotator GetIronsightsRotationOffset()
 simulated function float GetViewInertia() 
 {
 	return ViewInertia;
+}
+
+simulated function float GetIronSightAnimationPosition() 
+{
+	return IronSightAnimationPosition;
+}
+
+simulated function SetIronSightAnimationPosition(float value)
+{
+	if (value < 0) value = 0;
+	if (value > 1) value = 1;
+	IronSightAnimationPosition = value;
+}
+
+simulated function vector GetViewLocationLastFrame() 
+{
+	return ViewLocationLastFrame;
+}
+
+simulated function SetViewLocationLastFrame(vector value)
+{
+	ViewLocationLastFrame = value;
 }
 
 simulated function float GetBaseAimError()

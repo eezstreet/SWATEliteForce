@@ -1235,14 +1235,14 @@ simulated function vector GetIronsightsLocationOffset()
 {
 	local vector IronsightsLocation;
 
-    return IronsightsLocation;
+	return IronsightsLocation;
 }
 
 simulated function Rotator GetIronsightsRotationOffset()
 {
 	local Rotator IronsightsRotation;
 
-    return IronsightsRotation;
+	return IronsightsRotation;
 }
 
 simulated function float GetViewInertia() 
@@ -1251,6 +1251,22 @@ simulated function float GetViewInertia()
 	
 	return Inertia;
 }
+
+simulated function float GetIronSightAnimationPosition()
+{
+	local float IronSightAnimationPosition;
+	
+	return IronSightAnimationPosition;
+}
+simulated function SetIronSightAnimationPosition(float value) { }
+
+simulated function vector GetViewLocationLastFrame()
+{
+	local vector ViewLocationLastFrame;
+
+	return ViewLocationLastFrame;
+}
+simulated function SetViewLocationLastFrame(vector value) { }
 
 event Destroyed()
 {
