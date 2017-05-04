@@ -58,15 +58,15 @@ simulated function onMessage(Message m)
     // NOTE: we don't check the class of 'm' because we only register to 
     // receive one kind of message (MessagePreRender, done in 
     // PostNetBeginPlay()) 
-    UpdateHandsForRendering();
 } 
 
-simulated function UpdateHandsForRendering()
+simulated function UpdateHandsForRendering(float deltaTime)
 {
     local Pawn OwnerPawn;
     local PlayerController OwnerController;
     local vector TargetLocation;
-	local float AnimationPosition;
+    local float AnimationPosition;
+	local float AnimationPositionChange;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
@@ -74,6 +74,7 @@ simulated function UpdateHandsForRendering()
     local vector Offset;
     local float ViewInertia;
     local float ADSInertia;
+	local vector Change;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
@@ -120,6 +121,11 @@ simulated function UpdateHandsForRendering()
 		NewRotation += EquippedItem.GetDefaultRotationOffset();
 		Offset = EquippedItem.GetDefaultLocationOffset();
 	}
+	//scale animation position change based on framerate
+	AnimationPositionChange = AnimationPosition - EquippedItem.GetIronSightAnimationPosition();
+	AnimationPositionChange = AnimationPositionChange * (deltaTime / 0.016667); //scale relative to 60fps
+	AnimationPosition = EquippedItem.GetIronSightAnimationPosition() + AnimationPositionChange;
+	
 	EquippedItem.SetIronSightAnimationPosition(AnimationPosition);
 	//apply progress of iron sight animation
 	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationPosition);
@@ -130,6 +136,11 @@ simulated function UpdateHandsForRendering()
 	//interpolate towards our target location. inertia controls how quickly the weapon 
 	//visually responds to our movements
 	NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
+	
+	//scale the motion for this frame based on the framerate
+	Change = NewLocation - Location;
+	Change = Change * (deltaTime / 0.016667); //scale relative to 60fps
+	NewLocation = Location + Change;
 	
 	bOwnerNoSee = !OwnerPawn.bRenderHands;
 
@@ -153,42 +164,36 @@ simulated function OnEquipKeyFrame()
 {
 //    log( self$" in Hands::OnEquipKeyFrame()" );
     Pawn(Owner).OnEquipKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnUnequipKeyFrame()
 {
 //    log( self$" in Hands::OnUnequipKeyFrame()" );
     Pawn(Owner).OnUnequipKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnUseKeyFrame()
 {
 //    log( self$" in Hands::OnUseKeyFrame()" );
     Pawn(Owner).OnUseKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnLightstickKeyFrame()
 {
 //    log( self$" in Hands::OnUseKeyFrame()" );
     Pawn(Owner).OnLightstickKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnMeleeKeyFrame()
 {
 //    log( self$" in Hands::OnMeleeKeyFrame()" );
     Pawn(Owner).OnMeleeKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnReloadKeyFrame()
 {
 //    log( self$" in Hands::OnReloadKeyFrame()" );
     Pawn(Owner).OnReloadKeyFrame();
-    UpdateHandsForRendering();
 }
 
 //hands idle
@@ -196,7 +201,6 @@ event AnimEnd( int Channel )
 {
     if (Level.GetLocalPlayerController().HandsShouldIdle())
         IdleHoldingEquipment();
-		UpdateHandsForRendering();
 }
 
 //activeItem should be non-None and Idle
@@ -273,7 +277,6 @@ function PlayNewAnim(name Sequence, float Rate, float TweenTime)
 {
     if (!IsAnimating() || GetAnimName() != Sequence)
         PlayAnim(Sequence, Rate, TweenTime);
-		UpdateHandsForRendering();
 }
 
 //called by SwatPlayer::SetLowReady() only when low-ready changes
@@ -283,13 +286,11 @@ function SetLowReady(bool bEnable)
         return;
 
     bIsLowReady = bEnable;
-    UpdateHandsForRendering();
 
     if (Level.GetLocalPlayerController().HandsShouldIdle())
     {
         SetNextIdleTweenTime(0.2);  //we're immediately transitioning, so tween
         IdleHoldingEquipment();
-		UpdateHandsForRendering();
     }
 }
 
