@@ -13,6 +13,8 @@ simulated function bool HandleBallisticImpact(
     Material HitMaterial,
     ESkeletalRegion HitRegion,
     out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
     vector ExitLocation,
     vector ExitNormal,
     Material ExitMaterial
@@ -57,6 +59,8 @@ simulated function bool HandleBallisticImpact(
         HitMaterial,
         HitRegion,
         Momentum,
+        KillEnergy,
+        BulletType,
         ExitLocation,
         ExitNormal,
         ExitMaterial);
