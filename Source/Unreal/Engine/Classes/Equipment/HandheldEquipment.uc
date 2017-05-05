@@ -1217,33 +1217,56 @@ static function class<Actor> GetRenderableActorClass()
     return default.ThirdPersonModelClass;
 }
 
+simulated function vector GetDefaultLocationOffset()
+{
+	local vector DefaultLocationOffset;
+	
+	return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+	local Rotator DefaultRotationOffset;
+	
+	return DefaultRotationOffset;
+}
+
 simulated function vector GetIronsightsLocationOffset()
 {
 	local vector IronsightsLocation;
 
-    return IronsightsLocation;
-}
-
-simulated function vector GetPlayerViewOffset()
-{
-	local vector PlayerViewOffset;
-
-    return PlayerViewOffset;
+	return IronsightsLocation;
 }
 
 simulated function Rotator GetIronsightsRotationOffset()
 {
 	local Rotator IronsightsRotation;
 
-    return IronsightsRotation;
+	return IronsightsRotation;
 }
 
-simulated function rotator GetPlayerViewRotation()
+simulated function float GetViewInertia() 
 {
-	local rotator PlayerViewRotation;
-
-    return PlayerViewRotation;
+	local float Inertia;
+	
+	return Inertia;
 }
+
+simulated function float GetIronSightAnimationPosition()
+{
+	local float IronSightAnimationPosition;
+	
+	return IronSightAnimationPosition;
+}
+simulated function SetIronSightAnimationPosition(float value) { }
+
+simulated function vector GetViewLocationLastFrame()
+{
+	local vector ViewLocationLastFrame;
+
+	return ViewLocationLastFrame;
+}
+simulated function SetViewLocationLastFrame(vector value) { }
 
 event Destroyed()
 {

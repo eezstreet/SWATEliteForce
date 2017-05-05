@@ -129,11 +129,18 @@ var(Categorization) public config WeaponEquipType AllowedSlots               "Wh
 var() public config float Weight;
 var() public config float Bulk;
 
+var config vector DefaultLocationOffset;
+var config Rotator DefaultRotationOffset;
 var config vector IronSightLocationOffset;
 var config vector PlayerViewOffset;
 var config Rotator IronSightRotationOffset;
 var config Rotator PlayerViewRotation;
 var config float ZoomedAimErrorModifier;
+var config float ViewInertia;
+
+//a bit of a hack since we can't add vars to Hands.uc - K.F.
+var float IronSightAnimationPosition;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
+var vector ViewLocationLastFrame;
 
 var bool bPenetratesDoors;
 
@@ -267,6 +274,16 @@ function bool ValidIdleCategory(EIdleWeaponStatus DesiredStatus)
   return false; // This isn't a valid idle category for this weapon
 }
 
+simulated function vector GetDefaultLocationOffset()
+{
+    return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+    return DefaultRotationOffset;
+}
+
 simulated function vector GetIronsightsLocationOffset()
 {
     return IronSightLocationOffset;
@@ -277,50 +294,31 @@ simulated function Rotator GetIronsightsRotationOffset()
     return IronSightRotationOffset;
 }
 
-simulated function vector GetPlayerViewOffset()
+simulated function float GetViewInertia() 
 {
-	local vector ViewOffset;
-	local Pawn OwnerPawn;
-	local PlayerController OwnerController;
-
-	ViewOffset = PlayerViewOffset;
-
-	OwnerPawn = Pawn(Owner);
-
-	if (OwnerPawn!= None)
-	{
-		OwnerController = PlayerController(OwnerPawn.Controller);
-
-		if (OwnerController != None && OwnerController.WantsZoom)
-		{
-			return IronSightLocationOffset;
-		}
-	}
-
-	return ViewOffset;
+	return ViewInertia;
 }
 
-simulated function rotator GetPlayerViewRotation()
+simulated function float GetIronSightAnimationPosition() 
 {
-	local Rotator ViewRotation;
-	local Pawn OwnerPawn;
-	local PlayerController OwnerController;
+	return IronSightAnimationPosition;
+}
 
-	ViewRotation = PlayerViewRotation;
+simulated function SetIronSightAnimationPosition(float value)
+{
+	if (value < 0) value = 0;
+	if (value > 1) value = 1;
+	IronSightAnimationPosition = value;
+}
 
-	OwnerPawn = Pawn(Owner);
+simulated function vector GetViewLocationLastFrame() 
+{
+	return ViewLocationLastFrame;
+}
 
-	if (OwnerPawn!= None)
-	{
-		OwnerController = PlayerController(OwnerPawn.Controller);
-
-		if (OwnerController != None && OwnerController.WantsZoom)
-		{
-			return IronSightRotationOffset;
-		}
-	}
-
-	return ViewRotation;
+simulated function SetViewLocationLastFrame(vector value)
+{
+	ViewLocationLastFrame = value;
 }
 
 simulated function float GetBaseAimError()
