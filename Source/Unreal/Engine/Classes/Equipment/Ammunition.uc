@@ -103,6 +103,10 @@ simulated function SetCurrentClip(int Clip) { Assert(false); } //subclasses must
 simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector NormalizedBulletDirection, Material HitMaterial, float Momentum, int BounceNumber);
 simulated function float GetRicochetMomentumModifier();
 simulated function float GetDrag();
+simulated function int GetAmmoType();
+simulated function int GetBulletType();
+simulated function int GetPenetrationLevel();
+simulated function int GetPenetrationType();
 
 defaultproperties
 {
