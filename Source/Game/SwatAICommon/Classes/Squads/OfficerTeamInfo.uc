@@ -61,7 +61,6 @@ protected function InitAbilities()
 	//SquadAI.addAbility( new class'SquadReportAction' );
 	SquadAI.addAbility( new class'SquadDeployTaserAction' );
 	SquadAI.addAbility( new class'SquadDeployPepperSprayAction' );
-	SquadAI.addAbility( new class'SquadDisableTargetAction' );
 	SquadAI.addAbility( new class'SquadMoveToAction' );
 	SquadAI.addAbility( new class'SquadCoverAction' );
 	SquadAI.addAbility( new class'SquadDeployShotgunAction' );
@@ -1575,6 +1574,11 @@ function bool SecureEvidence(Pawn CommandGiver, vector CommandOrigin, Actor Evid
 	return Secure(CommandGiver, CommandOrigin, Evidence);
 }
 
+function bool DisableTarget(Pawn CommandGiver, vector CommandOrigin, Actor Target)
+{
+	return Secure(CommandGiver, CommandOrigin, Target);
+}
+
 function bool MoveTo(Pawn CommandGiver, vector CommandOrigin, vector TargetLocation)
 {
 	local SquadMoveToGoal CurrentSquadMoveToGoal;
@@ -1743,31 +1747,6 @@ function bool DeployPepperSpray(Pawn CommandGiver, vector CommandOrigin, Pawn Ta
 				// respond that nobody has the pepper spray
 				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerPepperSprayUnavailableSpeech();
 			}
-		}
-		else
-		{
-			TriggerOtherTeamDoingBehaviorSpeech();
-		}
-	}
-
-	return false;
-}
-
-function bool DisableTarget(Pawn CommandGiver, vector CommandOrigin, Actor Target)
-{
-	local SquadDisableTargetGoal CurrentSquadDisableTargetGoal;
-
-	// only post the goal if we are allowed
-	if (CanExecuteCommand())
-	{
-		// if we're not a sub element, or if the other team is already interacting with the Target
-		if (!IsSubElement() || !IsOtherSubElementInteractingWith(Target))
-		{
-			CurrentSquadDisableTargetGoal = new class'SquadDisableTargetGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, Target);
-			assert(CurrentSquadDisableTargetGoal != None);
-
-			PostCommandGoal(CurrentSquadDisableTargetGoal);
-			return true;	// command issued
 		}
 		else
 		{

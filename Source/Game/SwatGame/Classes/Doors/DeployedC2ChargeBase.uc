@@ -1,5 +1,5 @@
 class DeployedC2ChargeBase extends RWOSupport.DeployedTacticalAid
-    Implements IAmUsedByToolkit, ICanBeDisabled, SwatAICommon.IDeployedC2Charge
+    Implements IAmUsedByToolkit, ICanBeDisabled, SwatAICommon.IDeployedC2Charge, IDisableableByAI
     config(SwatEquipment);
 
 var(C2Charge) StaticMesh PreviewStaticMesh;
@@ -212,6 +212,12 @@ function OnUsingByToolkitInterrupted( Pawn User );
 simulated function bool IsActive()
 {
     return true;
+}
+
+//IDisableableByAI implementation
+simulated function bool IsDisableableNow()
+{
+  return IsActive();
 }
 
 state Removed

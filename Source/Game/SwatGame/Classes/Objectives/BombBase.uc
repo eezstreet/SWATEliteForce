@@ -2,7 +2,8 @@ class BombBase extends RWOSupport.ReactiveStaticMesh
     implements  IAmUsedByToolkit,
                 ICanBeSpawned,
                 ICanBeDisabled,
-                IUseArchetype
+                IUseArchetype,
+                IDisableableByAI
     config(SwatGame)
     abstract;
 
@@ -22,7 +23,7 @@ replication
 simulated function PostNetBeginPlay()
 {
     Super.PostNetBeginPlay();
-    
+
     if( !bActive )
         ReactToTriggered( None );
 }
@@ -89,6 +90,12 @@ simulated function bool IsActive()
     return bActive;
 }
 
+//IDisableableByAI implementation
+simulated function bool IsDisableableNow()
+{
+  return IsActive();
+}
+
 simulated function String UniqueID()
 {
     return String(SpawnedFromName);
@@ -106,7 +113,7 @@ defaultproperties
 
     // Force bombs to always update their collision box from their bone boxes;
     // otherwise bombs sometimes don't get added to the octree properly when
-    // replicated to clients, causing traces (like for disabling bombs) to 
+    // replicated to clients, causing traces (like for disabling bombs) to
     // miss the bomb when they shouldn't.
     bUseCollisionBoneBoundingBox=true
 }
