@@ -1,7 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
-class DisableTargetAction extends SwatCharacterAction
-	implements IInterestedInDoorOpening;
+class DisableTargetAction extends SwatCharacterAction;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -9,16 +8,12 @@ class DisableTargetAction extends SwatCharacterAction
 
 // copied from our goal
 var(parameters) Actor					Target;
-var(parameters) vector					DisableFromPoint;
-var(parameters) bool					bUseMoveToThreshold;
 
 // behaviors we use
-var private MoveToLocationGoal			CurrentMoveToLocationGoal;
+var private MoveToActorGoal				CurrentMoveToActorGoal;
 var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
 
 // internal
-var private bool						bMovedToDisableTarget;
-var private bool						bDoorHasOpened;
 
 // equipment
 var private HandheldEquipment			Toolkit;
@@ -33,7 +28,7 @@ var config float						DistanceFromTargetToDisable;
 const kDisableOnFloorThreshold = 48;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -43,20 +38,20 @@ function cleanup()
     // interrupt the toolkit
     if ((Toolkit != None) && !Toolkit.IsIdle())
     {
-		if (Toolkit.IsBeingUsed())
-		{
-			IAmAQualifiedUseEquipment(Toolkit).InstantInterrupt();
-		}
-		else
-		{
-			Toolkit.AIInterrupt();
-		}
+			if (Toolkit.IsBeingUsed())
+			{
+				IAmAQualifiedUseEquipment(Toolkit).InstantInterrupt();
+			}
+			else
+			{
+				Toolkit.AIInterrupt();
+			}
     }
 
-    if (CurrentMoveToLocationGoal != None)
+    if (CurrentMoveToActorGoal != None)
     {
-        CurrentMoveToLocationGoal.Release();
-        CurrentMoveToLocationGoal = None;
+        CurrentMoveToActorGoal.Release();
+        CurrentMoveToActorGoal = None;
     }
 
     if (CurrentRotateTowardRotationGoal != None)
@@ -68,12 +63,8 @@ function cleanup()
 	if (m_Pawn.bIsCrouched)
 		m_Pawn.ShouldCrouch(false);
 
-    // Guarentee collision avoidance is back on
-    m_Pawn.EnableCollisionAvoidance();
-
-	// unregister that we're interested that the door is opening
-	if (TargetSwatDoor != None)
-		TargetSwatDoor.UnRegisterInterestedInDoorOpening(self);
+  // Guarentee collision avoidance is back on
+  m_Pawn.EnableCollisionAvoidance();
 
 	// make sure the fired weapon is re-equipped
 	ISwatOfficer(m_Pawn).InstantReEquipFiredWeapon();
@@ -120,75 +111,41 @@ private function TriggerCompletedDisableSpeech()
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// IInterestedInDoorOpening implementation
-
-function NotifyDoorOpening(Door TargetDoor)
-{
-	if (! bMovedToDisableTarget)
-	{
-		// door is opening, can't disable the target on an open door
-		instantSucceed();
-	}
-	else
-	{
-		bDoorHasOpened = true;
-
-		if ((Toolkit != None) && Toolkit.IsBeingUsed())
-		{
-			IAmAQualifiedUseEquipment(Toolkit).InstantInterrupt();
-		}
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
 // State Code
 
 latent function MoveIntoPosition()
 {
-    CurrentMoveToLocationGoal = new class'MoveToLocationGoal'(movementResource(), achievingGoal.priority, DisableFromPoint);
-    assert(CurrentMoveToLocationGoal != None);
-    CurrentMoveToLocationGoal.AddRef();
+	assert(Target != None);
+	CurrentMoveToActorGoal = new class'MoveToActorGoal'(movementResource(), achievingGoal.priority, Target);
+	assert(CurrentMoveToActorGoal != None);
+	CurrentMoveToActorGoal.AddRef();
 
-    CurrentMoveToLocationGoal.SetRotateTowardsPointsDuringMovement(true);
-	CurrentMoveToLocationGoal.SetAcceptNearbyPath(true);
+	CurrentMoveToActorGoal.SetAcceptNearbyPath(true);
+	CurrentMoveToActorGoal.SetRotateTowardsPointsDuringMovement(true);
+	CurrentMoveToActorGoal.SetMoveToThreshold(40.0);
 
-	// only use a padded move threshold if we're supposed to
-	if (bUseMoveToThreshold)
-	{
-		CurrentMoveToLocationGoal.SetMoveToThreshold(m_Pawn.CollisionRadius + DistanceFromTargetToDisable);
-	}
+	// post the goal and wait for it to complete
+	CurrentMoveToActorGoal.postGoal(self);
+	WaitForGoal(CurrentMoveToActorGoal);
+	CurrentMoveToActorGoal.unPostGoal(self);
 
-    // post the goal and wait for it to complete
-    CurrentMoveToLocationGoal.postGoal(self);
-    
-	while (! CurrentMoveToLocationGoal.hasCompleted())
-	{
-		// if the target is a deployed c2, stop moving
-		if ((Target.IsA('DeployedC2ChargeBase') && Target.bHidden) || bDoorHasOpened)
-			succeed();
-
-		yield();
-	}
-
-    CurrentMoveToLocationGoal.unPostGoal(self);
-
-    CurrentMoveToLocationGoal.Release();
-    CurrentMoveToLocationGoal = None;
+	CurrentMoveToActorGoal.Release();
+	CurrentMoveToActorGoal = None;
 }
 
 latent function RotateTowardsTarget()
 {
-    CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, rotator(Target.Location - m_Pawn.Location));
-    assert(CurrentRotateTowardRotationGoal != None);
-    CurrentRotateTowardRotationGoal.AddRef();
+	assert(Target != None);
+	CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, rotator(Target.Location - m_Pawn.Location));
+	assert(CurrentRotateTowardRotationGoal != None);
+	CurrentRotateTowardRotationGoal.AddRef();
 
-    CurrentRotateTowardRotationGoal.postGoal(self);
-    WaitForGoal(CurrentRotateTowardRotationGoal);
-    CurrentRotateTowardRotationGoal.unPostGoal(self);
+	CurrentRotateTowardRotationGoal.postGoal(self);
+	WaitForGoal(CurrentRotateTowardRotationGoal);
+	CurrentRotateTowardRotationGoal.unPostGoal(self);
 
-    CurrentRotateTowardRotationGoal.Release();
-    CurrentRotateTowardRotationGoal = None;
+	CurrentRotateTowardRotationGoal.Release();
+	CurrentRotateTowardRotationGoal = None;
 }
 
 latent function DisableTarget()
@@ -208,15 +165,12 @@ latent function DisableTarget()
 	assert(Toolkit != None);
 	Toolkit.LatentWaitForIdleAndEquip();
 
-	if (! bDoorHasOpened)
-	{
-		SetDisableTargetAim();
+	SetDisableTargetAim();
 
-		// Use it on the target
-		IAmUsedOnOther(Toolkit).LatentUseOn(Target);
+	// Use it on the target
+	IAmUsedOnOther(Toolkit).LatentUseOn(Target);
 
-		UnsetDisableTargetAim();
-	}
+	UnsetDisableTargetAim();
 
 	// Unequip
 	ISwatOfficer(m_Pawn).ReEquipFiredWeapon();
@@ -228,22 +182,12 @@ latent function DisableTarget()
 state Running
 {
 Begin:
-	if (Target.IsA('DeployedC2ChargeBase'))
-	{
-		// if the target has been hidden already, don't bother dealing with it
-		if (Target.bHidden)
-			succeed();
-
-		TargetSwatDoor = IDeployedC2Charge(Target).GetDoorDeployedOn();
-		TargetSwatDoor.RegisterInterestedInDoorOpening(self);
-	}
 
 	useResources(class'AI_Resource'.const.RU_ARMS);
 
 	// trigger the appropriate reply speech
 	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerRepliedDisablingSpeech();
 
-	bMovedToDisableTarget = true;
 	MoveIntoPosition();
 	RotateTowardsTarget();
 
@@ -251,10 +195,8 @@ Begin:
 
 	DisableTarget();
 
-	// trigger the appropriate completed disable speech, if the door hasn't opened
-	if (! bDoorHasOpened)		
-		TriggerCompletedDisableSpeech();
-	
+	TriggerCompletedDisableSpeech();
+
 	succeed();
 }
 

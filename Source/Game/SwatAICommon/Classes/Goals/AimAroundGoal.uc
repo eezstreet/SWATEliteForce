@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // AimAroundGoal.uc - AimAroundGoal class
-// The goal that causes the AI to aim around its location (somewhat randomly) 
+// The goal that causes the AI to aim around its location (somewhat randomly)
 // in a natural fashion
 
 class AimAroundGoal extends SwatWeaponGoal
@@ -41,6 +41,9 @@ var(Parameters) protected bool		bInitialDelay;
 var(Parameters) protected float		MinInitialDelayTime;
 var(Parameters) protected bool		MaxInitialDelayTime;
 
+var(Parameters) public bool CancelWhenCompliant;
+var(Parameters) public bool CancelWhenStunned;
+
 // config variables
 var config float					DefaultInnerFovDegrees;
 var config float					DefaultOuterFovDegrees;
@@ -52,7 +55,7 @@ var config float					DefaultMinWaitForNewPointTime;
 var config float					DefaultMaxWaitForNewPointTime;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Constructors
 
 overloaded function construct(AI_Resource r, optional int pri)
@@ -89,7 +92,7 @@ overloaded function construct(AI_Resource r, float inMinAimAtPointTime, float in
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Manipulators
 
 function SetAimWeapon(bool inAimWeapon)
@@ -147,6 +150,16 @@ function SetPointTooCloseRadius(float radius)
     PointTooCloseRadius = radius;
 }
 
+function SetCancelWhenCompliant(bool set)
+{
+	CancelWhenCompliant = set;
+}
+
+function SetCancelWhenStunned(bool set)
+{
+	CancelWhenStunned = set;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
@@ -161,4 +174,3 @@ defaultproperties
     UpperBodyAnimBehaviorClientId = kUBABCI_NonIdleAimAround
 	bAimOnlyIfCharacterResourcesAvailable = false
 }
-

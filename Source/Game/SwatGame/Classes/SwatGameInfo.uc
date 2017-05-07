@@ -52,7 +52,7 @@ var DebugFrameData CurrentDebugFrameData;
 var private SpawningManager SpawningManager;
 
 // The Repo
-var private SwatRepo Repo;
+var public SwatRepo Repo;
 
 
 var GameEventsContainer GameEvents;

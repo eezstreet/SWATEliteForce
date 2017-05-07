@@ -243,6 +243,14 @@ enum ECommand
     Command_ShotgunStingAndMakeEntry,
     Command_ShotgunLeaderThrowAndMakeEntry,
 
+    //
+    // v6
+    //
+    Command_CleanSweep,   // Secure literally everything on the map
+    Command_RestrainAll,        // Restrain all targets in the same room as target
+    Command_SecureAll,          // Secure all evidence in the same room as target
+    Command_DisableAll,         // Disable all targets in the same room
+
     Command_Static,
 };
 
@@ -836,6 +844,17 @@ simulated function bool CommandUsesLightstick(Command Command) {
   return false;
 }
 
+simulated function bool CommandIsCleanSweep(Command Command) {
+  switch(Command.Command) {
+    case Command_CleanSweep:
+    case Command_RestrainAll:
+    case Command_SecureAll:
+    case Command_DisableAll:
+      return true;
+  }
+  return false;
+}
+
 //set the MenuPadStatus for the specified Command
 simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
 {
@@ -863,6 +882,8 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
     } else if (IsLeaderThrowCommand(Command)) {
       Status = Pad_Normal;
     } else if (CommandUsesC2(Command) || CommandUsesShotgun(Command)) {
+      Status = Pad_Normal;
+    } else if (CommandIsCleanSweep(Command)) {
       Status = Pad_Normal;
     }
     else if  (
@@ -1653,6 +1674,87 @@ simulated function bool IsExpectedCommandSource(name CommandSource)
     return CommandSource == ExpectedCommandSource;
 }
 
+// This handles all of the new, broad secure commands that are available in V6
+simulated function CleanSweepCommand(Pawn CommandGiver,
+  vector PendingCommandOrigin, bool Restrain, bool Evidence, bool Disable)
+{
+  local array<Actor> TargetsToDisable;
+  local array<Actor> TargetsToCollect;
+  local array<Actor> TargetsToRestrain;
+  local ICanBeArrested ArrestableActor;
+  local IEvidence EvidenceActor;
+  local IDisableableByAI DisableableActor;
+  local Actor a;
+  local int i;
+
+  // Find everything that we need to restrain/collect/disable
+  foreach AllActors(class 'Actor', A)
+  {
+    if(Restrain)
+    {
+      ArrestableActor = ICanBeArrested(A);
+      if(ArrestableActor != None) {
+        if(ArrestableActor.CanBeArrestedNow())
+        {
+          TargetsToRestrain[TargetsToRestrain.Length] = A;
+        }
+      }
+    }
+    if(Evidence)
+    {
+      EvidenceActor = IEvidence(A);
+      if(EvidenceActor != None)
+      {
+        if(EvidenceActor.IsA('StaticEvidence'))
+        {
+          // StaticEvidence can't be collected until the mission is completed
+          if(SwatGameInfo(Level.Game).Repo.GuiConfig.CurrentMission.IsMissionCompleted(SwatGameInfo(Level.Game).Repo.MissionObjectives))
+          {
+            TargetsToCollect[TargetsToCollect.Length] = A;
+          }
+        }
+        else
+        {
+          TargetsToCollect[TargetsToCollect.Length] = A;
+        }
+      }
+    }
+    if(Disable)
+    {
+      DisableableActor = IDisableableByAI(A);
+      if(DisableableActor != None) {
+        if(DisableableActor.IsDisableableNow())
+        {
+          TargetsToDisable[TargetsToDisable.Length] = A;
+        }
+      }
+    }
+  }
+
+  // We do more loops after this, because the order in which these commands are issued is important.
+
+  // Issue all disable commands first, because they are most important
+  for(i = 0; i < TargetsToDisable.Length; i++)
+  {
+    PendingCommandTeam.DisableTarget(CommandGiver, PendingCommandOrigin, TargetsToDisable[i]);
+    log("CleanSweepCommand: DisableTarget issued on "$TargetsToDisable[i]);
+  }
+
+  // Then do evidence commands
+  for(i = 0; i < TargetsToCollect.Length; i++)
+  {
+    PendingCommandTeam.SecureEvidence(CommandGiver, PendingCommandOrigin, TargetsToCollect[i]);
+    log("CleanSweepCommand: SecureEvidence issued on "$TargetsToCollect[i]);
+  }
+
+  // Then do restrain commands
+  for(i = 0; i < TargetsToRestrain.Length; i++)
+  {
+    PendingCommandTeam.Restrain(CommandGiver, PendingCommandOrigin, Pawn(TargetsToRestrain[i]));
+    log("CleanSweepCommand: Restrain issued on "$TargetsToRestrain[i]);
+  }
+}
+
 //send the pending command to the officers, now that any necessary speech has completed
 simulated function SendCommandToOfficers()
 {
@@ -2136,6 +2238,39 @@ simulated function SendCommandToOfficers()
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
             break;
+
+        // New broad secure commands for V6
+        case Command_CleanSweep:
+            CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                    PendingCommandOrigin,
+                    true,
+                    true,
+                    false);
+            break;
+
+        case Command_RestrainAll:
+            CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                    PendingCommandOrigin,
+                    true,
+                    false,
+                    false);
+            break;
+
+        case Command_SecureAll:
+             CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                     PendingCommandOrigin,
+                     false,
+                     true,
+                     false);
+              break;
+
+        case Command_DisableAll:
+              CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                      PendingCommandOrigin,
+                      false,
+                      false,
+                      true);
+              break;
 
         //Commands that require a valid Pawn
 

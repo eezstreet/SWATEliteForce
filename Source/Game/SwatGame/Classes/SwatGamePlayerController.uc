@@ -296,7 +296,7 @@ replication
 		ClientPreQuickRoundRestart,
 		ClientStartConversation, ClientSetTrainingText, ClientTriggerDynamicMusic,
         ClientReceiveCommand, /*ClientOnTargetUsed,*/
-        ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedAllEvidence,
+        ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedActiveWeapon, ClientAIDroppedAllEvidence,
         ClientInterruptAndGotoState, ClientInterruptState, ClientSetObjectiveVisibility, ClientReportableReportedToTOC,
         ClientAddPrecacheableMaterial, ClientAddPrecacheableMesh, ClientAddPrecacheableStaticMesh, ClientPrecacheAll,
         ClientViewFromLocation, ClientForceObserverCam, ReplicatedObserverCamTarget, ReplicatedViewportTeammate;
@@ -2179,6 +2179,7 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
 simulated function InternalMelee()
 {
 	local HandheldEquipment Item;
+  local HandheldEquipment PendingItem;
 
 	if (Level.GetEngine().EnableDevTools)
         log( "...in SwatGamePlayerController::InternalMeleeAttack()" );
@@ -2194,6 +2195,13 @@ simulated function InternalMelee()
         return;
 
 	Item = Pawn.GetActiveItem();
+  PendingItem = SwatPlayer.GetPendingItem();
+
+  // TSS bugfix: don't allow us to melee while changing weapons --eez
+  if(PendingItem != None && PendingItem != Item)
+  {
+    return;
+  }
 
 	if (!Item.bAbleToMelee)
 		return;
@@ -5600,7 +5608,7 @@ simulated function SwatPlayer GetSwatPlayer()
     {
         Player = SwatPlayer(ViewTarget);
     }
-	
+
     return Player;
 }
 

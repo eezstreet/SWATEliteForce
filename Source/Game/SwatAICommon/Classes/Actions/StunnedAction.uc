@@ -106,7 +106,7 @@ function cleanup()
 	// unlock our aim when we're done
 	ISwatAI(m_Pawn).UnlockAim();
 
-    ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_StunnedAction);
+	ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_StunnedAction);
 
     // return any morale we've taken
 	ReturnMorale();
@@ -126,8 +126,15 @@ function cleanup()
     m_Pawn.EnableCollisionAvoidance();
 
 	// stop any animations on the special channel if we have played an animation
-	if (bPlayedAnimation)
+	if (bPlayedAnimation && !ISwatAI(m_Pawn).IsArrested())
 		ISwatAI(m_Pawn).AnimStopSpecial();
+
+	// Make sure we go back to the idle!
+	if(ISwatAI(m_Pawn).IsArrested())
+	{
+		ISwatAI(m_Pawn).SetIdleCategory('Restrained');
+		ISwatAI(m_Pawn).SwapInRestrainedAnimSet();
+	}
 }
 
 // subclasses must override
