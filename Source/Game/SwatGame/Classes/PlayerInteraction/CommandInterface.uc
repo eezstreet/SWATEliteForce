@@ -1703,10 +1703,17 @@ simulated function CleanSweepCommand(Pawn CommandGiver,
     if(Evidence)
     {
       EvidenceActor = IEvidence(A);
-      if(EvidenceActor != None && !EvidenceActor.IsA('StaticEvidence')) {
-        // We do not collect static evidence, such as drug bags or objective items.
-        // This is intentional! We want the player to find them, not to cheat and use the AI.
-        if(EvidenceActor.CanBeUsedNow())
+      if(EvidenceActor != None)
+      {
+        if(EvidenceActor.IsA('StaticEvidence'))
+        {
+          // StaticEvidence can't be collected until the mission is completed
+          if(SwatGameInfo(Level.Game).Repo.GuiConfig.CurrentMission.IsMissionCompleted(SwatGameInfo(Level.Game).Repo.MissionObjectives))
+          {
+            TargetsToCollect[TargetsToCollect.Length] = A;
+          }
+        }
+        else
         {
           TargetsToCollect[TargetsToCollect.Length] = A;
         }
@@ -2238,7 +2245,7 @@ simulated function SendCommandToOfficers()
                     PendingCommandOrigin,
                     true,
                     true,
-                    true);
+                    false);
             break;
 
         case Command_RestrainAll:

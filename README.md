@@ -557,8 +557,8 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
-     * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines all three commands in one. 
-     * SECURE ALL will not target mission objectives or static drug bags, this is intentional so the player will search for them.
+     * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines RESTRAIN ALL and SECURE ALL. 
+     * NOTE: SECURE ALL will not look for drug bags until the mission is complete.
   * The lightstick commands got moved back to the DEPLOY submenu.
   * The DEPLOY submenu has been organized so that all of the commands are organized based on their use, instead of a random ordering. Frequently used commands are at the top.
 
