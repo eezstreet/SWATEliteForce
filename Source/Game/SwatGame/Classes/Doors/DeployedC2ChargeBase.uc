@@ -21,6 +21,7 @@ var config bool DebugBlast;
 
 var private SwatDoor AssociatedDoor;
 var private SwatPawn DeployedBy;
+var private bool CurrentlyDeployed;
 
 var Rotator BackwardVectorOffset;       //this is the direction, relative to the facing direction of a DeployedC2Charge, in which the charge affects pawns.  in other words, a DeployedC2Charge should affect pawns in the direction of Rotation + BackwardVectorOffset.
 var array<Pawn> Victims;
@@ -51,6 +52,7 @@ simulated function OnDeployed(SwatPawn inDeployedBy)
     SetCollision(true, false, false);
     Show();
     Deployedby = inDeployedBy;
+    CurrentlyDeployed = true;
 }
 
 simulated function OnDetonated()
@@ -77,6 +79,8 @@ simulated function OnDetonated()
 
         Hide();
     }
+
+    CurrentlyDeployed = false;
 }
 
 function AffectVictims()
@@ -201,6 +205,7 @@ function OnUsingByToolkitBegan( Pawn User );
 // Called when qualifying completes successfully.
 function OnUsedByToolkit(Pawn User)
 {
+    CurrentlyDeployed = false;
     GotoState('Removed');
 }
 
@@ -211,7 +216,7 @@ function OnUsingByToolkitInterrupted( Pawn User );
 //ICanBeDisabled implementation
 simulated function bool IsActive()
 {
-    return true;
+    return CurrentlyDeployed;
 }
 
 //IDisableableByAI implementation
