@@ -548,6 +548,30 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 # VERSION HISTORY #
 
+### v6 ###
+
+#### MAJOR FEATURES ####
+- First person improvements!
+  * By hitting the zoom key, you will transition into Iron Sights.
+  * Your weapon will sway as you move.
+
+- Command interface overhaul!
+  * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
+     * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines all three commands in one. 
+     * SECURE ALL will not target mission objectives or static drug bags, this is intentional so the player will search for them.
+  * The lightstick commands got moved back to the DEPLOY submenu.
+  * The DEPLOY submenu has been organized so that all of the commands are organized based on their use, instead of a random ordering. Frequently used commands are at the top.
+
+### ALL CHANGES ###
+- Added ironsights functionality
+- Added broad-secure commands (SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, DISABLE ALL)
+- Added first person weapon inertia
+- AI will now drop lightsticks as they clear rooms.
+- Reorganized DEPLOY command sub-menu
+- Externalized the position of the weapon in first person and in iron sights.
+- Added a command to change the position of the weapon in first person.
+- Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
+
 ### v5.2 ###
 
 #### CHANGES
