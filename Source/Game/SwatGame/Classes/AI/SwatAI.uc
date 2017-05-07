@@ -1989,7 +1989,7 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 	return PaintballAimRotation;
 }
 
-simulated native function vector GetAimOrigin();
+//simulated native function vector GetAimOrigin();
 
 function SetAimUrgency(bool Fast)
 {
