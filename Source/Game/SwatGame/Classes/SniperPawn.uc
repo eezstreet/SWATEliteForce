@@ -51,6 +51,7 @@ var private float ScaledMovementAmplitude;
 var private float AddedMovementFrequency;
 
 var public bool bAlreadyPlayedEntryTeam;
+var public bool bAlreadyPlayedEntryTeamLeaving;
 
 replication
 {

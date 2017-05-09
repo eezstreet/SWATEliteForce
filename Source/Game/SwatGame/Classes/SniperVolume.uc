@@ -39,9 +39,19 @@ function bool ShouldRejectCondition(HighGroundCondition inCondition)
     // Instead we're going to store this as a property of the sniper pawn itself
     if ( inCondition.Subject == 'SwatPlayer' || inCondition.Subject == 'SwatOfficer' )
     {
+      if(inCondition.Action == 'Left')
+      {
+        if ( AssociatedSniper.bAlreadyPlayedEntryTeamLeaving )
+            return true;
+        AssociatedSniper.bAlreadyPlayedEntryTeamLeaving = true;
+      }
+      else
+      {
         if ( AssociatedSniper.bAlreadyPlayedEntryTeam )
             return true;
         AssociatedSniper.bAlreadyPlayedEntryTeam = true;
+      }
+
     }
     return false;
 }
