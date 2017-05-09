@@ -263,7 +263,8 @@ replication
 {
     reliable if (Role == Role_Authority)
         bIsLocked, bIsBroken, ReasonForMove, LockedKnowledge,
-        DeployedWedge, DeployedC2ChargeLeft, DeployedC2ChargeRight;
+        DeployedWedge, DeployedC2ChargeLeft, DeployedC2ChargeRight,
+				Broken, Blasted;
 }
 ///////////////////////////
 
@@ -966,7 +967,7 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 
 
 // Note: In multiplayer function Blasted only happens on the server
-function Blasted(Pawn Instigator)
+simulated function Blasted(Pawn Instigator)
 {
     SetPositionForMove( CurrentPosition, MR_Blasted );	//We want the lock to be obliterated, but we dont want the door to swing open
 		Broken();
