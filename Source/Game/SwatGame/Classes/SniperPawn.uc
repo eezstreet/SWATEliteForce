@@ -50,6 +50,8 @@ var private config const float kSniperHorizontalNoiseDamping;
 var private float ScaledMovementAmplitude;
 var private float AddedMovementFrequency;
 
+var public bool bAlreadyPlayedEntryTeam;
+
 replication
 {
   reliable if(Role == ROLE_Authority)
