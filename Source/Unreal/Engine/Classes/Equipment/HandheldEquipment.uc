@@ -1260,13 +1260,13 @@ simulated function float GetIronSightAnimationPosition()
 }
 simulated function SetIronSightAnimationPosition(float value) { }
 
-simulated function vector GetViewLocationLastFrame()
+simulated function array<vector> GetAnimationSplinePoints() 
 {
-	local vector ViewLocationLastFrame;
-
-	return ViewLocationLastFrame;
+	local array<vector> AnimationSplinePoints;
+	
+	return AnimationSplinePoints;
 }
-simulated function SetViewLocationLastFrame(vector value) { }
+simulated function AddAnimationSplinePoint(vector value) { }
 
 event Destroyed()
 {

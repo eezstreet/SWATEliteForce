@@ -77,6 +77,7 @@ simulated function UpdateHandsForRendering()
     local float ADSInertia;
 	local vector Change;
 	local float deltaTime;
+	local array<vector> AnimationSplinePoints;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
