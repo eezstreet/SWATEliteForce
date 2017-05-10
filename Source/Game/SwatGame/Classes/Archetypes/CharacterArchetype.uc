@@ -50,6 +50,8 @@ var config float DOAConversionTimeMin;
 var config float DOAConversionTimeMax;
 
 var Mesh OfficerMesh;
+var Mesh OfficerHeavyMesh;
+var Mesh OfficerNoArmorMesh;
 
 //initialize this archetype
 function Initialize(Actor inOwner)
@@ -98,7 +100,7 @@ protected function Validate()
 
     ValidateCondition(Mesh != None, "Mesh resolves to None");
 
-    if (Mesh == OfficerMesh)
+    if (Mesh == OfficerMesh || Mesh == OfficerHeavyMesh || Mesh == OfficerNoArmorMesh)
     {
         ValidateCondition(FaceMaterial.length > 0, "it is Missing a FaceMaterial");
         for (i=0; i<FaceMaterial.length; ++i)
@@ -178,7 +180,7 @@ function InitializeInstance(ArchetypeInstance inInstance)
     Super.InitializeInstance(Instance);
 
     Instance.Mesh = Mesh;
-    if (Mesh == OfficerMesh)
+    if (Mesh == OfficerMesh || Mesh == OfficerHeavyMesh || Mesh == OfficerNoArmorMesh)
     {
         Instance.FaceMaterial = FaceMaterial[Rand(FaceMaterial.length)];
         Instance.VestMaterial = VestMaterial[Rand(VestMaterial.length)];
@@ -274,6 +276,8 @@ final private function class<Equipment> InitializeInstanceEquipment(
 defaultproperties
 {
 	OfficerMesh=Mesh'SWATMaleAnimation2.SwatOfficer'
+	OfficerHeavyMesh=Mesh'SWATMaleAnimation2.SwatHeavy'
+	OfficerNoArmorMesh=Mesh'SWATMaleAnimation2.SWATnoArmour'
 
 	// There's only really a small handful of archetypes that can cause issues here. Probably best we leave this at zero.
 	TaserDeathChance = 0.0
