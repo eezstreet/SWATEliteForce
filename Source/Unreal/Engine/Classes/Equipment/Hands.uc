@@ -58,15 +58,16 @@ simulated function onMessage(Message m)
     // NOTE: we don't check the class of 'm' because we only register to 
     // receive one kind of message (MessagePreRender, done in 
     // PostNetBeginPlay()) 
-} 
+	UpdateHandsForRendering();
+}
 
-simulated function UpdateHandsForRendering(float deltaTime)
+simulated function UpdateHandsForRendering()
 {
     local Pawn OwnerPawn;
     local PlayerController OwnerController;
     local vector TargetLocation;
-    local float AnimationPosition;
-	local float AnimationPositionChange;
+    local float AnimationProgress;
+	local float AnimationProgressChange;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
@@ -75,6 +76,8 @@ simulated function UpdateHandsForRendering(float deltaTime)
     local float ViewInertia;
     local float ADSInertia;
 	local vector Change;
+	local float deltaTime;
+	local array<vector> AnimationSplinePoints;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
@@ -104,7 +107,7 @@ simulated function UpdateHandsForRendering(float deltaTime)
 		OwnerPawn.CalcDrawOffset() + 
 		OwnerPawn.ViewLocationOffset(NewRotation);
 	
-	AnimationPosition = EquippedItem.GetIronSightAnimationPosition();
+	AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
 	//ViewInertia controls how much weapon sways when we move
 	ViewInertia = EquippedItem.GetViewInertia();
 	//ADSInertia controls how fast we aim down sight
@@ -112,23 +115,29 @@ simulated function UpdateHandsForRendering(float deltaTime)
 	
 	//if the player is zooming, add the iron sight offset to the new location
 	OwnerController = PlayerController(OwnerPawn.Controller);
+	deltaTime = OwnerController.LastDeltaTime;
 	if (OwnerController != None && OwnerController.WantsZoom) {
-		AnimationPosition = (AnimationPosition * ADSInertia + 1 * (1 - ADSInertia));
-		NewRotation += EquippedItem.GetIronsightsRotationOffset();
+		AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
+		//NewRotation += EquippedItem.GetIronsightsRotationOffset();
 	} else {
-		AnimationPosition = (AnimationPosition * ADSInertia + 0 * (1 - ADSInertia));
+		AnimationProgress = (AnimationProgress * ADSInertia + 0 * (1 - ADSInertia));
 		//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
-		NewRotation += EquippedItem.GetDefaultRotationOffset();
+		//NewRotation += EquippedItem.GetDefaultRotationOffset();
 		Offset = EquippedItem.GetDefaultLocationOffset();
 	}
-	//scale animation position change based on framerate
-	AnimationPositionChange = AnimationPosition - EquippedItem.GetIronSightAnimationPosition();
-	AnimationPositionChange = AnimationPositionChange * (deltaTime / 0.016667); //scale relative to 60fps
-	AnimationPosition = EquippedItem.GetIronSightAnimationPosition() + AnimationPositionChange;
 	
-	EquippedItem.SetIronSightAnimationPosition(AnimationPosition);
+	//scale animation position change based on framerate
+	AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
+	AnimationProgressChange = AnimationProgressChange * (deltaTime / 0.016667); //scale relative to 60fps
+	AnimationProgress = EquippedItem.GetIronSightAnimationProgress() + AnimationProgressChange;
+	
+	NewRotation = NewRotation 
+		+ EquippedItem.GetDefaultRotationOffset() * (1 - AnimationProgress) 
+		+ EquippedItem.GetIronsightsRotationOffset() * AnimationProgress;
+	
+	EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
 	//apply progress of iron sight animation
-	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationPosition);
+	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress);
 	//this converts local offset to world coordinates
 	Offset = Offset >> NewRotation;
 	TargetLocation = TargetLocation + Offset;
@@ -137,10 +146,12 @@ simulated function UpdateHandsForRendering(float deltaTime)
 	//visually responds to our movements
 	NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 	
-	//scale the motion for this frame based on the framerate
-	Change = NewLocation - Location;
-	Change = Change * (deltaTime / 0.016667); //scale relative to 60fps
-	NewLocation = Location + Change;
+	if (ViewInertia > 0) {
+		//scale the motion for this frame based on the framerate
+		Change = NewLocation - Location;
+		Change = Change * (deltaTime / 0.016667); //scale relative to 60fps
+		NewLocation = Location + Change;
+	}
 	
 	bOwnerNoSee = !OwnerPawn.bRenderHands;
 

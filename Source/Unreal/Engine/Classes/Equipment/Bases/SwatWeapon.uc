@@ -139,8 +139,8 @@ var config float ZoomedAimErrorModifier;
 var config float ViewInertia;
 
 //a bit of a hack since we can't add vars to Hands.uc - K.F.
-var float IronSightAnimationPosition;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
-var vector ViewLocationLastFrame;
+var float IronSightAnimationProgress;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
+var array<vector> AnimationSplinePoints;
 
 var bool bPenetratesDoors;
 
@@ -299,26 +299,30 @@ simulated function float GetViewInertia()
 	return ViewInertia;
 }
 
-simulated function float GetIronSightAnimationPosition() 
+simulated function float GetIronSightAnimationProgress() 
 {
-	return IronSightAnimationPosition;
+	return IronSightAnimationProgress;
 }
 
-simulated function SetIronSightAnimationPosition(float value)
+simulated function SetIronSightAnimationProgress(float value)
 {
 	if (value < 0) value = 0;
 	if (value > 1) value = 1;
-	IronSightAnimationPosition = value;
+	IronSightAnimationProgress = value;
 }
 
-simulated function vector GetViewLocationLastFrame() 
+simulated function array<vector> GetAnimationSplinePoints() 
 {
-	return ViewLocationLastFrame;
+	return AnimationSplinePoints;
 }
-
-simulated function SetViewLocationLastFrame(vector value)
+simulated function AddAnimationSplinePoint(vector value)
 {
-	ViewLocationLastFrame = value;
+	AnimationSplinePoints.Insert(AnimationSplinePoints.Length, 1);
+	AnimationSplinePoints[AnimationSplinePoints.Length - 1] = value;
+	if (AnimationSplinePoints.Length > 4) 
+	{
+		AnimationSplinePoints.Remove(0, 1);
+	}
 }
 
 simulated function float GetBaseAimError()
