@@ -66,8 +66,8 @@ simulated function UpdateHandsForRendering()
     local Pawn OwnerPawn;
     local PlayerController OwnerController;
     local vector TargetLocation;
-    local float AnimationPosition;
-	local float AnimationPositionChange;
+    local float AnimationProgress;
+	local float AnimationProgressChange;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
@@ -107,7 +107,7 @@ simulated function UpdateHandsForRendering()
 		OwnerPawn.CalcDrawOffset() + 
 		OwnerPawn.ViewLocationOffset(NewRotation);
 	
-	AnimationPosition = EquippedItem.GetIronSightAnimationPosition();
+	AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
 	//ViewInertia controls how much weapon sways when we move
 	ViewInertia = EquippedItem.GetViewInertia();
 	//ADSInertia controls how fast we aim down sight
@@ -117,22 +117,27 @@ simulated function UpdateHandsForRendering()
 	OwnerController = PlayerController(OwnerPawn.Controller);
 	deltaTime = OwnerController.LastDeltaTime;
 	if (OwnerController != None && OwnerController.WantsZoom) {
-		AnimationPosition = (AnimationPosition * ADSInertia + 1 * (1 - ADSInertia));
-		NewRotation += EquippedItem.GetIronsightsRotationOffset();
+		AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
+		//NewRotation += EquippedItem.GetIronsightsRotationOffset();
 	} else {
-		AnimationPosition = (AnimationPosition * ADSInertia + 0 * (1 - ADSInertia));
+		AnimationProgress = (AnimationProgress * ADSInertia + 0 * (1 - ADSInertia));
 		//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
-		NewRotation += EquippedItem.GetDefaultRotationOffset();
+		//NewRotation += EquippedItem.GetDefaultRotationOffset();
 		Offset = EquippedItem.GetDefaultLocationOffset();
 	}
-	//scale animation position change based on framerate
-	AnimationPositionChange = AnimationPosition - EquippedItem.GetIronSightAnimationPosition();
-	AnimationPositionChange = AnimationPositionChange * (deltaTime / 0.016667); //scale relative to 60fps
-	AnimationPosition = EquippedItem.GetIronSightAnimationPosition() + AnimationPositionChange;
 	
-	EquippedItem.SetIronSightAnimationPosition(AnimationPosition);
+	//scale animation position change based on framerate
+	AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
+	AnimationProgressChange = AnimationProgressChange * (deltaTime / 0.016667); //scale relative to 60fps
+	AnimationProgress = EquippedItem.GetIronSightAnimationProgress() + AnimationProgressChange;
+	
+	NewRotation = NewRotation 
+		+ EquippedItem.GetDefaultRotationOffset() * (1 - AnimationProgress) 
+		+ EquippedItem.GetIronsightsRotationOffset() * AnimationProgress;
+	
+	EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
 	//apply progress of iron sight animation
-	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationPosition);
+	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress);
 	//this converts local offset to world coordinates
 	Offset = Offset >> NewRotation;
 	TargetLocation = TargetLocation + Offset;

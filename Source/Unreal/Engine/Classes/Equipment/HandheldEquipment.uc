@@ -1252,13 +1252,13 @@ simulated function float GetViewInertia()
 	return Inertia;
 }
 
-simulated function float GetIronSightAnimationPosition()
+simulated function float GetIronSightAnimationProgress()
 {
 	local float IronSightAnimationPosition;
 	
 	return IronSightAnimationPosition;
 }
-simulated function SetIronSightAnimationPosition(float value) { }
+simulated function SetIronSightAnimationProgress(float value) { }
 
 simulated function array<vector> GetAnimationSplinePoints() 
 {
