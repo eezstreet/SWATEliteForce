@@ -2034,15 +2034,7 @@ Begin:
 ////////////////////////////////////////////////////////////////////////////////
 
 simulated function Tick(float dTime) {
-
-    local Hands MyHands;
-
     AdjustPlayerMovementSpeed();
-    
-    MyHands = GetHands();
-    if ( MyHands != None )
-        MyHands.UpdateHandsForRendering(dTime);
-
 }
 
 

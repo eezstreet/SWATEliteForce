@@ -58,9 +58,10 @@ simulated function onMessage(Message m)
     // NOTE: we don't check the class of 'm' because we only register to 
     // receive one kind of message (MessagePreRender, done in 
     // PostNetBeginPlay()) 
-} 
+	UpdateHandsForRendering();
+}
 
-simulated function UpdateHandsForRendering(float deltaTime)
+simulated function UpdateHandsForRendering()
 {
     local Pawn OwnerPawn;
     local PlayerController OwnerController;
@@ -75,6 +76,7 @@ simulated function UpdateHandsForRendering(float deltaTime)
     local float ViewInertia;
     local float ADSInertia;
 	local vector Change;
+	local float deltaTime;
     
     OwnerPawn = Pawn(Owner);
     if (OwnerPawn == None)
@@ -112,6 +114,7 @@ simulated function UpdateHandsForRendering(float deltaTime)
 	
 	//if the player is zooming, add the iron sight offset to the new location
 	OwnerController = PlayerController(OwnerPawn.Controller);
+	deltaTime = OwnerController.LastDeltaTime;
 	if (OwnerController != None && OwnerController.WantsZoom) {
 		AnimationPosition = (AnimationPosition * ADSInertia + 1 * (1 - ADSInertia));
 		NewRotation += EquippedItem.GetIronsightsRotationOffset();
@@ -137,10 +140,12 @@ simulated function UpdateHandsForRendering(float deltaTime)
 	//visually responds to our movements
 	NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 	
-	//scale the motion for this frame based on the framerate
-	Change = NewLocation - Location;
-	Change = Change * (deltaTime / 0.016667); //scale relative to 60fps
-	NewLocation = Location + Change;
+	if (ViewInertia > 0) {
+		//scale the motion for this frame based on the framerate
+		Change = NewLocation - Location;
+		Change = Change * (deltaTime / 0.016667); //scale relative to 60fps
+		NewLocation = Location + Change;
+	}
 	
 	bOwnerNoSee = !OwnerPawn.bRenderHands;
 
