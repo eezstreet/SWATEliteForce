@@ -554,13 +554,15 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - First person improvements!
   * By hitting the zoom key, you will transition into Iron Sights.
   * Your weapon will sway as you move.
-
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
      * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines RESTRAIN ALL and SECURE ALL. 
      * NOTE: SECURE ALL will not look for drug bags until the mission is complete.
   * The lightstick commands got moved back to the DEPLOY submenu.
   * The DEPLOY submenu has been organized so that all of the commands are organized based on their use, instead of a random ordering. Frequently used commands are at the top.
+- More AI improvements!
+  * High skilled suspects are much more dangerous.
+  * Enemies have figured out how to equip heavy armor! Your AP rounds will be very important.
 
 ### ALL CHANGES ###
 - Added ironsights functionality
@@ -570,6 +572,16 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Reorganized DEPLOY command sub-menu
 - Externalized the position of the weapon in first person and in iron sights.
 - Added a command to change the position of the weapon in first person.
+- Suspects will fire upon hostages twice as quickly.
+- Pepper spray now takes a moment or two to affect targets, like CS gas does.
+- High skill suspects are more likely to react to a thrown grenade now.
+- High skill suspects have much better accuracy.
+- High skill suspects will fire more rounds in a full-auto burst.
+- High skill suspects are less likely to flinch when affected by shots.
+- Suspects firing from cover may pause or regroup between shots.
+- Wild Gunners are now affected by the firing delay that SEF introduced.
+- Suspects will wait much less time between firing shots.
+- Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them. This has been fixed.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
 
 ### v5.2 ###
