@@ -211,14 +211,14 @@ latent function BreachDoorWithShotgun()
 	ISwatDoor(TargetDoor).UnRegisterInterestedInDoorOpening(self);
 
 	BreachingShotgun.SetPerfectAimNextShot();
+	
+	// @HACK Break the door "before firing the shotgun. The AI literally always misses,
+	// and there is a very noticable delay if we automatically break the door AFTER firing 
+	// the shotgun, but if we break the door FIRST it appears to happen exactly when the 
+	// shot is fired. In other words, this solution looks perfect. -K.F. 
+	
+	ISwatDoor(TargetDoor).Blasted(m_Pawn);
 	BreachingShotgun.LatentUse();
-
-	// @HACK: If the door wasn't broken by the breaching shotgun, blast it anyways.
-	if (! ISwatDoor(TargetDoor).IsBroken())
-	{
-		BreachingShotgun.LatentUse();
-		ISwatDoor(TargetDoor).Blasted(m_Pawn);
-	}
 }
 
 function TriggerReportedDeployingShotgunSpeech()
