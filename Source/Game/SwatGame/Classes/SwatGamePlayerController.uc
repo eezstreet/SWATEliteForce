@@ -1003,6 +1003,8 @@ function ServerRequestViewportChange( bool ActivateActiveItemViewport )
 {
     local HandheldEquipment theActiveItem;
 
+    mplog("SwatGamePlayerController::ServerRequestViewportChange("$ActivateActiveItemViewport$")");
+
     // Don't ever activate if we're non-lethaled!
     if ( SwatPlayer.IsNonLethaled() && ActivateActiveItemViewport )
         return;
@@ -1036,6 +1038,8 @@ simulated function ClientViewportChange( bool ActivateActiveItemViewport )
 {
     local HandheldEquipment theActiveItem;
 
+    mplog("ClientViewportChange("$ActivateActiveItemViewport$")");
+
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SGPC::ClientViewportChange()." );
 
@@ -1060,6 +1064,8 @@ simulated function ClientViewportChange( bool ActivateActiveItemViewport )
 simulated event ActivateViewport(IControllableViewport inNewViewport)
 {
     ActiveViewport = inNewViewport;
+
+    log("ActivateViewport("$inNewViewport$")");
 
     log ( "ActiveViewport actor is: "$Actor(ActiveViewport) );
     log ( "IControllableViewport of Actor is: "$IControllableViewport(Actor(ActiveViewport)) );
@@ -2320,6 +2326,7 @@ simulated exec function EquipPrevSlot()
 
 simulated function PlayerFocusInterface GetFocusInterface(EFocusInterface FocusInterface)
 {
+    assert(int(FocusInterface) < FocusInterfaces.Length);
     return FocusInterfaces[int(FocusInterface)];
 }
 
