@@ -98,7 +98,10 @@ simulated function ShowViewport(string inFilter, optional string inSpecificContr
         OriginalRotation = GetCurrentControllable().GetOriginalDirection();
         LastViewRotation = OriginalRotation;
         LastViewLocation = GetCurrentControllable().GetViewportLocation();
-        GUIParent.OnClientDraw = Render;
+        if(GUIParent != None)
+        {
+          GUIParent.OnClientDraw = Render;
+        }
     }
 }
 

@@ -308,7 +308,9 @@ replication
         ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
-		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo;
+		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
+        ServerViewportActivate, ServerViewportDeactivate,
+        ServerHandleViewportFire, ServerHandleViewportReload;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1059,6 +1061,18 @@ simulated function ClientViewportChange( bool ActivateActiveItemViewport )
     }
 }
 
+// Called on the server side
+simulated function ServerViewportActivate(name StateName, Actor ControllableViewport)
+{
+  ActiveViewport = ViewportManager;
+
+  GotoState(StateName);
+}
+
+simulated function ServerViewportDeactivate()
+{
+  EndState();
+}
 
 // Set the activate viewport and pipe commands into it
 simulated event ActivateViewport(IControllableViewport inNewViewport)
@@ -1074,6 +1088,11 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
     {
         log("Going to state: "$ActiveViewport.GetControllingStateName());
         GotoState(ActiveViewport.GetControllingStateName());
+        ServerViewportActivate(ActiveViewport.GetControllingStateName(), Actor(ActiveViewport));
+    }
+    else
+    {
+      ServerViewportDeactivate();
     }
 }
 
@@ -1468,6 +1487,17 @@ simulated function bool DoorInWay()
 //ignore in states to prevent opening the GCI while in those states
 simulated function bool CanOpenGCI() { return true; }
 
+// Server wrappers to handle the reload and fire events for snipers
+simulated function ServerHandleViewportFire()
+{
+  ActiveViewport.HandleFire();
+}
+
+simulated function ServerHandleViewportReload()
+{
+  ActiveViewport.HandleReload();
+}
+
 // State ControllingViewport takes the player's control away from the playerpawn and onto the active
 // viewport.  The actual implementation the instances of IControllableViewport handle all implementation
 // details.
@@ -1484,10 +1514,12 @@ ignores ActivateViewport;
         ViewportManager.InstantMinimize();
         GotoState('PlayerWalking');
         bControlViewport = 0;
+        mplog("ControllingViewport-->WindowFocusRegained()");
     }
 
     exec function HideViewport()
     {
+        mplog("ControllingViewport-->HideViewport()");
         Global.HideViewport();
         GotoState('PlayerWalking');
     }
@@ -1515,7 +1547,8 @@ ignores ActivateViewport;
 
     exec function Reload()
     {
-        ActiveViewport.HandleReload();
+        //ActiveViewport.HandleReload();
+        ServerHandleViewportReload();
     }
 
 	// Zooming is handled the same as alt fire for the viewport
@@ -1526,7 +1559,8 @@ ignores ActivateViewport;
 
     exec function Fire()
     {
-        ActiveViewport.HandleFire();
+        //ActiveViewport.HandleFire();
+        ServerHandleViewportFire();
     }
 
     exec function ViewportRightMouse ()
@@ -1544,16 +1578,27 @@ ignores ActivateViewport;
     {
         Pawn.SetPhysics(PHYS_Walking);
         ActiveViewport.OnEndControlling();
-        Global.ActivateViewport( None );
+
+        // Not necessary to do this if we are the server
+        if(Level.NetMode != NM_DedicatedServer || Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
+        {
+          Global.ActivateViewport( None );
+        }
         bControlViewport = 0;
 
         SetPlayerCommandInterfaceTeam(TeamSelectedBeforeControllingOfficerViewport);
+
+        if(Level.Netmode == NM_DedicatedServer && Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
+        {
+          GotoState('PlayerWalking');
+        }
     }
 
     simulated function PlayerTick(float DeltaTime)
     {
     	Super.PlayerTick(DeltaTime);
         ActiveViewport.SetInput(aTurn, aLookUp);
+
 
         if (!ActiveViewport.ShouldControlViewport())
         {
@@ -2326,7 +2371,6 @@ simulated exec function EquipPrevSlot()
 
 simulated function PlayerFocusInterface GetFocusInterface(EFocusInterface FocusInterface)
 {
-    assert(int(FocusInterface) < FocusInterfaces.Length);
     return FocusInterfaces[int(FocusInterface)];
 }
 

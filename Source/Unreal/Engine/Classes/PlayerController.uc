@@ -316,8 +316,8 @@ replication
     reliable if( bClientDemoRecording && ROLE==ROLE_Authority )
 		DemoClientSetHUD;
 
-    reliable if ( Role < ROLE_Authority )
-        ActiveViewport;
+    /*reliable if ( Role < ROLE_Authority )
+        ActiveViewport;*/
 
 	// Functions client can call.
 	unreliable if( Role<ROLE_Authority )
