@@ -727,6 +727,11 @@ function float GetTotalWeight() {
   total = 0.0;
 
   for(i = 0; i < Pocket.EnumCount; i++) {
+    if(PocketEquipment[i] == None)
+    {
+      continue;
+    }
+
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
     HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
     if(HHEItem == None) {
@@ -756,6 +761,11 @@ function float GetTotalBulk() {
   total = 0.0;
 
   for(i = 0; i < Pocket.EnumCount; i++) {
+    if(PocketEquipment[i] == None)
+    {
+      continue;
+    }
+
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
     total += PocketItem.GetBulk();
 

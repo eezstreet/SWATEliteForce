@@ -320,8 +320,6 @@ simulated latent protected function DoUsingHook()
     local Pawn PawnOwner;
     local SwatGamePlayerController PC;
     local SwatPlayer PlayerOwner;
-    local Quat OldQuat, NewQuat;
-    local Rotator ViewRot;
     local Name UseAnim, EndAnim;
 
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
@@ -450,11 +448,18 @@ simulated function Tick(float DeltaTime)
 
 	LastDeltaTime = DeltaTime;
 
-	FirstPersonModel.Skins[1] = LCDShader;
+  if(FirstPersonModel != None)
+  {
+    FirstPersonModel.Skins[1] = LCDShader;
+  }
+
 	LCDScreen.Revision++;
-    if (!CanUseNow()) {
-		FirstPersonModel.Skins[1] = BlankScreen;
-		ViewportCalcView(DrawLoc, DrawRot);
+  if (!CanUseNow()) {
+    if(FirstPersonModel != None)
+    {
+      FirstPersonModel.Skins[1] = BlankScreen;
+    }
+    ViewportCalcView(DrawLoc, DrawRot);
 	}
 }
 
