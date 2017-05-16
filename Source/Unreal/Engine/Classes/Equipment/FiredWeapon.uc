@@ -1833,6 +1833,20 @@ simulated function UpdateFlashlightState()
     }
 }
 
+simulated function SetFlashlightRadius(float radius)
+{
+	if (FlashlightDynamicLight != None) {
+		FlashlightDynamicLight.LightRadius = radius;
+	}
+}
+
+simulated function SetFlashlightCone(float cone)
+{
+	if (FlashlightDynamicLight != None) {
+		FlashlightDynamicLight.LightCone = cone;
+	}
+}
+
 simulated private function UpdateFlashlightLighting(optional float dTime)
 {
 #if ENABLE_FLASHLIGHT_PROJECTION_VISIBILITY_TESTING
@@ -2033,8 +2047,13 @@ simulated private function InitFlashlight()
 	// if we have a higher-end graphics card, then use a spotlight, otherwise,
 	// use a pointlight and try to make it look a little like a spot light by
 	// moving it out from the gun barrel
-	if (FlashlightUseFancyLights == 1)
+	if (FlashlightUseFancyLights == 1) 
+	{
 		FlashlightDynamicLight = Spawn(FlashlightSpotLightClass,WeaponModel,,,);
+		//FlashlightDynamicLight.bActorShadows = true; //doesn't seem to work
+		FlashlightDynamicLight.LightCone = 8; //how wide the flashlight beam is
+		FlashlightDynamicLight.LightRadius = FlashlightFirstPersonDistance; //distance the beam travels
+	}
 	else
 		FlashlightDynamicLight = Spawn(FlashlightPointLightClass,WeaponModel,,,);
 
