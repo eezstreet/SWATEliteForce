@@ -201,7 +201,7 @@ function OnPawnLostVisionNotification()
 	assert(VisionSensor.LastPawnLost != None);
 
 	// just let the hive know
-	GetHive().OfficerLostPawn(m_Pawn, VisionSensor.LastPawnLost);
+	GetHive().OfficerLostPawn(m_Pawn, VisionSensor.LastPawnLost, VisionSensor.GetWasLostRecently(m_Pawn, VisionSensor.LastPawnLost));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
