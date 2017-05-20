@@ -56,7 +56,7 @@ var public bool bAlreadyPlayedEntryTeamLeaving;
 replication
 {
   reliable if(Role == ROLE_Authority)
-    SniperName, ReloadTimer, ReloadSoundTimer, bReloading, SniperRifle, InitialRotation, FOVIndex, CurrentFOV, CreateSniperRifle;
+    SniperName, ReloadTimer, ReloadSoundTimer, bReloading, SniperRifle, InitialRotation, FOVIndex, CurrentFOV, CreateSniperRifle, ClientsideFireEffects;
 }
 
 simulated function CreateSniperRifle()
@@ -234,23 +234,28 @@ simulated function HandleReload()
         SniperRifle.ReloadedHook();
 }
 
+simulated function ClientsideFireEffects()
+{
+  SniperRifle.TriggerEffectEvent('Fired');
+  if (ReloadSoundTimer == None)
+  {
+    //log("Spawning ReloadSoundTimer "$ReloadSoundTimer);
+      ReloadSoundTimer = Spawn(class'Timer');
+      ReloadSoundTimer.TimerDelegate = OnReloadSoundTimer;
+  }
+  // When the sound timer goes off, it triggers another timer
+  // to start the reload
+  ReloadSoundTimer.StartTimer( ReloadSoundTime );
+}
+
 simulated function HandleFire()
 {
     log("SniperPawn("$self$")::HandleFire: SniperRifle("$SniperRifle$").NeedsReload("$SniperRifle.NeedsReload()$"), bReloading("$bReloading$")");
     if ( !SniperRifle.NeedsReload() && !bReloading )
     {
-        SniperRifle.TriggerEffectEvent('Fired');
         SniperRifle.Use();
 
-        if (ReloadSoundTimer == None)
-        {
-	        //log("Spawning ReloadSoundTimer "$ReloadSoundTimer);
-            ReloadSoundTimer = Spawn(class'Timer');
-            ReloadSoundTimer.TimerDelegate = OnReloadSoundTimer;
-        }
-        // When the sound timer goes off, it triggers another timer
-        // to start the reload
-        ReloadSoundTimer.StartTimer( ReloadSoundTime );
+        ClientsideFireEffects();
 
         bReloading = true;
         // RotationOffset.Pitch = -DEGREES_TO_TWOBYTE * 10;

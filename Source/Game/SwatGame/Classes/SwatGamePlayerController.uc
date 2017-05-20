@@ -1488,9 +1488,9 @@ simulated function bool DoorInWay()
 simulated function bool CanOpenGCI() { return true; }
 
 // Server wrappers to handle the reload and fire events for snipers
-simulated function ServerHandleViewportFire()
+simulated function ServerHandleViewportFire(vector CameraLocation, rotator CameraRotation)
 {
-  ActiveViewport.HandleFire();
+  ActiveViewport.HandleFire(true, CameraLocation, CameraRotation);
 }
 
 simulated function ServerHandleViewportReload()
@@ -1560,7 +1560,17 @@ ignores ActivateViewport;
     exec function Fire()
     {
         //ActiveViewport.HandleFire();
-        ServerHandleViewportFire();
+        local vector CameraLocation;
+        local Rotator CameraDirection;
+
+        if(ActiveViewport == None)
+        {
+          return;
+        }
+
+        ActiveViewport.ViewportCalcView(CameraLocation, CameraDirection);
+
+        ServerHandleViewportFire(CameraLocation, CameraDirection);
     }
 
     exec function ViewportRightMouse ()

@@ -515,8 +515,15 @@ simulated function        HandleReload()
     GetCurrentControllable().HandleReload();
 }
 
-simulated function        HandleFire()
+simulated function        HandleFire(optional bool OnServer, optional vector CameraLocation, optional rotator CameraRotation)
 {
+    if(OnServer)
+    {
+      // If we're calling this from the server, we need to set the rotation of the current controllable
+      // Location is not used, because this can open the door to hacks
+      GetCurrentControllable().SetRotationToViewport(CameraRotation);
+    }
+
     GetCurrentControllable().HandleFire();
 }
 
