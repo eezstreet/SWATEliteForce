@@ -175,7 +175,6 @@ Yes! There are two more confirmed missions in Extra Missions: Brewer County Cour
   * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
-  * You can't actually fire the sniper rifle in Multiplayer yet. It's bugged and we aren't 100% sure how to fix it. In the meantime, it provides important scouting information.
   * Sometimes crashes with a RotateActorAction, for reasons that aren't known.
   * Officers sometimes won't shoot suspects if they're very close to them. It's a problem in the original game as well.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
@@ -548,9 +547,17 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 # VERSION HISTORY #
 
-### v5.2 ###
+### v5.3 ###
+- Rewrote SpeechCommands grammar file from scratch (see SpeechCommands.md for changes)
+- Added missing speech commands from v5 (for specifying breaching method)
+- Minor optimizations regarding the optiwand
+- Snipers now report when they've lost sight of entry team on all maps, not just Qwik Fuel (they only do this once)
+- Another possible fix for the RotateAroundActor crash
+- Fixed SEF bug: Sniper rifle not firing in multiplayer
+- Fixed SEF bug: Breaking a door with the breaching shotgun (in a dedicated server/multiplayer) would sometimes not disable the antiportal
+- Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. (thanks to kevinfoley for this change)
 
-#### CHANGES
+### v5.2 ###
 - Fixed a very frequent crash in multiplayer that was introduced in 5.1
 - Corrected glitches in the grenade animations which appeared at high FOVs
 - Tweaked the speed of the surrender animation so it plays slower (thanks to kevinfoley for this change)
@@ -558,7 +565,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 
 ### v5.1 ###
 
-#### CHANGES
+#### MAIN CHANGES
 - Some additional improvements to speech commands (thanks to kevinfoley for these changes):
   * You can now report things to TOC using your voice!
   * Improved the speech commands with CS gas
@@ -584,7 +591,7 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Fixed TSS bug: Punching while changing weapons (or when finishing an arrest) would cause weird bugs, including turning your weapon invisible and going into a T-pose
 - Fixed TSS bug: Compliant/arrested "Wild Gunner" AIs (the kind with M249 SAWs) would be sweeping back and forth still, which looked odd (they still do this while they are stunned, but it'll require some reorganization of the code to fix this properly)
 
-#### WEAPON CHANGES ####
+#### WEAPON CHANGES
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
 -Pistols: Increased recovery speed.
 -SMGs: Increased recovery speed, with some exceptions:
@@ -1115,7 +1122,6 @@ MINOR FEATURES / FULL CHANGES
 
 # CREDITS/THANK-YOUS #
 Irrational Games and Sierra for the game.
-MulleDK9 for information regarding the Speech Recognition feature.
 KevinL for a tip about Voting Screen.
 sandman332 for a tip about audio
 kevinfoley for some help with Speech Recognition

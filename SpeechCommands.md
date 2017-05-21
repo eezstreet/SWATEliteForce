@@ -19,11 +19,13 @@ Commands that can be issued are in code blocks, for example, the TRY LOCK comman
 
 ```
 Stack up ...
-... the lock ...
+Try ... door ...
+Check the door.
 ```
 
 There are two main keywords that you might see: elipses (...) and the question mark (?)
 The elipses are used to denote a wildcard. For example, "Stack up on that door" and "Stack up alongside the door" both work. The elipses can also mean no further words are needed, so simply "Stack up" works.
+A plus (+) in front of a word means that it is extra important that that word be pronounced clearly. A minus (-) in front of a word means the opposite.
 The question mark is used to denote an optional word. For example, to start issuing orders to blue team, the following command is possible:
 
 ```
@@ -38,144 +40,114 @@ To start issuing orders to team *gold*, or *element*, try issuing one of the fol
 
 ```
 ?As ?an element
-All
+Gold ?Team
+Squad
 Everyone
 Everybody
-Gold
-Element
+All ?teams ?of ?you
 ```
 
 To start issuing orders to team *red*, any of the following will work:
 
 ```
 Red ?Team
-Girard's ?Team
-Girard ?Team
-Reynold's ?Team
-Reynold ?Team
 ```
 
 To start issuing orders to team *blue*, any of the following will work:
 
 ```
 Blue ?Team
-Fields ?Team
-Fields's ?Team
-Jackson ?Team
-Jackson's ?Team
 ```
 
 To start issuing a hold order (like you would with the CTRL key), the following will work:
 
 ```
 On my command
-On my mark
-When I tell you to
-On my when
-On my order
-On my go
 On my signal
-Wait for my signal, ?and then
+On my mark
+On my signal
 ```
 
 ## BASIC COMMANDS
 
 FALL IN:
 ```
-Fall in.
-Come to me.
-Return ...
-Come back ...
-Fall back
-Fall in on me.
-Follow me.
-On me.
+Fall ?back ?in ?on ?me.
+Follow me
+Come to ?me ?my ?position.
+Return to ?me ?my ?position.
 This way.
+On me.
 Come here.
-Get in here.
-Stay back.
 ```
 
 COVER:
 ```
-?No wait
-Abort
-... threats.
-... cover ...
-Keep it covered.
-Cover that ?area
-Watch that ...
-... keep an eye ...
+... Provide +cover.
++Cover ?the ?that area
++Watch ...
 ```
 
 MOVE TO:
 ```
-Get there.
-Move there.
-Go ?over there.
-Move to that position.
-Take position over there.
-Move over there.
-Get out of the way.
-You're in my way.
-Move up.
+Get ... +there.
+Move ... +there.
++Go ... +there.
+Take position ...
++Go ... +away
+Get ... out of the way
 ```
 
 INITIATE:
 ```
-Go go go!
-Initiate ?action.
+Go ?go ?go.
+Initiate ?action
+Let's ?move ?it ?go
+Zulu
 Do it ...
-Let's go ?go ?go
-Let's do it.
-Let's move.
-Mark.
 ```
 
 DROP LIGHTSTICK:
 ```
-Drop ?a light stick ...
+Drop ?a +light stick.
+Throw ?down ?a +light stick.
 ```
 
 MARK WITH LIGHTSTICK:
 ```
-Deploy ... light stick ...
-Mark ... ?with ?a ?light stick.
+?Mark ?it ?with ?a +light stick ...
+?Deploy ?a +light stick ...
 ```
 
 RESTRAIN:
 ```
-Zip ?him ?her up.
-?Hand cuff ...
-Restrain ...
-Arrest ...
-Make ... secure.
-Tie ... up
+Restrain ?her ?him
+?Hand +cuff ?him ?her
+Zip ?tie ?him ?her ?up
+Tie ?him ?her ?up ?down
+Arrest ?her ?him
 ```
 
 SECURE EVIDENCE:
 ```
-Secure ?that ?evidence.
-Get that.
-... that gun.
-... ?those drugs.
-... ?that drug bag.
+Secure ?that ?those ?evidence ?drugs ?drug ?bag ?gun ?guns
+Grab ?that ?those ?evidence ?drugs ?drug ?bag ?gun ?guns
+Confiscate ?that ?those ?evidence ?drugs ?drug ?bag ?gun ?guns
 ```
 
 DISABLE:
 ```
-Disable ...
-Defuse it
-Defuse that ...
-Defuse the ...
-Disarm it
-Disarm that ...
-Disarm the ...
++Disable ?that ?the ...
++Disarm ?that ?the ...
++Defuse ?that ?the ...
 ```
 
 REMOVE WEDGE:
 ```
-Remove ?the wedge
+Remove ... +wedge ...
+Clear ... +wedge ...
+Get ... +wedge ...
+Take ... +wedge ...
 ```
 
 CLOSE DOOR:
@@ -183,39 +155,67 @@ CLOSE DOOR:
 Close ...
 ```
 
+SWEEP AND SECURE:
+```
+... +sweep ...
++Search ...
++Fan out ...
+```
+
+RESTRAIN ALL:
+```
+Restrain all ...
++Cuff all ...
+```
+
+SECURE ALL EVIDENCE:
+```
+Secure all ...
+Grab all ...
+```
+
+DISABLE ALL:
+```
+Disable all ...
+Disarm all ...
+```
 
 ## INVESTIGATE COMMANDS
 
 TRY LOCK:
 ```
 Stack up ...
-Try the lock.
-Try the door.
+Try ... door ...
 Check the door.
 ```
 
 CHECK FOR TRAPS:
 ```
-Check ... traps
+Check ?out ?the ?door ?for traps.
+Look ?out for traps ?on ?the ?door
 ```
 
 MIRROR UNDER DOOR:
 ```
-Mirror ... door.
-Check under ... door.
-Check behind ...
-... behind ... door ...
+Mirror under ?the door ...
+Mirror behind ?the door ...
+Check under ?the door ...
+Check underneath ?the door ...
+Check behind ?the door ...
+Look under ?the door ...
+?Take ?a peek under ?the door ...
 ```
 
 MIRROR CORNER:
 ```
-Mirror ... corner.
-Check ... corner.
+Mirror ?around ?the corner ...
+Look ?around ?the corner ...
+?Take ?a peek ?around ?the corner ...
 ```
 
 MIRROR ROOM:
 ```
-Mirror ... room.
+Mirror ?into ?the room ...
 ```
 
 
@@ -223,90 +223,73 @@ Mirror ... room.
 
 PICK LOCK
 ```
+Pick ... lock.
 Unlock ...
-Pick ...
-Take care ... lock
-Handle ... lock
+Open ... quietly
+Quietly ... open ...
+Take care ... lock.
 ```
 
 OPEN AND CLEAR / OPEN AND MAKE ENTRY:
 ```
-Get in there.
-Get through there.
-Get in there ... clear ...
-Open and clear.
-Clear that room.
-Open and make entry.
+Open ?it ?the ?that ?door ?over ?there ?up ?and ?go ?clear ...
+Open ?it ?the ?that ?door ?over ?there ?and ?prepare ?to make entry.
+Get through ?there ?the ?that ?door, ?and ?go ?clear ...
+Make entry ?and ?clear ?that ?it ?the ?room ?door ?area ?sector
 ```
 
 OPEN BANG AND CLEAR / OPEN BANG AND MAKE ENTRY:
 ```
-Open, bang, and clear.
-Open, bang, and make entry.
+Open ?it ?the ?that ?door ?over ?there ?throw ?a ?flash bang ?and clear ...
+Open ?it ?that ?the ?door ?over ?there ?throw ?a ?flash bang ?and ?prepare ?to make entry ...
+Make Entry ?with ?a ?flash bang ?and ?clear ...
 ```
 
 OPEN GAS AND CLEAR / OPEN GAS AND MAKE ENTRY:
 ```
-Open, gas, and clear.
-Open, ass, and clear.
-Open, ... CS ... and clear
-Open, ... see yes ... and clear
-Open, gas, and make entry.
-Open, ... CS ... and make entry
-Open, see yes, and make entry.
+Open ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?see ?yes ?CS +gas ?grenade and clear ...
+Open ?it ?the ?that ?door ?room ?over ?there ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade and ?prepare ?to make entry.
 ```
 
 OPEN STING AND CLEAR / OPEN STING AND MAKE ENTRY:
 ```
-Open, sting, and clear.
-Open, sting, and make entry.
+Open ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a sting ?grenade and clear ...
+Open ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a sting ?grenade and ?prepare ?to make entry.
 ```
 
 OPEN LEADER AND CLEAR / OPEN LEADER AND MAKE ENTRY:
 ```
-Open Leader ?Throw ?And Clear
-Open ... ?and let me throw ...
-Open ... ?and I will throw ...
-Open Leader ?Throw ?And Make Entry
-Make Entry ?with my grenade
-Make Entry, I will throw ...
-Make Entry, Let me throw ...
-Open .. make entry ?after ?as I throw ...
+Open ... +leader ?throw and ... +clear ...
 ```
 
 MOVE AND CLEAR:
 ```
-Clear it.
-Move and clear.
-Move in.
+Move ?and +clear ...
+Move in ?and +clear
+Keep clearing ...
 ```
 
 BANG AND CLEAR:
 ```
-Bang and clear.
-Clear ?it ?the ?that ?room with ... flashbang ...
+?Flash +Bang ?it ?that ?the ?room ?door ?over ?there and clear ...
+Clear ?it ?that ?the ?room ?over ?there with ?a ?flash +bang ...
 ```
 
 GAS AND CLEAR:
 ```
-Gas and clear.
-CS and clear.
-See yes and clear.
-Clear ?it ?the ?that ?room with ?a gas ?grenade.
-Clear ?it ?the ?that ?room with ?a see yes ... ?grenade.
+Gas ?it ?that ?the ?room ?door ?over ?there and clear ...
+Clear ?it ?that ?the ?room ?over ?there with ?a ?see ?yes ?CS +gas ?grenade ...
+Clear ?it ?that ?the ?room ?over ?there with ?a see yes ?gas ?grenade ...
 ```
 
 STING AND CLEAR:
 ```
-Sting and clear.
-Clear ?it ?the ?that ?room with a stinger.
-Clear ?it ?the ?that ?room with a sting ?grenade.
+Sting ?it ?that ?the ?room ?door ?over ?there and clear ...
 ```
 
 LEADER THROW AND CLEAR:
 ```
-Move ?in after ... throw ?a ...
-Leader Throw ?And Clear
++Leader Throw ?and Clear
 ```
 
 
@@ -315,40 +298,103 @@ Note that BREACH AND ... commands aren't accessible in the Classic Command or Gr
 
 BREACH AND CLEAR / BREACH AND MAKE ENTRY:
 ```
-Breach and clear.
-Breach and make entry.
+Breach ?it ?the ?that ?door ?over ?there ?and clear ...
+Breach ?it ?the ?that ?door ?over ?there ?and ?prepare ?to make entry.
 ```
 
 BREACH, BANG AND CLEAR / BREACH, BANG AND MAKE ENTRY:
 ```
-Breach, bang and clear.
-Breach, bang and make entry.
++Breach ?it ?the ?that ?door ?room ?over ?there ?and ?flash +bang ?it ?the ?room ?and clear ...
++Breach ?it ?the ?that ?door ?over ?there ?and ?flash +bang ?it ?the ?room ?and ?prepare ?to make entry.
 ```
 
 BREACH, GAS AND CLEAR / BREACH, GAS AND MAKE ENTRY:
 ```
-Breach, gas and clear.
-Breach, ... CS ... and clear.
-Breach, see yes, and clear.
-Breach, gas and make entry.
-Breach, ... CS ... and make entry.
-Breach, see yes, and make entry.
+Breach ?it ?the ?that ?door +gas ?in ?it ?the ?room ?over ?there and clear ...
+Breach ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?CS ?See ?yes +gas ?grenade ?in ?it ?the ?room and ?prepare ?to make entry.
 ```
 
 BREACH, STING AND CLEAR / BREACH, STING AND MAKE ENTRY:
 ```
-Breach, sting and clear.
-Breach, sting, and make entry.
+Breach ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a +sting ?grenade ?and clear ...
+Breach ?it ?that ?the ?room ?door ?over ?there ?and ?toss ?throw ?a +sting ?grenade and ?prepare ?to make entry.
 ```
 
 BREACH, LEADER AND CLEAR / BREACH, LEADER AND MAKE ENTRY:
 ```
-Breach leader ?throw ?and clear
-Breach ?it ?and let me throw ...
-Breach ?it I will throw ...
-Breach, leader ?throw ?and make entry
-Breach ?and Make Entry. I will throw ...
-Breach ?and make entry. Let me throw ...
++Breach ... +leader ?throw and ... +clear ...
++Breach ... let me ?throw and ... +clear ...
+```
+
+---
+
+C2 & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two and ?prepare ?to make entry.
+```
+
+C2, BANG & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a ?flash +bang ?grenade ?and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a ?flash +bang ?grenade ?and ?prepare ?to make entry.
+```
+
+C2, GAS & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a ?CS ?see ?yes +gas ?grenade ?and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a see yes ?gas ?grenade ?and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a CS ?gas ?grenade ?and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade ?and ?prepare ?to make entry.
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a see yes ?gas ?grenade ?and ?prepare ?to make entry.
+```
+
+C2, STING & CLEAR
+```
+?Break ?Open Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a +sting ?grenade ?and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a +sting ?grenade ?and ?prepare ?to make entry.
+```
+
+C2, LEADER THROW & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?wait ?hold ?back ?for +leader ?throw ?and ?prepare ?to make entry.
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?let ?me ?the ?leader +throw ...
+```
+
+SHOTGUN & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun and ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?prepare ?to make entry.
+```
+
+SHOTGUN, BANG & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a ?flash +bang ?grenade ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a ?flash +bang ?grenade ?and ?prepare ?to make entry.
+```
+
+SHOTGUN, GAS & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a see yes ?gas ?grenade ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade ?and ?prepare ?to make entry.
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a see yes ?gas ?grenade ?and ?prepare ?to make entry.
+```
+
+SHOTGUN, STING & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a +sting ?grenade ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and ?throw ?toss ?a +sting ?grenade ?and ?prepare ?to make entry.
+```
+
+SHOTGUN, LEADER & CLEAR
+```
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and wait for me ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and let me ... clear ...
+?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and +leader ... clear ...
+?Break ?open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and wait for me ... make entry.
+?Break ?open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and let me throw ... make entry.
+?Break ?open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and leader throw ... make entry.
 ```
 
 
@@ -356,86 +402,70 @@ Breach ?and make entry. Let me throw ...
 
 DEPLOY LESS LETHAL SHOTGUN:
 ```
-Deploy less ?lethal ?shot gun
-Deploy bean bag
+Deploy less lethal ...
+Deploy bean bag ...
+Use less lethal ...
+Use bean bag ... 
 ```
 
 DEPLOY TASER:
 ```
-... taser ...
-... tazer ...
-Taze ...
+Deploy ... +taser ...
+Use ... +taser ...
 ```
 
 DEPLOY PEPPER SPRAY:
 ```
-Deploy pepperspray.
-Deploy pepper.
-Use pepper.
+Deploy ... pepper +spray ...
+Use ... pepper +spray ...
 ```
 
 DEPLOY PEPPER GUN:
 ```
-Deploy pepper gun.
-Use ?a ?the pepper gun.
+Deploy ... pepper ?gun ...
+Use ... pepper ?gun ...
 ```
 
 DEPLOY GRENADE LAUNCHER:
 ```
-Use ... grenade launcher ...
-Deploy grenade launcher ...
+Deploy ... launcher.
+Use ... launcher.
 ```
 
 DEPLOY FLASHBANG:
 ```
-Deploy flashbang.
++Deploy ... +bang ...
 ```
 
 DEPLOY CS GAS:
 ```
-... ?CS ... gas ...
-Gas ?them ?em
-Throw a see yes
-Deploy see yes
++Deploy see ?yes ?gas ...
++Deploy ?CS gas ...
 ```
 
 DEPLOY STING GRENADE:
 ```
-Deploy sting ?grenade.
-Deploy stinger ?grenade.
++Deploy sting ?grenade ...
++Deploy +stinger ?grenade ...
 ```
 
 DEPLOY WEDGE:
 ```
-Deploy ?a wedge.
-Put ... wedge ... ?on ?under ... door ...
-Get ... wedge ... ?on ?under ... door ...
-Wedge that door.
-Wedge the door.
+Deploy ... +wedge
+Use ... +wedge
+Place ... +wedge
 ```
 
 DEPLOY BREACHING SHOTGUN:
 ```
-Deploy ?a ?breaching shotgun.
-Shoot the ... lock ...
-Shoot the ... handle ...
-Shoot the ... door ...
+Deploy ... ?breaching +shotgun.
+Use ... ?breaching +shotgun.
 ```
 
 DEPLOY C2:
 ```
 Deploy see two.
-Deploy explosive.
-Deploy explosives.
-Place ... charge ...
-Put ... charge ...
-Blow ... door.
-Blow it up.
-Use see two ...
-Use explosives ...
-Get ... explosives ...
-Put ... explosives ...
-Knock it down.
+Use see two.
 ```
 
 ## OTHER ACTIONS WHICH AREN'T COMMANDS
@@ -446,8 +476,11 @@ Any of the following commands can be used to shout for compliance, the same as y
 
 ```
 ... Police ...
+... Arms up ...
+... Arms where ...
 ... Hands up ...
 ... Hands in the ...
+... Hands to the ...
 ... Hands where ...
 ... Get down ...
 Comply ...
@@ -459,12 +492,12 @@ Show ?me ?us your hands.
 ```
 
 ### REPORT TO TOC
-(New in v5.1!) You can report things to TOC using your voice as well as the interact button.
+You can report things to TOC using your voice as well as the interact button.
 
 ```
 TOC, this is entry team ...
 Entry team to TOC ...
-TOC, we have ...
-TOC, subject ...
+TOC, we ...
 TOC, there's ...
+TOC, there appears ...
 ```
