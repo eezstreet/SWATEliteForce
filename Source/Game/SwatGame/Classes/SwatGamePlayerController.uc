@@ -1559,18 +1559,7 @@ ignores ActivateViewport;
 
     exec function Fire()
     {
-        //ActiveViewport.HandleFire();
-        local vector CameraLocation;
-        local Rotator CameraDirection;
-
-        if(ActiveViewport == None)
-        {
-          return;
-        }
-
-        ActiveViewport.ViewportCalcView(CameraLocation, CameraDirection);
-
-        ServerHandleViewportFire(CameraLocation, CameraDirection);
+        ActiveViewport.HandleFire();
     }
 
     exec function ViewportRightMouse ()
@@ -1589,19 +1578,9 @@ ignores ActivateViewport;
         Pawn.SetPhysics(PHYS_Walking);
         ActiveViewport.OnEndControlling();
 
-        // Not necessary to do this if we are the server
-        if(Level.NetMode != NM_DedicatedServer || Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
-        {
-          Global.ActivateViewport( None );
-        }
         bControlViewport = 0;
 
         SetPlayerCommandInterfaceTeam(TeamSelectedBeforeControllingOfficerViewport);
-
-        if(Level.Netmode == NM_DedicatedServer && Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
-        {
-          GotoState('PlayerWalking');
-        }
     }
 
     simulated function PlayerTick(float DeltaTime)
@@ -1621,6 +1600,36 @@ ignores ActivateViewport;
 
 state ControllingSniperViewport extends ControllingViewport
 {
+  exec function Fire()
+  {
+    local vector CameraLocation;
+    local Rotator CameraDirection;
+
+    if(ActiveViewport == None)
+    {
+      return;
+    }
+
+    ActiveViewport.ViewportCalcView(CameraLocation, CameraDirection);
+
+    ServerHandleViewportFire(CameraLocation, CameraDirection);
+  }
+
+  simulated function EndState()
+  {
+    Super.EndState();
+
+    // Not necessary to do this if we are the server
+    if(Level.NetMode != NM_DedicatedServer || Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
+    {
+      Global.ActivateViewport( None );
+    }
+
+    if(Level.Netmode == NM_DedicatedServer && Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
+    {
+      GotoState('PlayerWalking');
+    }
+  }
 }
 
 // Control the optiwand viewport, NOTE: we're only in this state while actually using an optiwand...

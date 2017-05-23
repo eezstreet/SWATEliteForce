@@ -245,7 +245,7 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
 }
 
 // Unimplemented IControllableViewport functions
-simulated function HandleFire();
+simulated function HandleFire(optional bool OnServer, optional vector CameraLocation, optional Rotator CameraRotation);
 simulated function HandleAltFire();
 simulated function HandleReload();
 simulated function IControllableThroughViewport GetCurrentControllable();
