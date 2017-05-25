@@ -285,9 +285,25 @@ replication
 
 simulated event PostBeginPlay()
 {
+    local int ShadowDetail;
+	local string ShadowDetailString;
+    
     log( self$"---SwatPawn::PostBeginPlay()." );
 
     Super.PostBeginPlay();
+
+    //New for the "High" shadow quality setting. -K.F.
+    ShadowDetailString = Level.GetLocalPlayerController().ConsoleCommand( "SHADOWDETAIL GET" );
+    ShadowDetail = int(ShadowDetailString);
+	// bAcceptsShadowProjectors cannot be set using any kind of conditional logic. 
+	// You can't do "if (ShadowDetail >= 3) bAcceptsShadowProjectors = true;"
+	// You can't do "if (ShadowDetailString == "3") bAcceptsShadowProjectors = true;"
+	// You can't do "bAcceptsShadowProjectors = (ShadowDetail > 3)"
+	// Any such approach will set the value, but the value will not be *applied*. 
+	// Don't believe me? Try it. Anyway, it is safe to always set this to true, since 
+	// it will only have an effect when ShadowProjector's bProjectActor property is true 
+	//   -K.F.
+	bAcceptsShadowProjectors = true; 
 
     if (bActorShadows && Level.NetMode != NM_DedicatedServer)
     {
@@ -302,10 +318,16 @@ simulated event PostBeginPlay()
         Shadow.CullDistance = ShadowCullDistance;
         Shadow.Resolution = 256;
         Shadow.InitShadow();
+        
+        if (ShadowDetail >= 3) //3 = "High"
+        {
+            Shadow.Resolution = 512;
+            //Level.GetLocalPlayerController().ConsoleMessage("High quality shadows enabled!");
+        }
     }
-
+    
     // Initialize the perlin noise object for mouth movement
-        InitAnimationForCurrentMesh();
+    InitAnimationForCurrentMesh();
     InitMouthMovementPerlinNoise();
 }
 
