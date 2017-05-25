@@ -1088,9 +1088,10 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
     {
         log("Going to state: "$ActiveViewport.GetControllingStateName());
         GotoState(ActiveViewport.GetControllingStateName());
-        ServerViewportActivate(ActiveViewport.GetControllingStateName(), Actor(ActiveViewport));
+        if(!inNewViewport.IsA('Optiwand'))
+          ServerViewportActivate(ActiveViewport.GetControllingStateName(), Actor(ActiveViewport));
     }
-    else
+    else if(!inNewViewport.IsA('Optiwand'))
     {
       ServerViewportDeactivate();
     }
@@ -1559,7 +1560,23 @@ ignores ActivateViewport;
 
     exec function Fire()
     {
+      local vector CameraLocation;
+      local Rotator CameraDirection;
+
+      if(ActiveViewport == None)
+      {
+        return;
+      }
+
+      if(ActiveViewport.IsA('Optiwand'))
+      {
         ActiveViewport.HandleFire();
+        return;
+      }
+
+      ActiveViewport.ViewportCalcView(CameraLocation, CameraDirection);
+
+      ServerHandleViewportFire(CameraLocation, CameraDirection);
     }
 
     exec function ViewportRightMouse ()
@@ -1578,9 +1595,20 @@ ignores ActivateViewport;
         Pawn.SetPhysics(PHYS_Walking);
         ActiveViewport.OnEndControlling();
 
+        // Not necessary to do this if we are the server
+        if(Level.NetMode != NM_DedicatedServer || Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
+        {
+          Global.ActivateViewport( None );
+        }
+
         bControlViewport = 0;
 
         SetPlayerCommandInterfaceTeam(TeamSelectedBeforeControllingOfficerViewport);
+
+        if(Level.Netmode == NM_DedicatedServer && Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
+        {
+          GotoState('PlayerWalking');
+        }
     }
 
     simulated function PlayerTick(float DeltaTime)
@@ -1602,33 +1630,7 @@ state ControllingSniperViewport extends ControllingViewport
 {
   exec function Fire()
   {
-    local vector CameraLocation;
-    local Rotator CameraDirection;
 
-    if(ActiveViewport == None)
-    {
-      return;
-    }
-
-    ActiveViewport.ViewportCalcView(CameraLocation, CameraDirection);
-
-    ServerHandleViewportFire(CameraLocation, CameraDirection);
-  }
-
-  simulated function EndState()
-  {
-    Super.EndState();
-
-    // Not necessary to do this if we are the server
-    if(Level.NetMode != NM_DedicatedServer || Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
-    {
-      Global.ActivateViewport( None );
-    }
-
-    if(Level.Netmode == NM_DedicatedServer && Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
-    {
-      GotoState('PlayerWalking');
-    }
   }
 }
 
