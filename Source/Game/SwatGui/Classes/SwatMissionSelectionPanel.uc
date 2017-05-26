@@ -255,6 +255,19 @@ private function ListAllMissions()
   }
 }
 
+event Timer()
+{
+  Controller.OpenWaitDialog();
+  ListAllMissions();
+  Controller.CloseWaitDialog();
+}
+
+event Show()
+{
+  Super.Show();
+  SetTimer(0.1);
+}
+
 private function PopulateCustomScenarioList()
 {
     local int i,ScenarioIterator;
@@ -313,9 +326,10 @@ private function PopulateCampaignMissionList()
   			}
   		}
   	} else if(theCampaign.CampaignPath == 2) {
-      Controller.OpenWaitDialog();
-      ListAllMissions();
-      Controller.CloseWaitDialog();
+      //Controller.OpenWaitDialog();
+      //SetTimer(1.0);
+      //ListAllMissions();
+      //Controller.CloseWaitDialog();
     }
 
 
