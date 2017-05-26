@@ -283,7 +283,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                 if( (GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
                     Campaign != None) || coopcampaign )
                 {
-                    Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                    Campaign.MissionEnded(GuiConfig.GetCurrentMissionName(), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
                 }
                 else if( GuiConfig.SwatGameRole == GAMEROLE_SP_Custom )
                 {
