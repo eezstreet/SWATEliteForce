@@ -4714,7 +4714,7 @@ Text=DEPLOY FLASHBANG
 Text=DEPLOY TASER
 
 [Command_Deploy_GrenadeLauncher]
-Text=DEPLOY GRENADE LAUNCHER
+Text=DEPLOY TRIPLE BATON
 
 [Command_Deploy_Lightstick]
 Text=MARK WITH LIGHTSTICK
