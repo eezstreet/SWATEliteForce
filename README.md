@@ -562,6 +562,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Fixed SEF bug: Breaking a door with the breaching shotgun (in a dedicated server/multiplayer) would sometimes not disable the antiportal
 - Fixed SEF bug: Officers were reporting that they lost their contact way too often [kf]
 - Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. [kf]
+- Fixed TSS bug: Officers don't reply when ordered to cover an area, they just do it
 
 ### v5.2 ###
 - Fixed a very frequent crash in multiplayer that was introduced in 5.1
