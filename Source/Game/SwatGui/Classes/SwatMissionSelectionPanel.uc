@@ -68,6 +68,17 @@ function InternalOnActivate()
           return;
         }
 
+        if(theCampaign.CampaignPath == 2)
+        {
+          MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
+          MyMissionSelectionBox.List.UpdateSortFunction();
+        }
+        else
+        {
+          MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+          MyMissionSelectionBox.List.UpdateSortFunction();
+        }
+
         MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
 
         MyCampaignNameLabel.SetCaption(theCampaign.StringName);
