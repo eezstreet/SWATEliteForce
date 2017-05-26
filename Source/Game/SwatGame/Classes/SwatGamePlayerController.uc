@@ -5789,6 +5789,33 @@ exec function TestClientMessage( name type, string Msg )
     ClientMessage( Msg, type );
 }
 
+/* 
+//For debugging. These can be considered cheats and probably should
+be moved to SwatCheatManager
+exec function SetFlashlightRadius(float radius)
+{
+	local HandheldEquipment ActiveItem;
+	local FiredWeapon ActiveWeapon;
+	
+	ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = FiredWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.SetFlashlightRadius(radius);
+	}
+}
+exec function SetFlashlightCone(float cone)
+{
+	local HandheldEquipment ActiveItem;
+	local FiredWeapon ActiveWeapon;
+	
+	ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = FiredWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.SetFlashlightCone(cone);
+	}
+}
+*/
+
 #if IG_SWAT_AUDIT_FOCUS
 //causes an audit of the PlayerFocusInterfaces for one call to UpdateFocus()
 exec function AuditFocus()
