@@ -548,16 +548,20 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 # VERSION HISTORY #
 
 ### v5.3 ###
-- Rewrote SpeechCommands grammar file from scratch (see SpeechCommands.md for changes)
+Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
+
+- Rewrote SpeechCommands grammar file from scratch (see SpeechCommands.md for changes) (kevinfoley helped with this)
 - Added missing speech commands from v5 (for specifying breaching method)
 - Minor optimizations regarding the optiwand
 - Snipers now report when they've lost sight of entry team on all maps, not just Qwik Fuel (they only do this once)
 - Another possible fix for the RotateAroundActor crash
-- Improved the quality of shadows on the highest Shadow Quality setting. (thanks to kevinfoley for this change)
-- On the highest Shadow Quality setting, more things (such as AI-controlled officers, guns, etc) will cast shadows (thanks to kevinfoley for this change)
+- Improved the quality of shadows on the highest Shadow Quality setting. [kf]
+- On the highest Shadow Quality setting, more things (such as AI-controlled officers, guns, etc) will cast shadows [kf]
+- Cut content restored: Blood spray texture that was not used [kf]
 - Fixed SEF bug: Sniper rifle not firing in multiplayer
 - Fixed SEF bug: Breaking a door with the breaching shotgun (in a dedicated server/multiplayer) would sometimes not disable the antiportal
-- Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. (thanks to kevinfoley for this change)
+- Fixed SEF bug: Officers were reporting that they lost their contact way too often [kf]
+- Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. [kf]
 
 ### v5.2 ###
 - Fixed a very frequent crash in multiplayer that was introduced in 5.1
