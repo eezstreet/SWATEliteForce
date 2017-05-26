@@ -68,17 +68,17 @@ NOTES:
 			<PHRASE VALSTR="Command_BreachGasAndClear">Breach ?it ?the ?that ?door +gas ?in ?it ?the ?room ?over ?there and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachGasAndClear">Breach ?it ?the ?that ?door, ?throw ?toss see yes, and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachGasAndMakeEntry">Breach ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?CS ?See ?yes +gas ?grenade ?in ?it ?the ?room and ?prepare ?to make entry.</PHRASE>
-			<PHRASE VALSTR="Command_OpenGasAndClear">Open ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?see ?yes ?CS +gas ?grenade and clear ...</PHRASE>
-			<PHRASE VALSTR="Command_OpenGasAndClear">Open ?it ?the ?that ?door ?room ?over ?there, ?toss ?throw ?a see yes? ?gas ?grenade and clear ...</PHRASE>
-			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">Open, see yes ?gas ?grenade, and clear.</PHRASE>
-			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">Open ?it ?the ?that ?door ?room ?over ?there ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade and ?prepare ?to make entry.</PHRASE>
-			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">Open, see yes ?gas ?grenade, and ?prepare ?to make entry.</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndClear">?Open ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?see ?yes ?CS +gas ?grenade and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndClear">?Open ?it ?the ?that ?door ?room ?over ?there, ?toss ?throw ?a see yes? ?gas ?grenade and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">?Open, see yes ?gas ?grenade, and clear.</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">?Open ?it ?the ?that ?door ?room ?over ?there ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade and ?prepare ?to make entry.</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">?Open, see yes ?gas ?grenade, and ?prepare ?to make entry.</PHRASE>
             
 			<PHRASE VALSTR="Command_StingAndClear">Sting ?it ?that ?the ?room ?door ?over ?there and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachStingAndClear">Breach ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a +sting ?grenade ?and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachStingAndMakeEntry">Breach ?it ?that ?the ?room ?door ?over ?there ?and ?toss ?throw ?a +sting ?grenade and ?prepare ?to make entry.</PHRASE>
-			<PHRASE VALSTR="Command_OpenStingAndClear">Open ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a sting ?grenade and clear ...</PHRASE>
-			<PHRASE VALSTR="Command_OpenStingAndMakeEntry">Open ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a sting ?grenade and ?prepare ?to make entry.</PHRASE>
+			<PHRASE VALSTR="Command_OpenStingAndClear">?Open ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a sting ?grenade and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenStingAndMakeEntry">?Open ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a sting ?grenade and ?prepare ?to make entry.</PHRASE>
 
 			<PHRASE VALSTR="Command_FallIn">Fall in ?on ?me.</PHRASE>
 			<PHRASE VALSTR="Command_FallIn">Follow me</PHRASE>
