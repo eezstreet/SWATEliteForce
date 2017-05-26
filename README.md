@@ -532,6 +532,25 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- Does not unlock equipment. Use all of your acquired technology!
 
 # HOW TO PLAY IN MULTIPLAYER #
+
+## Using GameRanger (preferred) ##
+BOTH PLAYERS will need to do the following:
+Download and install GameRanger. It can be found at http://gameranger.com
+Next, GameRanger will automatically detect SWAT 4 and SWAT 4: The Stetchkov Syndicate, if all is OK.
+You may need to manually detect these, if GameRanger doesn't do it for you.
+Then, you will need to modify the Stetchkov Syndicate game in Gameranger so it points to the LaunchSEF.exe file in SEF/Extras/LaunchSEF.exe.
+
+THE HOST will need to do the following:
+Create a game room, as a SWAT 4: The Stetchkov Syndicate game. (TIP: if this is going to be a publicly joinable game, be sure to mention it's using the SEF mod and specify the version!)
+When enough players have joined, press the Start Game button. This will launch the game. From here, go to the Host Game menu and start up a server.
+Important Note: Do not launch as a dedicated server while using GameRanger.
+The other players will automatically connect to your game while you are loading the map.
+
+THE CLIENT will need to do the following:
+Join a public game, or your friend's game. That's all you really need to do.
+
+
+## Traditional Method (TCP/IP) ##
 SWAT: Elite Force v4 was the first version of this mod to allow for multiplayer play. v5 introduced Campaign CO-OP and allowed for publishing of games to Swat4Stats without a CD-key (removing DRM that GOG didn't).
 
 If you want to join a game:
@@ -544,6 +563,7 @@ First, you will need to open some ports on your router: 10480 - 10483, TCP/UDP. 
 OPTIONAL: If you want your game to be publicly visible on the master server list (on swat4stats), you will need to install the Swat4Stats server browser plugin, available at http://swat4stats.com - You'll also want to set your game to be "Internet" and not "LAN" for this to work.
 If you aren't playing an Internet/Swat4Stats enabled game, you will need your external IP address for other players to connect. You can look this up on http://myexternalip.com
 Lastly, you need to determine what type of game you want to play. Regular CO-OP is handled through the Host Game menu ingame, but Campaign CO-OP is done through the Career menu - select a campaign and hit Career CO-OP. The "Equipment" panel will change to a "Settings" panel where you can configure a password, etc just like in Host Game.
+Once you have selected your map settings and have started the server at least once, you can quickly launch a server (without going ingame) by using the Dedicated Server.bat file. You can then join the server from the Join Server menu.
 
 # VERSION HISTORY #
 
