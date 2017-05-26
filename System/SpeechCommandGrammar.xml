@@ -2,6 +2,18 @@
 
 <!-- If you change this file, use Source/Libraries/SAPI5.1/Bin/GramComp.exe to test it -->
 
+<!-- 
+NOTES:
+
+ - "see yes" is used as a stand-in for "CS" because the game doesn't understand letters 
+ - ? denotes an optional word
+ - ... denotes places where you can say whatever you want
+ - What does + mean?
+ - Be careful of similar-sounding phrases, for example "cover" and "cuff her"
+
+-->
+
+
 <GRAMMAR LANGID="409">
 
 	<!-- "LIST" may be abbreviated "L" -->
@@ -49,14 +61,18 @@
             
 			<PHRASE VALSTR="Command_BreachBangAndClear">+Breach ?it ?the ?that ?door ?room ?over ?there ?and ?flash +bang ?it ?the ?room ?and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachBangAndMakeEntry">+Breach ?it ?the ?that ?door ?over ?there ?and ?flash +bang ?it ?the ?room ?and ?prepare ?to make entry.</PHRASE>
-			<PHRASE VALSTR="Command_OpenBangAndClear">Open ?it ?the ?that ?door ?over ?there ?throw ?a ?flash bang ?and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenBangAndClear">?Open ?it ?the ?that ?door ?over ?there ?throw ?a ?flash bang ?and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_OpenBangAndMakeEntry">Open ?it ?that ?the ?door ?over ?there ?throw ?a ?flash bang ?and ?prepare ?to make entry ...</PHRASE>
 			<PHRASE VALSTR="Command_OpenBangAndMakeEntry">Make Entry ?with ?a ?flash bang ?and ?clear ...</PHRASE>
 
 			<PHRASE VALSTR="Command_BreachGasAndClear">Breach ?it ?the ?that ?door +gas ?in ?it ?the ?room ?over ?there and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_BreachGasAndClear">Breach ?it ?the ?that ?door, ?throw ?toss see yes, and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachGasAndMakeEntry">Breach ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?CS ?See ?yes +gas ?grenade ?in ?it ?the ?room and ?prepare ?to make entry.</PHRASE>
 			<PHRASE VALSTR="Command_OpenGasAndClear">Open ?it ?the ?that ?door ?room ?over ?there ?and ?toss ?throw ?a ?see ?yes ?CS +gas ?grenade and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndClear">Open ?it ?the ?that ?door ?room ?over ?there, ?toss ?throw ?a see yes? ?gas ?grenade and clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">Open, see yes ?gas ?grenade, and clear.</PHRASE>
 			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">Open ?it ?the ?that ?door ?room ?over ?there ?and ?throw ?toss ?a ?see ?yes ?CS +gas ?grenade and ?prepare ?to make entry.</PHRASE>
+			<PHRASE VALSTR="Command_OpenGasAndMakeEntry">Open, see yes ?gas ?grenade, and ?prepare ?to make entry.</PHRASE>
             
 			<PHRASE VALSTR="Command_StingAndClear">Sting ?it ?that ?the ?room ?door ?over ?there and clear ...</PHRASE>
 			<PHRASE VALSTR="Command_BreachStingAndClear">Breach ?it ?that ?the ?room ?door ?over ?there ?and ?throw ?toss ?a +sting ?grenade ?and clear ...</PHRASE>
@@ -75,7 +91,10 @@
 			<PHRASE VALSTR="Command_MoveTo">Take position ...</PHRASE>
 
 			<PHRASE VALSTR="Command_Cover">... Provide +cover.</PHRASE>
-			<PHRASE VALSTR="Command_Cover">+Cover ?the ?that area</PHRASE>
+			<PHRASE VALSTR="Command_Cover">Eyes on and provide +cover.</PHRASE>
+			<PHRASE VALSTR="Command_Cover">+Cover ?the ?that ?area</PHRASE>
+			<PHRASE VALSTR="Command_Cover">Abort</PHRASE>
+			<PHRASE VALSTR="Command_Cover">Cancel</PHRASE>
 
 			<PHRASE VALSTR="Command_Disable">+Disable ?that ?the ...</PHRASE>
 			<PHRASE VALSTR="Command_Disable">+Disarm ?that ?the ...</PHRASE>
@@ -96,20 +115,23 @@
 			<PHRASE VALSTR="Command_SecureEvidence">Confiscate ?that ?those ?evidence ?drugs ?drug ?bag ?gun ?guns</PHRASE>
 
 			<PHRASE VALSTR="Command_Restrain">Restrain ?her ?him</PHRASE>
+			<PHRASE VALSTR="Command_Restrain">Arrest ?her ?him</PHRASE>
 			<PHRASE VALSTR="Command_Restrain">?Hand +cuff ?him ?her</PHRASE>
 			<PHRASE VALSTR="Command_Restrain">Zip ?tie ?him ?her ?up</PHRASE>
 			<PHRASE VALSTR="Command_Restrain">Tie ?him ?her ?up ?down</PHRASE>
+			<PHRASE VALSTR="Command_Restrain">Make ?him ?her secure</PHRASE>
 
 			<PHRASE VALSTR="Command_MirrorRoom">Mirror ?into ?the room ...</PHRASE>
-			<PHRASE VALSTR="Command_MirrorUnderDoor">Mirror under ?the door ...</PHRASE>
+			<PHRASE VALSTR="Command_MirrorUnderDoor">Mirror ?under ?the door ...</PHRASE>
 			<PHRASE VALSTR="Command_MirrorUnderDoor">Look under ?the door ...</PHRASE>
 			<PHRASE VALSTR="Command_MirrorUnderDoor">?Take ?a peek under ?the door ...</PHRASE>
 			<PHRASE VALSTR="Command_MirrorCorner">Mirror ?around ?the corner ...</PHRASE>
 			<PHRASE VALSTR="Command_MirrorCorner">Look ?around ?the corner ...</PHRASE>
 			<PHRASE VALSTR="Command_MirrorCorner">?Take ?a peek ?around ?the corner ...</PHRASE>
 
-			<PHRASE VALSTR="Command_CheckForTraps">Check ?the ?door ?for traps.</PHRASE>
+			<PHRASE VALSTR="Command_CheckForTraps">Check ?the ?door ?it for traps.</PHRASE>
 			<PHRASE VALSTR="Command_CheckForTraps">Look ?out for traps ?on ?the ?door</PHRASE>
+			<PHRASE VALSTR="Command_CheckForTraps">Search ?the ?door ?it for traps.</PHRASE>
 
 			<PHRASE VALSTR="Command_Deploy_Wedge">Deploy ... +wedge</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Wedge">Use ... +wedge</PHRASE>
@@ -125,7 +147,8 @@
 			<PHRASE VALSTR="Command_Deploy_Taser">Deploy ... +taser ...</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Taser">Use ... +taser ...</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Flashbang">+Deploy ... +bang ...</PHRASE>
-			<PHRASE VALSTR="Command_Deploy_CSGas">+Deploy see ?yes ?gas ...</PHRASE>
+			<PHRASE VALSTR="Command_Deploy_CSGas">+Deploy see yes ?gas...</PHRASE>
+			<PHRASE VALSTR="Command_Deploy_CSGas">+Deploy gas ...</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_CSGas">+Deploy ?CS gas ...</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_StingGrenade">+Deploy sting ?grenade ...</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_StingGrenade">+Deploy +stinger ?grenade ...</PHRASE>
