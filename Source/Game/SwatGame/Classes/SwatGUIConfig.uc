@@ -324,6 +324,20 @@ overloaded function Construct()
 //////////////////////////////////////////////////////////////////////////////////////
 // Accessors
 //////////////////////////////////////////////////////////////////////////////////////
+function SetCurrentMissionAllMissions(String URL, Name MissionName, optional string FriendlyName, optional CustomScenario CustomScenario)
+{
+  local string MapPath;
+
+  MapPath = Left(URL, InStr(URL, "?"));
+
+  SetCurrentMission(MissionName, FriendlyName, CustomScenario);
+
+  CurrentMissionName = Name(MapPath);
+  CurrentMission.MapName = MapPath;
+  log("SetCurrentMissionAllMissions: MapPath is "$MapPath);
+  log("SetCurrentMissionAllMissions: CurrentMissionName = "$CurrentMissionName);
+}
+
 function SetCurrentMission( Name MissionName, optional string FriendlyName, optional CustomScenario CustomScenario )
 {
 log("[ckline] >>> SwatGUIConfig::SetCurrentMission('"$MissionName$"', '"$FriendlyName$"', '"$CustomScenario$"')");
