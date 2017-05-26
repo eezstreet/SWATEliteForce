@@ -577,6 +577,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Another possible fix for the RotateAroundActor crash
 - Improved the quality of shadows on the highest Shadow Quality setting. [kf]
 - On the highest Shadow Quality setting, more things (such as AI-controlled officers, guns, etc) will cast shadows [kf]
+- In All Missions campaigns, it will display the author of the map and a short description (if available) in the Mission Selection menu
 - Cut content restored: Blood spray texture that was not used [kf]
 - Fixed SEF bug: Sniper rifle not firing in multiplayer
 - Fixed SEF bug: Breaking a door with the breaching shotgun (in a dedicated server/multiplayer) would sometimes not disable the antiportal

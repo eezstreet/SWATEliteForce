@@ -26,6 +26,7 @@ var config array<String> ExtraFriendlyName "Friendly name used for this mission 
 var(DEBUG) private EditConst bool bAddingMissions;
 var(DEBUG) private Campaign theCampaign;
 var() private config localized string DifficultyLabelString;
+var() private localized config string ByString;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -198,16 +199,17 @@ private function ShowMissionDescription()
         Content = GC.CurrentMission.CustomScenario.Notes;
     }
 
-    MyMissionInfo.SetContent( Content );
-
     if(theCampaign.CampaignPath == 2) {
       LevelSummary = LevelSummary(MyMissionSelectionBox.List.GetObjectAtIndex(MyMissionSelectionBox.GetIndex()));
       MyThumbnail.Image = LevelSummary.Screenshot;
       MyMissionNameLabel.SetCaption(LevelSummary.Title);
       GC.CurrentMission.MapName = MyMissionSelectionBox.List.GetItemAtIndex(MyMissionSelectionBox.GetIndex());
+      MyMissionInfo.SetContent(FormatTextString(ByString, LevelSummary.Author, LevelSummary.Description));
+      MyDifficultyLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(GC.CurrentDifficulty)] ) );
     } else {
       MyThumbnail.Image = GC.CurrentMission.Thumbnail;
       MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
+      MyMissionInfo.SetContent( Content );
     }
 }
 
@@ -358,5 +360,6 @@ defaultproperties
 	OnActivate=InternalOnActivate
 //	StringC="This mission has not yet been attempted."
 //	StringD="Mission Results: "
-    DifficultyLabelString="Score of [b]%1[\b] required to advance."
+    DifficultyLabelString="Score of [b]%1[\\b] required to advance."
+    ByString="by [b]%1[\\b]||%2"
 }
