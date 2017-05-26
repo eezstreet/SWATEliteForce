@@ -585,6 +585,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Fixed SEF bug: Missions not sorted alphabetically sometimes in an All Missions campaign
 - Fixed SEF bug: Restart Mission button not working correctly in an All Missions campaign
 - Fixed SEF bug: Officer in a T-pose after returning to main menu after completing a mission in an All Missions campaign
+- Fixed SEF bug: High-scores not saving in All Missions campaign
 - Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. [kf]
 - Fixed TSS bug: Officers don't reply when ordered to cover an area, they just do it
 
