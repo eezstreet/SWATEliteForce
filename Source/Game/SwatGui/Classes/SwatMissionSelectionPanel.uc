@@ -266,8 +266,13 @@ event Timer()
 
 event Show()
 {
+  theCampaign = SwatGUIController(Controller).GetCampaign();
+
   Super.Show();
-  SetTimer(0.1);
+  if(theCampaign.CampaignPath == 2)
+  {
+    SetTimer(0.1);
+  }
 }
 
 private function PopulateCustomScenarioList()
