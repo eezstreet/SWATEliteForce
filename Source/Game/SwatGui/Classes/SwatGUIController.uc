@@ -400,6 +400,8 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'KickBan':
         case 'Say':
         case 'TeamSay':
+        case 'SayLocalized':
+        case 'TeamSayLocalized':
         case 'CommandGiven':
         case 'SwatKill':
         case 'SuspectsKill':

@@ -4309,7 +4309,21 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
     //log("[dkaplan] >>> "$self$"::TeamMessage( "$PRI$", "$S$", "$Type$" )" );
     if (((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None))
     {
-        S = PRI.PlayerName$"\t"$S;
+        if(!(string(Pawn.GetRoomName()) ~= "None"))
+        {
+          // If we have a RoomName of None, we are spectating
+          if(Type == 'Say') {
+            Type = 'SayLocalized';
+          } else {
+            Type = 'TeamSayLocalized';
+          }
+
+          S = PRI.PlayerName$"\t"$string(Pawn.GetRoomName())$"\t"$S;
+        }
+        else
+        {
+          S = PRI.PlayerName$"\t"$S;
+        }
 
         if (Level.GetEngine().EnableDevTools)
             mplog( "ChatMessage( "$S$", "$Type$" )" );
@@ -4350,11 +4364,11 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
 
     if (myHUD != None)
     {
-        if (Type == 'Say')
+        if (Type == 'Say' || Type == 'SayLocalized')
         {
             myHUD.AddTextMessage(s, class'ChatGlobalMessage', PRI);
         }
-        else if (Type == 'TeamSay')
+        else if (Type == 'TeamSay' || Type == 'TeamSayLocalized')
         {
             myHUD.AddTextMessage(s, class'ChatTeamMessage', PRI);
         }
@@ -5789,14 +5803,14 @@ exec function TestClientMessage( name type, string Msg )
     ClientMessage( Msg, type );
 }
 
-/* 
+/*
 //For debugging. These can be considered cheats and probably should
 be moved to SwatCheatManager
 exec function SetFlashlightRadius(float radius)
 {
 	local HandheldEquipment ActiveItem;
 	local FiredWeapon ActiveWeapon;
-	
+
 	ActiveItem = Pawn.GetActiveItem();
 	ActiveWeapon = FiredWeapon(ActiveItem);
 	if (ActiveWeapon != None) {
@@ -5807,7 +5821,7 @@ exec function SetFlashlightCone(float cone)
 {
 	local HandheldEquipment ActiveItem;
 	local FiredWeapon ActiveWeapon;
-	
+
 	ActiveItem = Pawn.GetActiveItem();
 	ActiveWeapon = FiredWeapon(ActiveItem);
 	if (ActiveWeapon != None) {
