@@ -579,6 +579,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Flashlights have a smaller cone but longer range [kf]
 - On the highest Shadow Quality setting, more things (such as AI-controlled officers, guns, etc) will cast shadows [kf]
 - In All Missions campaigns, it will display the author of the map and a short description (if available) in the Mission Selection menu
+- Chat messages now display the room name of where they were spoken from (except when spectating or in pregame)
 - Cut content restored: Blood spray texture that was not used [kf]
 - Fixed SEF bug: Sniper rifle not firing in multiplayer
 - Fixed SEF bug: Breaking a door with the breaching shotgun (in a dedicated server/multiplayer) would sometimes not disable the antiportal
