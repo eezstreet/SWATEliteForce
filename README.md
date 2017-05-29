@@ -554,12 +554,13 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - First person improvements!
   * By hitting the zoom key, you will transition into Iron Sights.
   * Your weapon will sway as you move.
+- Equipment changes!
+  * New silenced versions of base game weapons: Suppressed M4A1, Suppressed UMP and Suppressed G36C. More weight and bulk, but won't tip off suspects in adjacent rooms when fired.
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
      * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines RESTRAIN ALL and SECURE ALL. 
      * NOTE: SECURE ALL will not look for drug bags until the mission is complete.
-  * The lightstick commands got moved back to the DEPLOY submenu.
-  * The DEPLOY submenu has been organized so that all of the commands are organized based on their use, instead of a random ordering. Frequently used commands are at the top.
+  * The lightstick commands got moved back to the DEPLOY submenu, and all of the DEPLOY commands were reorganized based on how frequently they are used.
 - More AI improvements!
   * High skilled suspects are much more dangerous.
   * Enemies have figured out how to equip heavy armor! Your AP rounds will be very important.
@@ -568,10 +569,13 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Added ironsights functionality
 - Added broad-secure commands (SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, DISABLE ALL)
 - Added first person weapon inertia
+- Added Suppressed M4A1
+- Added Suppressed G36C
+- Added Suppressed UMP
 - AI will now drop lightsticks as they clear rooms.
 - Reorganized DEPLOY command sub-menu
 - Externalized the position of the weapon in first person and in iron sights.
-- Added a command to change the position of the weapon in first person.
+- Added a console command to change the position of the weapon in first person.
 - Suspects will fire upon hostages twice as quickly.
 - Pepper spray now takes a moment or two to affect targets, like CS gas does.
 - High skill suspects are more likely to react to a thrown grenade now.
@@ -581,8 +585,10 @@ Lastly, you need to determine what type of game you want to play. Regular CO-OP 
 - Suspects firing from cover may pause or regroup between shots.
 - Wild Gunners are now affected by the firing delay that SEF introduced.
 - Suspects will wait much less time between firing shots.
+- Altered the first person model of the HK33 so it can be aimed correctly with the iron sights.
 - Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them. This has been fixed.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
+- Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
 
 ### v5.2 ###
 
