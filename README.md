@@ -576,6 +576,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Snipers now report when they've lost sight of entry team on all maps, not just Qwik Fuel (they only do this once)
 - Another possible fix for the RotateAroundActor crash
 - Improved the quality of shadows on the highest Shadow Quality setting. [kf]
+- Flashlights have a smaller cone but longer range [kf]
 - On the highest Shadow Quality setting, more things (such as AI-controlled officers, guns, etc) will cast shadows [kf]
 - In All Missions campaigns, it will display the author of the map and a short description (if available) in the Mission Selection menu
 - Cut content restored: Blood spray texture that was not used [kf]
@@ -586,6 +587,10 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Fixed SEF bug: Restart Mission button not working correctly in an All Missions campaign
 - Fixed SEF bug: Officer in a T-pose after returning to main menu after completing a mission in an All Missions campaign
 - Fixed SEF bug: High-scores not saving in All Missions campaign
+- Fixed TSS bugs: The AI target sensor got rewritten from scratch, fixing the following TSS bugs:
+	- SWAT AI unable to hit things at very close distances
+	- SWAT AI not taking range into account when firing pepper spray, taser, etc
+	- SWAT AI could sometimes shoot hostages/suspects who were in the way of their target
 - Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. [kf]
 - Fixed TSS bug: Officers don't reply when ordered to cover an area, they just do it
 

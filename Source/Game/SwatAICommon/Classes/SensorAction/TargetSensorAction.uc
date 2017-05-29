@@ -13,7 +13,7 @@ var TargetSensor TargetSensor;
 var private	bool bCurrentlyCanHitTarget;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Initialization
 
 function setupSensors( AI_Resource resource )
@@ -33,12 +33,14 @@ function cleanup()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // State Code
 
 function TestCanHitTarget()
 {
 	local bool bCanHitTarget;
+
+	log("TargetSensorAction::TestCanHitTarget");
 
 	bCanHitTarget = m_Pawn.CanHit(TargetSensor.Target);
 
@@ -62,7 +64,7 @@ state Running
 
 	// if the target actor is a pawn, make sure it's conscious
 	// in addition we should only be running while someone is interested in our value
-	while (((TargetSensor.TargetPawn == None) || class'Pawn'.static.checkConscious(TargetSensor.TargetPawn)) && 
+	while (((TargetSensor.TargetPawn == None) || class'Pawn'.static.checkConscious(TargetSensor.TargetPawn)) &&
 		   (TargetSensor.queryUsage() > 0))
 	{
 		TestCanHitTarget();

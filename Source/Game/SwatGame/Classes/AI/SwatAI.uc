@@ -2008,7 +2008,31 @@ function SetAimUrgency(bool Fast)
 }
 
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
-native event bool CanHit(Actor Target);
+
+//
+//native event bool CanHit(Actor Target);
+//
+// Whatever Irrational did with this function, we don't know because it's native...
+// However, it's not correct because SWAT will very frequently not hit their target.
+
+event bool CanHit(Actor Target)
+{
+  local FiredWeapon TheWeapon;
+
+  TheWeapon = FiredWeapon(GetActiveItem());
+  if(TheWeapon == None)
+  {
+    // Whatever we are holding, it is not a weapon that can be fired
+    return false;
+  }
+
+  if(!TheWeapon.WillHitIntendedTarget(Target))
+  {
+    return false;
+  }
+
+  return true;
+}
 
 function bool HasUsableWeapon()
 {

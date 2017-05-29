@@ -326,6 +326,80 @@ simulated function TraceFire()
     }
 }
 
+// Used by the AI - whether firing this weapon will hit its intended target
+// (and not, for example, an actor or levelinfo that is in between our target)
+simulated function bool WillHitIntendedTarget(Actor Target)
+{
+  local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation;
+  local vector HitNormal, ExitNormal;
+  local float Distance;
+  local rotator PerfectFireStartDirection;
+  local Actor Victim;
+  local Material HitMaterial, ExitMaterial;
+  local ESkeletalRegion HitRegion;
+
+  GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
+
+  // For now, don't worry about potential slop in accuracy
+  StartTrace = PerfectFireStartLocation;
+  EndTrace = Target.Location;
+
+  Distance = VSize(EndTrace - StartTrace);
+
+  if(Distance >= Range)
+  {
+    return false; // We can't hit it because it is too far away.
+  }
+
+  foreach TraceActors(
+      class'Actor',
+      Victim,
+      HitLocation,
+      HitNormal,
+      HitMaterial,
+      EndTrace,
+      StartTrace,
+      /*optional extent*/,
+      true, //bSkeletalBoxTest
+      HitRegion,
+      true,   //bGetMaterial
+      true,   //bFindExitLocation
+      ExitLocation,
+      ExitNormal,
+      ExitMaterial )
+  {
+    if(Victim == Owner || Victim == Self || Victim.IsA('Doorway') || Victim.DrawType == DT_None || Victim.bHidden)
+    {
+      // If the thing we hit is ourselves, the gun, a doorway, or an invisible object,
+      // just keep walking along the trace line.
+      continue;
+    }
+
+    // TODO check to see if it's a levelinfo and calculate momentum etc so we can see if it penetrates
+
+
+
+    if(Target != Victim)
+    {
+      if(Owner.IsA('SwatEnemy'))
+      {
+        // Suspects will ignore hostages and players when factoring in these checks
+        if(Victim.IsA('SwatPlayer') || Victim.IsA('SwatOfficer') || Victim.IsA('SwatHostage') || Victim.IsA('SwatEnemy'))
+        { // Yeah, suspects are pretty dumb, they won't bother to note if they're making a clear shot. Intentional. --eez
+          // FIXME: don't make high skill suspects shoot other suspects, and fail this check if the suspect is Polite...
+          continue;
+        }
+      }
+      return false; // The thing we hit is not what we were wanting to target
+    }
+    else
+    {
+      return true;  // The thing we are going to hit is what we are targetting
+    }
+  }
+  return false;
+}
+
 //call once to give the weapon perfect accuracy the next time it fires.
 //(automatically cleared after firing)
 //AIs use this in special cases where they need to have perfect accuracy.
@@ -559,7 +633,7 @@ simulated function bool HandleBallisticImpact(
     {															//We also still wanna draw the decals
 		return HandleDoorImpact(Victim, HitLocation, HitNormal, HitMaterial, ExitLocation, ExitNormal, ExitMaterial);
 	}
-	
+
 	// officers don't hit other officers, or the player (unless we're attacking them)
 	if (Owner.IsA('SwatOfficer') &&
 		(Victim.IsA('SwatOfficer') || (Victim.IsA('SwatPlayer') && !Pawn(Owner).IsAttackingPlayer())))
@@ -657,7 +731,7 @@ simulated function bool HandleBallisticImpact(
 
 	// damage pawns
     PawnVictim = Pawn(Victim);
-    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)    
+    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)
 	{
 		Damage = 0;
     }
@@ -796,7 +870,7 @@ simulated function bool HandleDoorImpact(
 	Ammo.SetLocation(HitLocation);
 	Ammo.SetRotation(rotator(HitNormal));
 	Ammo.TriggerEffectEvent('BulletHit', None, HitMaterial);
-		
+
 	Ammo.SetLocation( ExitLocation );
     Ammo.SetRotation( rotator(ExitNormal) );
     Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
@@ -2047,7 +2121,7 @@ simulated private function InitFlashlight()
 	// if we have a higher-end graphics card, then use a spotlight, otherwise,
 	// use a pointlight and try to make it look a little like a spot light by
 	// moving it out from the gun barrel
-	if (FlashlightUseFancyLights == 1) 
+	if (FlashlightUseFancyLights == 1)
 	{
 		FlashlightDynamicLight = Spawn(FlashlightSpotLightClass,WeaponModel,,,);
 		//FlashlightDynamicLight.bActorShadows = true; //doesn't seem to work
