@@ -57,10 +57,10 @@ simulated function Open()
     }
 
 	EnsureMenuPageValid();
-	
+
 	SwatGamePlayerController(Level.GetLocalPlayerController()).UpdateFocus();
     View.Open();
-    
+
     bIsClosed = false;
 }
 
@@ -110,7 +110,7 @@ simulated protected function PreMainPageChanged()
 {
     bWasClosedBeforePageChange = bIsClosed;
     bIsClosed=true;
-    
+
     if (View != None)
         View.CloseInstantly();
 }

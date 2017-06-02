@@ -1229,6 +1229,12 @@ simulated function GiveCommandSP()
 		ClearHeldCommandCaptions(PendingCommandTeam);
 	}
 
+    // do this BEFORE speaking so it functions like SWAT3 --eez
+    if(CommandTriggersBack(PendingCommand.Command))
+    {
+      Back();
+    }
+    
     if (ShouldSpeakTeam())
     {
         //TMC 6-7-2004 Fix 4202: When giving command, team name shouldn't be said every time
@@ -1564,7 +1570,8 @@ state SpeakingCommand extends Speaking
     }
 
     // Called whenever an effect is started.
-    function OnEffectStarted(Actor inStartedEffect) {}
+    function OnEffectStarted(Actor inStartedEffect) {
+    }
 
     // Called whenever an effect is stopped.
     // the command speech has either completed, or it has been interrupted.
@@ -1779,7 +1786,6 @@ simulated function SendCommandToOfficers()
                 Slot_Flashbang,
                 GetLastFocusLocation(),
                 SwatDoor(PendingCommandTargetActor));
-            Back();
             break;
 
         case Command_Deploy_CSGas:
@@ -1789,7 +1795,6 @@ simulated function SendCommandToOfficers()
                 Slot_CSGasGrenade,
                 GetLastFocusLocation(),
                 SwatDoor(PendingCommandTargetActor));
-            Back();
             break;
 
         case Command_Deploy_StingGrenade:
@@ -1799,7 +1804,6 @@ simulated function SendCommandToOfficers()
                 Slot_StingGrenade,
                 GetLastFocusLocation(),
                 SwatDoor(PendingCommandTargetActor));
-            Back();
             break;
 
        case Command_Deploy_GrenadeLauncher:
@@ -1808,7 +1812,6 @@ simulated function SendCommandToOfficers()
 				PendingCommandOrigin,
 				PendingCommandTargetActor,
 				GetLastFocusLocation());
-            Back();
             break;
 
         case Command_Disable:
@@ -2092,7 +2095,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
-            Back();
             break;
 
         case Command_Deploy_BreachingShotgun:
@@ -2101,7 +2103,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
-            Back();
             break;
 
         case Command_Deploy_Wedge:
@@ -2110,7 +2111,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
-            Back();
             break;
 
         case Command_CloseDoor:
@@ -2154,7 +2154,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     Pawn(PendingCommandTargetActor));
-                Back();
             }
             break;
 
@@ -2165,7 +2164,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     Pawn(PendingCommandTargetActor));
-                Back();
             }
             break;
 
@@ -2176,7 +2174,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     Pawn(PendingCommandTargetActor));
-                Back();
             }
             break;
 
@@ -2187,7 +2184,6 @@ simulated function SendCommandToOfficers()
                     Level.GetLocalPlayerController().Pawn,
                     PendingCommandOrigin,
                     Pawn(PendingCommandTargetActor));
-                Back();
             }
             break;
 
@@ -2595,6 +2591,11 @@ simulated function UpdateDefaultCommandControl(string Text)
 
 	if ( Level.TimeSeconds > CurrentSpeechCommandTime )
 		CurrentSpeechCommand = "";
+}
+
+function bool CommandTriggersBack(ECommand Command)
+{
+  return false;
 }
 
 cpptext

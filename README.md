@@ -580,6 +580,8 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - On the highest Shadow Quality setting, more things (such as AI-controlled officers, guns, etc) will cast shadows [kf]
 - In All Missions campaigns, it will display the author of the map and a short description (if available) in the Mission Selection menu
 - Chat messages now display the room name of where they were spoken from (except when spectating or in pregame)
+- In the Classic Command Interface (CCI), a lot more commands will return you to the main screen, including PICK LOCK and MAKE ENTRY commands.
+- In the Classic Command Interface (CCI), issuing a command will *immediately* return you to the main screen (if it does this to begin with) instead of waiting for Lead to finish talking.
 - Cut content restored: Blood spray texture that was not used [kf]
 - Fixed SEF bug: Sniper rifle not firing in multiplayer
 - Fixed SEF bug: Sniper rifle viewport not controllable on listen servers
