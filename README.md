@@ -582,6 +582,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Chat messages now display the room name of where they were spoken from (except when spectating or in pregame)
 - Cut content restored: Blood spray texture that was not used [kf]
 - Fixed SEF bug: Sniper rifle not firing in multiplayer
+- Fixed SEF bug: Sniper rifle viewport not controllable on listen servers
 - Fixed SEF bug: Breaking a door with the breaching shotgun (in a dedicated server/multiplayer) would sometimes not disable the antiportal
 - Fixed SEF bug: Officers were reporting that they lost their contact way too often [kf]
 - Fixed SEF bug: Missions not sorted alphabetically sometimes in an All Missions campaign
@@ -594,6 +595,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 	- SWAT AI could sometimes shoot hostages/suspects who were in the way of their target
 - Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. [kf]
 - Fixed TSS bug: Officers don't reply when ordered to cover an area, they just do it
+- Fixed TSS bug: Wrong caption on QUICK OPTIONS/ADVANCED OPTIONS tabs in the Host Game menu
 
 ### v5.2 ###
 - Fixed a very frequent crash in multiplayer that was introduced in 5.1
