@@ -158,6 +158,7 @@ simulated function bool ShouldControlViewport()
   {
     return false;
   }
+
   if(Controller.bControlViewport == 0)
   {
     return false;
@@ -166,10 +167,12 @@ simulated function bool ShouldControlViewport()
   if(Level.NetMode != NM_Standalone)
   {
     PlayerReplicationInfo = SwatPlayerReplicationInfo(Controller.PlayerReplicationInfo);
-    if(Filter ~= "sniper")
+
+    if(Level.NetMode == NM_ListenServer && !(Filter ~= "sniper"))
     {
       return false;
     }
+
     if(!PlayerReplicationInfo.IsLeader)
     {
       return false;

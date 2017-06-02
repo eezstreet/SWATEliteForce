@@ -891,6 +891,7 @@ simulated function BeginLowReadyRefractoryPeriod()
 
 //////////////////////////////////////////////////////
 
+// Only ever used for the Optiwand
 simulated event InitiateViewportUse( IControllableViewport inNewViewport )
 {
     if ( Level.NetMode == NM_Standalone )
@@ -1005,7 +1006,7 @@ function ServerRequestViewportChange( bool ActivateActiveItemViewport )
 {
     local HandheldEquipment theActiveItem;
 
-    mplog("SwatGamePlayerController::ServerRequestViewportChange("$ActivateActiveItemViewport$")");
+    log("SwatGamePlayerController::ServerRequestViewportChange("$ActivateActiveItemViewport$")");
 
     // Don't ever activate if we're non-lethaled!
     if ( SwatPlayer.IsNonLethaled() && ActivateActiveItemViewport )
@@ -1032,7 +1033,7 @@ function ServerRequestViewportChange( bool ActivateActiveItemViewport )
     }
 
     if (Level.GetEngine().EnableDevTools)
-        mplog( "ServerRequestUseOptiwand on: "$Self$" ActiveViewport is: "$ActiveViewport );
+        log( "ServerRequestUseOptiwand on: "$Self$" ActiveViewport is: "$ActiveViewport );
 }
 
 
@@ -1075,6 +1076,7 @@ simulated function ServerViewportDeactivate()
 }
 
 // Set the activate viewport and pipe commands into it
+// Usually occurs on the client only!
 simulated event ActivateViewport(IControllableViewport inNewViewport)
 {
     ActiveViewport = inNewViewport;
@@ -1083,6 +1085,8 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
 
     log ( "ActiveViewport actor is: "$Actor(ActiveViewport) );
     log ( "IControllableViewport of Actor is: "$IControllableViewport(Actor(ActiveViewport)) );
+    log("GetControllingStateName:"$inNewViewport.GetControllingStateName());
+    log("GetCurrentControllable:"$inNewViewport.GetCurrentControllable());
 
     if ( ActiveViewport != None )
     {
@@ -1091,7 +1095,7 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
         if(!inNewViewport.IsA('Optiwand'))
           ServerViewportActivate(ActiveViewport.GetControllingStateName(), Actor(ActiveViewport));
     }
-    else if(!inNewViewport.IsA('Optiwand'))
+    else if(Level.NetMode != NM_Standalone && !inNewViewport.IsA('Optiwand'))
     {
       ServerViewportDeactivate();
     }
@@ -1596,7 +1600,7 @@ ignores ActivateViewport;
         ActiveViewport.OnEndControlling();
 
         // Not necessary to do this if we are the server
-        if(Level.NetMode != NM_DedicatedServer || Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
+        if(Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
         {
           Global.ActivateViewport( None );
         }
@@ -1605,7 +1609,7 @@ ignores ActivateViewport;
 
         SetPlayerCommandInterfaceTeam(TeamSelectedBeforeControllingOfficerViewport);
 
-        if(Level.Netmode == NM_DedicatedServer && Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
+        if(Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
         {
           GotoState('PlayerWalking');
         }
