@@ -444,6 +444,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 {
   local vector MirroredAngle, EndTrace;
   local vector NewHitLocation, NewHitNormal, NewExitLocation, NewExitNormal;
+  local vector PreviousExitLocation;
   local Material NewHitMaterial, NewExitMaterial;
   local Actor NewVictim;
   local ESkeletalRegion NewHitRegion;
@@ -463,6 +464,8 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
           Ammo.TriggerEffectEvent('BulletHit', Victim, HitMaterial);
       }
   #endif // IG_EFFECTS
+
+  PreviousExitLocation = HitLocation;
 
   foreach TraceActors(
       class'Actor',
@@ -489,7 +492,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 
       Ammo.BallisticsLog("Momentum (before drag): "$Momentum);
       // Reduce the bullet's momentum by drag
-      Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - HitLocation);
+      Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
       Ammo.BallisticsLog("Momentum (after drag): "$Momentum);
 
       if(Momentum < 0.0) {
@@ -506,6 +509,9 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
         // the bullet embedded itself into the material
         break;
       }
+
+      // the bullet passed through the target
+      PreviousExitLocation = NewExitLocation;
   }
 }
 
@@ -519,7 +525,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 //  is burried in the target.
 simulated function BallisticFire(vector StartTrace, vector EndTrace)
 {
-	local vector HitLocation, HitNormal, ExitLocation, ExitNormal;
+	local vector HitLocation, HitNormal, ExitLocation, ExitNormal, PreviousExitLocation;
 	local actor Victim;
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
@@ -534,6 +540,8 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         $" has Mass="$Ammo.Mass
         $".  Initial Momentum is "$Momentum
         $".");
+
+    PreviousExitLocation = StartTrace;
 
     foreach TraceActors(
         class'Actor',
@@ -553,7 +561,7 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         ExitMaterial )
     {
         Ammo.BallisticsLog("IMPACT: Momentum before drag: "$Momentum);
-        Momentum -= Ammo.GetDrag() * VSize(HitLocation - StartTrace);
+        Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
         Ammo.BallisticsLog("IMPACT: Momentum after drag: "$Momentum);
 
         if(Momentum < 0.0) {
@@ -563,12 +571,15 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
         if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
-          // Do a ricochet
+          // the bullet ricocheted
           DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0);
           break;
         }
         else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
-            break;
+            break; // the bullet embedded itself in the target
+
+        // the bullet passed through the target
+        PreviousExitLocation = ExitLocation;
     }
 }
 

@@ -591,6 +591,7 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Fixed SEF bug: Restart Mission button not working correctly in an All Missions campaign
 - Fixed SEF bug: Officer in a T-pose after returning to main menu after completing a mission in an All Missions campaign
 - Fixed SEF bug: High-scores not saving in All Missions campaign
+- Fixed SEF bug: The drag (bullet damage loss over distance) property was being calculated wrong and adding drag to bullets twice when they passed through objects.
 - Fixed TSS bugs: The AI target sensor got rewritten from scratch, fixing the following TSS bugs:
 	- SWAT AI unable to hit things at very close distances
 	- SWAT AI not taking range into account when firing pepper spray, taser, etc
