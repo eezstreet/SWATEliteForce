@@ -2018,20 +2018,36 @@ native event bool CanHitTargetAt(Actor Target, vector AILocation);
 event bool CanHit(Actor Target)
 {
   local FiredWeapon TheWeapon;
+  local bool Value;
+  local vector MuzzleLocation;
+  local rotator MuzzleDirection;
 
   TheWeapon = FiredWeapon(GetActiveItem());
-  if(TheWeapon == None)
+
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target))
   {
-    // Whatever we are holding, it is not a weapon that can be fired
-    return false;
+    Value = false;
+  }
+  else
+  {
+    Value = true;
   }
 
-  if(!TheWeapon.WillHitIntendedTarget(Target))
+  if(false) // DEBUG: draw a red line if we can't hit the target; draw a green line if we can hit the target
   {
-    return false;
+    TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+
+    if(Value)
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, Target.Location, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+    }
+    else
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, Target.Location, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+    }
   }
 
-  return true;
+  return Value;
 }
 
 function bool HasUsableWeapon()

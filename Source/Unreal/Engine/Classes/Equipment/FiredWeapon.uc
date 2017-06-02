@@ -330,17 +330,17 @@ simulated function TraceFire()
 // (and not, for example, an actor or levelinfo that is in between our target)
 simulated function bool WillHitIntendedTarget(Actor Target)
 {
-  local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation;
+  local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation, PreviousExitLocation;
   local vector HitNormal, ExitNormal;
   local float Distance;
   local rotator PerfectFireStartDirection;
   local Actor Victim;
   local Material HitMaterial, ExitMaterial;
   local ESkeletalRegion HitRegion;
+  local float Momentum;
 
   GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
-  // For now, don't worry about potential slop in accuracy
   StartTrace = PerfectFireStartLocation;
   EndTrace = Target.Location;
 
@@ -350,6 +350,9 @@ simulated function bool WillHitIntendedTarget(Actor Target)
   {
     return false; // We can't hit it because it is too far away.
   }
+
+  Momentum = MuzzleVelocity * Ammo.Mass;
+  PreviousExitLocation = StartTrace;
 
   foreach TraceActors(
       class'Actor',
@@ -368,34 +371,51 @@ simulated function bool WillHitIntendedTarget(Actor Target)
       ExitNormal,
       ExitMaterial )
   {
-    if(Victim == Owner || Victim == Self || Victim.IsA('Doorway') || Victim.DrawType == DT_None || Victim.bHidden)
+    Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+
+    if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
     {
-      // If the thing we hit is ourselves, the gun, a doorway, or an invisible object,
-      // just keep walking along the trace line.
-      continue;
+      continue; // Not something we need to worry about
+    }
+    else if(!Victim.IsA('SwatPawn') && Ammo.RoundsNeverPenetrate)
+    {
+      // Our bullet type doesn't penetrate surfaces and we hit a surface...
+      return false;
+    }
+    else if(!Victim.IsA('SwatPawn') && !Ammo.RoundsNeverPenetrate)
+    {
+      // Our bullet type *might* penetrate surfaces and we hit a surface...
+      Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+    }
+    else if(Victim.IsA('LevelInfo'))
+    {
+      return false; // Hit BSP geometry, we can't penetrate that ..!
     }
 
-    // TODO check to see if it's a levelinfo and calculate momentum etc so we can see if it penetrates
+    if(Momentum <= 0)
+    {
+      // The bullet lost all of its momentum
+      return false;
+    }
 
-
-
-    if(Target != Victim)
+    if(Victim != Target)
     {
       if(Owner.IsA('SwatEnemy'))
       {
-        // Suspects will ignore hostages and players when factoring in these checks
-        if(Victim.IsA('SwatPlayer') || Victim.IsA('SwatOfficer') || Victim.IsA('SwatHostage') || Victim.IsA('SwatEnemy'))
-        { // Yeah, suspects are pretty dumb, they won't bother to note if they're making a clear shot. Intentional. --eez
-          // FIXME: don't make high skill suspects shoot other suspects, and fail this check if the suspect is Polite...
-          continue;
+        // Suspects don't care, as long as they aren't hitting a buddy
+        // FIXME: make this based on Polite? skill level?
+        if(!Victim.IsA('SwatEnemy'))
+        {
+          return true;
         }
       }
-      return false; // The thing we hit is not what we were wanting to target
+      return false;
     }
     else
     {
-      return true;  // The thing we are going to hit is what we are targetting
+      return true;
     }
+
   }
   return false;
 }
