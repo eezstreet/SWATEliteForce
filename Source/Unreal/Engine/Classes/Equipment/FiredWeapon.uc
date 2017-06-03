@@ -343,6 +343,7 @@ simulated function bool WillHitIntendedTarget(Actor Target)
 
   StartTrace = PerfectFireStartLocation;
   EndTrace = Target.Location;
+  EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
 
   Distance = VSize(EndTrace - StartTrace);
 

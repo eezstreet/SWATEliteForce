@@ -2019,7 +2019,7 @@ event bool CanHit(Actor Target)
 {
   local FiredWeapon TheWeapon;
   local bool Value;
-  local vector MuzzleLocation;
+  local vector MuzzleLocation, EndTrace;
   local rotator MuzzleDirection;
 
   TheWeapon = FiredWeapon(GetActiveItem());
@@ -2036,14 +2036,16 @@ event bool CanHit(Actor Target)
   if(false) // DEBUG: draw a red line if we can't hit the target; draw a green line if we can hit the target
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+    EndTrace = Target.Location;
+    EndTrace.Z += (BaseEyeHeight / 2);
 
     if(Value)
     {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, Target.Location, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
     }
     else
     {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, Target.Location, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
     }
   }
 
