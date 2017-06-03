@@ -310,7 +310,8 @@ replication
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
 		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
-        ServerHandleViewportFire, ServerHandleViewportReload;
+        ServerHandleViewportFire, ServerHandleViewportReload,
+        ServerGetPlayerRoomName;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4311,13 +4312,10 @@ event ClientMessage( coerce string S, optional Name Type )
 event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
 {
     //log("[dkaplan] >>> "$self$"::TeamMessage( "$PRI$", "$S$", "$Type$" )" );
-    local Pawn PlayerPawn;
-
-    PlayerPawn = Controller(PRI.Owner).Pawn;
 
     if (((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None))
     {
-        if(!(string(PlayerPawn.GetRoomName()) ~= "None"))
+        if(!(ServerGetPlayerRoomName(PRI.PlayerID) ~= "None"))
         {
           // If we have a RoomName of None, we are spectating
           if(Type == 'Say') {
@@ -4326,7 +4324,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
             Type = 'TeamSayLocalized';
           }
 
-          S = PRI.PlayerName$"\t"$string(PlayerPawn.GetRoomName())$"\t"$S;
+          S = PRI.PlayerName$"\t"$ServerGetPlayerRoomName(PRI.PlayerID)$"\t"$S;
         }
         else
         {
@@ -6045,6 +6043,30 @@ simulated event RenderOverlays( canvas Canvas )
 				512);				// Extend to the bottom-right corner of the 512x512 texture
 		}
    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+function string ServerGetPlayerRoomName(int PlayerID)
+{
+  local Controller ControllerIter;
+  local PlayerController PCIter;
+
+  for(ControllerIter = Level.ControllerList; ControllerIter != None; ControllerIter = ControllerIter.NextController)
+  {
+    PCIter = PlayerController(ControllerIter);
+    if(PCIter == None)
+    {
+      // Not a player controller
+      continue;
+    }
+    else if(PCIter.PlayerReplicationInfo.PlayerID != PlayerID)
+    {
+      continue;
+    }
+    return string(PCIter.Pawn.GetRoomName());
+  }
+  return "None";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
