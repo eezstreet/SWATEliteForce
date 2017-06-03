@@ -843,21 +843,22 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
 
     if (Command == None) return;
 
+    // This needs to be cleaned up badly --eez
     // Special hacky conditions, since TeamCanExecuteCommand is a bit of a hack in and of itself
     if (Command.Command == Command_Preferences) {
       // Makes sense in every context
       Status = Pad_Normal;
-    } else if (CommandUsesGas(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
+    } else if (Level.NetMode == NM_Standalone && CommandUsesGas(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
       Status = Pad_GreyedOut;
-    } else if (CommandUsesFlashbang(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Flashbang)) {
+    } else if (Level.NetMode == NM_Standalone && CommandUsesFlashbang(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Flashbang)) {
       Status = Pad_GreyedOut;
-    } else if (CommandUsesStinger(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_StingGrenade)) {
+    } else if (Level.NetMode == NM_Standalone && CommandUsesStinger(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_StingGrenade)) {
       Status = Pad_GreyedOut;
-    } else if (CommandUsesLightstick(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Lightstick)) {
+    } else if (Level.NetMode == NM_Standalone && CommandUsesLightstick(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Lightstick)) {
       Status = Pad_GreyedOut;
-    } else if (CommandUsesC2(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Breaching)) {
+    } else if (Level.NetMode == NM_Standalone && CommandUsesC2(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Breaching)) {
       Status = Pad_GreyedOut;
-    } else if (CommandUsesShotgun(Command)) {
+    } else if (Level.NetMode == NM_Standalone && CommandUsesShotgun(Command)) {
       // BIG OL FIXME
       Status = Pad_Normal;
     } else if (IsLeaderThrowCommand(Command)) {
@@ -1234,7 +1235,7 @@ simulated function GiveCommandSP()
     {
       Back();
     }
-    
+
     if (ShouldSpeakTeam())
     {
         //TMC 6-7-2004 Fix 4202: When giving command, team name shouldn't be said every time
