@@ -310,8 +310,7 @@ replication
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
 		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
-        ServerHandleViewportFire, ServerHandleViewportReload,
-        ServerGetPlayerRoomName;
+        ServerHandleViewportFire, ServerHandleViewportReload;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3055,7 +3054,7 @@ state Dead
 
     exec function TeamSay( string Msg )
     {
-//log( self$"::TeamSay( "$Msg$" )" );
+log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
 }
@@ -3119,7 +3118,7 @@ state ObserveFromTeamOrLocation
 
     exec function TeamSay( string Msg )
     {
-        //log( self$"::TeamSay( "$Msg$" )" );
+        log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
 }
@@ -4302,6 +4301,41 @@ function ClientRoundStarted()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+exec function Say( string Msg )
+{
+//  log(self$"::Say - "$Pawn.GetRoomName()$" - ("$Msg$")");
+	if (PlayerReplicationInfo.bAdmin && left(Msg,1) == "#" )
+	{
+		Level.Game.AdminSay(right(Msg,len(Msg)-1));
+		return;
+	}
+
+    // On a dedicated server, no one gets TeamMessage(), so we need to print
+    // it here. We don't do it for listen servers, because we'd get double log
+    // messages (since listen servers do get TeamMessage() ).
+    if ( Level.NetMode == NM_DedicatedServer )
+    {
+        mplog( "ChatMessage( "$Msg$", Say )" );
+    }
+
+  if(Pawn != None)
+	  Level.Game.Broadcast(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+  else
+    Level.Game.Broadcast(self, Msg, 'Say');
+}
+
+exec function TeamSay( string Msg )
+{
+//  log(self$"::TeamSay("$msg$")");
+	if( !GameReplicationInfo.bTeamGame )
+	{
+		Say( Msg );
+		return;
+	}
+
+    Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+}
+
 event ClientMessage( coerce string S, optional Name Type )
 {
     //log("[dkaplan] >>> "$self$"::ClientMessage( "$S$", "$Type$" )" );
@@ -4309,13 +4343,13 @@ event ClientMessage( coerce string S, optional Name Type )
   ConsoleMessage(S);
 }
 
-event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
+event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optional string Location)
 {
-    //log("[dkaplan] >>> "$self$"::TeamMessage( "$PRI$", "$S$", "$Type$" )" );
+    //log("[dkaplan] >>> "$self$"::TeamMessage( "$PRI$", "$S$", "$Type$" "$Location$" )" );
 
-    if (((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None))
+    if (Type == 'Say' || Type == 'TeamSay')
     {
-        if(!(ServerGetPlayerRoomName(PRI.PlayerID) ~= "None"))
+        if(Location != "" && Location != "None")
         {
           // If we have a RoomName of None, we are spectating
           if(Type == 'Say') {
@@ -4324,7 +4358,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
             Type = 'TeamSayLocalized';
           }
 
-          S = PRI.PlayerName$"\t"$ServerGetPlayerRoomName(PRI.PlayerID)$"\t"$S;
+          S = PRI.PlayerName$"\t"$Location$"\t"$S;
         }
         else
         {
@@ -6046,28 +6080,6 @@ simulated event RenderOverlays( canvas Canvas )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-function string ServerGetPlayerRoomName(int PlayerID)
-{
-  local Controller ControllerIter;
-  local PlayerController PCIter;
-
-  for(ControllerIter = Level.ControllerList; ControllerIter != None; ControllerIter = ControllerIter.NextController)
-  {
-    PCIter = PlayerController(ControllerIter);
-    if(PCIter == None)
-    {
-      // Not a player controller
-      continue;
-    }
-    else if(PCIter.PlayerReplicationInfo.PlayerID != PlayerID)
-    {
-      continue;
-    }
-    return string(PCIter.Pawn.GetRoomName());
-  }
-  return "None";
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

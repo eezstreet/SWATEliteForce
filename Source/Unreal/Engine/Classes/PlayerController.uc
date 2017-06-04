@@ -980,13 +980,13 @@ event ClientMessage( coerce string S, optional Name Type )
 	TeamMessage(PlayerReplicationInfo, S, Type);
 }
 
-event TeamMessage( PlayerReplicationInfo PRI, coerce string S, name Type  )
+event TeamMessage( PlayerReplicationInfo PRI, coerce string S, name Type, optional string Location  )
 {
 	if ( myHUD != None )
 	myHUD.Message( PRI, S, Type );
 
     if ( ((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None) )
-		S = PRI.PlayerName$": "$S;
+		S = PRI.PlayerName$" ("$Location$"): "$S;
 
     Player.Console.Message( S, 0 );
 }
