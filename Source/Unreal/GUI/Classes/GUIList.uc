@@ -244,9 +244,16 @@ function bool PlayersCompare( GUIListElem ElemA, GUIListElem ElemB )
     MaxPlayersA = int(PlayerStrA);
     MaxPlayersB = int(PlayerStrB);
 
-    return MaxPlayersA > MaxPlayersB ||
-           ( MaxPlayersA == MaxPlayersB &&
-             ( PlayersA > PlayersB ) );
+    if(PlayersA > PlayersB) {
+      return true;
+    } else if(PlayersA == PlayersB) {
+      return MaxPlayersA > MaxPlayersB;
+    } else {
+      return false;
+    }
+    //return MaxPlayersA > MaxPlayersB ||
+    //       ( MaxPlayersA == MaxPlayersB &&
+    //         ( PlayersA > PlayersB ) );
 }
 
 
