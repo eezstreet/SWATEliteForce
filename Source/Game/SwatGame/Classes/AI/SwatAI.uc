@@ -1989,7 +1989,7 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 	return PaintballAimRotation;
 }
 
-simulated native function vector GetAimOrigin();
+//simulated native function vector GetAimOrigin();
 
 function SetAimUrgency(bool Fast)
 {
@@ -2008,7 +2008,49 @@ function SetAimUrgency(bool Fast)
 }
 
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
-native event bool CanHit(Actor Target);
+
+//
+//native event bool CanHit(Actor Target);
+//
+// Whatever Irrational did with this function, we don't know because it's native...
+// However, it's not correct because SWAT will very frequently not hit their target.
+
+event bool CanHit(Actor Target)
+{
+  local FiredWeapon TheWeapon;
+  local bool Value;
+  local vector MuzzleLocation, EndTrace;
+  local rotator MuzzleDirection;
+
+  TheWeapon = FiredWeapon(GetActiveItem());
+
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target))
+  {
+    Value = false;
+  }
+  else
+  {
+    Value = true;
+  }
+
+  if(false) // DEBUG: draw a red line if we can't hit the target; draw a green line if we can hit the target
+  {
+    TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+    EndTrace = Target.Location;
+    EndTrace.Z += (BaseEyeHeight / 2);
+
+    if(Value)
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+    }
+    else
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+    }
+  }
+
+  return Value;
+}
 
 function bool HasUsableWeapon()
 {

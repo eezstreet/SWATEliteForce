@@ -410,10 +410,14 @@ event PostBeginPlay()
     {
         //if we are testing (ie, running off the command line/via UnrealEd)
         //set the current mission if not already set (only occurs if entering via the command line)
-        if( GuiConfig.GetCurrentMissionName() != Level.Label )
+        if (GuiConfig.GetCurrentMissionName() != Level.Label && GetCampaign().CampaignPath == 2)
+            GuiConfig.SetCurrentMissionAllMissions(Level.GetLocalURL(), Level.Label, Level.Title);
+        else if( GuiConfig.GetCurrentMissionName() != Level.Label )
             GuiConfig.SetCurrentMission( Level.Label, Level.Title );
         else
             GuiConfig.ResetCurrentMission();
+
+        log("SwatRepo::PostBeginPlay - LocalURL is "$Level.GetLocalURL());
 
         AssertWithDescription( GuiConfig.CurrentMission != None, "No Mission was created for level "$Level.Label );
 

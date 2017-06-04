@@ -98,7 +98,10 @@ simulated function ShowViewport(string inFilter, optional string inSpecificContr
         OriginalRotation = GetCurrentControllable().GetOriginalDirection();
         LastViewRotation = OriginalRotation;
         LastViewLocation = GetCurrentControllable().GetViewportLocation();
-        GUIParent.OnClientDraw = Render;
+        if(GUIParent != None)
+        {
+          GUIParent.OnClientDraw = Render;
+        }
     }
 }
 
@@ -155,6 +158,7 @@ simulated function bool ShouldControlViewport()
   {
     return false;
   }
+
   if(Controller.bControlViewport == 0)
   {
     return false;
@@ -163,10 +167,12 @@ simulated function bool ShouldControlViewport()
   if(Level.NetMode != NM_Standalone)
   {
     PlayerReplicationInfo = SwatPlayerReplicationInfo(Controller.PlayerReplicationInfo);
-    if(Filter ~= "sniper")
+
+    if(Level.NetMode == NM_ListenServer && !(Filter ~= "sniper"))
     {
       return false;
     }
+
     if(!PlayerReplicationInfo.IsLeader)
     {
       return false;
@@ -512,8 +518,15 @@ simulated function        HandleReload()
     GetCurrentControllable().HandleReload();
 }
 
-simulated function        HandleFire()
+simulated function        HandleFire(optional bool OnServer, optional vector CameraLocation, optional rotator CameraRotation)
 {
+    if(OnServer)
+    {
+      // If we're calling this from the server, we need to set the rotation of the current controllable
+      // Location is not used, because this can open the door to hacks
+      GetCurrentControllable().SetRotationToViewport(CameraRotation);
+    }
+
     GetCurrentControllable().HandleFire();
 }
 

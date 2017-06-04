@@ -26,6 +26,7 @@ var config array<String> ExtraFriendlyName "Friendly name used for this mission 
 var(DEBUG) private EditConst bool bAddingMissions;
 var(DEBUG) private Campaign theCampaign;
 var() private config localized string DifficultyLabelString;
+var() private localized config string ByString;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -66,6 +67,17 @@ function InternalOnActivate()
         if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
           Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
           return;
+        }
+
+        if(theCampaign.CampaignPath == 2)
+        {
+          MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
+          MyMissionSelectionBox.List.UpdateSortFunction();
+        }
+        else
+        {
+          MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+          MyMissionSelectionBox.List.UpdateSortFunction();
         }
 
         MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
@@ -187,16 +199,17 @@ private function ShowMissionDescription()
         Content = GC.CurrentMission.CustomScenario.Notes;
     }
 
-    MyMissionInfo.SetContent( Content );
-
     if(theCampaign.CampaignPath == 2) {
       LevelSummary = LevelSummary(MyMissionSelectionBox.List.GetObjectAtIndex(MyMissionSelectionBox.GetIndex()));
       MyThumbnail.Image = LevelSummary.Screenshot;
       MyMissionNameLabel.SetCaption(LevelSummary.Title);
       GC.CurrentMission.MapName = MyMissionSelectionBox.List.GetItemAtIndex(MyMissionSelectionBox.GetIndex());
+      MyMissionInfo.SetContent(FormatTextString(ByString, LevelSummary.Author, LevelSummary.Description));
+      MyDifficultyLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(GC.CurrentDifficulty)] ) );
     } else {
       MyThumbnail.Image = GC.CurrentMission.Thumbnail;
       MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
+      MyMissionInfo.SetContent( Content );
     }
 }
 
@@ -241,6 +254,24 @@ private function ListAllMissions()
         break;
       }
     }
+  }
+}
+
+event Timer()
+{
+  Controller.OpenWaitDialog();
+  ListAllMissions();
+  Controller.CloseWaitDialog();
+}
+
+event Show()
+{
+  theCampaign = SwatGUIController(Controller).GetCampaign();
+
+  Super.Show();
+  if(theCampaign.CampaignPath == 2)
+  {
+    SetTimer(0.1);
   }
 }
 
@@ -302,9 +333,10 @@ private function PopulateCampaignMissionList()
   			}
   		}
   	} else if(theCampaign.CampaignPath == 2) {
-      Controller.OpenWaitDialog();
-      ListAllMissions();
-      Controller.CloseWaitDialog();
+      //Controller.OpenWaitDialog();
+      //SetTimer(1.0);
+      //ListAllMissions();
+      //Controller.CloseWaitDialog();
     }
 
 
@@ -333,5 +365,6 @@ defaultproperties
 	OnActivate=InternalOnActivate
 //	StringC="This mission has not yet been attempted."
 //	StringD="Mission Results: "
-    DifficultyLabelString="Score of [b]%1[\b] required to advance."
+    DifficultyLabelString="Score of [b]%1[\\b] required to advance."
+    ByString="by [b]%1[\\b]||%2"
 }

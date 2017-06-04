@@ -119,6 +119,19 @@ private latent function CreateCoverGoals()
 	SwatAIRepo.ReleaseNavigationPointList(PointsInRoomThatCanHitCoverLocation);
 }
 
+protected function TriggerCoverReplySpeech()
+{
+	local Pawn ClosestOfficerToCommandGiver;
+
+	ClosestOfficerToCommandGiver = GetClosestOfficerTo(CommandGiver, false, false);
+
+	if (ClosestOfficerToCommandGiver != None)
+	{
+		// trigger a generic reply
+		ISwatOfficer(ClosestOfficerToCommandGiver).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
+	}
+}
+
 state Running
 {
 Begin:
@@ -127,6 +140,7 @@ Begin:
 
 	WaitForZulu();
 
+	TriggerCoverReplySpeech();
 	CreateCoverGoals();
 }
 

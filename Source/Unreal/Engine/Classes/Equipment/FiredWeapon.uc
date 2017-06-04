@@ -326,6 +326,101 @@ simulated function TraceFire()
     }
 }
 
+// Used by the AI - whether firing this weapon will hit its intended target
+// (and not, for example, an actor or levelinfo that is in between our target)
+simulated function bool WillHitIntendedTarget(Actor Target)
+{
+  local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation, PreviousExitLocation;
+  local vector HitNormal, ExitNormal;
+  local float Distance;
+  local rotator PerfectFireStartDirection;
+  local Actor Victim;
+  local Material HitMaterial, ExitMaterial;
+  local ESkeletalRegion HitRegion;
+  local float Momentum;
+
+  GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
+
+  StartTrace = PerfectFireStartLocation;
+  EndTrace = Target.Location;
+  EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
+
+  Distance = VSize(EndTrace - StartTrace);
+
+  if(Distance >= Range)
+  {
+    return false; // We can't hit it because it is too far away.
+  }
+
+  Momentum = MuzzleVelocity * Ammo.Mass;
+  PreviousExitLocation = StartTrace;
+
+  foreach TraceActors(
+      class'Actor',
+      Victim,
+      HitLocation,
+      HitNormal,
+      HitMaterial,
+      EndTrace,
+      StartTrace,
+      /*optional extent*/,
+      true, //bSkeletalBoxTest
+      HitRegion,
+      true,   //bGetMaterial
+      true,   //bFindExitLocation
+      ExitLocation,
+      ExitNormal,
+      ExitMaterial )
+  {
+    Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+
+    if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
+    {
+      continue; // Not something we need to worry about
+    }
+    else if(!Victim.IsA('SwatPawn') && Ammo.RoundsNeverPenetrate)
+    {
+      // Our bullet type doesn't penetrate surfaces and we hit a surface...
+      return false;
+    }
+    else if(!Victim.IsA('SwatPawn') && !Ammo.RoundsNeverPenetrate)
+    {
+      // Our bullet type *might* penetrate surfaces and we hit a surface...
+      Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+    }
+    else if(Victim.IsA('LevelInfo'))
+    {
+      return false; // Hit BSP geometry, we can't penetrate that ..!
+    }
+
+    if(Momentum <= 0)
+    {
+      // The bullet lost all of its momentum
+      return false;
+    }
+
+    if(Victim != Target)
+    {
+      if(Owner.IsA('SwatEnemy'))
+      {
+        // Suspects don't care, as long as they aren't hitting a buddy
+        // FIXME: make this based on Polite? skill level?
+        if(!Victim.IsA('SwatEnemy'))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+
+  }
+  return false;
+}
+
 //call once to give the weapon perfect accuracy the next time it fires.
 //(automatically cleared after firing)
 //AIs use this in special cases where they need to have perfect accuracy.
@@ -370,6 +465,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 {
   local vector MirroredAngle, EndTrace;
   local vector NewHitLocation, NewHitNormal, NewExitLocation, NewExitNormal;
+  local vector PreviousExitLocation;
   local Material NewHitMaterial, NewExitMaterial;
   local Actor NewVictim;
   local ESkeletalRegion NewHitRegion;
@@ -389,6 +485,8 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
           Ammo.TriggerEffectEvent('BulletHit', Victim, HitMaterial);
       }
   #endif // IG_EFFECTS
+
+  PreviousExitLocation = HitLocation;
 
   foreach TraceActors(
       class'Actor',
@@ -415,7 +513,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 
       Ammo.BallisticsLog("Momentum (before drag): "$Momentum);
       // Reduce the bullet's momentum by drag
-      Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - HitLocation);
+      Momentum -= Ammo.GetDrag() * VSize(NewHitLocation - PreviousExitLocation);
       Ammo.BallisticsLog("Momentum (after drag): "$Momentum);
 
       if(Momentum < 0.0) {
@@ -432,6 +530,9 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
         // the bullet embedded itself into the material
         break;
       }
+
+      // the bullet passed through the target
+      PreviousExitLocation = NewExitLocation;
   }
 }
 
@@ -445,7 +546,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 //  is burried in the target.
 simulated function BallisticFire(vector StartTrace, vector EndTrace)
 {
-	local vector HitLocation, HitNormal, ExitLocation, ExitNormal;
+	local vector HitLocation, HitNormal, ExitLocation, ExitNormal, PreviousExitLocation;
 	local actor Victim;
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
@@ -460,6 +561,8 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         $" has Mass="$Ammo.Mass
         $".  Initial Momentum is "$Momentum
         $".");
+
+    PreviousExitLocation = StartTrace;
 
     foreach TraceActors(
         class'Actor',
@@ -479,7 +582,7 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         ExitMaterial )
     {
         Ammo.BallisticsLog("IMPACT: Momentum before drag: "$Momentum);
-        Momentum -= Ammo.GetDrag() * VSize(HitLocation - StartTrace);
+        Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
         Ammo.BallisticsLog("IMPACT: Momentum after drag: "$Momentum);
 
         if(Momentum < 0.0) {
@@ -489,12 +592,15 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
         if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
-          // Do a ricochet
+          // the bullet ricocheted
           DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0);
           break;
         }
         else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
-            break;
+            break; // the bullet embedded itself in the target
+
+        // the bullet passed through the target
+        PreviousExitLocation = ExitLocation;
     }
 }
 
@@ -559,7 +665,7 @@ simulated function bool HandleBallisticImpact(
     {															//We also still wanna draw the decals
 		return HandleDoorImpact(Victim, HitLocation, HitNormal, HitMaterial, ExitLocation, ExitNormal, ExitMaterial);
 	}
-	
+
 	// officers don't hit other officers, or the player (unless we're attacking them)
 	if (Owner.IsA('SwatOfficer') &&
 		(Victim.IsA('SwatOfficer') || (Victim.IsA('SwatPlayer') && !Pawn(Owner).IsAttackingPlayer())))
@@ -657,7 +763,7 @@ simulated function bool HandleBallisticImpact(
 
 	// damage pawns
     PawnVictim = Pawn(Victim);
-    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)    
+    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)
 	{
 		Damage = 0;
     }
@@ -796,7 +902,7 @@ simulated function bool HandleDoorImpact(
 	Ammo.SetLocation(HitLocation);
 	Ammo.SetRotation(rotator(HitNormal));
 	Ammo.TriggerEffectEvent('BulletHit', None, HitMaterial);
-		
+
 	Ammo.SetLocation( ExitLocation );
     Ammo.SetRotation( rotator(ExitNormal) );
     Ammo.TriggerEffectEvent('BulletExited', Victim, ExitMaterial);
@@ -1833,6 +1939,20 @@ simulated function UpdateFlashlightState()
     }
 }
 
+simulated function SetFlashlightRadius(float radius)
+{
+	if (FlashlightDynamicLight != None) {
+		FlashlightDynamicLight.LightRadius = radius;
+	}
+}
+
+simulated function SetFlashlightCone(float cone)
+{
+	if (FlashlightDynamicLight != None) {
+		FlashlightDynamicLight.LightCone = cone;
+	}
+}
+
 simulated private function UpdateFlashlightLighting(optional float dTime)
 {
 #if ENABLE_FLASHLIGHT_PROJECTION_VISIBILITY_TESTING
@@ -2034,7 +2154,12 @@ simulated private function InitFlashlight()
 	// use a pointlight and try to make it look a little like a spot light by
 	// moving it out from the gun barrel
 	if (FlashlightUseFancyLights == 1)
+	{
 		FlashlightDynamicLight = Spawn(FlashlightSpotLightClass,WeaponModel,,,);
+		//FlashlightDynamicLight.bActorShadows = true; //doesn't seem to work
+		FlashlightDynamicLight.LightCone = 8; //how wide the flashlight beam is
+		FlashlightDynamicLight.LightRadius = FlashlightFirstPersonDistance; //distance the beam travels
+	}
 	else
 		FlashlightDynamicLight = Spawn(FlashlightPointLightClass,WeaponModel,,,);
 

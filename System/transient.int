@@ -2908,11 +2908,11 @@ Hint=Remove the selected map from the map rotation.
 
 [SwatServerSetupMenu_AdvancedButton]
 Caption=ADVANCED
-Hint=Select equipment for your team.
+Hint=Choose more advanced options for your server.
 
 [SwatServerSetupMenu_QuickStartButton]
 Caption=QUICK START
-Hint=Select equipment for your team.
+Hint=Change basic settings for your server.
 
 [SwatServerSetupMenu_StartServerButton]
 Caption=START

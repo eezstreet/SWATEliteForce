@@ -18,6 +18,8 @@ var(StaticConfig)   Config  bool    bDisplayConnects "if true, will display conn
 
 var() private config localized string TeamChatMessage;
 var() private config localized string GlobalChatMessage;
+var() private config localized string TeamChatMessageLocalized;
+var() private config localized string GlobalChatMessageLocalized;
 
 var() private config localized string NameChangeMessage;
 var() private config localized string KickMessage;
@@ -192,6 +194,16 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
         case 'Say':
             MsgText = FormatTextString( GlobalChatMessage, StrA, StrB );
+            MsgIsChat = true;
+            break;
+
+        case 'SayLocalized':
+            MsgText = FormatTextString(GlobalChatMessageLocalized, StrA, StrB, StrC);
+            MsgIsChat = true;
+            break;
+
+        case 'TeamSayLocalized':
+            MsgText = FormatTextString(TeamChatMessageLocalized, StrA, StrB, StrC);
             MsgIsChat = true;
             break;
 
@@ -669,7 +681,9 @@ defaultproperties
 	ReferendumFailedMessage="[c=ff00ff]The vote failed"
 
     TeamChatMessage="[c=808080][b]%1[\\b]: %2"
-    GlobalChatMessage="[c=00ff00][b]%1[\\b]: %2"
+    GlobalChatMessage="[c=00ff00][b]%1[\\b][c=00ff00]: %2"
+    TeamChatMessageLocalized="[c=808080][b]%1 (%2)[\\b]: %3"
+    GlobalChatMessageLocalized="[c=00ff00][b]%1 [\\c][c=ffffff](%2)[\\c][\\b][c=00ff00]: %3"
     SwatSuicideMessage="[c=0000ff][b]%1[\\b] suicided!"
     SuspectsSuicideMessage="[c=ff0000][b]%1[\\b] suicided!"
     SwatTeamKillMessage="[c=0000ff][b]%1[\\b] betrayed [b]%2[\\b] with a %3!"

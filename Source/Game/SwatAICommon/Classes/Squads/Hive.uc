@@ -566,7 +566,8 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 	}
 }
 
-function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost)
+//if WasLostRecently is true, we won't play the officer speech
+function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost, bool WasLostRecently)
 {
 	assert(OfficerViewer != None);
 	assert(Lost != None);
@@ -586,7 +587,7 @@ function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost)
 		{
 			if (Lost.IsA('SwatEnemy'))
 			{
-				OfficerLostEnemy(OfficerViewer, Lost);
+				OfficerLostEnemy(OfficerViewer, Lost, WasLostRecently);
 				Blackboard.RemoveAssignedTarget(Lost);
 			}
 			else
@@ -725,28 +726,31 @@ private function OfficerLostHostage(Pawn OfficerViewer, Pawn LostHostage)
 
 private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 {
-	Blackboard.UpdateEnemy(SeenEnemy);
-
-	// only say something if the hostage is not already arrested or compliant
+	// only say something if the suspect is not already arrested or compliant
 	if (! ISwatAI(SeenEnemy).IsCompliant() &&
-		! ISwatAI(SeenEnemy).IsArrested())
+		! ISwatAI(SeenEnemy).IsArrested() &&
+		! Blackboard.IsAnAssignedTarget(SeenEnemy))
 	{
 		// trigger a sound for the viewer to say
 		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectSpottedSpeech();
 	}
+	Blackboard.UpdateEnemy(SeenEnemy);
+	
 }
 
-private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy)
-{
-	Blackboard.UpdateEnemy(LostEnemy);
-	
-	// only say something if the hostage is not already arrested or compliant
-	if (! ISwatAI(LostEnemy).IsCompliant() &&
-		! ISwatAI(LostEnemy).IsArrested() && class'Pawn'.static.checkConscious(LostEnemy))
+private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy, bool WasLostRecently)
+{	
+	// only say something if the hostage is not already arrested or compliant, and wasn't lost recently
+	if (! ISwatAI(LostEnemy).IsCompliant() && 
+		! ISwatAI(LostEnemy).IsArrested() && 
+		class'Pawn'.static.checkConscious(LostEnemy) && 
+		Blackboard.IsAnAssignedTarget(LostEnemy) && 
+		! WasLostRecently)
 	{
 		// trigger a sound for the viewer to say
 		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectLostSpeech();
 	}
+	Blackboard.UpdateEnemy(LostEnemy);
 }
 private function ClearCommandGoalsForOfficer(Pawn Officer)
 {
