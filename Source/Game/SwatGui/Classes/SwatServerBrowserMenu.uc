@@ -526,8 +526,9 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
     local int i;
     local string Key;
     local string Value;
-	local GUIImage Icon;
-	local bool bLocked, bStatsEnabled;
+	  local GUIImage Icon;
+	  local bool bLocked, bStatsEnabled;
+    local string FullIPAddress;
 
     if( MyServerListBox.Num() > MaxResults )
         return;
@@ -562,12 +563,18 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
         return; // This is a server ping for an internet game whose ping was cancelled
 #endif
 
+    FullIPAddress = s.IP $ ":" $ s.Port;
+
+    // Don't add this item to the list twice --eez
+    if(MyServerListBox.RowElementExists("IPAddress",,FullIPAddress))
+      return;
+
     // Remember the currently selected ip, so we can reselect it after the
     // listbox addition
     PreviouslySelectedIP = MyServerListBox.GetColumn( "IPAddress" ).GetExtra();
 
     // Add a new element to the listbox
-    MyServerListBox.AddNewRowElement( "IPAddress",,   s.IP$":"$s.Port );
+    MyServerListBox.AddNewRowElement( "IPAddress",,   FullIPAddress );
     MyServerListBox.AddNewRowElement( "ServerName",,  s.ServerName );
     MyServerListBox.AddNewRowElement( "MapName",,     s.MapName );
 
