@@ -1,5 +1,15 @@
-class Wedge extends SwatGame.EquipmentUsedOnOther
+class Wedge extends SwatGame.WedgeItem
     implements ITacticalAid;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// New Stuff for HUD --eez
+
+simulated function EquippedHook()
+{
+  Super.EquippedHook();
+  UpdateHUD();
+}
 
 simulated function UsedHook()
 {
@@ -7,6 +17,27 @@ simulated function UsedHook()
     ThirdPersonModel.Hide();
 
     IAmUsedByWedge(Other).OnUsedByWedge();
+    UpdateHUD();
+}
+
+function UpdateHUD()
+{
+  local SwatGame.SwatGamePlayerController LPC;
+  local int ReserveWedges;
+
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return; //the player doesn't own this ammo
+
+  ReserveWedges = LPC.SwatPlayer.GetTacticalAidAvailableCount(GetSlot());
+  ReserveWedges--; // We are holding one
+  if(ReserveWedges < 0)
+  {
+    ReserveWedges = 0;
+  }
+
+  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveWedges, self);
+  LPC.GetHUDPage().UpdateWeight();
 }
 
 // IAmAQualifiedUseEquipment implementation

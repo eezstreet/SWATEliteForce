@@ -550,17 +550,19 @@ simulated function UpdateFireMode()
     local FiredWeapon FiredWeapon;
     local FiredWeapon.FireMode CurrentFireMode;
     local SwatGrenade SwatGrenade;
+    local WedgeItem WedgeItem;
 //    local int i;
 
     if( PlayerOwner().Pawn != None )
         FiredWeapon = FiredWeapon(PlayerOwner().Pawn.GetActiveItem());
     if (FiredWeapon == None)
         SwatGrenade = SwatGrenade(PlayerOwner().Pawn.GetActiveItem());
+    if (SwatGrenade == None)
+        WedgeItem = WedgeItem(PlayerOwner().Pawn.GetActiveItem());
 
-    if (FiredWeapon == None && SwatGrenade == None)
+    if (FiredWeapon == None && SwatGrenade == None && WedgeItem == None)
     {
         //Hide the fire mode indicator && AmmoStatus HERE.
-        log("Hiding ammostatus/firemode");
         if( AmmoStatus.bVisible )
             AmmoStatus.Hide();
 
@@ -569,9 +571,8 @@ simulated function UpdateFireMode()
 
         //log("[FIRE MODE] ActiveItem is not a FiredWeapon.");
     }
-    else if(SwatGrenade != None)
+    else if(SwatGrenade != None || WedgeItem != None)
     {
-        log("Grenade equipped!");
         FireMode.Hide();
         AmmoStatus.Show();
     }
