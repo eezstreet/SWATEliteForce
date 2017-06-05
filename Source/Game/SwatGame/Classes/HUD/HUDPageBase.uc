@@ -544,18 +544,23 @@ simulated function UpdateArmor()
   ArmorProtectionIndicator.SetCaption(""$ProtectionPercent$"%");
 }
 
+// This is responsible for hiding elements that shouldn't be available
 simulated function UpdateFireMode()
 {
     local FiredWeapon FiredWeapon;
     local FiredWeapon.FireMode CurrentFireMode;
+    local SwatGrenade SwatGrenade;
 //    local int i;
 
     if( PlayerOwner().Pawn != None )
         FiredWeapon = FiredWeapon(PlayerOwner().Pawn.GetActiveItem());
-
     if (FiredWeapon == None)
+        SwatGrenade = SwatGrenade(PlayerOwner().Pawn.GetActiveItem());
+
+    if (FiredWeapon == None && SwatGrenade == None)
     {
         //Hide the fire mode indicator && AmmoStatus HERE.
+        log("Hiding ammostatus/firemode");
         if( AmmoStatus.bVisible )
             AmmoStatus.Hide();
 
@@ -563,6 +568,12 @@ simulated function UpdateFireMode()
             FireMode.Hide();
 
         //log("[FIRE MODE] ActiveItem is not a FiredWeapon.");
+    }
+    else if(SwatGrenade != None)
+    {
+        log("Grenade equipped!");
+        FireMode.Hide();
+        AmmoStatus.Show();
     }
     else
     {

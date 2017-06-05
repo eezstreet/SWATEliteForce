@@ -20,6 +20,6 @@ simulated function UpdateHUD()
 
   if (Pawn(Owner.Owner).Controller != LPC) return; //the player doesn't own this ammo
 
-  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveCans, self);
+  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveCans, HandheldEquipment(Owner), self);
   LPC.GetHUDPage().UpdateWeight();
 }
