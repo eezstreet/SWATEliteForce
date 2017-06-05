@@ -551,6 +551,7 @@ simulated function UpdateFireMode()
     local FiredWeapon.FireMode CurrentFireMode;
     local SwatGrenade SwatGrenade;
     local WedgeItem WedgeItem;
+    local HandheldEquipment HandheldEquipment;
 //    local int i;
 
     if( PlayerOwner().Pawn != None )
@@ -559,8 +560,9 @@ simulated function UpdateFireMode()
         SwatGrenade = SwatGrenade(PlayerOwner().Pawn.GetActiveItem());
     if (SwatGrenade == None)
         WedgeItem = WedgeItem(PlayerOwner().Pawn.GetActiveItem());
+    HandheldEquipment = PlayerOwner().Pawn.GetActiveItem();
 
-    if (FiredWeapon == None && SwatGrenade == None && WedgeItem == None)
+    if (FiredWeapon == None && SwatGrenade == None && WedgeItem == None && !HandheldEquipment.IsA('C2Charge') && !HandheldEquipment.IsA('Detonator'))
     {
         //Hide the fire mode indicator && AmmoStatus HERE.
         if( AmmoStatus.bVisible )
@@ -571,7 +573,7 @@ simulated function UpdateFireMode()
 
         //log("[FIRE MODE] ActiveItem is not a FiredWeapon.");
     }
-    else if(SwatGrenade != None || WedgeItem != None)
+    else if(SwatGrenade != None || WedgeItem != None || HandheldEquipment.IsA('C2Charge') || HandheldEquipment.IsA('Detonator'))
     {
         FireMode.Hide();
         AmmoStatus.Show();

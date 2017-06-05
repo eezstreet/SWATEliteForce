@@ -675,6 +675,29 @@ simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
   local HandheldEquipment Equipment;
   local FiredWeapon Weapon;
 
+  if(Slot == EquipmentSlot.Slot_Breaching || Slot == EquipmentSlot.Slot_Detonator)
+  {
+    Equipment = HandheldEquipment(PocketEquipment[Pocket.Pocket_Breaching]);
+    if(Equipment != None && Equipment.IsAvailable())
+    {
+      Count++;
+    }
+
+    Equipment = HandheldEquipment(PocketEquipment[Pocket.Pocket_HiddenC2Charge1]);
+    if(Equipment != None && Equipment.IsAvailable())
+    {
+      Count++;
+    }
+
+    Equipment = HandheldEquipment(PocketEquipment[Pocket.Pocket_HiddenC2Charge2]);
+    if(Equipment != None && Equipment.IsAvailable())
+    {
+      Count++;
+    }
+
+    return Count;
+  }
+
   for(i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++)
   {
     Equipment = HandheldEquipment(PocketEquipment[i]);

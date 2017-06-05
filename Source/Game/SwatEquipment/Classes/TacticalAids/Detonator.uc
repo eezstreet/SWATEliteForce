@@ -20,6 +20,12 @@ simulated function bool HandleMultiplayerUse()
     return false;
 }
 
+simulated function EquippedHook()
+{
+  Super.EquippedHook();
+  UpdateHUD();
+}
+
 simulated function UsedHook()
 {
     local ICanUseC2Charge Officer;
@@ -62,6 +68,27 @@ simulated function UsedHook()
     //{
     //TMC TODO handle Detonator::UsedHook() with no linked charge
     //}
+    UpdateHUD();
+}
+
+function UpdateHUD()
+{
+  local SwatGame.SwatGamePlayerController LPC;
+  local int ReserveWedges;
+
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return; //the player doesn't own this ammo
+
+  ReserveWedges = LPC.SwatPlayer.GetTacticalAidAvailableCount(GetSlot());
+  ReserveWedges--; // We are holding one
+  if(ReserveWedges < 0)
+  {
+    ReserveWedges = 0;
+  }
+
+  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveWedges, self);
+  LPC.GetHUDPage().UpdateWeight();
 }
 
 //which slot should be equipped after this item becomes unavailable
