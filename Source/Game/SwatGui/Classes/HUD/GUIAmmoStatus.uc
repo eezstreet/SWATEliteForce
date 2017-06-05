@@ -13,6 +13,8 @@ var(GUIAmmoStatus) EditInline Config GUIProgressBar   ClipRoundsRemainingBar[MAX
 var(GUIAmmoStatus) Config Color   ActiveClipColor        "Progress bar that displays the current (loaded) rounds remainings color.";
 var(GUIAmmoStatus) Config Color   InActiveClipColor      "Progress bar that displays the current (unloaded) rounds remainings color.";
 
+var localized config string PepperSprayCansStr;
+
 
 function OnConstruct(GUIController MyController)
 {
@@ -50,6 +52,30 @@ function SetWeaponStatus( Ammunition Ammo )
         SetRoundBasedWeaponStatus( RoundAmmo );
     else
         AssertWithDescription( false, "[dkaplan] Could not Set the Weapon Status hud display for Ammunition "$Ammo$" as it was neither ClipBased nor RoundBased.");
+}
+
+function SetTacticalAidStatus(int Count, optional Ammunition Ammo)
+{
+  if(Ammo != None)
+  {
+    SetPepperSprayStatus(count, Ammo);
+  }
+  else
+  {
+    // Other stuff, for other tac-aids (lightstick, grenades, wedges, etc)
+  }
+}
+
+private function SetPepperSprayStatus(int Count, optional Ammunition Ammo)
+{
+  local RoundBasedAmmo RBAmmo;
+
+  RBAmmo = RoundBasedAmmo(Ammo);
+  assert(RBAmmo != None);
+
+  SetRoundBasedWeaponStatus(RBAmmo);
+
+  ExtraAmmoLabel.SetCaption("+" $ string(Count) $ " " $ PepperSprayCansStr);
 }
 
 private function SetRoundBasedWeaponStatus( RoundBasedAmmo Ammo )
@@ -126,6 +152,8 @@ private function SetClipBasedWeaponStatus( ClipBasedAmmo Ammo )
 
 defaultproperties
 {
+    PepperSprayCansStr="cans"
+
     PropagateState=false
     PropagateActivity=false
     PropagateVisibility=false

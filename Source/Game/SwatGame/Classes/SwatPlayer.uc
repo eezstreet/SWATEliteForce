@@ -160,6 +160,14 @@ replication
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+//
+simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
+{
+  return LoadOut.GetTacticalAidAvailableCount(Slot);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // IAmAffectedByWeight implementation
 simulated function float GetTotalWeight() {
   return LoadOut.GetTotalWeight();

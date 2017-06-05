@@ -668,6 +668,34 @@ simulated function bool HasProArmorHelmet()
 		return false; // The VIP has no head armor
 }
 
+// For an EquipmentSlot, determine how many items we have
+simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
+{
+  local int Count, i;
+  local HandheldEquipment Equipment;
+  local FiredWeapon Weapon;
+
+  for(i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++)
+  {
+    Equipment = HandheldEquipment(PocketEquipment[i]);
+    if(Equipment != None && Equipment.GetSlot() == Slot && Equipment.IsAvailable())
+    {
+      if(Equipment.IsA('PepperSpray'))
+      {
+        // Special case: pepper spray isn't ever made "not available", it's just emptied
+        Weapon = FiredWeapon(Equipment);
+        if(Weapon.Ammo.IsEmpty())
+        {
+          continue;
+        }
+      }
+      Count++;
+    }
+  }
+
+  return Count;
+}
+
 //returns the item, if any, that was replaced
 function HandheldEquipment FindItemToReplace(HandheldEquipment PickedUp)
 {
