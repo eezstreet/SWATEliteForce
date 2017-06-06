@@ -38,34 +38,9 @@ simulated event Destroyed()
 	Super.Destroyed();
 }
 
-// Carlos - 
-// Note: Our Mirrors don't behave like normal real-world mirrors, because of time/complexity limitations.  This approach
-// is the closest that we can get for now.  Basically, the mirror is rendered from a static location, the center of 
-// the mirror static mesh.  The camera is pointed along the vector opposite of the vector from the player to the mirror,
-// "mirrored" by the normal of the mirror static mesh.
 simulated function Rotator GetViewRotation()
 {
-    local Vector EyeLocation, ToPlayer;
-    local Actor ViewActor;
-    local Rotator EyeRotation; 
-    local Rotator MirrorRot;
-    
-    // Get the current view rotation and location
-    Level.GetLocalPlayerController().PlayerCalcView(ViewActor, EyeLocation, EyeRotation);
-    
-    // Get the vector from the player to the mirror
-    ToPlayer =  Location - EyeLocation; 
-    
-    // Mirror the vector ToPlayer by the "normal" of the mirror.  Since it isn't trivial to figure out the normal based on the geometry,
-    // we'll just use the mirror camera's rotation.  MirrorCameras are by default spawned to point along the normal away from the mirror.
-    MirrorRot = Rotator(MirrorVectorByNormal( ToPlayer, Normal(Vector(Rotation)) ));
-    
-    // Manually set the roll and pitch to the MirrorCamera's rotation so only horizontal movement is updated.
-    MirrorRot.Roll = Rotation.Roll;
-    MirrorRot.Pitch = Rotation.Pitch;
-
-    // Return the mirror camera
-    return MirrorRot; 
+    return Rotation;
 }
 
 simulated function Vector GetViewLocation()
