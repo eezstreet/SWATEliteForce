@@ -30,7 +30,6 @@ var(SWATGui) private EditInline Config GUIButton		    MyRefreshButton;
 var(SWATGui) private EditInline Config GUIButton		    MyFiltersButton;
 var(SWATGui) private EditInline Config GUIButton		    MyJoinIPButton;
 var(SWATGui) private EditInline Config GUIButton		    MyProfileButton;
-var(SWATGui) private EditInline Config GUIButton        InstallBrowserPatchButton;
 
 var(SWATGui) private EditInline Config GUIRadioButton		MyUseLanButton;
 var(SWATGui) private EditInline Config GUIRadioButton		MyUseGameSpyButton;
@@ -88,7 +87,6 @@ function InitComponent(GUIComponent MyOwner)
     MyServerListBox.OnChange=UpdateJoinableState;
     MyUseGameSpyButton.OnChange=NetworkModeSelected;
 	MyProfileButton.OnClick=OnProfile;
-    InstallBrowserPatchButton.OnClick=OnBrowserButton;
 
     MyNameBox.OnChange=UpdateJoinableState;
     MyNameBox.MaxWidth = GC.MPNameLength;
@@ -691,11 +689,6 @@ private function OnAllServersReturned()
 private function OnProfile( GUIComponent sender )
 {
 	Controller.OpenMenu( "SwatGui.SwatGamespyProfilePopup", "SwatGamespyProfilePopup" );
-}
-
-private function OnBrowserButton( GUIComponent sender)
-{
-  PlayerOwner().ConsoleCommand("start https://github.com/sergeii/swat-patches/tree/master/swat4stats-masterserver/");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
