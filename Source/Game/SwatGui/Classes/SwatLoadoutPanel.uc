@@ -1056,6 +1056,11 @@ private function bool IsPocketDisplayedInActiveTab( Pocket pock )
     return false;
 }
 
+protected function int GetActiveTab()
+{
+  return ActiveTab;
+}
+
 defaultproperties
 {
 	FailedToValidate = -1
