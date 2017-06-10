@@ -376,20 +376,25 @@ function AttemptMultiApply(GUIComponent Sender)
     case MultiApply_Element:
     case MultiApply_Lead:
       CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player]);
+      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_Player));
       if(selected == MultiApply_Lead) break;
     case MultiApply_BlueTeam:
     case MultiApply_B1:
       CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne]);
+      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
       if(selected == MultiApply_B1) break;
     case MultiApply_B2:
       CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo]);
+      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
       if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam) break;
     case MultiApply_RedTeam:
     case MultiApply_R1:
       CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne]);
+      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
       if(selected == MultiApply_R1) break;
     case MultiApply_R2:
       CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo]);
+      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
       break;
   }
 }
