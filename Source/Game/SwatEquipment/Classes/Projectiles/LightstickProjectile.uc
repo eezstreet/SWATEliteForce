@@ -6,7 +6,6 @@ var config byte GlowSaturation;
 var config float GlowBrightness;
 var config float GlowLifetime;
 var config StaticMesh ExpiredMesh;
-var config float RestDelay;
 var config float MPGlowLifetimeMultiplier;
 
 var vector CurrentVelocity;
@@ -20,12 +19,6 @@ replication
 {
 	reliable if (Role == ROLE_Authority && bNetInitial)
 		ElapsedTime, CurrentVelocity, CurrentAngular, GlowLifetime;
-}
-
-simulated function Timer()
-{
-	CurrentVelocity = Vect(0,0,0);
-	SetPhysics(PHYS_None);
 }
 
 simulated function PostBeginPlay()
@@ -108,7 +101,6 @@ auto simulated state Glowing
 		{
 			HavokSetLinearVelocity(CurrentVelocity);
 			HavokSetAngularVelocity(CurrentAngular);
-			SetTimer(RestDelay, false);
 		}
 	}
 
@@ -154,7 +146,6 @@ defaultproperties
 	GlowSaturation=128
 	LightOffset=(0, 0, 200)
 	GlowLifetime=300
-	RestDelay=10
 	MPGlowLifetimeMultiplier=0.1
 
 	RemoteRole = ROLE_SimulatedProxy

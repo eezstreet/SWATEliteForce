@@ -2806,7 +2806,6 @@ simulated function OnMeleeKeyFrame()
 
 simulated function OnLightstickKeyFrame()
 {
-	log("USE LIGHTSTICK");
 }
 
 simulated function OnReloadKeyFrame()
