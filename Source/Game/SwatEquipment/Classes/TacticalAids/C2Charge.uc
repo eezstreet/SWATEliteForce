@@ -24,6 +24,16 @@ simulated function UsedHook()
     UpdateHUD();
 }
 
+simulated function int GetDefaultAvailableCount()
+{
+  if(GetPocket() == Pocket.Pocket_Unused1 || GetPocket() == Pocket.Pocket_Unused2)
+    return 0; // FIXME: The engine always sets the unused pockets as having C2.
+              // In the past, the game used to cycle between these unused pockets
+              // instead of like how SEF does it with storing a hidden quantity field.
+              // This would've made things like 3-packs impossible to do.
+  return 3; // We get 3 charges per tactical slot
+}
+
 simulated function EquippedHook()
 {
   Super.EquippedHook();

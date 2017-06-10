@@ -74,7 +74,7 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
     if ( DynamicSpec == None )
         return;
 
-    for( i = 0; i <= Pocket.Pocket_HiddenC2Charge2; i++ )
+    for( i = 0; i <= Pocket.Pocket_Unused2; i++ )
     {
         if ( i == Pocket.Pocket_Detonator || i == Pocket.Pocket_Cuffs || i == Pocket.Pocket_IAmCuffed )
             continue;
@@ -403,7 +403,10 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
 
     // Set the pocket on the newly spawned item
     if( HandheldEquipment( PocketEquipment[i] ) != None )
+    {
+        HandheldEquipment( PocketEquipment[i] ).SetAvailable(true);
         HandheldEquipment( PocketEquipment[i] ).SetPocket( i );
+    }
 
     // Trigger notification that this equipment has been spawned for this loadout
     if( Equipment( PocketEquipment[i] ) != None )
@@ -473,6 +476,7 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
     local HandheldEquipment Item;
     local HandheldEquipment Candidate;
 
+    // FIXME BIGTIME
     assert(Owner.IsA('ICanUseC2Charge'));
     if( Slot == SLOT_Breaching && ICanUseC2Charge(Owner).GetDeployedC2Charge() != None )
         return GetItemAtSlot( Slot_Detonator );
@@ -675,33 +679,18 @@ simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
   local HandheldEquipment Equipment;
   local FiredWeapon Weapon;
 
-  if(Slot == EquipmentSlot.Slot_Breaching || Slot == EquipmentSlot.Slot_Detonator)
-  {
-    Equipment = HandheldEquipment(PocketEquipment[Pocket.Pocket_Breaching]);
-    if(Equipment != None && Equipment.IsAvailable())
-    {
-      Count++;
-    }
-
-    Equipment = HandheldEquipment(PocketEquipment[Pocket.Pocket_HiddenC2Charge1]);
-    if(Equipment != None && Equipment.IsAvailable())
-    {
-      Count++;
-    }
-
-    Equipment = HandheldEquipment(PocketEquipment[Pocket.Pocket_HiddenC2Charge2]);
-    if(Equipment != None && Equipment.IsAvailable())
-    {
-      Count++;
-    }
-
-    return Count;
-  }
-
-  for(i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++)
+  for(i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipSix; i++)
   {
     Equipment = HandheldEquipment(PocketEquipment[i]);
-    if(Equipment != None && Equipment.GetSlot() == Slot && Equipment.IsAvailable())
+    if(Slot == SLOT_Detonator)
+    {
+      // Special case for detonator, it adds the counts from C2
+      if(Equipment != None && Equipment.IsA('C2Charge'))
+      {
+        Count += Equipment.GetAvailableCount();
+      }
+    }
+    else if(Equipment != None && Equipment.GetSlot() == Slot && Equipment.IsAvailable())
     {
       if(Equipment.IsA('PepperSpray'))
       {
@@ -712,7 +701,7 @@ simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
           continue;
         }
       }
-      Count++;
+      Count += Equipment.GetAvailableCount();
     }
   }
 

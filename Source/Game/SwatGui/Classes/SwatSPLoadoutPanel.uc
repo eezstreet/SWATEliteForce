@@ -260,11 +260,9 @@ function CopyThisPage(DynamicLoadOutSpec to)
       to.LoadoutSpec[Pocket.Pocket_EquipThree] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipThree];
       to.LoadoutSpec[Pocket.Pocket_EquipFour] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipFour];
       to.LoadoutSpec[Pocket.Pocket_EquipFive] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipFive];
+      to.LoadoutSpec[Pocket.Pocket_EquipSix] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipSix];
       break;
     case 3:
-      // Breaching tab. Remove?
-      break;
-    case 4:
       // Protection tab. Copy helmet and body armor
       to.LoadoutSpec[Pocket.Pocket_HeadArmor] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_HeadArmor];
       to.LoadoutSpec[Pocket.Pocket_BodyArmor] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_BodyArmor];

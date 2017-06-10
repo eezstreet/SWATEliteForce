@@ -83,6 +83,7 @@ simulated function float GetTotalWeight() {
       case Pocket_EquipThree:
       case Pocket_EquipFour:
       case Pocket_EquipFive:
+      case Pocket_EquipSix:
         OptiwandGenericClass = class(DynamicLoadObject("Engine.OptiwandBase", class'class'));
         WeaponGenericClass = class(DynamicLoadObject("Engine.SwatWeapon", class'class'));
         TacticalAidGenericClass = class(DynamicLoadObject("Engine.QualifiedTacticalAid", class'class'));
@@ -100,19 +101,6 @@ simulated function float GetTotalWeight() {
         } else if(ClassIsChildOf(LoadOutSpec[i], GrenadeGenericClass)) {
           GrenadeClass = class<SwatGrenade>(LoadOutSpec[i]);
           total += GrenadeClass.default.Weight;
-        }
-        break;
-
-      case Pocket_Breaching:
-        WeaponGenericClass = class(DynamicLoadObject("Engine.SwatWeapon", class'class'));
-        TacticalAidGenericClass = class(DynamicLoadObject("Engine.QualifiedTacticalAid", class'class'));
-
-        if(ClassIsChildOf(LoadOutSpec[i], WeaponGenericClass)) {
-          WeaponClass = class<SwatWeapon>(LoadOutSpec[i]);
-          total += WeaponClass.default.Weight;
-        } else if(ClassIsChildOf(LoadOutSpec[i], TacticalAidGenericClass)) {
-          TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
-          total += TacticalAidClass.default.Weight * 3; // FIXME: assumes that we're carrying 3 C2 charges..
         }
         break;
 
@@ -188,6 +176,7 @@ simulated function float GetTotalBulk() {
       case Pocket_EquipThree:
       case Pocket_EquipFour:
       case Pocket_EquipFive:
+      case Pocket_EquipSix:
         OptiwandGenericClass = class(DynamicLoadObject("Engine.OptiwandBase", class'class'));
         WeaponGenericClass = class(DynamicLoadObject("Engine.SwatWeapon", class'class'));
         TacticalAidGenericClass = class(DynamicLoadObject("Engine.QualifiedTacticalAid", class'class'));
@@ -205,19 +194,6 @@ simulated function float GetTotalBulk() {
         } else if(ClassIsChildOf(LoadOutSpec[i], GrenadeGenericClass)) {
           GrenadeClass = class<SwatGrenade>(LoadOutSpec[i]);
           total += GrenadeClass.default.Bulk;
-        }
-        break;
-
-      case Pocket_Breaching:
-        WeaponGenericClass = class(DynamicLoadObject("Engine.SwatWeapon", class'class'));
-        TacticalAidGenericClass = class(DynamicLoadObject("Engine.QualifiedTacticalAid", class'class'));
-
-        if(ClassIsChildOf(LoadOutSpec[i], WeaponGenericClass)) {
-          WeaponClass = class<SwatWeapon>(LoadOutSpec[i]);
-          total += WeaponClass.default.Bulk;
-        } else if(ClassIsChildOf(LoadOutSpec[i], TacticalAidGenericClass)) {
-          TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
-          total += TacticalAidClass.default.Bulk;
         }
         break;
 

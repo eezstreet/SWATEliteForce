@@ -473,6 +473,10 @@ RateOfFire=600 RPM
 Description=This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
 FriendlyName=Door Wedge
 
+[Wedge3pack]
+Description=This pack of three door wedges contains three times as many wedges, but occupies three times as much space and weight.
+FriendlyName=Wedge 3-Pack
+
 [Optiwand]
 Description=The opti-wand is a sophisticated observation device which allows officers to examine situations around corners and under closed doors without exposing themselves to lines of fire.  On top of the device is a small LCD screen which displays the images seen by the camera at the end of the expandable rod.  It is an invaluable tool for gathering intelligence on suspect and civilian locations before performing dangerous clear routines and potentially exposing your team to fire.
 FriendlyName=Optiwand
@@ -491,7 +495,19 @@ FriendlyName=M7A3 CS Grenade
 
 [FlashbangGrenade]
 Description=The stun grenade is a diversionary device that stuns and disorients people with an explosive report and a brillant flash.  People that are affected by the device can be temporarily blinded and deafened by the blast.  During this time SWAT has a significant tactical advantage over the affected persons.||Flashbangs are designed so that they will not fragment on detonation, but can still cause serious injury if detonation occurs in close proximity to a person.  Caution is advised.
-FriendlyName=M84 Stun Grenade
+FriendlyName=M84 Flashbang
+
+[Sting3pack]
+Description=This 3-pack of stingers contains three times as many stingers, but occupies three times as much space and weight.
+FriendlyName=Stinger 3-Pack
+
+[CS3pack]
+Description=This 3-pack of gas grenades contains three times as many CS gas grenades, but occupies three times as much space and weight.
+FriendlyName=CS Gas 3-Pack
+
+[Flashbang3pack]
+Description=This 3-pack of flashbangs contains three times as many flashbangs, but occupies three times as much space.
+FriendlyName=Flashbang 3-Pack
 
 [BreachingSG]
 Description=The breaching shotgun is a specially modified, pump action shotgun designed to breach locked doors.  The weapon fires frangible breaching ammo that is designed to quickly break into very small pieces upon impact.  This behavior reduces penetration and increases damage upon impact with hard surfaces.  These factors make it ideal for breaking locks on doors without penetrating the door and harming someone on the other side.  The toothed extender on barrel allows officers to jam the weapon into the door and ensures the correct distance from the lock for the breaching ammo to be most effective.  Its compact design permits officers to carry the weapon on their back, allowing it to be carried in addition to the primary weapon.
