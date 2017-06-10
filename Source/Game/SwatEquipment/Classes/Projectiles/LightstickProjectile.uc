@@ -51,6 +51,12 @@ simulated function PostNetBeginPlay()
 	Light.LifeSpan = GlowLifetime - ElapsedTime;
 }
 
+simulated function SetInitialVelocity(vector Velocity)
+{
+  CurrentVelocity = Velocity;
+  HavokSetLinearVelocity(CurrentVelocity);
+}
+
 simulated function Destroyed()
 {
 	if (Light != None)
@@ -100,8 +106,8 @@ auto simulated state Glowing
 	{
 		if (Role != ROLE_Authority && CurrentVelocity != Vect(0,0,0))
 		{
-			HavokSetLinearVelocity(CurrentVelocity); 
-			HavokSetAngularVelocity(CurrentAngular); 
+			HavokSetLinearVelocity(CurrentVelocity);
+			HavokSetAngularVelocity(CurrentAngular);
 			SetTimer(RestDelay, false);
 		}
 	}

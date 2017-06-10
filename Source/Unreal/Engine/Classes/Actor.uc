@@ -2853,6 +2853,11 @@ simulated function LoadAnimationSet(string AnimationSet)
 }
 #endif // IG_SWAT
 
+simulated function SetInitialVelocity(vector NewVelocity)
+{
+	Velocity = NewVelocity;
+}
+
 defaultproperties
 {
      DrawType=DT_Sprite

@@ -673,6 +673,7 @@ simulated function HACK_QuickUnequipForAIDropWeapon()
     ThirdPersonModel.OnUnequipKeyFrame(); // true means 'never hide after unequipping'
 
     // disable the weapon, it can no longer be used
+    log(self$"SetAvailable(false) because HACK_QuickUnequipForAIDropWeapon");
     SetAvailable(false);
 
     // HandheldEquipmentModels are hidden in OnUnEquipKeyframe if they
@@ -845,6 +846,8 @@ simulated final function OnUseKeyFrame( optional bool ForceUse )
         if(UnavailableAfterUsed)
           AvailableCount--;
 
+        log(self$"::OnUseKeyFrame. AvailableCount is now "$AvailableCount);
+
         UpdateAvailability();
 
         UsingStatus = ActionStatus_HitKeyFrame;
@@ -861,6 +864,11 @@ simulated function UpdateAvailability()
         SetAvailable(false);
     if(AvailableCount < 0)
       AvailableCount = 0; // Don't let this go negative
+}
+
+simulated function DecrementAvailableCount()
+{
+  UpdateAvailability();
 }
 
 simulated final protected function OnUsingFinished()
@@ -1142,6 +1150,7 @@ simulated final function SetAvailableCount(int NewCount)
 {
   if(NewCount == 0)
   {
+    log(self$"SetAvailable(false) because SetAvailableCount is 0");
     SetAvailable(false);
   }
   else
@@ -1158,6 +1167,10 @@ simulated function int GetDefaultAvailableCount()
 
 simulated final function SetAvailable(bool inAvailable)
 {
+  if(!inAvailable)
+  {
+    log(self$"SetAvailable() set to "$inAvailable);
+  }
   if(Available && !inAvailable)
   {
     AvailableCount = 0;

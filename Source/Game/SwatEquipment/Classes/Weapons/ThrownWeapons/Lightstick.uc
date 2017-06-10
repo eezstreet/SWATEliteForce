@@ -1,73 +1,44 @@
 class Lightstick extends Engine.SwatGrenade
 	config(SwatEquipment);
 
-import enum EquipmentSlot from Engine.HandheldEquipment;
+////////////////////////////////////////////////////////////////////
+//
+// New stuff for HUD --eez
 
-var config class<LightstickProjectile> LightstickClass;
-var config float ThrowVelocity;
-var config float AIThrowVelocity;
-var config string BaseThirdPersonThrowAnim;
-var config name BaseThirdPersonThrowAnimNet;
-var config int StartingAmount;
-
-var private bool Used;
-
-simulated function CreateModels()
+simulated function EquippedHook()
 {
-	Super.CreateModels();
+  Super.EquippedHook();
+  UpdateHUD();
 }
 
 simulated function UsedHook()
 {
-    log("Lightstick away!");
+  Super.UsedHook();
+  UpdateHUD();
 }
 
-simulated function OnPostEquipped()
+function UpdateHUD()
 {
-    log("Lightstick equipped!");
-}
+  local SwatGame.SwatGamePlayerController LPC;
+  local int ReserveGrenades;
 
-function name GetThirdPersonThrowAnimation()
-{
-	return 'None';
-}
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
 
-// Lightstick need not be equipped for AIs to use
-simulated function bool ValidateUse( optional bool Prevalidate )
-{
-	return false;
-}
+  if (Pawn(Owner).Controller != LPC) return; //the player doesn't own this ammo
 
-simulated latent protected function PreUsed()
-{
-	Super.PreUsed();
-}
+  ReserveGrenades = GetAvailableCount();
+  ReserveGrenades--; // We are holding one
+  if(ReserveGrenades < 0)
+  {
+    ReserveGrenades = 0;
+  }
 
-simulated function OnUsingFinishedHook()
-{
-}
-
-simulated function CheckTickEquipped()
-{
-}
-
-simulated function bool ShouldDisplayReticle()
-{
-	return false;
+  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveGrenades, self);
+  LPC.GetHUDPage().UpdateWeight();
 }
 
 defaultproperties
 {
     Slot=Slot_Lightstick
-    LightstickClass=class'SwatEquipment.LightstickProjectile'
-	ThrowVelocity=100
-	AIThrowVelocity=25
-	StartingAmount=25
-	UnavailableAfterUsed=false
-	BaseThirdPersonThrowAnim="LightStickDrop_"
-	BaseThirdPersonThrowAnimNet="LightStickDrop_MP"
-	HandsPreThrowAnimation="GlowPreThrow"
-	HandsThrowAnimation="GlowThrow"
-
-	InstantUnequip = false
+	  ProjectileClass=class'SwatEquipment.LightstickProjectile'
 }
