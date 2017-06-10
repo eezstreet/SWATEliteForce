@@ -20,6 +20,12 @@ simulated function UsedHook()
     UpdateHUD();
 }
 
+// Every time we use a wedge, switch back to the primary weapon
+simulated function EquipmentSlot GetSlotForReequip()
+{
+    return Slot_PrimaryWeapon;
+}
+
 function UpdateHUD()
 {
   local SwatGame.SwatGamePlayerController LPC;
