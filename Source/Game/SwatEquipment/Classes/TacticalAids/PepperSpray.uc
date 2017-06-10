@@ -200,6 +200,12 @@ simulated latent function EndFiring()
     }
 }
 
+// Sticky selection: if this item is equipped, then we switch to a grenade, then use a grenade, it switches to this item
+simulated function bool HasStickySelection()
+{
+  return false;
+}
+
 function OnGivenToOwner()
 {
   // Need to override this, because otherwise we get problems

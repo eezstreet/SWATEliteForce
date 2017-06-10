@@ -17,14 +17,8 @@ simulated function float GetBulk() {
   return Bulk;
 }
 
-// Every time we throw a grenade, switch back to the primary weapon
-simulated function EquipmentSlot GetSlotForReequip()
-{
-    return Slot_PrimaryWeapon;
-}
-
 simulated function vector GetPlayerViewOffset()
-{	
+{
     return PlayerViewOffset;
 }
 

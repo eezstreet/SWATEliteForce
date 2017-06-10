@@ -346,6 +346,38 @@ simulated function float GetBaseAimError()
 	return BaseAimError;
 }
 
+// Sticky selection: if this item is equipped, then we switch to a grenade, then use a grenade, it switches to this item
+simulated function bool HasStickySelection()
+{
+  return true;
+}
+
+simulated function EquippedHook()
+{
+  local Pawn OwnerPawn;
+  local PlayerController OwnerController;
+
+  Super.EquippedHook();
+
+  OwnerPawn = Pawn(Owner);
+  if(OwnerPawn != None && HasStickySelection())
+  {
+    OwnerController = PlayerController(OwnerPawn.Controller);
+    if(OwnerController != None)
+    {
+      if(GetPocket() == Pocket.Pocket_SecondaryWeapon)
+      {
+        OwnerController.bSecondaryWeaponLast = true;
+      }
+      else
+      {
+        OwnerController.bSecondaryWeaponLast = false;
+      }
+    }
+  }
+
+}
+
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?
 
 defaultproperties

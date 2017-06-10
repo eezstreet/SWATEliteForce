@@ -48,6 +48,7 @@ var bool	bBlockCloseCamera;
 var bool	bValidBehindCamera;
 var bool	bForcePrecache;
 var bool	bClientDemo;
+var public bool bSecondaryWeaponLast; // when true, last weapon equipped is the secondary weapon 
 var const bool bAllActorsRelevant;	// used by UTTV.  DO NOT SET THIS TRUE - it has a huge impact on network performance
 var bool	bShortConnectTimeOut;	// when true, reduces connect timeout to 15 seconds
 var bool	bPendingDestroy;		// when true, playercontroller is being destroyed
