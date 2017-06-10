@@ -84,6 +84,7 @@ simulated function float GetTotalWeight() {
       case Pocket_EquipFour:
       case Pocket_EquipFive:
       case Pocket_EquipSix:
+      case Pocket_Toolkit:
         OptiwandGenericClass = class(DynamicLoadObject("Engine.OptiwandBase", class'class'));
         WeaponGenericClass = class(DynamicLoadObject("Engine.SwatWeapon", class'class'));
         TacticalAidGenericClass = class(DynamicLoadObject("Engine.QualifiedTacticalAid", class'class'));
@@ -97,16 +98,11 @@ simulated function float GetTotalWeight() {
           total += WeaponClass.default.Weight;
         } else if(ClassIsChildOf(LoadOutSpec[i], TacticalAidGenericClass)) {
           TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
-          total += TacticalAidClass.default.Weight;
+          total += TacticalAidClass.static.GetInitialWeight();
         } else if(ClassIsChildOf(LoadOutSpec[i], GrenadeGenericClass)) {
           GrenadeClass = class<SwatGrenade>(LoadOutSpec[i]);
-          total += GrenadeClass.default.Weight;
+          total += GrenadeClass.static.GetInitialWeight();
         }
-        break;
-
-      case Pocket_Toolkit:
-        TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
-        total += TacticalAidClass.default.Weight;
         break;
 
       default:
@@ -177,6 +173,7 @@ simulated function float GetTotalBulk() {
       case Pocket_EquipFour:
       case Pocket_EquipFive:
       case Pocket_EquipSix:
+      case Pocket_Toolkit:
         OptiwandGenericClass = class(DynamicLoadObject("Engine.OptiwandBase", class'class'));
         WeaponGenericClass = class(DynamicLoadObject("Engine.SwatWeapon", class'class'));
         TacticalAidGenericClass = class(DynamicLoadObject("Engine.QualifiedTacticalAid", class'class'));
@@ -190,10 +187,10 @@ simulated function float GetTotalBulk() {
           total += WeaponClass.default.Bulk;
         } else if(ClassIsChildOf(LoadOutSpec[i], TacticalAidGenericClass)) {
           TacticalAidClass = class<QualifiedTacticalAid>(LoadOutSpec[i]);
-          total += TacticalAidClass.default.Bulk;
+          total += TacticalAidClass.static.GetInitialBulk();
         } else if(ClassIsChildOf(LoadOutSpec[i], GrenadeGenericClass)) {
           GrenadeClass = class<SwatGrenade>(LoadOutSpec[i]);
-          total += GrenadeClass.default.Bulk;
+          total += GrenadeClass.static.GetInitialBulk();
         }
         break;
 

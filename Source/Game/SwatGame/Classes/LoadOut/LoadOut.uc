@@ -780,7 +780,7 @@ function float GetTotalWeight() {
       total += PocketItem.GetWeight();
     }
 
-    if(i == 0 || i == 2) {
+    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
       // A weapon
       FiredItem = FiredWeapon(PocketItem);
       FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
@@ -809,7 +809,7 @@ function float GetTotalBulk() {
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
     total += PocketItem.GetBulk();
 
-    if(i == 0 || i == 2) {
+    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
       // Weapon
       FiredItem = FiredWeapon(PocketItem);
       FiredItemAmmo = SwatAmmo(FiredItem.Ammo);

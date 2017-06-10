@@ -1375,6 +1375,26 @@ cpptext
     UBOOL InFirstPersonView();
 }
 
+simulated function float GetWeight()
+{
+  return AvailableCount * GetItemWeight();
+}
+
+simulated function float GetBulk()
+{
+  return AvailableCount * GetItemBulk();
+}
+
+simulated function float GetItemWeight()
+{
+  return 0.0f; // Has to be implemented by subclasses
+}
+
+simulated function float GetItemBulk()
+{
+  return 0.0f;
+}
+
 defaultproperties
 {
     Slot=Slot_Invalid

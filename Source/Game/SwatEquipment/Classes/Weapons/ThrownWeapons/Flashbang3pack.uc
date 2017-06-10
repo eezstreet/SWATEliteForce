@@ -1,6 +1,1 @@
-class Flashbang3pack extends FlashbangGrenade;
-
-simulated function int GetDefaultAvailableCount()
-{
-  return 3;
-}
+class Flashbang3pack extends FlashbangGrenade config(SwatEquipment);

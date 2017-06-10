@@ -8,12 +8,21 @@ var() config vector PlayerViewOffset;
 
 var() public config float Weight;
 var() public config float Bulk;
+var() public config float StartCount;
 
-simulated function float GetWeight() {
+static function float GetInitialWeight() {
+  return default.Weight * default.StartCount;
+}
+
+static function float GetInitialBulk() {
+  return default.Bulk * default.StartCount;
+}
+
+simulated function float GetItemWeight() {
   return Weight;
 }
 
-simulated function float GetBulk() {
+simulated function float GetItemBulk() {
   return Bulk;
 }
 
@@ -22,7 +31,13 @@ simulated function vector GetPlayerViewOffset()
     return PlayerViewOffset;
 }
 
+simulated function int GetDefaultAvailableCount()
+{
+  return StartCount;
+}
+
 defaultproperties
 {
   PlayerViewOffset = (X=-22,Y=7,Z=-12)
+  StartCount=1
 }

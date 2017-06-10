@@ -1,6 +1,1 @@
-class Wedge3pack extends Wedge;
-
-simulated function int GetDefaultAvailableCount()
-{
-  return 3;
-}
+class Wedge3pack extends Wedge config(SwatEquipment);
