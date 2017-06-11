@@ -2197,7 +2197,7 @@ function Killed( Controller Killer, Controller Killed, Pawn KilledPawn, class<Da
 // Set NonInteractive to false if the call is not due to user input
 function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional bool NonInteractive)
 {
-	local SwatGameReplicationInfo SGRI;
+	//local SwatGameReplicationInfo SGRI;
 	local TeamInfo CurrentTeam;
 	local TeamInfo NewTeam;
 
@@ -2259,9 +2259,10 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	}
 
 	// Stop a new team member from stating a referendum straight away
-	SGRI = SwatGameReplicationInfo(GameReplicationInfo);
-	if (SGRI != None && SGRI.RefMgr != None)
-		SGRI.RefMgr.AddVoterToCooldownList(Player.PlayerReplicationInfo.PlayerId);
+  // ??? why --eez
+	//SGRI = SwatGameReplicationInfo(GameReplicationInfo);
+	//if (SGRI != None && SGRI.RefMgr != None)
+	//	SGRI.RefMgr.AddVoterToCooldownList(Player.PlayerReplicationInfo.PlayerId);
 
 	Player.PlayerReplicationInfo.Team = NewTeam;
 }

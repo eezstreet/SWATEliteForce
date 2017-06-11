@@ -1,61 +1,50 @@
-class LeaderReferendum extends Engine.Actor implements Voting.IReferendum;
+class LeaderReferendum extends Voting.Referendum;
 
 var() config localized string ReferendumDescriptionText;
-var private PlayerController LeaderTarget;
-var private PlayerReplicationInfo NominatorPRI;
-var private PlayerReplicationInfo LeaderTargetPRI;
-
-replication
-{
-	reliable if (bNetDirty && (Role == ROLE_Authority))
-		NominatorPRI, LeaderTargetPRI;
-}
-
-function Initialise(PlayerReplicationInfo InitNominatorPRI, PlayerController LeaderCandidate)
-{
-	LeaderTarget = LeaderCandidate;
-	NominatorPRI = InitNominatorPRI;
-	LeaderTargetPRI = LeaderTarget.PlayerReplicationInfo;
-}
 
 simulated function String ReferendumDescription()
 {
-	return FormatTextString(ReferendumDescriptionText, NominatorPRI.PlayerName, LeaderTargetPRI.PlayerName);
+	return FormatTextString(ReferendumDescriptionText, CallerPRI.PlayerName, TargetPRI.PlayerName);
 }
 
 function ReferendumDecided(bool YesVotesWin)
 {
 	local GameModeCOOP GMC;
 
-	if (LeaderTarget == None)
+	if (TargetPC == None)
 		return;
 
 	if (YesVotesWin)
-	{	
+	{
 		GMC = GameModeCOOP(SwatGameInfo(Level.Game).GetGameMode());
 
 		if (GMC != None)
 		{
-			mplog("The leader referendum was successful. Promoting " $ LeaderTargetPRI.PlayerName $ " to leader");
-			Level.Game.BroadcastTeam(LeaderTarget, "", 'ReferendumSucceeded');
-			GMC.SetLeader(NetTeam(LeaderTarget.PlayerReplicationInfo.Team), SwatGamePlayerController(LeaderTarget));
+			mplog("The leader referendum was successful. Promoting " $ TargetPRI.PlayerName $ " to leader");
+			Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumSucceeded');
+			GMC.SetLeader(NetTeam(TargetPC.PlayerReplicationInfo.Team), SwatGamePlayerController(TargetPC));
 		}
 	}
 	else
 	{
-		mplog("The leader referendum was unsuccessful. " $ LeaderTargetPRI.PlayerName $ " will not be promoted to leader");
-		Level.Game.BroadcastTeam(LeaderTarget, "", 'ReferendumFailed');
+		mplog("The leader referendum was unsuccessful. " $ TargetPRI.PlayerName $ " will not be promoted to leader");
+		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumFailed');
 	}
+}
+
+function bool ReferendumCanBeCalledOnTarget(PlayerController Caller, PlayerController Target)
+{
+	if(Caller.PlayerReplicationInfo.Team != Target.PlayerReplicationInfo.Team)
+	{
+		Level.Game.Broadcast(None, "", 'LeaderVoteTeamMismatch', Caller);
+		return false;
+	}
+	return true;
 }
 
 defaultproperties
 {
 	ReferendumDescriptionText="%1 has started a vote to promote %2 to leader"
-
-	RemoteRole=ROLE_SimulatedProxy
-	bAlwaysRelevant=true
-	bOnlyDirtyReplication=true
-	bSkipActorPropertyReplication=true
-
-	bHidden=true
+	bNoImmunity=true
+	bUseTeam=true
 }

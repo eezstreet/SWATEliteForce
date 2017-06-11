@@ -31,7 +31,7 @@ replication
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
 		Kick, KickBan, SAD, Switch, StartGame, AbortGame,
-		ServerStartKickReferendum, ServerStartBanReferendum, ServerStartLeaderReferendum, ServerStartMapChangeReferendum, ServerVoteYes, ServerVoteNo;
+		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
 		VOIPIgnore, VOIPUnIgnore, VOIPClearIgnore;
@@ -664,24 +664,14 @@ function bool VOIPIsSpeaking(int PlayerID)
 // Voting replicated function
 ///////////////////////////////////////////////////////////////////////////////
 
-exec function ServerStartKickReferendum(String PlayerName)
+exec function ServerStartReferendum(PlayerController PC, class<Voting.Referendum> ReferendumClass, optional PlayerController Target, optional String TargetStr)
 {
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartKickReferendum(self, PlayerName);
+  SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartReferendum(PC, ReferendumClass, Target, TargetStr);
 }
 
-exec function ServerStartBanReferendum(String PlayerName)
+exec function ServerStartReferendumForPlayer(PlayerController PC, class<Voting.Referendum> ReferendumClass, string PlayerName)
 {
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartBanReferendum(self, PlayerName);
-}
-
-exec function ServerStartLeaderReferendum(String PlayerName)
-{
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartLeaderReferendum(self, PlayerName);
-}
-
-exec function ServerStartMapChangeReferendum(EMPMode GameType, String MapName)
-{
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartMapChangeReferendum(self, MapName, GameType);
+  SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartReferendumForPlayer(PC, ReferendumClass, PlayerName);
 }
 
 exec function ServerVoteYes()
