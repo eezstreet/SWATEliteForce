@@ -209,7 +209,6 @@ event HandleParameters(string Param1, string Param2, optional int param3)
 function SaveServerSettings()
 {
     local ServerSettings Settings;
-    local float EnemyFireAmount;
 
     //
     // Save to the pending server settings
@@ -220,14 +219,6 @@ function SaveServerSettings()
 	AdvancedSetupPanel.SaveServerSettings();
 
     //
-    // Update the modifiers based on checkbox value
-    //
-    if( AdvancedSetupPanel.MyEnemyFireButton.bChecked )
-        EnemyFireAmount = 0.0;
-    else
-        EnemyFireAmount = 1.0;
-
-    //
     // Set all server settings
     //
     SwatPlayerController(PlayerOwner()).ServerSetSettings( Settings,
@@ -235,22 +226,22 @@ function SaveServerSettings()
                                 QuickSetupPanel.SelectedIndex,
                                 QuickSetupPanel.MyRoundsBox.Value,
                                 AdvancedSetupPanel.MyMaxPlayersBox.Value,
-                                QuickSetupPanel.MyDeathLimitBox.Value,
+                                0,  // Not used
                                 AdvancedSetupPanel.MyPostGameTimeLimitBox.Value,
-                                QuickSetupPanel.MyTimeLimitBox.Value,
+                                0, // Not used
                                 AdvancedSetupPanel.MyPreGameTimeLimitBox.Value,
                                 AdvancedSetupPanel.MyShowTeammatesButton.bChecked,
-                                AdvancedSetupPanel.MyShowEnemyButton.bChecked,
-								AdvancedSetupPanel.MyAllowReferendumsButton.bChecked,
+                                false, // Not used
+								                AdvancedSetupPanel.MyAllowReferendumsButton.bChecked,
                                 QuickSetupPanel.MyNoRespawnButton.bChecked,
                                 QuickSetupPanel.MyQuickResetBox.bChecked,
                                 AdvancedSetupPanel.MyFriendlyFireSlider.GetValue(),
-                                EnemyFireAmount,
-								-1^0,
-								AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
-								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
-								AdvancedSetupPanel.MyEnableStatsCheck.bChecked,
-								!AdvancedSetupPanel.MyEnableTeamSpecificWeapons.bChecked);
+                                0.0f, // Not used
+								                -1^0,
+								                AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
+								                !AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
+								                false,  // Not used
+								                AdvancedSetupPanel.MyEnableSnipers.bChecked);
 
     GC.SaveConfig();
 }
@@ -344,7 +335,6 @@ function RefreshEnabled()
         MyQuitButton.SetEnabled( bEnableStart );
 
 	QuickSetupPanel.DoRefreshEnabled();
-	AdvancedSetupPanel.DoRefreshEnabled();
 }
 
 defaultproperties

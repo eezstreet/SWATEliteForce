@@ -120,8 +120,6 @@ function PreBeginPlay()
 {
     local SwatPlayerStart Point;
 
-	UpdateStatTrackingEnabled();
-
 	ServerStats = new class<StatsInterface>(DynamicLoadObject(StatsClass(), class'class'));
 	ServerStats.SetLevel(Level);
 
@@ -592,13 +590,7 @@ function SetupNameDisplay()
     else
         SGRI.ShowTeammateNames = 1;
 
-    if ( ServerSettings(Level.CurrentServerSettings).bShowEnemyNames )
-        SGRI.ShowEnemyNames = 2;
-    else
-        SGRI.ShowEnemyNames = 1;
-
 	mplog( "...ShowTeammateNames="$SGRI.ShowTeammateNames );
-    mplog( "...ShowEnemyNames="$SGRI.ShowEnemyNames );
 }
 
 function InitializeGameMode()
@@ -2561,34 +2553,6 @@ event DetailChange()
     }
 }
 
-function UpdateStatTrackingEnabled()
-{
-	local bool bShouldUse;
-	local SwatPlayerReplicationInfo Info;
-
-	bShouldUse = ServerSettings(Level.CurrentServerSettings).ShouldUseStatTracking();
-
-	if (bShouldUse == Level.GetGameSpyManager().bTrackingStats)
-		return;
-
-	Level.GetGameSpyManager().bTrackingStats = bShouldUse;
-
-	if (Level.GetGameSpyManager().bTrackingStats)
-	{
-		ForEach AllActors(class'SwatPlayerReplicationInfo', Info)
-		{
-			Info.bStatsRequestSent = false;
-		}
-
-		log("[Stats] Stat tracking enabled, initializing...");
-		Level.GetGameSpyManager().ConnectStats();
-	}
-	else
-	{
-		log("[Stats] Stat tracking is disabled.");
-	}
-}
-
 // Execute only on server.
 function PreQuickRoundRestart()
 {
@@ -2605,7 +2569,6 @@ function PreQuickRoundRestart()
         }
     }
 
-	UpdateStatTrackingEnabled();
 	SetupNameDisplay();
 
    // Clean up garbage when quick restarting.

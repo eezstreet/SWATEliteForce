@@ -9,8 +9,6 @@ const MAX_MAPS = 40;
 var SwatServerSetupMenu SwatServerSetupMenu;
 
 var(SWATGui) EditInline Config GUINumericEdit      MyRoundsBox;
-var(SWATGui) EditInline Config GUINumericEdit      MyDeathLimitBox;
-var(SWATGui) EditInline Config GUINumericEdit      MyTimeLimitBox;
 var(SWATGui) EditInline Config GUIEditBox		   MyNameBox;
 var(SWATGui) EditInline Config GUIEditBox          MyServerNameBox;
 var(SWATGui) EditInline Config GUIEditBox		   MyPasswordBox;
@@ -209,8 +207,6 @@ function SetSubComponentsEnabled( bool bSetEnabled )
     SelectedMaps.SetEnabled( bSetEnabled );
     DisplayOnlyMaps.SetEnabled( bSetEnabled );
     MyRoundsBox.SetEnabled( bSetEnabled );
-    MyDeathLimitBox.SetEnabled( bSetEnabled );
-    MyTimeLimitBox.SetEnabled( bSetEnabled );
     MyServerNameBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
     MyPasswordBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
     MyPasswordedButton.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
@@ -247,7 +243,6 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
         MyQuickResetBox.SetChecked(false);
 
         MyQuickResetBox.DisableComponent();
-        MyTimeLimitBox.DisableComponent();
 
         //default 1 rounds per map for non-coop
         MyRoundsBox.SetValue( 1 );
@@ -258,38 +253,6 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
 
         //default 5 rounds per map for non-coop
         MyRoundsBox.SetValue( 5 );
-    }
-
-    //Barricaded special
-    if( NewMode == EMPMode.MPM_BarricadedSuspects )
-    {
-        MyTimeLimitBox.SetValue( 900, true );
-        MyDeathLimitBox.SetValue( 50 );
-    }
-    else
-    {
-        MyDeathLimitBox.DisableComponent();
-        MyNoRespawnButton.DisableComponent();
-    }
-
-    //Rapid deployment special
-    if( NewMode == EMPMode.MPM_RapidDeployment )
-    {
-        MyTimeLimitBox.SetValue( 600, true );
-    }
-    else
-    {
-        //Do Nothing
-    }
-
-    //VIP special
-    if( NewMode == EMPMode.MPM_VIPEscort )
-    {
-        MyTimeLimitBox.SetValue( 720, true );
-    }
-    else
-    {
-        //Do Nothing
     }
 
     MyNoRespawnButton.SetChecked(false);
@@ -344,8 +307,6 @@ function LoadServerSettings( optional bool ReadOnly )
     // Load the rest of the settings
     //
     MyRoundsBox.SetValue(Settings.NumRounds, true);
-    MyDeathLimitBox.SetValue(Settings.DeathLimit, true);
-    MyTimeLimitBox.SetValue(Settings.RoundTimeLimit, true);
     MyPasswordedButton.bForceUpdate = true;
     MyNoRespawnButton.SetChecked( Settings.bNoRespawn );
     MyQuickResetBox.SetChecked( Settings.bQuickRoundReset );

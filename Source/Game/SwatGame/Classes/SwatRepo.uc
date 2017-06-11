@@ -582,10 +582,7 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 NetRoundInProgress = true;
-                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
-                  GetSGRI().ServerCountdownTime = 0;
-                else
-                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).RoundTimeLimit;
+                GetSGRI().ServerCountdownTime = 0;
                 //Level.Game.SetPause( false, PlayerController );
             }
             break;
@@ -938,22 +935,22 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.MapIndex,
 		CurrentSettings.NumRounds,
 		CurrentSettings.MaxPlayers,
-		CurrentSettings.DeathLimit,
+		CurrentSettings.Unused,
 		CurrentSettings.PostGameTimeLimit,
-		CurrentSettings.RoundTimeLimit,
+		CurrentSettings.Unused2,
 		CurrentSettings.MPMissionReadyTime,
 		CurrentSettings.bShowTeammateNames,
-		CurrentSettings.bShowEnemyNames,
+		CurrentSettings.Unused3,
 		CurrentSettings.bAllowReferendums,
 		CurrentSettings.bNoRespawn,
 		CurrentSettings.bQuickRoundReset,
 		CurrentSettings.FriendlyFireAmount,
-		CurrentSettings.EnemyFireAmount,
-		CurrentSettings.ArrestRoundTimeDeduction,
+		CurrentSettings.Unused4,
+		CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.bUseStatTracking,
-		CurrentSettings.bDisableTeamSpecificWeapons
+		CurrentSettings.Unused5,
+		CurrentSettings.bEnableSnipers
 	);
 	ServerSettings(Level.PendingServerSettings).RoundNumber = CurrentSettings.RoundNumber;
 
@@ -1298,10 +1295,7 @@ function float GetExternalDamageModifier( Actor Damager, Actor Victim )
     //  for enemy damage and team damage
     if( NetPlayer(Damager) != none && NetPlayer(Victim) != None )
     {
-        if( NetPlayer(Damager).GetTeamNumber() == NetPlayer(Victim).GetTeamNumber() )
-            return GetFriendlyFireModifier();
-        else
-            return GetEnemyFireModifier();
+        return GetFriendlyFireModifier();
     }
     else
         return Super.GetExternalDamageModifier( Damager, Victim );
@@ -1309,15 +1303,7 @@ function float GetExternalDamageModifier( Actor Damager, Actor Victim )
 
 function float GetFriendlyFireModifier()
 {
-    if( ServerSettings(Level.CurrentServerSettings).EnemyFireAmount == 0.0 )
-        return 0.0;
-
     return ServerSettings(Level.CurrentServerSettings).FriendlyFireAmount;
-}
-
-function float GetEnemyFireModifier()
-{
-    return ServerSettings(Level.CurrentServerSettings).EnemyFireAmount;
 }
 
 function TrainingTextManager GetTrainingTextManager()

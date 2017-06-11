@@ -82,7 +82,7 @@ function OnPlayerDied( PlayerController player, Controller killer )
 	{
 		gameItem.Dropped(np.Location);
 		ItemDropped(np);
-		
+
 		if (killer != None && killer != player)
 		{
 			SwatPlayerReplicationInfo(killer.PlayerReplicationInfo).netScoreInfo.IncrementSmashAndGrabKilled();
@@ -122,7 +122,7 @@ function ItemGoalAchieved(NetPlayer np)
 	bGoalAchieved = true;
 
     InterestingViewTarget = np;
-    
+
     C = SwatGamePlayerController(np.Controller);
 	if (C != None)
 	{
@@ -172,15 +172,12 @@ function bool ClusterPointValidForRoundStart( SwatMPStartCluster thePoint )
 function OnPawnArrested( Pawn Arrestee, Pawn Arrester )
 {
 	local NetPlayer np;
-	local float ArrestRoundTimeDeduction;
-
-	ArrestRoundTimeDeduction = ServerSettings(Level.CurrentServerSettings).ArrestRoundTimeDeduction;
 
 	// round time is deducted when swat make an arrest
-	if (ArrestRoundTimeDeduction > 0 && NetPlayer(Arrester).GetTeamNumber() == 0 && NetPlayer(Arrestee).GetTeamNumber() == 1)
+	if (NetPlayer(Arrester).GetTeamNumber() == 0 && NetPlayer(Arrestee).GetTeamNumber() == 1)
 	{
-		SwatGameReplicationInfo(SGI.GameReplicationInfo).ServerCountdownTime -= ArrestRoundTimeDeduction;
-		SGI.Broadcast(None, string(ArrestRoundTimeDeduction), 'SmashAndGrabArrestTimeDeduction');
+		SwatGameReplicationInfo(SGI.GameReplicationInfo).ServerCountdownTime -= 30.0f;
+		SGI.Broadcast(None, string(30.0f), 'SmashAndGrabArrestTimeDeduction');
 	}
 
 	np = NetPlayer(Arrestee);
@@ -200,7 +197,7 @@ function NetRoundTimeRemaining( int TimeRemaining )
     //if we are not actually playing, don't do anything else
     if( SwatRepo(Level.GetRepo()).GuiConfig.SwatGameState != GAMESTATE_MidGame )
         return;
-        
+
     // broadcast round time
     SwatGameReplicationInfo(SGI.GameReplicationInfo).SpecialTime = TimeRemaining;
 }

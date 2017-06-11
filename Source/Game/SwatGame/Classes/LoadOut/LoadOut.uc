@@ -252,9 +252,6 @@ simulated protected function bool ValidateEquipmentForTeam( Pocket pock, class<A
 
 	Settings = ServerSettings(Level.CurrentServerSettings);
 
-	if (Settings != None && Settings.bDisableTeamSpecificWeapons)
-		return true;
-
     NumEquipment = GC.AvailableEquipmentPockets[pock].EquipmentClassName.Length;
 
     if( CheckClass == None && NumEquipment == 0)

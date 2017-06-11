@@ -121,16 +121,25 @@ function InternalOnClick(GUIComponent Sender)
 					SwatPlayerController(PlayerOwner()).ServerSetSettings(
 						Settings,
 						EMPMode.MPM_COOP,
-						0, 1, ServerPanel.MyMaxPlayersSpinner.Value, 0, 60, 1, 10,
-						true,
-						true,
-						false,
-						true,
-						true,
-						1, 1, CampaignInfo, 0,
-						false,
-						false,
-						true
+						0, // Map index
+						1, // Number of rounds
+						ServerPanel.MyMaxPlayersSpinner.Value, // Max players
+						0, // Unused
+						60, // Post-Round time (Not necessary in campaign CO-OP)
+						1, // Unused
+						10, // Mission ready time (Not necessary in campaign CO-OP)
+						true, // Show teammate names
+						true, // Not used
+						true, // Allow voting
+						true, // No respawning
+						true, // Quick round reset
+						1, // Friendly fire amount (FIXME: Make this configurable)
+						1, // Not used
+						CampaignInfo, // Campaign CO-OP data
+						0, // Time between respawns
+						false, // No Leaders
+						false, // Not used
+						true // Add snipers
 					);
 					GC.SaveConfig();
 					SwatGUIController(Controller).LoadLevel(GC.CurrentMission.Name $ "?listen");

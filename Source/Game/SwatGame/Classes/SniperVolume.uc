@@ -31,7 +31,7 @@ function bool ShouldRejectCondition(HighGroundCondition inCondition)
     }
 
     // Always reject in MP...
-    if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bShowEnemyNames))
+    if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bEnableSnipers))
         return true;
 
     // Fixing TSS bug ...
