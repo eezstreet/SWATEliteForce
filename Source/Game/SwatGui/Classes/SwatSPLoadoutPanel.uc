@@ -97,6 +97,8 @@ function InitComponent(GUIComponent MyOwner)
     MyMultiApplySelect.AddItem(MultiApplyStr[i],,,i);
     MyMultiApplyLoadoutSelect.AddItem(MultiApplyStr[i],,,i);
   }
+  MyMultiApplySelect.SetIndex(0);
+  MyMultiApplyLoadoutSelect.SetIndex(0);
   MyMultiApplyButton.OnClick=AttemptMultiApply;
   MyMultiApplyLoadoutButton.OnClick=AttemptMultiApplyLoadout;
 }
