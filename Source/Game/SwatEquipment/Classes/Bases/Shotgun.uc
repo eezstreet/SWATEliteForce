@@ -5,6 +5,11 @@ class Shotgun extends RoundBasedWeapon;
 var config float WoodBreachingChance;
 var config float MetalBreachingChance;
 
+function bool ShouldBreach(float BreachingChance)
+{
+  return FRand() < BreachingChance;
+}
+
 function bool ShouldPenetrateMaterial(float BreachingChance)
 {
   local ShotgunAmmo ShotgunAmmo;
@@ -14,7 +19,7 @@ function bool ShouldPenetrateMaterial(float BreachingChance)
 
   if(!ShotgunAmmo.WillPenetrateDoor())
     return false;
-    
+
   return FRand() < BreachingChance;
 }
 
@@ -55,14 +60,21 @@ simulated function bool HandleBallisticImpact(
     		break;
     	}
 
-      if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && ShouldPenetrateMaterial(BreachingChance) )
-          IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(
-                  HitRegion,
-                  HitLocation,
-                  HitNormal,
-                  0,                  //damage: unimportant for breaching a door
-                  GetDamageType(),
-                  Owner);
+      if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && ShouldBreach(BreachingChance) )
+      {
+        IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(
+                HitRegion,
+                HitLocation,
+                HitNormal,
+                0,                  //damage: unimportant for breaching a door
+                GetDamageType(),
+                Owner);
+        if(!ShouldPenetrateMaterial(BreachingChance))
+        {
+          Momentum = 0; // All of the momentum is lost
+        }
+      }
+
   }
 
   // We should still consider it to have ballistic impacts
