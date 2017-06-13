@@ -814,6 +814,8 @@ simulated function bool CommandUsesC2(Command Command) {
     case Command_C2GasAndMakeEntry:
     case Command_C2StingAndClear:
     case Command_C2StingAndMakeEntry:
+    case Command_C2LeaderThrowAndClear:
+    case Command_C2LeaderThrowAndMakeEntry:
       return true;
   }
   return false;
@@ -830,6 +832,8 @@ simulated function bool CommandUsesShotgun(Command Command) {
     case Command_ShotgunGasAndMakeEntry:
     case Command_ShotgunStingAndClear:
     case Command_ShotgunStingAndMakeEntry:
+    case Command_ShotgunLeaderThrowAndClear:
+    case Command_ShotgunLeaderThrowAndMakeEntry:
       return true;
   }
   return false;
@@ -878,8 +882,18 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
     } else if (Level.NetMode == NM_Standalone && CommandUsesC2(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Breaching)) {
       Status = Pad_GreyedOut;
     } else if (Level.NetMode == NM_Standalone && CommandUsesShotgun(Command)) {
-      // BIG OL FIXME
-      Status = Pad_Normal;
+      if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun'))
+      {
+        Status = Pad_Normal;
+      }
+      else if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun'))
+      {
+        Status = Pad_Normal;
+      }
+      else
+      {
+        Status = Pad_GreyedOut;
+      }
     } else if (IsLeaderThrowCommand(Command)) {
       Status = Pad_Normal;
     } else if (CommandUsesC2(Command) || CommandUsesShotgun(Command)) {

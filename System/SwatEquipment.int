@@ -510,8 +510,15 @@ Description=This 3-pack of flashbangs contains three times as many flashbangs, b
 FriendlyName=Flashbang 3-Pack
 
 [BreachingSG]
-Description=The breaching shotgun is a specially modified, pump action shotgun designed to breach locked doors.  The weapon fires frangible breaching ammo that is designed to quickly break into very small pieces upon impact.  This behavior reduces penetration and increases damage upon impact with hard surfaces.  These factors make it ideal for breaking locks on doors without penetrating the door and harming someone on the other side.  The toothed extender on barrel allows officers to jam the weapon into the door and ensures the correct distance from the lock for the breaching ammo to be most effective.  Its compact design permits officers to carry the weapon on their back, allowing it to be carried in addition to the primary weapon.
-FriendlyName=Remington 870
+Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This weapon can be modified with special breaching ammunition for quick room entries, or beanbags for a less-lethal approach.||This particular variant is equipped with a special breaching nozzle, which ensures that every shot will consistently breach a door.
+FriendlyName=M870 Breaching
+Manufacturer=Remington
+Caliber=12 Gauge
+CountryOfOrigin=United States
+ProductionStart=1950
+FireModes=Pump-Action
+TotalAmmoString=50 shells
+RateOfFire=150 RPM
 
 [Toolkit]
 Description=The multi-tool serves many functions and can be used to pick locks, disable bombs and traps, and remove tactical wedges.  All officers are equipped with a toolkit.

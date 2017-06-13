@@ -508,7 +508,23 @@ event function bool CanDeployThrownItem(EquipmentSlot ThrownItemEquipmentSlot)
 
 event function bool CanDeployShotgun(Door TargetDoor)
 {
-	return TargetDoor.IsClosed() && DoesAnOfficerHaveUsableEquipment(Slot_Breaching, 'BreachingShotgun');
+	if(!TargetDoor.IsClosed())
+	{
+		return false;
+	}
+
+	if(DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun'))
+	{
+		return true;
+	}
+	else if(DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun'))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 event function bool CanDeployC2(Door TargetDoor, bool bLeftSide)

@@ -116,11 +116,14 @@ latent function EquipBreachingShotgun()
     Officer = ISwatOfficer(m_Pawn);
     assert(Officer != None);
 
-    BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_Breaching));
+    BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_PrimaryWeapon));
+		if(BreachingShotgun == None || !BreachingShotgun.IsA('Shotgun'))
+			BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_SecondaryWeapon));
+			
     // If we've been put into this action, we expect that the officer has a
     // breaching shotgun
     assert(BreachingShotgun != None);
-    assert(BreachingShotgun.IsA('BreachingShotgun'));
+    assert(BreachingShotgun.IsA('Shotgun'));
 
     if (!BreachingShotgun.IsEquipped())
     {
@@ -211,12 +214,12 @@ latent function BreachDoorWithShotgun()
 	ISwatDoor(TargetDoor).UnRegisterInterestedInDoorOpening(self);
 
 	BreachingShotgun.SetPerfectAimNextShot();
-	
+
 	// @HACK Break the door "before firing the shotgun. The AI literally always misses,
-	// and there is a very noticable delay if we automatically break the door AFTER firing 
-	// the shotgun, but if we break the door FIRST it appears to happen exactly when the 
-	// shot is fired. In other words, this solution looks perfect. -K.F. 
-	
+	// and there is a very noticable delay if we automatically break the door AFTER firing
+	// the shotgun, but if we break the door FIRST it appears to happen exactly when the
+	// shot is fired. In other words, this solution looks perfect. -K.F.
+
 	ISwatDoor(TargetDoor).Blasted(m_Pawn);
 	BreachingShotgun.LatentUse();
 }

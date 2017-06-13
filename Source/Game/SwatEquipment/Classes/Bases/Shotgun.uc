@@ -2,11 +2,19 @@
 class Shotgun extends RoundBasedWeapon;
 ///////////////////////////////////////////////////////////////////////////////
 
-var float WoodBreachingChance;
-var float MetalBreachingChance;
+var config float WoodBreachingChance;
+var config float MetalBreachingChance;
 
 function bool ShouldPenetrateMaterial(float BreachingChance)
 {
+  local ShotgunAmmo ShotgunAmmo;
+
+  ShotgunAmmo = ShotgunAmmo(Ammo);
+  assertWithDescription(ShotgunAmmo != None, "[eezstreet] Shotgun "$self$" is not using ShotgunAmmo!");
+
+  if(!ShotgunAmmo.WillPenetrateDoor())
+    return false;
+    
   return FRand() < BreachingChance;
 }
 

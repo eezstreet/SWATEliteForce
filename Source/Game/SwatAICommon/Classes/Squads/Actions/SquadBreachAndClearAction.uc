@@ -155,20 +155,19 @@ protected function SetBreacher(optional bool skipBreacher)
 
 protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
 {
-	local HandheldEquipment Equipment;
 	local FiredWeapon Weapon;
 
-    Equipment = ISwatOfficer(Officer).GetItemAtSlot(SLOT_Breaching);
-    if ((Equipment != None) && Equipment.IsA('BreachingShotgun'))
-    {
-		Weapon = FiredWeapon(Equipment);
-		assert(Weapon != None);
+	Weapon = FiredWeapon(ISwatOfficer(Officer).GetItemAtSlot(SLOT_PrimaryWeapon));
+	if(Weapon != None && Weapon.IsA('Shotgun') && (!Weapon.NeedsReload() || Weapon.CanReload()))
+	{
+		return true;
+	}
 
-		if (! Weapon.NeedsReload() || Weapon.CanReload())
-		{
-			return true;
-		}
-    }
+	Weapon = FiredWeapon(ISwatOfficer(Officer).GetItemAtSlot(SLOT_SecondaryWeapon));
+	if(Weapon != None && Weapon.IsA('Shotgun') && (!Weapon.NeedsReload() || Weapon.CanReload()))
+	{
+		return true;
+	}
 
 	return false;
 }
