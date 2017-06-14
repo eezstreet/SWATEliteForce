@@ -435,7 +435,9 @@ event function bool CanPickLock()
 event private function bool CanBreachAndClearLockedDoor()
 {
 	if (DoesAnOfficerHaveUsableEquipment(SLOT_Breaching) ||
-		DoesAnOfficerHaveUsableEquipment(Slot_Toolkit))
+		DoesAnOfficerHaveUsableEquipment(Slot_Toolkit) ||
+		DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun') ||
+		DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun'))
 	{
 		return true;
 	}
@@ -443,6 +445,19 @@ event private function bool CanBreachAndClearLockedDoor()
 	{
 		return false;
 	}
+}
+
+event private function bool DoesTeamHaveSufficientBreachingEquipment(int BreachingMethod)
+{
+	if(BreachingMethod == 1)
+	{
+		return DoesAnOfficerHaveUsableEquipment(Slot_Breaching);
+	}
+	else if(BreachingMethod == 2)
+	{
+		return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun');
+	}
+	return CanBreachAndClearLockedDoor();
 }
 
 event function bool CanBreachAndClear(bool bPlayerBelievesDoorLocked)
@@ -1025,11 +1040,26 @@ function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door Targe
 			{
 				if (CanBreachAndClearLockedDoor())
 				{
-					SquadBreachAndClearGoal = new class'SquadBreachAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
-					assert(SquadBreachAndClearGoal != None);
+					if(DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+					{
+						SquadBreachAndClearGoal = new class'SquadBreachAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
+						assert(SquadBreachAndClearGoal != None);
 
-					PostCommandGoal(SquadBreachAndClearGoal);
-					return true;	// command issued
+						PostCommandGoal(SquadBreachAndClearGoal);
+						return true;	// command issued
+					}
+					else if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
 				}
 				else
 				{
@@ -1086,6 +1116,21 @@ function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door T
 				{
 					// respond to not being able to breach a locked door
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
 				}
 				else
 				{
@@ -1144,6 +1189,21 @@ function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door Ta
 					// respond to not being able to breach a locked door
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
 				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
 				else
 				{
 					SquadBreachGasAndClearGoal = new class'SquadBreachGasAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
@@ -1200,6 +1260,21 @@ function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 					// respond to not being able to breach a locked door
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
 				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
 				else
 				{
 					SquadBreachStingAndClearGoal = new class'SquadBreachStingAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
@@ -1242,7 +1317,23 @@ function bool BreachLeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin,
 			if(UseBreachingEquipment) {
 				if(!CanBreachAndClearLockedDoor()) {
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
-				} else {
+				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
+				else {
 					SquadGoal = new class'SquadBreachLeaderThrowAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadGoal != None);
 
