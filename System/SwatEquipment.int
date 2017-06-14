@@ -189,8 +189,19 @@ FireModes=Pump-Action
 TotalAmmoString=50 shells
 RateOfFire=150 RPM
 
+[M1Super90SG]
+Description=It would be difficult for anyone living half a century ago to believe that Benelli would be famous for guns, and not motorcycles. The Benelli M1Super90 and its inertia-driven recoil system, designed by Bruno Civolani, made it easy. While the M1Super90 is older and its feed size smaller than its successors, it nontheless remains a mainstay in law enforcement.
+FriendlyName=M1 Super 90 Defense
+Manufacturer=Benelli
+Caliber=12 Gauge
+CountryOfOrigin=Italy
+ProductionStart=1994
+FireModes=Semi-Automatic
+TotalAmmoString=50 shells
+RateOfFire=200 RPM
+
 [M4Super90SG]
-Description=The Benelli M4 Super 90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its seven round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has one drawback - its bulk can make it difficult to handle in close quarters situations.
+Description=The Benelli M4Super90 (designated by the United States military as the M1014) is a highly reliable semi-automatic shotgun, developed in the late 90s as the final successor to the widely popular M1 series of Benelli shotguns. Its 7-round magazine is appealing to law enforcement, but its relative bulk may make it difficult to use in close quarters.
 FriendlyName=M4 Super 90
 Manufacturer=Benelli
 Caliber=12 Gauge
@@ -591,10 +602,6 @@ FriendlyName=Rifle Grip Pump Shotgun
 [Pump1SG]
 Description=Pistol Grip Pump Shotgun
 FriendlyName=Pistol Grip Pump Shotgun
-
-[M1Super90SG]
-Description=Benelli M1 Super 90
-FriendlyName=Benelli M1 Super 90
 
 [BadguyM4Super90SG]
 Description=Benelli M4 Super90
