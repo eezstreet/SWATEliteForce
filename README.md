@@ -58,27 +58,33 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 		** Upon restraining a target, SWAT officers will now report it to TOC automatically!
 		** SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
 		** SWAT officers can now take cover like suspects do (including leaning around corners)
+		** SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
+		** SWAT officers will drop a lightstick after clearing a room.
 	* Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
 		** This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
 	* New secondary objective: collect drug evidence. Static drug bags have been replaced with new ones that can be collected.
 		** The bags count towards the "Secure All Evidence" procedure.
-	* More equipment options. This includes a few cut equipment items, such as riot helmets.
-		** AI-controlled officers can carry more lightsticks.
+	* More equipment options.
+		** Over 25 new pieces of equipment have been added, including shotguns, assault rifles, submachine guns, tactical gear, and armor.
 		** The player can carry armor and all helmet options in singleplayer.
+		** The breaching slot has been removed and replaced with a sixth tactical slot. The breaching shotgun is a weapon now.
 		** The player can select how many magazines they would like to bring in the mission.
 		** There is a new Advanced Information Panel in the loadout menu that lets you view information such as manufacturer, magazine size, etc.
 		** Heavy armor now shows a health percentage on the HUD. Heavy armor at 100% health can stop almost any bullet in the game, but as it takes damage, it loses the ability to protect you. It can only be shattered by bullets and sabot slugs, not buckshot or other rounds.
+		** 3-packs have been added for wedges and grenades.
 		** All secondary weapons equippable as primaries, and some primaries equippable as secondaries.
 	* Equipment is also much more realistic.
+		** Weapons can be aimed down the sights, for better accuracy, using the zoom key.
 		** All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is.
 		** Bullets of certain types (FMJ, buckshot, etc) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
 		** Bullets are now subject to drag; they lose damage over distance.
 		** Less lethal equipment is now actually LESS LETHAL. Some equipment (tasers, beanbag shotgun) can incapacitate or kill if used incorrectly.
 		** All equipment has been modified to use real values.
+		** Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
 		** For more information, see the EQUIPMENT section.
 	* Doors behave more realistically
 		** Any shotgun can be used to breach any door.
-		** A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The Breaching Shotgun can breach any door in one shot.
+		** A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The M870 Breaching can breach any door in one shot.
 		** When doors are breached with shotguns, they do not swing open like when breached with C2. You have to shoot the knob and then open the door.
 		** Broken doors can now be closed and/or wedged.
 	* Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
@@ -101,11 +107,13 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 		** There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
 		** Option to disable the initial dispatch briefings.
 		** The game will tell you when you incur a penalty or complete an objective.
+		** Wedges, grenades, lightsticks and C2 all show how many pieces you have left, while you have them equipped.
 	* Multiplayer improvements!
 		** Snipers are now available in multiplayer.
-		** New options available for server hosts for voting; see Default.ini for more information
+		** New kinds of voting: Next Map and End Current Map
 		** The chat now reports which room a person is when they send a chat message
-		** You can now un-ready yourself in multiplayer.
+		** You can enable or disable friendly fire in CO-OP.
+		** You can now un-ready yourself in the pre-game lobby.
 
 
 # FREQUENTLY ASKED QUESTIONS (FAQ) #
@@ -120,6 +128,10 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
  * Are you going to add AI officers in CAREER CO-OP?
  * Does this mod work with other mods?
  * Are there more missions for Extra Missions coming out?
+ * I can't find X piece of equipment! Did you remove it?
+ * Breaching doors with the shotgun doesn't work!
+ * Beanbags don't work!
+ * How do I disarm a trap?
 
 ## HOW DO I INSTALL THE MOD?
 Please read the How to Install section of this README. :)
@@ -129,6 +141,43 @@ First, you will need to ensure that your operating system supports Speech Recogn
 If your system meets the requirements, the 'Use Speech Recognition' checkbox will be available.
 You can also bind a key to toggle the functionality ingame, which is good when you're speaking for a Let's Play, for example.
 A list of trigger words is provided, starting with Patch 5.1. See SpeechCommands.md for more information.
+
+IF SPEECH RECOGNITION DOES NOT WORK (CHECKBOX GREYED OUT):
+
+- What language is your operating system? *By default, the game will only work with an English (United States) version of Windows.* 
+In order to support more languages, you will need to edit your SEF/System/SpeechCommandGrammar.xml. Near the top of the file will be a line that reads like this:
+```
+<GRAMMAR LANGID="409">
+```
+You will want to modify this line so that it uses a number which corresponds to your operating system (NOT THE GAME!). 
+The list of languages can be found here: https://msdn.microsoft.com/en-us/library/office/hh361638
+So for instance, if you have a Swedish operating system, you will want to change it so the line looks like this:
+```
+<GRAMMAR LANGID="41D">
+```
+
+- Did you install the API? (see the above link)
+
+- Still not working? Try installing the Speech Recognition Improvement mod, and see if that mod works.
+
+
+IF SPEECH RECOGNITION DOES NOT WORK (COMMAND NOT RECOGNIZED, OR MICROPHONE NOT WORKING)
+
+- Check to make sure that you did not disable the speech recognition with the keybind. (The key is not bound to anything by default)
+
+- Check to make sure that the microphone works in Windows. 
+
+- Check to make sure that the microphone works in the game (try using the built-in VOIP feature and see if your friends can hear you in a multiplayer game)
+
+- Make sure there is no background noise, like a television. The game may misinterpret it as being your voice.
+
+- Make sure you are speaking clearly. 
+If you are using the language fix from the above, you will want to speak with a bad accent as much as possible. Really roll those Rs if you're using a Spanish OS.
+If you aren't, try to talk like you're a newscaster or like you're having a conversation with someone on the phone and they aren't understanding you.
+Also note that some things sound similar. For example, "Cuff her" sounds a lot like "cover".
+
+- Make sure you are saying the correct thing.
+See the SpeechCommands.md if you are having trouble saying a particular command.
 
 ## WHAT'S THE DIFFERENCE BETWEEN "MARK WITH LIGHTSTICK" AND "DROP LIGHTSTICK"?
 MARK WITH LIGHTSTICK orders the nearest officer to go to the location and drop a lightstick. DROP LIGHTSTICK orders the nearest officer to drop a lightstick at their feet.
@@ -168,22 +217,40 @@ Here's a good list of mods that won't work, even with tinkering:
 - Speech Recognition Improvement; the Speech Recognition feature is available but not all of the commands from that mod are present.
 
 ## ARE THERE MORE MISSIONS FOR EXTRA MISSIONS COMING OUT?
-Yes! There are two more confirmed missions in Extra Missions: Brewer County Courthouse and Enverstar Power Plant. On top of that, we are gathering suggestions for custom maps.
+Yes.
 
+## I CAN'T FIND X PIECE OF EQUIPMENT! DID YOU REMOVE IT?
+Only the ammo pouch was removed from the base game. If you cannot find a piece of equipment, make sure you have unlocked it in the campaign!
+Note that some equipment (M16, Uzi, AKM, etc) is only available in multiplayer.
+
+## BREACHING DOORS WITH THE SHOTGUN DOESN'T WORK!
+Whether or not a shotgun breaches the door successfully is random and depends upon a few things:
+
+- The material of the door (wooden doors are easier to breach than metal ones)
+
+- The ammo type you are using (larger pellets = more likely to breach)
+
+- Which shotgun you are using (the M870 Breaching *always* breaches the door on the first shot)
+
+Generally it takes about 2-3 shots on a wooden door and 3-4 shots on a metal door to breach it successfully.
+
+## BEANBAGS DON'T WORK!
+Beanbags don't stun people unless they do damage. Damage falls off over distance and is negated by body armor to some extent.
+For best results, aim for the limbs (arms/legs) where a target is less likely to be fatally hit (and is less armored at the same time)
+
+## HOW DO I DISARM A TRAP?
+You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around. Or just take the penalty.
 
 # KNOWN ISSUES #
-  * Yes, the game is HARD AS NAILS. It's supposed to be. It's a police simulator and meant to train SWAT operators.
-  * If you're missing equipment in Singleplayer, note that you need to unlock it first.
-  * Not working when you launch the .bat? The whole SEF folder is supposed to be copied to your SWAT 4 folder. Please review the HOW TO INSTALL section.
-  * You cannot select Barricaded Suspects, VIP Escort or Rapid Deployment. Intentional! This mod is only meant for CO-OP play and we don't balance the equipment to suit those modes.
+Please read the FAQ before looking here! It's entirely possible that what you are seeing is intentional behavior.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
   * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
   * Sometimes crashes with a RotateActorAction, for reasons that aren't known.
-  * Officers sometimes won't shoot suspects if they're very close to them. It's a problem in the original game as well.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
-  * Throws an assertion when an officer ordered to restrain a civilian is ordered to disarm a bomb. Nothing I've changed would've caused it, so again, probably an issue with the original game. Also harmless.
-  * MULTIPLAYER: "gui_tex package version mismatch" --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
+  * Occasionally in an All Missions campaign it will display the wrong equipment icons in the loadout menu for some pieces of equipment.
+  * 
+  * "gui_tex package version mismatch" when joining a server --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
 
 # OTHER MINOR CHANGES #
 
@@ -207,11 +274,15 @@ Yes! There are two more confirmed missions in Extra Missions: Brewer County Cour
  * Explosion effects from gas cans DO alert AI to your presence now
  * Office workers on Department of Agriculture and terrorists from Mt. Threshold Research Center had stupidly high max morale, this has been changed.
  * Suspects weren't taking into account whether a door was locked or wedged when fleeing, which would lead to cases where they would try to open the door in an endless loop while running away.
- * Arresting people with No Armor equipped was glitchy, this has been fixed.
+ * Arresting people with No Armor equipped was glitchy
  * The Multiplayer ESC menu didn't show colors on the server name
  * Taser recoil applied to every player on the map, not just the person who shot it
  * Lightstick-related commands weren't greyed out if there weren't any officers with lightsticks
  * Weapons couldn't be picked up while aiming through incapacitated/dead suspects/civilians
+ * Lightsticks couldn't be dropped if the officer was wearing heavy armor (they would appear at the world origin)
+ * Server browser showed duplicate servers
+ * Server browser player sorting didn't work correctly
+ * Ordering your team to disable something while they were restraining people (or collecting evidence) would cause them to stop restraining targets (or collecting evidence), and vice versa.
 
 ## GAMEPLAY ##
   * Maps may now alter themselves based on difficulty level, for instance adding more suspects or traps in Elite difficulty. Only a few maps use this feature currently.
@@ -226,12 +297,17 @@ Yes! There are two more confirmed missions in Extra Missions: Brewer County Cour
   * (Non-Insane/Non-Polite) suspects take twice as long before shooting hostages
   * Added a new quality: Polite. Any suspect archetype with this quality won't attempt to shoot hostages.
   * Added a new quality: Insane. Any suspect archetype with this quality will shoot hostages *much* faster (basically instantly) and ignores distance checks.
+  * Grenades and wedges now go back to your last used weapon after using one, instead of switching back to the flashbang.
 
 ## GUI ##
   * Training mission returns! New Features from the Expansion are gone.
   * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
   * "Mouse Smoothing" checkbox in Control Settings enables (default) or disables mouse smoothing.
   * "Field of Vision" slider in Video Settings lets you change the field of vision.
+  * Mod version, wiki and Discord links are shown in the main menu.
+  * Server browser has a button to download the server browser patch.
+  * Loadout Menu (SP) has a button to apply current tab to Element, Team, or specific officer
+  * Loadout Menu (SP) has a button to apply current loadout to Element, Team, or specific officer
   * Maps in the Voting screen are now sorted alphabetically.
   * Host Game no longer precaches all of the maps at once; it goes to the menu and loads the maps while in the menu.
   * Added Advanced Information tab to Equipment Panel. It now shows a weapon's manufacturer, manufacturer country, date manufactured, caliber, magazine size, maximum ammo carried, muzzle velocity and firing modes. It also shows advanced information for protective equipment.
@@ -239,13 +315,13 @@ Yes! There are two more confirmed missions in Extra Missions: Brewer County Cour
   * New splash screen
   * More advanced console. It will now show output of commands, and a console log. You need to press ESC to close the console now.
   * Added 'Take Screenshot' and 'Toggle Speech Interface' key to Controls menu.
-  * Fixed an exploit that allowed the player to get unlocks early by saving a loadout with unlocked equipment and loading it later
   * New main menu logo
   * All evidence of Gamespy scrubbed
+  * Removed "Check for Patch" button on the join game menu
   * Cleaned up appearance throughout
   * You can now Un-Ready yourself in CO-OP games. You can only edit your equipment when you are not ready.
-  * OUT OF THE WAY now the default for General MP menu.
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
+  * The menu will now show labels on stuff in widescreen resolution
   * You no longer need a CD-key to publish a game to the Internet server browser.
 
 
@@ -613,30 +689,54 @@ Once you have selected your map settings and have started the server at least on
 
 #### MAJOR FEATURES ####
 - First person improvements!
-  * By hitting the zoom key, you will transition into Iron Sights.
-  * Your weapon will sway as you move.
+  * By hitting the zoom key, you will transition into Iron Sights!
+  * Lightsticks are thrown like grenades now. Chuck them across the room, or just drop them at your feet!
+  * Tactical equipment now shows how many items you have left on the HUD, so you are never left guessing!
 - Equipment changes!
+  * The breaching tab has been removed and a sixth tactical slot has been added.
+  * C2 is now considered a tactical piece of equipment, and the breaching shotgun is a weapon. The breaching shotgun will breach a door 100% of the time, unlike other shotguns where this chance is random.
   * New silenced versions of base game weapons: Suppressed M4A1, Suppressed UMP and Suppressed G36C. More weight and bulk, but won't tip off suspects in adjacent rooms when fired.
+  * Added a cut weapon from the game: The M1Super90.
+  * 3-packs of Wedges, Flashbangs, CS Gas and Stingers have been added. They have 3 tactical items, with the equivalent weight and bulk of five of those items.
+  * All shotguns now have Frangible Breaching Ammo, which doesn't ricochet or overpenetrate a door.
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
      * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines RESTRAIN ALL and SECURE ALL. 
-     * NOTE: SECURE ALL will not look for drug bags until the mission is complete.
+     * NOTE: SECURE ALL will not look for drug bags until the mission is complete. This is so your team will not rush to secure mission objectives that are across the map.
   * The lightstick commands got moved back to the DEPLOY submenu, and all of the DEPLOY commands were reorganized based on how frequently they are used.
+  * The Classic Command Interface (CCI) has had all of its commands reorganized to play better.
 - More AI improvements!
   * High skilled suspects are much more dangerous.
   * Enemies have figured out how to equip heavy armor! Your AP rounds will be very important.
+- Menu improvements!
+  * The main menu now has a link to Discord and the Wiki and shows the mod version.
+  * The Join Game menu now won't show duplicate servers, the player sorting is better, and there is a link to download the server browser plugin.
+  * You can now apply a tab (or a whole loadout) to another officer, another team, or element. It's much easier now to keep a consistent loadout amongst your men.
+  * You can now vote (in multiplayer) to end the current map, or to go to the next map.
 
 ### ALL CHANGES ###
-- Added ironsights functionality
+- Added ironsights to most weapons; several weapons have had their first person weapon model tweaked to have right-side faces and other improvements.
 - Added broad-secure commands (SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, DISABLE ALL)
-- Added first person weapon inertia
+- Added first person weapon inertia (weapon sways with movement)
 - Added Suppressed M4A1
 - Added Suppressed G36C
 - Added Suppressed UMP
+- Added Breaching Shotgun as a weapon (M870 Breaching). The M870 Breaching will always breach a door 100% of the time regardless of its material.
+- Added Wedge 3-Pack, CS Gas 3-Pack, Flashbang 3-Pack, and Stinger 3-Pack.
+- Lightsticks are now treated the same as grenades, instead of being an instant-use item.
+- C2 is now considered a tactical item.
+- Breaching tab removed; sixth tactical slot added.
+- Added frangible breaching ammo for all shotguns.
 - AI will now drop lightsticks as they clear rooms.
+- Tactical items (grenades, wedges, lightsticks, C2) now show the number of items left when equipped.
+- Rewrote the voting code from scratch. No longer allowed to vote for gametype; can vote to end current map or to go to next map.
+- The breaching shotgun fire interface will now show for all shotguns, not just the breaching shotgun.
+- The pick lock fire interface will now show if you have a shotgun equipped.
+- Drastically improved the layout of commands in the Classic Command Interface (CCI)
+- Added the ability to assign the currently selected tab to an officer, team, or Element.
+- You can now assign the current loadout to an officer, team, or Element.
+- Pepper spray now shows the number of reserve cans when equipped
 - Reorganized DEPLOY command sub-menu
-- Externalized the position of the weapon in first person and in iron sights.
-- Added a console command to change the position of the weapon in first person.
 - Suspects will fire upon hostages twice as quickly.
 - Pepper spray now takes a moment or two to affect targets, like CS gas does.
 - High skill suspects are more likely to react to a thrown grenade now.
@@ -645,11 +745,27 @@ Once you have selected your map settings and have started the server at least on
 - High skill suspects are less likely to flinch when affected by shots.
 - Suspects firing from cover may pause or regroup between shots.
 - Wild Gunners are now affected by the firing delay that SEF introduced.
+- Reduced the volume (slightly) of the M16 Third Person fire effect, and the dispatch audio for Meat Barn.
+- Removed the physics timer from lightsticks; they will now always retain their physics instead of losing them after 10 seconds.
 - Suspects will wait much less time between firing shots.
 - Altered the first person model of the HK33 so it can be aimed correctly with the iron sights.
+- Using grenades (not lightsticks) will now return the player to the last weapon they used, instead of the primary weapon always.
+- Wedges now return the player to their weapon after they are used.
+- Mod version is now shown in the main menu
+- Added a Discord and Wiki button to the main menu
+- Removed the CHECK FOR PATCH button in the server browser; added a DOWNLOAD PLUGIN button.
+- Removed map filter from server browser filter menu (was causing lag)
+- Added a console command to change the position of the weapon in first person.
+- Externalized the position of the weapon in first person and in iron sights.
+- Cut Content Restored: M1Super90 Defense shotgun added
 - Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them. This has been fixed.
+- Fixed SEF bug: Wedges not depleting weight when used
+- Fixed SEF bug: AI-controlled officers were more focused on falling in than engaging suspects at times.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
 - Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
+- Fixed TSS bug: Duplicate servers in the server browser
+- Fixed TSS bug: Weird player count sorting in the server browser
+- Fixed TSS bug: Lightsticks don't drop if the player is wearing heavy armor
 
 ### v5.3 ###
 Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
@@ -1253,11 +1369,12 @@ MINOR FEATURES / FULL CHANGES
 Irrational Games and Sierra for the game.
 KevinL for a tip about Voting Screen.
 sandman332 for a tip about audio
-kevinfoley for some help with Speech Recognition
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
 Sebasien NovA for his modified SwatEd.exe
 Ryo Ohki for a tip about P90 and SAW animations
 Dc247 for typo corrections in this document
+MulleDK19 for help with the Speech Recognition feature
+Yasuntei for spotting a typo
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
@@ -1268,13 +1385,14 @@ These people have generously donated money to Elite Force via Patreon. If you ar
 TheTCREngineer
 Jake Robinson/sandman332
 Evan Derickson
+Mad Max
+Jordan Harrison
 
 
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
 PC Power Play (Also ran a nice overview of the mod)
 StrawberryClock (Streamer)
-Rangar (Streamer)
 
 TESTING
 Oglogoth
@@ -1284,7 +1402,7 @@ Vylka
 WE ARE: ELITE SQUAD
 eezstreet: Team Lead, Programming, Map Editing
 Jose21Crisis: Programming, Weapons Analysis
-mezzokoko: Programming
+kevinfoley: Programming, Model Editing
 Rangar: Music (Composition), Textures
 TheTCREngineer: Models
 
