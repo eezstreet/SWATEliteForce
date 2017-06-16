@@ -275,6 +275,7 @@ const MaxAIWaitForEffectEventToFinish = 10.0;
 var private Name CurrentEffectEventName;
 var private int CurrentSeed;
 var private bool bEffectEventStillPlaying;
+var private bool bDebugSensor;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2015,6 +2016,11 @@ native event bool CanHitTargetAt(Actor Target, vector AILocation);
 // Whatever Irrational did with this function, we don't know because it's native...
 // However, it's not correct because SWAT will very frequently not hit their target.
 
+simulated function SEFDebugSensor()
+{
+  bDebugSensor = !bDebugSensor;
+}
+
 event bool CanHit(Actor Target)
 {
   local FiredWeapon TheWeapon;
@@ -2024,7 +2030,7 @@ event bool CanHit(Actor Target)
 
   TheWeapon = FiredWeapon(GetActiveItem());
 
-  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target))
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, TheWeapon.bIsLessLethal))
   {
     Value = false;
   }
@@ -2033,11 +2039,17 @@ event bool CanHit(Actor Target)
     Value = true;
   }
 
-  if(false) // DEBUG: draw a red line if we can't hit the target; draw a green line if we can hit the target
+  if(bDebugSensor)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
     EndTrace = Target.Location;
-    EndTrace.Z += (BaseEyeHeight / 2);
+
+    if(!TheWeapon.bIsLessLethal)
+    {
+      // Don't do this if we're using a less lethal weapon.
+      // In practice it makes DEPLOY TASER etc actions come up close to the target and maybe not hit them
+      EndTrace.Z += (BaseEyeHeight / 2);
+    }
 
     if(Value)
     {

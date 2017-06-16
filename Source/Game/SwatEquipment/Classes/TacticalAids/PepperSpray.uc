@@ -225,4 +225,5 @@ defaultproperties
     Slot=Slot_PepperSpray
     SPPlayerProtectiveEquipmentDurationScaleFactor=0
     MPPlayerProtectiveEquipmentDurationScaleFactor=0
+    bIsLessLethal=true
 }

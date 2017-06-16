@@ -328,7 +328,7 @@ simulated function TraceFire()
 
 // Used by the AI - whether firing this weapon will hit its intended target
 // (and not, for example, an actor or levelinfo that is in between our target)
-simulated function bool WillHitIntendedTarget(Actor Target)
+simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters)
 {
   local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation, PreviousExitLocation;
   local vector HitNormal, ExitNormal;
@@ -343,7 +343,12 @@ simulated function bool WillHitIntendedTarget(Actor Target)
 
   StartTrace = PerfectFireStartLocation;
   EndTrace = Target.Location;
-  EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
+  if(!bIsLessLethal)
+  {
+    // See note in SwatAI.uc as to why we don't do this with less lethal
+    EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
+  }
+
 
   Distance = VSize(EndTrace - StartTrace);
 
@@ -393,7 +398,7 @@ simulated function bool WillHitIntendedTarget(Actor Target)
       return false; // Hit BSP geometry, we can't penetrate that ..!
     }
 
-    if(Momentum <= 0)
+    if(Momentum <= 0 && MomentumMatters)
     {
       // The bullet lost all of its momentum
       return false;
