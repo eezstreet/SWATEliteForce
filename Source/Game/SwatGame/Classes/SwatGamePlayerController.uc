@@ -2252,13 +2252,22 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     }
 }
 
+simulated function CheckDoorLock(SwatDoor Door)
+{
+  Door.TryDoorLock(self);
+}
+
 simulated function InternalMelee()
 {
 	local HandheldEquipment Item;
   local HandheldEquipment PendingItem;
+  local Actor Candidate;
+  local vector HitLocation, HitNormal, CameraLocation, TraceEnd;
+  local rotator CameraRotation;
+  local Material HitMaterial;
 
 	if (Level.GetEngine().EnableDevTools)
-        log( "...in SwatGamePlayerController::InternalMeleeAttack()" );
+        log( "...in SwatGamePlayerController::InternalMelee()" );
 
 	// We don't want the player to be able to melee if he's currently under
     // the influence of nonlethals.
@@ -2277,6 +2286,30 @@ simulated function InternalMelee()
   if(PendingItem != None && PendingItem != Item)
   {
     return;
+  }
+
+  // Determine if we are trying to check the lock or if we are trying to punch someone
+  CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
+  TraceEnd = vector(CameraRotation) * Item.MeleeRange;
+  foreach TraceActors(
+    class'Actor',
+    Candidate,
+    HitLocation,
+    HitNormal,
+    HitMaterial,
+    CameraLocation + TraceEnd,
+    CameraLocation
+    )
+  {
+    if(Candidate.IsA('SwatPawn'))
+    {
+      break; // We intend to melee.
+    }
+    else if(Candidate.IsA('SwatDoor'))
+    {
+      CheckDoorLock(SwatDoor(Candidate));
+      return;
+    }
   }
 
 	if (!Item.bAbleToMelee)
@@ -3428,6 +3461,21 @@ function ServerViewNextPlayer()
 }
 
 ///////////////////
+
+function DoorCannotBeLocked()
+{
+  ClientMessage("This door cannot be locked.", 'SpeechManagerNotification');
+}
+
+function DoorIsLocked()
+{
+  ClientMessage("The door is locked.", 'SpeechManagerNotification');
+}
+
+function DoorIsNotLocked()
+{
+  ClientMessage("The door is not locked.", 'SpeechManagerNotification');
+}
 
 function DoSetEndRoundTarget( Actor Target, string TargetName, bool TargetIsOnSWAT )
 {
