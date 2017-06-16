@@ -876,16 +876,8 @@ private event bool CanAssignOfficerToTarget(Pawn Officer, Pawn Target)
 			return true;
 		}
 
-		if(bIsTargetAThreat && Target.IsA('SwatEnemy'))
-		{
-			if(Officer.CanHit(Target))
-			{ // DO assign us if we can hit it and it is an enemy that is mean and threatening
-				return true;
-			}
-		}
-		else if(Officer.LineOfSightTo(Target))
-		{
-			// DO assign us if we have line of sight.
+		if(Officer.CanHit(Target) || Officer.LineOfSightTo(Target))
+		{ // DO assign us if we can hit the target or they are within LOS
 			return true;
 		}
 	}
