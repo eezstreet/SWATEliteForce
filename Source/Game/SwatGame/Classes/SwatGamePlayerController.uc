@@ -283,7 +283,7 @@ replication
 {
     // Things the server should send to the client
     reliable if ( bNetOwner && bNetDirty && (Role == ROLE_Authority) )
-        SwatPlayer;
+        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -3464,17 +3464,17 @@ function ServerViewNextPlayer()
 
 function DoorCannotBeLocked()
 {
-  ClientMessage("This door cannot be locked.", 'SpeechManagerNotification');
+  ClientMessage("[c=FFFFFF]This door cannot be locked.", 'SpeechManagerNotification');
 }
 
 function DoorIsLocked()
 {
-  ClientMessage("The door is locked.", 'SpeechManagerNotification');
+  ClientMessage("[c=FFFFFF]The door is locked.", 'SpeechManagerNotification');
 }
 
 function DoorIsNotLocked()
 {
-  ClientMessage("The door is not locked.", 'SpeechManagerNotification');
+  ClientMessage("[c=FFFFFF]The door is not locked.", 'SpeechManagerNotification');
 }
 
 function DoSetEndRoundTarget( Actor Target, string TargetName, bool TargetIsOnSWAT )
@@ -4460,10 +4460,10 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
         {
             myHUD.AddTextMessage(s, class'ChatTeamMessage', PRI);
         }
-		else
-		{
-	    	myHUD.Message( PRI, S, Type );
-		}
+    		else
+    		{
+    	    	myHUD.Message( PRI, S, Type );
+    		}
     }
 
     Player.Console.Message(S, 6.0);
