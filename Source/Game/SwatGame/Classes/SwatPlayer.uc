@@ -2051,7 +2051,7 @@ Begin:
 ////////////////////////////////////////////////////////////////////////////////
 
 simulated function Tick(float dTime) {
-  AdjustPlayerMovementSpeed();
+    AdjustPlayerMovementSpeed();
 }
 
 

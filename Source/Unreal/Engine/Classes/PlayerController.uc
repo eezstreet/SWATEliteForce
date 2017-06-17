@@ -2811,9 +2811,8 @@ event TravelPostAccept()
 
 event PlayerTick( float DeltaTime )
 {
-#if IG_SWAT
-    LastDeltaTime = DeltaTime;
-#endif
+	LastDeltaTime = DeltaTime;
+
 
 #if !IG_SHARED	// rowan: this is essentially a hack.. we handle this better now by explicitly precaching actors on the client
 	//if ( bForcePrecache && (Level.TimeSeconds > ForcePrecacheTime) )

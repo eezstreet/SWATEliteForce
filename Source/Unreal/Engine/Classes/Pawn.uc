@@ -891,17 +891,9 @@ simulated function vector CalcDrawOffset()
 
 	if ( Controller == None )
 		return (Hands.PlayerViewOffset >> Rotation) + BaseEyeHeight * vect(0,0,1);
-
-	EquippedItem = GetActiveItem();
-
-	if (EquippedItem.IsA('FiredWeapon'))
-	{
-		DrawOffset = ((90/FirstPersonFOV * EquippedItem.GetPlayerViewOffset()) >> GetViewRotation() );
-	}
-	else
-	{
-		DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
-	}
+	
+	DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
+	
 	if ( !IsLocallyControlled() )
 		DrawOffset.Z += BaseEyeHeight;
 	else
@@ -2919,6 +2911,7 @@ simulated event rotator ViewRotationOffset()
 
 simulated function vector ViewLocationOffset(Rotator CameraRotation)
 {
+	//return vect(sin(CameraRotation.Yaw), cos(CameraRotation.Yaw), 0);
     return vect(0,0,0);
 }
 
