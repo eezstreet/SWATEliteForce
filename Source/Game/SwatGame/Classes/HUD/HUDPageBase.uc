@@ -169,6 +169,15 @@ function OnGameStarted()
 
 function OnTick( float Delta )
 {
+  if(PlayerOwner().GetCrosshairDisabled() || bInCinematic)
+  {
+    Reticle.Hide();
+  }
+  else
+  {
+    Reticle.Show();
+  }
+
 	if (NumTicks >= 0)
 	{
 		NumTicks++;

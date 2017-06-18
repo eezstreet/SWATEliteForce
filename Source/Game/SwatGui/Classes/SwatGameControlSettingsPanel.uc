@@ -14,6 +14,10 @@ import enum eVoiceType from SwatGame.SwatGUIConfig;
 var(SWATGui) private EditInline Config GUIComboBox MyVoiceTypeBox;
 var(SWATGui) private EditInline Config GUIEditBox MyMPNameBox;
 
+var(SWATGui) private EditInline Config GUICheckBoxButton MyOldZoomCheckbox;
+var(SWATGui) private EditInline Config GUICheckBoxButton MyHideFPModelCheckbox;
+var(SWATGui) private EditInline Config GUICheckBoxButton MyHideCrosshairsCheckbox;
+var(SWATGui) private EditInline Config GUICheckBoxButton MyDisableInertiaCheckbox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyMouseSmoothingBox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyAlwaysRunCheck;
 var(SWATGui) private EditInline Config GUIComboBox MyNetSpeedBox;
@@ -58,6 +62,9 @@ var() private config localized string GCIOptionS4P3String;
 
 var() private float DefaultMouseSensitivity;
 
+var(MPSettings) config localized array<string> NetworkConnectionChoices "Choices for network connection";
+var(MPSettings) config           array<int>    NetworkConnectionSpeeds "Speeds for network connection";
+
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
@@ -67,9 +74,9 @@ function InitComponent(GUIComponent MyOwner)
     MyMPNameBox.MaxWidth = GC.MPNameLength;
     MyMPNameBox.AllowedCharSet = GC.MPNameAllowableCharSet;
 
-	for( i = 0; i < GC.NetworkConnectionChoices.Length; i++ )
+	for( i = 0; i < NetworkConnectionChoices.Length; i++ )
 	{
-    	MyNetSpeedBox.AddItem(GC.NetworkConnectionChoices[i],,,GC.NetworkConnectionSpeeds[i]);
+    	MyNetSpeedBox.AddItem(NetworkConnectionChoices[i],,,NetworkConnectionSpeeds[i]);
     }
     MyNetSpeedBox.SetIndex(0);
 
@@ -168,6 +175,11 @@ function SaveSettings()
     if( SwatGamePlayerController(PlayerOwner()) != None )
         SwatGamePlayerController(PlayerOwner()).SetAlwaysRun( GC.bAlwaysRun );
 
+    GC.bNoIronSights = MyOldZoomCheckbox.bChecked;
+    GC.bHideFPWeapon = MyHideFPModelCheckbox.bChecked;
+    GC.bHideCrosshairs = MyHideCrosshairsCheckbox.bChecked;
+    GC.bNoWeaponInertia = MyDisableInertiaCheckbox.bChecked;
+
 	GC.bShowCustomSkins = MyCustomSkinsCheck.bChecked;
 	//log("Saving, GC.bShowCustomSkins now"@GC.bShowCustomSkins);
 
@@ -214,6 +226,11 @@ function LoadSettings()
     MyAlwaysRunCheck.SetChecked( GC.bAlwaysRun );
 	MyCustomSkinsCheck.SetChecked( GC.bShowCustomSkins );
 	//log("GC.bShowCustomSkins is "$GC.bShowCustomSkins);
+
+    MyOldZoomCheckbox.SetChecked(GC.bNoIronSights);
+    MyHideFPModelCheckbox.SetChecked(GC.bHideFPWeapon);
+    MyHideCrosshairsCheckbox.SetChecked(GC.bHideCrosshairs);
+    MyDisableInertiaCheckbox.SetChecked(GC.bNoWeaponInertia);
 
     MouseXMultiplier = float(PlayerOwner().ConsoleCommand("Get WinDrv.WindowsClient MouseXMultiplier"));
     MouseYMultiplier = float(PlayerOwner().ConsoleCommand("Get WinDrv.WindowsClient MouseYMultiplier"));
@@ -311,4 +328,13 @@ defaultproperties
     GCIOptionS4P1String="Click [k=OpenGraphicCommandInterface | RightMouseAlias] to open menu"
     GCIOptionS4P2String="Click [k=OpenGraphicCommandInterface | RightMouseAlias] to select"
     GCIOptionS4P3String="Click [k=Fire] to cancel"
+
+    NetworkConnectionChoices[0]="Modem"
+    NetworkConnectionChoices[1]="ISDN"
+    NetworkConnectionChoices[2]="Cable/ADSL"
+    NetworkConnectionChoices[3]="LAN/T1"
+    NetworkConnectionSpeeds[0]=2600
+    NetworkConnectionSpeeds[1]=5000
+    NetworkConnectionSpeeds[2]=10000
+    NetworkConnectionSpeeds[3]=15000
 }

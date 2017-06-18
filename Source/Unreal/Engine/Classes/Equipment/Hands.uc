@@ -110,7 +110,7 @@ simulated function UpdateHandsForRendering()
         EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
         if (EquippedFirstPersonModel != None)
         {
-            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands;
+            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
         }
     }
 
@@ -129,7 +129,7 @@ simulated function UpdateHandsForRendering()
   	ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
 
   	//if the player is zooming, add the iron sight offset to the new location
-  	if (OwnerController != None && OwnerController.WantsZoom) {
+  	if (OwnerController != None && OwnerController.WantsZoom && !OwnerController.GetIronsightsDisabled()) {
   		AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
   		//NewRotation += EquippedItem.GetIronsightsRotationOffset();
   	} else {
@@ -158,26 +158,34 @@ simulated function UpdateHandsForRendering()
 
   	//interpolate towards our target location. inertia controls how quickly the weapon
   	//visually responds to our movements
-  	NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
+    if(!OwnerController.GetInertiaDisabled())
+    {
+      NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 
-  	if (ViewInertia > 0) {
-      Change = NewLocation - HandsPass[HandAnimationPass.HandPass_PreviousLocation];
-      Change *= (deltaTime / 0.016667);
-      NewLocation = (Change * 0.3628864620) + HandsPass[HandAnimationPass.HandPass_PreviousLocation];
-  	}
+    	if (ViewInertia > 0) {
+        Change = NewLocation - HandsPass[HandAnimationPass.HandPass_PreviousLocation];
+        Change *= (deltaTime / 0.016667);
+        NewLocation = (Change * 0.3628864620) + HandsPass[HandAnimationPass.HandPass_PreviousLocation];
+    	}
 
-    // Cap the maximum distance we can be away from the target location
-    Change = NewLocation - TargetLocation;
-    if(Change.x > 1.0) Change.x = 1.0;
-    else if(Change.x < -1.0) Change.x = -1.0;
-    if(Change.y > 1.0) Change.y = 1.0;
-    else if(Change.y < -1.0) Change.y = -1.0;
-    if(Change.z > 1.0) Change.z = 1.0;
-    else if(Change.z < -1.0) Change.z = -1.0;
+      // Cap the maximum distance we can be away from the target location
+      Change = NewLocation - TargetLocation;
+      if(Change.x > 1.0) Change.x = 1.0;
+      else if(Change.x < -1.0) Change.x = -1.0;
+      if(Change.y > 1.0) Change.y = 1.0;
+      else if(Change.y < -1.0) Change.y = -1.0;
+      if(Change.z > 1.0) Change.z = 1.0;
+      else if(Change.z < -1.0) Change.z = -1.0;
 
-    NewLocation = TargetLocation + Change;
+      NewLocation = TargetLocation + Change;
+    }
+    else
+    {
+      NewLocation = TargetLocation;
+    }
 
-  	bOwnerNoSee = !OwnerPawn.bRenderHands;
+
+  	bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
 
   	// Special-case exception: even if hands/weapon rendering is disabled,
   	// the hands and weapon should be shown when the optiwand is equipped

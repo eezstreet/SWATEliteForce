@@ -48,7 +48,7 @@ var bool	bBlockCloseCamera;
 var bool	bValidBehindCamera;
 var bool	bForcePrecache;
 var bool	bClientDemo;
-var public bool bSecondaryWeaponLast; // when true, last weapon equipped is the secondary weapon 
+var public bool bSecondaryWeaponLast; // when true, last weapon equipped is the secondary weapon
 var const bool bAllActorsRelevant;	// used by UTTV.  DO NOT SET THIS TRUE - it has a huge impact on network performance
 var bool	bShortConnectTimeOut;	// when true, reduces connect timeout to 15 seconds
 var bool	bPendingDestroy;		// when true, playercontroller is being destroyed
@@ -84,6 +84,7 @@ var int ShowFlags;
 var int ExShowFlags;
 #endif
 var int Misc1,Misc2;
+
 var int RendMap;
 var float        OrthoZoom;     // Orthogonal/map view zoom factor.
 var const actor ViewTarget;
@@ -270,7 +271,6 @@ var private Timer ManualFlushTimer;  // Timer used to trigger a manual "FLUSH" c
 #if IG_SWAT // dbeswick: stats
 var StatsInterface Stats;
 #endif
-
 
 replication
 {
@@ -5019,6 +5019,30 @@ exec function Suppress( string NameToSuppress )
 
 native function SuppressName( Name NameToSuppress );
 #endif
+
+function bool GetIronsightsDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetViewmodelDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetCrosshairDisabled()
+{
+	assert(false);
+	return false;
+}
+
+function bool GetInertiaDisabled()
+{
+	assert(false);
+	return false;
+}
 
 // =====================================================================================================================
 // =====================================================================================================================
