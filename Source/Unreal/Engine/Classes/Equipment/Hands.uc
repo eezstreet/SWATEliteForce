@@ -87,7 +87,7 @@ simulated function UpdateHandsForRendering()
     local PlayerController OwnerController;
     local vector TargetLocation;
     local float AnimationProgress;
-	  local float AnimationProgressChange;
+    local float AnimationProgressChange;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
@@ -95,8 +95,8 @@ simulated function UpdateHandsForRendering()
     local vector Offset;
     local float ViewInertia;
     local float ADSInertia;
-  	local vector Change;
-  	local float DeltaTime;
+    local vector Change;
+    local float DeltaTime;
     local vector Velocity, Acceleration;
 
     OwnerPawn = Pawn(Owner);
@@ -114,90 +114,89 @@ simulated function UpdateHandsForRendering()
         }
     }
 
-  	NewRotation = OwnerPawn.GetViewRotation();
+    NewRotation = OwnerPawn.GetViewRotation();
 
-  	//Location of the weapon if it stayed at our hip without any inertia or ADS effects
-  	TargetLocation =
-  		OwnerPawn.Location +
-  		OwnerPawn.CalcDrawOffset() +
-  		OwnerPawn.ViewLocationOffset(NewRotation);
+    //Location of the weapon if it stayed at our hip without any inertia or ADS effects
+    TargetLocation =
+    	OwnerPawn.Location +
+    	OwnerPawn.CalcDrawOffset() +
+    	OwnerPawn.ViewLocationOffset(NewRotation);
 
-  	AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
-  	//ViewInertia controls how much weapon sways when we move
-  	ViewInertia = EquippedItem.GetViewInertia();
-  	//ADSInertia controls how fast we aim down sight
-  	ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
+    AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
+    //ViewInertia controls how much weapon sways when we move
+    ViewInertia = EquippedItem.GetViewInertia();
+    //ADSInertia controls how fast we aim down sight
+    ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
 
-  	//if the player is zooming, add the iron sight offset to the new location
-  	if (OwnerController != None && OwnerController.WantsZoom && !OwnerController.GetIronsightsDisabled()) {
-  		AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
-  		//NewRotation += EquippedItem.GetIronsightsRotationOffset();
-  	} else {
-  		AnimationProgress = (AnimationProgress * ADSInertia + 0 * (1 - ADSInertia));
-  		//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
-  		//NewRotation += EquippedItem.GetDefaultRotationOffset();
-  		Offset = EquippedItem.GetDefaultLocationOffset();
-  	}
+    //if the player is zooming, add the iron sight offset to the new location
+    if (OwnerController != None && OwnerController.WantsZoom && !OwnerController.GetIronsightsDisabled()) {
+    	AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
+    	//NewRotation += EquippedItem.GetIronsightsRotationOffset();
+    } else {
+    	AnimationProgress = (AnimationProgress * ADSInertia + 0 * (1 - ADSInertia));
+    	//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
+    	//NewRotation += EquippedItem.GetDefaultRotationOffset();
+    	Offset = EquippedItem.GetDefaultLocationOffset();
+    }
 
-  	//scale animation position change based on framerate
-  	AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
-  	AnimationProgressChange = AnimationProgressChange * (deltaTime / 0.016667); //scale relative to 60fps
-  	AnimationProgress = EquippedItem.GetIronSightAnimationProgress() + AnimationProgressChange;
+    //scale animation position change based on framerate
+    AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
+    AnimationProgressChange = AnimationProgressChange * (deltaTime / 0.016667); //scale relative to 60fps
+    AnimationProgress = EquippedItem.GetIronSightAnimationProgress() + AnimationProgressChange;
 
-  	NewRotation = NewRotation
-  		+ EquippedItem.GetDefaultRotationOffset() * (1 - AnimationProgress)
-  		+ EquippedItem.GetIronsightsRotationOffset() * AnimationProgress;
+    NewRotation = NewRotation
+    	+ EquippedItem.GetDefaultRotationOffset() * (1 - AnimationProgress)
+    	+ EquippedItem.GetIronsightsRotationOffset() * AnimationProgress;
 
-  	EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
-  	//apply progress of iron sight animation
-  	Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress);
+    EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
+    //apply progress of iron sight animation
+    Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress);
 
-  	//this converts local offset to world coordinates
-  	Offset = Offset >> NewRotation;
-  	TargetLocation = TargetLocation + Offset;
+    //this converts local offset to world coordinates
+    Offset = Offset >> NewRotation;
+    TargetLocation = TargetLocation + Offset;
 
-  	//interpolate towards our target location. inertia controls how quickly the weapon
-  	//visually responds to our movements
+    //interpolate towards our target location. inertia controls how quickly the weapon
+    //visually responds to our movements
     if(!OwnerController.GetInertiaDisabled())
     {
-      NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
+        NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 
-    	if (ViewInertia > 0) {
-        Change = NewLocation - HandsPass[HandAnimationPass.HandPass_PreviousLocation];
-        Change *= (deltaTime / 0.016667);
-        NewLocation = (Change * 0.3628864620) + HandsPass[HandAnimationPass.HandPass_PreviousLocation];
-    	}
+        if (ViewInertia > 0) {
+            Change = NewLocation - HandsPass[HandAnimationPass.HandPass_PreviousLocation];
+            Change *= (deltaTime / 0.016667);
+            NewLocation = (Change * 0.3628864620) + HandsPass[HandAnimationPass.HandPass_PreviousLocation];
+        }
 
-      // Cap the maximum distance we can be away from the target location
-      Change = NewLocation - TargetLocation;
-      if(Change.x > 1.0) Change.x = 1.0;
-      else if(Change.x < -1.0) Change.x = -1.0;
-      if(Change.y > 1.0) Change.y = 1.0;
-      else if(Change.y < -1.0) Change.y = -1.0;
-      if(Change.z > 1.0) Change.z = 1.0;
-      else if(Change.z < -1.0) Change.z = -1.0;
+        // Cap the maximum distance we can be away from the target location
+        Change = NewLocation - TargetLocation;
+        if(Change.x > 1.0) Change.x = 1.0;
+        else if(Change.x < -1.0) Change.x = -1.0;
+        if(Change.y > 1.0) Change.y = 1.0;
+        else if(Change.y < -1.0) Change.y = -1.0;
+        if(Change.z > 1.0) Change.z = 1.0;
+        else if(Change.z < -1.0) Change.z = -1.0;
 
-      NewLocation = TargetLocation + Change;
+        NewLocation = TargetLocation + Change;
     }
     else
     {
-      NewLocation = TargetLocation;
+        NewLocation = TargetLocation;
     }
 
+    bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
 
-  	bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
-
-  	// Special-case exception: even if hands/weapon rendering is disabled,
-  	// the hands and weapon should be shown when the optiwand is equipped
-  	// (otherwise you can't see the optiwand screen)
-  	if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
-  	{
-  		if (EquippedFirstPersonModel != None)
-  		{
-  			EquippedFirstPersonModel.bOwnerNoSee = false;
-  		}
-  		bOwnerNoSee = false;
-  	}
+    // Special-case exception: even if hands/weapon rendering is disabled,
+    // the hands and weapon should be shown when the optiwand is equipped
+    // (otherwise you can't see the optiwand screen)
+    if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
+    {
+        if (EquippedFirstPersonModel != None)
+        {
+            EquippedFirstPersonModel.bOwnerNoSee = false;
+        }
+        bOwnerNoSee = false;
+    }
 
     SetLocation(NewLocation);
     SetRotation(NewRotation);
