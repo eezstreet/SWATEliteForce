@@ -1307,6 +1307,13 @@ simulated function float GetViewInertia()
 	return Inertia;
 }
 
+simulated function float GetMaxInertiaOffset() 
+{
+	local float Offset;
+	
+	return Offset;
+}
+
 simulated function float GetIronSightAnimationProgress()
 {
 	local float IronSightAnimationPosition;

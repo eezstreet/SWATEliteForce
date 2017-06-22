@@ -137,6 +137,7 @@ var config Rotator IronSightRotationOffset;
 var config Rotator PlayerViewRotation;
 var config float ZoomedAimErrorModifier;
 var config float ViewInertia;
+var config float MaxInertiaOffset;
 
 //a bit of a hack since we can't add vars to Hands.uc - K.F.
 var float IronSightAnimationProgress;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
@@ -297,6 +298,11 @@ simulated function Rotator GetIronsightsRotationOffset()
 simulated function float GetViewInertia() 
 {
 	return ViewInertia;
+}
+
+simulated function float GetMaxInertiaOffset() 
+{
+	return MaxInertiaOffset;
 }
 
 simulated function float GetIronSightAnimationProgress() 

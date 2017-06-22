@@ -98,6 +98,7 @@ simulated function UpdateHandsForRendering()
     local vector Change;
     local float DeltaTime;
     local vector Velocity, Acceleration;
+	local float MaxInertiaOffset;
 
     OwnerPawn = Pawn(Owner);
     OwnerController = PlayerController(OwnerPawn.Controller);
@@ -125,7 +126,9 @@ simulated function UpdateHandsForRendering()
     AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
     //ViewInertia controls how much weapon sways when we move
     ViewInertia = EquippedItem.GetViewInertia();
-    //ADSInertia controls how fast we aim down sight
+    //MaxInertiaOffset limits how far the weapon can sway from center
+    MaxInertiaOffset = EquippedItem.GetMaxInertiaOffset();
+    //ADSInertia controls how fast we aim down sight. We set it by scaling the ViewInertia.
     ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
 
     //if the player is zooming, add the iron sight offset to the new location
@@ -163,19 +166,19 @@ simulated function UpdateHandsForRendering()
         NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 
         if (ViewInertia > 0) {
-            Change = NewLocation - HandsPass[HandAnimationPass.HandPass_PreviousLocation];
+            Change = NewLocation - Location;
             Change *= (deltaTime / 0.016667);
-            NewLocation = (Change * 0.3628864620) + HandsPass[HandAnimationPass.HandPass_PreviousLocation];
+            NewLocation = Location + Change;
         }
 
         // Cap the maximum distance we can be away from the target location
         Change = NewLocation - TargetLocation;
-        if(Change.x > 1.0) Change.x = 1.0;
-        else if(Change.x < -1.0) Change.x = -1.0;
-        if(Change.y > 1.0) Change.y = 1.0;
-        else if(Change.y < -1.0) Change.y = -1.0;
-        if(Change.z > 1.0) Change.z = 1.0;
-        else if(Change.z < -1.0) Change.z = -1.0;
+        if(Change.x > MaxInertiaOffset) Change.x = MaxInertiaOffset;
+        else if(Change.x < -MaxInertiaOffset) Change.x = -MaxInertiaOffset;
+        if(Change.y > MaxInertiaOffset) Change.y = MaxInertiaOffset;
+        else if(Change.y < -MaxInertiaOffset) Change.y = -MaxInertiaOffset;
+        if(Change.z > MaxInertiaOffset) Change.z = MaxInertiaOffset;
+        else if(Change.z < -MaxInertiaOffset) Change.z = -MaxInertiaOffset;
 
         NewLocation = TargetLocation + Change;
     }
@@ -200,8 +203,6 @@ simulated function UpdateHandsForRendering()
 
     SetLocation(NewLocation);
     SetRotation(NewRotation);
-    HandsPass[HandAnimationPass.HandPass_PreviousLocation] = NewLocation;
-    HandsPass[HandAnimationPass.HandPass_PreviousAngles] = vector(NewRotation);
 }
 
 simulated function OnEquipKeyFrame()
