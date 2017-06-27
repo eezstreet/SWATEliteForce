@@ -275,6 +275,7 @@ const MaxAIWaitForEffectEventToFinish = 10.0;
 var private Name CurrentEffectEventName;
 var private int CurrentSeed;
 var private bool bEffectEventStillPlaying;
+var private bool bDebugSensor;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1989,7 +1990,7 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 	return PaintballAimRotation;
 }
 
-simulated native function vector GetAimOrigin();
+//simulated native function vector GetAimOrigin();
 
 function SetAimUrgency(bool Fast)
 {
@@ -2008,7 +2009,60 @@ function SetAimUrgency(bool Fast)
 }
 
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
-native event bool CanHit(Actor Target);
+
+//
+//native event bool CanHit(Actor Target);
+//
+// Whatever Irrational did with this function, we don't know because it's native...
+// However, it's not correct because SWAT will very frequently not hit their target.
+
+simulated function SEFDebugSensor()
+{
+  bDebugSensor = !bDebugSensor;
+}
+
+event bool CanHit(Actor Target)
+{
+  local FiredWeapon TheWeapon;
+  local bool Value;
+  local vector MuzzleLocation, EndTrace;
+  local rotator MuzzleDirection;
+
+  TheWeapon = FiredWeapon(GetActiveItem());
+
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, TheWeapon.bIsLessLethal))
+  {
+    Value = false;
+  }
+  else
+  {
+    Value = true;
+  }
+
+  if(bDebugSensor)
+  {
+    TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+    EndTrace = Target.Location;
+
+    if(!TheWeapon.bIsLessLethal)
+    {
+      // Don't do this if we're using a less lethal weapon.
+      // In practice it makes DEPLOY TASER etc actions come up close to the target and maybe not hit them
+      EndTrace.Z += (BaseEyeHeight / 2);
+    }
+
+    if(Value)
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+    }
+    else
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+    }
+  }
+
+  return Value;
+}
 
 function bool HasUsableWeapon()
 {

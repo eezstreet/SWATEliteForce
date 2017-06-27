@@ -263,7 +263,8 @@ replication
 {
     reliable if (Role == Role_Authority)
         bIsLocked, bIsBroken, ReasonForMove, LockedKnowledge,
-        DeployedWedge, DeployedC2ChargeLeft, DeployedC2ChargeRight;
+        DeployedWedge, DeployedC2ChargeLeft, DeployedC2ChargeRight,
+				Broken, Blasted;
 }
 ///////////////////////////
 
@@ -673,6 +674,36 @@ simulated function OnUnlocked()
     }
 }
 
+simulated function TryDoorLock(SwatGamePlayerController Caller)
+{
+	if(!bCanBeLocked)
+	{
+		Caller.DoorCannotBeLocked();
+		return;
+	}
+
+	if(bIsLocked)
+	{
+		BroadcastEffectEvent('LockedDoorTried');
+		UpdateOfficerDoorKnowledge(true);
+		Caller.DoorIsLocked();
+
+		LockedKnowledge[0] = 1;
+		LockedKnowledge[1] = 1;
+		LockedKnowledge[2] = 1;
+	}
+	else
+	{
+		BroadcastEffectEvent('Unlocked');
+		UpdateOfficerDoorKnowledge(false);
+		Caller.DoorIsNotLocked();
+
+		LockedKnowledge[0] = 0;
+		LockedKnowledge[1] = 0;
+		LockedKnowledge[2] = 0;
+	}
+}
+
 // FIXME: there might be more that's required to get this to work correctly..?
 simulated function OnDoorLockedByOperator() {
 	if(bIsLocked) {
@@ -966,7 +997,7 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 
 
 // Note: In multiplayer function Blasted only happens on the server
-function Blasted(Pawn Instigator)
+simulated function Blasted(Pawn Instigator)
 {
     SetPositionForMove( CurrentPosition, MR_Blasted );	//We want the lock to be obliterated, but we dont want the door to swing open
 		Broken();

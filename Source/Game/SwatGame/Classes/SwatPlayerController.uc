@@ -197,6 +197,42 @@ exec function Suicide()
 #endif // DISALLOW_SUICIDE
 }
 
+function bool GetIronsightsDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bNoIronSights;
+}
+
+function bool GetViewmodelDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bHideFPWeapon;
+}
+
+function bool GetCrosshairDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bHideCrosshairs;
+}
+
+function bool GetInertiaDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bNoWeaponInertia;
+}
+
 //overridden from Engine.PlayerController
 exec function SetName( coerce string S)
 {

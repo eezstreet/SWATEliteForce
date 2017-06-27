@@ -2,8 +2,26 @@
 class Shotgun extends RoundBasedWeapon;
 ///////////////////////////////////////////////////////////////////////////////
 
-var float WoodBreachingChance;
-var float MetalBreachingChance;
+var config float WoodBreachingChance;
+var config float MetalBreachingChance;
+
+function bool ShouldBreach(float BreachingChance)
+{
+  return FRand() < BreachingChance;
+}
+
+function bool ShouldPenetrateMaterial(float BreachingChance)
+{
+  local ShotgunAmmo ShotgunAmmo;
+
+  ShotgunAmmo = ShotgunAmmo(Ammo);
+  assertWithDescription(ShotgunAmmo != None, "[eezstreet] Shotgun "$self$" is not using ShotgunAmmo!");
+
+  if(!ShotgunAmmo.WillPenetrateDoor())
+    return false;
+
+  return FRand() < BreachingChance;
+}
 
 simulated function bool HandleBallisticImpact(
     Actor Victim,
@@ -21,35 +39,46 @@ simulated function bool HandleBallisticImpact(
 	local vector PlayerToDoor;
 	local float MaxDoorDistance;
 	local float BreachingChance;
-	
-	MaxDoorDistance = 99.45;		//1.5 meters in UU
-	PlayerToDoor = HitLocation - Owner.Location;
 
-	switch (HitMaterial.MaterialVisualType)
-	{
-	case MVT_ThinMetal:
-	case MVT_ThickMetal:
-	case MVT_Default:
-		BreachingChance = MetalBreachingChance;
-		break;
-	case MVT_Wood:
-		BreachingChance = WoodBreachingChance;
-		break;
-	default:
-		BreachingChance = 0;
-		break;
-	}
-	
-    if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && FRand() < BreachingChance )
+  if(Role == Role_Authority)  // ONLY do this on the server!!
+  {
+      MaxDoorDistance = 99.45;		//1.5 meters in UU
+    	PlayerToDoor = HitLocation - Owner.Location;
+
+    	switch (HitMaterial.MaterialVisualType)
+    	{
+    	case MVT_ThinMetal:
+    	case MVT_ThickMetal:
+    	case MVT_Default:
+    		BreachingChance = MetalBreachingChance;
+    		break;
+    	case MVT_Wood:
+    		BreachingChance = WoodBreachingChance;
+    		break;
+    	default:
+    		BreachingChance = 0;
+    		break;
+    	}
+
+      if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && ShouldBreach(BreachingChance) )
+      {
         IHaveSkeletalRegions(Victim).OnSkeletalRegionHit(
-                HitRegion, 
-                HitLocation, 
-                HitNormal, 
+                HitRegion,
+                HitLocation,
+                HitNormal,
                 0,                  //damage: unimportant for breaching a door
-                GetDamageType(), 
+                GetDamageType(),
                 Owner);
+        if(!ShouldPenetrateMaterial(BreachingChance))
+        {
+          Momentum = 0; // All of the momentum is lost
+        }
+      }
 
-    return Super.HandleBallisticImpact(
+  }
+
+  // We should still consider it to have ballistic impacts
+  return Super.HandleBallisticImpact(
         Victim,
         HitLocation,
         HitNormal,

@@ -213,6 +213,15 @@ exec function DebugPathLines()
     }
 }
 
+exec function SEFDebugSensor()
+{
+  local SwatAI SwatAI;
+  foreach AllActors(class 'SwatAI', SwatAI)
+  {
+    SwatAI.SEFDebugSensor();
+  }
+}
+
 
 exec function DebugAIs()
 {

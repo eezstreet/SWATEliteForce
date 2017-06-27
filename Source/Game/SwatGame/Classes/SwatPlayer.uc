@@ -160,6 +160,14 @@ replication
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+//
+simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
+{
+  return LoadOut.GetTacticalAidAvailableCount(Slot);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // IAmAffectedByWeight implementation
 simulated function float GetTotalWeight() {
   return LoadOut.GetTotalWeight();
@@ -1947,8 +1955,17 @@ simulated state ThrowingFinish
         //    $", ThrowHeldTime="$ThrowHeldTime
         //    $".  ThrowSpeedTimeFactor * ThrowHeldTime = "$ThrowSpeedTimeFactor * ThrowHeldTime
         //    $", FClamp(ThrowSpeedTimeFactor * ThrowHeldTime, ThrowSpeedRange.Min, ThrowSpeedRange.Max) = "$FClamp(ThrowSpeedTimeFactor * ThrowHeldTime, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
-        ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
-        ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+        if(ThrownWeapon.IsA('Lightstick'))
+        {
+          // Lightsticks can be dropped at the feet. Grenades, not so much.
+          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, ThrowSpeedRange.Max));
+        }
+        else
+        {
+          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+        }
     }
 
     simulated function EndState()
@@ -2034,7 +2051,7 @@ Begin:
 ////////////////////////////////////////////////////////////////////////////////
 
 simulated function Tick(float dTime) {
-  AdjustPlayerMovementSpeed();
+    AdjustPlayerMovementSpeed();
 }
 
 

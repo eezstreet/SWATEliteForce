@@ -1,4 +1,4 @@
-class Hands extends Actor     
+class Hands extends Actor
     implements ICanHoldEquipment, ICanThrowWeapons
     native
     config(SwatGame);
@@ -8,14 +8,34 @@ var config vector PlayerViewOffset; //offset from view center
 
 var protected config array<string> AnimationGroups;
 
+// Moved into HandsConfig so this can be freed up for more important things --eez
+/*
 var config float MinimumLongThrowSpeed;         //if a ThrownWeapon is thrown at a speed less than this, then the 'short' animations are played, otherwise, 'long' animations are used
 
 var config name ThrowShortAnimation;
 var config name ThrowLongAnimation;
 
 var config name PreThrowAnimation;      //a pull-pin-and-raise-grenade animation
+*/
+
+/*
+ * This is a ginormous hack, but basically we need to pack a ton of information into a little space.
+ * Hence, this mess!
+ * The HandPass array contains a lot of information that we need to animate the viewmodel correctly.
+ * See the comment on each one for what they do.
+ */
+enum HandAnimationPass
+{
+  HandPass_PreviousLocation,
+  HandPass_PreviousAngles,
+};
+
+var protected array<vector> HandsPass;
+var protected int NotUsed;
+
 var config float PreThrowTweenTime;
 var config float PreThrowRootBone;
+
 
 var private bool bIsLowReady;
 var private float NextIdleTweenTime;    //next time we play an idle, play with this tween time.  PLEASE only set with SetNextIdleTweenTime()
@@ -41,7 +61,7 @@ simulated event PostNetBeginPlay()
 {
     Super.PostNetBeginPlay();
 
-    // Register to be notified when the level is about to render, so we can 
+    // Register to be notified when the level is about to render, so we can
     // render the first person model, if necessary.
 
     // Because our first person hands rely on registerClientMessage() to
@@ -55,116 +75,133 @@ simulated event PostNetBeginPlay()
 
 simulated function onMessage(Message m)
 {
-    // NOTE: we don't check the class of 'm' because we only register to 
-    // receive one kind of message (MessagePreRender, done in 
-    // PostNetBeginPlay()) 
-    UpdateHandsForRendering();
-} 
+    // NOTE: we don't check the class of 'm' because we only register to
+    // receive one kind of message (MessagePreRender, done in
+    // PostNetBeginPlay())
+	UpdateHandsForRendering();
+}
 
 simulated function UpdateHandsForRendering()
 {
-    local Pawn PawnOwner;
-	local PlayerController OwnerController;
+    local Pawn OwnerPawn;
+    local PlayerController OwnerController;
+    local vector TargetLocation;
+    local float AnimationProgress;
+    local float AnimationProgressChange;
     local vector NewLocation;
     local rotator NewRotation;
     local HandheldEquipmentModel EquippedFirstPersonModel;
     local HandheldEquipment EquippedItem;
-    
-    PawnOwner = Pawn(Owner);
-    if (PawnOwner == None)
-    {
-        AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
-    }
+    local vector Offset;
+    local float ViewInertia;
+    local float ADSInertia;
+    local vector Change;
+    local float DeltaTime;
+    local vector Velocity, Acceleration;
+	local float MaxInertiaOffset;
 
-	NewRotation = PawnOwner.GetViewRotation();
+    OwnerPawn = Pawn(Owner);
+    OwnerController = PlayerController(OwnerPawn.Controller);
+    DeltaTime = OwnerController.LastDeltaTime;
+    HandsPass.Length = HandAnimationPass.EnumCount;
 
-	NewLocation = 
-		PawnOwner.Location + 
-		PawnOwner.CalcDrawOffset() + 
-		PawnOwner.ViewLocationOffset(NewRotation);
-		
-    // Implement "showhands" command in SwatCheatManager.
-    // Native code sets bHidden on hands/gun every tick, so we hide
-    // the hands in native code. But we need to hide/show the first person
-    // model each tick here.
-    EquippedItem = PawnOwner.GetActiveItem();
+    EquippedItem = OwnerPawn.GetActiveItem();
     if (EquippedItem != None)
     {
         EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
         if (EquippedFirstPersonModel != None)
         {
-            EquippedFirstPersonModel.bOwnerNoSee = !PawnOwner.bRenderHands;        
+            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
         }
     }
 
-    bOwnerNoSee = !PawnOwner.bRenderHands;
+    NewRotation = OwnerPawn.GetViewRotation();
 
-	// Special-case exception: even if hands/weapon rendering is disabled,
-	// the hands and weapon should be shown when the optiwand is equipped
-	// (otherwise you can't see the optiwand screen)
-	if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
-	{
-		if (EquippedFirstPersonModel != None)
-		{
-			EquippedFirstPersonModel.bOwnerNoSee = false;        
-		}
-		bOwnerNoSee = false;
-	}
+    //Location of the weapon if it stayed at our hip without any inertia or ADS effects
+    TargetLocation =
+    	OwnerPawn.Location +
+    	OwnerPawn.CalcDrawOffset() +
+    	OwnerPawn.ViewLocationOffset(NewRotation);
 
-	SetLocation(NewLocation);
-    SetRotation(NewRotation);
-}
+    AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
+    //ViewInertia controls how much weapon sways when we move
+    ViewInertia = EquippedItem.GetViewInertia();
+    //MaxInertiaOffset limits how far the weapon can sway from center
+    MaxInertiaOffset = EquippedItem.GetMaxInertiaOffset();
+    //ADSInertia controls how fast we aim down sight. We set it by scaling the ViewInertia.
+    ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
 
-simulated function UpdateHandsForRenderingWithZoom()
-{
-    local Pawn PawnOwner;
-    local vector NewLocation;
-    local rotator NewRotation;
-    local HandheldEquipmentModel EquippedFirstPersonModel;
-    local HandheldEquipment EquippedItem;
-    
-    PawnOwner = Pawn(Owner);
-    if (PawnOwner == None)
+    //if the player is zooming, add the iron sight offset to the new location
+    if (OwnerController != None && OwnerController.WantsZoom && !OwnerController.GetIronsightsDisabled()) {
+    	AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
+    	//NewRotation += EquippedItem.GetIronsightsRotationOffset();
+    } else {
+    	AnimationProgress = (AnimationProgress * ADSInertia + 0 * (1 - ADSInertia));
+    	//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
+    	//NewRotation += EquippedItem.GetDefaultRotationOffset();
+    	Offset = EquippedItem.GetDefaultLocationOffset();
+    }
+
+    //scale animation position change based on framerate
+    AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
+    AnimationProgressChange = AnimationProgressChange * (deltaTime / 0.016667); //scale relative to 60fps
+    AnimationProgress = EquippedItem.GetIronSightAnimationProgress() + AnimationProgressChange;
+
+    NewRotation = NewRotation
+    	+ EquippedItem.GetDefaultRotationOffset() * (1 - AnimationProgress)
+    	+ EquippedItem.GetIronsightsRotationOffset() * AnimationProgress;
+
+    EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
+    //apply progress of iron sight animation
+    Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress);
+
+    //this converts local offset to world coordinates
+    Offset = Offset >> NewRotation;
+    TargetLocation = TargetLocation + Offset;
+
+    //interpolate towards our target location. inertia controls how quickly the weapon
+    //visually responds to our movements
+    if(!OwnerController.GetInertiaDisabled())
     {
-        AssertWithDescription(false,"[tcohen] Hands.UpdateHandsForRendering() was called, but its Owner wasn't a Pawn.");
-    }	
-	NewRotation = PawnOwner.GetViewRotation();
+        NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 
-	NewLocation = 
-		PawnOwner.Location + 
-		PawnOwner.CalcDrawOffset() + 
-		PawnOwner.ViewLocationOffset(NewRotation) +
-		EquippedItem.GetIronsightsLocationOffset();
-		
-    // Implement "showhands" command in SwatCheatManager.
-    // Native code sets bHidden on hands/gun every tick, so we hide
-    // the hands in native code. But we need to hide/show the first person
-    // model each tick here.
-    EquippedItem = PawnOwner.GetActiveItem();
-    if (EquippedItem != None)
+        if (ViewInertia > 0) {
+            Change = NewLocation - Location;
+            Change *= (deltaTime / 0.016667);
+            NewLocation = Location + Change;
+        }
+
+        // Cap the maximum distance we can be away from the target location
+        Change = NewLocation - TargetLocation;
+        if(Change.x > MaxInertiaOffset) Change.x = MaxInertiaOffset;
+        else if(Change.x < -MaxInertiaOffset) Change.x = -MaxInertiaOffset;
+        if(Change.y > MaxInertiaOffset) Change.y = MaxInertiaOffset;
+        else if(Change.y < -MaxInertiaOffset) Change.y = -MaxInertiaOffset;
+        if(Change.z > MaxInertiaOffset) Change.z = MaxInertiaOffset;
+        else if(Change.z < -MaxInertiaOffset) Change.z = -MaxInertiaOffset;
+
+        NewLocation = TargetLocation + Change;
+    }
+    else
     {
-        EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
+        NewLocation = TargetLocation;
+    }
+
+    bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
+
+    // Special-case exception: even if hands/weapon rendering is disabled,
+    // the hands and weapon should be shown when the optiwand is equipped
+    // (otherwise you can't see the optiwand screen)
+    if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
+    {
         if (EquippedFirstPersonModel != None)
         {
-            EquippedFirstPersonModel.bOwnerNoSee = !PawnOwner.bRenderHands;        
+            EquippedFirstPersonModel.bOwnerNoSee = false;
         }
+        bOwnerNoSee = false;
     }
 
-    bOwnerNoSee = !PawnOwner.bRenderHands;
-
-	// Special-case exception: even if hands/weapon rendering is disabled,
-	// the hands and weapon should be shown when the optiwand is equipped
-	// (otherwise you can't see the optiwand screen)
-	if (bOwnerNoSee && EquippedItem.IsA('Optiwand'))
-	{
-		if (EquippedFirstPersonModel != None)
-		{
-			EquippedFirstPersonModel.bOwnerNoSee = false;        
-		}
-		bOwnerNoSee = false;
-	}
-
-	SetLocation(NewLocation);
+    SetLocation(NewLocation);
     SetRotation(NewRotation);
 }
 
@@ -172,42 +209,36 @@ simulated function OnEquipKeyFrame()
 {
 //    log( self$" in Hands::OnEquipKeyFrame()" );
     Pawn(Owner).OnEquipKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnUnequipKeyFrame()
 {
 //    log( self$" in Hands::OnUnequipKeyFrame()" );
     Pawn(Owner).OnUnequipKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnUseKeyFrame()
 {
 //    log( self$" in Hands::OnUseKeyFrame()" );
     Pawn(Owner).OnUseKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnLightstickKeyFrame()
 {
 //    log( self$" in Hands::OnUseKeyFrame()" );
     Pawn(Owner).OnLightstickKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnMeleeKeyFrame()
 {
 //    log( self$" in Hands::OnMeleeKeyFrame()" );
     Pawn(Owner).OnMeleeKeyFrame();
-    UpdateHandsForRendering();
 }
 
 simulated function OnReloadKeyFrame()
 {
 //    log( self$" in Hands::OnReloadKeyFrame()" );
     Pawn(Owner).OnReloadKeyFrame();
-    UpdateHandsForRendering();
 }
 
 //hands idle
@@ -215,7 +246,6 @@ event AnimEnd( int Channel )
 {
     if (Level.GetLocalPlayerController().HandsShouldIdle())
         IdleHoldingEquipment();
-		UpdateHandsForRendering();
 }
 
 //activeItem should be non-None and Idle
@@ -227,6 +257,8 @@ simulated function IdleHoldingEquipment()
     local HandheldEquipmentModel Model;
     local HandheldEquipment theActiveItem;
     local float SavedTweenTime;
+    local Pawn OwnerPawn;
+    local PlayerController OwnerController;
 
     //only use a tween time once each time it is set
     SavedTweenTime = NextIdleTweenTime;
@@ -236,8 +268,20 @@ simulated function IdleHoldingEquipment()
     if ( theActiveItem == None )
         return;
 
+	//if the player is zooming, don't play the idle animation unless it changes our lowReady state
+	OwnerPawn = Pawn(Owner);
+	//if SavedTweenTime is 0, this is a generic idle animation, not a lowReady transitioning
+	if (SavedTweenTime == 0 && OwnerPawn != None)
+	{
+		OwnerController = PlayerController(OwnerPawn.Controller);
+		if (OwnerController != None && OwnerController.WantsZoom)
+		{
+			return;
+		}
+	}
+
     Model = theActiveItem.GetFirstPersonModel();
-    
+
     if (bIsLowReady && Model.HolderLowReadyIdleAnimation != '')
     {
         if (Model.HolderDisorientedLowReadyIdleAnimation != '' && ICanBeArrested(Owner).CanBeArrestedNow())
@@ -251,18 +295,18 @@ simulated function IdleHoldingEquipment()
     {
         if (Model.HolderIdleAnimations.length == 0)
             return;
-        
+
         RandChance = Rand(Model.IdleChanceSum);
 
         //find the selected
         for (i=0; i<Model.HolderIdleAnimations.length; ++i)
         {
             AccumulatedChance += Model.HolderIdleAnimations[i].Chance;
-            
+
             if (AccumulatedChance >= RandChance)
             {
                 PlayNewAnim(
-                    Model.HolderIdleAnimations[i].Animation, 
+                    Model.HolderIdleAnimations[i].Animation,
                     1.0,                   //Rate
                     SavedTweenTime);    //support tween times for quick low-ready transitions
                 return;
@@ -278,7 +322,6 @@ function PlayNewAnim(name Sequence, float Rate, float TweenTime)
 {
     if (!IsAnimating() || GetAnimName() != Sequence)
         PlayAnim(Sequence, Rate, TweenTime);
-		UpdateHandsForRendering();
 }
 
 //called by SwatPlayer::SetLowReady() only when low-ready changes
@@ -288,13 +331,11 @@ function SetLowReady(bool bEnable)
         return;
 
     bIsLowReady = bEnable;
-    UpdateHandsForRendering();
 
     if (Level.GetLocalPlayerController().HandsShouldIdle())
     {
         SetNextIdleTweenTime(0.2);  //we're immediately transitioning, so tween
         IdleHoldingEquipment();
-		UpdateHandsForRendering();
     }
 }
 
@@ -348,17 +389,16 @@ simulated function float GetPawnThrowTweenTime()
 
 simulated function name GetPreThrowAnimation()
 {
-    return PreThrowAnimation;
+    return class'HandsConfig'.default.PreThrowAnimation;
 }
 
 simulated function name GetThrowAnimation(float ThrowSpeed)
 {
-    if (ThrowSpeed < MinimumLongThrowSpeed)
-        return ThrowShortAnimation;
+    if (ThrowSpeed < class'HandsConfig'.default.MinimumLongThrowSpeed)
+        return class'HandsConfig'.default.ThrowShortAnimation;
     else
-        return ThrowLongAnimation;
+        return class'HandsConfig'.default.ThrowLongAnimation;
 }
-
 
 simulated function SetMaterialForHands( Material NewMaterial )
 {
@@ -368,7 +408,7 @@ simulated function SetMaterialForHands( Material NewMaterial )
 
 cpptext
 {
-    // Automatically updates the correct value of bOwnerNoSee based on 
+    // Automatically updates the correct value of bOwnerNoSee based on
     // the current view.
     virtual UBOOL Tick( FLOAT DeltaSeconds, ELevelTick TickType );
     virtual void PreRenderCallback(UBOOL MainScene, FLevelSceneNode* SceneNode, FRenderInterface* RI);
@@ -381,7 +421,7 @@ defaultproperties
 
     DrawType=DT_Mesh
     Mesh=SkeletalMesh'FP_Hand2.1stPersonHand'
-    
+
     bOwnerNoSee=false
 
     // Don't replicate. All hands are local to the machine on which they

@@ -283,7 +283,7 @@ replication
 {
     // Things the server should send to the client
     reliable if ( bNetOwner && bNetDirty && (Role == ROLE_Authority) )
-        SwatPlayer;
+        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -308,7 +308,9 @@ replication
         ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
-		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo;
+		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
+        ServerViewportActivate, ServerViewportDeactivate,
+        ServerHandleViewportFire, ServerHandleViewportReload;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -889,6 +891,7 @@ simulated function BeginLowReadyRefractoryPeriod()
 
 //////////////////////////////////////////////////////
 
+// Only ever used for the Optiwand
 simulated event InitiateViewportUse( IControllableViewport inNewViewport )
 {
     if ( Level.NetMode == NM_Standalone )
@@ -1003,6 +1006,8 @@ function ServerRequestViewportChange( bool ActivateActiveItemViewport )
 {
     local HandheldEquipment theActiveItem;
 
+    log("SwatGamePlayerController::ServerRequestViewportChange("$ActivateActiveItemViewport$")");
+
     // Don't ever activate if we're non-lethaled!
     if ( SwatPlayer.IsNonLethaled() && ActivateActiveItemViewport )
         return;
@@ -1028,13 +1033,15 @@ function ServerRequestViewportChange( bool ActivateActiveItemViewport )
     }
 
     if (Level.GetEngine().EnableDevTools)
-        mplog( "ServerRequestUseOptiwand on: "$Self$" ActiveViewport is: "$ActiveViewport );
+        log( "ServerRequestUseOptiwand on: "$Self$" ActiveViewport is: "$ActiveViewport );
 }
 
 
 simulated function ClientViewportChange( bool ActivateActiveItemViewport )
 {
     local HandheldEquipment theActiveItem;
+
+    mplog("ClientViewportChange("$ActivateActiveItemViewport$")");
 
     if (Level.GetEngine().EnableDevTools)
         mplog( self$"---SGPC::ClientViewportChange()." );
@@ -1055,19 +1062,42 @@ simulated function ClientViewportChange( bool ActivateActiveItemViewport )
     }
 }
 
+// Called on the server side
+simulated function ServerViewportActivate(name StateName, Actor ControllableViewport)
+{
+  ActiveViewport = ViewportManager;
+
+  GotoState(StateName);
+}
+
+simulated function ServerViewportDeactivate()
+{
+  EndState();
+}
 
 // Set the activate viewport and pipe commands into it
+// Usually occurs on the client only!
 simulated event ActivateViewport(IControllableViewport inNewViewport)
 {
     ActiveViewport = inNewViewport;
 
+    log("ActivateViewport("$inNewViewport$")");
+
     log ( "ActiveViewport actor is: "$Actor(ActiveViewport) );
     log ( "IControllableViewport of Actor is: "$IControllableViewport(Actor(ActiveViewport)) );
+    log("GetControllingStateName:"$inNewViewport.GetControllingStateName());
+    log("GetCurrentControllable:"$inNewViewport.GetCurrentControllable());
 
     if ( ActiveViewport != None )
     {
         log("Going to state: "$ActiveViewport.GetControllingStateName());
         GotoState(ActiveViewport.GetControllingStateName());
+        if(!inNewViewport.IsA('Optiwand'))
+          ServerViewportActivate(ActiveViewport.GetControllingStateName(), Actor(ActiveViewport));
+    }
+    else if(Level.NetMode != NM_Standalone && !inNewViewport.IsA('Optiwand'))
+    {
+      ServerViewportDeactivate();
     }
 }
 
@@ -1435,6 +1465,66 @@ exec function NextFireMode()
         FiredWeapon(ActiveItem).NextFireMode();
 }
 
+exec function SetWeaponViewOffset(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.DefaultLocationOffset = offset;
+	}
+}
+
+exec function SetWeaponViewRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.DefaultRotationOffset = Rotation;
+	}
+}
+
+exec function SetIronSightOffset(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.IronSightLocationOffset = offset;
+	}
+}
+
+exec function SetIronSightRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.IronSightRotationOffset = Rotation;
+	}
+}
+
+exec function SetWeaponViewInertia(float Inertia)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.ViewInertia = Inertia;
+	}
+}
+
 simulated function SwatDoor GetDoorInWay()
 {
     local SwatDoor DoorActor;
@@ -1462,6 +1552,17 @@ simulated function bool DoorInWay()
 //ignore in states to prevent opening the GCI while in those states
 simulated function bool CanOpenGCI() { return true; }
 
+// Server wrappers to handle the reload and fire events for snipers
+simulated function ServerHandleViewportFire(vector CameraLocation, rotator CameraRotation)
+{
+  ActiveViewport.HandleFire(true, CameraLocation, CameraRotation);
+}
+
+simulated function ServerHandleViewportReload()
+{
+  ActiveViewport.HandleReload();
+}
+
 // State ControllingViewport takes the player's control away from the playerpawn and onto the active
 // viewport.  The actual implementation the instances of IControllableViewport handle all implementation
 // details.
@@ -1478,10 +1579,12 @@ ignores ActivateViewport;
         ViewportManager.InstantMinimize();
         GotoState('PlayerWalking');
         bControlViewport = 0;
+        mplog("ControllingViewport-->WindowFocusRegained()");
     }
 
     exec function HideViewport()
     {
+        mplog("ControllingViewport-->HideViewport()");
         Global.HideViewport();
         GotoState('PlayerWalking');
     }
@@ -1509,7 +1612,8 @@ ignores ActivateViewport;
 
     exec function Reload()
     {
-        ActiveViewport.HandleReload();
+        //ActiveViewport.HandleReload();
+        ServerHandleViewportReload();
     }
 
 	// Zooming is handled the same as alt fire for the viewport
@@ -1520,7 +1624,23 @@ ignores ActivateViewport;
 
     exec function Fire()
     {
+      local vector CameraLocation;
+      local Rotator CameraDirection;
+
+      if(ActiveViewport == None)
+      {
+        return;
+      }
+
+      if(ActiveViewport.IsA('Optiwand'))
+      {
         ActiveViewport.HandleFire();
+        return;
+      }
+
+      ActiveViewport.ViewportCalcView(CameraLocation, CameraDirection);
+
+      ServerHandleViewportFire(CameraLocation, CameraDirection);
     }
 
     exec function ViewportRightMouse ()
@@ -1538,16 +1658,28 @@ ignores ActivateViewport;
     {
         Pawn.SetPhysics(PHYS_Walking);
         ActiveViewport.OnEndControlling();
-        Global.ActivateViewport( None );
+
+        // Not necessary to do this if we are the server
+        if(Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host)
+        {
+          Global.ActivateViewport( None );
+        }
+
         bControlViewport = 0;
 
         SetPlayerCommandInterfaceTeam(TeamSelectedBeforeControllingOfficerViewport);
+
+        if(Repo.GuiConfig.SwatGameRole == GAMEROLE_MP_Host)
+        {
+          GotoState('PlayerWalking');
+        }
     }
 
     simulated function PlayerTick(float DeltaTime)
     {
     	Super.PlayerTick(DeltaTime);
         ActiveViewport.SetInput(aTurn, aLookUp);
+
 
         if (!ActiveViewport.ShouldControlViewport())
         {
@@ -1560,6 +1692,10 @@ ignores ActivateViewport;
 
 state ControllingSniperViewport extends ControllingViewport
 {
+  exec function Fire()
+  {
+
+  }
 }
 
 // Control the optiwand viewport, NOTE: we're only in this state while actually using an optiwand...
@@ -2176,13 +2312,22 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     }
 }
 
+simulated function CheckDoorLock(SwatDoor Door)
+{
+  Door.TryDoorLock(self);
+}
+
 simulated function InternalMelee()
 {
 	local HandheldEquipment Item;
   local HandheldEquipment PendingItem;
+  local Actor Candidate;
+  local vector HitLocation, HitNormal, CameraLocation, TraceEnd;
+  local rotator CameraRotation;
+  local Material HitMaterial;
 
 	if (Level.GetEngine().EnableDevTools)
-        log( "...in SwatGamePlayerController::InternalMeleeAttack()" );
+        log( "...in SwatGamePlayerController::InternalMelee()" );
 
 	// We don't want the player to be able to melee if he's currently under
     // the influence of nonlethals.
@@ -2201,6 +2346,30 @@ simulated function InternalMelee()
   if(PendingItem != None && PendingItem != Item)
   {
     return;
+  }
+
+  // Determine if we are trying to check the lock or if we are trying to punch someone
+  CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
+  TraceEnd = vector(CameraRotation) * Item.MeleeRange;
+  foreach TraceActors(
+    class'Actor',
+    Candidate,
+    HitLocation,
+    HitNormal,
+    HitMaterial,
+    CameraLocation + TraceEnd,
+    CameraLocation
+    )
+  {
+    if(Candidate.IsA('SwatPawn'))
+    {
+      break; // We intend to melee.
+    }
+    else if(Candidate.IsA('SwatDoor'))
+    {
+      CheckDoorLock(SwatDoor(Candidate));
+      return;
+    }
   }
 
 	if (!Item.bAbleToMelee)
@@ -2978,7 +3147,7 @@ state Dead
 
     exec function TeamSay( string Msg )
     {
-//log( self$"::TeamSay( "$Msg$" )" );
+log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
 }
@@ -3042,7 +3211,7 @@ state ObserveFromTeamOrLocation
 
     exec function TeamSay( string Msg )
     {
-        //log( self$"::TeamSay( "$Msg$" )" );
+        log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
 }
@@ -3352,6 +3521,21 @@ function ServerViewNextPlayer()
 }
 
 ///////////////////
+
+function DoorCannotBeLocked()
+{
+  ClientMessage("[c=FFFFFF]This door cannot be locked.", 'SpeechManagerNotification');
+}
+
+function DoorIsLocked()
+{
+  ClientMessage("[c=FFFFFF]The door is locked.", 'SpeechManagerNotification');
+}
+
+function DoorIsNotLocked()
+{
+  ClientMessage("[c=FFFFFF]The door is not locked.", 'SpeechManagerNotification');
+}
 
 function DoSetEndRoundTarget( Actor Target, string TargetName, bool TargetIsOnSWAT )
 {
@@ -4225,6 +4409,41 @@ function ClientRoundStarted()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+exec function Say( string Msg )
+{
+//  log(self$"::Say - "$Pawn.GetRoomName()$" - ("$Msg$")");
+	if (PlayerReplicationInfo.bAdmin && left(Msg,1) == "#" )
+	{
+		Level.Game.AdminSay(right(Msg,len(Msg)-1));
+		return;
+	}
+
+    // On a dedicated server, no one gets TeamMessage(), so we need to print
+    // it here. We don't do it for listen servers, because we'd get double log
+    // messages (since listen servers do get TeamMessage() ).
+    if ( Level.NetMode == NM_DedicatedServer )
+    {
+        mplog( "ChatMessage( "$Msg$", Say )" );
+    }
+
+  if(Pawn != None)
+	  Level.Game.Broadcast(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+  else
+    Level.Game.Broadcast(self, Msg, 'Say');
+}
+
+exec function TeamSay( string Msg )
+{
+//  log(self$"::TeamSay("$msg$")");
+	if( !GameReplicationInfo.bTeamGame )
+	{
+		Say( Msg );
+		return;
+	}
+
+    Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+}
+
 event ClientMessage( coerce string S, optional Name Type )
 {
     //log("[dkaplan] >>> "$self$"::ClientMessage( "$S$", "$Type$" )" );
@@ -4232,12 +4451,27 @@ event ClientMessage( coerce string S, optional Name Type )
   ConsoleMessage(S);
 }
 
-event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
+event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optional string Location)
 {
-    //log("[dkaplan] >>> "$self$"::TeamMessage( "$PRI$", "$S$", "$Type$" )" );
-    if (((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None))
+    //log("[dkaplan] >>> "$self$"::TeamMessage( "$PRI$", "$S$", "$Type$" "$Location$" )" );
+
+    if (Type == 'Say' || Type == 'TeamSay')
     {
-        S = PRI.PlayerName$"\t"$S;
+        if(Location != "" && Location != "None")
+        {
+          // If we have a RoomName of None, we are spectating
+          if(Type == 'Say') {
+            Type = 'SayLocalized';
+          } else {
+            Type = 'TeamSayLocalized';
+          }
+
+          S = PRI.PlayerName$"\t"$Location$"\t"$S;
+        }
+        else
+        {
+          S = PRI.PlayerName$"\t"$S;
+        }
 
         if (Level.GetEngine().EnableDevTools)
             mplog( "ChatMessage( "$S$", "$Type$" )" );
@@ -4278,18 +4512,18 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type)
 
     if (myHUD != None)
     {
-        if (Type == 'Say')
+        if (Type == 'Say' || Type == 'SayLocalized')
         {
             myHUD.AddTextMessage(s, class'ChatGlobalMessage', PRI);
         }
-        else if (Type == 'TeamSay')
+        else if (Type == 'TeamSay' || Type == 'TeamSayLocalized')
         {
             myHUD.AddTextMessage(s, class'ChatTeamMessage', PRI);
         }
-		else
-		{
-	    	myHUD.Message( PRI, S, Type );
-		}
+    		else
+    		{
+    	    	myHUD.Message( PRI, S, Type );
+    		}
     }
 
     Player.Console.Message(S, 6.0);
@@ -5717,6 +5951,33 @@ exec function TestClientMessage( name type, string Msg )
     ClientMessage( Msg, type );
 }
 
+/*
+//For debugging. These can be considered cheats and probably should
+be moved to SwatCheatManager
+exec function SetFlashlightRadius(float radius)
+{
+	local HandheldEquipment ActiveItem;
+	local FiredWeapon ActiveWeapon;
+
+	ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = FiredWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.SetFlashlightRadius(radius);
+	}
+}
+exec function SetFlashlightCone(float cone)
+{
+	local HandheldEquipment ActiveItem;
+	local FiredWeapon ActiveWeapon;
+
+	ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = FiredWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.SetFlashlightCone(cone);
+	}
+}
+*/
+
 #if IG_SWAT_AUDIT_FOCUS
 //causes an audit of the PlayerFocusInterfaces for one call to UpdateFocus()
 exec function AuditFocus()
@@ -5925,6 +6186,8 @@ simulated event RenderOverlays( canvas Canvas )
 		}
    }
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

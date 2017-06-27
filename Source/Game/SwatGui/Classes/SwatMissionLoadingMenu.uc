@@ -27,10 +27,14 @@ var() private config localized string DownloadString;
 event Show()
 {
     local int i;
+    local Campaign theCampaign;
 
     Super.Show();
 
-    if(GC.CurrentMission != None && GC.CurrentMission.LoadingImage != None &&
+    theCampaign = SwatGuiController(Controller).GetCampaign();
+
+
+    if(theCampaign.CampaignPath != 2 && GC.CurrentMission != None && GC.CurrentMission.LoadingImage != None &&
       (GC.SwatGameRole == GAMEROLE_SP_Campaign || (GC.SwatGameRole == GAMEROLE_SP_Other && GC.CurrentMission.MapName == "SP-Training")))
     {
         LoadingText.SetCaption( GC.CurrentMission.LoadingText );

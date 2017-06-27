@@ -2034,21 +2034,21 @@ function NetTeam GetTeamFromID( int TeamID )
 
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
 {
-//log( self$"::Broadcast( "$Msg$" )" );
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
+//log( self$"::Broadcast( "$Msg$" "$Location$" )" );
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
 }
 
 //overridden from Engine.GameInfo
-function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type )
+function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type, optional string Location )
 {
 //log( self$"::BroadcastTeam( "$Sender$", "$Msg$" ), sender.statename = "$Sender.GetStateName() );
     if( Sender.IsInState( 'ObserveTeam' ) ||
         Sender.IsInState( 'Dead' ) )
         BroadcastObservers( Sender, Msg, Type );
 
-	BroadcastHandler.BroadcastTeam(Sender,Msg,Type);
+	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
 }
 
 function BroadcastObservers( Controller Sender, coerce string Msg, optional name Type )

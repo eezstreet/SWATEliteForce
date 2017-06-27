@@ -55,7 +55,7 @@ function InitComponent(GUIComponent MyOwner)
     {
         InitColumn( ListNames[i] );
     }
-    
+
     ClearRow();
 }
 
@@ -67,7 +67,7 @@ private function InitColumn( string ListName )
     if( newList == None )
         newList = GUIMultiColumnList(AddComponent( "GUI.GUIMultiColumnList" ,self.Name$"_"$ListName, true));
     Assert( newList != None );
-    
+
     newList.IndexID=MultiColumnList.Length;
     InitBaseList( newList.MCList );
     newList.MCList.OnChange=InternalOnChange;
@@ -100,11 +100,11 @@ function SetActiveColumn( string theName, optional bool bExact )
 function GUIList GetColumn( string Header )
 {
     local GUIMultiColumnList GMCList;
-    
+
     GMCList = FindColumn( Header );
-    
+
     AssertWithDescription( GMCList != None, "Specified column \""$Header$"\" not found in "$self.name );
-    
+
     return GMCList.MCList;
 }
 
@@ -112,7 +112,7 @@ function GUIList GetColumn( string Header )
 private function GUIMultiColumnList FindColumn( string theName, optional bool bExact )
 {
     local int i;
-    
+
     for( i = 0; i < MultiColumnList.Length; i++ )
     {
         if( ( theName ~= string(MultiColumnList[i].Name) ) || ( !bExact && InStr(Caps(MultiColumnList[i].Name), Caps(theName)) >= 0 ) )
@@ -125,7 +125,7 @@ private function GUIMultiColumnList FindColumn( string theName, optional bool bE
 function Clear()
 {
     local int i;
-    
+
     for( i = 0; i < MultiColumnList.Length; i++ )
     {
         MultiColumnList[i].MCList.Clear();
@@ -156,7 +156,7 @@ private function InternalOnClick(GUIComponent Sender)
 private function InternalOnChange(GUIComponent Sender)
 {
     local int i, curTop;
-    
+
     SetActiveList( GUIListBase(Sender) );
     ActiveRowIndex = GetIndex();
     curTop = MyActiveList.Top;
@@ -173,7 +173,7 @@ private function InternalOnChange(GUIComponent Sender)
 private function InternalOnAdjustTop(GUIComponent Sender)
 {
     local int i, curTop;
-    
+
     SetActiveList( GUIListBase(Sender) );
     curTop = MyActiveList.Top;
     for( i = 0; i < MultiColumnList.Length; i++ )
@@ -186,6 +186,29 @@ private function InternalOnAdjustTop(GUIComponent Sender)
 //////////////////////////////////////////////////////////////////////
 // Row Management
 //////////////////////////////////////////////////////////////////////
+
+function bool RowElementExists(string ColumnHeader, optional Object obj, optional string Str, optional int intData, optional bool bData)
+{
+  local int i;
+  local GUIMultiColumnList Column;
+  local GUIListElem Current;
+
+  Column = FindColumn(ColumnHeader);
+  if(Column == None)
+  {
+    return false;
+  }
+
+  for(i = 0; i < Column.MCList.Elements.Length; i++)
+  {
+    Current = Column.MCList.Elements[i];
+    if(Str != "" && Current.ExtraStrData == Str) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function AddNewRowElement( string ColumnHeader, optional Object obj, optional string Str, optional int intData, optional bool bData )
 {
     AddRowElement( CreateElement( ColumnHeader, obj, Str, intData, bData ) );
@@ -194,7 +217,7 @@ function AddNewRowElement( string ColumnHeader, optional Object obj, optional st
 function AddRowElement( GUIListElem theElem )
 {
     local int i;
-    
+
     for( i = 0; i < MultiColumnList.Length; i++ )
     {
         if( Controller.FixGUIComponentName(self.Name$"_"$theElem.Item) ~= String(MultiColumnList[i].Name) )
@@ -208,7 +231,7 @@ function AddRowElement( GUIListElem theElem )
 function ClearRow()
 {
     ActiveRow.Remove(0,ActiveRow.Length);
-    
+
     //ensure the active row is large enough to hold all possible data
     ActiveRow[MultiColumnList.Length] = CreateElement( "" );
 }
@@ -224,13 +247,13 @@ function int PopulateRow( optional string DontReplaceHeader )
         column = FindColumn( DontReplaceHeader );
         if( column != None )
         {
-            i = column.MCList.FindElement( ActiveRow[column.IndexID] ); 
+            i = column.MCList.FindElement( ActiveRow[column.IndexID] );
             if( i >= 0 )
                 return i;
         }
     }
 
-    // add w/ insertion sort    
+    // add w/ insertion sort
     rowIndex = MultiColumnList[ActiveIndex].MCList.AddElement( ActiveRow[ActiveIndex], false, true );
     if( rowIndex < 0 )
         return rowIndex;
@@ -239,7 +262,7 @@ function int PopulateRow( optional string DontReplaceHeader )
         if( i == ActiveIndex )
             continue;
         MultiColumnList[i].MCList.InsertElement( rowIndex, ActiveRow[i], false, true );
-    }    
+    }
     ClearRow();
     SetDirty();
     return rowIndex;
@@ -251,7 +274,7 @@ function int PopulateRow( optional string DontReplaceHeader )
 private function SwapMCLBIndices( int indexA, int indexB )
 {
     local int j;
-    
+
     for( j = 0; j < MultiColumnList.Length; j++ )
     {
         MultiColumnList[j].MCList.Swap( indexA, indexB, j == ActiveIndex );

@@ -48,6 +48,7 @@ var bool	bBlockCloseCamera;
 var bool	bValidBehindCamera;
 var bool	bForcePrecache;
 var bool	bClientDemo;
+var public bool bSecondaryWeaponLast; // when true, last weapon equipped is the secondary weapon
 var const bool bAllActorsRelevant;	// used by UTTV.  DO NOT SET THIS TRUE - it has a huge impact on network performance
 var bool	bShortConnectTimeOut;	// when true, reduces connect timeout to 15 seconds
 var bool	bPendingDestroy;		// when true, playercontroller is being destroyed
@@ -83,6 +84,7 @@ var int ShowFlags;
 var int ExShowFlags;
 #endif
 var int Misc1,Misc2;
+
 var int RendMap;
 var float        OrthoZoom;     // Orthogonal/map view zoom factor.
 var const actor ViewTarget;
@@ -270,7 +272,6 @@ var private Timer ManualFlushTimer;  // Timer used to trigger a manual "FLUSH" c
 var StatsInterface Stats;
 #endif
 
-
 replication
 {
 	// Things the server should send to the client.
@@ -316,8 +317,8 @@ replication
     reliable if( bClientDemoRecording && ROLE==ROLE_Authority )
 		DemoClientSetHUD;
 
-    reliable if ( Role < ROLE_Authority )
-        ActiveViewport;
+    /*reliable if ( Role < ROLE_Authority )
+        ActiveViewport;*/
 
 	// Functions client can call.
 	unreliable if( Role<ROLE_Authority )
@@ -980,13 +981,13 @@ event ClientMessage( coerce string S, optional Name Type )
 	TeamMessage(PlayerReplicationInfo, S, Type);
 }
 
-event TeamMessage( PlayerReplicationInfo PRI, coerce string S, name Type  )
+event TeamMessage( PlayerReplicationInfo PRI, coerce string S, name Type, optional string Location  )
 {
 	if ( myHUD != None )
 	myHUD.Message( PRI, S, Type );
 
     if ( ((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None) )
-		S = PRI.PlayerName$": "$S;
+		S = PRI.PlayerName$" ("$Location$"): "$S;
 
     Player.Console.Message( S, 0 );
 }
@@ -2810,9 +2811,8 @@ event TravelPostAccept()
 
 event PlayerTick( float DeltaTime )
 {
-#if IG_SWAT
-    LastDeltaTime = DeltaTime;
-#endif
+	LastDeltaTime = DeltaTime;
+
 
 #if !IG_SHARED	// rowan: this is essentially a hack.. we handle this better now by explicitly precaching actors on the client
 	//if ( bForcePrecache && (Level.TimeSeconds > ForcePrecacheTime) )
@@ -5019,6 +5019,30 @@ exec function Suppress( string NameToSuppress )
 
 native function SuppressName( Name NameToSuppress );
 #endif
+
+function bool GetIronsightsDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetViewmodelDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetCrosshairDisabled()
+{
+	assert(false);
+	return false;
+}
+
+function bool GetInertiaDisabled()
+{
+	assert(false);
+	return false;
+}
 
 // =====================================================================================================================
 // =====================================================================================================================

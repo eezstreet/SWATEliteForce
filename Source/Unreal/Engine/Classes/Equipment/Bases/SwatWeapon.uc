@@ -129,11 +129,19 @@ var(Categorization) public config WeaponEquipType AllowedSlots               "Wh
 var() public config float Weight;
 var() public config float Bulk;
 
+var config vector DefaultLocationOffset;
+var config Rotator DefaultRotationOffset;
 var config vector IronSightLocationOffset;
 var config vector PlayerViewOffset;
 var config Rotator IronSightRotationOffset;
 var config Rotator PlayerViewRotation;
 var config float ZoomedAimErrorModifier;
+var config float ViewInertia;
+var config float MaxInertiaOffset;
+
+//a bit of a hack since we can't add vars to Hands.uc - K.F.
+var float IronSightAnimationProgress;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
+var array<vector> AnimationSplinePoints;
 
 var bool bPenetratesDoors;
 
@@ -267,6 +275,16 @@ function bool ValidIdleCategory(EIdleWeaponStatus DesiredStatus)
   return false; // This isn't a valid idle category for this weapon
 }
 
+simulated function vector GetDefaultLocationOffset()
+{
+    return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+    return DefaultRotationOffset;
+}
+
 simulated function vector GetIronsightsLocationOffset()
 {
     return IronSightLocationOffset;
@@ -277,50 +295,40 @@ simulated function Rotator GetIronsightsRotationOffset()
     return IronSightRotationOffset;
 }
 
-simulated function vector GetPlayerViewOffset()
+simulated function float GetViewInertia() 
 {
-	local vector ViewOffset;
-	local Pawn OwnerPawn;
-	local PlayerController OwnerController;
-
-	ViewOffset = PlayerViewOffset;
-
-	OwnerPawn = Pawn(Owner);
-
-	if (OwnerPawn!= None)
-	{
-		OwnerController = PlayerController(OwnerPawn.Controller);
-
-		if (OwnerController != None && OwnerController.WantsZoom)
-		{
-			return IronSightLocationOffset;
-		}
-	}
-
-	return ViewOffset;
+	return ViewInertia;
 }
 
-simulated function rotator GetPlayerViewRotation()
+simulated function float GetMaxInertiaOffset() 
 {
-	local Rotator ViewRotation;
-	local Pawn OwnerPawn;
-	local PlayerController OwnerController;
+	return MaxInertiaOffset;
+}
 
-	ViewRotation = PlayerViewRotation;
+simulated function float GetIronSightAnimationProgress() 
+{
+	return IronSightAnimationProgress;
+}
 
-	OwnerPawn = Pawn(Owner);
+simulated function SetIronSightAnimationProgress(float value)
+{
+	if (value < 0) value = 0;
+	if (value > 1) value = 1;
+	IronSightAnimationProgress = value;
+}
 
-	if (OwnerPawn!= None)
+simulated function array<vector> GetAnimationSplinePoints() 
+{
+	return AnimationSplinePoints;
+}
+simulated function AddAnimationSplinePoint(vector value)
+{
+	AnimationSplinePoints.Insert(AnimationSplinePoints.Length, 1);
+	AnimationSplinePoints[AnimationSplinePoints.Length - 1] = value;
+	if (AnimationSplinePoints.Length > 4) 
 	{
-		OwnerController = PlayerController(OwnerPawn.Controller);
-
-		if (OwnerController != None && OwnerController.WantsZoom)
-		{
-			return IronSightRotationOffset;
-		}
+		AnimationSplinePoints.Remove(0, 1);
 	}
-
-	return ViewRotation;
 }
 
 simulated function float GetBaseAimError()
@@ -344,6 +352,38 @@ simulated function float GetBaseAimError()
 	}
 
 	return BaseAimError;
+}
+
+// Sticky selection: if this item is equipped, then we switch to a grenade, then use a grenade, it switches to this item
+simulated function bool HasStickySelection()
+{
+  return true;
+}
+
+simulated function EquippedHook()
+{
+  local Pawn OwnerPawn;
+  local PlayerController OwnerController;
+
+  Super.EquippedHook();
+
+  OwnerPawn = Pawn(Owner);
+  if(OwnerPawn != None && HasStickySelection())
+  {
+    OwnerController = PlayerController(OwnerPawn.Controller);
+    if(OwnerController != None)
+    {
+      if(GetPocket() == Pocket.Pocket_SecondaryWeapon)
+      {
+        OwnerController.bSecondaryWeaponLast = true;
+      }
+      else
+      {
+        OwnerController.bSecondaryWeaponLast = false;
+      }
+    }
+  }
+
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?

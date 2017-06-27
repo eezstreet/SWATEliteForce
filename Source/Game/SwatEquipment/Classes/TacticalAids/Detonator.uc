@@ -20,6 +20,12 @@ simulated function bool HandleMultiplayerUse()
     return false;
 }
 
+simulated function EquippedHook()
+{
+  Super.EquippedHook();
+  UpdateHUD();
+}
+
 simulated function UsedHook()
 {
     local ICanUseC2Charge Officer;
@@ -62,14 +68,40 @@ simulated function UsedHook()
     //{
     //TMC TODO handle Detonator::UsedHook() with no linked charge
     //}
+    UpdateHUD();
 }
 
-//which slot should be equipped after this item becomes unavailable
+function UpdateHUD()
+{
+  local SwatGame.SwatGamePlayerController LPC;
+  local int ReserveWedges;
+
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return; //the player doesn't own this ammo
+
+  ReserveWedges = LPC.SwatPlayer.GetTacticalAidAvailableCount(GetSlot());
+  ReserveWedges--; // We are holding one
+  if(ReserveWedges < 0)
+  {
+    ReserveWedges = 0;
+  }
+
+  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveWedges, self);
+  LPC.GetHUDPage().UpdateWeight();
+}
+
 simulated function EquipmentSlot GetSlotForReequip()
 {
-    return Slot_Invalid;
+  local SwatGame.SwatGamePlayerController LPC;
 
-    //returning Slot_Invalid means equip the default.
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
+
+  if(LPC.bSecondaryWeaponLast)
+    return Slot_SecondaryWeapon;
+  return Slot_PrimaryWeapon;
 }
 
 defaultproperties

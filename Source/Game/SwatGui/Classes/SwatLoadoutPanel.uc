@@ -438,18 +438,6 @@ function ChangeLoadOut( Pocket thePocket )
         case Pocket_SecondaryWeapon:
             LoadAmmoForWeapon( thePocket, class<FiredWeapon>(theItem) );
             break;
-        case Pocket_Breaching:
-            if( theItem == class'SwatEquipment.C2Charge' )
-            {
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] = class'SwatEquipment.C2Charge';
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] = class'SwatEquipment.C2Charge';
-            }
-            else
-            {
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] = None;
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] = None;
-            }
-            break;
     }
 }
 
@@ -1054,6 +1042,11 @@ private function bool IsPocketDisplayedInActiveTab( Pocket pock )
     }
 
     return false;
+}
+
+protected function int GetActiveTab()
+{
+  return ActiveTab;
 }
 
 defaultproperties

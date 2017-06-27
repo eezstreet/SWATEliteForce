@@ -55,7 +55,7 @@ simulated function float GetBulk() {
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    //Disable('Tick');
+    Disable('Tick');
 }
 
 // Helper function, this should really be in Object or something
@@ -66,10 +66,19 @@ simulated function int DegreesToUnreal( INT inDegrees )
 
 simulated function EquippedHook()
 {
+    Enable('Tick');
+
     Super.EquippedHook();
 
 	// Clear out the initial rotation of the lens bone
     FirstPersonModel.SetBoneDirection( BoneName, rot(0,0,0),,1,0 );
+}
+
+simulated function UnequippedHook()
+{
+  Disable('Tick');
+
+  Super.UnequippedHook();
 }
 
 simulated function OnGivenToOwner()
@@ -189,13 +198,20 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
     local Object.Range YawRange, PitchRange;
 
     // Most of the time this is all we need to take care of
-	FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation()+LastBoneRotation,,, 1);
+    if(FirstPersonModel != None)
+    { // Don't do this on the server.
+      FirstPersonModel.SetBoneDirection(BoneName, Pawn(Owner).GetViewRotation()+LastBoneRotation,,, 1);
+    }
+
     ResolveInitialLocationAndRotation( CameraLocation, PlayerViewRot );
 
-	if (!bInUse) {
-		CameraRotation = FirstPersonModel.GetBoneRotation(BoneName, 1);
-		return;
-	}
+  	if (!bInUse) {
+      if(FirstPersonModel != None)
+      {
+        CameraRotation = FirstPersonModel.GetBoneRotation(BoneName, 1);
+      }
+  		return;
+  	}
 
     // Only handle this stuff when we're actually moving the mouse.
     if ( VSize(MouseAccel) != 0)
@@ -229,7 +245,7 @@ simulated function  ViewportCalcView(out Vector CameraLocation, out Rotator Came
 }
 
 // Unimplemented IControllableViewport functions
-simulated function HandleFire();
+simulated function HandleFire(optional bool OnServer, optional vector CameraLocation, optional Rotator CameraRotation);
 simulated function HandleAltFire();
 simulated function HandleReload();
 simulated function IControllableThroughViewport GetCurrentControllable();
@@ -255,6 +271,11 @@ simulated function bool CanUseNow()
     local SwatGamePlayerController PC;
     local FireInterface FireInterface;
     local Vector X, Y, Z;
+
+    if(!IsEquipped())
+    {
+      return false; // Of course we can't use the optiwand if it isn't equipped!
+    }
 
     // There is a really funky exploit that happens in first person view and are close to a wall, where if you move the camera really
     // quick towards a wall, you can sometimes press fire and use the optiwand BEFORE the low ready interface updates and realizes that
@@ -320,8 +341,6 @@ simulated latent protected function DoUsingHook()
     local Pawn PawnOwner;
     local SwatGamePlayerController PC;
     local SwatPlayer PlayerOwner;
-    local Quat OldQuat, NewQuat;
-    local Rotator ViewRot;
     local Name UseAnim, EndAnim;
 
     assertWithDescription( FirstPersonModel!=None, Self$", does not have a firstpersonmodel!!" );
@@ -450,11 +469,19 @@ simulated function Tick(float DeltaTime)
 
 	LastDeltaTime = DeltaTime;
 
-	FirstPersonModel.Skins[1] = LCDShader;
+  if(FirstPersonModel != None)
+  {
+    FirstPersonModel.Skins[1] = LCDShader;
+  }
+
 	LCDScreen.Revision++;
-    if (!CanUseNow()) {
-		FirstPersonModel.Skins[1] = BlankScreen;
-		ViewportCalcView(DrawLoc, DrawRot);
+
+  if (!CanUseNow()) {
+    if(FirstPersonModel != None)
+    {
+      FirstPersonModel.Skins[1] = BlankScreen;
+    }
+    ViewportCalcView(DrawLoc, DrawRot);
 	}
 }
 

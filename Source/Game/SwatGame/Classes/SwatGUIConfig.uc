@@ -138,8 +138,15 @@ var(MPSettings) config           eVoiceType     PreferredVoiceType "Selected voi
 // If it's set to RANDOM, then it will be re-cached when next queried
 var                               eVoiceType     CachedRandomVoice;
 
-var(MPSettings) config localized array<string> NetworkConnectionChoices "Choices for network connection";
-var(MPSettings) config           array<int>    NetworkConnectionSpeeds "Speeds for network connection";
+var config bool bNoIronSights;		// Use old-style zoom?
+var config bool bHideFPWeapon;		// Hide first person weapon?
+var config bool bHideCrosshairs;	// Hide crosshairs at all times?
+var config bool bNoWeaponInertia;	// No weapon inertia?
+var() config int NotUsed;
+var() config int NotUsed2;
+var() config int NotUsed3;
+var() config int NotUsed4;
+var() config int NotUsed5;
 var(MPSettings) config           int           NetSpeedSelection "Selected speed for network connection";
 
 var(MPSettings) Config float MPPostMissionTime "Time (in seconds) between when the round has been completed and the MPPage is brought up";
@@ -324,6 +331,20 @@ overloaded function Construct()
 //////////////////////////////////////////////////////////////////////////////////////
 // Accessors
 //////////////////////////////////////////////////////////////////////////////////////
+function SetCurrentMissionAllMissions(String URL, Name MissionName, optional string FriendlyName, optional CustomScenario CustomScenario)
+{
+  local string MapPath;
+
+  MapPath = Left(URL, InStr(URL, "?"));
+
+  SetCurrentMission(MissionName, FriendlyName, CustomScenario);
+
+  CurrentMissionName = Name(MapPath);
+  CurrentMission.MapName = MapPath;
+  log("SetCurrentMissionAllMissions: MapPath is "$MapPath);
+  log("SetCurrentMissionAllMissions: CurrentMissionName = "$CurrentMissionName);
+}
+
 function SetCurrentMission( Name MissionName, optional string FriendlyName, optional CustomScenario CustomScenario )
 {
 log("[ckline] >>> SwatGUIConfig::SetCurrentMission('"$MissionName$"', '"$FriendlyName$"', '"$CustomScenario$"')");

@@ -94,11 +94,25 @@ final function MissionResults GetMissionResults(name Mission)
 {
     local int index;
 
-    index = GetMissionIndex(Mission);
-log( "[dkaplan] getting mission results for mission " $ Mission $ ", index = " $ index );
+    if(CampaignPath == 2)
+    { // In All Missions, we can complete the missions in whatever order we want to
+      for(index = 0; index < MissionResultNames.length; index++)
+      {
+        if(MissionResultNames[index] == Mission)
+        {
+          return MissionResults[index];
+        }
+      }
+    }
+    else
+    { // It's safe to assume we have a score, since they need to be completed sequentially
+      index = GetMissionIndex(Mission);
+      log( "[dkaplan] getting mission results for mission " $ Mission $ ", index = " $ index );
 
-    //(GetMissionIndex() returns MissionResults.length if Mission is not found.)
-    return MissionResults[index];
+      //(GetMissionIndex() returns MissionResults.length if Mission is not found.)
+      return MissionResults[index];
+    }
+
 }
 
 //returns the index of Mission in MissionResults, or MissionResults.length if not found.

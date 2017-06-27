@@ -283,7 +283,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                 if( (GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
                     Campaign != None) || coopcampaign )
                 {
-                    Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                    Campaign.MissionEnded(GuiConfig.GetCurrentMissionName(), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
                 }
                 else if( GuiConfig.SwatGameRole == GAMEROLE_SP_Custom )
                 {
@@ -400,6 +400,8 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'KickBan':
         case 'Say':
         case 'TeamSay':
+        case 'SayLocalized':
+        case 'TeamSayLocalized':
         case 'CommandGiven':
         case 'SwatKill':
         case 'SuspectsKill':
@@ -451,7 +453,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
             break;
         case 'PenaltyIssued':
         case 'ObjectiveCompleted':
-            SendMessageToChat(Msg, Type, true);
+            SendMessageToChat(Msg, Type, true );
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( Msg );
             break;
         case 'MissionCompleted':

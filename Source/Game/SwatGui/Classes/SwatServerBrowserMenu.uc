@@ -30,7 +30,6 @@ var(SWATGui) private EditInline Config GUIButton		    MyRefreshButton;
 var(SWATGui) private EditInline Config GUIButton		    MyFiltersButton;
 var(SWATGui) private EditInline Config GUIButton		    MyJoinIPButton;
 var(SWATGui) private EditInline Config GUIButton		    MyProfileButton;
-var(SWATGui) private EditInline Config GUIButton		    MyPatchButton;
 
 var(SWATGui) private EditInline Config GUIRadioButton		MyUseLanButton;
 var(SWATGui) private EditInline Config GUIRadioButton		MyUseGameSpyButton;
@@ -64,8 +63,6 @@ var private config localized string ConnectPasswordQueryString;
 var string BuildVersion;
 var string ModName;
 
-var float LastPatchCheckTime;
-
 var() private config string CompatibleColorString;
 var() private config string InCompatibleColorString;
 
@@ -90,7 +87,6 @@ function InitComponent(GUIComponent MyOwner)
     MyServerListBox.OnChange=UpdateJoinableState;
     MyUseGameSpyButton.OnChange=NetworkModeSelected;
 	MyProfileButton.OnClick=OnProfile;
-	MyPatchButton.OnClick=OnPatch;
 
     MyNameBox.OnChange=UpdateJoinableState;
     MyNameBox.MaxWidth = GC.MPNameLength;
@@ -154,14 +150,6 @@ function InternalOnActivate()
     RefreshEnabled();
 
 	UpdateComponents();
-
-	// check for patch
-	if (LastPatchCheckTime == 0 || PlayerOwner().Level.TimeSeconds - LastPatchCheckTime > 600)
-	{
-		LastPatchCheckTime = PlayerOwner().Level.TimeSeconds;
-		SGSM.OnQueryPatchResult = OnQueryPatchResult;
-		SGSM.QueryPatch();
-	}
 }
 
 function InternalOnDeActivate()
@@ -170,24 +158,9 @@ function InternalOnDeActivate()
 
     DestroyPingClient();
 
-	SGSM.OnQueryPatchResult = None;
-
 	SwatPlayerController(PlayerOwner()).SetName( MyNameBox.GetText() );
     GC.bViewingGameSpy = bUseGameSpy;
     GC.SaveConfig();
-}
-
-function OnQueryPatchResult(bool bNeeded, bool bMandatory, string versionName, string URL)
-{
-	if (bNeeded)
-	{
-		log("Game requires patch.");
-		OpenPatchPopup();
-	}
-	else
-	{
-		log("Game is up-to-date.");
-	}
 }
 
 function DebugServerList(int num)
@@ -526,8 +499,9 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
     local int i;
     local string Key;
     local string Value;
-	local GUIImage Icon;
-	local bool bLocked, bStatsEnabled;
+	  local GUIImage Icon;
+	  local bool bLocked, bStatsEnabled;
+    local string FullIPAddress;
 
     if( MyServerListBox.Num() > MaxResults )
         return;
@@ -562,12 +536,18 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
         return; // This is a server ping for an internet game whose ping was cancelled
 #endif
 
+    FullIPAddress = s.IP $ ":" $ s.Port;
+
+    // Don't add this item to the list twice --eez
+    if(MyServerListBox.RowElementExists("IPAddress",,FullIPAddress))
+      return;
+
     // Remember the currently selected ip, so we can reselect it after the
     // listbox addition
     PreviouslySelectedIP = MyServerListBox.GetColumn( "IPAddress" ).GetExtra();
 
     // Add a new element to the listbox
-    MyServerListBox.AddNewRowElement( "IPAddress",,   s.IP$":"$s.Port );
+    MyServerListBox.AddNewRowElement( "IPAddress",,   FullIPAddress );
     MyServerListBox.AddNewRowElement( "ServerName",,  s.ServerName );
     MyServerListBox.AddNewRowElement( "MapName",,     s.MapName );
 
@@ -709,16 +689,6 @@ private function OnAllServersReturned()
 private function OnProfile( GUIComponent sender )
 {
 	Controller.OpenMenu( "SwatGui.SwatGamespyProfilePopup", "SwatGamespyProfilePopup" );
-}
-
-private function OpenPatchPopup()
-{
-	Controller.OpenMenu( "SwatGui.SwatPatchingPopup", "SwatPatchingPopup" );
-}
-
-private function OnPatch( GUIComponent sender )
-{
-	OpenPatchPopup();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

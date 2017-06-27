@@ -713,8 +713,7 @@ defaultproperties
     RemoteRole=ROLE_None
     DrawType=DT_Mesh
 
-    // To speed up rendering, don't let pawn shadows be cast on equipment
-    bAcceptsShadowProjectors=false
+    bAcceptsShadowProjectors=true
 
     // these should be part of the 3rd person shadows
     bActorShadows=true

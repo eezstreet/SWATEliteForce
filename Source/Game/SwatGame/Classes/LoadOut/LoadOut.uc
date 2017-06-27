@@ -74,7 +74,7 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
     if ( DynamicSpec == None )
         return;
 
-    for( i = 0; i <= Pocket.Pocket_HiddenC2Charge2; i++ )
+    for( i = 0; i <= Pocket.Pocket_Unused2; i++ )
     {
         if ( i == Pocket.Pocket_Detonator || i == Pocket.Pocket_Cuffs || i == Pocket.Pocket_IAmCuffed )
             continue;
@@ -403,7 +403,10 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
 
     // Set the pocket on the newly spawned item
     if( HandheldEquipment( PocketEquipment[i] ) != None )
+    {
+        HandheldEquipment( PocketEquipment[i] ).SetAvailable(true);
         HandheldEquipment( PocketEquipment[i] ).SetPocket( i );
+    }
 
     // Trigger notification that this equipment has been spawned for this loadout
     if( Equipment( PocketEquipment[i] ) != None )
@@ -473,6 +476,7 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
     local HandheldEquipment Item;
     local HandheldEquipment Candidate;
 
+    // FIXME BIGTIME
     assert(Owner.IsA('ICanUseC2Charge'));
     if( Slot == SLOT_Breaching && ICanUseC2Charge(Owner).GetDeployedC2Charge() != None )
         return GetItemAtSlot( Slot_Detonator );
@@ -668,6 +672,42 @@ simulated function bool HasProArmorHelmet()
 		return false; // The VIP has no head armor
 }
 
+// For an EquipmentSlot, determine how many items we have
+simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
+{
+  local int Count, i;
+  local HandheldEquipment Equipment;
+  local FiredWeapon Weapon;
+
+  for(i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipSix; i++)
+  {
+    Equipment = HandheldEquipment(PocketEquipment[i]);
+    if(Slot == SLOT_Detonator)
+    {
+      // Special case for detonator, it adds the counts from C2
+      if(Equipment != None && Equipment.IsA('C2Charge'))
+      {
+        Count += Equipment.GetAvailableCount();
+      }
+    }
+    else if(Equipment != None && Equipment.GetSlot() == Slot && Equipment.IsAvailable())
+    {
+      if(Equipment.IsA('PepperSpray'))
+      {
+        // Special case: pepper spray isn't ever made "not available", it's just emptied
+        Weapon = FiredWeapon(Equipment);
+        if(Weapon.Ammo.IsEmpty())
+        {
+          continue;
+        }
+      }
+      Count += Equipment.GetAvailableCount();
+    }
+  }
+
+  return Count;
+}
+
 //returns the item, if any, that was replaced
 function HandheldEquipment FindItemToReplace(HandheldEquipment PickedUp)
 {
@@ -727,6 +767,11 @@ function float GetTotalWeight() {
   total = 0.0;
 
   for(i = 0; i < Pocket.EnumCount; i++) {
+    if(PocketEquipment[i] == None)
+    {
+      continue;
+    }
+
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
     HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
     if(HHEItem == None) {
@@ -735,7 +780,7 @@ function float GetTotalWeight() {
       total += PocketItem.GetWeight();
     }
 
-    if(i == 0 || i == 2) {
+    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
       // A weapon
       FiredItem = FiredWeapon(PocketItem);
       FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
@@ -756,10 +801,15 @@ function float GetTotalBulk() {
   total = 0.0;
 
   for(i = 0; i < Pocket.EnumCount; i++) {
+    if(PocketEquipment[i] == None)
+    {
+      continue;
+    }
+
     PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
     total += PocketItem.GetBulk();
 
-    if(i == 0 || i == 2) {
+    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
       // Weapon
       FiredItem = FiredWeapon(PocketItem);
       FiredItemAmmo = SwatAmmo(FiredItem.Ammo);

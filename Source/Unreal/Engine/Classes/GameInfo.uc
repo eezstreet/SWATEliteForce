@@ -1,16 +1,16 @@
 //=============================================================================
 // GameInfo.
 //
-// The GameInfo defines the game being played: the game rules, scoring, what actors 
-// are allowed to exist in this game type, and who may enter the game.  While the 
-// GameInfo class is the public interface, much of this functionality is delegated 
-// to several classes to allow easy modification of specific game components.  These 
-// classes include GameInfo, AccessControl, Mutator, BroadcastHandler, and GameRules.  
-// A GameInfo actor is instantiated when the level is initialized for gameplay (in 
-// C++ UGameEngine::LoadMap() ).  The class of this GameInfo actor is determined by 
-// (in order) either the DefaultGameType if specified in the LevelInfo, or the 
-// DefaultGame entry in the game's .ini file (in the Engine.Engine section), unless 
-// its a network game in which case the DefaultServerGame entry is used.  
+// The GameInfo defines the game being played: the game rules, scoring, what actors
+// are allowed to exist in this game type, and who may enter the game.  While the
+// GameInfo class is the public interface, much of this functionality is delegated
+// to several classes to allow easy modification of specific game components.  These
+// classes include GameInfo, AccessControl, Mutator, BroadcastHandler, and GameRules.
+// A GameInfo actor is instantiated when the level is initialized for gameplay (in
+// C++ UGameEngine::LoadMap() ).  The class of this GameInfo actor is determined by
+// (in order) either the DefaultGameType if specified in the LevelInfo, or the
+// DefaultGame entry in the game's .ini file (in the Engine.Engine section), unless
+// its a network game in which case the DefaultServerGame entry is used.
 //
 //=============================================================================
 class GameInfo extends Info
@@ -75,7 +75,7 @@ var   string			      BeaconName;				// Identifying string used for finding LAN s
 
 var   globalconfig int	      MaxSpectators;			// Maximum number of spectators.
 var	  int					  NumSpectators;			// Current number of spectators.
-var   globalconfig int		  MaxPlayers; 
+var   globalconfig int		  MaxPlayers;
 var   int					  NumPlayers;				// number of human players
 var	  int					  NumBots;					// number of non-human players (AI controlled but participating as a player)
 var   int					  CurrentID;
@@ -158,8 +158,8 @@ private function NotifyGameStarted()
 #endif
 
 #if IG_SHARED
-// This maps to ULevel::FindSpot in UnLevAct.cpp. 
-// 
+// This maps to ULevel::FindSpot in UnLevAct.cpp.
+//
 // You pass in the extents of a collision box and a location. If the function
 // returns false then it couldn't find any spot near the location to put the
 // box without it being encroached upon. If it can find a spot near the
@@ -224,12 +224,12 @@ static function bool UseLowGore()
 {
 	return ( Default.bAlternateMode || (Default.GoreLevel > 0) );
 }
-		
+
 function PostBeginPlay()
 {
 }
 
-/* Reset() 
+/* Reset()
 reset actor to initial state - used when restarting level without reloading.
 */
 function Reset()
@@ -340,7 +340,7 @@ function GetServerDetails( out ServerResponseLine ServerState )
 	ServerState.ServerInfo.Length = i+1;
 	ServerState.ServerInfo[i].Key = "adminname";
 	ServerState.ServerInfo[i++].Value = GameReplicationInfo.AdminName;
-	
+
 	// adminemail
 	ServerState.ServerInfo.Length = i+1;
 	ServerState.ServerInfo[i].Key = "adminemail";
@@ -383,7 +383,7 @@ function GetServerDetails( out ServerResponseLine ServerState )
 	for ( G=GameRulesModifiers; G!=None; G=G.NextGameRules )
 		G.GetServerDetails(ServerState);
 }
-			
+
 function GetServerPlayers( out ServerResponseLine ServerState )
 {
     local Mutator M;
@@ -399,9 +399,9 @@ function GetServerPlayers( out ServerResponseLine ServerState )
 			if( (PRI != None) && !PRI.bBot && MessagingSpectator(C) == None )
             {
 			ServerState.PlayerInfo.Length = i+1;
-			ServerState.PlayerInfo[i].PlayerNum  = C.PlayerNum;		
+			ServerState.PlayerInfo[i].PlayerNum  = C.PlayerNum;
 			ServerState.PlayerInfo[i].PlayerName = PRI.PlayerName;
-			ServerState.PlayerInfo[i].Score		 = PRI.Score;			
+			ServerState.PlayerInfo[i].Score		 = PRI.Score;
 			ServerState.PlayerInfo[i].Ping		 = PRI.Ping;
 			i++;
 		}
@@ -457,7 +457,7 @@ function ChangeVoiceChatter( Controller Client, int IpAddr, int Handle, bool Add
 {
 	local int Index;
 	local PlayerController P;
-		
+
 	if( Add )
 	{
 		Index = VoiceChatters.length;
@@ -474,7 +474,7 @@ function ChangeVoiceChatter( Controller Client, int IpAddr, int Handle, bool Add
 				VoiceChatters.Remove(Index,1);
 		}
 	}
-	
+
 	foreach DynamicActors( class'PlayerController', P )
 	{
 		if( P != Client )
@@ -615,8 +615,8 @@ function bool HasOption( string Options, string InKey )
 }
 
 /* Initialize the game.
- The GameInfo's InitGame() function is called before any other scripts (including 
- PreBeginPlay() ), and is used by the GameInfo to initialize parameters and spawn 
+ The GameInfo's InitGame() function is called before any other scripts (including
+ PreBeginPlay() ), and is used by the GameInfo to initialize parameters and spawn
  its helper classes.
  Warning: this is called before actors' PreBeginPlay.
 */
@@ -641,8 +641,8 @@ event InitGame( string Options, out string Error )
 		SetGameSpeed(float(InOpt));
 	}
 
-    AddMutator(MutatorClass); 
-	
+    AddMutator(MutatorClass);
+
 	BHClass = class<BroadcastHandler>(DynamicLoadObject(BroadcastHandlerClass,Class'Class'));
 	BroadcastHandler = spawn(BHClass);
 
@@ -688,14 +688,14 @@ event InitGame( string Options, out string Error )
 			{
 				if ( GameRulesModifiers == None )
 					GameRulesModifiers = Spawn(GRClass);
-				else	
+				else
 					GameRulesModifiers.AddGameRules(Spawn(GRClass));
 			}
 		}
 	}
 
 	log("Base Mutator is "$BaseMutator);
-    
+
 	InOpt = ParseOption( Options, "Mutator");
 	if ( InOpt != "" )
 	{
@@ -714,7 +714,7 @@ event InitGame( string Options, out string Error )
 				InOpt = "";
 			}
 			log("Add mutator "$LeftOpt);
-            AddMutator(LeftOpt, true); 
+            AddMutator(LeftOpt, true);
 		}
 	}
 
@@ -738,9 +738,9 @@ event InitGame( string Options, out string Error )
 		bEnableStatLogging = bool(InOpt);
 	else
 		bEnableStatLogging = false;
-	
+
 	log("GameInfo::InitGame : bEnableStatLogging"@bEnableStatLogging);
-	 
+
 	if( HasOption(Options, "DemoRec") )
 		Log( Level.ConsoleCommand("demorec"@ParseOption(Options, "DemoRec")) );
 }
@@ -753,7 +753,7 @@ function AddMutator(string mutname, optional bool bUserAdded)
     mutClass = class<Mutator>(DynamicLoadObject(mutname, class'Class'));
     if (mutClass == None)
         return;
-	
+
 	if ( (mutClass.Default.GroupName != "") && (BaseMutator != None) )
 	{
 		// make sure no mutators with same groupname
@@ -761,7 +761,7 @@ function AddMutator(string mutname, optional bool bUserAdded)
 			if ( mut.GroupName == mutClass.Default.GroupName )
 				return;
 	}
-	 
+
     mut = Spawn(mutClass);
 	// mc, beware of mut being none
 	if (mut == None)
@@ -780,11 +780,11 @@ function AddMutator(string mutname, optional bool bUserAdded)
 // Return beacon text for serverbeacon.
 //
 event string GetBeaconText()
-{	
+{
 	return
 		Level.ComputerName
     $   " "
-    $   Left(Level.Title,24) 
+    $   Left(Level.Title,24)
     $   "\\t"
     $   BeaconName
     $   "\\t"
@@ -816,7 +816,7 @@ function ProcessServerTravel( string URL, bool bItems )
 			P.ClientTravel( URL$"?SwatPlayerID="$P.GetSwatPlayerID(), TRAVEL_Relative, bItems );
         }
 		else
-		{	
+		{
 			LocalPlayer = P;
 			P.PreClientTravel();
 		}
@@ -827,7 +827,7 @@ function ProcessServerTravel( string URL, bool bItems )
 					 $"?Name="$LocalPlayer.GetDefaultURL("Name")
                      $"?Class="$LocalPlayer.GetDefaultURL("Class")
             $"?Character="$LocalPlayer.GetDefaultURL("Character")
-            $"?SwatPlayerID="$LocalPlayer.GetSwatPlayerID(); 
+            $"?SwatPlayerID="$LocalPlayer.GetSwatPlayerID();
 
 	// Switch immediately if not networking.
 	if( Level.NetMode!=NM_DedicatedServer && Level.NetMode!=NM_ListenServer )
@@ -861,7 +861,7 @@ function int GetIntOption( string Options, string ParseString, int CurrentValue)
 	{
 		log(ParseString@InOpt);
 		return int(InOpt);
-	}	
+	}
 	return CurrentValue;
 }
 
@@ -899,7 +899,7 @@ event PlayerController Login
 	local NavigationPoint StartSpot;
 	local PlayerController NewPlayer;
 	local Pawn      TestPawn;
-    local string          InName, InAdminName, InPassword, InChecksum, InClass, InCharacter; 
+    local string          InName, InAdminName, InPassword, InChecksum, InClass, InCharacter;
 	local byte            InTeam;
     local bool bSpectator, bAdmin;
     local class<Security> MySecurityClass;
@@ -917,7 +917,7 @@ event PlayerController Login
 	// If admin, force spectate mode if the server already full of reg. players
 	if ( bAdmin && AtCapacity(false))
 		bSpectator = true;
-	
+
 	BaseMutator.ModifyLogin(Portal, Options);
 
 	// Get URL options.
@@ -928,12 +928,12 @@ event PlayerController Login
 	InChecksum = ParseOption ( Options, "Checksum" );
 
 	log( "Login:" @ InName );
-	
+
 	// Pick a team (if need teams)
     InTeam = PickTeam(InTeam,None);
-		 
+
 	// Find a start spot.
-	
+
 	// ckline: Note, from what I can tell, this finds a "potential" spot to
 	// spawn; it's only checking the controller, not the pawn. Later, in
 	// RestartPlayer, starting points will be checked again.
@@ -967,7 +967,7 @@ event PlayerController Login
 	NewPlayer.GotoState('Spectating');
 
 	// Apply security to this controller
-	
+
 	MySecurityClass=class<Security>(DynamicLoadObject(SecurityClass,class'class'));
     if (MySecurityClass!=None)
     {
@@ -1000,7 +1000,7 @@ event PlayerController Login
 		return None;
 	}
 	newPlayer.StartSpot = StartSpot;
-		
+
     // Init player's administrative privileges and log it
 /*FIXME_MERGE    if (AccessControl.AdminLogin(NewPlayer, InAdminName, InPassword))
     {
@@ -1026,7 +1026,7 @@ event PlayerController Login
 	if ( bDelayedStart )
 	{
 		NewPlayer.GotoState('PlayerWaiting');
-		return NewPlayer;	
+		return NewPlayer;
 	}
 
 	// Try to match up to existing unoccupied player in level,
@@ -1045,15 +1045,15 @@ event PlayerController Login
 	}
 
 	return newPlayer;
-}	
+}
 
 /* StartMatch()
 Start the game - inform all actors that the match is starting, and spawn player pawns
 */
 function StartMatch()
-{	
+{
 	local Controller P;
-	local Actor A; 
+	local Actor A;
 
 	// tell all actors the game is starting
 	ForEach AllActors(class'Actor', A)
@@ -1063,9 +1063,9 @@ function StartMatch()
 	for ( P = Level.ControllerList; P!=None; P=P.nextController )
 		if ( P.IsA('PlayerController') && (P.Pawn == None) )
 		{
-            if ( bGameEnded ) 
+            if ( bGameEnded )
                 return; // telefrag ended the game with ridiculous frag limit
-            else if ( PlayerController(P).CanRestartPlayer()  ) 
+            else if ( PlayerController(P).CanRestartPlayer()  )
 				RestartPlayer(P);
 		}
 
@@ -1086,7 +1086,7 @@ function StartMatch()
 //
 // Restart a player.
 //
-function RestartPlayer( Controller aPlayer )	
+function RestartPlayer( Controller aPlayer )
 {
 	local NavigationPoint startSpot;
 	local int TeamNum;
@@ -1105,8 +1105,8 @@ function RestartPlayer( Controller aPlayer )
 	{
         log(" Player pawn start not found!!!");
 		return;
-	}	
-	
+	}
+
     log("Setting TimeOfLastSpawn to "$Level.TimeSeconds$" for "$StartSpot);
     StartSpot.TimeOfLastSpawn = Level.TimeSeconds; // ckline added
 
@@ -1136,13 +1136,13 @@ function NavigationPoint SpawnPlayerPawn(Controller aPlayer, int TeamNum)
     if( startSpot == None )
     {
         return None;
-    }	
+    }
 
 	if (aPlayer.PreviousPawnClass!=None && aPlayer.PawnClass != aPlayer.PreviousPawnClass)
     {
-		BaseMutator.PlayerChangedClass(aPlayer);			
+		BaseMutator.PlayerChangedClass(aPlayer);
     }
-			
+
 	if ( aPlayer.PawnClass != None )
     {
         //TMC tagged player pawn 'Player'; needed for pulling loadout info from ini file
@@ -1228,7 +1228,7 @@ event PostLogin( PlayerController NewPlayer )
     SongName = Level.Song;
     if( SongName != "" && SongName != "None" )
         NewPlayer.ClientSetMusic( SongName, MTRAN_Fade );
-	
+
 	// tell client what hud and scoreboard to use
 
     if( HUDType != "" )
@@ -1273,7 +1273,7 @@ function Logout( Controller Exiting )
         {
 			NumPlayers--;
         }
-			
+
 		if( Level.NetMode != NM_Standalone )
 		{
 			for( Index=0; Index<VoiceChatters.Length; Index++ )
@@ -1406,7 +1406,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 {
 	if ( (Killer == Other) || (Killer == None) )
         BroadcastLocalized(self,DeathMessageClass, 1, None, Other.PlayerReplicationInfo, damageType);
-	else 
+	else
         BroadcastLocalized(self,DeathMessageClass, 0, Killer.PlayerReplicationInfo, Other.PlayerReplicationInfo, damageType);
 }
 
@@ -1482,7 +1482,7 @@ function int ReduceDamage( int Damage, pawn injured, pawn instigatedBy, vector H
 		{
 			Damage = FirstArmor.ArmorAbsorbDamage(Damage, DamageType, HitLocation);
 			FirstArmor = FirstArmor.nextArmor;
-		} 
+		}
 #endif
 
 	}
@@ -1507,8 +1507,8 @@ function bool ShouldRespawn( Pickup Other )
 #endif
 
 #if !IG_SWAT // ckline: we don't support this
-/* Called when pawn has a chance to pick Item up (i.e. when 
-   the pawn touches a weapon pickup). Should return true if 
+/* Called when pawn has a chance to pick Item up (i.e. when
+   the pawn touches a weapon pickup). Should return true if
    he wants to pick it up, false if he does not want it.
 */
 function bool PickupQuery( Pawn Other, Pickup item )
@@ -1524,7 +1524,7 @@ function bool PickupQuery( Pawn Other, Pickup item )
 		return !Other.Inventory.HandlePickupQuery(Item);
 }
 #endif
-		
+
 /* Discard a player's inventory after he dies.
 */
 function DiscardInventory( Pawn Other )
@@ -1539,14 +1539,14 @@ function DiscardInventory( Pawn Other )
 }
 
 /* Try to change a player's name.
-*/	
+*/
 function ChangeName( Controller Other, coerce string S, bool bNameChange )
 {
 	if( S == "" )
 		return;
-		
+
 	Other.PlayerReplicationInfo.SetPlayerName(S);
-	
+
     // notify local players
     if ( bNameChange )
     {
@@ -1557,7 +1557,7 @@ function ChangeName( Controller Other, coerce string S, bool bNameChange )
 #else
 		for ( C=Level.ControllerList; C!=None; C=C.NextController )
 			if ( (PlayerController(C) != None) && (Viewport(PlayerController(C).Player) != None) )
-				PlayerController(C).ReceiveLocalizedMessage( class'GameMessage', 2, Other.PlayerReplicationInfo );          
+				PlayerController(C).ReceiveLocalizedMessage( class'GameMessage', 2, Other.PlayerReplicationInfo );
 #endif
     }
 }
@@ -1638,9 +1638,9 @@ local class<MapList> MapListClass;
 // Message broadcasting functions (handled by the BroadCastHandler)
 
 #if IG_SWAT // dbeswick: broadcast send to Target only
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
 {
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
 }
 #else
 event Broadcast( Actor Sender, coerce string Msg, optional name Type )
@@ -1649,9 +1649,9 @@ event Broadcast( Actor Sender, coerce string Msg, optional name Type )
 }
 #endif
 
-function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type )
+function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type, optional string Location )
 {
-	BroadcastHandler.BroadcastTeam(Sender,Msg,Type);
+	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
 }
 
 /*
@@ -1665,7 +1665,7 @@ event BroadcastLocalized( actor Sender, class<LocalMessage> Message, optional in
 }
 
 //==========================================================================
-	
+
 function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 {
 	local Controller P;
@@ -1678,7 +1678,7 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 	{
 		P.ClientGameEnded();
         P.GameHasEnded();
-	}	
+	}
 	return true;
 }
 
@@ -1717,7 +1717,7 @@ function NavigationPoint FindPlayerStart( Controller Player, optional byte InTea
 	{
 		Log("Found player start ["$(Player.StartSpot)$"] by using Player.StartSpot");
 		return Player.StartSpot;
-	}	
+	}
 
 	if ( GameRulesModifiers != None )
 	{
@@ -1756,17 +1756,17 @@ function NavigationPoint FindPlayerStart( Controller Player, optional byte InTea
 			Log(" Searching NavigationPoints to find player start; new best point is ["$BestStart$"] with rating ["$NewRating$"]");
 		}
 	}
-	
+
 	if ( BestStart == None )
 	{
-		log("Warning - PATHS NOT DEFINED or NO PLAYERSTART");			
+		log("Warning - PATHS NOT DEFINED or NO PLAYERSTART");
 		foreach AllActors( class 'NavigationPoint', N )
 		{
 			NewRating = RatePlayerStart(N,0,Player);
 			if ( NewRating > BestRating )
 			{
 				BestRating = NewRating;
-				BestStart = N;	
+				BestStart = N;
 				Log(" Iterating all NavigationPoints to find player start; new best point is ["$BestStart$"] with rating ["$NewRating$"]");
 			}
 		}
@@ -1826,7 +1826,7 @@ function CheckScore(PlayerReplicationInfo Scorer)
 	if ( (GameRulesModifiers != None) && GameRulesModifiers.CheckScore(Scorer) )
 		return;
 }
-	
+
 function ScoreEvent(PlayerReplicationInfo Who, float Points, string Desc)
 {
 }
