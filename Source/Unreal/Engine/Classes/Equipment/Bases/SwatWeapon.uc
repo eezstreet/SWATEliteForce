@@ -108,6 +108,7 @@ var(Firing) config WeaponAimAnimationType AimAnimation;
 var(Firing) config WeaponLowReadyAnimationType LowReadyAnimation;
 var(Firing) config array<EIdleWeaponStatus> IdleWeaponCategory;
 var(Firing) config EComplianceWeaponAnimation ComplianceAnimation;
+var(Firing) protected config bool ShowCrosshairInIronsights "Whether to show the crosshair in ironsights";
 
 // Manufacturer Information
 var(AdvancedDescription) protected localized config string Manufacturer         "The Manufacturer in the Advanced Information panel (localized)";
@@ -156,6 +157,11 @@ simulated function float GetBulk() {
 simulated function float GetChoke()
 {
   return Choke;
+}
+
+simulated function bool ShouldHideCrosshairsInIronsights()
+{
+  return !ShowCrosshairInIronsights;
 }
 
 simulated function UpdateAmmoDisplay()
@@ -295,17 +301,17 @@ simulated function Rotator GetIronsightsRotationOffset()
     return IronSightRotationOffset;
 }
 
-simulated function float GetViewInertia() 
+simulated function float GetViewInertia()
 {
 	return ViewInertia;
 }
 
-simulated function float GetMaxInertiaOffset() 
+simulated function float GetMaxInertiaOffset()
 {
 	return MaxInertiaOffset;
 }
 
-simulated function float GetIronSightAnimationProgress() 
+simulated function float GetIronSightAnimationProgress()
 {
 	return IronSightAnimationProgress;
 }
@@ -317,7 +323,7 @@ simulated function SetIronSightAnimationProgress(float value)
 	IronSightAnimationProgress = value;
 }
 
-simulated function array<vector> GetAnimationSplinePoints() 
+simulated function array<vector> GetAnimationSplinePoints()
 {
 	return AnimationSplinePoints;
 }
@@ -325,7 +331,7 @@ simulated function AddAnimationSplinePoint(vector value)
 {
 	AnimationSplinePoints.Insert(AnimationSplinePoints.Length, 1);
 	AnimationSplinePoints[AnimationSplinePoints.Length - 1] = value;
-	if (AnimationSplinePoints.Length > 4) 
+	if (AnimationSplinePoints.Length > 4)
 	{
 		AnimationSplinePoints.Remove(0, 1);
 	}
