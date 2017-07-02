@@ -17,6 +17,7 @@ var(Ricochet) config float RicochetMinimumMomentum "Minimum momentum required to
 // Advanced ballstics for Elite Force
 var(AdvancedBallistics) config float Drag "The amount of Momentum that is lost with each unit traveled.";
 var(AdvancedBallistics) config bool ShredsArmor "True if this ammo type can shred armor, false otherwise";
+var(AdvancedBallistics) config float MinimumMomentum "The minimum amount of momentum that this ammo type has, after drag";
 
 // Fracture occurs when a bullet ricochets and splits into multiple pieces.
 // These fractured projectiles deviate from the ricochet angle when they collide against each other. This is simulated by giving them some slop.
@@ -66,6 +67,11 @@ simulated function float GetDrag() {
 
 simulated function bool CanShredArmor() {
   return ShredsArmor;
+}
+
+simulated function float GetMinimumMomentum()
+{
+  return MinimumMomentum;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
