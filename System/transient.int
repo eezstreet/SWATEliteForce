@@ -5358,7 +5358,6 @@ EntryOptionTitle=("Side 4, Level 1","Side 1, Level 1")
 EntryDescription=("Main Entrance","Side Dock Entrance")
 TimeLinePlot=(0,80,90,100)
 TimeLineTime=("19:04","19:27","19:35","19:47")
-TimeLineShortDescription=(" Arrest Warrant Issued.", "First units arrive.", "Perimeter Established.", "SWAT Entry.")
 TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
 LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
 

@@ -757,6 +757,7 @@ Once you have selected your map settings and have started the server at least on
 - Removed map filter from server browser filter menu (was causing lag)
 - Added a console command to change the position of the weapon in first person.
 - Externalized the position of the weapon in first person and in iron sights.
+- LaunchSEF.exe now works correctly on Windows XP.
 - Cut Content Restored: M1Super90 Defense shotgun added
 - Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them. This has been fixed.
 - Fixed SEF bug: Wedges not depleting weight when used

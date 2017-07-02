@@ -1275,15 +1275,20 @@ static function class<Actor> GetRenderableActorClass()
 simulated function vector GetDefaultLocationOffset()
 {
 	local vector DefaultLocationOffset;
-	
+
 	return DefaultLocationOffset;
 }
 
 simulated function Rotator GetDefaultRotationOffset()
 {
 	local Rotator DefaultRotationOffset;
-	
+
 	return DefaultRotationOffset;
+}
+
+simulated function bool ShouldHideCrosshairsInIronsights()
+{
+  return false; // Only weapons do
 }
 
 simulated function vector GetIronsightsLocationOffset()
@@ -1300,32 +1305,32 @@ simulated function Rotator GetIronsightsRotationOffset()
 	return IronsightsRotation;
 }
 
-simulated function float GetViewInertia() 
+simulated function float GetViewInertia()
 {
 	local float Inertia;
-	
+
 	return Inertia;
 }
 
-simulated function float GetMaxInertiaOffset() 
+simulated function float GetMaxInertiaOffset()
 {
 	local float Offset;
-	
+
 	return Offset;
 }
 
 simulated function float GetIronSightAnimationProgress()
 {
 	local float IronSightAnimationPosition;
-	
+
 	return IronSightAnimationPosition;
 }
 simulated function SetIronSightAnimationProgress(float value) { }
 
-simulated function array<vector> GetAnimationSplinePoints() 
+simulated function array<vector> GetAnimationSplinePoints()
 {
 	local array<vector> AnimationSplinePoints;
-	
+
 	return AnimationSplinePoints;
 }
 simulated function AddAnimationSplinePoint(vector value) { }
