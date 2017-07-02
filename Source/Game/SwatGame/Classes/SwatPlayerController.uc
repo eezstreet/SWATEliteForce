@@ -221,7 +221,7 @@ function bool GetCrosshairDisabled()
 
   GC = SwatRepo(Level.GetRepo()).GuiConfig;
 
-	return GC.bHideCrosshairs;
+	return GC.bHideCrosshairs || (!GetIronsightsDisabled() && WantsZoom);
 }
 
 function bool GetInertiaDisabled()
