@@ -594,8 +594,8 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         {
           Momentum = Ammo.GetMinimumMomentum();
         }
-        
-        if(Momentum < 0.0) {
+
+        if(Momentum <= 0.0) {
           Ammo.BallisticsLog("Momentum went < 0. Not impacting with anything (LOST BULLET)");
           break;
         }
