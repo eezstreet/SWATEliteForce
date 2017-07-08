@@ -1,0 +1,1 @@
+class BombRoster extends MPRoster;

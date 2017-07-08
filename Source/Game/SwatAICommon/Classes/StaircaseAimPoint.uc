@@ -1,0 +1,21 @@
+///////////////////////////////////////////////////////////////////////////////
+
+class StaircaseAimPoint extends Engine.Actor
+    placeable
+    native;
+
+///////////////////////////////////////////////////////////////////////////////
+
+defaultproperties
+{
+    Texture=Texture'Swat4EditorTex.stairaiming'
+    bStatic=true
+    bNoDelete=true
+    bHidden=true
+    bBlockZeroExtentTraces=false
+    bBlockNonZeroExtentTraces=false
+    CollisionRadius=+00030.000000
+    CollisionHeight=+00080.000000
+}
+
+///////////////////////////////////////////////////////////////////////////////

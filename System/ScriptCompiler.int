@@ -1,0 +1,15 @@
+[Public]
+Object=(Name=ScriptCompiler.MakeCommandlet,Class=Class,MetaClass=Core.Commandlet)
+
+
+[MakeCommandlet]
+HelpCmd=make
+HelpOneLiner=Rebuild UnrealScript packages
+HelpUsage=make [-option...] [parm=value]...
+HelpParm[0]=Silent
+HelpDesc[0]=No prompts; assume "yes" to all questions
+HelpParm[1]=NoBind
+HelpDesc[1]=Don't force native functions to be bound to DLLs
+HelpParm[2]=All
+HelpDesc[2]=Clean rebuild (otherwise rebuild is incremental)
+

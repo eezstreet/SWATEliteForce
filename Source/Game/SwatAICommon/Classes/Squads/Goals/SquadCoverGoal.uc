@@ -1,0 +1,34 @@
+///////////////////////////////////////////////////////////////////////////////
+// SquadCoverGoal.uc - SquadCoverGoal class
+// this goal is used to organize the Officer's cover behavior
+
+class SquadCoverGoal extends SquadCommandGoal;
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Variables
+
+// copied to our action
+var(parameters) vector	CoverLocation;
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Constructors
+
+
+// Use this constructor
+overloaded function construct( AI_Resource r, Pawn inCommandGiver, vector inCommandOrigin, vector inCoverLocation)
+{
+	super.construct(r, inCommandGiver, inCommandOrigin);
+
+	coverLocation      = inCoverLocation;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+defaultproperties
+{
+	goalName = "SquadCover"
+	bRepostElementGoalOnSubElementSquad = true
+}

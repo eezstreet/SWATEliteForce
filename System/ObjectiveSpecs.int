@@ -1,0 +1,4 @@
+[ClearHotelBeforeBombExplodes]
+;Standard Objective Properties
+Description=Clear the Hotel before the Bomb explodes
+FailureCondition=The timer on the Bomb expired, and the Bomb exploded

@@ -1,0 +1,11 @@
+Changelog for: Win32 Common Code
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+04-28-2005  1.00.00  SN   RELEASE  Releasing to developer site.
+04-04-2005  1.00.00  SN   RELEASE  Releasing to developer site.
+09-16-2004  1.00.00  SN   RELEASE  Releasing to developer site.
+08-26-2004  1.00.00  DES  OTHER    Changelog started
+                          FEATURE  Added a workspace for building all the C test apps.
+

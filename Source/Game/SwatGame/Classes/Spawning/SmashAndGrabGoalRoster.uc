@@ -1,0 +1,1 @@
+class SmashAndGrabGoalRoster extends MPRoster;

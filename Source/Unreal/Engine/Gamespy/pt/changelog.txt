@@ -1,0 +1,54 @@
+Changelog for: GameSpy Patching & Tracking SDK
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+06-03-2005  1.01.23  SN   RELEASE  Releasing to developer site.
+05-09-2005  1.01.23  SN   FIX      Fixed common code includes in source files
+                                   Fixed project to use new common code
+05-04-2005  1.01.22  SN   OTHER    Created Visual Studio .NET project
+04-28-2005  1.01.22  SN   RELEASE  Releasing to developer site.
+04-27-2005  1.01.22  DES  RELEASE  Limited release to Nintendo DS developers.
+04-25-2005  1.01.22  DES  FEATURE  Added common debug support to pttestc
+04-04-2005  1.01.21  SN   RELEASE  Releasing to developer site.
+03-14-2005  1.01.21  DES  FEATURE  Nintendo DS support
+11-24-2004  1.01.20  SN   FIX      Fixed download URL with 100 char limit to be 256. 
+                                   Made URL character string local to functions that use it.  
+                                   added a 256 char size constant
+09-16-2004  1.01.19  SN   RELEASE  Releasing to developer site.
+08-27-2004  1.01.19  DES  CLEANUP  Fixed warnings under OSX
+                     DES  CLEANUP  General Unicode cleanup
+                     DES  CLEANUP  Updated Win32 project configurations
+                     DES  CLEANUP  Updated OSX Makefile
+08-04-2004  1.01.18  SN   RELEASE  Releasing to developer site.
+07-19-2004  1.01.18  SN	  FIX      Updated code with explicit casts to remove implicit cast error 
+                                   when compiling at highest level and warnings treated as errors.
+06-18-2004  1.01.18  BED  RELEASE  Releasing to developer site.
+                     BED  FEATURE  Added PS2 Insock support
+11-10-2003  1.01.17  DES  RELEASE  Releasing to developer site.
+11-07-2003  1.01.17  BED  FIX      Updated CodeWarrior project file.
+11-07-2003  1.01.16  DES  FIX      Updated linux and PS2 makefiles.
+11-04-2003  1.01.15  DES  FEATURE  Added availability check code.
+10-29-2003  1.01.14  BED  FIX      Fixed bug with incorrect data types in callback.
+                     DES  FEATURE  Now passes the gamename along with the request.
+10-22-2003  1.01.13  BED  RELEASE  Releasing to developer site.  (UNIQUE NICK AND UNICODE SUPPORT)
+10-22-2003  1.01.13  BED  FIX      Removed script compiler warnings in preparation for release.
+                     BED  FEATURE  Added Unicode support to the sample.
+10-09-2003  1.01.12  BED  FIX      Added ghttpCleanup call to pttestc.c to prevent memory leak.
+09-08-2003  1.01.11  BED  FEATURE  Added UTF-8 wrapper for UNICODE support
+07-24-2003  1.01.10  DES  RELEASE  Releasing to developer site.
+07-23-2003  1.01.10  BED  FEATURE  Added Linux sample Makefile.
+07-18-2003  1.01.09  BED  FEATURE  Added CodeWarrior (PS2) sample project file.
+                     BED  CLEANUP  General cleanup to remove CodeWarrior warnings.
+07-17-2003  1.01.08  DES  CLEANUP  Cleaned up the PS2 Makefile, it now uses Makefile.commmon.
+07-16-2003  1.01.07  DES  FIX      Changed a __mips64 check to a _PS2 check.
+                     BED  FEATURE  Added ProDG sample project files.
+07-11-2003  1.01.06  BED  FIX      Added a success message in the pttest sample for PS2.
+07-10-2003  1.01.05  BED  CLEANUP  Switch from local UNUSED_PARAM to standard GSI_UNUSED macro.
+05-09-2003  1.01.04  DES  CLEANUP  Removed Dreamcast support.
+04-15-2003  1.01.03  JED  CLEANUP  Removed a few DevStudio Level4 warnings
+12-19-2002  1.01.02  DES  RELEASE  Releasing to developer site.
+12-19-2002  1.01.02  DES  CLEANUP  Removed assert.h include.
+12-13-2002  1.01.01  DES  FEATURE  Added PS2 eenet stack support.
+                          CLEANUP  Cleaned up code to remove PS2 compiler warnings.
+09-25-2002  1.01.00  DDW  OTHER    Changelog started

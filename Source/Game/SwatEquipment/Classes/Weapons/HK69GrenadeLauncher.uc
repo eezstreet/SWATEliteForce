@@ -1,0 +1,1 @@
+class HK69GrenadeLauncher extends GrenadeLauncherBase;

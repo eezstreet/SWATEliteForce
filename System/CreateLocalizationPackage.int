@@ -1,0 +1,5 @@
+[General]
+Start=CreateLocalizationPackage (Starting)
+Exit=CreateLocalizationPackage (Exiting)
+Run=CreateLocalizationPackage (Running)
+Product=CreateLocalizationPackage

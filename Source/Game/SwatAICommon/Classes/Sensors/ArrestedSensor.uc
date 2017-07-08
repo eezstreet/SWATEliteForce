@@ -1,0 +1,41 @@
+///////////////////////////////////////////////////////////////////////////////
+// ArrestedSensor.uc - the ArrestedSensor class
+// a sensor that notifies interested parties when a target is arrested (or no longer alive)
+
+class ArrestedSensor extends Tyrion.AI_Sensor;
+///////////////////////////////////////////////////////////////////////////////
+
+var Pawn Target;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Notifications
+
+function NotifyTargetArrested()
+{
+	SetObjectValue(Target);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Cleanup
+
+function cleanup()
+{
+	Target = None;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Setup
+
+// Initialize set the sensor's parameters
+// 'target': the pawn this sensor is interested in
+function setParameters( Pawn inTarget )
+{
+	assert(inTarget != None);
+
+	Target = inTarget;
+
+	sensorAction.runAction();
+}

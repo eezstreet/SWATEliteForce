@@ -1,0 +1,3 @@
+interface IInterested_GameEvent_ReportableReportedToTOC;
+
+function OnReportableReportedToTOC(IAmReportableCharacter ReportableCharacter, Pawn Reporter);

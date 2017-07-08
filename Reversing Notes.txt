@@ -1,0 +1,8 @@
+=== SWATGAME ===
+
+UObject
++8 = void* CallEvent(void* this, void* functionPointer, ...)
+
+SwatPawn
++0 = UObject struct (unknown sizeof)
++248 = Mesh (unknown type)

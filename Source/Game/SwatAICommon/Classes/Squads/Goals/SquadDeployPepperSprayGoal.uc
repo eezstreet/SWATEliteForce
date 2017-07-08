@@ -1,0 +1,39 @@
+///////////////////////////////////////////////////////////////////////////////
+
+class SquadDeployPepperSprayGoal extends SquadCommandGoal;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Variables
+
+var(parameters) Pawn TargetPawn;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Constructors
+
+// Use this constructor
+overloaded function construct( AI_Resource r, Pawn inCommandGiver, vector inCommandOrigin, Pawn inTargetPawn )
+{
+	super.construct(r, inCommandGiver, inCommandOrigin);
+
+	assert(inTargetPawn != None);
+	TargetPawn = inTargetPawn;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Accessors
+
+function bool IsInteractingWith(Actor TestActor)
+{
+	return (TargetPawn == TestActor);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+defaultproperties
+{
+	goalName = "SquadDeployPepperSpray"
+    bIsCharacterInteractionCommandGoal=true
+}

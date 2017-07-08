@@ -1,0 +1,77 @@
+Changelog for: GameSpy HTTP SDK
+--------------------------------------------------------
+
+DATE        VERSION  BY   TYPE     DESCRIPTION
+----------  -------  ---  -------  ---------------------------------------------------------
+06-03-2005  1.07.11  SN   RELEASE  Releasing to developer site.
+06-01-2004  1.07.11  SN   FIX      Fixed the function ghiParseStatus to find the status string after it checks for correct header information.
+05-09-2005  1.07.10  BED  FEATURE  Added ghttpCloseRequest to handle graceful shutdowns
+05-08-2005  1.07.09  DES  FIX      CompletedCallback now gets the file length for Save and Stream requests.
+05-05-2005  1.07.08  BED  FIX      Updated project files to use new common folder
+04-29-2005  1.07.07  SN   OTHER    Created Visual Studio .NET projects
+04-28-2005  1.07.07  SN   RELEASE  Releasing to developer site.
+04-27-2005  1.07.07  DES  RELEASE  Limited release to Nintendo DS developers.
+04-25-2005  1.07.07  DES  FEATURE  Added debug logging.
+                     DES  CLEANUP  Removed old commented-out code.
+                     DES  CLEANUP  General cleanup of ghttpc.
+04-12-2005  1.07.06  BED  FIX      Fixed bug where User-Agent header could appear twice.
+04-04-2005  1.07.05  SN   RELEASE  Releasing to developer site.
+03-29-2005  1.07.05  DES  FIX      Fixed warnings for internal functions
+03-14-2005  1.07.04  DES  FEATURE  Nintendo DS support
+01-12-2004  1.07.03  BED  FIX      Was missing a #ifdef around matrixssl.h
+12-20-2004  1.07.02  BED  FIX      Fixed ghttpGetHeaders with SSL support.
+12-06-2004  1.07.01  BED  FEATURE  Added initial support for SSL connections.
+11-19-2004  1.07.00  DDW  FEATURE  Added internal support for persistent server connections
+09-16-2004  1.06.25  SN   RELEASE  Releasing to developer site.
+08-27-2004  1.06.25  DES  CLEANUP  Removed MacOS style includes
+                     DES  CLEANUP  General Unicode cleanup
+                     DES  CLEANUP  Updated Win32 project configurations
+                     DES  CLEANUP  Fixed warnings under OSX
+                     DES  CLEANUP  Updated OSX Makefile
+08-13-2004  1.06.24  SN   FIX      Changed asserts in ghiParseProxyServer to reflect the correct checks on parameters
+08-04-2004  1.06.23  SN   RELEASE  Releasing to developer site.
+07-19-2004  1.06.23  SN   FIX	   Updated code with explicit casts to remove implicit cast error 
+                                   when compiling at highest level and warnings treated as errors.
+06-18-2004  1.06.22  BED  RELEASE  Releasing to developer site.
+06-17-2004  1.06.22  BED  FIX      ghttpc sample no longer builds UNICODE mode by default
+                     BED  FEATURE  Added PS2 Insock support
+01-26-2004  1.06.21  BED  FEATURE  Added the ability to set a "proxy override" on each request.
+11-10-2003  1.06.20  DES  RELEASE  Releasing to developer site.
+11-07-2003  1.06.20  DES  FIX      Updated the linux makefile.
+10-21-2003  1.06.19  BED  RELEASE  Releasing to developer site.  (UNIQUE NICK AND UNICODE SUPPORT)
+10-20-2003  1.06.19  BED  FEATURE  Added ghttpSetMaxRecvTime() to prevent async downloads from blocking in special cases
+01-05-2003  1.06.18  JED  FEATURE  Added download size checking and GHTTPFileToBig error code
+09-30-2003  1.06.17  BED  FEATURE  Modified sample app to check (result < 0) instead of (result == -1) to handle additional error codes.
+09-16-2003  1.06.16  JED  FIX      Added stringutil.c/h incudes to ghttp.dsp
+09-08-2003  1.06.15  BED  FEATURE  Added wrapper for UNICODE support.  (Two byte UNICODE converted to single byte ASCII)
+                     BED  FEATURE  Added new return status "GHTTPFileIncomplete" to notify of a partial or interrupted download
+                     BED  FEATURE  Added extra error return codes per JED request.  To enable these define GHTTP_EXTENDEDERROR
+07-24-2003  1.06.14  DES  RELEASE  Releasing to developer site.
+07-18-2003  1.06.14  BED  FEATURE  Added CodeWarrior (PS2) sample project file.
+                     BED  CLEANUP  General cleanup to remove CodeWarrior warnings.
+07-17-2003  1.06.13  DES  CLEANUP  Cleaned up the PS2 Makefile, it now uses Makefile.commmon.
+07-16-2003  1.06.12  DES  FIX      Changed a __mips64 checks to a _PS2 check.
+                     BED  FEATURE  Added ProDG sample project files.
+07-15-2003  1.06.11  DES  RELEASE  Releasing to developer site.
+07-10-2003  1.06.11  BED  FIX      Added newline to end of file to prevent compiler warning.
+05-09-2003  1.06.10  DES  CLEANUP  Removed Dreamcast support.
+                          FIX      Metrowerks for Win32 is no longer falsely identified as MacOS.
+04-15-2003  1.06.09  JED  CLEANUP  More cleanup to remove a few DevStudio Level4 warnings
+03-03-2003  1.06.08  DES  CLEANUP  General cleanup to remove warnings.
+01-28-2003  1.06.07  DES  FIX      Fixed a bug which could cause a request to fail if a 1xx (Continue)
+                                   status response was received (common when posting).
+                          CLEANUP  Changed posting code to send no more than 32K in a single send() call.
+                                   Win98 was having trouble dealing with large blocks of data.
+01-23-2003  1.06.06  DES  FIX      Replaced a malloc with gsimalloc.
+01-15-2003  1.06.05  DES  FIX      Fixed a crashing bug involving parsing received data that started
+                                   with the last byte of a chunk header.
+12-19-2002  1.06.04  DES  RELEASE  Releasing to developer site.
+12-19-2002  1.06.04  DES  CLEANUP  Removed assert.h include.
+12-16-2002  1.06.03  DES  CLEANUP  Removed call to GOAClearSocketError.
+12-13-2002  1.06.02  DES  FEATURE  Added PS2 eenet stack support.
+                          CLEANUP  Cleaned up code to remove PS2 compiler warnings.
+11-14-2002  1.06.01  DES  FIX      Send "Connection: close" in request header to be 1.1 compliant
+                          FIX      Fixed bug with reading end of chunked header
+                          OTHER    Removed "#if 1" block from around chunked transfer code
+                          OTHER    Each connection gets a unique ID (for debugging, not exposed in API)
+09-25-2002  1.06.00  DDW  OTHER    Changelog started

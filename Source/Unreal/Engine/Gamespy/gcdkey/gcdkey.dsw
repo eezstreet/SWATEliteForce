@@ -1,0 +1,85 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "gcdkeyclient"=.\gcdkeyclient.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/gcdkey", JIGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gcdkeygen"=.\gcdkeygen.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/gcdkey", PJGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gcdkeyserver"=.\gcdkeyserver.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/gcdkey", JIGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gcdkeyserver_qr2"=.\gcdkeyserver_qr2.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/gcdkey", JIGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Gamespy/GOA/gcdkey", JIGAAAAA
+    .
+    end source code control
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
