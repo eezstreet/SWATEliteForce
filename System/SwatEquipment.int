@@ -190,7 +190,7 @@ TotalAmmoString=50 shells
 RateOfFire=150 RPM
 
 [M1Super90SG]
-Description=The M1 Super 90 is a semi-automatic 12 gauge combat shotgun with a five round magazine capacity and it accepts multiple types of 2.75" shot shells. With a tritium "glow in the dark" front sight, a fourteen-inch chrome plated barrel, a high impact polymer buttstock and a mounted flashlight, the Benelli M1 Super 90 might old, but it is a mainstay in law enforcement.
+Description=It would be difficult for anyone living half a century ago to believe that Benelli would be famous for guns, and not motorcycles. The Benelli M1Super90 and its inertia-driven recoil system, designed by Bruno Civolani, made it easy. While the M1Super90 is older and its feed size smaller than its successors, it nontheless remains a mainstay in law enforcement.
 FriendlyName=M1 Super 90 Defense
 Manufacturer=Benelli
 Caliber=12 Gauge
@@ -201,7 +201,7 @@ TotalAmmoString=50 shells
 RateOfFire=200 RPM
 
 [M4Super90SG]
-Description=The Benelli M4 Super 90 (designated by the United States military as the M1014) is a highly reliable semi-automatic shotgun, developed in the late 90s as the final successor to the widely popular M1 series of Benelli shotguns. Its 7-round magazine is appealing to law enforcement, but its relative bulk may make it difficult to use in close quarters.
+Description=The Benelli M4Super90 (designated by the United States military as the M1014) is a highly reliable semi-automatic shotgun, developed in the late 90s as the final successor to the widely popular M1 series of Benelli shotguns. Its 7-round magazine is appealing to law enforcement, but its relative bulk may make it difficult to use in close quarters.
 FriendlyName=M4 Super 90
 Manufacturer=Benelli
 Caliber=12 Gauge
@@ -351,20 +351,20 @@ Description=The Colt M4A1 carbine is based on the tried and true design of the M
 FriendlyName=Suppressed M4A1 Carbine
 
 [G36kMG]
-Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing.
-FriendlyName=G36K
+Description=The H&K G36C Carbine is a lightweight sub compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing.
+FriendlyName=G36C
 Manufacturer=Heckler & Koch
 Caliber=5.56x45mm DM11
 CountryOfOrigin=Germany
-ProductionStart=1997
+ProductionStart=2001
 FireModes=Semi-Automatic, 2-rd. Burst, Full-Auto
 MagazineSizeString=30
 TotalAmmoString=10 magazines
 RateOfFire=750 RPM
 
 [G36ksdMG]
-Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount.
-FriendlyName=Suppressed G36K
+Description=The H&K G36C Carbine is a lightweight sub compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount.
+FriendlyName=Suppressed G36C
 
 [UziSMG]
 Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice. Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.

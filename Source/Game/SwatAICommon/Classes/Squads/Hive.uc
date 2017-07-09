@@ -483,28 +483,6 @@ function bool IsActorWithinDistanceOfOfficers(Actor TestActor, float Distance)
 	return false;
 }
 
-function bool IsOfficerWithinDistanceOfSuspects(Pawn TestPawn, float Distance, bool bRequiresLineOfSight)
-{
-	local int i;
-	local Pawn IterSuspect;
-
-	assert(TestPawn != None);
-
-	if (TestPawn.Level.NetMode == NM_Standalone)
-	{
-		// now check the AIs
-		for(i=0; i<Blackboard.EncounteredEnemies.Length; ++i)
-		{
-			IterSuspect = Blackboard.EncounteredEnemies[i];
-
-			if ((VSize2D(IterSuspect.Location - TestPawn.Location) < Distance) && (! bRequiresLineOfSight || TestPawn.LineOfSightTo(IterSuspect)))
-				return true;
-		}
-	}
-
-	return false;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Engaging Points
