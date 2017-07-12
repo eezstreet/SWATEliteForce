@@ -414,32 +414,26 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'PlayerConnect':
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
-        case 'NameChange':
-        case 'Kick':
-        case 'KickBan':
-		case 'KickReferendumStarted':
-		case 'BanReferendumStarted':
-		case 'LeaderReferendumStarted':
-		case 'MapReferendumStarted':
-		case 'ReferendumAlreadyActive':
-		case 'ReferendumStartCooldown':
-		case 'PlayerImmuneFromReferendum':
-		case 'ReferendumAgainstAdmin':
-		case 'ReferendumsDisabled':
-		case 'LeaderVoteTeamMismatch':
-		case 'YesVote':
-		case 'NoVote':
-		case 'ReferendumSucceeded':
-		case 'ReferendumFailed':
-		case 'CoopQMM':
-		case 'SmashAndGrabArrestTimeDeduction':
-		case 'SmashAndGrabGotItem':
-		case 'SmashAndGrabDroppedItem':
-		case 'Stats':
-		case 'CoopLeaderPromoted':
-		case 'CoopMessage':
-		case 'StatsValidatedMessage':
-		case 'StatsBadProfileMessage':
+        case 'ReferendumStarted':
+		    case 'ReferendumAlreadyActive':
+		    case 'ReferendumStartCooldown':
+		    case 'PlayerImmuneFromReferendum':
+		    case 'ReferendumAgainstAdmin':
+		    case 'ReferendumsDisabled':
+		    case 'LeaderVoteTeamMismatch':
+		    case 'YesVote':
+		    case 'NoVote':
+		    case 'ReferendumSucceeded':
+		    case 'ReferendumFailed':
+		    case 'CoopQMM':
+		    case 'SmashAndGrabArrestTimeDeduction':
+		    case 'SmashAndGrabGotItem':
+		    case 'SmashAndGrabDroppedItem':
+		    case 'Stats':
+		    case 'CoopLeaderPromoted':
+		    case 'CoopMessage':
+		    case 'StatsValidatedMessage':
+		    case 'StatsBadProfileMessage':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
