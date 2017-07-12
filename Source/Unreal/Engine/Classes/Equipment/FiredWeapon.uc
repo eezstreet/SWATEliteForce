@@ -393,6 +393,7 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
     {
       // Our bullet type *might* penetrate surfaces and we hit a surface...
       Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+      continue;
     }
 
     if(Momentum <= 0 && MomentumMatters)
