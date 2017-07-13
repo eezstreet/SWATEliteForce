@@ -26,7 +26,7 @@ function Timer()
 	bSwitchingMaps = false;
 
 	// Travel to the new map
-	SwatRepo(Level.GetRepo()).NetSwitchLevelsFromMapVote(SwatRepo(Level.GetRepo()).GetSGRI().NextMap);
+	SwatRepo(Level.GetRepo()).NetSwitchLevels(true);
 }
 
 simulated function String ReferendumDescription()

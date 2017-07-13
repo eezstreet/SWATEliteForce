@@ -169,7 +169,7 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 	// Start a cooldown for PlayerId to start another referendum
 	AddVoterToCooldownList(PRI.PlayerId);
 
-	Level.Game.BroadcastTeam(None, CurrentReferendum.ReferendumDescription(), 'ReferendumStarted');
+	Level.Game.Broadcast(None, CurrentReferendum.ReferendumDescription(), 'ReferendumStarted');
 
 	return true;
 }
