@@ -15,13 +15,13 @@ function ReferendumDecided(bool YesVotesWin)
 	if (YesVotesWin)
 	{
 		mplog("The ban referendum was successful. Banning " $ TargetPRI.PlayerName);
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumSucceeded');
+		Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 		Level.Game.VotedToBeBanned(TargetPC);
 	}
 	else
 	{
 		mplog("The ban referendum was unsuccessful. " $ TargetPRI.PlayerName $ " will not be banned");
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumFailed');
+		Level.Game.Broadcast(None, "", 'ReferendumFailed');
 	}
 }
 
