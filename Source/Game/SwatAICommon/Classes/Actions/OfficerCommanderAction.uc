@@ -23,6 +23,7 @@ var private IdleAimAroundGoal			CurrentIdleAimAroundGoal;
 var private WatchNonHostileTargetGoal	CurrentWatchNonHostileTargetGoal;
 
 var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
+var private ReloadGoal			CurrentReloadGoal;
 
 // Config
 var config float						MinAimAtNoiseWhileMovingTime;
@@ -85,6 +86,12 @@ function cleanup()
 	{
 		CurrentIdleAimAroundGoal.Release();
 		CurrentIdleAimAroundGoal = None;
+	}	
+	
+	if (CurrentReloadGoal != None)
+	{
+		CurrentReloadGoal.Release();
+		CurrentReloadGoal = None;
 	}
 }
 
@@ -126,6 +133,13 @@ function RemoveNonDeathGoals()
 		CurrentRotateTowardRotationGoal.unPostGoal(self);
 		CurrentRotateTowardRotationGoal.Release();
 		CurrentRotateTowardRotationGoal = None;
+	}
+	
+	if (CurrentReloadGoal != None)
+	{
+		CurrentReloadGoal.unPostGoal(self);
+		CurrentReloadGoal.Release();
+		CurrentReloadGoal = None;
 	}
 }
 
@@ -494,6 +508,15 @@ private latent function EngageAssignment()
 	}
 }
 
+function ReloadWeapons()
+{
+	CurrentReloadGoal = new class'SwatAICommon.ReloadGoal'(AI_WeaponResource(m_Pawn.WeaponAI));
+	assert(CurrentReloadGoal != None);
+	CurrentReloadGoal.AddRef();	
+
+	CurrentReloadGoal.postGoal( self );
+}
+
 state Running
 {
  Begin:
@@ -526,6 +549,7 @@ state Running
 	}
 
 	yield();
+	ReloadWeapons();
 	goto('Begin');
 }
 
