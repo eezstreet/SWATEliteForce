@@ -319,7 +319,8 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * All evidence of Gamespy scrubbed
   * Removed "Check for Patch" button on the join game menu
   * Cleaned up appearance throughout
-  * You can now Un-Ready yourself in CO-OP games. You can only edit your equipment when you are not ready.
+  * You can now Un-Ready yourself in CO-OP games.
+  * In CO-OP, clicking the Equipment button automatically Un-Readies yourself.
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
   * The menu will now show labels on stuff in widescreen resolution
   * You no longer need a CD-key to publish a game to the Internet server browser.
@@ -755,6 +756,7 @@ Once you have selected your map settings and have started the server at least on
 - Added a Discord and Wiki button to the main menu
 - Removed the CHECK FOR PATCH button in the server browser; added a DOWNLOAD PLUGIN button.
 - Removed map filter from server browser filter menu (was causing lag)
+- In CO-OP, instead of the Ready button disabling the Equipment panel, hitting the Equipment button will automatically Un-Ready yourself.
 - Added a console command to change the position of the weapon in first person.
 - Externalized the position of the weapon in first person and in iron sights.
 - LaunchSEF.exe now works correctly on Windows XP.

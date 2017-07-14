@@ -57,7 +57,7 @@ var int ProcedureValue[MAX_PROCEDURES];
 
 ///////////////////////////////////////////////////////////////////////////////
 
-var SwatReferendumManager RefMgr;
+var ReferendumManager RefMgr;
 
 var String NextMap;
 
@@ -83,7 +83,7 @@ simulated function PostNetBeginPlay()
     ClearScoring();
 
 	if (RefMgr == None && Level.NetMode != NM_Client)
-		RefMgr = Spawn(class'SwatReferendumManager');
+		RefMgr = Spawn(class'ReferendumManager');
 }
 
 simulated function PostBeginPlay()
@@ -347,137 +347,34 @@ function int ServerChooseSoundEffectToPlay( name EffectSpecification, Actor Sour
     return SoundRef.SoundSetIndex;
 }
 
-function StartKickReferendum(PlayerController PC, String PlayerName)
+function StartReferendum(PlayerController PC, class<Voting.Referendum> ReferendumClass, optional PlayerController Target, optional String TargetStr)
 {
-	local PlayerController KickTarget;
-
-	if (RefMgr == None)
+	if(RefMgr == None)
 		return;
 
-	if (!ServerSettings(Level.CurrentServerSettings).bAllowReferendums)
+	if(!ServerSettings(Level.CurrentServerSettings).bAllowReferendums)
 	{
 		Level.Game.Broadcast(None, "", 'ReferendumsDisabled', PC);
 		return;
 	}
 
-	ForEach DynamicActors(class'PlayerController', KickTarget)
+	if(RefMgr.StartNewReferendum(PC, ReferendumClass, Target, TargetStr))
 	{
-		if (KickTarget.PlayerReplicationInfo.PlayerName ~= PlayerName)
-		{
-			if (KickTarget == Level.GetLocalPlayerController()
-#if IG_THIS_IS_SHIPPING_VERSION //enable no passwords for dev purposes
-				|| (Level.Game.IsA('SwatGameInfo') && SwatGameInfo(Level.Game).Admin.IsAdmin(KickTarget))
-#endif
-				)
-			{
-				mplog("Can't kick the local player or admin");
-				Level.Game.Broadcast(None, "", 'ReferendumAgainstAdmin', PC);
-				break;
-			}
-
-			if (RefMgr.StartKickReferendum(PC.PlayerReplicationInfo, KickTarget))
-			{
-				mplog(PC.PlayerReplicationInfo.PlayerName $ " has started a referendum to kick " $ KickTarget.PlayerReplicationInfo.PlayerName);
-
-				Level.Game.BroadcastTeam(PC, PC.PlayerReplicationInfo.PlayerName $ "\t" $ KickTarget.PlayerReplicationInfo.PlayerName, 'KickReferendumStarted');
-
-				VoteYes(PC);
-			}
-		}
-	}
-}
-
-function StartBanReferendum(PlayerController PC, String PlayerName)
-{
-	local PlayerController BanTarget;
-
-	if (RefMgr == None)
-		return;
-
-	if (!ServerSettings(Level.CurrentServerSettings).bAllowReferendums)
-	{
-		Level.Game.Broadcast(None, "", 'ReferendumsDisabled', PC);
-		return;
-	}
-
-	ForEach DynamicActors(class'PlayerController', BanTarget)
-	{
-		if (BanTarget.PlayerReplicationInfo.PlayerName ~= PlayerName)
-		{
-			if (BanTarget == Level.GetLocalPlayerController()
-#if IG_THIS_IS_SHIPPING_VERSION //enable no passwords for dev purposes
-				|| (Level.Game.IsA('SwatGameInfo') && SwatGameInfo(Level.Game).Admin.IsAdmin(BanTarget))
-#endif
-				)
-			{
-				mplog("Can't ban the local player");
-				Level.Game.Broadcast(None, "", 'ReferendumAgainstAdmin', PC);
-				break;
-			}
-
-			if (RefMgr.StartBanReferendum(PC.PlayerReplicationInfo, BanTarget))
-			{
-				mplog(PC.PlayerReplicationInfo.PlayerName $ " has started a referendum to ban " $ BanTarget.PlayerReplicationInfo.PlayerName);
-
-				Level.Game.BroadcastTeam(PC, PC.PlayerReplicationInfo.PlayerName $ "\t" $ BanTarget.PlayerReplicationInfo.PlayerName, 'BanReferendumStarted');
-
-				VoteYes(PC);
-			}
-		}
-	}
-}
-
-function StartLeaderReferendum(PlayerController PC, String PlayerName)
-{
-	local PlayerController LeaderTarget;
-
-	if (RefMgr == None)
-		return;
-
-	if (!ServerSettings(Level.CurrentServerSettings).bAllowReferendums)
-	{
-		Level.Game.Broadcast(None, "", 'ReferendumsDisabled', PC);
-		return;
-	}
-
-	ForEach DynamicActors(class'PlayerController', LeaderTarget)
-	{
-		if (LeaderTarget.PlayerReplicationInfo.PlayerName ~= PlayerName)
-		{
-			if (PC.PlayerReplicationInfo.Team != LeaderTarget.PlayerReplicationInfo.Team)
-			{
-				Level.Game.Broadcast(None, "", 'LeaderVoteTeamMismatch', PC);
-			}
-			else if (RefMgr.StartLeaderReferendum(PC.PlayerReplicationInfo, LeaderTarget))
-			{
-				mplog(PC.PlayerReplicationInfo.PlayerName $ " has started a referendum to promote " $ LeaderTarget.PlayerReplicationInfo.PlayerName $ " to leader");
-
-				Level.Game.BroadcastTeam(PC, PC.PlayerReplicationInfo.PlayerName $ "\t" $ LeaderTarget.PlayerReplicationInfo.PlayerName, 'LeaderReferendumStarted');
-
-				VoteYes(PC);
-			}
-		}
-	}
-}
-
-function StartMapChangeReferendum(PlayerController PC, String MapName, EMPMode GameType)
-{
-	if (RefMgr == None)
-		return;
-
-	if (!ServerSettings(Level.CurrentServerSettings).bAllowReferendums)
-	{
-		Level.Game.Broadcast(None, "", 'ReferendumsDisabled', PC);
-		return;
-	}
-
-	if (RefMgr.StartMapChangeReferendum(PC.PlayerReplicationInfo, MapName, GameType))
-	{
-		mplog(PC.PlayerReplicationInfo.PlayerName $ " has started a referendum to change the map to " $ MapName $ " and the game type to " $ SwatRepo(Level.GetRepo()).GuiConfig.GetGameModeName(GameType));
-
-		Level.Game.Broadcast(PC, PC.PlayerReplicationInfo.PlayerName $ "\t" $ MapName $ "\t" $ String(int(GameType)), 'MapReferendumStarted');
-
 		VoteYes(PC);
+	}
+}
+
+function StartReferendumForPlayer(PlayerController PC, class<Voting.Referendum> ReferendumClass, string PlayerName)
+{
+	local PlayerController Target;
+
+	foreach DynamicActors(class'PlayerController', Target)
+	{
+		if(Target.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			StartReferendum(PC, ReferendumClass, Target);
+			return;
+		}
 	}
 }
 

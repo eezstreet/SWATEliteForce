@@ -1,37 +1,20 @@
-class MapChangeReferendum extends Engine.Actor implements Voting.IReferendum;
+class MapChangeReferendum extends Voting.Referendum;
 
 import enum EMPMode from Engine.Repo;
 
 var() config localized string ReferendumDescriptionText;
-var private PlayerReplicationInfo ReferendumInstigatorPRI;
-var private String NewMapName;
-var private EMPMode NewGameType;
 var bool bSwitchingMaps;
-
-replication
-{
-	reliable if (bNetDirty && (Role == ROLE_Authority))
-		ReferendumInstigatorPRI, NewMapName, NewGameType;
-}
-
-function Initialise(PlayerReplicationInfo InitReferendumInstigatorPRI, String MapName, EMPMode GameType)
-{
-	ReferendumInstigatorPRI = InitReferendumInstigatorPRI;
-	NewMapName = MapName;
-	NewGameType = GameType;
-}
 
 simulated function String ReferendumDescription()
 {
-	return FormatTextString(ReferendumDescriptionText, ReferendumInstigatorPRI.PlayerName, NewMapName,
-		SwatRepo(Level.GetRepo()).GuiConfig.GetGameModeName(NewGameType));
+	return FormatTextString(ReferendumDescriptionText, CallerPRI.PlayerName, TargetStr);
 }
 
 function ReferendumDecided(bool YesVotesWin)
 {
 	if (YesVotesWin)
 	{
-		mplog("The map change referendum was successful. Changing map to " $ NewMapName);
+		mplog("The map change referendum was successful. Changing map to " $ TargetStr);
 
 		Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 
@@ -51,20 +34,13 @@ function Timer()
 	bSwitchingMaps = false;
 
 	// Modify the server settings for the new game type
-	ServerSettings(Level.CurrentServerSettings).MapChangingByVote(NewGameType);
+	ServerSettings(Level.CurrentServerSettings).MapChangingByVote(EMPMode.MPM_COOP);
 
 	// Travel to the new map
-	SwatRepo(Level.GetRepo()).NetSwitchLevelsFromMapVote(NewMapName);
+	SwatRepo(Level.GetRepo()).NetSwitchLevelsFromMapVote(TargetStr);
 }
 
 defaultproperties
 {
-	ReferendumDescriptionText="%1 has started a vote to change the map to %2, %3"
-
-	RemoteRole=ROLE_SimulatedProxy
-	bAlwaysRelevant=true
-	bOnlyDirtyReplication=true
-	bSkipActorPropertyReplication=true
-
-	bHidden=true
+	ReferendumDescriptionText="%1 has started a vote to change the map to %2"
 }

@@ -381,6 +381,7 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
 
     if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
     {
+      // The weapon shot itself (?), the person carrying it, or something that is invisible (like a volume)
       continue; // Not something we need to worry about
     }
     else if(!Victim.IsA('SwatPawn') && Ammo.RoundsNeverPenetrate)
@@ -392,10 +393,7 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
     {
       // Our bullet type *might* penetrate surfaces and we hit a surface...
       Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
-    }
-    else if(Victim.IsA('LevelInfo'))
-    {
-      return false; // Hit BSP geometry, we can't penetrate that ..!
+      continue;
     }
 
     if(Momentum <= 0 && MomentumMatters)
