@@ -2375,6 +2375,9 @@ simulated function InternalMelee()
 	if (!Item.bAbleToMelee)
 		return;
 
+  if(WantsZoom)
+    return; // Not allowed while zooming
+
 	if ( SwatPlayer.ValidateMelee() )
 	{
 		if (Level.GetEngine().EnableDevTools)
