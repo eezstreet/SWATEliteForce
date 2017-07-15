@@ -22,15 +22,7 @@ function float selectionHeuristic( AI_Goal goal )
 	
 	if (CurrentWeapon != None)
 	{	
-		if ((m_Pawn.IsA('SwatOfficer')) && (CurrentWeapon.IsA('RoundBasedWeapon')) && (CurrentWeapon.Ammo.RoundsRemainingBeforeReload() <= 0.9*CurrentWeapon.Ammo.RoundsComparedBeforeReload()) && CurrentWeapon.CanReload())
-		{
-			return 1.0;
-		}	
-		if ((m_Pawn.IsA('SwatOfficer')) && (CurrentWeapon.IsA('ClipBasedWeapon')) && (CurrentWeapon.Ammo.RoundsRemainingBeforeReload() <= 0.9*CurrentWeapon.Ammo.RoundsComparedBeforeReload()) && CurrentWeapon.CanReload())
-		{
-			return 1.0;
-		}
-		else if ((m_Pawn.IsA('SwatOfficer')) && CurrentWeapon.ShouldReload() && CurrentWeapon.CanReload())
+		if ((m_Pawn.IsA('SwatOfficer')) && CurrentWeapon.ShouldReload() && CurrentWeapon.CanReload())
 		{
 			return 1.0;
 		}
@@ -42,6 +34,27 @@ function float selectionHeuristic( AI_Goal goal )
 
 	// couldn't find anything
 	return 0.0;
+}
+
+private function bool IsWeaponFull()
+{
+	local FiredWeapon CurrentWeapon;
+	
+	CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
+	
+	if (CurrentWeapon != None)
+	{	
+		if ((m_Pawn.IsA('SwatOfficer')) && CurrentWeapon.ShouldReload() && CurrentWeapon.CanReload())
+		{
+			return false;
+		}
+		else if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
+		{
+			return false;
+		}	
+	}
+		
+	else return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,6 +75,16 @@ state Running
 {
  Begin:
 	ReloadWeapon();
+	// Wait, if this thing loaded yet?
+	// If it is good, if it's not, then reload again.
+	if (IsWeaponFull())
+	{
+		yield();
+	}
+	else
+	{
+		goto('Begin');
+	}
 	succeed();
 }
 

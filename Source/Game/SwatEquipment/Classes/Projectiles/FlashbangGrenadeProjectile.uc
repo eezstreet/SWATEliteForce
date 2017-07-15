@@ -25,7 +25,7 @@ simulated function Detonated()
 
     OuterRadius = FMax(FMax(DamageRadius, KarmaImpulseRadius), StunRadius);
 	vCeilingChkr = Location;
-	vCeilingChkr.Z = Location.Z + 246;
+	vCeilingChkr.Z = Location.Z + 600;
 
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (bRenderDebugInfo)
@@ -44,79 +44,79 @@ simulated function Detonated()
       CurrentExtra.OnFlashbangWentOff(Pawn(Owner));
     }
 	
-  if(FastTrace(Location, vCeilingChkr))
-{	
-    foreach RadiusActors(class'IReactToFlashbangGrenade', Current, OuterRadius)
-    {
-        //try to reject the candidate
+  if(FastTrace(Location, vCeilingChkr))	
+  {	  
+		foreach VisibleCollidingActors(class'IReactToFlashbangGrenade', Current, OuterRadius)
+		{
 
-        if  (
-                Actor(Current).Region.ZoneNumber != Region.ZoneNumber   //in a different zone
-            )
-            continue;
+					if  (                                                   // (it's within range, and
+							Actor(Current).Region.Zone == Region.Zone       //  AND it's in the same zone),
+						||  FastTrace(Location, Actor(Current).Location)    // OR it's unblocked
+						)
+					{
 
-        //can't reject
-
-        Current.ReactToFlashbangGrenade(
-            Self,
-            Pawn(Owner),
-            Damage,
-            DamageRadius,
-            KarmaImpulse,
-            KarmaImpulseRadius,
-            StunRadius,
-            PlayerStunDuration,
-            AIStunDuration,
-            MoraleModifier);
+			Current.ReactToFlashbangGrenade(
+				Self,
+				Pawn(Owner),
+				Damage,
+				DamageRadius,
+				KarmaImpulse,
+				KarmaImpulseRadius,
+				StunRadius,
+				PlayerStunDuration,
+				AIStunDuration,
+				MoraleModifier);
 
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
-        if (bRenderDebugInfo)
-        {
-            // Render line to actors that are affected
-            Level.GetLocalPlayerController().myHUD.AddDebugLine(
-                Location, Actor(Current).Location,
-                class'Engine.Canvas'.Static.MakeColor(0,0,255),
-                5);
-        }
-#endif
+			if (bRenderDebugInfo)
+			{
+				// Render line to actors that are affected
+				Level.GetLocalPlayerController().myHUD.AddDebugLine(
+					Location, Actor(Current).Location,
+					class'Engine.Canvas'.Static.MakeColor(0,0,255),
+					5);
+			}
+	#endif
+		}
     }
-}	  
-    foreach VisibleCollidingActors(class'IReactToFlashbangGrenade', Current, OuterRadius)
-    {
-        //try to reject the candidate
+}
 
-        if  (
-                Actor(Current).Region.ZoneNumber != Region.ZoneNumber   //in a different zone
-            &&  !FastTrace(Actor(Current).Location)                     //and blocked
-            &&  GetLastTracedActor().class.name != 'DoorWay'            //but not by a DoorWay
-            )
-            continue;
+	else
+	{	  
+		foreach RadiusActors(class'IReactToFlashbangGrenade', Current, OuterRadius)
+		{
 
-        //can't reject
+					if  (                                                   // (it's within range, and
+							Actor(Current).Region.Zone == Region.Zone       //  AND it's in the same zone),
+						||  FastTrace(Location, Actor(Current).Location)    // OR it's unblocked
+						)
+					{
 
-        Current.ReactToFlashbangGrenade(
-            Self,
-            Pawn(Owner),
-            Damage,
-            DamageRadius,
-            KarmaImpulse,
-            KarmaImpulseRadius,
-            StunRadius,
-            PlayerStunDuration,
-            AIStunDuration,
-            MoraleModifier);
+			Current.ReactToFlashbangGrenade(
+				Self,
+				Pawn(Owner),
+				Damage,
+				DamageRadius,
+				KarmaImpulse,
+				KarmaImpulseRadius,
+				StunRadius,
+				PlayerStunDuration,
+				AIStunDuration,
+				MoraleModifier);
 
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
-        if (bRenderDebugInfo)
-        {
-            // Render line to actors that are affected
-            Level.GetLocalPlayerController().myHUD.AddDebugLine(
-                Location, Actor(Current).Location,
-                class'Engine.Canvas'.Static.MakeColor(0,0,255),
-                5);
-        }
-#endif
-    }	
+			if (bRenderDebugInfo)
+			{
+				// Render line to actors that are affected
+				Level.GetLocalPlayerController().myHUD.AddDebugLine(
+					Location, Actor(Current).Location,
+					class'Engine.Canvas'.Static.MakeColor(0,0,255),
+					5);
+			}
+	#endif
+		}
+    }
+}	
 
     if ( Level.NetMode != NM_Client )
         SwatGameInfo(Level.Game).GameEvents.GrenadeDetonated.Triggered( Pawn(Owner), Self );

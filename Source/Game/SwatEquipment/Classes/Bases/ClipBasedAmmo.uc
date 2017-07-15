@@ -137,14 +137,9 @@ simulated function bool NeedsReload()
 
 simulated function bool ShouldReload()
 {
-    if (ClipRoundsRemaining[CurrentClip] <= ClipSize/2)
-	{
-		return true;
-	}
-	else 
-	{
-		return false;
-	}
+    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize);
+
+    return (ClipRoundsRemaining[CurrentClip] <= ClipSize/2);
 }
 
 simulated function OnRoundUsed(Pawn User, Equipment Launcher)

@@ -37,7 +37,7 @@ var private EAICoverLocationType		AttackCoverLocationType;
 
 var private array<Pawn>					CachedSeenPawns;
 
-var private DistanceToOfficersSensor	DistanceToOfficersSensor;
+var private DistanceSensor				DistanceSensor;
 var config private float				MinDistanceToSuspectsWhileTakingCover;
 
 var private float						MoveBrieflyChance;
@@ -65,7 +65,6 @@ private function bool CanTakeCoverAndAttack()
 	// if we have a weapon, cover is available, the distance is greater than the minimum required
 	// between us and the officers, and we can find cover to attack from
 	return (ISwatAI(m_Pawn).HasUsableWeapon() && AICoverFinder.IsCoverAvailable() &&
-		!HiveMind.IsPawnWithinDistanceOfOfficers(m_Pawn, MinDistanceToSuspectsWhileTakingCover, true) &&
 		FindBestCoverToAttackFrom() &&
 		!CoverIsInBadPosition());
 }
@@ -150,10 +149,10 @@ function cleanup()
 		CurrentAimAroundGoal = None;
 	}
 
-	if (DistanceToOfficersSensor != None)
+	if (DistanceSensor != None)
 	{
-		DistanceToOfficersSensor.deactivateSensor(self);
-		DistanceToOfficersSensor = None;
+		DistanceSensor.deactivateSensor(self);
+		DistanceSensor = None;
 	}
 
 	// make sure we're not leaning
@@ -192,7 +191,7 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 		log("TakeCoverAndAttackAction received sensor message from " $ sensor.name $ " value is "$ value.integerData);
 
 	// we only (currently) get messages from a distance sensor
-	assert(sensor == DistanceToOfficersSensor);
+	assert(sensor == DistanceSensor);
 
 	if (value.integerData == 1)
 	{
@@ -609,9 +608,9 @@ state Running
 	waitForResourcesAvailable(achievingGoal.priority, achievingGoal.priority);
 
 	// create a sensor so we fail if we get to close to the officers
-	DistanceToOfficersSensor = DistanceToOfficersSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceToOfficersSensor', characterResource(), 0, 1000000 ));
-	assert(DistanceToOfficersSensor != None);
-	DistanceToOfficersSensor.SetParameters(MinDistanceToSuspectsWhileTakingCover, true);
+	DistanceSensor = DistanceSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceSensor', characterResource(), 0, 1000000 ));
+	assert(DistanceSensor != None);
+	DistanceSensor.SetParameters(MinDistanceToSuspectsWhileTakingCover, GetEnemy(), false);
 
 	// we must have found cover in our selection heuristic for this to work
 	TakeCoverAtInitialCoverLocation();
