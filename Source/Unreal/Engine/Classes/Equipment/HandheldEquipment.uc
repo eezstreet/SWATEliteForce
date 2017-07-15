@@ -861,9 +861,11 @@ simulated function UsedHook();    //for subclasses
 simulated function UpdateAvailability()
 {
     if (AvailableCount <= 0 && !Level.IsTraining)
-        SetAvailable(false);
+      SetAvailable(false);
     if(AvailableCount < 0)
       AvailableCount = 0; // Don't let this go negative
+    if(Level.IsTraining)
+      AvailableCount = 1;
 }
 
 simulated function DecrementAvailableCount()
