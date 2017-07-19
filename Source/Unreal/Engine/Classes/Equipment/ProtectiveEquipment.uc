@@ -83,6 +83,8 @@ static function String GetMtPString()
   return string(default.MomentumToPenetrate);
 }
 
+simulated function int GetProtectionLevel();
+simulated function int GetProtectionType();
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Armor shredding mechanic

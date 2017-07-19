@@ -1,6 +1,26 @@
 class SwatAmmo extends Ammunition abstract;
 
 import enum EMaterialVisualType from Material;
+enum AmmoType
+{
+  AmmoType_ArmorPiercing,            // Higher effectiveness against armor, less effectiveness against unarmored targets
+  AmmoType_FullMetalJacket,          // All-rounded effectiveness, can go through armor, good effectiveness against unarmored
+  AmmoType_JacketedSoftPoint,        // Fair effectiveness against unarmored targets, probably won't go through armor
+  AmmoType_JacketedHollowPoint,      // Very effective against unarmored targets, ineffective against armor
+  AmmoType_Buckshot,                 // Very effective against unarmored targets, very ineffective against armor
+  AmmoType_Special                   // We are not a bullet/pellet/slug. Used for LTL stuff.
+};
+
+enum PenetrationLevel
+{
+  Level_0,            // Can't go through any armor
+  Level_1,            // Can go through Level I vests and helmets (AKA nothing)
+  Level_2a,           // Can go through Level IIa vests and helmets (AKA Still Nothing)
+  Level_2,            // Can go through Level II vests and helmets (AKA light armor, most helmets)
+  Level_3a,           // Can go through Level IIIa vests and helmet (AKA damaged heavy armor and protec helmet)
+  Level_3,            // Can go through Level III vests (AKA full heavy armor)
+  Level_4             // Can go through Level IV vests.......why you should use this is beyond me
+};
 
 // Ricochet occurs when a bullet hits a hard surface and bounces off.
 // It can only occur within a certain angle, and when the bullet bounces, it loses momentum.
@@ -15,6 +35,11 @@ var(Ricochet) config float RicochetMomentum "Momentum is multiplied by this when
 var(Ricochet) config float RicochetMinimumMomentum "Minimum momentum required to trigger a ricochet";
 
 // Advanced ballstics for Elite Force
+var(AdvancedBallistics) config AmmoType BulletClass "What ammo type I am?";
+var int BulletType "Internal measure to know the BulletClass";
+var(AdvancedBallistics) config PenetrationLevel ArmorPenetration "What level of armor can I go through?";
+var int PenetrationType "Internal measure to know the BulletClass";
+
 var(AdvancedBallistics) config float Drag "The amount of Momentum that is lost with each unit traveled.";
 var(AdvancedBallistics) config bool ShredsArmor "True if this ammo type can shred armor, false otherwise";
 var(AdvancedBallistics) config float MinimumMomentum "The minimum amount of momentum that this ammo type has, after drag";
@@ -64,7 +89,77 @@ simulated function float GetRicochetMomentumModifier() {
 simulated function float GetDrag() {
   return Drag;
 }
+simulated function int GetAmmoType() 
+ {
+   return BulletClass;
+ }
+ 
+simulated function int GetPenetrationLevel() 
+ {
+   return ArmorPenetration;
+ }
+ 
+simulated function int GetBulletType() 
+ {			
+ switch(BulletClass) 
+ {				
+ case AmmoType_ArmorPiercing:
+ 	BulletType = 1;
+ 	break;
+ case AmmoType_FullMetalJacket:
+ 	BulletType = 2;
+ 	break;
+ case AmmoType_JacketedSoftPoint:
+ 	BulletType = 3;
+ 	break;
+ case AmmoType_JacketedHollowPoint:
+ 	BulletType = 4;
+ 	break;
+ case AmmoType_Buckshot:
+ 	BulletType = 5;
+ 	break;
+ case AmmoType_Special:
+ 	BulletType = 6;
+ 	break;
+ default:
+ 	BulletType = 7;
+ }
+ 
+  return BulletType;
+ }
+ 
+simulated function int GetPenetrationType() 
+{			
+ switch(ArmorPenetration) 
+ {				
+ case Level_0:
+ 	PenetrationType = 1;
+ 	break;
+ case Level_1:
+ 	PenetrationType = 2;
+ 	break;
+ case Level_2a:
+ 	PenetrationType = 3;
+ 	break;
+ case Level_2:
+ 	PenetrationType = 4;
+ 	break;
+ case Level_3a:
+ 	PenetrationType = 5;
+ 	break;
+ case Level_3:
+ 	PenetrationType = 6;
+ 	break;
+ case Level_4:
+ 	PenetrationType = 7;
+ 	break;
+ default:
+ 	PenetrationType = 1;
+ }
 
+  return PenetrationType;
+}
+ 
 simulated function bool CanShredArmor() {
   return ShredsArmor;
 }
@@ -146,7 +241,8 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
 defaultproperties
 {
   Drag=0
-
+  
+  BulletClass=AmmoType_Special
   CanCauseRicochet=false
   RicochetChance=0.5
   MinRicochetAngle=20

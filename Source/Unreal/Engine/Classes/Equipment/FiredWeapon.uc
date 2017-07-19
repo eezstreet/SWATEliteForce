@@ -43,7 +43,7 @@ var protected float AimError;                       //in degrees, the maximum an
                                                     //for example, an AimError of 18 represents a cone over 10% of a sphere: offsetting a rotation by 18 degrees in any direction produces a
                                                     //  rotation anywhere within 36 degrees, or 10% of a full sphere.
 
-var private float PendingAimErrorPenalty;           //penalties that have been received but not yet applied
+var float PendingAimErrorPenalty;           //penalties that have been received but not yet applied
 var(Aim) config float MaxAimError                       "AimError is never allowed to be above this value";
 var(Aim) config float SmallAimErrorRecoveryRate         "AimError recovered per second until base AimError is achieved, when AimError is > AimErrorBreakingPoint";
 var(Aim) config float LargeAimErrorRecoveryRate         "AimError recovered per second until base AimError is achieved, when AimError is <= AimErrorBreakingPoint";
@@ -147,7 +147,7 @@ var private int AutoFireShotIndex;                          //while firing in Fi
 
 var private bool PerfectAimNextShot;                        //for special purposes, we want to be able to take a shot with perfect aim, ie. Officers with shotguns
 
-var(Damage) private config float OverrideArmDamageModifier;
+var(Damage) config float OverrideArmDamageModifier;
 
 var(AI) config bool OfficerWontEquipAsPrimary					"If true Officer will use secondary weapon unless ordered otherwise";
 
@@ -332,22 +332,21 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
 {
   local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation, PreviousExitLocation;
   local vector HitNormal, ExitNormal;
+  local Coords  cTarget;
   local float Distance;
   local rotator PerfectFireStartDirection;
   local Actor Victim;
   local Material HitMaterial, ExitMaterial;
   local ESkeletalRegion HitRegion;
-  local float Momentum;
+  local float Momentum, MtP;
 
   GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
-  StartTrace = PerfectFireStartLocation;
+  StartTrace = PerfectFireStartLocation;  
   EndTrace = Target.Location;
-  if(!bIsLessLethal)
-  {
-    // See note in SwatAI.uc as to why we don't do this with less lethal
-    EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
-  }
+ 
+  StartTrace.Z += (Pawn(Owner).BaseEyeHeight);
+  EndTrace.Z += (Pawn(Owner).BaseEyeHeight);
 
 
   Distance = VSize(EndTrace - StartTrace);
@@ -359,6 +358,7 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
 
   Momentum = MuzzleVelocity * Ammo.Mass;
   PreviousExitLocation = StartTrace;
+  MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
 
   foreach TraceActors(
       class'Actor',
@@ -376,13 +376,22 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
       ExitLocation,
       ExitNormal,
       ExitMaterial )
-  {
-    Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
-
+  { 
+	
     if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
     {
-      // The weapon shot itself (?), the person carrying it, or something that is invisible (like a volume)
       continue; // Not something we need to worry about
+    }
+	else if (Victim.IsA('SwatDoor'))
+	{
+		Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial); //Doors are a different type of SM
+		continue;
+	}
+	// These guys need additional detail to work. Godzilla Threshold's still active, Round 2
+    else if(Victim.DrawType == DT_StaticMesh)
+    {
+		Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+		continue;
     }
     else if(!Victim.IsA('SwatPawn') && Ammo.RoundsNeverPenetrate)
     {
@@ -395,12 +404,17 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
       Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
       continue;
     }
+    else if(Victim.IsA('LevelInfo'))
+    {
+      return false; // Hit BSP geometry, we can't penetrate that ..!
+    }
 
-    if(Momentum <= 0 && MomentumMatters)
+    if(Momentum <= 0)
     {
       // The bullet lost all of its momentum
       return false;
     }
+
 
     if(Victim != Target)
     {
@@ -457,6 +471,8 @@ simulated function bool HandleBallisticImpact(
     Material HitMaterial,
     ESkeletalRegion HitRegion,
     out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
     vector ExitLocation,
     vector ExitNormal,
     Material ExitMaterial
@@ -464,7 +480,7 @@ simulated function bool HandleBallisticImpact(
 
 // Handles bullet ricochet.
 // For right now, all this does is fire the bullet in a perfect mirror.
-simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, int BounceCount)
+simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, float KillEnergy, int BulletType, int BounceCount)
 {
   local vector MirroredAngle, EndTrace;
   local vector NewHitLocation, NewHitNormal, NewExitLocation, NewExitNormal;
@@ -476,6 +492,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
   BounceCount = BounceCount + 1;
   MirroredAngle = BulletDirection - 2 * (BulletDirection dot Normal(HitNormal)) * Normal(HitNormal);
   Momentum *= Ammo.GetRicochetMomentumModifier();
+  KillEnergy = 0;
   EndTrace = HitLocation + MirroredAngle * Range;
 
   // Play an effect when it hits the first surface
@@ -526,10 +543,10 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 
       if(Ammo.CanRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount)) {
         // the bullet ricocheted from the material
-        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount);
+        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, KillEnergy, BulletType, BounceCount);
         break;
       } else if(!HandleBallisticImpact(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial,
-                  NewHitRegion, Momentum, NewExitLocation, NewExitNormal, NewExitMaterial)) {
+                  NewHitRegion, Momentum, KillEnergy, BulletType, NewExitLocation, NewExitNormal, NewExitMaterial)) {
         // the bullet embedded itself into the material
         break;
       }
@@ -553,9 +570,14 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 	local actor Victim;
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
+    local float KillEnergy;
+    local int BulletType;
     local ESkeletalRegion HitRegion;
 
     Momentum = MuzzleVelocity * Ammo.Mass;
+    BulletType = Ammo.GetBulletType();
+	//This is redefined somewhere else
+    KillEnergy = 0;
 
     Ammo.BallisticsLog("BallisticFire(): Weapon "$name
         $", shot by "$Owner.name
@@ -599,12 +621,13 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         }
 
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
-        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
+        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) 
+		{
           // the bullet ricocheted
-          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0);
+          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, KillEnergy, BulletType, 0);
           break;
         }
-        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
+        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, KillEnergy, BulletType, ExitLocation, ExitNormal, ExitMaterial))
             break; // the bullet embedded itself in the target
 
         // the bullet passed through the target
@@ -641,6 +664,8 @@ simulated function bool HandleBallisticImpact(
     Material HitMaterial,
     ESkeletalRegion HitRegion,
     out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
     vector ExitLocation,
     vector ExitNormal,
     Material ExitMaterial
@@ -653,11 +678,17 @@ simulated function bool HandleBallisticImpact(
     local int Damage;
     local SkeletalRegionInformation SkeletalRegionInformation;
     local ProtectiveEquipment Protection;
+    local int ArmorLevel;
+    local int BulletLevel;
     local float DamageModifier, ExternalDamageModifier;
     local float LimbInjuryAimErrorPenalty;
     local IHaveSkeletalRegions SkelVictim;
     local Pawn  PawnVictim;
 	local PlayerController OwnerPC;
+	
+    BulletType = Ammo.GetBulletType();	
+    ArmorLevel = Protection.GetProtectionType();
+    BulletLevel = Ammo.GetPenetrationType();
 
     // You shouldn't be able to hit hidden actors that block zero-extent
     // traces (i.e., projectors, blocking volumes). However, the 'Victim'
@@ -726,7 +757,11 @@ simulated function bool HandleBallisticImpact(
                                 HitLocation,
                                 HitNormal,
                                 NormalizedBulletDirection,
-                                Momentum))
+                                Momentum,
+                                KillEnergy,
+                                BulletType,
+								ArmorLevel,
+								BulletLevel))
                         return false;   //blocked by ProtectiveEquipment
                 }
             }
@@ -954,7 +989,11 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     vector HitLocation,
     vector HitNormal,
     vector NormalizedBulletDirection,
-    out float Momentum)
+    out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
+    int ArmorLevel,
+    int BulletLevel)
 {
     local bool PenetratesProtection;
     local vector MomentumVector;
@@ -962,6 +1001,9 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float MomentumLostToProtection;
     local Object.Range DamageModifierRange;
     local float DamageModifier, ExternalDamageModifier;
+	
+    ArmorLevel = Protection.GetProtectionType();
+    BulletLevel = Ammo.GetPenetrationType();
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
     PenetratesProtection = (Protection.GetMtP() < Momentum);

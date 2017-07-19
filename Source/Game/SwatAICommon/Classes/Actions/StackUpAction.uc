@@ -69,11 +69,6 @@ function PostReloadGoal()
 	assert(CurrentReloadGoal != None);
 	CurrentReloadGoal.AddRef();
 	CurrentReloadGoal.postGoal(self);
-	
-	CurrentReloadGoal.unPostGoal(self);
-
-	CurrentReloadGoal.Release();
-	CurrentReloadGoal = None;
 }
 
 function PostAimAtTargetGoal()

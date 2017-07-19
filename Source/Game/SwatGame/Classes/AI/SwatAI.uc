@@ -2043,13 +2043,9 @@ event bool CanHit(Actor Target)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
     EndTrace = Target.Location;
-
-    if(!TheWeapon.bIsLessLethal)
-    {
-      // Don't do this if we're using a less lethal weapon.
-      // In practice it makes DEPLOY TASER etc actions come up close to the target and maybe not hit them
-      EndTrace.Z += (BaseEyeHeight / 2);
-    }
+	
+    MuzzleLocation.Z += (BaseEyeHeight);
+    EndTrace.Z += (BaseEyeHeight);
 
     if(Value)
     {
