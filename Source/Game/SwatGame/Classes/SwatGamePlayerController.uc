@@ -2350,14 +2350,14 @@ simulated function InternalMelee()
 
   // Determine if we are trying to check the lock or if we are trying to punch someone
   CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
-  TraceEnd = vector(CameraRotation) * Item.MeleeRange / 2.0;
+  TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
   foreach TraceActors(
     class'Actor',
     Candidate,
     HitLocation,
     HitNormal,
     HitMaterial,
-    CameraLocation + TraceEnd,
+    TraceEnd,
     CameraLocation
     )
   {
