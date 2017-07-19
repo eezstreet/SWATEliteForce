@@ -674,12 +674,17 @@ simulated function OnUnlocked()
     }
 }
 
-simulated function TryDoorLock(SwatGamePlayerController Caller)
+simulated function bool TryDoorLock(SwatGamePlayerController Caller)
 {
-	if(!bCanBeLocked)
+	if(IsClosing() || IsOpening())
+	{
+		return false;
+	}
+
+	if(!bCanBeLocked || IsBroken())
 	{
 		Caller.DoorCannotBeLocked();
-		return;
+		return true;
 	}
 
 	if(bIsLocked)
@@ -702,6 +707,8 @@ simulated function TryDoorLock(SwatGamePlayerController Caller)
 		LockedKnowledge[1] = 0;
 		LockedKnowledge[2] = 0;
 	}
+
+	return true;
 }
 
 // FIXME: there might be more that's required to get this to work correctly..?

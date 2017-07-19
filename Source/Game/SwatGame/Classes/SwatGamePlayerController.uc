@@ -2312,9 +2312,9 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     }
 }
 
-simulated function CheckDoorLock(SwatDoor Door)
+simulated function bool CheckDoorLock(SwatDoor Door)
 {
-  Door.TryDoorLock(self);
+  return Door.TryDoorLock(self);
 }
 
 simulated function InternalMelee()
@@ -2367,8 +2367,8 @@ simulated function InternalMelee()
     }
     else if(Candidate.IsA('SwatDoor'))
     {
-      CheckDoorLock(SwatDoor(Candidate));
-      return;
+      if(CheckDoorLock(SwatDoor(Candidate)))
+        return;
     }
   }
 
