@@ -676,7 +676,7 @@ simulated function OnUnlocked()
 
 simulated function bool TryDoorLock(SwatGamePlayerController Caller)
 {
-	if(IsClosing() || IsOpening())
+	if(IsClosing() || IsOpening() || IsEmptyDoorWay() || IsOpen())
 	{
 		return false;
 	}
