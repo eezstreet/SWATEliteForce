@@ -926,6 +926,11 @@ simulated function bool  ShouldSpawnBloodForVictim( Pawn PawnVictim, int Damage 
 #endif
 }
 
+simulated function bool ShouldLowReadyInIronsights()
+{
+  return false;
+}
+
 simulated function bool SpawnBloodEffects(Ammunition Ammo,Vector ExitLocation, int Damage, vector Direction)
 {
     local int NumPools, ct;

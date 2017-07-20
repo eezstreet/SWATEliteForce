@@ -1288,6 +1288,11 @@ simulated function Rotator GetDefaultRotationOffset()
 	return DefaultRotationOffset;
 }
 
+simulated function bool ShouldLowReadyInIronsights()
+{
+  return true;
+}
+
 simulated function bool ShouldHideCrosshairsInIronsights()
 {
   return false; // Only weapons do
