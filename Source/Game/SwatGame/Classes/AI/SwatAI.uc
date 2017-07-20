@@ -1991,6 +1991,28 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 }
 
 //simulated native function vector GetAimOrigin();
+//
+//This function is supposed to get the Aim Origin for the weapons so that pawns
+//can aim correctly. However, there is something wrong in it because it crashes
+//at times. And we can't check what Irrational did because it is native. So I'm
+//rewriting this to make it work.
+
+simulated function vector GetAimOrigin()
+{
+    return Location + EyePosition();
+}
+
+simulated function vector EyePosition()
+{
+    local vector vEyeHeight;
+
+    if(bIsCrouched)
+        vEyeHeight.Z = 8;
+        else
+        vEyeHeight.Z = 0;
+
+    return vEyeHeight;
+}
 
 function SetAimUrgency(bool Fast)
 {
@@ -2030,7 +2052,26 @@ event bool CanHit(Actor Target)
 
   TheWeapon = FiredWeapon(GetActiveItem());
 
-  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, TheWeapon.bIsLessLethal))
+  /*
+  // The below code seems to be janky, but what the game actually tends to use for aiming at things.
+  // Maybe we should be using stuff like GetAimOrigin() to get the actual position?
+  if (CurrentWeaponTarget != None)
+  {
+      EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
+  }
+  else if(!TheWeapon.bIsLessLethal)
+  {
+      EndTrace = CurrentWeaponTargetLocation;
+  }
+  else
+  {
+    EndTrace = Target.Location;
+  }
+  */
+
+  EndTrace = Pawn(Target).GetAimOrigin();
+
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
   {
     Value = false;
   }
@@ -2042,14 +2083,14 @@ event bool CanHit(Actor Target)
   if(bDebugSensor)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
-    EndTrace = Target.Location;
+    /*EndTrace = Target.Location;
 
     if(!TheWeapon.bIsLessLethal)
     {
       // Don't do this if we're using a less lethal weapon.
       // In practice it makes DEPLOY TASER etc actions come up close to the target and maybe not hit them
       EndTrace.Z += (BaseEyeHeight / 2);
-    }
+    }*/
 
     if(Value)
     {

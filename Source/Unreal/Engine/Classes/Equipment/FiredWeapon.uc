@@ -328,26 +328,26 @@ simulated function TraceFire()
 
 // Used by the AI - whether firing this weapon will hit its intended target
 // (and not, for example, an actor or levelinfo that is in between our target)
-simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters)
+simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace)
 {
-  local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation, PreviousExitLocation;
+  local vector PerfectFireStartLocation, HitLocation, StartTrace, ExitLocation, PreviousExitLocation;
   local vector HitNormal, ExitNormal;
   local float Distance;
   local rotator PerfectFireStartDirection;
   local Actor Victim;
   local Material HitMaterial, ExitMaterial;
   local ESkeletalRegion HitRegion;
-  local float Momentum;
+  local float Momentum, MtP;
 
   GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
   StartTrace = PerfectFireStartLocation;
-  EndTrace = Target.Location;
-  if(!bIsLessLethal)
+  //EndTrace = Target.Location;
+  /*if(!bIsLessLethal)
   {
     // See note in SwatAI.uc as to why we don't do this with less lethal
     EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
-  }
+  }*/
 
 
   Distance = VSize(EndTrace - StartTrace);
@@ -378,32 +378,34 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
       ExitMaterial )
   {
     Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
+    MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+    PreviousExitLocation = ExitLocation;
 
-    if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
+    if(Victim.IsA('LevelInfo'))
+    { // LevelInfo is hidden AND blocks all bullets!
+      return false;
+    }
+    else if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
     {
       // The weapon shot itself (?), the person carrying it, or something that is invisible (like a volume)
       continue; // Not something we need to worry about
     }
-    else if(!Victim.IsA('SwatPawn') && Ammo.RoundsNeverPenetrate)
+
+    if(Victim != Target && Ammo.RoundsNeverPenetrate)
     {
-      // Our bullet type doesn't penetrate surfaces and we hit a surface...
+      // Our bullet type doesn't penetrate and we didn't hit our target..
       return false;
     }
-    else if(!Victim.IsA('SwatPawn') && !Ammo.RoundsNeverPenetrate)
-    {
-      // Our bullet type *might* penetrate surfaces and we hit a surface...
-      Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
-      continue;
-    }
-
-    if(Momentum <= 0 && MomentumMatters)
+    else if(Momentum <= 0 && MomentumMatters)
     {
       // The bullet lost all of its momentum
       return false;
     }
-
-    if(Victim != Target)
+    else if(Victim != Target)
     {
+      Momentum -= MtP;
+
+      // We hit something that isn't our target
       if(Owner.IsA('SwatEnemy'))
       {
         // Suspects don't care, as long as they aren't hitting a buddy
