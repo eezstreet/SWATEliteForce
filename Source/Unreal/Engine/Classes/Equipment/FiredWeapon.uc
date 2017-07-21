@@ -341,14 +341,8 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
 
   GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
-  StartTrace = PerfectFireStartLocation;
-  //EndTrace = Target.Location;
-  /*if(!bIsLessLethal)
-  {
-    // See note in SwatAI.uc as to why we don't do this with less lethal
-    EndTrace.Z += (Pawn(Owner).BaseEyeHeight / 2);
-  }*/
-
+  StartTrace = Pawn(Owner).GetEyeLocation();
+  EndTrace = Target.Location;
 
   Distance = VSize(EndTrace - StartTrace);
 
@@ -358,7 +352,8 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
   }
 
   Momentum = MuzzleVelocity * Ammo.Mass;
-  PreviousExitLocation = StartTrace;
+  PreviousExitLocation = ExitLocation;
+
 
   foreach TraceActors(
       class'Actor',
@@ -377,9 +372,8 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
       ExitNormal,
       ExitMaterial )
   {
-    Momentum -= Ammo.GetDrag() * VSize(HitLocation - PreviousExitLocation);
-    MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
-    PreviousExitLocation = ExitLocation;
+
+  MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
 
     if(Victim.IsA('LevelInfo'))
     { // LevelInfo is hidden AND blocks all bullets!
@@ -387,14 +381,23 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
     }
     else if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
     {
-      // The weapon shot itself (?), the person carrying it, or something that is invisible (like a volume)
       continue; // Not something we need to worry about
     }
-
-    if(Victim != Target && Ammo.RoundsNeverPenetrate)
+    else if(Victim != Target && Ammo.RoundsNeverPenetrate)
     {
       // Our bullet type doesn't penetrate and we didn't hit our target..
       return false;
+    }
+    else if(Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
+    {
+      // This might be redundant, but it doesn't seem to work otherwise.
+      return false;
+    }
+    else if(Victim.DrawType == DT_StaticMesh)
+    {
+      // The bullet hits a static mesh.
+      Momentum -= MtP;
+	  continue;
     }
     else if(Momentum <= 0 && MomentumMatters)
     {

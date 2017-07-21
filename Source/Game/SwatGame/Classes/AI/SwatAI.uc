@@ -1999,19 +1999,43 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 
 simulated function vector GetAimOrigin()
 {
-    return Location + EyePosition();
+	return Location + EyePosition();
 }
 
 simulated function vector EyePosition()
 {
-    local vector vEyeHeight;
+    local vector vEyeHeight;	
+	local FiredWeapon ActiveItem;
 
+	ActiveItem = FiredWeapon(GetActiveItem());
+	
     if(bIsCrouched)
-        vEyeHeight.Z = 8;
-        else
-        vEyeHeight.Z = 0;
+		{
+			if(ActiveItem.bAimAtHead)
+			vEyeHeight.Z = 40;    
+			else
+			vEyeHeight.Z = 0;
+		}    
+	else
+		{
+			if(ActiveItem.bAimAtHead)
+			vEyeHeight.Z = 32;    
+			else
+			vEyeHeight.Z = 0;
+		}
+		
+	return vEyeHeight;
+}
 
-    return vEyeHeight;
+simulated function vector GetEyeLocation()
+{
+    local Coords  cTarget;
+    local vector  vTarget;
+	
+    cTarget = GetBoneCoords('Bone01Eye');
+    vTarget = cTarget.Origin;
+		
+	return vTarget;
 }
 
 function SetAimUrgency(bool Fast)
@@ -2047,7 +2071,7 @@ event bool CanHit(Actor Target)
 {
   local FiredWeapon TheWeapon;
   local bool Value;
-  local vector MuzzleLocation, EndTrace;
+  local vector MuzzleLocation, EndTrace, StartTrace;
   local rotator MuzzleDirection;
 
   TheWeapon = FiredWeapon(GetActiveItem());
@@ -2069,7 +2093,7 @@ event bool CanHit(Actor Target)
   }
   */
 
-  EndTrace = Pawn(Target).GetAimOrigin();
+  EndTrace = Target.Location;
 
   if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
   {
@@ -2083,22 +2107,16 @@ event bool CanHit(Actor Target)
   if(bDebugSensor)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
-    /*EndTrace = Target.Location;
-
-    if(!TheWeapon.bIsLessLethal)
-    {
-      // Don't do this if we're using a less lethal weapon.
-      // In practice it makes DEPLOY TASER etc actions come up close to the target and maybe not hit them
-      EndTrace.Z += (BaseEyeHeight / 2);
-    }*/
-
+	StartTrace = GetEyeLocation();  
+    EndTrace = Target.Location;
+	
     if(Value)
     {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
     }
     else
     {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
     }
   }
 

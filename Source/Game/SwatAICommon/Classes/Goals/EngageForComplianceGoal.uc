@@ -26,7 +26,7 @@ overloaded function construct( AI_Resource r, Pawn inTargetPawn)
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-    Priority   = 80
+    Priority   = 85
     GoalName   = "EngageForCompliance"
 }
 
