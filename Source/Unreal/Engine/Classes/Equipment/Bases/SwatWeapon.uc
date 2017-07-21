@@ -526,9 +526,9 @@ simulated function bool HandleBallisticImpact(
 			}
 			
         if ((HitRegion == REGION_LeftArm || HitRegion == REGION_RightArm))
-        WoundChance = 1350;
+        WoundChance = 950;
         if ((HitRegion == REGION_LeftLeg || HitRegion == REGION_RightLeg))
-        WoundChance = 900;
+        WoundChance = 500;
 		
 		//Reset damage First
 		Damage = 0;	
@@ -746,7 +746,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			if (BulletLevel > ArmorLevel)
 				WoundChance = 100;
 			if (BulletLevel == ArmorLevel)
-				WoundChance = 300;
+				WoundChance = 400;
 			else
 				WoundChance = 1750;
 			}
@@ -1007,9 +1007,9 @@ simulated function UpdateAimError(float dTime)
 			{
 				//determine recovery rate, which depends on how bad our accuracy is now
 				if (AimError > AimErrorBreakingPoint)
-					AimErrorRecoveryRate = LargeAimErrorRecoveryRate / ZoomedAimErrorModifier;
+					AimErrorRecoveryRate = LargeAimErrorRecoveryRate;
 				else
-					AimErrorRecoveryRate = SmallAimErrorRecoveryRate / ZoomedAimErrorModifier;
+					AimErrorRecoveryRate = SmallAimErrorRecoveryRate;
 
 				//recover accuracy over time
 				AimError = FMax(TargetAimError, AimError - dTime * AimErrorRecoveryRate);

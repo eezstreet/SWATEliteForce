@@ -1991,6 +1991,52 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 }
 
 //simulated native function vector GetAimOrigin();
+//
+//This function is supposed to get the Aim Origin for the weapons so that pawns
+//can aim correctly. However, there is something wrong in it because it crashes
+//at times. And we can't check what Irrational did because it is native. So I'm
+//rewriting this to make it work.
+
+simulated function vector GetAimOrigin()
+{
+	return Location + EyePosition();
+}
+
+simulated function vector EyePosition()
+{
+    local vector vEyeHeight;	
+	local FiredWeapon ActiveItem;
+
+	ActiveItem = FiredWeapon(GetActiveItem());
+	
+    if(bIsCrouched)
+		{
+			if(ActiveItem.bAimAtHead)
+			vEyeHeight.Z = 40;    
+			else
+			vEyeHeight.Z = 0;
+		}    
+	else
+		{
+			if(ActiveItem.bAimAtHead)
+			vEyeHeight.Z = 32;    
+			else
+			vEyeHeight.Z = 0;
+		}
+		
+	return vEyeHeight;
+}
+
+simulated function vector GetEyeLocation()
+{
+    local Coords  cTarget;
+    local vector  vTarget;
+	
+    cTarget = GetBoneCoords('Bone01Eye');
+    vTarget = cTarget.Origin;
+		
+	return vTarget;
+}
 
 function SetAimUrgency(bool Fast)
 {
@@ -2025,12 +2071,31 @@ event bool CanHit(Actor Target)
 {
   local FiredWeapon TheWeapon;
   local bool Value;
-  local vector MuzzleLocation, EndTrace;
+  local vector MuzzleLocation, EndTrace, StartTrace;
   local rotator MuzzleDirection;
 
   TheWeapon = FiredWeapon(GetActiveItem());
 
-  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, TheWeapon.bIsLessLethal))
+  /*
+  // The below code seems to be janky, but what the game actually tends to use for aiming at things.
+  // Maybe we should be using stuff like GetAimOrigin() to get the actual position?
+  if (CurrentWeaponTarget != None)
+  {
+      EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
+  }
+  else if(!TheWeapon.bIsLessLethal)
+  {
+      EndTrace = CurrentWeaponTargetLocation;
+  }
+  else
+  {
+    EndTrace = Target.Location;
+  }
+  */
+
+  EndTrace = Target.Location;
+
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
   {
     Value = false;
   }
@@ -2042,18 +2107,16 @@ event bool CanHit(Actor Target)
   if(bDebugSensor)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+	StartTrace = GetEyeLocation();  
     EndTrace = Target.Location;
 	
-    MuzzleLocation.Z += (BaseEyeHeight);
-    EndTrace.Z += (BaseEyeHeight);
-
     if(Value)
     {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
     }
     else
     {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
     }
   }
 

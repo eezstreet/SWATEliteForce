@@ -328,11 +328,10 @@ simulated function TraceFire()
 
 // Used by the AI - whether firing this weapon will hit its intended target
 // (and not, for example, an actor or levelinfo that is in between our target)
-simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters)
+simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace)
 {
-  local vector PerfectFireStartLocation, HitLocation, StartTrace, EndTrace, ExitLocation, PreviousExitLocation;
+  local vector PerfectFireStartLocation, HitLocation, StartTrace, ExitLocation, PreviousExitLocation;
   local vector HitNormal, ExitNormal;
-  local Coords  cTarget;
   local float Distance;
   local rotator PerfectFireStartDirection;
   local Actor Victim;
@@ -342,12 +341,8 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
 
   GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
-  StartTrace = PerfectFireStartLocation;  
+  StartTrace = Pawn(Owner).GetEyeLocation();  
   EndTrace = Target.Location;
- 
-  StartTrace.Z += (Pawn(Owner).BaseEyeHeight);
-  EndTrace.Z += (Pawn(Owner).BaseEyeHeight);
-
 
   Distance = VSize(EndTrace - StartTrace);
 
@@ -357,8 +352,8 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
   }
 
   Momentum = MuzzleVelocity * Ammo.Mass;
-  PreviousExitLocation = StartTrace;
-  MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+  PreviousExitLocation = ExitLocation;
+
 
   foreach TraceActors(
       class'Actor',
@@ -376,48 +371,44 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
       ExitLocation,
       ExitNormal,
       ExitMaterial )
-  { 
-	
-    if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
-    {
-      continue; // Not something we need to worry about
-    }
-	else if (Victim.IsA('SwatDoor'))
-	{
-		Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial); //Doors are a different type of SM
-		continue;
-	}
-	// These guys need additional detail to work. Godzilla Threshold's still active, Round 2
-    else if(Victim.DrawType == DT_StaticMesh)
-    {
-		Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
-		continue;
-    }
-    else if(!Victim.IsA('SwatPawn') && Ammo.RoundsNeverPenetrate)
-    {
-      // Our bullet type doesn't penetrate surfaces and we hit a surface...
+  {    
+  
+  MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+
+    if(Victim.IsA('LevelInfo'))
+    { // LevelInfo is hidden AND blocks all bullets!
       return false;
     }
-    else if(!Victim.IsA('SwatPawn') && !Ammo.RoundsNeverPenetrate)
+    else if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
     {
-      // Our bullet type *might* penetrate surfaces and we hit a surface...
-      Momentum -= Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
-      continue;
-    }
-    else if(Victim.IsA('LevelInfo'))
+      continue; // Not something we need to worry about
+    }	
+    else if(Victim != Target && Ammo.RoundsNeverPenetrate)
     {
-      return false; // Hit BSP geometry, we can't penetrate that ..!
+      // Our bullet type doesn't penetrate and we didn't hit our target..
+      return false;
+    }	
+    else if(Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
+    {
+      // This might be redundant, but it doesn't seem to work otherwise.
+      return false;
+    }	
+    else if(Victim.DrawType == DT_StaticMesh)
+    {
+      // The bullet hits a static mesh.
+      Momentum -= MtP;
+	  continue;
     }
-
-    if(Momentum <= 0)
+    else if(Momentum <= 0 && MomentumMatters)
     {
       // The bullet lost all of its momentum
       return false;
     }
-
-
-    if(Victim != Target)
+    else if(Victim != Target)
     {
+      Momentum -= MtP;
+
+      // We hit something that isn't our target
       if(Owner.IsA('SwatEnemy'))
       {
         // Suspects don't care, as long as they aren't hitting a buddy

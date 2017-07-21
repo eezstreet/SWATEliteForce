@@ -95,10 +95,6 @@ simulated function int GetProtectionType()
 		default:
 			ProtectionType = 1;
 		}
-	if (MayBeShredded && (CurrentMomentumToPenetrate <= ((MaxMomentumToPenetrate/1660)*600)))
-		{
-			ProtectionType -= 2;
-		}
 	return ProtectionType;
 }
 
@@ -131,6 +127,10 @@ simulated function OnProtectedRegionHit() {
 
   if(CurrentBulletMtP < MinBulletMtpReduction) {
     CurrentBulletMtP = MinBulletMtpReduction;
+  }
+  
+  if(CurrentMomentumToPenetrate < MaxMomentumToPenetrate/2) {
+    ProtectionType -= 2;
   }
 
   if(CurrentMomentumToPenetrate < MinMomentumToPenetrate) {

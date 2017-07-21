@@ -1536,6 +1536,39 @@ simulated function vector EyePosition()
 }
 #endif
 
+simulated function vector GetEyeLocation()
+{
+    local Coords  cTarget;
+    local vector  vTarget;
+	
+    cTarget = GetBoneCoords('Bone01Eye');
+    vTarget = cTarget.Origin;
+		
+	return vTarget;
+}
+
+simulated function vector GetChestLocation()
+{
+    local Coords  cTarget;
+    local vector  vTarget;
+	
+    cTarget = GetBoneCoords('Bip01_Spine2');
+    vTarget = cTarget.Origin;
+		
+	return vTarget;
+}
+
+simulated function vector GetHeadLocation()
+{
+    local Coords  cTarget;
+    local vector  vTarget;
+	
+    cTarget = GetBoneCoords('Bone01Eye');
+    vTarget = cTarget.Origin;
+		
+	return vTarget;
+}
+
 #if IG_SWAT
 native function AddViewablePawn(Pawn NewViewablePawn);
 #endif
