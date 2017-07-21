@@ -18,7 +18,17 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 {
     if (!Pawn.IsA('SwatEnemy')) return;
 
-    if (WasAThreat)
+//    if (WasAThreat)
+//    {
+//        if (GetGame().DebugLeadership)
+//            log("[LEADERSHIP] "$class.name
+//                $"::OnPawnDied() did *not* add "$Pawn.name
+//                $" to its list of KilledEnemies because the SwatEnemy was a threat (so the deadly force was authorized).");
+//
+//        return; //the deadly force was authorized
+//    }
+	
+    if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat())
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name
@@ -41,6 +51,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
     AssertNotInArray( Pawn, KilledEnemies, 'KilledEnemies' );
     Add( Pawn, KilledEnemies );
     ChatMessageEvent('PenaltyIssued');
+    GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

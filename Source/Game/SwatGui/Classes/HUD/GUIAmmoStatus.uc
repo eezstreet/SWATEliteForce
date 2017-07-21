@@ -1,7 +1,7 @@
 class GUIAmmoStatus extends SwatGame.GUIAmmoStatusBase;
 
 //NOTE: Should match the corresponding const in ClipBasedAmmo, may be optimized to min number displayed in gui
-const MAX_CLIP_ROUNDS_REMAINING = 10;   // 10 should be greater than the number of
+const MAX_CLIP_ROUNDS_REMAINING = 10;   // 30 should be greater than the number of
                                         // clips we would need.
 
 var(GUIAmmoStatus) EditInline Config GUILabel         LoadedAmmoLabel               "Text that displays the current rounds remaining in the magazine/clip.";
@@ -13,11 +13,13 @@ var(GUIAmmoStatus) EditInline Config GUIProgressBar   ClipRoundsRemainingBar[MAX
 var(GUIAmmoStatus) Config Color   ActiveClipColor        "Progress bar that displays the current (loaded) rounds remainings color.";
 var(GUIAmmoStatus) Config Color   InActiveClipColor      "Progress bar that displays the current (unloaded) rounds remainings color.";
 
+var localized config string PepperSprayCansStr;
+
 
 function OnConstruct(GUIController MyController)
 {
     local int i;
-    
+
     Super.OnConstruct(MyController);
 
     LoadedAmmoLabel=GUILabel(AddComponent( "GUI.GUILabel", self.Name$"_LoadedAmmoLabel" ));
@@ -43,7 +45,7 @@ function SetWeaponStatus( Ammunition Ammo )
 //log("[dkaplan] In SetWeaponStatus, Ammo = "$Ammo);
     ClipAmmo = ClipBasedAmmo( Ammo );
     RoundAmmo = RoundBasedAmmo( Ammo );
-    
+
     if( ClipAmmo != None )
         SetClipBasedWeaponStatus( ClipAmmo );
     else if( RoundAmmo != None )
@@ -52,9 +54,56 @@ function SetWeaponStatus( Ammunition Ammo )
         AssertWithDescription( false, "[dkaplan] Could not Set the Weapon Status hud display for Ammunition "$Ammo$" as it was neither ClipBased nor RoundBased.");
 }
 
+function HideRoundsRemainingBars()
+{
+  local int i;
+
+  for( i = 0; i < MAX_CLIP_ROUNDS_REMAINING; i++ )
+  {
+      ClipRoundsRemainingBar[i].Hide();
+  }
+}
+
+function SetTacticalAidStatus(int Count, optional HandheldEquipment Equipment, optional Ammunition Ammo)
+{
+  HideRoundsRemainingBars();
+  RoundsRemainingBar.Hide();
+  MagazineSizeLabel.SetCaption("");
+  LoadedAmmoLabel.SetCaption("");
+  ExtraAmmoLabel.SetCaption("");
+
+  if(Ammo != None)
+  {
+    SetPepperSprayStatus(count, Ammo);
+  }
+  else
+  {
+    // Other stuff, for other tac-aids (lightstick, grenades, wedges, etc)
+    SetHandheldEquipmentStatus(Count, Equipment);
+  }
+}
+
+private function SetHandheldEquipmentStatus(int Count, optional HandheldEquipment Equipment)
+{
+  LoadedAmmoLabel.SetCaption("+"$Count);
+  LoadedAmmoLabel.Show();
+}
+
+private function SetPepperSprayStatus(int Count, optional Ammunition Ammo)
+{
+  local RoundBasedAmmo RBAmmo;
+
+  RBAmmo = RoundBasedAmmo(Ammo);
+  assert(RBAmmo != None);
+
+  SetRoundBasedWeaponStatus(RBAmmo);
+
+  ExtraAmmoLabel.SetCaption("+" $ string(Count) $ " " $ PepperSprayCansStr);
+}
+
 private function SetRoundBasedWeaponStatus( RoundBasedAmmo Ammo )
 {
-    local int i, loadedAmmo, magazineSize, extraRounds, initialExtraRounds;
+    local int loadedAmmo, magazineSize, extraRounds, initialExtraRounds;
 
     loadedAmmo = Ammo.GetCurrentRounds();
     magazineSize = Ammo.GetMagazineSize();
@@ -63,26 +112,17 @@ private function SetRoundBasedWeaponStatus( RoundBasedAmmo Ammo )
 
     LoadedAmmoLabel.SetCaption( string(loadedAmmo) );
     LoadedAmmoLabel.Show();
-    
+
     MagazineSizeLabel.SetCaption( "/" $ string(magazineSize) );
     MagazineSizeLabel.Show();
-    
+
     ExtraAmmoLabel.SetCaption( "+" $ string(extraRounds) );
     ExtraAmmoLabel.Show();
 
-//    if( initialExtraRounds > 0 )
-//    {
-//        RoundsRemainingBar.Value = float(extraRounds)/float(initialExtraRounds);
-        RoundsRemainingBar.Value = float(loadedAmmo)/float(magazineSize);
-        RoundsRemainingBar.Show();
-//    }
-//    else
-//        RoundsRemainingBar.Hide();
-        
-    for( i = 0; i < MAX_CLIP_ROUNDS_REMAINING; i++ )
-    {
-        ClipRoundsRemainingBar[i].Hide();
-    }
+    RoundsRemainingBar.Value = float(loadedAmmo)/float(magazineSize);
+    RoundsRemainingBar.Show();
+
+    HideRoundsRemainingBars();
 }
 
 private function SetClipBasedWeaponStatus( ClipBasedAmmo Ammo )
@@ -95,14 +135,14 @@ private function SetClipBasedWeaponStatus( ClipBasedAmmo Ammo )
 
     LoadedAmmoLabel.SetCaption( string(Ammo.GetClip(currentClip)) );
     LoadedAmmoLabel.Show();
-    
+
     MagazineSizeLabel.SetCaption( "/" $ string(magazineSize) );
     MagazineSizeLabel.Show();
-    
+
     ExtraAmmoLabel.Hide();
 
     RoundsRemainingBar.Hide();
-        
+
     for( i = 0; i < MAX_CLIP_ROUNDS_REMAINING; i++ )
     {
         if( i < clipCount )
@@ -126,10 +166,12 @@ private function SetClipBasedWeaponStatus( ClipBasedAmmo Ammo )
 
 defaultproperties
 {
+    PepperSprayCansStr="cans"
+
     PropagateState=false
     PropagateActivity=false
     PropagateVisibility=false
-    
+
     ActiveClipColor=(R=255,G=255,B=255,A=255)
     InActiveClipColor=(R=155,G=155,B=155,A=255)
 }

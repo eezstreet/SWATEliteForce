@@ -40,8 +40,18 @@ var config float PepperDeathChance;	// Chance that any hit with pepper spray may
 var config bool Fearless;   // Won't scream if in a room with a suspect
 var config bool Polite;     // Won't threaten hostages
 var config bool Insane;     // Will shoot hostages like their life depends on it
+var config bool Wanders;    // Doesn't patrol; instead it wanders
+
+var config bool DOAConversion;  // Whether to convert incapacitated subjects to DOAs
+var config bool StaticDOAConversion; // Whether to convert starting incapacitations to DOAs
+var config float StaticDOAConversionTimeMin;
+var config float StaticDOAConversionTimeMax;
+var config float DOAConversionTimeMin;
+var config float DOAConversionTimeMax;
 
 var Mesh OfficerMesh;
+var Mesh OfficerHeavyMesh;
+var Mesh OfficerNoArmorMesh;
 
 //initialize this archetype
 function Initialize(Actor inOwner)
@@ -90,7 +100,7 @@ protected function Validate()
 
     ValidateCondition(Mesh != None, "Mesh resolves to None");
 
-    if (Mesh == OfficerMesh)
+    if (Mesh == OfficerMesh || Mesh == OfficerHeavyMesh || Mesh == OfficerNoArmorMesh)
     {
         ValidateCondition(FaceMaterial.length > 0, "it is Missing a FaceMaterial");
         for (i=0; i<FaceMaterial.length; ++i)
@@ -163,13 +173,14 @@ function ValidateEquipment(
 function InitializeInstance(ArchetypeInstance inInstance)
 {
     local CharacterArchetypeInstance Instance;
+    local float StaticDOAConversionTimePicked;
 
     Instance = CharacterArchetypeInstance(inInstance);
 
     Super.InitializeInstance(Instance);
 
     Instance.Mesh = Mesh;
-    if (Mesh == OfficerMesh)
+    if (Mesh == OfficerMesh || Mesh == OfficerHeavyMesh || Mesh == OfficerNoArmorMesh)
     {
         Instance.FaceMaterial = FaceMaterial[Rand(FaceMaterial.length)];
         Instance.VestMaterial = VestMaterial[Rand(VestMaterial.length)];
@@ -198,6 +209,18 @@ function InitializeInstance(ArchetypeInstance inInstance)
   Instance.Fearless = Fearless;
   Instance.Polite = Polite;
   Instance.Insane = Insane;
+  Instance.Wandering = Wanders;
+
+  Instance.DOAConversion = DOAConversion;
+  Instance.StaticDOAConversion = StaticDOAConversion;
+
+  if(Instance.StaticDOAConversion)
+  {
+    StaticDOAConversionTimePicked = RandRange(StaticDOAConversionTimeMin, StaticDOAConversionTimeMax);
+    log("[DOA Conversions] ArchetypeInstance "$self$" has range between "$StaticDOAConversionTimeMin$" and "$StaticDOAConversionTimeMax$". Selected time = "$StaticDOAConversionTimePicked);
+    Instance.StaticDOAConversionTime = StaticDOAConversionTimePicked;
+  }
+  Instance.DOAConversionTime = RandRange(DOAConversionTimeMin, DOAConversionTimeMax);
 
     Instance.UpdateInstancePrecachables();
 
@@ -253,11 +276,17 @@ final private function class<Equipment> InitializeInstanceEquipment(
 defaultproperties
 {
 	OfficerMesh=Mesh'SWATMaleAnimation2.SwatOfficer'
+	OfficerHeavyMesh=Mesh'SWATMaleAnimation2.SwatHeavy'
+	OfficerNoArmorMesh=Mesh'SWATMaleAnimation2.SWATnoArmour'
 
 	// There's only really a small handful of archetypes that can cause issues here. Probably best we leave this at zero.
-	TaserDeathChance = 0.0;
-	PepperDeathChance = 0.0;
-  Fearless = false;
-  Polite = false;
-  Insane = false;
+	TaserDeathChance = 0.0
+	PepperDeathChance = 0.0
+  Fearless = false
+  Polite = false
+  Insane = false
+  DOAConversion = false
+  StaticDOAConversion = false
+  StaticDOAConversionTimeMin=600.0
+  StaticDOAConversionTimeMax=900.0
 }

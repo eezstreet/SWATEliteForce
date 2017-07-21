@@ -1,4 +1,5 @@
 class SimpleEquipment extends Engine.Equipment
+    abstract
     native;
 
 var() name AttachmentBone;
@@ -7,9 +8,6 @@ var() bool AutoEquip;
 function PostBeginPlay()
 {
     Super.PostBeginPlay();
-
-    AssertWithDescription(class.name != 'SimpleEquipment',
-        "[tcohen] "$name$" is a SimpleEquipment.  SimpleEquipment cannot be used directly in SWAT.  It is used only as a template to create specific pieces of simple equipment.  Please delete the SimpleEquipment from the map.");
     
     AssertWithDescription(AttachmentBone != '',
         "[tcohen] "$class.name$" (a SimpleEquipment) does not have an AttachmentBone.  Please give it one.");

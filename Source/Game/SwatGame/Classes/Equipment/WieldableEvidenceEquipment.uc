@@ -8,6 +8,18 @@ class WieldableEvidenceEquipment extends SimpleEquipment
 var private bool Secured;
 var private bool Destroyed;
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// IHaveWeight implementation
+
+simulated function float GetWeight() {
+	return 0.0;
+}
+
+simulated function float GetBulk() {
+	return 0.0;
+}
+
 simulated function Drop()
 {
 	if (!CanDrop())

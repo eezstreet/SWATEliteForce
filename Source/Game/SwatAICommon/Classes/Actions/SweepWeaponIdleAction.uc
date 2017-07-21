@@ -40,6 +40,8 @@ latent function SweepWeapon()
 	CurrentAimAroundGoal.SetAimInnerFovDegrees(60.0);
 	CurrentAimAroundGoal.SetAimOuterFovDegrees(120.0);
 	CurrentAimAroundGoal.SetDoOnce(true);
+	CurrentAimAroundGoal.SetCancelWhenStunned(true);
+	CurrentAimAroundGoal.SetCancelWhenCompliant(true);
 
 	// post the aim around goal and wait for it to do one aim
     CurrentAimAroundGoal.postGoal(self);

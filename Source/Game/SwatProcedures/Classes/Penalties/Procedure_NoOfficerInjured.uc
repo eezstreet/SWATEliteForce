@@ -33,6 +33,7 @@ function OnPawnDamaged(Pawn Pawn, Actor Damager)
 
     Add( Pawn, InjuredOfficers );
     ChatMessageEvent('PenaltyIssued');
+    GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

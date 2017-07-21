@@ -1,4 +1,4 @@
-class BadguySAWMG extends MachineGun;
+class BadguySAWMG extends SAWMG;
 
 defaultproperties
 {

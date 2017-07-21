@@ -6,16 +6,22 @@ class SquadBreachAndClearGoal extends SquadMoveAndClearGoal;
 ///////////////////////////////////////////////////////////////////////////////
 
 var private bool UseBreachingCharge;
+var private int BreachingMethod;
 
 ///////////////////////////////////////////////////////////////////////////////
 // constructor
-overloaded function construct(AI_Resource r, Pawn inCommandGiver, vector inCommandOrigin, Door inTargetDoor, optional bool bUseBreachingCharge) {
+overloaded function construct(AI_Resource r, Pawn inCommandGiver, vector inCommandOrigin, Door inTargetDoor, optional bool bUseBreachingCharge, optional int iBreachingMethod) {
 	super.construct(r, inCommandGiver, inCommandOrigin, inTargetDoor);
 	UseBreachingCharge = bUseBreachingCharge;
+	BreachingMethod = iBreachingMethod;
 }
 
 function bool DoWeUseBreachingCharge() {
 	return UseBreachingCharge;
+}
+
+function int GetBreachingMethod() {
+	return BreachingMethod;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

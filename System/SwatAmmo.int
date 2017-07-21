@@ -2,32 +2,47 @@
 Description=Full Metal jacket ammunition is a lead core surrounded by a strong metal jacket.  This ammunition is designed for high penetration.  It is best used against armored targets since it can penetrate the armor and still provide stopping power.
 FriendlyName=FMJ
 
-[MP5SMG_FMJ]
-FriendlyName=9mm FMJ
-GUIImage=Texture'gui_tex.ammo_9mm_FMJ'
-
 [JacketedHollowPoint]
 Description=Jacketed hollow point ammunition is characterized by its hollow tip which initiates uniform expansion of the bullet tip to the depth of the hollow point.  This expansion causes severe internal damage to the target with less penetration.  JHP ammo is best used against unarmored targets since it causes maximum damage with less chance of penetration which could cause unwanted targets to be hit.
 FriendlyName=JHP
 
-[MP5SMG_JHP]
-FriendlyName=9mm JHP
-GUIImage=Texture'gui_tex.ammo_9mm_JHP'
+[000ShotgunAmmo]
+Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are large in diameter and better at penetrating armor, 000 shells disperse fewer pellets for less overall damage.
+FriendlyName=000 Buck
+GUIImage=Texture'gui_tex3.ammo_000buckshotgun'
 
-[M4Super90SGAmmo]
-Description=00 buck has been a law enforcement standard issue for shotguns for many years.  These rounds contain 9 buckshot pellets, all 00 gauge in diameter.  The pellets spread out after being fired and can inflict massive damage to unarmored targets.  It is less effective against armored targets because the pellets round shape and low speed doesn't allow for penetration.
+[00ShotgunAmmo]
+Description=00 buck has been a law enforcement standard issue for shotguns for many years.  These rounds contain 9 buckshot pellets, all 00 gauge in diameter.  The pellets spread out after being fired and can inflict massive damage to unarmored targets.  It is modestly effective against armored targets but the pellets round shape and low speed doesn't allow for much penetration.
 FriendlyName=00 Buck
 GUIImage=Texture'gui_tex.ammo_00buckshotgun'
 
-[M4Super90SGSabotAmmo]
+[0ShotgunAmmo]
+Description=0 buck offers a solid compromise between the large pellets of 000 and 00 buck with the decreased penetration and increased pellet count of 1 buck and 4 buck rounds. These rounds contain 12 buckshot pellets, all 0 gauge in diameter.
+FriendlyName=0 Buck
+GUIImage=Texture'gui_tex.ammo_0buckshotgun'
+
+[1ShotgunAmmo]
+Description=1 buck, while not commonly used by police officers, is nontheless a capable choice for interior spaces. These rounds contain 16 buckshot pellets, all 1 gauge in diameter. These rounds fare slightly better than the 4 buck against armored targets and are less ricochet-prone, but the much larger 1 gauge pellet may overpenetrate.
+FriendlyName=1 Buck
+GUIImage=Texture'gui_tex.ammo_1buckshotgun'
+
+[4ShotgunAmmo]
+Description=4 buck, while not as widespread as its larger-pelleted brethren, is dominant in urban environments. The 27 buckshot pellets, 4 gauge in diameter, are large enough to inflict injury, but small enough to prevent unwanted penetration through walls and other surfaces. The increased number of pellets increases the chances of ricochet and the pellets themselves are incapable of penetrating kevlar.
+FriendlyName=4 Buck
+GUIImage=Texture'gui_tex.ammo_4buckshotgun'
+
+[ShotgunSabotAmmo]
 Description=This 12 gauge specialty round is specifically designed for armor penetration.  It is a fin stabilized slug housing a steel penetrator button.  Although relatively inaccurate, it allows for the shotgun to be quite effective against armored targets.
 FriendlyName=Sabot Slug
 GUIImage=Texture'gui_tex.ammo_sabot'
 
-[M4Super90SG000Ammo]
-Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are larger in diameter, 000 shells disperse fewer pellets for less overall damage.
-FriendlyName=000 Buck
-GUIImage=Texture'gui_tex3.ammo_000buckshotgun'
+[MP5SMG_FMJ]
+FriendlyName=9mm FMJ
+GUIImage=Texture'gui_tex.ammo_9mm_FMJ'
+
+[MP5SMG_JHP]
+FriendlyName=9mm JHP
+GUIImage=Texture'gui_tex.ammo_9mm_JHP'
 
 [M4A1MG_FMJ]
 FriendlyName=.223 FMJ
@@ -36,21 +51,6 @@ GUIImage=Texture'gui_tex.ammo_223cal_FMJ'
 [M4A1MG_JHP]
 FriendlyName=.223 JHP
 GUIImage=Texture'gui_tex.ammo_223cal_JHP'
-
-[NovaPumpSGAmmo]
-Description=00 buck has been a law enforcement standard issue for shotguns for many years.  These rounds contain 9 buckshot pellets all 00 gauge in diameter.  The pellets spread out after being fired and can inflict massive damage to unarmored targets.  It is less effective against armored targets because the pellets round shape and low speed doesn't allow for penetration.
-FriendlyName=00 Buck
-GUIImage=Texture'gui_tex.ammo_00buckshotgun'
-
-[NovaPumpSGSabotAmmo]
-Description=This 12 gauge specialty round is specifically designed for armor penetration.  It is a fin stabilized slug housing a steel penetrator button.  Although relatively inaccurate, it allows for the shotgun to be quite effective against armored targets.
-FriendlyName=Sabot Slug
-GUIImage=Texture'gui_tex.ammo_sabot'
-
-[NovaPumpSG000Ammo]
-Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are larger in diameter, 000 shells disperse fewer pellets for less overall damage.
-FriendlyName=000 Buck
-GUIImage=Texture'gui_tex3.ammo_000buckshotgun'
 
 [CSBallLauncherAmmo]
 Description=The OC-Ball ammo is a hard plastic ball filled with Oleoresin Capsicum, the active ingredient in pepper spray.  The ball breaks on impact releasing the chemical agent affecting anyone within a small radius of where the ball broke.
@@ -64,9 +64,19 @@ GUIImage=Texture'gui_tex.ammo_lesslethal'
 
 [AK47MG_FMJ]
 GUIImage=Texture'gui_tex.ammo_762cal_FMJ'
+FriendlyName=7.62 FMJ
 
 [AK47MG_JHP]
 GUIImage=Texture'gui_tex.ammo_762cal_JHP'
+FriendlyName=7.62 JHP
+
+[AK47MG_AP]
+GUIImage=Texture'gui_tex.ammo_762cal_AP'
+FriendlyName=7.62 AP
+
+[AK47MG_JSP]
+GUIImage=Texture'gui_tex.ammo_762cal_JSP'
+FriendlyName=7.62 JSP
 
 [UZISMG_FMJ]
 GUIImage=Texture'gui_tex.ammo_9mm_FMJ'
@@ -120,7 +130,9 @@ FriendlyName=.357 Magnum JHP
 GUIImage=Texture'gui_tex.ammo_357cal_JHP'
 
 [BreachingShotgunAmmo]
-FriendlyName=Frangible Breaching Shot
+FriendlyName=12 Gauge Frangible
+GUIImage=Texture'gui_tex.ammo_frangible'
+Description=Frangible rounds are commonly used when breaching doors. The dimpled slug design allows the round to cut uniform holes in surfaces without overpenetrating. And, unlike buckshot, it won't ricochet on hard metal surfaces. While it can be used as a replacement for buckshot or sabot slugs, it is relatively ill-equipped to do so.
 
 [VIPPIstolAmmo_JHP]
 Description=VIP JHP Ammo description

@@ -70,7 +70,7 @@ var private int RoundsWon[2];
 var SwatGameReplicationInfo CachedSGRI;
 
 // When true, we have initialized loading as a net client
-//   The GUIController, when initialized, should check this 
+//   The GUIController, when initialized, should check this
 //     and bring the GUI up to the appropriate state
 var bool bInitAsNetPlayer;
 
@@ -135,7 +135,7 @@ function LoadLevel( string MapName )
 
 	cmd = "start"@MapName;
 	log("[dkaplan] >>> SwatRepo::LoadLevel()... MapName = '"$MapName$"' ... ConsoleCommand = '"$cmd$"'" );
-    Level.ConsoleCommand( cmd ); 
+    Level.ConsoleCommand( cmd );
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ function StartServer( string MapOverride, string AdditionalURLOptions )
 		URL = MapOverride;
 	else
 		URL = ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex];
-    
+
 	URL = URL $ "?Name=" $ GuiConfig.MPName $ AdditionalURLOptions;
 
 	if( ServerSettings(Level.CurrentServerSettings).bPassworded )
@@ -197,11 +197,11 @@ event Tick( Float DeltaSeconds )
                 PerformQuickRoundReset();
                 return;
             }
-            
+
             //dont update timers/check readiness if there are no players on the server
             if( Level.NetMode == NM_DedicatedServer && !AnyPlayersOnServer() )
                 return;
-                
+
             GetSGRI().ServerCountdownTime-=DeltaSeconds;
 
             // Notify the SwatGameInfo, so the GameMode can take any necessary actions.
@@ -216,7 +216,13 @@ event Tick( Float DeltaSeconds )
                 case GAMESTATE_PostGame:
                     CumulativeDelta += DeltaSeconds;
 
-                    if( GetSGRI().ServerCountdownTime <= 0 )
+					          if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+					          {
+						                CumulativeDelta = 0;
+						                CheckAllPlayersReady();
+					          }
+
+                    else if( GetSGRI().ServerCountdownTime <= 0 )
                     {
                         CumulativeDelta = 0;
                         AllPlayersReady();
@@ -263,7 +269,7 @@ event Tick( Float DeltaSeconds )
                 }
             }
         }
-        
+
         if( CriticalMomentCountdown > 0 )
         {
             CriticalMomentCountdown -= DeltaSeconds;
@@ -279,7 +285,7 @@ function QuickServerRestart( PlayerController PC )
 {
     if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
         return;
-        
+
     //set this flag to perform the quick round reset next tick
     bShouldPerformQuickRoundReset = true;
 }
@@ -289,7 +295,7 @@ function CoopQMMServerRestart( PlayerController PC )
 {
     if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
         return;
-        
+
     NetNextRound();
 }
 
@@ -321,7 +327,7 @@ log("[dkaplan]: >>> SwatRepo::PreLevelChange( New Level == " $ MapName $ " )");
     //always send the mission ended game event before level changing to avoid hanging ref problems
     if( PlayerController != None && Level.Game != None && SwatGameInfo(Level.Game) != None )
         SwatGameInfo(Level.Game).MissionEnded();
-    
+
     if( GuiConfig.SwatGameState != GAMESTATE_ClientTravel )
     {
         if( InStr( MapName, "Entry" ) < 0 &&
@@ -343,7 +349,7 @@ log("[dkaplan]: >>> SwatRepo::PreLevelChange( New Level == " $ MapName $ " )");
     //always clear the current mission before level changing to avoid hanging ref problems
     GuiConfig.ClearCurrentMission();
 
-    //cleanup actor refs    
+    //cleanup actor refs
     PlayerController = None;
     CachedSGRI = None;
     MissionObjectives = None;
@@ -399,16 +405,20 @@ log("[dkaplan]: >>> SwatRepo::PostLevelChange()");
 
 event PostBeginPlay()
 {
-    if( Level.NetMode == NM_Standalone || 
+    if( Level.NetMode == NM_Standalone ||
         Level.IsPlayingCOOP )
     {
         //if we are testing (ie, running off the command line/via UnrealEd)
         //set the current mission if not already set (only occurs if entering via the command line)
-        if( GuiConfig.GetCurrentMissionName() != Level.Label )
+        if (GuiConfig.GetCurrentMissionName() != Level.Label && GetCampaign().CampaignPath == 2)
+            GuiConfig.SetCurrentMissionAllMissions(Level.GetLocalURL(), Level.Label, Level.Title);
+        else if( GuiConfig.GetCurrentMissionName() != Level.Label )
             GuiConfig.SetCurrentMission( Level.Label, Level.Title );
         else
             GuiConfig.ResetCurrentMission();
-            
+
+        log("SwatRepo::PostBeginPlay - LocalURL is "$Level.GetLocalURL());
+
         AssertWithDescription( GuiConfig.CurrentMission != None, "No Mission was created for level "$Level.Label );
 
     	MissionObjectives = GuiConfig.CurrentMission.Objectives;
@@ -466,7 +476,7 @@ function Logout( SwatGamePlayerController SGPC )
     mplog( "SwatRepo::Logout(). bTravellingToNewRound="$bTravellingToNewRound$", SGPC="$SGPC );
 
     // Add code here to remove the player's item from the repo unless
-    // travelling to new round is 
+    // travelling to new round is
 
     if ( !bTravellingToNewRound )
     {
@@ -498,7 +508,7 @@ function OnMissionStarted()
 log("[dkaplan] >>> SwatRepo::MissionStarted() "$self);
     StateChange( GAMESTATE_MidGame );
     //should be called when the round actually starts
-    
+
     if( Level.Game != None )
         SwatGameInfo(Level.Game).OnMissionStarted();
 }
@@ -538,7 +548,7 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
     Switch (newState)
     {
         case GAMESTATE_None:
-            AssertWithDescription( oldState == GAMESTATE_EntryLoading || 
+            AssertWithDescription( oldState == GAMESTATE_EntryLoading ||
                                    oldState == GAMESTATE_None, errStr);
             GuiConfig.FirstTimeThrough = true;
             break;
@@ -547,17 +557,20 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             break;
         case GAMESTATE_LevelLoading:
             //dkaplan- removed invalid assertion, can use "open <mapname>" at any time, except while entryloading
-            //AssertWithDescription( oldState == GAMESTATE_PostGame || 
+            //AssertWithDescription( oldState == GAMESTATE_PostGame ||
             //                       oldState == GAMESTATE_None, errStr);
             AssertWithDescription( oldState != GAMESTATE_EntryLoading, errStr);
             break;
         case GAMESTATE_PreGame:
-            AssertWithDescription( oldState == GAMESTATE_LevelLoading || 
+            AssertWithDescription( oldState == GAMESTATE_LevelLoading ||
                                    oldState == GAMESTATE_ClientTravel, errStr );
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 bDelayedFinish=false;
-                GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).MPMissionReadyTime + PRECACHING_FUDGE;
+                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+                  GetSGRI().ServerCountdownTime = 0;
+                else
+                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).MPMissionReadyTime + PRECACHING_FUDGE;
                 //Level.Game.SetPause( true, PlayerController );
 
                 UpdateRoundsWon( 0 );
@@ -569,7 +582,10 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 NetRoundInProgress = true;
-                GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).RoundTimeLimit;
+                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+                  GetSGRI().ServerCountdownTime = 0;
+                else
+                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).RoundTimeLimit;
                 //Level.Game.SetPause( false, PlayerController );
             }
             break;
@@ -577,8 +593,8 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             AssertWithDescription( oldState == GAMESTATE_MidGame, errStr);
             log( "......FirstTimeThrough="$GuiConfig.FirstTimeThrough );
             log( "......SwatGameRole="$GuiConfig.SwatGameRole );
-            
-            if( GuiConfig.SwatGameRole == GAMEROLE_MP_Client || 
+
+            if( GuiConfig.SwatGameRole == GAMEROLE_MP_Client ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 GuiConfig.FirstTimeThrough = false;
@@ -587,18 +603,21 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             {
                 SwatGameInfo(Level.Game).MissionEnded();
             }
-            
+
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
-                GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).PostGameTimeLimit;
+                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+                  GetSGRI().ServerCountdownTime = 0;
+                else
+                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).PostGameTimeLimit;
             }
-            
+
             NetRoundInProgress = false;
             break;
         case GAMESTATE_ClientTravel:
-            AssertWithDescription( oldState == GAMESTATE_None || 
-                                   oldState == GAMESTATE_PreGame || 
-                                   oldState == GAMESTATE_MidGame || 
+            AssertWithDescription( oldState == GAMESTATE_None ||
+                                   oldState == GAMESTATE_PreGame ||
+                                   oldState == GAMESTATE_MidGame ||
                                    oldState == GAMESTATE_PostGame, errStr );
             break;
         case GAMESTATE_ConnectionFailed:
@@ -612,9 +631,9 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
         LastServerTime = GetSGRI().ServerCountdownTime;
         CumulativeDelta=0;
     }
-    
+
     GuiConfig.SwatGameState = newState;
-    
+
     if( SwatGUIControllerBase(GUIController) != None )
         SwatGUIControllerBase(GUIController).OnStateChange( oldState, newState, CurrentGameMode );
     if( PlayerController != None )
@@ -628,18 +647,29 @@ function RoleChange( eSwatGameRole newRole )
 log("[dkaplan] >>> RoleChange of "$self$", newRole == "$GetEnum(eSwatGameRole,newRole)$", oldRole == "$GetEnum(eSwatGameRole,oldRole));
     if( oldRole == newRole )
         return;
-        
+
     GuiConfig.SwatGameRole = newRole;
-    
+
     if( SwatGUIControllerBase(GUIController) != None )
         SwatGUIControllerBase(GUIController).OnRoleChange( oldRole, newRole );
     if( PlayerController != None )
         PlayerController.OnRoleChange( oldRole, newRole );
 }
 
+function Campaign GetCampaign()
+{
+  return SwatGUIControllerBase(GUIController).GetCampaign();
+}
 
+function UpdateCampaignPawnDied(Pawn Died) {
+  if(GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign) {
+    SwatGUIControllerBase(GUIController).UpdateCampaignDeathInformation(Died);
+  }
+}
 
-
+function bool CheckOfficerPermadeathInformation(int OfficerSpawnName) {
+  return SwatGUIControllerBase(GUIController).CheckCampaignForOfficerSpawn(OfficerSpawnName);
+}
 
 function OnCriticalMoment()
 {
@@ -655,11 +685,11 @@ function OnDelayedCriticalMoment()
 log("[dkaplan] >>> SwatRepo::OnDelayedCriticalMoment() "$self);
 
     if( GuiConfig.CurrentMission.IsMissionTerminal() ||
-        ( /*dkaplan: this should be done in both SP and MP...  
+        ( /*dkaplan: this should be done in both SP and MP...
             GuiConfig.SwatGameRole == GAMEROLE_MP_Host && */
           !MissionObjectives.AnyVisibleObjectivesInProgress() && Procedures.ProceduresMaxed() ) )
     {
-        SwatGameInfo(Level.Game).GameAbort(); 
+        SwatGameInfo(Level.Game).GameAbort();
     }
 }
 
@@ -670,7 +700,7 @@ log( "[dkaplan] >>> SwatRepo::FailedServerConnection()");
 
     //ensure the pending connection gets killed now
     Level.ConsoleCommand("KILLNET");
-    
+
     StateChange( GAMESTATE_ConnectionFailed );
 }
 
@@ -684,7 +714,7 @@ log( "[dkaplan] >>> SwatRepo::FailedConnectionAccepted()");
 event NetworkClientLoading()
 {
     log( self$"::NetworkClientLoading()" );
-    
+
     RoleChange(GAMEROLE_MP_Client);
 
     NetworkPlayerLoading();
@@ -693,7 +723,7 @@ event NetworkClientLoading()
 event NetworkHostLoading()
 {
     log( self$"::NetworkHostLoading()" );
-    
+
     RoleChange(GAMEROLE_MP_Host);
 
     NetworkPlayerLoading();
@@ -702,7 +732,7 @@ event NetworkHostLoading()
 function NetworkPlayerLoading()
 {
     log( self$"::NetworkPlayerLoading()" );
-    
+
     //handle initial connection as a gamespy client
     if( SwatGUIControllerBase(GUIController) != None )
     {
@@ -768,11 +798,34 @@ function SwapServerSettings()
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+//  Restart the map (like from a referendum or otherwise)
+//
+function NetRestartRound()
+{
+  SwapServerSettings();
+
+  ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
+  ClearRoundsWon();
+  NetSwitchLevelsFromMapVote("?restart"); // Undocumented engine feature; restarts the current map
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 //  Determine whether or not to quick restart the next round
 //
 function NetNextRound()
 {
-log("[dkaplan] >>> NetNextRound()" );
+    local SwatGameReplicationInfo SGRI;
+
+    SGRI = GetSGRI();
+
+    if(SwatGUIControllerBase(GUIController).coopcampaign && SGRI.NextMap == "")
+    {
+      // we CANNOT go to a next map until the host has picked a new map!
+      return;
+    }
+
+    log("[dkaplan] >>> NetNextRound()" );
 
     SwapServerSettings();
 
@@ -799,7 +852,7 @@ log("[dkaplan] >>> NetNextRound()" );
     {
         NetQuickStartNextRound();
     }
-    
+
     log( "Advancing to the next round... ServerSettings(Level.CurrentServerSettings).RoundNumber="$ServerSettings(Level.CurrentServerSettings).RoundNumber$", ServerSettings(Level.CurrentServerSettings).NumRounds="$ServerSettings(Level.CurrentServerSettings).NumRounds$", ServerSettings(Level.CurrentServerSettings).MapIndex="$ServerSettings(Level.CurrentServerSettings).MapIndex );
 }
 
@@ -824,16 +877,29 @@ function FinalizeStats()
 ///////////////////////////////////////////////////////////////////////////////
 function NetSwitchLevels( optional bool bAdvanceToNextMap )
 {
+    local SwatGameReplicationInfo SGRI;
+    local int NextMapIndex;
+
+    SGRI = GetSGRI();
+
     log("[dkaplan] >>> NetSwitchLevels()" );
 
     Assert( Level.NetMode != NM_Client );
 
     //don't advance to the next round if the server settings changed and a round was selected
-    if( bAdvanceToNextMap )
+    if(!SwatGuiControllerBase(GUIController).coopcampaign)
     {
-        ServerSettings(Level.CurrentServerSettings).MapIndex++;
-        if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
-            ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
+      if( bAdvanceToNextMap )
+      {
+          ServerSettings(Level.CurrentServerSettings).MapIndex++;
+          if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
+              ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
+      }
+      NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+      if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
+        NextMapIndex = 0;
+      }
+      SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
     }
 
     ServerSettings(Level.CurrentServerSettings).SaveConfig();
@@ -843,7 +909,14 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
 
     log( "Beginning a new Map... ServerSettings(Level.CurrentServerSettings).RoundNumber="$ServerSettings(Level.CurrentServerSettings).RoundNumber$", ServerSettings(Level.CurrentServerSettings).NumRounds="$ServerSettings(Level.CurrentServerSettings).NumRounds$", ServerSettings(Level.CurrentServerSettings).MapIndex="$ServerSettings(Level.CurrentServerSettings).MapIndex );
 
-    Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
+    if(SwatGuiControllerBase(GUIController).coopcampaign)
+    {
+      Level.ServerTravel( SGRI.NextMap, false );
+    }
+    else
+    {
+      Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
+    }
 }
 
 function NetSwitchLevelsFromMapVote( String URL )
@@ -874,20 +947,20 @@ log("[dkaplan] >>> NetStartNextRound()" );
     //reset config on the pending settings to match the current settings
 	ServerSettings(Level.PendingServerSettings).SetServerSettings(
 		None,
-		CurrentSettings.GameType, 
-		CurrentSettings.MapIndex, 
-		CurrentSettings.NumRounds, 
-		CurrentSettings.MaxPlayers, 
+		CurrentSettings.GameType,
+		CurrentSettings.MapIndex,
+		CurrentSettings.NumRounds,
+		CurrentSettings.MaxPlayers,
 		CurrentSettings.DeathLimit,
-		CurrentSettings.PostGameTimeLimit, 
-		CurrentSettings.RoundTimeLimit, 
-		CurrentSettings.MPMissionReadyTime, 
-		CurrentSettings.bShowTeammateNames, 
+		CurrentSettings.PostGameTimeLimit,
+		CurrentSettings.RoundTimeLimit,
+		CurrentSettings.MPMissionReadyTime,
+		CurrentSettings.bShowTeammateNames,
 		CurrentSettings.bShowEnemyNames,
 		CurrentSettings.bAllowReferendums,
-		CurrentSettings.bNoRespawn, 
-		CurrentSettings.bQuickRoundReset, 
-		CurrentSettings.FriendlyFireAmount, 
+		CurrentSettings.bNoRespawn,
+		CurrentSettings.bQuickRoundReset,
+		CurrentSettings.FriendlyFireAmount,
 		CurrentSettings.EnemyFireAmount,
 		CurrentSettings.ArrestRoundTimeDeduction,
 		CurrentSettings.AdditionalRespawnTime,
@@ -896,17 +969,17 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.bDisableTeamSpecificWeapons
 	);
 	ServerSettings(Level.PendingServerSettings).RoundNumber = CurrentSettings.RoundNumber;
-    
+
     SGI = SwatGameInfo(Level.Game);
 
     SGI.PreQuickRoundRestart();
 
     //reset the GameMode
     SGI.InitializeGameMode();
-    
+
     //Reset OnMissionStarted listeners
     SGI.OnMissionStarted();
-    
+
     //start the next round
     NetRoundStart();
 }
@@ -918,9 +991,27 @@ function NetRoundStart()
     local Controller Controller;
     local SwatGamePlayerController SwatController;
     local SwatGameInfo SGI;
+    local SwatGameReplicationInfo SGRI;
+    local int NextMapIndex;
+
 log("[dkaplan] >>> NetRoundStart()" );
 
     log( "SwatRepo::NetRoundStart() called." );
+
+    SGRI = GetSGRI();
+
+    if(!SwatGUIControllerBase(GUIController).coopcampaign)
+    {
+      NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+      if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
+        NextMapIndex = 0;
+      }
+      SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
+    }
+    else
+    {
+      SGRI.NextMap = "";
+    }
 
     SGI = SwatGameInfo(Level.Game);
     assert( SGI != None );
@@ -966,7 +1057,7 @@ function OnNetRoundFinished( ESwatRoundOutcome RoundOutcome )
     bDelayedFinish=true;
     SwatGameInfo(Level.Game).NetRoundTimeRemaining( 0 );
     SwatGameInfo(Level.Game).MissionEnded();
-    
+
     GetSGRI().ServerCountdownTime = GuiConfig.MPPostMissionTime;
 
     switch (RoundOutcome)
@@ -986,7 +1077,7 @@ function OnNetRoundFinished( ESwatRoundOutcome RoundOutcome )
             result = GuiConfig.MPSWATWinMessage;
             Level.Game.Broadcast( None, result, 'SwatWin' );
             break;
-            
+
         case SRO_SwatVictoriousRapidDeployment:
             Level.Game.Broadcast( None, "", 'AllBombsDisarmed' );
             break;
@@ -1019,7 +1110,7 @@ function OnNetRoundFinished( ESwatRoundOutcome RoundOutcome )
             result = GuiConfig.MPSWATWinMessage;
             Level.Game.Broadcast( None, result, 'SwatWinSmashAndGrab' );
             break;
-            
+
         default:
             AssertWithDescription( false, "Invalid RoundOutcome in SwatRepo::OnNetRoundFinished(). outcome="$RoundOutcome );
     }
@@ -1059,7 +1150,7 @@ private function NetRoundDelayedFinish()
                 SGPC.ClientRoundStarted();
                 //SGPC.SwatRepoPlayerItem.SetHasEnteredFirstRound();
             }
-			
+
 			SwatPlayerReplicationInfo(SGPC.PlayerReplicationInfo).COOPPlayerStatus = STATUS_NotReady;
             SGPC.GameHasEnded();
             SGPC.ClientGameEnded();
@@ -1094,7 +1185,7 @@ function SwatRepoPlayerItem GetRepoPlayerItem( int SwatPlayerID )
     local int i;
 
     log( "in SwatRepo::GetRepoPlayerItem(). ID="$SwatPlayerID );
-    
+
     for ( i = 0; i < PlayerItems.Length; ++i )
     {
         if ( (PlayerItems[i] != None) && (PlayerItems[i].SwatPlayerID == SwatPlayerID) )
@@ -1170,12 +1261,12 @@ function SetTravellingToNewRound()
 
 // Set whether the player and his team should start from the primary or
 // secondary set of entry points in a single player mission.
-final function SetDesiredEntryPoint(EEntryType EntrySet) 
+final function SetDesiredEntryPoint(EEntryType EntrySet)
 {
 	GuiConfig.SetDesiredEntryPoint( EntrySet );
 }
 
-final function EEntryType GetDesiredEntryPoint() 
+final function EEntryType GetDesiredEntryPoint()
 {
     return GuiConfig.GetDesiredEntryPoint();
 }
@@ -1233,7 +1324,7 @@ function float GetFriendlyFireModifier()
 {
     if( ServerSettings(Level.CurrentServerSettings).EnemyFireAmount == 0.0 )
         return 0.0;
-        
+
     return ServerSettings(Level.CurrentServerSettings).FriendlyFireAmount;
 }
 
@@ -1328,7 +1419,7 @@ function SetObjectiveVisibility( name ObjectiveName, bool Visible )
 function ClearRoundsWon()
 {
     local int i;
-    
+
     for( i = 0; i < 2; i++ )
     {
         RoundsWon[i] = 0;
@@ -1391,4 +1482,3 @@ defaultproperties
 {
     PRECACHING_FUDGE=30.0
 }
-

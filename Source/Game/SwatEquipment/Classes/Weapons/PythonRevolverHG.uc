@@ -1,6 +1,1 @@
-class PythonRevolverHG extends Handgun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class PythonRevolverHG extends Handgun config(SwatEquipment);

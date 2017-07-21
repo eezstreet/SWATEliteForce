@@ -2,7 +2,7 @@
 // ISwatEnemy.uc - ISwatEnemy interface
 // we use this interface to be able to call functions on the SwatEnemy because we
 // the definition of SwatEnemy has not been defined yet, but because SwatEnemy implements
-// ISwatEnemy, we have a contract that says these functions will be implemented, and 
+// ISwatEnemy, we have a contract that says these functions will be implemented, and
 // we can cast any Pawn pointer to an ISwatEnemy interface to call them
 
 interface ISwatEnemy extends ISwatAICharacter
@@ -33,7 +33,6 @@ enum EnemyState
 function bool		IsAnInvestigator();
 function EnemyState GetCurrentState();
 function			SetCurrentState(EnemyState NewState);
-function			BecomeAware();
 function EnemySkill GetEnemySkill();
 
 function StartSprinting();
@@ -51,7 +50,9 @@ function EnemySpeechManagerAction	GetEnemySpeechManagerAction();
 // Threat
 
 function bool		IsAThreat();
+function bool		IAmThreat();
 function			BecomeAThreat();
+function			UnbecomeAThreat();
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -62,10 +63,16 @@ function FiredWeapon GetBackupWeapon();
 
 function PickUpWeaponModel(HandHeldEquipmentModel HHEModel);
 
-// Tell the enemy to drop all of his weapons, if it is being shown, and give the
+// Tell the enemy to drop his active weapon, and give the
 // falling weapon the specified impulse (in weapon-local space). 
+function DropActiveWeapon(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude);
+// Tell the enemy to drop all of his weapons, if it is being shown, and give the
+// falling weapon the specified impulse (in weapon-local space).
 function DropAllWeapons(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude);
 function ThrowWeaponDown();
+
+//Get whether the suspect chooses to drop his/her weapon instantly when complying
+function bool ShouldDropWeaponInstantly();
 
 // Tell the enemy to drop any evidence he is holding
 function DropAllEvidence(bool bIsDestroying);

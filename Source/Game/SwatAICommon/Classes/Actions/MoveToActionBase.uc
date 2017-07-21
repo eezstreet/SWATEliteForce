@@ -15,7 +15,7 @@ var protected bool			bHasRotatedTowardFirstPoint;
 var protected bool			bWasAvoidingCollision;
 
 // this is a hack until we're able to test whether we are currently in one of the latent MoveTo functions
-var protected bool			bIsMoving;						
+var protected bool			bIsMoving;
 
 // allows us to complete moving when reachability says we won't hit anything but we end up hitting something
 var private float			MovementTimeOut;
@@ -172,7 +172,7 @@ function HandleDistanceSensorMessage(AI_SensorData value)
 
 		// determine walking based on our distance sensor
 		MoveToGoalBase(achievingGoal).SetShouldWalk(bShouldWalk);
-				
+
 		SetMovement(bShouldWalk, bShouldCrouch);
 	}
 }
@@ -188,7 +188,7 @@ event SetMovement(bool bWalkWhileMoving, bool bCrouchWhileMoving)
 	{
 		m_pawn.bIsWalking = bWalkWhileMoving;
 	}
-	
+
 	if (m_pawn.bWantsToCrouch != bCrouchWhileMoving)
 	{
 		m_pawn.ShouldCrouch(bCrouchWhileMoving);
@@ -411,9 +411,9 @@ function bool ShouldCloseDoor(Actor Destination)
 		DoorDestination     = Door(Destination);
 
 		// only try and close normal doors that are open and not broken
-		if (! Door(Destination).IsEmptyDoorway() && ! SwatDoorDestination.IsBroken() && (DoorDestination.IsOpen() || DoorDestination.IsOpening()))
+		if (! Door(Destination).IsEmptyDoorway() /*&& ! SwatDoorDestination.IsBroken()*/ && (DoorDestination.IsOpen() || DoorDestination.IsOpening()))
 		{
-			// if we're not supposed to close initially open doors (doors that were set 
+			// if we're not supposed to close initially open doors (doors that were set
 			// by the designer to be open from the beginning of the map), we don't close them
 			// otherwise we do.
 			if (!bShouldNotCloseInitiallyOpenDoors || !ISwatDoor(Destination).WasDoorInitiallyOpen())
@@ -425,7 +425,7 @@ function bool ShouldCloseDoor(Actor Destination)
 					{
 						// only try and close a door while moving if it's open to the side we're going to
 						bPointAheadToLeft = SwatDoorDestination.ActorIsToMyLeft(m_Pawn.Controller.RouteCache[1]);
-						return ((DoorDestination.IsOpen() && (DoorDestination.IsOpenLeft() == bPointAheadToLeft)) || 
+						return ((DoorDestination.IsOpen() && (DoorDestination.IsOpenLeft() == bPointAheadToLeft)) ||
 								(DoorDestination.IsOpening() && (DoorDestination.IsOpeningLeft() == bPointAheadToLeft)));
 					}
 					else if (Destination.Location != GetDestination())
@@ -492,7 +492,7 @@ protected latent function NavigateThroughDoor(Door Target)
 
 //	log(m_Pawn.Name $ " finished waiting - PendingDoorInteractor " $ PendingDoorInteractor $ " IsClosed " $ Target.IsClosed() $ " IsBroken " $ SwatDoorTarget.IsBroken() $ " IsOpening " $ Target.IsOpening());
 
-	if (Target.IsClosed() && !SwatDoorTarget.IsBroken() && !Target.IsOpening() &&
+	if (Target.IsClosed() && /*!SwatDoorTarget.IsBroken() &&*/ !Target.IsOpening() &&
 		((PendingDoorInteractor == None) || (PendingDoorInteractor == m_Pawn)))
 	{
 		PostOpenDoorGoal(Target);

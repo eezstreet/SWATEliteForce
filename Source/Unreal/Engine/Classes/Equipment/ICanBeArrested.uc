@@ -12,10 +12,10 @@ simulated function OnArrestBegan(Pawn Arrester);
 
 
 // *** Please note that SwatPawn implements OnArrested() and classes
-//     derived from SwatPawn should not override OnArrested(), but 
+//     derived from SwatPawn should not override OnArrested(), but
 //     should override OnArrestedSwatPawn() instead. ***
 //
-//if the arrester completes the qualification process, 
+//if the arrester completes the qualification process,
 //  then the ICanBeArrested gets OnArrested()
 simulated function OnArrested(Pawn Arrester);
 
@@ -25,7 +25,7 @@ simulated function OnArrestInterrupted(Pawn Arrester);
 
 
 //return the time it takes for a Player to "qualify" to arrest me
-simulated function float GetQualifyTimeForArrest();
+simulated function float GetQualifyTimeForArrest(Pawn Arrester);
 
 //returns whether we've been arrested
 simulated function bool IsArrested();

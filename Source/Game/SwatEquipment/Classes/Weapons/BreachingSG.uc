@@ -1,6 +1,1 @@
-class BreachingSG extends BreachingShotgun;
-
-defaultproperties
-{
-    Slot=SLOT_Breaching
-}
+class BreachingSG extends BreachingShotgun config(SwatEquipment);

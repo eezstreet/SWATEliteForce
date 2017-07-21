@@ -263,7 +263,8 @@ replication
 {
     reliable if (Role == Role_Authority)
         bIsLocked, bIsBroken, ReasonForMove, LockedKnowledge,
-        DeployedWedge, DeployedC2ChargeLeft, DeployedC2ChargeRight;
+        DeployedWedge, DeployedC2ChargeLeft, DeployedC2ChargeRight,
+				Broken, Blasted;
 }
 ///////////////////////////
 
@@ -420,6 +421,30 @@ simulated function bool IsBoobyTrapped()
     return bIsBoobyTrapped;
 }
 
+simulated function bool TrapIsDisabledByC2()
+{
+	local BoobyTrap_Door Trap;
+
+	if(!IsBoobyTrapped()) {
+		return false;
+	}
+
+	Trap = BoobyTrap_Door(BoobyTrap);
+	assert(Trap != None);
+
+	return Trap.C2DisablesThis;
+}
+
+simulated function DisableBoobyTrap()
+{
+	if(!IsBoobyTrapped()) {
+		return;
+	}
+
+	BoobyTrap.ReactToUsed(self);
+	bIsBoobyTrapped = false;
+}
+
 simulated function SetBoobyTrap(BoobyTrap Trap)
 {
     BoobyTrap = Trap;
@@ -498,7 +523,7 @@ private function NotifyRegistrantsDoorOpening()
 
 simulated function bool CanInteract()
 {
-    return !IsBroken() && !IsWedged();
+    return /*!IsBroken() &&*/ !IsWedged();
 }
 
 //pass Force=true to interact even with a locked door
@@ -649,13 +674,66 @@ simulated function OnUnlocked()
     }
 }
 
+simulated function bool TryDoorLock(SwatGamePlayerController Caller)
+{
+	if(IsClosing() || IsOpening() || IsEmptyDoorWay() || IsOpen())
+	{
+		return false;
+	}
+
+	if(!bCanBeLocked || IsBroken())
+	{
+		Caller.DoorCannotBeLocked();
+		return true;
+	}
+
+	if(bIsLocked)
+	{
+		BroadcastEffectEvent('LockedDoorTried');
+		UpdateOfficerDoorKnowledge(true);
+		Caller.DoorIsLocked();
+
+		LockedKnowledge[0] = 1;
+		LockedKnowledge[1] = 1;
+		LockedKnowledge[2] = 1;
+	}
+	else
+	{
+		BroadcastEffectEvent('Unlocked');
+		UpdateOfficerDoorKnowledge(false);
+		Caller.DoorIsNotLocked();
+
+		LockedKnowledge[0] = 0;
+		LockedKnowledge[1] = 0;
+		LockedKnowledge[2] = 0;
+	}
+
+	return true;
+}
+
+// FIXME: there might be more that's required to get this to work correctly..?
+simulated function OnDoorLockedByOperator() {
+	if(bIsLocked) {
+		// See above note about bIsLocked
+		return;
+	}
+
+	bIsLocked = true;
+	TriggerEffectEvent('Unlocked');
+
+	UpdateOfficerDoorKnowledge(true);
+
+	LockedKnowledge[0] = 1;
+	LockedKnowledge[1] = 1;
+	LockedKnowledge[2] = 1;
+}
+
 simulated function bool KnowsDoorIsLocked( int TeamNumber )
 {
     assert( Level.NetMode != NM_Standalone );
     assert( TeamNumber < 3 ); // dbeswick: used to be 2, now there are potentially 3 teams in coop
     return LockedKnowledge[TeamNumber] == 1;
 }
-
 
 //
 // Antiportal handling
@@ -664,7 +742,7 @@ simulated function bool KnowsDoorIsLocked( int TeamNumber )
 private simulated function bool IsAntiPortalOn()
 {
 	// if this door doesn't act as an antiportal, the antiportal is never on
-	if (!bIsAntiPortal)
+	if (!bIsAntiPortal || bIsBroken)
 		return false;
 
 	if (DoorAntiPortal == None)
@@ -698,9 +776,31 @@ private simulated function ReactivateNearbyRagdolls()
 private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 {
 	// Ignore if this door does not act as an antiportal
+	SetAntiportal(Enabled);
+
+  SetMPBlockingVolume(Enabled);
+}
+
+simulated function SetMPBlockingVolume(bool Enabled)
+{
+	if (DoorBufferVolume != None)
+	{
+			if (Enabled)
+			{
+					DoorBufferVolume.EnableRepulsion();
+			}
+			else
+			{
+					DoorBufferVolume.DisableRepulsion();
+			}
+	}
+}
+
+simulated function SetAntiportal(bool Enabled)
+{
 	if (bIsAntiPortal && DoorAntiPortal != None)
     {
-	    if (Enabled)
+	    if (Enabled && !bIsBroken)
 	    {
 		    //Log("Changing AntiPortalActor.DrawType for Door '"$self$"' from "$GetEnum(EDrawType, DoorAntiPortal.DrawType)$" to DT_AntiPortal");
 		    DoorAntiPortal.SetDrawType(DT_AntiPortal);
@@ -711,19 +811,8 @@ private simulated function SetAntiPortalAndMPBlockingVolume(bool Enabled)
 		    DoorAntiPortal.SetDrawType(DT_None);
 	    }
 
-	    assertWithDescription(!bIsAntiPortal || Enabled == IsAntiPortalOn(), "[ckline] After SetAntiPortalAndMPBlockingVolume("$Enabled$") on Door '"$self$"', IsAntiPortalOn() == "$(!Enabled)$" -- this is not right.");
-    }
-
-    if (DoorBufferVolume != None)
-    {
-        if (Enabled)
-        {
-            DoorBufferVolume.EnableRepulsion();
-        }
-        else
-        {
-            DoorBufferVolume.DisableRepulsion();
-        }
+	    //assertWithDescription(!bIsAntiPortal || Enabled == IsAntiPortalOn(), "[ckline] After SetAntiPortalAndMPBlockingVolume("$Enabled$") on Door '"$self$"', IsAntiPortalOn() == "$(!Enabled)$" -- this is not right.");
+		//mezzo: We dont need this assertion really anymore
     }
 }
 
@@ -915,17 +1004,11 @@ function NotifyClientsOfDoorBlocked( bool OpeningBlocked )
 
 
 // Note: In multiplayer function Blasted only happens on the server
-function Blasted(Pawn Instigator)
+simulated function Blasted(Pawn Instigator)
 {
-    if ( IsClosed() || IsClosing() )
-    {
-        if (ActorIsToMyLeft(Instigator))
-            SetPositionForMove( DoorPosition_OpenRight, MR_Blasted );
-        else
-            SetPositionForMove( DoorPosition_OpenLeft, MR_Blasted );
-
-        Moved(false, true); //not instantly, but force
-    }
+    SetPositionForMove( CurrentPosition, MR_Blasted );	//We want the lock to be obliterated, but we dont want the door to swing open
+		Broken();
+		OnUnlocked();
 }
 
 // Note: In multiplayer function Blasted only happens on the server
@@ -945,6 +1028,7 @@ function Breached(DeployedC2ChargeBase Charge)
         PlayBreachedEffects();
         Broken();
     }
+	OnUnlocked();
 }
 
 //
@@ -1100,7 +1184,7 @@ simulated function bool LocationIsInSweep(vector DoorPivot, vector TestLocation,
     return true;    //candidate is blocking
 }
 
-simulated function UpdateOfficerDoorKnowledge()
+simulated function UpdateOfficerDoorKnowledge(optional bool locking)
 {
 	local SwatAIRepository AIRepo;
     local SwatPawn PlayerPawn;
@@ -1118,7 +1202,7 @@ simulated function UpdateOfficerDoorKnowledge()
 		if (AIRepo != None)
 			AIRepo.UpdateDoorKnowledgeForOfficers(self);
 		else                //no AIRepository... tell myself
-			PlayerPawn.SetDoorLockedBelief(self, false);
+			PlayerPawn.SetDoorLockedBelief(self, locking);
 	}
 }
 
@@ -1138,6 +1222,13 @@ simulated event bool PawnBelievesDoorLocked(SwatPawn Pawn)
         return Info.DoesBelieveDoorLocked();
 }
 
+simulated function bool BelievesDoorLocked(Pawn p) {
+	local SwatPawn SwatPawn_;
+
+	SwatPawn_ = SwatPawn(p);
+	return PawnBelievesDoorLocked(SwatPawn_);
+}
+
 simulated function Broken()
 {
     if (!IsBroken())
@@ -1145,8 +1236,12 @@ simulated function Broken()
         bIsBroken = true;
 
         //remove any wedge
-        if (IsWedged())
-            DeployedWedge.OnRemoved();
+        //if (IsWedged())
+        //    DeployedWedge.OnRemoved();
+				// eez- don't remove wedges unless we are blown up by C2
+
+				// [eez] remove the antiportal (#66)
+				SetAntiportal(false);
 
 		// update officer door knowledge in standalone
 		UpdateOfficerDoorKnowledge();
@@ -1154,6 +1249,8 @@ simulated function Broken()
         LockedKnowledge[0] = 0;
         LockedKnowledge[1] = 0;
         LockedKnowledge[2] = 0;
+
+		bIsPushable = true;
 
 		// allow subclasses to extend functionality
         PostBroken();
@@ -1254,7 +1351,7 @@ simulated state Opening extends Moving
     {
 		NotifyRegistrantsDoorOpening();
 
-        if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
+        if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') && !GetLastInteractor().IsA('SwatHostage') )
         {
             assert(BoobyTrap != None);
             BoobyTrap.OnTriggeredByDoor();
@@ -1344,16 +1441,16 @@ simulated state BeingBlasted extends Moving
     {
 		NotifyRegistrantsDoorOpening();
 
-        if (PendingPosition == DoorPosition_OpenLeft)
+        /*if (PendingPosition == DoorPosition_OpenLeft)
             PlayAnim('BlastedLeft');
         else
-            PlayAnim('BlastedRight');
+            PlayAnim('BlastedRight');*/
 
-						if ( IsBoobyTrapped() )
-		        {
-		            assert(BoobyTrap != None);
-		            BoobyTrap.OnTriggeredByDoor();
-		        }
+		/*if ( IsBoobyTrapped() )
+		{
+			assert(BoobyTrap != None);
+			BoobyTrap.OnTriggeredByDoor();
+		}*/
     }
 
     simulated function PlayBlastedEffects();    //implemented in subclasses
@@ -1369,29 +1466,39 @@ simulated state BeingBreached extends Moving
             PlayBreachedEffects();
 //            TriggerEffectEvent('Breached');
             Broken();
+						if (IsWedged())
+		            DeployedWedge.OnRemoved();
         }
     }
 
     simulated function StartMoving()
     {
-		NotifyRegistrantsDoorOpening();
+				if(IsBoobyTrapped() && TrapIsDisabledByC2()) {
+					DisableBoobyTrap();
+				}
+
+				NotifyRegistrantsDoorOpening();
 
         if (PendingPosition == DoorPosition_OpenLeft)
             PlayAnim('BreachedLeft');
         else
             PlayAnim('BreachedRight');
 
-						if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') )
-		        {
-		            assert(BoobyTrap != None);
-		            BoobyTrap.OnTriggeredByDoor();
-		        }
+		if ( IsBoobyTrapped() )
+		{
+			assert(BoobyTrap != None);
+		    BoobyTrap.OnTriggeredByDoor();
+		}
     }
 }
 simulated function PlayBreachedEffects();    //implemented in subclasses
 
 simulated function PlayDoorBreached( DeployedC2ChargeBase TheCharge )
 {
+		if(IsBoobyTrapped() && TrapIsDisabledByC2()) {
+			DisableBoobyTrap();
+		}
+
     Assert( Level.NetMode == NM_Client );
     TheCharge.OnDetonated();
 }
@@ -2357,7 +2464,7 @@ simulated event bool IsC2ChargeOnPlayersSide()
 // Return true iff this can be operated by a toolkit now
 simulated function bool CanBeUsedByToolkitNow()
 {
-    return IsLocked();
+	return CanBeLocked();
 }
 
 // Called when qualifying begins.
@@ -2366,7 +2473,11 @@ function OnUsingByToolkitBegan( Pawn User );
 // Called when qualifying completes successfully.
 simulated function OnUsedByToolkit(Pawn User)
 {
+	if(bIsLocked || BelievesDoorLocked(User)) {
     OnUnlocked();
+	} else {
+		OnDoorLockedByOperator();
+	}
 }
 
 // Called when qualifying is interrupted.
@@ -2390,7 +2501,7 @@ simulated function OnUsedByWedge()
 	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatDoor::OnUsedByWedge()." );
 
-    CanDoorBeWedgedNow = IsClosed() && !IsOpening() && !IsBroken();
+    CanDoorBeWedgedNow = IsClosed() && !IsOpening();
     if ( !CanDoorBeWedgedNow  )
     {
 		if (Level.GetEngine().EnableDevTools)
@@ -2443,7 +2554,7 @@ simulated function float GetQualifyTimeForC2Charge()
 simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vector HitNormal, int Damage, class<DamageType> DamageType, Actor Instigator)
 {
     //if a SwatDoor's REGION_Door_BreachingSpot is hit by a ShotgunDamageType, then the door has been blasted.
-    if (RegionHit == REGION_Door_BreachingSpot && ClassIsChildOf( DamageType, class'IFrangibleBreachingDamageType' ) )
+    if (RegionHit == REGION_Door_BreachingSpot)
     {
         assertWithDescription(Instigator.IsA('SwatPawn'),
             "[tcohen] SwatDoor::OnSkeletalRegionHit() RegionHit is REGION_Door_BreachingSpot and DamageType is FrangibleBreachingAmmo, but Instigator is not a SwatPawn.");
@@ -2461,14 +2572,14 @@ simulated event DesiredPositionChanged()
 		mplog( "...CurrentPosition="$CurrentPosition );
 		mplog( "...PendingPosition="$PendingPosition );
 		mplog( "...DesiredPosition="$DesiredPosition );
-    }
+  }
 
-    // We don't want sounds to be played on empty doorways.
-    if ( !IsEmptyDoorway() )
-    {
-        PendingPosition = DesiredPosition;
-        Moved( false, true );
-    }
+  // We don't want sounds to be played on empty doorways.
+  if ( !IsEmptyDoorway() )
+  {
+      PendingPosition = DesiredPosition;
+      Moved( false, true );
+  }
 }
 
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games

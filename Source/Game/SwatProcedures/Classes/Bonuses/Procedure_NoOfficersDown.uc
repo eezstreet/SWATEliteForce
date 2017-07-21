@@ -18,8 +18,10 @@ function PostInitHook()
 //interface IInterested_GameEvent_PawnIncapacitated implementation
 function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 {
-    if( !Pawn.IsA('SwatOfficer') ) 
+    if( !Pawn.IsA('SwatOfficer') )
         return;   //we only care about officers
+
+    GetGame().CheckForCampaignDeath(Pawn);
 
     AssertNotInArray( Pawn, DownedOfficers, 'DownedOfficers' );
     Add( Pawn, DownedOfficers );
@@ -28,8 +30,10 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 //interface IInterested_GameEvent_PawnDied implementation
 function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 {
-    if( !Pawn.IsA('SwatPlayer') ) 
+    if( !Pawn.IsA('SwatPlayer') )
         return;   //we only care about players
+
+    GetGame().CheckForCampaignDeath(Pawn);
 
     AssertNotInArray( Pawn, DownedOfficers, 'DownedOfficers' );
     Add( Pawn, DownedOfficers );
@@ -41,11 +45,11 @@ function int GetCurrentValue()
     local float Modifier;
     local int total;
     local int NumOfficers;
-    
+
     NumOfficers = GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' );
     Modifier = float(NumOfficers-DownedOfficers.length)/float(NumOfficers);
     total = int(float(Bonus)*Modifier);
-    
+
     return total;
 }
 

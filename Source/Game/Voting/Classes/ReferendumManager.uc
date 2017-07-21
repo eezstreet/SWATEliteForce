@@ -4,10 +4,14 @@ var private TeamInfo ReferendumTeam;				// The team of the player that started t
 
 var private int YesVotes;							// The current tally of yes votes
 var private int NoVotes;							// The current tally of no votes
-	
+
 var private array<int> Voters;						// A list of PlayerIds that have submitted a vote
-	
+
 var private globalconfig float ReferendumDuration;	// How long the referendum will allow votes to be cast
+var private globalconfig bool TiesWin;							// Whether ties count as a vote succeed
+var private globalconfig bool CallCastVote;					// Whether calling a vote automatically counts as a "yes" vote
+var private globalconfig int MinVoters;							// Minimum number of voters required for a referendum to succeed
+var private globalconfig bool NonVotersAreNo;				// Whether Non-Voters count as "no" votes
 var private float TimeRemaining;					// How much time remains before the referendum expires
 
 struct CooldownTimer
@@ -31,14 +35,12 @@ var private float ReferendumImmunityCooldown;
 var private array<CooldownTimer> ImmunityCooldownTimers;
 
 // Objects that define what actually happens once a specific type of referendum is decided
-var private IReferendum CurrentReferendumType;
-var private KickReferendum KickReferendumType;
-var private BanReferendum BanReferendumType;
+var private Referendum CurrentReferendum;
 
 replication
 {
 	reliable if (bNetDirty && (Role == ROLE_Authority))
-		ReferendumTeam, YesVotes, NoVotes, TimeRemaining, CurrentReferendumType;
+		ReferendumTeam, YesVotes, NoVotes, TimeRemaining, CurrentReferendum;
 }
 
 simulated function TeamInfo GetTeam()
@@ -69,8 +71,8 @@ simulated function bool ReferendumActive()
 
 simulated function String GetReferendumDescription()
 {
-	if (CurrentReferendumType != None)
-		return CurrentReferendumType.ReferendumDescription();
+	if (CurrentReferendum != None)
+		return CurrentReferendum.ReferendumDescription();
 	else
 		return "";
 }
@@ -127,7 +129,7 @@ private function UpdateCooldownTimers(float Delta)
 }
 
 // Returns false if the referendum could not be started
-protected function bool StartReferendum(PlayerReplicationInfo PRI, IReferendum ReferendumType, optional bool bDontUseTeam)
+protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType, optional bool bDontUseTeam)
 {
 	// Only one referendum can be active at any one time
 	if (ReferendumActive())
@@ -147,9 +149,6 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, IReferendum R
 		return false;
 	}
 
-	// Start a cooldown for PlayerId to start another referendum
-	AddVoterToCooldownList(PRI.PlayerId);
-
 	if (bDontUseTeam)
 		ReferendumTeam = None;
 	else
@@ -161,66 +160,51 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, IReferendum R
 	NoVotes = 0;
 
 	TimeRemaining = ReferendumDuration;
-	CurrentReferendumType = ReferendumType;
+	CurrentReferendum = ReferendumType;
+
+	if(CallCastVote) {
+		SubmitYesVote(PRI.PlayerId, PRI.Team);
+	}
+
+	// Start a cooldown for PlayerId to start another referendum
+	AddVoterToCooldownList(PRI.PlayerId);
+
+	Level.Game.Broadcast(None, CurrentReferendum.ReferendumDescription(), 'ReferendumStarted');
 
 	return true;
 }
 
-// Start a referendum to kick a player from the server
-function bool StartKickReferendum(PlayerReplicationInfo PRI, PlayerController KickTarget)
+function bool StartNewReferendum(PlayerController PC, class<Referendum> ReferendumClass, optional PlayerController Target, optional String TargetStr)
 {
-	// A player is immune from referendums if they've recently "survived" a referendum against them
-	if (ImmuneFromReferendums(KickTarget.PlayerReplicationInfo.PlayerId))
+	local Referendum Referendum;
+
+	if(Target != None && !ReferendumClass.default.bNoImmunity && ImmuneFromReferendums(Target.PlayerReplicationInfo.PlayerId))
 	{
 		//mplog("Player " $ KickTarget.PlayerReplicationInfo.PlayerName $ " is currently immune from referendums");
-		assert(PlayerController(PRI.Owner) != None);
-		Level.Game.Broadcast(None, KickTarget.PlayerReplicationInfo.PlayerName, 'PlayerImmuneFromReferendum', PlayerController(PRI.Owner));
+		assert(PC != None);
+		Level.Game.Broadcast(None, Target.PlayerReplicationInfo.PlayerName, 'PlayerImmuneFromReferendum', PC);
 		return false;
 	}
 
-	if (KickReferendumType == None)
-		KickReferendumType = Spawn(class'KickReferendum');
+	Referendum = Spawn(ReferendumClass);
+	Referendum.InitializeReferendum(PC, Target, TargetStr);
 
-	KickReferendumType.Initialise(PRI, KickTarget);
-
-	if (StartReferendum(PRI, KickReferendumType, Level.IsCoopServer))
+	if(Target != None && Target != PC && !Referendum.ReferendumCanBeCalledOnTarget(PC, Target))
 	{
-		// Start a cooldown for KickTarget's Id to be immune from referendums
-		ImmunityCooldownTimers.Length = ImmunityCooldownTimers.Length + 1;
-		ImmunityCooldownTimers[ImmunityCooldownTimers.Length - 1].PlayerId = KickTarget.PlayerReplicationInfo.PlayerId;
-		ImmunityCooldownTimers[ImmunityCooldownTimers.Length - 1].TimeRemaining = ReferendumImmunityCooldown;
-
-		return true;
+		return false; // Do whatever logic in the referendum to determine whether it can be called on the target
 	}
 
-	return false;
-}
-
-// Start a referendum to ban a player from the server
-function bool StartBanReferendum(PlayerReplicationInfo PRI, PlayerController BanTarget)
-{
-	// A player is immune from referendums if they've recently "survived" a referendum against them
-	if (ImmuneFromReferendums(BanTarget.PlayerReplicationInfo.PlayerId))
+	if(StartReferendum(PC.PlayerReplicationInfo, Referendum, ReferendumClass.default.bUseTeam))
 	{
-		//mplog("Player " $ BanTarget.PlayerReplicationInfo.PlayerId $ " is currently immune from referendums");
-		assert(PlayerController(PRI.Owner) != None);
-		Level.Game.Broadcast(None, BanTarget.PlayerReplicationInfo.PlayerName, 'PlayerImmuneFromReferendum', PlayerController(PRI.Owner));
-		return false;
-	}
+		if(Target != None && !ReferendumClass.default.bNoImmunity)
+		{
+			// Start a cooldown for KickTarget's Id to be immune from referendums
+			ImmunityCooldownTimers.Length = ImmunityCooldownTimers.Length + 1;
+			ImmunityCooldownTimers[ImmunityCooldownTimers.Length - 1].PlayerId = Target.PlayerReplicationInfo.PlayerId;
+			ImmunityCooldownTimers[ImmunityCooldownTimers.Length - 1].TimeRemaining = ReferendumImmunityCooldown;
 
-	if (BanReferendumType == None)
-		BanReferendumType = Spawn(class'BanReferendum');
-
-	BanReferendumType.Initialise(PRI, BanTarget);
-
-	if (StartReferendum(PRI, BanReferendumType, Level.IsCoopServer))
-	{
-		// Start a cooldown for BanTarget's Id to be immune from referendums
-		ImmunityCooldownTimers.Length = ImmunityCooldownTimers.Length + 1;
-		ImmunityCooldownTimers[ImmunityCooldownTimers.Length - 1].PlayerId = BanTarget.PlayerReplicationInfo.PlayerId;
-		ImmunityCooldownTimers[ImmunityCooldownTimers.Length - 1].TimeRemaining = ReferendumImmunityCooldown;
-
-		return true;
+			return true;
+		}
 	}
 
 	return false;
@@ -289,7 +273,24 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 // Returns true if the Yes voters have won the referendum
 private function bool YesVotesWin()
 {
-	return Voters.Length > 1 && YesVotes > (MaxPossibleVoters() - YesVotes);
+	local int YesVotersTotal, NoVotersTotal;
+
+	if(Voters.Length < MinVoters) {
+		return false;
+	}
+
+	YesVotersTotal = YesVotes;
+	if(TiesWin) {
+		YesVotersTotal++;
+	}
+
+	if(NonVotersAreNo) {
+		NoVotersTotal = (MaxPossibleVoters() - YesVotes);
+	} else {
+		NoVotersTotal = NoVotes;
+	}
+
+	return YesVotersTotal > NoVotersTotal;
 }
 
 private function EndReferendum()
@@ -300,8 +301,8 @@ private function EndReferendum()
 
 private function ReferendumDecided()
 {
-	CurrentReferendumType.ReferendumDecided(YesVotesWin());
-	CurrentReferendumType = None;
+	CurrentReferendum.ReferendumDecided(YesVotesWin());
+	CurrentReferendum = None;
 }
 
 // Returns true if a vote has already been submitted by PlayerId

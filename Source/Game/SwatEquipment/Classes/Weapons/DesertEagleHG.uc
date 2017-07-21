@@ -1,6 +1,1 @@
-class DesertEagleHG extends Handgun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class DesertEagleHG extends Handgun config(SwatEquipment);

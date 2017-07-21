@@ -1,7 +1,7 @@
-class HelmetAndGogglesBase extends Engine.ProtectiveEquipment
+class HelmetAndGogglesBase extends Engine.Headgear
     implements  SwatGame.IProtectFromFlashbang;
 
-function QualifyProtectedRegion() 
+function QualifyProtectedRegion()
 {
     assertWithDescription(ProtectedRegion < REGION_Body_Max,
         "[Carlos] The HelmetAndGogglesBase class "$class.name

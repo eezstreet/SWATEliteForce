@@ -60,7 +60,7 @@ const kMoveTowardMinTime = 1.0;
 const kMoveTowardMaxTime = 2.0;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 private function bool CanTakeCoverAndAttack()
@@ -71,10 +71,10 @@ private function bool CanTakeCoverAndAttack()
 	assert(HiveMind != None);
 	assert(m_Pawn != None);
 
-	// if we have a weapon, cover is available, the distance is greater than the minimum required 
+	// if we have a weapon, cover is available, the distance is greater than the minimum required
 	// between us and the officers, and we can find cover to attack from
-	return (ISwatAI(m_Pawn).HasUsableWeapon() && AICoverFinder.IsCoverAvailable() && 
-		!HiveMind.IsPawnWithinDistanceOfOfficers(m_Pawn, MinDistanceToOfficersWhileTakingCover, true) && 
+	return (ISwatAI(m_Pawn).HasUsableWeapon() && AICoverFinder.IsCoverAvailable() &&
+		!HiveMind.IsPawnWithinDistanceOfOfficers(m_Pawn, MinDistanceToOfficersWhileTakingCover, true) &&
 		FindBestCoverToAttackFrom() &&
 		!CoverIsInBadPosition());
 }
@@ -136,7 +136,7 @@ function float selectionHeuristic( AI_Goal goal )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // cleanup
 
 function cleanup()
@@ -293,7 +293,9 @@ private function StopAttacking()
 
 private function Attack(Pawn Enemy, bool bCanSucceedAfterFiring)
 {
-	assert(Enemy != None);
+  if(Enemy == None) {
+    return;
+  }
 
 	if (CurrentAttackTargetGoal == None)
 	{
@@ -308,6 +310,10 @@ private function Attack(Pawn Enemy, bool bCanSucceedAfterFiring)
 		}
 
 		CurrentAttackTargetGoal.postGoal(self);
+  	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
+  	{
+  		ISwatEnemy(m_Pawn).BecomeAThreat();
+  	}
 	}
 }
 
@@ -362,10 +368,10 @@ private function bool CanLeanAtCoverResult()
 // tests the current value in the cover result value to determine if a piece of cover is usable
 private function bool CanUseCover()
 {
-	// if the cover result says we have cover and it's low cover, 
+	// if the cover result says we have cover and it's low cover,
 	// or it's normal cover and we can lean at that point
 	if ((CoverResult.coverActor != None) &&
-		((CoverResult.coverLocationInfo == kAICLI_InLowCover) || 
+		((CoverResult.coverLocationInfo == kAICLI_InLowCover) ||
 		 ((CoverResult.coverLocationInfo == kAICLI_InCover) && CanLeanAtCoverResult())))
 	{
 		return true;
@@ -397,7 +403,7 @@ protected function bool FindBestCoverToAttackFrom()
 
 	if (m_Pawn.logAI)
 		log("CoverResult.coverLocationInfo is: "$CoverResult.coverLocationInfo$"  CoverResult.coverActor is: " $CoverResult.coverActor);
-	
+
 	// there's no cover to use
 	if (CoverResult.coverActor == None)
 		return false;
@@ -434,7 +440,7 @@ protected function bool FindBestCoverToAttackFrom()
 			return true;
 		}
 	}
-	
+
 	// found cover!
 	return true;
 }
@@ -467,7 +473,7 @@ protected latent function TakeCover()
 	}
 
 	MoveToTakeCover(CoverResult.coverLocation);
-    
+
 	StopAttacking();
 	ResetFullBodyAnimations();
 
@@ -513,6 +519,10 @@ private latent function AimAroundBriefly()
 	CurrentAimAroundGoal.SetDoOnce(true);
 
 	CurrentAimAroundGoal.postGoal(self);
+	if (m_Pawn.IsA('SwatEnemy') && ((!m_Pawn.IsA('SwatUndercover') || (!m_Pawn.IsA('SwatGuard')) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))))
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 	WaitForGoal(CurrentAimAroundGoal);
 
 	CurrentAimAroundGoal.unPostGoal(self);
@@ -527,7 +537,7 @@ private latent function AttackWhileCrouchingBehindCover(Pawn Enemy)
 	{
 		// stop crouching
 		m_pawn.ShouldCrouch(false);
-		
+
 		// stand up for a bit
 		sleep(RandRange(MinStandTime, MaxStandTime));
 
@@ -594,10 +604,10 @@ private latent function AttackWhileLeaningBehindCover(Pawn Enemy)
 	{
 		// start leaning
 		Lean();
-		
+
 		// lean for a bit
 		sleep(RandRange(MinLeanTime, MaxLeanTime));
-	
+
 		// if we can't hit our current enemy, we should re-evaluate our cover
 		if (! m_Pawn.CanHit(Enemy))
 		{
@@ -648,7 +658,7 @@ protected latent function AttackFromBehindCover()
 		}
 		else
 		{
-			AttackWhileLeaningBehindCover(Enemy);	
+			AttackWhileLeaningBehindCover(Enemy);
 		}
 
 		yield();
@@ -672,7 +682,7 @@ state Running
 	// for now we're just doing crouching
 	if (m_tookCover)
 	{
-		// TODO: handle moving to the closest edge of the cover 
+		// TODO: handle moving to the closest edge of the cover
 		// currently we just move to the closest area of cover
 		AttackFromBehindCover();
 

@@ -33,7 +33,7 @@ function int GetCurrentValue()
     local float Modifier;
     local int total;
     local int NumPlayers;
-    
+
     NumPlayers = GetNumActors( class'SwatPlayer' );
     Modifier = float(NumPlayers-InjuredPlayers.length)/float(NumPlayers);
     total = int(float(Bonus)*Modifier);

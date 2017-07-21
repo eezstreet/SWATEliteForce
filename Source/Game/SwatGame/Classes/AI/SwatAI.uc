@@ -275,6 +275,7 @@ const MaxAIWaitForEffectEventToFinish = 10.0;
 var private Name CurrentEffectEventName;
 var private int CurrentSeed;
 var private bool bEffectEventStillPlaying;
+var private bool bDebugSensor;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1989,7 +1990,29 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 	return PaintballAimRotation;
 }
 
-simulated native function vector GetAimOrigin();
+//simulated native function vector GetAimOrigin();
+//
+//This function is supposed to get the Aim Origin for the weapons so that pawns
+//can aim correctly. However, there is something wrong in it because it crashes
+//at times. And we can't check what Irrational did because it is native. So I'm
+//rewriting this to make it work.
+
+simulated function vector GetAimOrigin()
+{
+    return Location + EyePosition();
+}
+
+simulated function vector EyePosition()
+{
+    local vector vEyeHeight;
+
+    if(bIsCrouched)
+        vEyeHeight.Z = 8;
+        else
+        vEyeHeight.Z = 0;
+
+    return vEyeHeight;
+}
 
 function SetAimUrgency(bool Fast)
 {
@@ -2008,7 +2031,79 @@ function SetAimUrgency(bool Fast)
 }
 
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
-native event bool CanHit(Actor Target);
+
+//
+//native event bool CanHit(Actor Target);
+//
+// Whatever Irrational did with this function, we don't know because it's native...
+// However, it's not correct because SWAT will very frequently not hit their target.
+
+simulated function SEFDebugSensor()
+{
+  bDebugSensor = !bDebugSensor;
+}
+
+event bool CanHit(Actor Target)
+{
+  local FiredWeapon TheWeapon;
+  local bool Value;
+  local vector MuzzleLocation, EndTrace;
+  local rotator MuzzleDirection;
+
+  TheWeapon = FiredWeapon(GetActiveItem());
+
+  /*
+  // The below code seems to be janky, but what the game actually tends to use for aiming at things.
+  // Maybe we should be using stuff like GetAimOrigin() to get the actual position?
+  if (CurrentWeaponTarget != None)
+  {
+      EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
+  }
+  else if(!TheWeapon.bIsLessLethal)
+  {
+      EndTrace = CurrentWeaponTargetLocation;
+  }
+  else
+  {
+    EndTrace = Target.Location;
+  }
+  */
+
+  EndTrace = Pawn(Target).GetAimOrigin();
+
+  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
+  {
+    Value = false;
+  }
+  else
+  {
+    Value = true;
+  }
+
+  if(bDebugSensor)
+  {
+    TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+    /*EndTrace = Target.Location;
+
+    if(!TheWeapon.bIsLessLethal)
+    {
+      // Don't do this if we're using a less lethal weapon.
+      // In practice it makes DEPLOY TASER etc actions come up close to the target and maybe not hit them
+      EndTrace.Z += (BaseEyeHeight / 2);
+    }*/
+
+    if(Value)
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+    }
+    else
+    {
+      Level.GetLocalPlayerController().myHUD.AddDebugLine(MuzzleLocation, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+    }
+  }
+
+  return Value;
+}
 
 function bool HasUsableWeapon()
 {
@@ -2035,25 +2130,52 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 {
 	assert(Weapon != None);
 
-	if (Weapon.HasFireMode(FireMode_Burst))
+	if(Weapon.Owner.IsA('SwatEnemy')) {
+    // the thing holding me is a suspect
+		if (Weapon.HasFireMode(FireMode_Burst))
+		{
+			return FireMode_Burst;
+		}
+		else if (Weapon.HasFireMode(FireMode_Auto))
+		{
+			return FireMode_Auto;
+		}
+		if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+		{
+			return FireMode_Single;
+		}
+		else
+		{
+ 		// sanity check!
+			assert(Weapon.HasFireMode(FireMode_DoubleTaser));
+
+			return FireMode_DoubleTaser;
+		}
+	}
+	else if (Weapon.HasFireMode(FireMode_Burst))
 	{
 		return FireMode_Burst;
+	}
+	else if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+	{
+		return FireMode_Single;
 	}
 	else if (Weapon.HasFireMode(FireMode_Auto))
 	{
 		return FireMode_Auto;
 	}
-	else if (Weapon.HasFireMode(FireMode_DoubleTaser))
-	{
-		return FireMode_DoubleTaser;
-	}
 	else
 	{
 		// sanity check!
-		assert(Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser));
+		assert(Weapon.HasFireMode(FireMode_DoubleTaser));
 
-		return FireMode_Single;
+		return FireMode_DoubleTaser;
 	}
+}
+
+function float GetTimeToWaitBeforeFiring()
+{
+  return 0.0; // For most NPCs this is 0 - only implemented in SwatEnemy
 }
 
 // return weapon specific time values for this AI
@@ -2181,7 +2303,10 @@ simulated private function bool CanHitCurrentTarget()
 
 simulated function Died(Controller Killer, class<DamageType> damageType, vector HitLocation, vector HitMomentum)
 {
+  local CharacterSpeechManagerAction SpeechManagerAction;
 	log(Name $ " Died - IsIncapacitated: " $ IsIncapacitated() $ " ShouldBecomeIncapacitated: " $ ShouldBecomeIncapacitated());
+
+  SpeechManagerAction = GetSpeechManagerAction();
 
 	if (ShouldBecomeIncapacitated())
 	{
@@ -2189,7 +2314,7 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 	}
 	else
 	{
-		if (! IsIncapacitated())
+		if (! IsIncapacitated() && SpeechManagerAction != None)
 			GetSpeechManagerAction().TriggerDiedSpeech();
 
 		// we are no longer incapacitated, we are dead!
@@ -2273,20 +2398,13 @@ function NotifyHit(float Damage, Pawn HitInstigator);
 function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vector HitNormal, int Damage, class<DamageType> DamageType, Actor Instigator)
 {
 	local Pawn Attacker;
-	local bool bIsLessLethalHit;
 
 	log("OnSkeletalRegionHit on " $ Name $ " Damage type: " $ DamageType);
 
 	Attacker = Pawn(Instigator);
 
-	if (Attacker != None)
-	{
-		if ((Attacker.GetActiveItem() != None) && Attacker.GetActiveItem().IsA('LessLethalSG'))
-			bIsLessLethalHit = true;
-	}
-
 	// don't react if we're a client or if we got hit by a less lethal
-	if ((Level.NetMode != NM_Client) && !bIsLessLethalHit)
+	if (Level.NetMode != NM_Client)
 	{
 		// a check for being incapacitated is done in the commander
 		GetCommanderAction().OnSkeletalRegionHit(RegionHit, HitLocation, HitNormal, Damage, DamageType);
@@ -2325,8 +2443,10 @@ native function CommanderAction GetCommanderAction();
 
 function CharacterSpeechManagerAction GetSpeechManagerAction()
 {
+  if(SpeechManager.achievingAction == None) {
+    return None;
+  }
 	assert(SpeechManager != None);
-	assert(SpeechManager.achievingAction != None);
 	assert(CharacterSpeechManagerAction(SpeechManager.achievingAction) != None);
 
 	return CharacterSpeechManagerAction(SpeechManager.achievingAction);
@@ -3054,13 +3174,22 @@ simulated function String UniqueID()
     return String(SpawnedFromName);
 }
 
+simulated function bool IsDOA()
+{
+  return false;
+}
+
 ///////////////////////////////////////
 // IAmReportableCharacter implementation
 
 // Provides the effect event name to use when this ai is being reported to TOC
 simulated final function name GetEffectEventForReportingToTOC()
 {
-    if (IsDead())
+    if (IsDOA())
+    {
+        return 'ReportedDOA';
+    }
+    else if (IsDead())
     {
         return GetEffectEventForReportingToTOCWhenDead();
     }
@@ -3082,7 +3211,11 @@ simulated final function name GetEffectEventForReportingToTOC()
 // about this ai
 simulated final function name GetEffectEventForReportResponseFromTOC()
 {
-    if (IsIncapacitated())
+    if (IsDOA())
+    {
+       return 'RepliedDOAReported';
+    }
+    else if (IsIncapacitated())
     {
         return GetEffectEventForReportResponseFromTOCWhenIncapacitated();
     }

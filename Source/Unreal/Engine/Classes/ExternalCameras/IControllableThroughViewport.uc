@@ -4,7 +4,7 @@ interface IControllableThroughViewport;
 // IControllableThroughViewport
 //
 // Interface for Actors that can be controlled through a viewport. Currently used
-// by the ExternalViewportManager.  
+// by the ExternalViewportManager.
 //
 // =============================================================================
 
@@ -59,7 +59,7 @@ simulated function float      GetViewportYawClamp();
 // Allow the implementor to do something with a new rotation
 simulated function            SetRotationToViewport(Rotator inNewRotation);
 
-// True if this viewport should be drawn 
+// True if this viewport should be drawn
 simulated function bool       ShouldDrawViewport();
 
 // Should this view have a reticle?

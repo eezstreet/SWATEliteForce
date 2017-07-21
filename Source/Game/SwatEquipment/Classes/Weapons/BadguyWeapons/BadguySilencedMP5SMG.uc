@@ -1,4 +1,4 @@
-class BadguySilencedMP5SMG extends SubMachineGun;
+class BadguySilencedMP5SMG extends SilencedMP5SMG;
 
 defaultproperties
 {

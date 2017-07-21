@@ -6,6 +6,7 @@ class Console extends Interaction;
 
 // Constants.
 const MaxHistory=16;		// # of command histroy to remember.
+const MaxMessages=150;		// # of messages to remember
 
 // Variables
 
@@ -13,10 +14,12 @@ var globalconfig byte ConsoleKey;			// Key used to bring up the console
 
 var int HistoryTop, HistoryBot, HistoryCur;
 var string TypedStr, History[MaxHistory]; 	// Holds the current command, and the history
+var string storedMessages[MaxMessages];
 var bool bTyping;							// Turn when someone is typing on the console
-var bool bIgnoreKeys;						// Ignore Key presses until a new KeyDown is received							
+var bool bIgnoreKeys;						// Ignore Key presses until a new KeyDown is received
 var font ConsoleFont;
 var Texture BackgroundTexture;
+var bool bDrawHistory;
 
 function Initialize()
 {
@@ -57,10 +60,20 @@ event NotifyLevelChange()
 }
 
 //-----------------------------------------------------------------------------
-// Message - By default, the console ignores all output.
+// Message
 //-----------------------------------------------------------------------------
 
-event Message( coerce string Msg, float MsgLife);
+event Message( coerce string Msg, float MsgLife)
+{
+	local int i;
+
+	// Push a Message
+	for(i = MaxMessages-1; i > 0; i--) {
+		storedMessages[i] = storedMessages[i-1];
+	}
+	storedMessages[0] = Msg;
+	log(Msg);
+}
 
 //-----------------------------------------------------------------------------
 // Check for the console key.
@@ -71,12 +84,20 @@ function bool KeyEvent( EInputKey Key, EInputAction Action, FLOAT Delta )
 		return false;
 	else if( Key==ConsoleKey )
 	{
+		log("Console "$Self$" was opened");
 		GotoState('Typing');
 		return true;
 	}
 	else
 		return false;
 
+}
+
+//-----------------------------------------------------------------------------
+// Toggles the display log (so you can for e.g. do `shot` without the log showing)
+function ToggleLog()
+{
+	bDrawHistory = !bDrawHistory;
 }
 
 //-----------------------------------------------------------------------------
@@ -89,6 +110,7 @@ state Typing
 		TypedStr="";
 		gotoState( '' );
 	}
+
 #if IG_SHARED // hkaufman: Prevent the addition of repeated consecutive commands to the console history list
 	function int GetPrevHistoryIndex( int Cur )
 	{
@@ -160,7 +182,7 @@ state Typing
 			if( TypedStr!="" )
 			{
 				// Print to console.
-				Message( TypedStr, 6.0 );
+				Message( "> "$TypedStr, 0 );
 
 #if IG_SHARED // hkaufman: Prevent the addition of repeated consecutive commands to the console history list
 				PrevInd = GetPrevHistoryIndex( HistoryTop );
@@ -170,10 +192,10 @@ state Typing
 #endif
 				    History[HistoryTop] = TypedStr;
 				    HistoryTop = (HistoryTop+1) % MaxHistory;
-    
+
 				    if ( ( HistoryBot == -1) || ( HistoryBot == HistoryTop ) )
 					    HistoryBot = (HistoryBot+1) % MaxHistory;
-    
+
 				    HistoryCur = HistoryTop;
 #if IG_SHARED // hkaufman: Prevent the addition of repeated consecutive commands to the console history list
 				}
@@ -186,10 +208,7 @@ state Typing
 					Message( Localize("Errors","Exec","Core"), 6.0 );
 
 				Message( "", 6.0 );
-				GotoState('');
 			}
-			else
-				GotoState('');
 
 			return true;
 		}
@@ -243,7 +262,9 @@ state Typing
 	function PostRender(Canvas Canvas)
 	{
 		local float xl,yl;
+		local float y1;
 		local string OutStr;
+		local int i;
 
 		// Blank out a space
 
@@ -263,6 +284,18 @@ state Typing
 		Canvas.SetPos(0,Canvas.ClipY-3-yl);
 		Canvas.bCenter = False;
 		Canvas.DrawText( OutStr, false );
+
+		// Draw the stored messages
+		y1 = 0;
+		Canvas.SetDrawColor(0,255,255);
+		if(bDrawHistory) {
+			for(i = 0; i < MaxMessages; i++) {
+				Canvas.SetPos(0, Canvas.ClipY-40-y1);
+				if(storedMessages[i] != "")
+					Canvas.DrawText(storedMessages[i], false);
+				y1 += 14;
+			}
+		}
 	}
 
 	function BeginState()
@@ -286,4 +319,5 @@ defaultproperties
 	bVisible=False
 	bRequiresTick=True
 	HistoryBot=-1
+	bDrawHistory=True
 }

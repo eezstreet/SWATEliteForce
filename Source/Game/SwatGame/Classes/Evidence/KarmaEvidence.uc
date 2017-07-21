@@ -20,7 +20,7 @@ replication
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Static Evidence does not get destroyed, 
+// Static Evidence does not get destroyed,
 // it only gets hidden
 simulated function DestroyRWO()
 {
@@ -78,4 +78,5 @@ defaultproperties
 {
     bNoDelete=false
     RemoteRole=ROLE_DumbProxy
+    bAlwaysRelevant=true
 }

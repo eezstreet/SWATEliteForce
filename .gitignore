@@ -1,5 +1,8 @@
 System/*.u
+System/Packages.md5
+System/Packages.txt
 System/Promotional/*
+System/Running.ini
 *.bmp
 *.jpg
 *.png
@@ -9,11 +12,22 @@ System/Promotional/*
 *.nam
 *.log
 *.til
-*.s4m
 *.$$$
 *.zip
 *.dll
 *.bak
+*.dds
+*.psd
+*.s4m
+*.ukx
+*.mopp
+*.uax
+*.wav
+*.ogg
+*.usx
+*.umx
+*.utx
+*.orig
 *DynamicLoadout.ini
 *Autotest.ini
 *Campaign.ini
@@ -22,3 +36,4 @@ System/Promotional/*
 *MissionSelectionPanel.ini
 *SwatGuiState.ini
 *User.ini
+*.h

@@ -4,6 +4,9 @@ class SwatOfficer extends SwatAI
                 IControllableThroughViewport,
                 Engine.ICanBePepperSprayed,
                 Engine.IReactToCSGas,
+                Engine.ICanBeTased,
+                Engine.IAmAffectedByWeight,
+                Engine.ICarryGuns,
                 ICanUseC2Charge,
                 IInterested_GameEvent_ReportableReportedToTOC
 	native;
@@ -32,37 +35,6 @@ var private config Material  ViewportOverlayMaterial;
 var private float			 NextTimeCanReactToHarmlessShotByPlayer;
 var private config float	 DeltaReactionTimeBetweenHarmlessShot;
 
-// reacting to nonlethal weapons --eez
-/*var private Timer StungTimer;
-var private Timer FlashbangedTimer;
-var private Timer GassedTimer;
-var private Timer PepperSprayedTimer;
-var private Timer TasedTimer;
-
-enum ELastStingWeapon
-{
-    StingGrenade,
-    LessLethalShotgun,
-	TripleBatonRound,
-	DirectGrenadeHit,
-	MeleeAttack
-};
-var ELastStingWeapon LastStingWeapon; // type of last thing to cause sting effect
-
-var float                 LastStungTime;
-var float                 LastStungDuration;
-
-var float LastFlashbangedTime;
-
-var float LastGassedTime;
-var float LastGassedDuration;
-
-var float LastPepperedTime;
-var float LastPepperedDuration;
-
-var float LastTasedTime;
-var float LastTasedDuration;
-*/
 // When the officer stops avoiding collisions, this timer is started. When the
 // timer is triggered, the officer unsets the kUBABCI_AvoidCollisions upper
 // animation behavior. This helps smooth out the animation transitioning if the
@@ -89,6 +61,37 @@ cpptext
 
         return Super::WillCollide(otherActor, otherActorTestLocation);
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// ICarryGuns implementation
+simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
+  // Identical to the one in SwatPlayer
+  if(LoadOut.IsWeaponPrimary(in)) {
+    return LoadOut.GetPrimaryAmmoCount();
+  } else {
+    return LoadOut.GetSecondaryAmmoCount();
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IAmAffectedByWeight implementation
+simulated function float GetTotalBulk() {
+  return LoadOut.GetTotalBulk();
+}
+
+simulated function float GetTotalWeight() {
+  return LoadOut.GetTotalWeight();
+}
+
+simulated function float GetWeightMovementModifier() {
+  return LoadOut.GetWeightMovementModifier();
+}
+
+simulated function float GetBulkQualifyModifier() {
+  return LoadOut.GetBulkQualifyModifier();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -235,6 +238,8 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.MirrorDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorCornerAction');
   characterResource.addAbility(new class'SwatAICommon.ReportAction');
+  characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
+  characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
 
 	// call down the chain
 	Super.ConstructCharacterAI();
@@ -956,7 +961,25 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, float AIDuration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
 	TriggerHarmlessShotSpeech();
+}
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// ICanBeTased implementation
+
+function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration )
+{
+  SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(self, Taser);
+}
+
+simulated function bool IsVulnerableToTaser()
+{
+    //Fix 2436: Spec says that taser should only affect players with no armor, but this makes no sense
+    //
+    //Paul wants players to always be vulnerable to Taser:
+//    //heavy armor protects from taser
+//    return (!GetLoadOut().HasHeavyArmor());
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1016,6 +1039,40 @@ simulated function OnLightstickKeyFrame()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+simulated function AdjustOfficerMovementSpeed() {
+  local float OriginalFwd, OriginalBck, OriginalSde;
+  local float ModdedFwd, ModdedBck, ModdedSde;
+  local float TotalWeight;
+
+  local AnimationSetManager AnimationSetManager;
+  local AnimationSet setObject;
+
+  AnimationSetManager = SwatRepo(Level.GetRepo()).GetAnimationSetManager();
+  setObject = AnimationSetManager.GetAnimationSet(GetMovementAnimSet());
+
+  OriginalFwd = setObject.AnimSpeedForward;
+  OriginalBck = setObject.AnimSpeedBackward;
+  OriginalSde = setObject.AnimSpeedSidestep;
+
+  ModdedFwd = OriginalFwd;
+  ModdedBck = OriginalBck;
+  ModdedSde = OriginalSde;
+
+  ModdedFwd *= LoadOut.GetWeightMovementModifier();
+  ModdedBck *= LoadOut.GetWeightMovementModifier();
+  ModdedSde *= LoadOut.GetWeightMovementModifier();
+
+  AnimSet.AnimSpeedForward = ModdedFwd;
+  AnimSet.AnimSpeedBackward = ModdedBck;
+  AnimSet.AnimSpeedSidestep = ModdedSde;
+
+  TotalWeight = LoadOut.GetTotalWeight();
+}
+
+simulated function Tick(float dTime) {
+  AdjustOfficerMovementSpeed();
+}
 
 defaultproperties
 {

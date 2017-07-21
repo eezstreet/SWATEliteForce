@@ -2,7 +2,8 @@
 // FleeAction.uc - FleeAction class
 // The Action that causes the AI to flee
 
-class FleeAction extends SwatCharacterAction;
+class FleeAction extends SwatCharacterAction
+	dependsOn(ISwatEnemy);
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EnemySkill from ISwatEnemy;
@@ -76,7 +77,7 @@ function cleanup()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 private function bool IsWithinDistanceOfOfficers()
@@ -114,6 +115,13 @@ private function bool CanGetOutOfRoomSafely()
 	for(i=0; i<DoorsInRoom.GetSize(); ++i)
 	{
 		DoorInRoom = Door(DoorsInRoom.GetEntryAt(i));
+
+    if(ISwatPawn(m_Pawn).DoesBelieveDoorWedged(DoorInRoom)) {
+      continue; // We can't use this door if we know it's wedged
+    }
+    if(ISwatPawn(m_Pawn).DoesBelieveDoorLocked(DoorInRoom)) {
+      continue; // We can't use this door if we know it's locked
+    }
 
 		// if there is one door that we can use to get out of here, that isn't close too any player or officer, then we can get out safely
 		if (! HiveMind.IsActorWithinDistanceOfOfficers(DoorInRoom, MinRequiredFleeDistanceFromOfficer))
@@ -170,7 +178,7 @@ function float selectionHeuristic( AI_Goal goal )
 			return FRand() * 0.1;
 		}
 	}
-	
+
 	return 0.0;
 }
 
@@ -221,16 +229,40 @@ function float GetSkillSpecificAttackChance()
 
 function bool ShouldAttackWhileFleeing()
 {
+  local Pawn CurrentEnemy;
+
 	assert(m_Pawn != None);
 
-	return  m_Pawn.IsA('SwatEnemy') &&
-			ISwatAI(m_Pawn).HasUsableWeapon() &&
-			(FRand() < GetSkillSpecificAttackChance());
+  if(!m_Pawn.IsA('SwatEnemy')) {
+    return false; // Sanity check - anything below this point might have unintended consequences
+  }
+
+  CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+  if(CurrentEnemy.IsA('SniperPawn')) {
+    return false; // We should not be able to target SniperPawns
+  }
+
+  if(!ISwatAI(m_Pawn).HasUsableWeapon()) {
+    return false; // Can't fire if we don't have a usable weapon
+  }
+
+  if(FRand() < GetSkillSpecificAttackChance()) {
+    return false;
+  }
+
+  return true;
 }
 
 function AttackWhileFleeing()
 {
-	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy());
+  local Pawn Enemy;
+
+  Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+  if(Enemy == None) {
+    return;
+  }
+
+	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
     assert(CurrentAttackTargetGoal != None);
 	CurrentAttackTargetGoal.AddRef();
 
@@ -287,7 +319,7 @@ private function FleePoint FindFleePointDestination()
     for(i=0; i<AllFleePoints.GetSize(); ++i)
     {
         Iter = FleePoint(AllFleePoints.GetEntryAt(i));
-		
+
 //		log("Distance to ITer from Enemy is: " $ VSize2D(Iter.Location - CurrentEnemy.Location) $ " Required Distance is: " $ MinRequiredFleeDistanceFromOfficer);
 
         if ((CurrentEnemy == None) || !CurrentEnemy.IsInRoom(Iter.GetRoomName(CurrentEnemy)))
@@ -372,14 +404,14 @@ Begin:
 	{
 		AttackWhileFleeing();
 	}
-	else 
+	else
 	{
 		// if we're not attacking while fleeing, use the full body flee (movement) animations
 		SwapInFullBodyFleeAnimations();
 	}
 
     Flee();
-    
+
 	// let the commander know to clean up after this particular behavior
 	ISwatEnemy(m_Pawn).GetEnemyCommanderAction().FinishedMovingEngageBehavior();
 

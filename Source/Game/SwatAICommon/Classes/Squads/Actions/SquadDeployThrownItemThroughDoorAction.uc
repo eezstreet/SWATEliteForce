@@ -18,6 +18,24 @@ var(parameters) EquipmentSlot	ThrownItemSlot;
 //
 // Events
 
+protected function TriggerDeployingGrenadeSpeech()
+{
+	switch(ThrownItemSlot)
+	{
+		case Slot_Flashbang:
+			ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerDeployingFlashbangSpeech();
+			break;
+
+		case Slot_CSGasGrenade:
+			ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerDeployingGasSpeech();
+			break;
+
+		case Slot_StingGrenade:
+			ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerDeployingStingSpeech();
+			break;
+	}
+}
+
 protected function TriggerThrowGrenadeMoveUpSpeech()
 {
 	switch(ThrownItemSlot)

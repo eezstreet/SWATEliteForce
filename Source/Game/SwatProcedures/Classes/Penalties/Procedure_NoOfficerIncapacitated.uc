@@ -46,6 +46,9 @@ function OnOfficerIncapacitated(Pawn Pawn, Actor Incapacitator)
     AssertNotInArray( Pawn, IncapacitatedOfficers, 'IncapacitatedOfficers' );
     Add( Pawn, IncapacitatedOfficers );
     ChatMessageEvent('PenaltyIssued');
+    GetGame().CampaignStats_TrackPenaltyIssued();
+
+    GetGame().CheckForCampaignDeath(Pawn);
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

@@ -42,7 +42,21 @@ simulated function bool ShouldUseAlternate()
 
 simulated function float GetQualifyDuration()
 {
-    return IAmUsedByToolkit(Other).GetQualifyTimeForToolkit();
+    return IAmUsedByToolkit(Other).GetQualifyTimeForToolkit() * GetQualifyModifier();
+}
+
+simulated function bool CanUseOnOtherNow(Actor other) {
+  local Door theDoor;
+
+  if(!other.IsA('Door')) {
+    return true;
+  }
+
+  theDoor = Door(other);
+  if(!theDoor.CanBeLocked()) {
+    return false;
+  }
+  return true;
 }
 
 

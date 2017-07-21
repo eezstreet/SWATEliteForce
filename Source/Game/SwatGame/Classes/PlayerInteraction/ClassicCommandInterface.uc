@@ -10,6 +10,8 @@ var config localized string BackString;
 var config localized string DeployMenuKeyString;
 var config localized string TwelveMenuKeyString;
 
+var private config array<ECommand> ReverseCommands; // These commands will trigger a Back()
+
 const MAX_COMMANDS          = 13;
 
 struct MenuPad
@@ -108,7 +110,7 @@ simulated function GiveCommandIndex(int CommandIndex, optional bool bHoldCommand
     case Pad_Normal:
         Player.TriggerEffectEvent('NormalCommandGiven');
         break;
-    
+
     default:
         assert(false);  //unexpected pad status
         break;
@@ -158,7 +160,7 @@ simulated function UpdateView()
 
         Text = MenuInfo[int(CurrentMainPage)].Text $ "|";
     }
-    
+
     for (i=1; i<MAX_COMMANDS; ++i)
     {
         //set the string to display for each index
@@ -194,7 +196,7 @@ simulated function UpdateView()
         case Pad_Disabled:
             Text = Text $ "|";
             break;
-        
+
         default:
             assert(false);  //unexpected PadStatus
             break;
@@ -226,11 +228,25 @@ simulated function ClearCommands(bool PageChange)
     {
         if  (
                 PageChange
-            ||  CurrentMenuPads[i].Command == None 
-            ||  !CurrentMenuPads[i].Command.bStatic 
+            ||  CurrentMenuPads[i].Command == None
+            ||  !CurrentMenuPads[i].Command.bStatic
             )
             CurrentMenuPads[i].Status = Pad_Disabled;
     }
+}
+
+function bool CommandTriggersBack(ECommand Command)
+{
+  local int i;
+
+  for(i = 0; i < ReverseCommands.Length; i++)
+  {
+    if(ReverseCommands[i] == Command)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 defaultproperties

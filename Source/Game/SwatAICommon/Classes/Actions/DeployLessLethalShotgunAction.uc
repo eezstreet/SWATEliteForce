@@ -17,7 +17,7 @@ var private AttackTargetGoal	CurrentAttackTargetGoal;
 var private HandheldEquipment	LessLethalShotgun;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()
@@ -27,7 +27,7 @@ function cleanup()
         CurrentMoveToOpponentGoal.Release();
         CurrentMoveToOpponentGoal = None;
     }
-	
+
 	if (CurrentAttackTargetGoal != None)
     {
         CurrentAttackTargetGoal.Release();
@@ -38,7 +38,7 @@ function cleanup()
 	{
 		LessLethalShotgun.AIInterrupt();
 	}
-	
+
 	// make sure the fired weapon is re-equipped
 	ISwatOfficer(m_Pawn).InstantReEquipFiredWeapon();
 
@@ -67,7 +67,10 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 latent function EquipLessLethalShotgun()
 {
     LessLethalShotgun = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_PrimaryWeapon);
-    assert(LessLethalShotgun != None && LessLethalShotgun.IsA('LessLethalSG'));
+    if(LessLethalShotgun == None || !LessLethalShotgun.IsA('BeanbagShotgunBase')) {
+      LessLethalShotgun = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_SecondaryWeapon);
+    }
+    assert(LessLethalShotgun != None && LessLethalShotgun.IsA('BeanbagShotgunBase'));
     LessLethalShotgun.LatentWaitForIdleAndEquip();
 }
 
@@ -116,6 +119,9 @@ Begin:
     // let the officers know that the target exists
     SwatAIRepository(Level.AIRepo).GetHive().NotifyOfficersOfTarget(TargetPawn);
 
+	// trigger the speech
+	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLessLethalShotgunSpeech();
+	
     EquipLessLethalShotgun();
     AttackWithLessLethalShotgun();
     UnequipLessLethalShotgun();

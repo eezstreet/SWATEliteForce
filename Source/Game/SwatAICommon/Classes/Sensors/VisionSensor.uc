@@ -16,6 +16,10 @@ var float LastTimeSeen;							// last time we saw somone
 var Pawn LastPawnLost;							// last Pawn lost (cleared if a pawn is spotted)
 var vector LastLostPawnLocation;				// the last location the pawn we lost was at
 var float LastTimeLost;							// last time we lost someone
+var array<Pawn> RecentlyLostPawns;
+var array<float> RecentlyLostTimes;
+
+const MaxSecondsConsideredRecent = 5.0;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -39,11 +43,15 @@ function OnViewerSawPawn(Pawn Viewer, Pawn Seen)
 	LastPawnLost = None;
 	LastTimeSeen = Viewer.Level.TimeSeconds;
 	setIntegerValue( Pawns.Length );
+	
+	cleanOutRecentlyLost(Viewer.Level.TimeSeconds);
 }
 
 function OnViewerLostPawn(Pawn Viewer, Pawn Lost)
 {
 	local int i;
+	local int j;
+	local bool WasLostRecently;
 
 	// for now: forget about opponents that can't be seen
 	for( i = 0; i < Pawns.length; i++ )
@@ -57,11 +65,60 @@ function OnViewerLostPawn(Pawn Viewer, Pawn Lost)
 			LastLostPawnLocation = Lost.Location;
 			LastTimeLost = Viewer.Level.TimeSeconds;
 			setIntegerValue( Pawns.Length );
+			
+			for (j = 0; j < RecentlyLostPawns.Length; j++)
+			{
+				if (RecentlyLostPawns[j] == Lost) 
+				{
+					WasLostRecently = true;
+					break;
+				}
+			}
+			if (!WasLostRecently) 
+			{
+				RecentlyLostPawns[RecentlyLostPawns.Length] = Lost;
+				RecentlyLostTimes[RecentlyLostTimes.Length] = Viewer.Level.TimeSeconds;
+			}
+			
 			break;
+		}
+	}
+	
+	cleanOutRecentlyLost(Viewer.Level.TimeSeconds);
+}
+
+function cleanOutRecentlyLost(float currentTime)
+{
+	local int i;
+	
+	for( i = RecentlyLostPawns.Length - 1; i >= 0; i-- )
+	{
+		if (currentTime - RecentlyLostTimes[i] >= MaxSecondsConsideredRecent)
+		{
+			RecentlyLostTimes.remove(i, 1);
+			RecentlyLostPawns.remove(i, 1);
 		}
 	}
 }
 
+function bool GetWasLostRecently(Pawn Viewer, Pawn Lost)
+{
+	local int i;
+	
+	cleanOutRecentlyLost(Viewer.Level.TimeSeconds);
+	
+	for (i = 0; i < RecentlyLostPawns.Length; i++)
+	{
+		//don't return true if the pawn was lost this frame
+		if (RecentlyLostPawns[i] == Lost && Viewer.Level.TimeSeconds != RecentlyLostTimes[i])
+		{
+			return true;
+		}
+	}
+	
+	//not found
+	return false;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //

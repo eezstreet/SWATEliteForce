@@ -34,9 +34,10 @@ protected function AddAdditionalStunnedTime(float AdditionalStunnedTime)
 }
 
 // with the pepper spray we don't delay our reaction
+// pepper spray now takes some time to take effect like it does in real life
 protected function bool ShouldDelayReaction()
 {
-	return false;
+	return true;
 }
 
 // TODO: figure out if we need pepper sprayed animations

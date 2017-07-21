@@ -4,7 +4,7 @@ class HandheldEquipmentPickup extends Actor
     placeable;
 
 import enum EquipmentSlot from HandheldEquipment;
-    
+
 var(Pickup) class<HandheldEquipment> HandheldEquipmentClass;
 var private class<HandheldEquipment> LastHHEClass;         //used to detect if the class has changed in the Editor
 
@@ -116,6 +116,7 @@ state BeingPickedUp
         assertWithDescription(Item.GetSlot() != SLOT_Breaching,
             "[tcohen] HandheldEquipmentPickup::OnUsed() The Dropped is a breaching Tactical Aid.  "
             $"HandheldEquipment with SLOT_Breaching cannot be picked-up (because its illegal to have more than one type).");
+        Item.SetAvailable(true);
         Item.OnGivenToOwner();
 
         Item.Pickup = self; //setup callback when unequip of ActiveItem finishes

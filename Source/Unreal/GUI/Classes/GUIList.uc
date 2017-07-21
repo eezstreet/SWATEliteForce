@@ -1,7 +1,7 @@
 // ====================================================================
 //  Class:  GUI.GUIList
 //
-//  The GUIList is a basic list component.   
+//  The GUIList is a basic list component.
 //
 //  Written by Joe Wilcox
 //  (c) 2002, Epic Games, Inc.  All Rights Reserved
@@ -114,7 +114,7 @@ function ReverseList()
 {
     local int i, j, prevIndex;
     prevIndex=Index;
-    for( i = 0; i < Elements.Length / 2; i++ ) 
+    for( i = 0; i < Elements.Length / 2; i++ )
     {
         j = Elements.Length - i - 1;
         if( prevIndex == j )
@@ -128,34 +128,42 @@ function ReverseList()
 }
 
 ////////////////////////////////////////////////////////////////////////
+// Update sort function
+////////////////////////////////////////////////////////////////////////
+function UpdateSortFunction()
+{
+  switch (TypeOfSort)
+  {
+      case SORT_AlphaItem:
+          CompareItem=AlphabeticalCompareItem;
+          break;
+      case SORT_AlphaExtra:
+          CompareItem=AlphabeticalCompareExtra;
+          break;
+      case SORT_Numeric:
+          CompareItem=NumericCompare;
+          break;
+      case SORT_Bool:
+          CompareItem=BooleanCompare;
+          break;
+      case SORT_IP:
+          CompareItem=IPCompare;
+          break;
+      case SORT_Players:
+          CompareItem=PlayersCompare;
+          break;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////
 // Init component
 ////////////////////////////////////////////////////////////////////////
 function InitComponent(GUIComponent MyOwner)
 {
 	Super.InitComponent(MyOwner);
-    
-    switch (TypeOfSort)
-    {
-        case SORT_AlphaItem:
-            CompareItem=AlphabeticalCompareItem;
-            break;
-        case SORT_AlphaExtra:
-            CompareItem=AlphabeticalCompareExtra;
-            break;
-        case SORT_Numeric:
-            CompareItem=NumericCompare;
-            break;
-        case SORT_Bool:
-            CompareItem=BooleanCompare;
-            break;
-        case SORT_IP:
-            CompareItem=IPCompare;
-            break;            
-        case SORT_Players:
-            CompareItem=PlayersCompare;
-            break;            
-    }
-    
+
+  UpdateSortFunction();
+
     switch (DisplayItem)
     {
         case LIST_ELEM_Item:
@@ -172,7 +180,7 @@ function InitComponent(GUIComponent MyOwner)
             break;
         case LIST_ELEM_ExtraBoolData:
             ElementsEqual=EqualsBool;
-            break;            
+            break;
     }
 }
 
@@ -205,19 +213,19 @@ function bool IPCompare( GUIListElem ElemA, GUIListElem ElemB )
 {
     local int IPA, IPB;
     local string PortA, PortB, IPStrA, IPStrB;
-    
+
     PortA = ElemA.ExtraStrData;
     PortB = ElemB.ExtraStrData;
-    
+
     IPStrA = GetFirstField( PortA, ":" );
     IPStrB = GetFirstField( PortB, ":" );
-    
+
     while( IPA == IPB && IPStrA != "" && IPStrB != "")
     {
         IPA = int(GetFirstField( IPStrA, "." ));
         IPB = int(GetFirstField( IPStrB, "." ));
     }
-        
+
     return IPA > IPB ||
            ( IPA == IPB &&
              ( int(PortA) > int(PortB) ) );
@@ -227,18 +235,25 @@ function bool PlayersCompare( GUIListElem ElemA, GUIListElem ElemB )
 {
     local int PlayersA, PlayersB, MaxPlayersA, MaxPlayersB;
     local string PlayerStrA, PlayerStrB;
-    
+
     PlayerStrA = ElemA.ExtraStrData;
     PlayerStrB = ElemB.ExtraStrData;
-    
+
     PlayersA = int(GetFirstField( PlayerStrA, "/" ));
     PlayersB = int(GetFirstField( PlayerStrB, "/" ));
     MaxPlayersA = int(PlayerStrA);
     MaxPlayersB = int(PlayerStrB);
 
-    return MaxPlayersA > MaxPlayersB || 
-           ( MaxPlayersA == MaxPlayersB && 
-             ( PlayersA > PlayersB ) );
+    if(PlayersA > PlayersB) {
+      return true;
+    } else if(PlayersA == PlayersB) {
+      return MaxPlayersA > MaxPlayersB;
+    } else {
+      return false;
+    }
+    //return MaxPlayersA > MaxPlayersB ||
+    //       ( MaxPlayersA == MaxPlayersB &&
+    //         ( PlayersA > PlayersB ) );
 }
 
 
@@ -293,7 +308,7 @@ event string SelectedText( int offsetIndex )
                 break;
             case LIST_ELEM_ExtraBoolData:
                 return string(Elements[offsetIndex].ExtraBoolData);
-                break;            
+                break;
         }
     }
 	return "";
@@ -339,12 +354,12 @@ function int InsertElement( int NewIndex, optional GUIListElem theElem, optional
         bListIsDirty = true;
 	if ( (NewIndex<0) || (NewIndex>Elements.Length) )
         NewIndex = Elements.Length;
-        
+
     Elements.Insert( NewIndex, 1 );
     Elements[NewIndex]=theElem;
-    
+
 	ItemCount=Elements.Length;
-	
+
 	if( bDontReAlign )
 	{
 	    if( bInsertSorted && NewIndex < Index )
@@ -358,7 +373,7 @@ function int InsertElement( int NewIndex, optional GUIListElem theElem, optional
 	{
     	SetIndex(NewIndex);
     }
-    
+
 	return NewIndex;
 }
 
@@ -374,19 +389,19 @@ function ReplaceElement( int index, GUIListElem theElem )
 		AddElement(theElem);
 	else
 		Elements[index]=theElem;
-}		
+}
 
 function Insert(int index, string NewItem, optional Object obj, optional string Str, optional int intData, optional bool bData )
 {
     InsertElement( index, CreateElement( NewItem, obj, Str, intData, bData ) );
-}	
+}
 
 event Swap(int IndexA, int IndexB, optional bool bIsSorting)
 {
 	local GUI.GUIListElem elem;
     if( !bIsSorting )
         bListIsDirty = true;
-        
+
 	if ( (IndexA<0) || (IndexA>=Elements.Length) || (IndexB<0) || (IndexB>=Elements.Length) )
 		return;
 
@@ -394,12 +409,12 @@ event Swap(int IndexA, int IndexB, optional bool bIsSorting)
 	Elements[IndexA] = Elements[IndexB];
 	Elements[IndexB] = elem;
 }
-	
+
 function string GetItemAtIndex(int i)
 {
 	if ((i<0) || (i>Elements.Length))
 		return "";
-		
+
 	return Elements[i].Item;
 }
 
@@ -407,7 +422,7 @@ function SetItemAtIndex(int i, string NewItem)
 {
 	if ((i<0) || (i>Elements.Length))
 		return;
-		
+
 	Elements[i].Item = NewItem;
 }
 
@@ -415,7 +430,7 @@ function object GetObjectAtIndex(int i)
 {
 	if ((i<0) || (i>Elements.Length))
 		return None;
-		
+
 	return Elements[i].ExtraData;
 }
 
@@ -423,7 +438,7 @@ function string GetExtraAtIndex(int i)
 {
 	if ((i<0) || (i>Elements.Length))
 		return "";
-		
+
 	return Elements[i].ExtraStrData;
 }
 
@@ -431,7 +446,7 @@ function SetExtraAtIndex(int i, string NewExtra)
 {
 	if ((i<0) || (i>Elements.Length))
 		return;
-		
+
 	Elements[i].ExtraStrData = NewExtra;
 }
 
@@ -439,7 +454,7 @@ function int GetExtraIntAtIndex(int i)
 {
 	if ((i<0) || (i>Elements.Length))
 		return 0;
-		
+
 	return Elements[i].ExtraIntData;
 }
 
@@ -447,7 +462,7 @@ function SetExtraIntAtIndex(int i, int NewExtra)
 {
 	if ((i<0) || (i>Elements.Length))
 		return;
-		
+
 	Elements[i].ExtraIntData = NewExtra;
 }
 
@@ -457,7 +472,7 @@ function GUIListElem GetAtIndex(int i)
 	if ((i<0) || (i>Elements.Length))
 		return nothing;
     return Elements[i];
-}  
+}
 
 function GUIListElem GetElement()
 {
@@ -465,7 +480,7 @@ function GUIListElem GetElement()
 	if ((Index<0) || (Index>Elements.Length))
 		return nothing;
     return Elements[Index];
-}  
+}
 
 function LoadFrom(GUIList Source, optional bool bClearFirst)
 {
@@ -473,7 +488,7 @@ function LoadFrom(GUIList Source, optional bool bClearFirst)
 
 	if (bClearfirst)
 		Clear();
-	
+
 	for (i=0;i<Source.Elements.Length;i++)
 	{
 		AddElement(Source.GetAtIndex(i));
@@ -484,17 +499,17 @@ function Remove(int i, optional int Count)
 {
 	if (Count==0)
 		Count=1;
-		
+
 	Elements.Remove(i, Count);
 
-	ItemCount = Elements.Length;		
-		
+	ItemCount = Elements.Length;
+
 	if( i == 0 )
 	    i = ItemCount;
 	SetIndex(i-1);
     if( MyScrollBar != None )
 	MyScrollBar.AlignThumb();
-} 
+}
 
 function RemoveItem(string Item)
 {
@@ -523,10 +538,10 @@ function Clear()
 	Elements.Remove(0,Elements.Length);
 
 	Super.Clear();
-	
+
 	bListIsDirty = false;
 	OnChange(self);
-}	
+}
 
 function string Get()
 {
@@ -542,7 +557,7 @@ function object GetObject()
 		return none;
 	else
 		return Elements[Index].ExtraData;
-}	
+}
 
 function string GetExtra()
 {
@@ -551,7 +566,7 @@ function string GetExtra()
 	else
 		return Elements[Index].ExtraStrData;
 }
-	
+
 function int GetExtraIntData()
 {
 	if ( (Index<0) || (Index>=ItemCount) )
@@ -559,7 +574,7 @@ function int GetExtraIntData()
 	else
 		return Elements[Index].ExtraIntData;
 }
-	
+
 function bool GetExtraBoolData()
 {
 	if ( (Index<0) || (Index>=ItemCount) )
@@ -567,7 +582,7 @@ function bool GetExtraBoolData()
 	else
 		return Elements[Index].ExtraBoolData;
 }
-	
+
 function int FindElement(GUIListElem theElem)
 {
 	local int i;
@@ -650,6 +665,22 @@ function int FindExtraIntData(int TheIntToFind, optional bool bDontSetIndex, opt
 		}
 	}
 	return -1;
+}
+
+// returns the index of the found element
+function int FindObjectData(object TheObjectToFind, optional bool bDontSetIndex, optional bool bDontReAlign)
+{
+  local int i;
+  for(i = 0; i < ItemCount; i++)
+  {
+    if(TheObjectToFind == Elements[i].ExtraData)
+    {
+      if(!bDontSetIndex)
+        SetIndex(i, false, bDontReAlign);
+      return i;
+    }
+  }
+  return -1;
 }
 
 defaultproperties

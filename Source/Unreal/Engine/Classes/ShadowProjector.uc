@@ -31,7 +31,16 @@ native final function UpdateDetailSetting();
 
 event PostBeginPlay()
 {
+	local int ShadowDetail;
+
 	Super(Actor).PostBeginPlay();
+	
+	//New "High"-quality shadow quality setting. Enables casting shadows on actors. -K.F.
+	ShadowDetail = int(Level.GetLocalPlayerController().ConsoleCommand( "SHADOWDETAIL GET" ) );
+	if (ShadowDetail >= 3) //3 = "high"
+	{
+		bProjectActor = true;
+	}
 }
 
 //

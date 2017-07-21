@@ -1,6 +1,1 @@
-class SAWMG extends MachineGun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class SAWMG extends MachineGun config(SwatEquipment);

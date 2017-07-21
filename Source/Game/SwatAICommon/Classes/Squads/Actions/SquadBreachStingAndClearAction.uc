@@ -11,6 +11,11 @@ import enum EquipmentSlot from Engine.HandheldEquipment;
 //
 // Events
 
+protected function TriggerDeployingGrenadeSpeech()
+{
+	ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerDeployingStingSpeech();
+}
+
 protected function TriggerThrowGrenadeMoveUpSpeech()
 {
 	ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerMoveUpStingSpeech();
@@ -22,7 +27,7 @@ protected function TriggerThrowGrenadeMoveUpSpeech()
 
 protected function SetThrower()
 {
-	Thrower = GetThrowingOfficer(Slot_StingGrenade);	
+	Thrower = GetThrowingOfficer(Slot_StingGrenade);
 
 	if (Thrower == None)
 		instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE);
@@ -30,7 +35,7 @@ protected function SetThrower()
 
 protected latent function PreTargetDoorBreached()
 {
-	if (!IsFirstOfficerThrower())
+	if (!IsFirstOfficerThrower() && Breacher != Thrower)
 	{
 		PrepareToThrowGrenade(Slot_StingGrenade, true);
 	}
@@ -38,7 +43,7 @@ protected latent function PreTargetDoorBreached()
 
 protected latent function PostTargetDoorBreached()
 {
-	if (IsFirstOfficerThrower())
+	if (IsFirstOfficerThrower() || Breacher == Thrower)
 	{
 		PrepareToThrowGrenade(Slot_StingGrenade, false);
 	}

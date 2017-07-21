@@ -173,6 +173,13 @@ function float GetShotMoraleModification()
 	return ShotMoraleModification;
 }
 
+function NotifyNearbyHostageDowned(Pawn NearbyHostage)
+{
+	assert(NearbyHostage != None);
+
+	ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerDownedHostageSpeech();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Doors

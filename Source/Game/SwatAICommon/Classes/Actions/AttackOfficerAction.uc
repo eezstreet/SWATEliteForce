@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // AttackOfficerAction.uc - AttackOfficerAction class
-// The action that causes the AI to attack a particular enemy with any weapon it 
+// The action that causes the AI to attack a particular enemy with any weapon it
 // has
 
-class AttackOfficerAction extends SwatCharacterAction;
+class AttackOfficerAction extends SwatCharacterAction dependsOn(ISwatEnemy);
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EnemySkill from ISwatEnemy;
@@ -36,7 +36,7 @@ function Pawn GetOfficerTarget()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 function float selectionHeuristic( AI_Goal goal )
@@ -46,7 +46,7 @@ function float selectionHeuristic( AI_Goal goal )
 	{
 		m_Pawn = AI_CharacterResource(goal.resource).m_pawn;
 		assert(m_Pawn != None);
-	} 
+	}
 	assert(m_Pawn.IsA('SwatEnemy'));
 
 	if (ISwatAI(m_Pawn).HasUsableWeapon() && (GetOfficerTarget() != None))
@@ -69,7 +69,7 @@ function float selectionHeuristic( AI_Goal goal )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Cleanup
 
 function cleanup()

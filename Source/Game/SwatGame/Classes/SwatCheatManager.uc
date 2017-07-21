@@ -5,7 +5,7 @@
 // for more details
 //=============================================================================
 
-class SwatCheatManager extends Engine.CheatManager within SwatPlayerController 
+class SwatCheatManager extends Engine.CheatManager within SwatPlayerController
       dependson(SwatStartPointBase)
       native;
 
@@ -16,151 +16,151 @@ var private bool bUserHidAIs;
 var private bool bDebugGrenades;
 
 // Prints a list of all available SwatCheatManager exec functions
-exec function Help()  
-{	
-	log("--------------------------------------------------------------------");
-	log("              SwatCheatManager available functions");
-	log("--------------------------------------------------------------------");
-	log("");
-	log("---------- QA stuff ----------");
-	log("");
-	log("Loc: Print player location/rotation to the log file"); // in SwatGamePlayerController.uc
-	log("OpenDoorsToLeft: Opens all doors in the level to the left");
-	log("OpenDoorsToRight: Opens all doors in the level to the right");
-	log("");
-	log("---------- HUD/GUI stuff ----------");
-	log("");
-	log("ToggleGUI: Turn GUI/HUD rendering on/off"); // in SwatHUD.uc
-	log("ShowHands or HandsDown: Turn First-person hands & weapon rendering on/off"); // in SwatGamePlayerController.uc
-	log("ToggleWatermark: Turn screenshot watermark (version, %complete, etc) on/off"); // in SwatCheatManager.cpp
-	log("");
-	log("---------- AI stuff ----------");
-	log("");
-	log("HideAI: Hides all AIs");
-	log("ShowAI: Shows hidden AIs");
-	log("DebugAIs: Turn on/off AI debug info");
-	log("DebugTyrion: Turn on/off all Tyrion debug info");
-	log("DebugTyrionCharacter: Turn on/off Tyrion Character debug info");
-	log("DebugTyrionMovement: Turn on/off Tyrion Movement debug info");
-	log("DebugTyrionWeapon: Turn on/off Tyrion Weapon debug info");
-	log("DisableVision <optional: AI Class (ie. SwatEnemy)>: Disables AI vision");
-	log("EnableVision <optional: AI Class (ie. SwatEnemy)>: Enables vision for AIs whose vision has been disabled");
-	log("DisableHearing <optional: AI Class (ie. SwatEnemy)>: Disables AI hearing");
-	log("EnableHearing <optional: AI Class (ie. SwatEnemy)>: Enables hearing for AIs whose hearing has been disabled");
-	log("ToggleAIHiddenState: Toggle between ShowAI/HideAI");
-	log("DebugMorale: Turn on/off morale debugging info");
-	log("EveryoneComply: Asks all enemy/hostage AIs to comply");
-	log("DisableAwareness <optional: AI Class (ie. SwatEnemy)>: Disables the awareness system of AIs");
-	log("EnableAwareness <optional: AI Class (ie. SwatEnemy)>: Enables the awareness system of AIs whose awareness has been disabled");
-	log("DisableCollisionAvoidance <optional: AI Class (ie. SwatEnemy)>: Disables collision avoidance");
-	log("EnableCollisionAvoidance <optional: AI Class (ie. SwatEnemy)>: Enables collision avoidance");
-	log("MakeAIGod <optional: AI Class (ie. SwatEnemy)>: Makes particular types unhurtable (defaults to all AIs)");
-	log("");
-	log("---------- Cover stuff ----------");
-	log("");
-	log("DebugCover <name of pawn taking cover>: Shows 'true' cover area for specified pawn (i.e., intersection of per-officer cover extrusions)");
-	log("DebugCover2 <name of pawn taking cover>: 'DebugCover' functionality PLUS per-officer cover extrusions for cover plane");
-	log("DebugCover3 <name of pawn taking cover>: 'DebugCover2' functionality PLUS extrusion from each officer to the cover plane");
-	log("");
-	log("---------- Weapon stuff ----------");
-	log("");
-    log("DebugBallistics: Toggles debugging ballistics on and off.  When on, ballistics information will be logged for each shot fired.");
-    log("UseAmmo <Ammo class>: Use the specified ammunition class with your current weapon, Eg. 'useammo fullmetaljacket'");
-    log("ToggleRecoil: Turns recoil on and off");
-    log("FlashlightLines <0 or 1>: Turns debug flashlight lines on and off");
-    log("FlashlightFancy <0 or 1>: Selects Flashlight spot lights (true) or point lights (false)");
-    log("DebugGrenades: Toggles debugging of grenades on and off.  When on, trajectories and radii of affect are drawn.");
-	log("");
-	log("---------- Weapon ScreenEffect stuff ----------");
-	log("");
-    log("GetSprayed:   Runs camera effect for Pepper Spray (with 0 damage).");
-    log("GetGassed:    Runs camera effect for CS Gas (similar to Pepper Spray) (with 0 damage).");
-    log("GetTased:     Runs camera effect for Taser (with 0 damage).");
-    log("GetStung:     Runs camera effect for Sting Grenade (with 0 damage).");
-    log("GetLLShotgun: Runs camera effect for Less Lethal Shotgun (similar to Sting Grenade) (with 0 damage).");
-	log("---------- For editing ScreenEffect Parameters:");
-    log("editClass paramsClass: Where paramsClass is one of: ");
-	log("  DesignerStingParams, DesignerPepperSprayParams, DesignerCSGasParams, DesignerLessLethalSGParams");
-	log("");
-	log("---------- Archetypes/Spawning stuff ----------");
-	log("");
-    log("SummonArchetype <'Enemy' / 'Hostage' / 'Inanimate'>, <Archetype name>: Spawns an instance of the specified archetype in front of the player.  Eg. 'summonarchetype enemy arms_dealer'");
-    log("TestSpawn <Count>: Simulate spawning for the current level Count times.  Nothing is actually spawned.  But results of the simulation are logged.");    //TMC TODO make count=0 do 'allspawn'
-    log("TestSpawn (no count): Spawn a 'TestSpawn' Archetype at each Enemy and Hostage Spawner.");
-	log("UsePrimaryEntry <1 or 0>: if 1, singleplayer missions will use the primary entry point. If 0, they will use the secondary entry point");
-	log("");
-	log("---------- Sound/Visual FX stuff ----------");
-	log("");
-    log("DebugEffectEvent <EffectEvent>: log the details of TriggerEffectEvent() each time EffectEvent is triggered.");
-    log("DumpEffects <'Visual' / 'Sound'>: Logs the state of the specified effects subsystem.");
-	log("");
-	log("---------- Leadership/Objectives stuff ----------");
-	log("");
-    log("MissionStatus: Log the current mission status");
-    log("LeadershipStatus: Log the current leadership status & scores");
-	log("");
-    log("---------- Rendering Stuff ----------");
-	log("");
-    log("RenderDetail <0-3>: Globally adjusts ALL other rendering settings; 3 is highest detail, 0 is lowest");
-    log("TextureDetail <0-3>: Changes texture detail (size); 3 is highest detail, 0 is lowest");
-    log("BumpDetail <0-3>: Changes bumpmapping settings. 3 = characters+staticmesh+bsp+emitters, 2 = characters+staticmesh; 1 = static mesh, 0 = nothing");
-	log("");
-    log("---------- Profiling Stuff ----------");
-	log("");
-    log("EnableProfile: Turn on profiling of function calls");
-    log("TickProfile: Enable profiling of time spent in Tick() on a per-class basis");
-    log("ResetProfile: Rest the profiling stats");
-    log("LogProfile: Dump the current profile to the log");
-	log("");
-    log("---------- Debugging Stuff ----------");
-	log("");
-    log("stat anim: Show details on what animations are playing");
-    log("show projectorbounds: Show bounds of projectors in-game.");
-    log("show actors: turn on/off rendering of actors");
-    log("show actorinfo: turn on/off rendering of actor info");
-    log("show staticmesh: turn on/off rendering of static meshes");
-    log("show fog: turn on/off rendering of fog");
-    log("show sky: turn on/off rendering of skyzone");
-    log("show corona: turn on/off rendering of coronas");
-    log("show particle: turn on/off rendering of particles");
-    log("show bsp: turn on/off rendering of bsp surfaces");
-    log("show radii: turn on/off rendering of radii for things using cylinder collision");
-    log("show fluid: turn on/off rendering of fluid surfaces");
-    log("show projector: turn on/off rendering of dynamic projectors");
-    log("show collision: Show non-havok collision bounds. Dynamic objects are in pink. Also show bone collision boxes.");
-    log("rend collision: Show pawn collision. If pawn is on top of something, show that thing in yellow and draw line to it");
-    log("AnimDrawDebugLines: Show where the pawns should be aiming");
-    log("DebugAIMovement: Show where the AIs think they are going");
-    log("rend bound: Show the rendering bounding sphere/box for skeletal");
-    log("            meshes (blue), the render bounding box for static meshes (green),");
-    log("            the predicted render bounding box (red) and the emitter bounds (yellow)");
-    log("ListVisibleSprites: writes to the log the identity of any 'dragon-camel' icons appearing in the game.");
-	log("");
-    log("--------------------------------------------------------------------");
+exec function Help()
+{
+	ConsoleMessage("--------------------------------------------------------------------");
+	ConsoleMessage("              SwatCheatManager available functions");
+	ConsoleMessage("--------------------------------------------------------------------");
+	ConsoleMessage("");
+	ConsoleMessage("---------- QA stuff ----------");
+	ConsoleMessage("");
+	ConsoleMessage("Loc: Print player location/rotation to the log file"); // in SwatGamePlayerController.uc
+	ConsoleMessage("OpenDoorsToLeft: Opens all doors in the level to the left");
+	ConsoleMessage("OpenDoorsToRight: Opens all doors in the level to the right");
+	ConsoleMessage("");
+	ConsoleMessage("---------- HUD/GUI stuff ----------");
+	ConsoleMessage("");
+	ConsoleMessage("ToggleGUI: Turn GUI/HUD rendering on/off"); // in SwatHUD.uc
+	ConsoleMessage("ShowHands or HandsDown: Turn First-person hands & weapon rendering on/off"); // in SwatGamePlayerController.uc
+	ConsoleMessage("ToggleWatermark: Turn screenshot watermark (version, %%complete, etc) on/off"); // in SwatCheatManager.cpp
+	ConsoleMessage("");
+	ConsoleMessage("---------- AI stuff ----------");
+	ConsoleMessage("");
+	ConsoleMessage("HideAI: Hides all AIs");
+	ConsoleMessage("ShowAI: Shows hidden AIs");
+	ConsoleMessage("DebugAIs: Turn on/off AI debug info");
+	ConsoleMessage("DebugTyrion: Turn on/off all Tyrion debug info");
+	ConsoleMessage("DebugTyrionCharacter: Turn on/off Tyrion Character debug info");
+	ConsoleMessage("DebugTyrionMovement: Turn on/off Tyrion Movement debug info");
+	ConsoleMessage("DebugTyrionWeapon: Turn on/off Tyrion Weapon debug info");
+	ConsoleMessage("DisableVision <optional: AI Class (ie. SwatEnemy)>: Disables AI vision");
+	ConsoleMessage("EnableVision <optional: AI Class (ie. SwatEnemy)>: Enables vision for AIs whose vision has been disabled");
+	ConsoleMessage("DisableHearing <optional: AI Class (ie. SwatEnemy)>: Disables AI hearing");
+	ConsoleMessage("EnableHearing <optional: AI Class (ie. SwatEnemy)>: Enables hearing for AIs whose hearing has been disabled");
+	ConsoleMessage("ToggleAIHiddenState: Toggle between ShowAI/HideAI");
+	ConsoleMessage("DebugMorale: Turn on/off morale debugging info");
+	ConsoleMessage("EveryoneComply: Asks all enemy/hostage AIs to comply");
+	ConsoleMessage("DisableAwareness <optional: AI Class (ie. SwatEnemy)>: Disables the awareness system of AIs");
+	ConsoleMessage("EnableAwareness <optional: AI Class (ie. SwatEnemy)>: Enables the awareness system of AIs whose awareness has been disabled");
+	ConsoleMessage("DisableCollisionAvoidance <optional: AI Class (ie. SwatEnemy)>: Disables collision avoidance");
+	ConsoleMessage("EnableCollisionAvoidance <optional: AI Class (ie. SwatEnemy)>: Enables collision avoidance");
+	ConsoleMessage("MakeAIGod <optional: AI Class (ie. SwatEnemy)>: Makes particular types unhurtable (defaults to all AIs)");
+	ConsoleMessage("");
+	ConsoleMessage("---------- Cover stuff ----------");
+	ConsoleMessage("");
+	ConsoleMessage("DebugCover <name of pawn taking cover>: Shows 'true' cover area for specified pawn (i.e., intersection of per-officer cover extrusions)");
+	ConsoleMessage("DebugCover2 <name of pawn taking cover>: 'DebugCover' functionality PLUS per-officer cover extrusions for cover plane");
+	ConsoleMessage("DebugCover3 <name of pawn taking cover>: 'DebugCover2' functionality PLUS extrusion from each officer to the cover plane");
+	ConsoleMessage("");
+	ConsoleMessage("---------- Weapon stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("DebugBallistics: Toggles debugging ballistics on and off.  When on, ballistics information will be logged for each shot fired.");
+    ConsoleMessage("UseAmmo <Ammo class>: Use the specified ammunition class with your current weapon, Eg. 'useammo fullmetaljacket'");
+    ConsoleMessage("ToggleRecoil: Turns recoil on and off");
+    ConsoleMessage("FlashlightLines <0 or 1>: Turns debug flashlight lines on and off");
+    ConsoleMessage("FlashlightFancy <0 or 1>: Selects Flashlight spot lights (true) or point lights (false)");
+    ConsoleMessage("DebugGrenades: Toggles debugging of grenades on and off.  When on, trajectories and radii of affect are drawn.");
+	ConsoleMessage("");
+	ConsoleMessage("---------- Weapon ScreenEffect stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("GetSprayed:   Runs camera effect for Pepper Spray (with 0 damage).");
+    ConsoleMessage("GetGassed:    Runs camera effect for CS Gas (similar to Pepper Spray) (with 0 damage).");
+    ConsoleMessage("GetTased:     Runs camera effect for Taser (with 0 damage).");
+    ConsoleMessage("GetStung:     Runs camera effect for Sting Grenade (with 0 damage).");
+    ConsoleMessage("GetLLShotgun: Runs camera effect for Less Lethal Shotgun (similar to Sting Grenade) (with 0 damage).");
+	ConsoleMessage("---------- For editing ScreenEffect Parameters:");
+    ConsoleMessage("editClass paramsClass: Where paramsClass is one of: ");
+	ConsoleMessage("  DesignerStingParams, DesignerPepperSprayParams, DesignerCSGasParams, DesignerLessLethalSGParams");
+	ConsoleMessage("");
+	ConsoleMessage("---------- Archetypes/Spawning stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("SummonArchetype <'Enemy' / 'Hostage' / 'Inanimate'>, <Archetype name>: Spawns an instance of the specified archetype in front of the player.  Eg. 'summonarchetype enemy arms_dealer'");
+    ConsoleMessage("TestSpawn <Count>: Simulate spawning for the current level Count times.  Nothing is actually spawned.  But results of the simulation are logged.");    //TMC TODO make count=0 do 'allspawn'
+    ConsoleMessage("TestSpawn (no count): Spawn a 'TestSpawn' Archetype at each Enemy and Hostage Spawner.");
+	ConsoleMessage("UsePrimaryEntry <1 or 0>: if 1, singleplayer missions will use the primary entry point. If 0, they will use the secondary entry point");
+	ConsoleMessage("");
+	ConsoleMessage("---------- Sound/Visual FX stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("DebugEffectEvent <EffectEvent>: log the details of TriggerEffectEvent() each time EffectEvent is triggered.");
+    ConsoleMessage("DumpEffects <'Visual' / 'Sound'>: Logs the state of the specified effects subsystem.");
+	ConsoleMessage("");
+	ConsoleMessage("---------- Leadership/Objectives stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("MissionStatus: Log the current mission status");
+    ConsoleMessage("LeadershipStatus: Log the current leadership status & scores");
+	ConsoleMessage("");
+    ConsoleMessage("---------- Rendering Stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("RenderDetail <0-3>: Globally adjusts ALL other rendering settings; 3 is highest detail, 0 is lowest");
+    ConsoleMessage("TextureDetail <0-3>: Changes texture detail (size); 3 is highest detail, 0 is lowest");
+    ConsoleMessage("BumpDetail <0-3>: Changes bumpmapping settings. 3 = characters+staticmesh+bsp+emitters, 2 = characters+staticmesh; 1 = static mesh, 0 = nothing");
+	ConsoleMessage("");
+    ConsoleMessage("---------- Profiling Stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("EnableProfile: Turn on profiling of function calls");
+    ConsoleMessage("TickProfile: Enable profiling of time spent in Tick() on a per-class basis");
+    ConsoleMessage("ResetProfile: Rest the profiling stats");
+    ConsoleMessage("LogProfile: Dump the current profile to the log");
+	ConsoleMessage("");
+    ConsoleMessage("---------- Debugging Stuff ----------");
+	ConsoleMessage("");
+    ConsoleMessage("stat anim: Show details on what animations are playing");
+    ConsoleMessage("show projectorbounds: Show bounds of projectors in-game.");
+    ConsoleMessage("show actors: turn on/off rendering of actors");
+    ConsoleMessage("show actorinfo: turn on/off rendering of actor info");
+    ConsoleMessage("show staticmesh: turn on/off rendering of static meshes");
+    ConsoleMessage("show fog: turn on/off rendering of fog");
+    ConsoleMessage("show sky: turn on/off rendering of skyzone");
+    ConsoleMessage("show corona: turn on/off rendering of coronas");
+    ConsoleMessage("show particle: turn on/off rendering of particles");
+    ConsoleMessage("show bsp: turn on/off rendering of bsp surfaces");
+    ConsoleMessage("show radii: turn on/off rendering of radii for things using cylinder collision");
+    ConsoleMessage("show fluid: turn on/off rendering of fluid surfaces");
+    ConsoleMessage("show projector: turn on/off rendering of dynamic projectors");
+    ConsoleMessage("show collision: Show non-havok collision bounds. Dynamic objects are in pink. Also show bone collision boxes.");
+    ConsoleMessage("rend collision: Show pawn collision. If pawn is on top of something, show that thing in yellow and draw line to it");
+    ConsoleMessage("AnimDrawDebugLines: Show where the pawns should be aiming");
+    ConsoleMessage("DebugAIMovement: Show where the AIs think they are going");
+    ConsoleMessage("rend bound: Show the rendering bounding sphere/box for skeletal");
+    ConsoleMessage("            meshes (blue), the render bounding box for static meshes (green),");
+    ConsoleMessage("            the predicted render bounding box (red) and the emitter bounds (yellow)");
+    ConsoleMessage("ListVisibleSprites: writes to the log the identity of any 'dragon-camel' icons appearing in the game.");
+	ConsoleMessage("");
+    ConsoleMessage("--------------------------------------------------------------------");
 }
 
 // Turn the screenshot watermark on/off
 exec native function ToggleWatermark();
 
 // Calls hide() on all instances of SwatAI.
-exec function HideAI()  
-{	
+exec function HideAI()
+{
 	local SwatAI TheAI;
 	ForEach AllActors(class'SwatAI',TheAI)
 	{
-		log("SwatCheatManager: Hiding SwatAI \""$TheAI$"\"");
+		ConsoleMessage("SwatCheatManager: Hiding SwatAI \""$TheAI$"\"");
 		TheAI.Hide();
 	}
     bUserHidAIs = true;
 }
 
 // Calls show() on all instances of SwatAI.
-exec function ShowAI()  
-{	
+exec function ShowAI()
+{
 	local SwatAI TheAI;
 	ForEach AllActors(class'SwatAI', TheAI)
 	{
-		log("SwatCheatManager: Unhiding SwatAI \""$TheAI$"\"");
+		ConsoleMessage("SwatCheatManager: Unhiding SwatAI \""$TheAI$"\"");
 		TheAI.Show();
 	}
     bUserHidAIs = false;
@@ -168,13 +168,13 @@ exec function ShowAI()
 
 // If the user has previously called HideAI(), this function calls ShowAI();
 // otherwise it calls HideAI().
-exec function ToggleAIHiddenState()  
-{	
+exec function ToggleAIHiddenState()
+{
 	if (bUserHidAIs)
 	{
 		ShowAI();
 	}
-	else 
+	else
 	{
 		HideAI();
 	}
@@ -188,7 +188,7 @@ exec function EveryoneComply()
 
 	ForEach AllActors(class'SwatAI', IterAI)
 	{
-		log("SwatCheatManager: Telling SwatAI "$IterAI$" to comply using "$Pawn);
+		ConsoleMessage("SwatCheatManager: Telling SwatAI "$IterAI$" to comply using "$Pawn);
 
 		assert(SwatCharacterResource(IterAI.characterAI).CommonSensorAction.GetComplySensor() != None);
 		SwatCharacterResource(IterAI.characterAI).CommonSensorAction.GetComplySensor().NotifyComply(Pawn);
@@ -211,6 +211,15 @@ exec function DebugPathLines()
     {
         SwatAI.ToggleDebugPathLines();
     }
+}
+
+exec function SEFDebugSensor()
+{
+  local SwatAI SwatAI;
+  foreach AllActors(class 'SwatAI', SwatAI)
+  {
+    SwatAI.SEFDebugSensor();
+  }
 }
 
 
@@ -662,7 +671,7 @@ exec function SummonArchetype(name ArchetypeKind, name ArchetypeName)
             ArchetypeClass = class'InanimateArchetype';
             break;
         default:
-            log("Unexpected ArchetypeKind "$ArchetypeKind$" specified.");
+            ConsoleMessage("Unexpected ArchetypeKind "$ArchetypeKind$" specified.");
     }
 
     PlayerPawn = Level.GetLocalPlayerController().Pawn;
@@ -671,7 +680,7 @@ exec function SummonArchetype(name ArchetypeKind, name ArchetypeName)
     Archetype = new(None, string(ArchetypeName), 0) ArchetypeClass;
     if (Archetype == None)
     {
-        log("SummonArchetype: Couldn't instantiate a new Archetype of class "$ArchetypeClass);
+        ConsoleMessage("SummonArchetype: Couldn't instantiate a new Archetype of class "$ArchetypeClass);
         return;
     }
     Archetype.Initialize(Level);
@@ -684,7 +693,7 @@ exec function SummonArchetype(name ArchetypeKind, name ArchetypeName)
     Summoned = Spawn(ClassToSpawn,,, PlayerPawn.Location + 70 * vector(PlayerPawn.Rotation) + vect(1,1,15));
     if (Summoned == None)
     {
-        log("SummonArchetype: Couldn't Spawn an instance of Class "$ClassToSpawn$".  (selected to spawn from Archetype "$Archetype$")");
+        ConsoleMessage("SummonArchetype: Couldn't Spawn an instance of Class "$ClassToSpawn$".  (selected to spawn from Archetype "$Archetype$")");
         return;
     }
 
@@ -697,7 +706,7 @@ exec function DebugBallistics()
     Level.AnalyzeBallistics = !Level.AnalyzeBallistics;
 }
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
 exec function DebugGrenades()
 {
     local class<SwatGrenadeProjectile> SGPClass;
@@ -707,23 +716,23 @@ exec function DebugGrenades()
     SGPClass = class'Engine.SwatGrenadeProjectile';
     SGPClass.Default.bRenderDebugInfo = !SGPClass.Default.bRenderDebugInfo;
 
-    Log("Grenade debugging default changed to: "$SGPClass.Default.bRenderDebugInfo);
+    ConsoleMessage("Grenade debugging default changed to: "$SGPClass.Default.bRenderDebugInfo);
 
     // turn on/off debugging for existing grenades
 	ForEach AllActors(class'SwatGrenadeProjectile',ExistingProjectile)
 	{
 		ExistingProjectile.bRenderDebugInfo = SGPClass.Default.bRenderDebugInfo;
-        Log("  Grenade debugging changed to: "$ExistingProjectile.bRenderDebugInfo$" for pre-existing grenade "$ExistingProjectile);
+        ConsoleMessage("  Grenade debugging changed to: "$ExistingProjectile.bRenderDebugInfo$" for pre-existing grenade "$ExistingProjectile);
 	}
 }
 #endif
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
 exec function ToggleRecoil()
 {
     local SwatGamePlayerController Player;
     Player = SwatGamePlayerController(Level.GetLocalPlayerController());
-    
+
     Player.DebugShouldRecoil = !Player.DebugShouldRecoil;
 }
 #endif
@@ -733,7 +742,7 @@ exec function FlashlightLines(bool onState)
 	local FiredWeapon TheWeapon;
 	ForEach AllActors(class'FiredWeapon',TheWeapon)
 	{
-		log("SwatCheatManager: Changing Flashlight debug line visibility for \""$TheWeapon$"\" to: "$onState);
+		ConsoleMessage("SwatCheatManager: Changing Flashlight debug line visibility for \""$TheWeapon$"\" to: "$onState);
 		TheWeapon.DebugDrawFlashlightDir = onState;
 	}
 }
@@ -743,7 +752,7 @@ exec function FlashlightFancy(bool onState)
 	local FiredWeapon TheWeapon;
 	ForEach AllActors(class'FiredWeapon',TheWeapon)
 	{
-		log("SwatCheatManager: Changing Flashlight point/spot type for \""$TheWeapon$"\" to: "$onState);
+		ConsoleMessage("SwatCheatManager: Changing Flashlight point/spot type for \""$TheWeapon$"\" to: "$onState);
 		if (onState)
 			TheWeapon.FlashlightUseFancyLights = 1;
 		else
@@ -788,7 +797,7 @@ exec function GetGassed()
         "[henry] Could not find class CSGasGrenadeProjectile in GetGassed().");
 
     Gasser = Spawn(GrenadeClass,
-				   Level.GetLocalPlayerController().Pawn, , 
+				   Level.GetLocalPlayerController().Pawn, ,
 				   Level.GetLocalPlayerController().Pawn.Location + Offset);
 	AssertWithDescription(Gasser != None,
         "[henry] Could not create class CSGasGrenadeProjectile in GetGassed().");
@@ -819,7 +828,7 @@ exec function GetLLShotgun()
 							10.0,
 							ImpulseRange,
 							10,
-							10, 
+							10,
 							10,					  // Duration
 							6,					  // Armored Duration
 							14,					  // No Armor Duration
@@ -846,7 +855,7 @@ exec function GetStung()
         "[henry] Could not find class StingGrenadeProjectile in GetStung().");
 
     Stinger = Spawn(GrenadeClass,
-					Level.GetLocalPlayerController().Pawn, , 
+					Level.GetLocalPlayerController().Pawn, ,
 					Level.GetLocalPlayerController().Pawn.Location + Offset);
 	AssertWithDescription(Stinger != None,
         "[henry] Could not create class StingGrenadeProjectile in GetStung().");
@@ -861,7 +870,7 @@ exec function GetStung()
 							10.0,
 							ImpulseRange,
 							10,
-							10, 
+							10,
 							10,					  // Duration
 							6,					  // Armored Duration
 							14,					  // No Armor Duration
@@ -901,7 +910,7 @@ exec function GetFlashBanged()
 exec function DebugEffectEvent(name EffectEvent)
 {
     EffectsSystem(Level.EffectsSystem).DebugEffectEvent[EffectsSystem(Level.EffectsSystem).DebugEffectEvent.length] = EffectEvent;
-    log("DebugEffectEvent() now debugging '"$EffectEvent$"'");
+    ConsoleMessage("DebugEffectEvent() now debugging '"$EffectEvent$"'");
 }
 
 exec function TestSpawn(int Count)
@@ -941,7 +950,7 @@ exec function ListVisibleSprites()
     {
         if (TheActor.DrawType == DT_Sprite && TheActor.bHidden == false)
         {
-            Log("FOUND VISIBLE SPRITE: "$TheActor$" at location "$TheActor.Location);
+            ConsoleMessage("FOUND VISIBLE SPRITE: "$TheActor$" at location "$TheActor.Location);
         }
     }
 }
@@ -973,7 +982,7 @@ exec function LogTimers()
     {
         if (TheTimer != None)
         {
-            Log("  Timer: Name="$TheTimer.Name$" Owner="$TheTimer.Owner$" IsRunning="$TheTimer.IsRunning()$" LastStartTime="$TheTimer.GetLastStartTime());
+            ConsoleMessage("  Timer: Name="$TheTimer.Name$" Owner="$TheTimer.Owner$" IsRunning="$TheTimer.IsRunning()$" LastStartTime="$TheTimer.GetLastStartTime());
         }
     }
 
@@ -1009,7 +1018,7 @@ exec function runScript(Name label)
 	{
 		if (!s.IsInState('ExecuteScript'))
 			s.GotoState('ExecuteScript');
-		LOG("Ran script "$label);
+		ConsoleMessage("Ran script "$label);
 		ClientMessage("Ran script "$label);
 	}
 }

@@ -3,10 +3,10 @@ class Taser extends RoundBasedWeapon
 
 const MAX_PROBES = 4;	// maximum number of probes (not truly changeable - below code assumes in a few places there will be at most 4)
 
-// NOTE: there is currently a bug where sometimes the probes will stick in BSP 
+// NOTE: there is currently a bug where sometimes the probes will stick in BSP
 // even though they shouldn't (e.g., when set to STICK_Actors or lower enum).
 // I think this is due to collision resolution issues in the engine.
-enum EStickPolicy 
+enum EStickPolicy
 {
 	STICK_Nothing,
 	STICK_TaseablePawns,  // only stick to things that can be tased
@@ -52,7 +52,7 @@ var config float         ProbeFinalRecoilSpeed;   // seconds for probes to recoi
 
 // configurable parameters for the taser wire animated models
 var config class<TaserWire>      TaserWireClass;
-var config name  WireZapAnimation[2];   // the name of the animation to play on the wires as they shoot out  
+var config name  WireZapAnimation[2];   // the name of the animation to play on the wires as they shoot out
 var config name  WireSlackAnimation[2]; // the name of the animation to play on the wires after they attach
 var config float WireForceSlackTimeFraction; // force the slack to start after this fraction of the zap animation
 var config float WireSlackAnimRate;   // the speed of the slack animation
@@ -75,7 +75,7 @@ struct TaserProbeShot {
 	var vector         TargetLocation;  // where the probe should hit
 	var Actor          Victim;          // what was hit
 	var Name           VictimBone;      // which bone was it hit on
-	
+
 	var TaserProbeBase Probe;           // the probe object (like a bullet)
 
 	var TaserWire      TaserWire;       // the wire between the probe and the taser gun
@@ -127,12 +127,12 @@ function PostBeginPlay()
 /// Death / Destruction Notifications
 /////////////////////////////////////////////////
 // This is called when any pawn dies, so that we can make sure there are no
-// dangling taser probes in a multiplayer game 
+// dangling taser probes in a multiplayer game
 simulated function OnOtherPawnDied(Pawn DeadPawn)
 {
 	if (DeadPawn == Owner || DeadPawn == probes[0].Victim || DeadPawn == probes[1].Victim || DeadPawn == probes[2].Victim || DeadPawn == probes[3].Victim)
 	{
-		if (probes[0].Active || probes[1].Active || probes[2].Active || probes[3].Active) 
+		if (probes[0].Active || probes[1].Active || probes[2].Active || probes[3].Active)
 		{
 			log("Taser owner or victim was killed while the tasers were shot");
 		}
@@ -169,7 +169,7 @@ simulated function ApplyTaserAimError(int cartridge, rotator CenterFireDirection
     //	Rho=FRand()*AimError would produce center-biased points (because polar coordinates are more dense closer to
     //	the origin).
     //TMC TODO consider using center-biased accuracy for an easier difficulty setting
-		
+
 	planarAimError = Tan(GetAimError() * DEGREES_TO_RADIANS);
     Rho = Sqrt(FRand()) * planarAimError;
     Theta = FRand() * 360.0;
@@ -199,7 +199,7 @@ simulated function ApplyTaserAimError(int cartridge, rotator CenterFireDirection
 
 	//log("Fired Taser rnd 2d point: "$xScale$","$yScale);
 	//log("axes: "$ xPlanarVec $",  "$ yPlanarVec $", " $ zPlanarVec);
-	
+
 
 	// to make the second point, move from the first point towards the center
 	// of the circle by the taserAimSpread amount, but clip the max distance
@@ -212,8 +212,8 @@ simulated function ApplyTaserAimError(int cartridge, rotator CenterFireDirection
 	diff = spherePoint - randPoint1;
 	boundaryDist = VSize(diff) + planarAimError; // dist to circle center plus radius
 	diff = Normal(diff);
-	
-	randPoint2 = randPoint1 + diff * 
+
+	randPoint2 = randPoint1 + diff *
 		FMin(Tan(TaserAimSpread * DEGREES_TO_RADIANS), boundaryDist);
 
 	// project back onto the unit sphere
@@ -228,7 +228,7 @@ simulated function ApplyTaserAimError(int cartridge, rotator CenterFireDirection
 	// add vertical displacement for 2nd cartridge on Stingray
 	if (cartridge == 0 && VerticalSpread != 0 && CurrentFireMode == FireMode_DoubleTaser)
 	{
-		downtilt.Pitch = 65536.0f * VerticalSpread / 360.0f; 
+		downtilt.Pitch = 65536.0f * VerticalSpread / 360.0f;
 		FireDirection1 += downtilt;
 		FireDirection2 += downtilt;
 	}
@@ -256,13 +256,13 @@ simulated function TraceFireInternal(int cartridge)
 	local int probe1, probe2;
 
 	log("Fired Taser owner: '"$owner$"'");
-	
+
 	probe1 = 2*cartridge;
 	probe2 = 2*cartridge+1;
 
     GetPerfectFireStart(StartLocation, StartDirection);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (DebugDrawAccuracyCone)
         Level.GetLocalPlayerController().myHUD.AddDebugCone(
             StartLocation, vector(StartDirection),
@@ -271,10 +271,10 @@ simulated function TraceFireInternal(int cartridge)
             5);                         //lifespan
 #endif
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
-    if (!DebugPerfectAim) 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
+    if (!DebugPerfectAim)
 #else
-    if (true) 
+    if (true)
 #endif
 	{
         //ApplyAimError(StartDirection);
@@ -290,12 +290,12 @@ simulated function TraceFireInternal(int cartridge)
     StartTrace = StartLocation;
     EndTrace   = StartLocation + vector(StartDirection) * Range;
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (DebugDrawTraceFire)
 	{
-		EndTrace   = StartLocation + vector(FireDirection1) * Range; 
+		EndTrace   = StartLocation + vector(FireDirection1) * Range;
 		Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0));
-		
+
 		EndTrace   = StartLocation + vector(FireDirection2) * Range;
         Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0));
 	}
@@ -323,12 +323,12 @@ simulated function TraceFireInternal(int cartridge)
 		//StartDirection.Yaw -= spread;
 
 		foreach TraceActors(
-			class'Actor', 
-			LocalVictim, 
-			HitLocation, 
-			HitNormal, 
+			class'Actor',
+			LocalVictim,
+			HitLocation,
+			HitNormal,
 			MaterialHit,
-			EndTrace, 
+			EndTrace,
 			StartTrace,,
 			true, HitRegion)
 			{
@@ -339,11 +339,11 @@ simulated function TraceFireInternal(int cartridge)
 
                 //SwatDoors (the animations) must be drawn, and their SkeletalRegions must block traces, but shots should ignore them
                 if (LocalVictim.IsA('SwatDoor'))
-                    continue;    
+                    continue;
 
 				// If the nearest hit is too far, then consider it a miss, and make
 				// the taser Wire shoot out to the max distance and then fall.
-				if (VDistSquared(HitLocation, StartLocation) > Square(Range)) 
+				if (VDistSquared(HitLocation, StartLocation) > Square(Range))
 				{
 					HitDiff = Normal(HitLocation - StartLocation);
 					HitDiff *= Range;
@@ -368,7 +368,7 @@ simulated function TraceFireInternal(int cartridge)
 			}
 
 		//if we didn't hit anything, then the extent of the probes is the end of the trace
-		if (probes[i].Victim == None) 
+		if (probes[i].Victim == None)
 		{
 			probes[i].TargetLocation = EndTrace;
 			probes[i].TaserHit = false;
@@ -397,7 +397,7 @@ simulated function TraceFireInternal(int cartridge)
 			ActualTasedVictim = probes[probe2].Victim;
 		}
 	}
-	else 
+	else
 	{
 		// Else, choose the first probe (in probe order, not in distance) that hits something tases it
 		if (probes[probe1].TaserHit)
@@ -410,13 +410,13 @@ simulated function TraceFireInternal(int cartridge)
 		}
 	}
 
-	if (ActualTasedVictim != None) 
+	if (ActualTasedVictim != None)
 	{
 		ICanBeTased(ActualTasedVictim).ReactToBeingTased(self, PlayerTasedDuration, AITasedDuration);
 		if (ClassIsChildOf(ActualTasedVictim.Class, class'SwatPlayer'))
 		{
 			ActualTasedDuration = PlayerTasedDuration;
-		} 
+		}
 		else
 		{
 			ActualTasedDuration = AITasedDuration;
@@ -424,8 +424,6 @@ simulated function TraceFireInternal(int cartridge)
 	}
 
     InitializeProbes(cartridge);
-	
-    PlayerController(owner).AddRecoil(RecoilBackDuration, RecoilForeDuration, RecoilMagnitude);
 
 	// for debugging, to see which probe is which
 	//probes[0].Probe.SetDrawScale(5.0);
@@ -443,7 +441,7 @@ simulated function InitializeProbes(int cartridge)
 	probe1 = 2*cartridge;
 	probe2 = 2*cartridge+1;
 
-	for (i = probe1; i <= probe2; i++) 
+	for (i = probe1; i <= probe2; i++)
     {
 		//log("Taser fire victim: " $ probes[i].Victim @ probes[i].VictimBone @ probes[i].TargetLocation);
 
@@ -454,22 +452,22 @@ simulated function InitializeProbes(int cartridge)
 
 		// Make the TargetBoneOffset be in local coordinates of the bone,
 		// so that the target will move correctly with the bone
-		if (probes[i].Victim != None) 
+		if (probes[i].Victim != None)
         {
-			if (probes[i].VictimBone != '') 
+			if (probes[i].VictimBone != '')
             {
 				boneCoords = probes[i].Victim.GetBoneCoords(probes[i].VictimBone, true);
 				targetOffset = probes[i].TargetLocation - boneCoords.Origin;
 				probes[i].TargetBoneOffset.X = targetOffset Dot boneCoords.XAxis;
 				probes[i].TargetBoneOffset.Y = targetOffset Dot boneCoords.YAxis;
 				probes[i].TargetBoneOffset.Z = targetOffset Dot boneCoords.ZAxis;
-			} 
-            else 
+			}
+            else
             {
 				probes[i].TargetBoneOffset = probes[i].TargetLocation - probes[i].Victim.Location;
 			}
-		} 
-        else 
+		}
+        else
         {
 			probes[i].TargetBoneOffset.X = 0.0;
 			probes[i].TargetBoneOffset.Y = 0.0;
@@ -480,15 +478,15 @@ simulated function InitializeProbes(int cartridge)
 
 		probes[i].ProbeInitialLocation = probes[i].ProbeOriginLocation;
 
-		if (probes[i].Probe == None) 
+		if (probes[i].Probe == None)
 		{
-			probes[i].Probe = Spawn(ProbeClass, self, ProbePartNames[i], 
-									probes[i].ProbeOriginLocation, 
+			probes[i].Probe = Spawn(ProbeClass, self, ProbePartNames[i],
+									probes[i].ProbeOriginLocation,
                                     probes[i].ProbeOriginRotation,
                                     true // bNoCollisionFail
                                     );
-		} 
-        else 
+		}
+        else
         {
 			probes[i].Probe.SetLocation(probes[i].ProbeOriginLocation);
 			probes[i].Probe.SetRotation(probes[i].ProbeOriginRotation);
@@ -499,26 +497,26 @@ simulated function InitializeProbes(int cartridge)
 		probes[i].Probe.OptimizeIn();
 		probes[i].Probe.Show();
 
-		if (probes[i].TaserWire == None) 
+		if (probes[i].TaserWire == None)
 		{
-			probes[i].TaserWire = Spawn(TaserWireClass, self, WirePartNames[i], 
-                                        probes[i].ProbeOriginLocation, 
+			probes[i].TaserWire = Spawn(TaserWireClass, self, WirePartNames[i],
+                                        probes[i].ProbeOriginLocation,
                                         probes[i].ProbeOriginRotation,
                                         true // bNoCollisionFail
                                         );
-		} 
-        else 
+		}
+        else
         {
 			probes[i].TaserWire.SetLocation(probes[i].ProbeOriginLocation);
 			probes[i].TaserWire.SetRotation(probes[i].ProbeOriginRotation);
 		}
 		assert(probes[i].TaserWire != None);
-	
+
 		probes[i].TaserWire.OptimizeIn();
 		probes[i].TaserWire.Show();
 
 		probes[i].TaserWire.SetPhysics(PHYS_None);
-        
+
 		probes[i].TaserWire.minYZScale      = WireMinYZScale;
 		probes[i].TaserWire.maxYZScale      = WireMaxYZScale;
 		probes[i].TaserWire.endEffectorName = WireEndEffectorName;
@@ -529,7 +527,7 @@ simulated function InitializeProbes(int cartridge)
 		probes[i].TravelTime = travelDistance / ProbeVisualSpeed;
 		probes[i].CurrentTravelTime = 0;
 
-		heightPeak = FMin(WireMaxHeightFraction * travelDistance, WireMaxHeight); 
+		heightPeak = FMin(WireMaxHeightFraction * travelDistance, WireMaxHeight);
 
 		// Set the velocity so that the physics system has an initial velocity
 		// at the end of the travel time to use when switching to PHYS_Falling
@@ -540,7 +538,7 @@ simulated function InitializeProbes(int cartridge)
 
 		probes[i].StickToTarget = false;
         //log("Victim = "$probes[i].Victim.Name$" VictimBones = "$probes[i].VictimBone$" StickPolicy = "$StickToWhat$" = "$GetEnum(EStickPolicy, StickToWhat));
-		if (probes[i].VictimBone != '') 
+		if (probes[i].VictimBone != '')
         {
             // Check if the victim is both taseable in theory (ICanBeTased) AND
             // is *currently* taseable (e.g., not wearing armor that blocks tasing,
@@ -549,41 +547,41 @@ simulated function InitializeProbes(int cartridge)
                  ICanBeTased(probes[i].Victim).IsVulnerableToTaser())
             {
 				//log("hit Taseable");
-				if (StickToWhat >= STICK_TaseablePawns) 
+				if (StickToWhat >= STICK_TaseablePawns)
                 {
 					probes[i].StickToTarget = true;
 				}
-			} 
-            else 
+			}
+            else
             {
 				//log("hit HasBones");
-				if (StickToWhat >= STICK_SkeletalMeshes) 
+				if (StickToWhat >= STICK_SkeletalMeshes)
                 {
 					probes[i].StickToTarget = true;
 				}
 			}
-		} 
-        else if (probes[i].Victim != None) 
+		}
+        else if (probes[i].Victim != None)
         {
-			if (probes[i].Victim.IsA('LevelInfo')) 
+			if (probes[i].Victim.IsA('LevelInfo'))
             {
 				//log("hit LevelInfo");
-				if (StickToWhat >= STICK_AllGeometry) 
-                {
-					probes[i].StickToTarget = true;
-				}
-			} 
-            else 
-            {
-				//log("hit noBones");
-				if (StickToWhat >= STICK_Actors) 
+				if (StickToWhat >= STICK_AllGeometry)
                 {
 					probes[i].StickToTarget = true;
 				}
 			}
-		} 
+            else
+            {
+				//log("hit noBones");
+				if (StickToWhat >= STICK_Actors)
+                {
+					probes[i].StickToTarget = true;
+				}
+			}
+		}
         else // taser hit nothing
-        { 
+        {
 			//log("hit nothing");
 			if (StickToWhat >= STICK_Always)
             {
@@ -591,20 +589,20 @@ simulated function InitializeProbes(int cartridge)
 			}
 		}
 
-		if (probes[i].StickToTarget == true && TaserHit) 
+		if (probes[i].StickToTarget == true && TaserHit)
 		{
 			probes[i].PostTravelTime = ProbeStickTime;
 		}
-		else 
+		else
 		{
 			probes[i].PostTravelTime = ProbeFallDuration;
 		}
 
-		//log("stick to target = " $ probes[i].StickToTarget @ 
+		//log("stick to target = " $ probes[i].StickToTarget @
 		//	" should stick to: " $ GetEnum(EStickPolicy, StickToWhat) $ " ("$StickToWhat$")");
  	}
 
-	if (TaserHit) 
+	if (TaserHit)
 	{
 		// make the post travel time the same because it looks weird if one
 		// probe lasts longer than the other.
@@ -664,7 +662,7 @@ simulated function GetProbeOrigin(int probeInd)
     else
     {
 #if 0 // Disabled because the weapon is currently static mesh, not skeletal mesh with bones
-        //ProbeBoneCoords = GetThirdPersonModel().GetBoneCoords(ThirdPersonProbeBones[probeInd], true);    //use socket 
+        //ProbeBoneCoords = GetThirdPersonModel().GetBoneCoords(ThirdPersonProbeBones[probeInd], true);    //use socket
 #else
 		// Use the taser's origin and add the offset in the taser's coordinate system
 		probes[probeInd].ProbeOriginLocation = GetThirdPersonModel().Location;
@@ -687,24 +685,24 @@ event LostChild( Actor Other )
 	local int i;
 
     Super.LostChild(Other);
- 
+
     // Sometimes probes and wires can slip through corners in bsp and fall
     // out of the world, so we need to clean up properly in this case
     deadProbe = TaserProbeBase(Other);
     deadWire = TaserWire(Other);
-	
+
     if (deadProbe != None)
     {
         //log("TaserProbe "$deadProbe.Name$" destroyed; cleaning up the Taser references");
 		for (i = 0; i < NProbes; ++i)
-		    if (probes[i].Probe == deadProbe) 
+		    if (probes[i].Probe == deadProbe)
 			    probes[i].Probe = None;
     }
     else if (deadWire != None)
     {
         //log("TaserWire "$deadWire.Name$" destroyed; cleaning up the Taser references");
 		for (i = 0; i < NProbes; ++i)
-			if (probes[i].TaserWire == deadWire) 
+			if (probes[i].TaserWire == deadWire)
 				probes[i].TaserWire = None;
     }
 }
@@ -746,9 +744,9 @@ simulated function Tick(float dTime)
 		if (probes[i].Victim != None) {
 			if (probes[i].VictimBone != '') {
 				boneCoords = probes[i].Victim.GetBoneCoords(probes[i].VictimBone, true);
-				probes[i].TargetLocation = boneCoords.Origin + 
-					probes[i].TargetBoneOffset.X * boneCoords.XAxis + 
-					probes[i].TargetBoneOffset.Y * boneCoords.YAxis + 
+				probes[i].TargetLocation = boneCoords.Origin +
+					probes[i].TargetBoneOffset.X * boneCoords.XAxis +
+					probes[i].TargetBoneOffset.Y * boneCoords.YAxis +
 					probes[i].TargetBoneOffset.Z * boneCoords.ZAxis;
 			} else {
 				probes[i].TargetLocation = probes[i].Victim.Location + probes[i].TargetBoneOffset;
@@ -773,7 +771,7 @@ simulated function Tick(float dTime)
 		diffSize = VSize(diff);
 		diff *= timeScale;
 		if (WireMaxHeightFraction > 0) {
-			heightPeak = FMin(WireMaxHeightFraction * diffSize, WireMaxHeight); 
+			heightPeak = FMin(WireMaxHeightFraction * diffSize, WireMaxHeight);
 			diff.Z    += heightPeak * (1.0 - 4.0*Square(timeFraction - 0.5));
 		}
 
@@ -812,15 +810,15 @@ simulated function Tick(float dTime)
 				SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(Pawn(probes[i].Victim), owner);
 				probes[0].DidDamageAlready = true;
 			}
-			
-			if (probes[i].StickToTarget) 
+
+			if (probes[i].StickToTarget)
 			{
                 //log("Probe["$i$"] sticking to target "$(probes[i].Victim.Name));
 				// stay attached to target
 				probes[i].Probe.SetLocation(probes[i].ProbeOriginLocation + diff);
-				if (probes[i].ProbeState < PROBE_AfterHit) 
+				if (probes[i].ProbeState < PROBE_AfterHit)
 				{
-					if (probes[i].Victim  != None) 
+					if (probes[i].Victim  != None)
 					{
 						probes[i].Probe.TriggerEffectEvent('BulletHit', ,probes[i].HitMaterial);
 					}
@@ -834,20 +832,20 @@ simulated function Tick(float dTime)
 					// because the alpha stays at 0.
 					probes[i].TaserWire.AnimBlendToAlpha(1, 1.0, WireSlackTweenTime);
 				}
-			} 
-			else 
+			}
+			else
 			{
 				//they should start falling
                 //log("Probe["$i$"] falling probestate="$GetEnum(EProbeState, probes[i].ProbeState)$" ProbeRecoilTime="$probeRecoils[i].recoilTime);
 				if (probes[i].ProbeState < PROBE_AfterHit) {
-					if (probes[i].Victim  != None) 
+					if (probes[i].Victim  != None)
 					{
 						probes[i].Probe.TriggerEffectEvent('BulletHit', ,probes[i].HitMaterial);
 					}
 					probeRecoils[i].recoilTime = 0;
 					diff = Normal(probes[i].Probe.Location - probes[i].ProbeOriginLocation);
 					// get the component along the wire direction
-					probeRecoils[i].initialVelocity = (probes[i].Probe.Velocity	Dot diff) * diff;	
+					probeRecoils[i].initialVelocity = (probes[i].Probe.Velocity	Dot diff) * diff;
 					probeRecoils[i].initialSpeed = VSize(probeRecoils[i].initialVelocity);
                     probes[i].Probe.StartPhysics();
 					probes[i].ProbeState = PROBE_AfterHit;
@@ -869,17 +867,17 @@ simulated function Tick(float dTime)
 				// perform the recoil action by putting the velocity component
 				// along the wire on a cos, and fading from the initial
 				// speed to the final recoil speed
-				if (probeRecoils[i].recoilTime <= ProbeRecoilTime) 
+				if (probeRecoils[i].recoilTime <= ProbeRecoilTime)
 				{
 					diff = Normal(probes[i].Probe.Location - probes[i].ProbeOriginLocation);
 					// subtract out the component along the wire direction
 					probes[i].Probe.Velocity -= (probes[i].Probe.Velocity Dot diff) * diff;
-					
-					if (ProbeRecoilTime > 0) 
+
+					if (ProbeRecoilTime > 0)
 					{
-						
+
 						timeFraction = probeRecoils[i].recoilTime / ProbeRecoilTime;
-						recoilSpeedFade    = probeRecoils[i].initialSpeed + 
+						recoilSpeedFade    = probeRecoils[i].initialSpeed +
 							timeFraction * (ProbeFinalRecoilSpeed -	probeRecoils[i].initialSpeed);
 						// add back in the oscillated velocity along the wire direction
 						probes[i].Probe.Velocity +=	(recoilSpeedFade * Cos(Pi * timeFraction)) * diff;
@@ -894,13 +892,13 @@ simulated function Tick(float dTime)
 				}
 			}
 
-			if (probes[i].WireState == WIRE_AttachedToGun) 
+			if (probes[i].WireState == WIRE_AttachedToGun)
 			{
 				// If the Taser gun moves more than a distance threshold, then
 				// detach the wire from it, and accelerate the fade out time,
 				// so it initiates fadeout right away
 				if (VDistSquared(probes[i].ProbeInitialLocation,probes[i].ProbeOriginLocation) >
-					Square(WireDetachDistance)) 
+					Square(WireDetachDistance))
 				{
 					probes[i].WireState = WIRE_Falling;
 					probes[i].TaserWire.SetPhysics(PHYS_Falling);
@@ -922,7 +920,7 @@ simulated function Tick(float dTime)
 			}
 		}
 
-		if (probes[i].WireState == WIRE_AttachedToGun) 
+		if (probes[i].WireState == WIRE_AttachedToGun)
 		{
 			probes[i].TaserWire.SetStartLocation(probes[i].ProbeOriginLocation);
 		}
@@ -1025,13 +1023,13 @@ defaultproperties
     Slot=Slot_Invalid
     PlayerTasedDuration=10.0
     AITasedDuration=10.0
-	WireZapAnimation[0]=Fire1 
-	WireZapAnimation[1]=Fire2 
-	WireSlackAnimation[0]=Slack1 
-	WireSlackAnimation[1]=Slack2 
+	WireZapAnimation[0]=Fire1
+	WireZapAnimation[1]=Fire2
+	WireSlackAnimation[0]=Slack1
+	WireSlackAnimation[1]=Slack2
 	WireForceSlackTimeFraction=0.7
-	WireSlackAnimRate=2.5 
-	WireSlackTweenTime=.5 
+	WireSlackAnimRate=2.5
+	WireSlackTweenTime=.5
 	WireSlackStartSpeed=100
 	WireEndEffectorName=TaserProng
 	WireMinYZScale=0.1
@@ -1063,4 +1061,5 @@ defaultproperties
     ThirdPersonProbeOffset[1]=(X=0,Y=-11,Z=5.5)
 
 	bIsLessLethal=true
+	bPenetratesDoors=false
 }

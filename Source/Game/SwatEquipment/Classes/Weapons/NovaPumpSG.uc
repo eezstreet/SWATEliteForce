@@ -1,6 +1,1 @@
-class NovaPumpSG extends Shotgun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class NovaPumpSG extends Shotgun config(SwatEquipment);

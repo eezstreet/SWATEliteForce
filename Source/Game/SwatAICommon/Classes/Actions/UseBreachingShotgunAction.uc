@@ -25,7 +25,7 @@ var(parameters) private Door            TargetDoor;
 var(parameters) private NavigationPoint PostBreachPoint;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Init / Cleanup
 
 function initAction(AI_Resource r, AI_Goal goal)
@@ -64,7 +64,7 @@ function cleanup()
 
 	// re-enable collision avoidance (if it isn't already)
 	m_Pawn.EnableCollisionAvoidance();
-	
+
 	if ((BreachingShotgun != None) && !BreachingShotgun.IsIdle())
 	{
 		BreachingShotgun.AIInterrupt();
@@ -116,11 +116,14 @@ latent function EquipBreachingShotgun()
     Officer = ISwatOfficer(m_Pawn);
     assert(Officer != None);
 
-    BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_Breaching));
+    BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_PrimaryWeapon));
+		if(BreachingShotgun == None || !BreachingShotgun.IsA('Shotgun'))
+			BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_SecondaryWeapon));
+			
     // If we've been put into this action, we expect that the officer has a
     // breaching shotgun
     assert(BreachingShotgun != None);
-    assert(BreachingShotgun.IsA('BreachingShotgun'));
+    assert(BreachingShotgun.IsA('Shotgun'));
 
     if (!BreachingShotgun.IsEquipped())
     {
@@ -203,7 +206,7 @@ latent function BreachDoorWithShotgun()
 
     // @NOTE: Pause for a brief moment before shooting to make the shot look
     // more deliberate
-    Sleep(0.4);
+    Sleep(1.0);
 
 	CheckBreachingShotgunAmmunition();
 
@@ -211,13 +214,14 @@ latent function BreachDoorWithShotgun()
 	ISwatDoor(TargetDoor).UnRegisterInterestedInDoorOpening(self);
 
 	BreachingShotgun.SetPerfectAimNextShot();
-	BreachingShotgun.LatentUse();
 
-	// @HACK: If the door wasn't broken by the breaching shotgun, blast it anyways.
-	if (! ISwatDoor(TargetDoor).IsBroken())
-	{
-		ISwatDoor(TargetDoor).Blasted(m_Pawn);
-	}
+	// @HACK Break the door "before firing the shotgun. The AI literally always misses,
+	// and there is a very noticable delay if we automatically break the door AFTER firing
+	// the shotgun, but if we break the door FIRST it appears to happen exactly when the
+	// shot is fired. In other words, this solution looks perfect. -K.F.
+
+	ISwatDoor(TargetDoor).Blasted(m_Pawn);
+	BreachingShotgun.LatentUse();
 }
 
 function TriggerReportedDeployingShotgunSpeech()
@@ -247,6 +251,9 @@ Begin:
 
 		AimAtDoorKnob();
 		EquipBreachingShotgun();
+
+		WaitForZulu();
+
 		BreachDoorWithShotgun();
 
 		StopAimingAtDoorKnob();

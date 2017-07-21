@@ -3,31 +3,31 @@ class HandheldEquipment extends Equipment
     abstract
     native;
 
-var config int Range;   //the effective range of this equipment
+var(Firing) config int Range;   //the effective range of this equipment
 
-var config class<HandheldEquipmentModel> FirstPersonModelClass;
-var config class<HandheldEquipmentModel> ThirdPersonModelClass;
+var(Viewmodel) config class<HandheldEquipmentModel> FirstPersonModelClass;
+var(Viewmodel) config class<HandheldEquipmentModel> ThirdPersonModelClass;
 
 //if specified, these model classes will be used in multiplayer
-var config class<HandheldEquipmentModel> MPFirstPersonModelClass;
-var config class<HandheldEquipmentModel> MPThirdPersonModelClass;
+var(Viewmodel) config class<HandheldEquipmentModel> MPFirstPersonModelClass;
+var(Viewmodel) config class<HandheldEquipmentModel> MPThirdPersonModelClass;
 
-var config localized   String  Description;
-var config localized   String  FriendlyName;
-var config    Material GUIImage;
+var(GUI) config localized   String  Description;
+var(GUI) config localized   String  FriendlyName;
+var(GUI) config    Material GUIImage;
 
 var bool ShouldLowReady;
 
-var config float ZoomedFOV;				// FOV when zoomed in
-var config float ZoomTime;				// time it takes to zoom in
-var config Material ZoomBlurOverlay;	// 512x512 Material that is draw as an overlay when the item is zoomed in; set to None for no overlay
+var(Zoom) config float ZoomedFOV;				// FOV when zoomed in
+var(Zoom) config float ZoomTime;				// time it takes to zoom in
+var(Zoom) config Material ZoomBlurOverlay;	// 512x512 Material that is draw as an overlay when the item is zoomed in; set to None for no overlay
 
-var config name		LightstickThrowAnimPostfix	"Postfix appended to the third person lightstick throw animation when pawn is using this equipment.";
+var(Viewmodel) config name		LightstickThrowAnimPostfix	"Postfix appended to the third person lightstick throw animation when pawn is using this equipment.";
 
 
 enum EquipmentSlot
 {
-    Slot_Invalid,           //0
+  Slot_Invalid,           //0
 	Slot_PrimaryWeapon,     //1
 	Slot_SecondaryWeapon,   //2
 	Slot_Flashbang,         //3
@@ -61,15 +61,15 @@ enum Pocket
     Pocket_EquipThree,             //  6
     Pocket_EquipFour,              //  7
     Pocket_EquipFive,              //  8
-    Pocket_Breaching,              //  9
+    Pocket_EquipSix,               //  9
     Pocket_BodyArmor,              // 10
     Pocket_HeadArmor,              // 11
     Pocket_Toolkit,                // 12
     Pocket_Detonator,              // 13
     Pocket_Cuffs,                  // 14
     Pocket_IAmCuffed,              // 15
-    Pocket_HiddenC2Charge1,        // 16
-    Pocket_HiddenC2Charge2,        // 17
+    Pocket_Unused1,                // 16
+    Pocket_Unused2,                // 17
     Pocket_SimpleBackPouch,        // 18
     Pocket_SimpleHipPouch,         // 19
     Pocket_SimpleHolster,          // 20
@@ -77,7 +77,7 @@ enum Pocket
     Pocket_SimpleRadioPouch,       // 22
     Pocket_HeadEffectProtection,   // 23
     Pocket_Lightstick,             // 24
-	Pocket_CustomSkin,             // 25
+	  Pocket_CustomSkin,             // 25
     Pocket_Invalid                 // 26
 };
 
@@ -101,36 +101,41 @@ var protected ActionStatus UnequippingStatus;
 var protected ActionStatus UsingStatus;
 var protected ActionStatus MeleeingStatus;
 
-var config float EquipAnimationRate;
-var config float UnequipAnimationRate;
-var config float UseAnimationRate;
-var config float MeleeAnimationRate;
-var config bool InstantUnequip;
+var(Viewmodel) config float EquipAnimationRate;
+var(Viewmodel) config float UnequipAnimationRate;
+var(Viewmodel) config float UseAnimationRate;
+var(Viewmodel) config float MeleeAnimationRate;
+var(Viewmodel) config bool InstantUnequip;
 
 var bool		 bAbleToMelee;
 var bool		 MeleeAnimNotifierTriggered;
-var config float MeleeRange;
-var config float MeleeDamage;
-var config float MeleePlayerStingDuration;
-var config float MeleeHeavilyArmoredPlayerStingDuration;
-var config float MeleeNonArmoredPlayerStingDuration;
-var config float MeleeAIStingDuration;
+var(Melee) config float MeleeRange;
+var(Melee) config float MeleeDamage;
+var(Melee) config float MeleePlayerStingDuration;
+var(Melee) config float MeleeHeavilyArmoredPlayerStingDuration;
+var(Melee) config float MeleeNonArmoredPlayerStingDuration;
+var(Melee) config float MeleeAIStingDuration;
 
-var private bool Available;             //eg. not Thrown.  We don't remove items from LoadOut so that we have a record of them having been there.
+var bool Available;
 var bool UnavailableAfterUsed;          //if true, then Available is set to false after used
 var bool EquipOtherAfterUsed;           //if true, then a Holder should DoDefaultEquip() after this item is used.
                                         //  Note: if UnavailableAfterUsed is true, then EquipOtherAfterUsed is assumed!
 var bool PlayerCanUnequip;              //if false, then a player cannot simply unequip this piece of equipment.  Intended for the IAmCuffed HandheldEquipment.
-var config bool ShouldHaveFirstPersonModel;     //Most HandheldEquipment requires a valid FirstPersonModelClass.  But some (eg. IAmCuffed) don't... so this allows us to
+var(Viewmodel) config bool ShouldHaveFirstPersonModel;     //Most HandheldEquipment requires a valid FirstPersonModelClass.  But some (eg. IAmCuffed) don't... so this allows us to
                                                 //  not provide a FirstPersonModel, and at the same time assert that HHEquipment that should have a FirstPersonModel does.
-var config bool ShouldHaveThirdPersonModel;     //Most HandheldEquipment requires a valid ThirdPersonModelClass.  But some (eg. SniperRifle) don't... so this allows us to
+var(Viewmodel) config bool ShouldHaveThirdPersonModel;     //Most HandheldEquipment requires a valid ThirdPersonModelClass.  But some (eg. SniperRifle) don't... so this allows us to
                                                 //  not provide a ThirdPersonModel, and at the same time assert that HHEquipment that should have a ThirdPersonModel does.
-
-var float FramerateCompensationDelay;   //[see comments in DoEquipping()]
 
 var HandheldEquipmentPickup Pickup;
 
-var private config float RagdollDeathImpactMomentumMultiplier;
+var() private config float RagdollDeathImpactMomentumMultiplier;
+var private int AvailableCount;             //eg. not Thrown.  We don't remove items from LoadOut so that we have a record of them having been there.
+
+replication
+{
+  reliable if(Role == ROLE_Authority)
+    AvailableCount;
+}
 
 function PostBeginPlay()
 {
@@ -170,11 +175,6 @@ simulated function CreateModels()
             "[tcohen] The class "$class.name
             $" should have a valid FirstPersonModelClass, but it doesn't.  In SwatEquipment.ini, [SwatEquipment."$class.name
             $", please specify a valid FirstPersonModelClass, or set ShouldHaveFirstPersonModel=false.");
-    else
-        assertWithDescription(SelectedFirstPersonModelClass == None,
-            "[tcohen] The class "$class.name
-            $" should not have a valid FirstPersonModelClass, but it does.  In SwatEquipment.ini, [SwatEquipment."$class.name
-            $", please specify FirstPersonModelClass=None, or set ShouldHaveFirstPersonModel=true.");
 
     if (ShouldHaveFirstPersonModel && GetHands() != None )
     {
@@ -467,7 +467,7 @@ simulated latent private function DoEquipping()
     OwnersActiveItem = Pawn(Owner).GetActiveItem();
     if (OwnersActiveItem != None && OwnersActiveItem != self)
     {
-        if (OwnersActiveItem.Available)
+        if (OwnersActiveItem.AvailableCount > 0)
         {
             OwnersActiveItem.Unequip();
             if (Pickup != None)
@@ -520,7 +520,7 @@ simulated latent private function DoEquipping()
           && Pawn(Owner).Controller != None
           &&  Pawn(Owner).Controller.GetEquipmentSlotForQualify() != SLOT_Invalid )
     {
-        Sleep(FramerateCompensationDelay);
+        Sleep(0.2);
     }
 
 	OnPostEquipped();
@@ -673,6 +673,7 @@ simulated function HACK_QuickUnequipForAIDropWeapon()
     ThirdPersonModel.OnUnequipKeyFrame(); // true means 'never hide after unequipping'
 
     // disable the weapon, it can no longer be used
+    log(self$"SetAvailable(false) because HACK_QuickUnequipForAIDropWeapon");
     SetAvailable(false);
 
     // HandheldEquipmentModels are hidden in OnUnEquipKeyframe if they
@@ -842,6 +843,11 @@ simulated final function OnUseKeyFrame( optional bool ForceUse )
 
         UsedHook();
 
+        if(UnavailableAfterUsed)
+          AvailableCount--;
+
+        log(self$"::OnUseKeyFrame. AvailableCount is now "$AvailableCount);
+
         UpdateAvailability();
 
         UsingStatus = ActionStatus_HitKeyFrame;
@@ -854,8 +860,17 @@ simulated function UsedHook();    //for subclasses
 //  even in training
 simulated function UpdateAvailability()
 {
-    if (UnavailableAfterUsed && !Level.IsTraining)
-        SetAvailable(false);
+    if (AvailableCount <= 0 && !Level.IsTraining)
+      SetAvailable(false);
+    if(AvailableCount < 0)
+      AvailableCount = 0; // Don't let this go negative
+    if(Level.IsTraining)
+      AvailableCount = 1;
+}
+
+simulated function DecrementAvailableCount()
+{
+  UpdateAvailability();
 }
 
 simulated final protected function OnUsingFinished()
@@ -1051,8 +1066,9 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
     }
     else if (Instigator.IsA('SwatAI'))
     {
-		outLocation  = Instigator.GetAimOrigin();
-		outDirection = Instigator.GetAimRotation();
+      outLocation = Instigator.GetAimLocation(self);
+		    //outLocation  = Instigator.GetAimOrigin();
+		  outDirection = Instigator.GetAimRotation();
     }
     else
 		assertWithDescription(false,
@@ -1124,12 +1140,49 @@ simulated final function bool HasMeleeTarget()
 
 simulated final function bool IsAvailable()
 {
-    return Available;
+    return AvailableCount > 0 && Available;
+}
+
+simulated final function int GetAvailableCount()
+{
+  return AvailableCount;
+}
+
+simulated final function SetAvailableCount(int NewCount)
+{
+  if(NewCount == 0)
+  {
+    log(self$"SetAvailable(false) because SetAvailableCount is 0");
+    SetAvailable(false);
+  }
+  else
+  {
+    AvailableCount = NewCount;
+    SetAvailable(true);
+  }
+}
+
+simulated function int GetDefaultAvailableCount()
+{
+  return 1;
 }
 
 simulated final function SetAvailable(bool inAvailable)
 {
-	Available = inAvailable;
+  if(!inAvailable)
+  {
+    log(self$"SetAvailable() set to "$inAvailable);
+  }
+  if(Available && !inAvailable)
+  {
+    AvailableCount = 0;
+  }
+  else if(inAvailable)
+  {
+    AvailableCount = GetDefaultAvailableCount();
+  }
+
+  Available = inAvailable;
 
     if ( !inAvailable )
     {
@@ -1221,6 +1274,74 @@ static function class<Actor> GetRenderableActorClass()
     return default.ThirdPersonModelClass;
 }
 
+simulated function vector GetDefaultLocationOffset()
+{
+	local vector DefaultLocationOffset;
+
+	return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+	local Rotator DefaultRotationOffset;
+
+	return DefaultRotationOffset;
+}
+
+simulated function bool ShouldLowReadyInIronsights()
+{
+  return true;
+}
+
+simulated function bool ShouldHideCrosshairsInIronsights()
+{
+  return false; // Only weapons do
+}
+
+simulated function vector GetIronsightsLocationOffset()
+{
+	local vector IronsightsLocation;
+
+	return IronsightsLocation;
+}
+
+simulated function Rotator GetIronsightsRotationOffset()
+{
+	local Rotator IronsightsRotation;
+
+	return IronsightsRotation;
+}
+
+simulated function float GetViewInertia()
+{
+	local float Inertia;
+
+	return Inertia;
+}
+
+simulated function float GetMaxInertiaOffset()
+{
+	local float Offset;
+
+	return Offset;
+}
+
+simulated function float GetIronSightAnimationProgress()
+{
+	local float IronSightAnimationPosition;
+
+	return IronSightAnimationPosition;
+}
+simulated function SetIronSightAnimationProgress(float value) { }
+
+simulated function array<vector> GetAnimationSplinePoints()
+{
+	local array<vector> AnimationSplinePoints;
+
+	return AnimationSplinePoints;
+}
+simulated function AddAnimationSplinePoint(vector value) { }
+
 event Destroyed()
 {
     if (FirstPersonModel != None)
@@ -1262,7 +1383,6 @@ function AIInterrupt()
     else if (UnequippingStatus > ActionStatus_Idle) AIInterrupt_Unequipping();
     else if (UsingStatus > ActionStatus_Idle)       AIInterrupt_Using();
     else                                            AIInterruptHandheldEquipmentHook();
-
 	Pawn(Owner).AnimStopEquipment();
 }
 protected function AIInterruptHandheldEquipmentHook(); //for subclasses
@@ -1281,7 +1401,7 @@ protected function AIInterrupt_Unequipping()
 
 protected function AIInterrupt_Using()
 {
-    GotoState('');
+    //GotoState('');  // for some reason this line is causing crashes...sp00ky
     UsingStatus = ActionStatus_Idle;
 }
 
@@ -1310,6 +1430,26 @@ cpptext
     UBOOL InFirstPersonView();
 }
 
+simulated function float GetWeight()
+{
+  return AvailableCount * GetItemWeight();
+}
+
+simulated function float GetBulk()
+{
+  return AvailableCount * GetItemBulk();
+}
+
+simulated function float GetItemWeight()
+{
+  return 0.0f; // Has to be implemented by subclasses
+}
+
+simulated function float GetItemBulk()
+{
+  return 0.0f;
+}
+
 defaultproperties
 {
     Slot=Slot_Invalid
@@ -1327,7 +1467,7 @@ defaultproperties
     UseAnimationRate=1.0
 	MeleeAnimationRate=1.0
 
-	MeleeRange=170
+	MeleeRange=85
 	MeleeDamage=5
 	MeleePlayerStingDuration=1.5
 	MeleeHeavilyArmoredPlayerStingDuration=0.5
@@ -1338,6 +1478,5 @@ defaultproperties
 
     ZoomedFOV=0
 
-    FramerateCompensationDelay=0.2
 	ZoomBlurOverlay=Material'HUD.DefaultZoomBlurOverlay'
 }

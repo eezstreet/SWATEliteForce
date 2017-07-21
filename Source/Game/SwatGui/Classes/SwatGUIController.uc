@@ -27,6 +27,7 @@ enum eIMDType
 
 var(SwatGUIController) Editinline EditConst	Array<GUIPage>	StorageStack "Holds an out-of-game set of page names for recreating the stack";
 
+var(SwatGUIController) public EditInline EditConst SwatSPLoadoutPanel              SPLoadoutPanel "The loadout panel that should be used to display messages";
 var(SwatGUIController) private Editinline EditConst SwatMPLoadoutPanel              MPLoadoutPanel "The loadout panel that should be used to display messages";
 var(SwatGUIController) private Editinline EditConst array<SwatChatPanel>            ChatPanel "The chat panel that should be used to display messages";
 var(SwatGUIController) private Editinline EditConst SwatImportantMessageDisplay     ImportantMessageDisplays[eIMDType.EnumCount] "The important message display";
@@ -166,6 +167,7 @@ log("[dkaplan] >>> OnRoleChange of (SwatGUIController) "$self);
 function OnStateChange( eSwatGameState oldState, eSwatGameState newState, optional EMPMode CurrentGameMode )
 {
     local string CustomMissionLabel;
+    local ServerSettings Settings;
 log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
 //LogMenuStack();
 //LogStorageStack();
@@ -252,19 +254,36 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
         case GAMESTATE_PostGame:
             HUDPage(GetHudPage()).OnGameOver();
 
-            if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
+            if( (GuiConfig.SwatGameRole == GAMEROLE_MP_Host && !coopcampaign) ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
+                // TODO: Check if in a campaign coop game on client, to set score as green
+                InternalOpenMenu( MPPopupMenu );
+            }
+            else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
+            {
+
+
+                GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
+                if(Campaign != None) {
+                  Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+
+                  Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
+                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+
+                  Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
+                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+                }
                 InternalOpenMenu( MPPopupMenu );
             }
             else
             {
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
 
-                if( GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
-                    Campaign != None )
+                if( (GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
+                    Campaign != None) || coopcampaign )
                 {
-                    Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                    Campaign.MissionEnded(GuiConfig.GetCurrentMissionName(), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
                 }
                 else if( GuiConfig.SwatGameRole == GAMEROLE_SP_Custom )
                 {
@@ -273,7 +292,11 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
                 }
 
-                OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
+                if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
+                  GameOver();
+                } else {
+                  OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
+                }
             }
             break;
         case GAMESTATE_ConnectionFailed:
@@ -364,7 +387,6 @@ private function ClearChatHistory()
 function bool OnMessageRecieved( String Msg, Name Type )
 {
 //log( "[dkaplan]: >>>OnMessageRecieved: Msg = "$Msg$", Type = "$Type$", ViewportOwner.Actor = "$ViewportOwner.Actor);
-
     switch (Type)
     {
         case 'Connected':
@@ -378,6 +400,8 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'KickBan':
         case 'Say':
         case 'TeamSay':
+        case 'SayLocalized':
+        case 'TeamSayLocalized':
         case 'CommandGiven':
         case 'SwatKill':
         case 'SuspectsKill':
@@ -390,32 +414,26 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'PlayerConnect':
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
-        case 'NameChange':
-        case 'Kick':
-        case 'KickBan':
-		case 'KickReferendumStarted':
-		case 'BanReferendumStarted':
-		case 'LeaderReferendumStarted':
-		case 'MapReferendumStarted':
-		case 'ReferendumAlreadyActive':
-		case 'ReferendumStartCooldown':
-		case 'PlayerImmuneFromReferendum':
-		case 'ReferendumAgainstAdmin':
-		case 'ReferendumsDisabled':
-		case 'LeaderVoteTeamMismatch':
-		case 'YesVote':
-		case 'NoVote':
-		case 'ReferendumSucceeded':
-		case 'ReferendumFailed':
-		case 'CoopQMM':
-		case 'SmashAndGrabArrestTimeDeduction':
-		case 'SmashAndGrabGotItem':
-		case 'SmashAndGrabDroppedItem':
-		case 'Stats':
-		case 'CoopLeaderPromoted':
-		case 'CoopMessage':
-		case 'StatsValidatedMessage':
-		case 'StatsBadProfileMessage':
+        case 'ReferendumStarted':
+		    case 'ReferendumAlreadyActive':
+		    case 'ReferendumStartCooldown':
+		    case 'PlayerImmuneFromReferendum':
+		    case 'ReferendumAgainstAdmin':
+		    case 'ReferendumsDisabled':
+		    case 'LeaderVoteTeamMismatch':
+		    case 'YesVote':
+		    case 'NoVote':
+		    case 'ReferendumSucceeded':
+		    case 'ReferendumFailed':
+		    case 'CoopQMM':
+		    case 'SmashAndGrabArrestTimeDeduction':
+		    case 'SmashAndGrabGotItem':
+		    case 'SmashAndGrabDroppedItem':
+		    case 'Stats':
+		    case 'CoopLeaderPromoted':
+		    case 'CoopMessage':
+		    case 'StatsValidatedMessage':
+		    case 'StatsBadProfileMessage':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
@@ -429,7 +447,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
             break;
         case 'PenaltyIssued':
         case 'ObjectiveCompleted':
-            SendMessageToChat(Msg, Type, true);
+            SendMessageToChat(Msg, Type, true );
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( Msg );
             break;
         case 'MissionCompleted':
@@ -452,6 +470,10 @@ function bool OnMessageRecieved( String Msg, Name Type )
             break;
 
         case 'Caption':
+            SendMessageToChat( Msg, Type );
+            break;
+
+        case 'SpeechManagerNotification':
             SendMessageToChat( Msg, Type );
             break;
 
@@ -1057,4 +1079,6 @@ defaultproperties
 	VoteYesNoKeys="Vote yes = %1, Vote no = %2"
 
     CaptureScriptExec=true
+
+	coopcampaign=false
 }

@@ -3,10 +3,12 @@
 // this is the base class of all squads for the Officer AI
 
 class OfficerTeamInfo extends AICommon.SquadInfo
+	implements Engine.ICareAboutGrenadesGoingOff
 	native;
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EquipmentSlot from Engine.HandheldEquipment;
+import enum Pocket from Engine.HandheldEquipment;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -43,10 +45,12 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadBangAndClearAction' );
 	SquadAI.addAbility( new class'SquadGasAndClearAction' );
 	SquadAI.addAbility( new class'SquadStingAndClearAction' );
+	SquadAI.addAbility( new class'SquadLeaderThrowAndClearAction' );
 	SquadAI.addAbility( new class'SquadBreachAndClearAction' );
 	SquadAI.addAbility( new class'SquadBreachBangAndClearAction' );
 	SquadAI.addAbility( new class'SquadBreachGasAndClearAction' );
 	SquadAI.addAbility( new class'SquadBreachStingAndClearAction' );
+	SquadAI.addAbility( new class'SquadBreachLeaderThrowAndClearAction');
 	SquadAI.addAbility( new class'SquadDeployThrownItemAction' );
 	SquadAI.addAbility( new class'SquadExamineAndReportAction' );
 	SquadAI.addAbility( new class'SquadPickLockAction' );
@@ -57,7 +61,6 @@ protected function InitAbilities()
 	//SquadAI.addAbility( new class'SquadReportAction' );
 	SquadAI.addAbility( new class'SquadDeployTaserAction' );
 	SquadAI.addAbility( new class'SquadDeployPepperSprayAction' );
-	SquadAI.addAbility( new class'SquadDisableTargetAction' );
 	SquadAI.addAbility( new class'SquadMoveToAction' );
 	SquadAI.addAbility( new class'SquadCoverAction' );
 	SquadAI.addAbility( new class'SquadDeployShotgunAction' );
@@ -386,6 +389,44 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 	return false;
 }
 
+// Returns true if all officers have this piece of protective equipment
+function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
+{
+	local int i;
+	local Pawn Officer;
+
+	for(i = 0; i < pawns.length; i++)
+	{
+		Officer = pawns[i];
+
+		if(!ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+// Returns true if an officer has this piece of equipment
+function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
+{
+	local int i;
+	local Pawn Officer;
+
+	for(i = 0; i < pawns.length; i++)
+	{
+		Officer = pawns[i];
+
+		if(ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+// Returns true if an officer has this piece of protective equipment
+
 event function bool CanPickLock()
 {
 	return DoesAnOfficerHaveUsableEquipment(Slot_Toolkit);
@@ -394,7 +435,9 @@ event function bool CanPickLock()
 event private function bool CanBreachAndClearLockedDoor()
 {
 	if (DoesAnOfficerHaveUsableEquipment(SLOT_Breaching) ||
-		DoesAnOfficerHaveUsableEquipment(Slot_Toolkit))
+		DoesAnOfficerHaveUsableEquipment(Slot_Toolkit) ||
+		DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun') ||
+		DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun'))
 	{
 		return true;
 	}
@@ -402,6 +445,19 @@ event private function bool CanBreachAndClearLockedDoor()
 	{
 		return false;
 	}
+}
+
+event private function bool DoesTeamHaveSufficientBreachingEquipment(int BreachingMethod)
+{
+	if(BreachingMethod == 1)
+	{
+		return DoesAnOfficerHaveUsableEquipment(Slot_Breaching);
+	}
+	else if(BreachingMethod == 2)
+	{
+		return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun');
+	}
+	return CanBreachAndClearLockedDoor();
 }
 
 event function bool CanBreachAndClear(bool bPlayerBelievesDoorLocked)
@@ -435,6 +491,11 @@ event function bool CanBreachStingAndClear(bool bPlayerBelievesDoorLocked)
 	return (CanBreachAndClear(bPlayerBelievesDoorLocked) && DoesAnOfficerHaveUsableEquipment(Slot_StingGrenade));
 }
 
+event function bool CanBreachLeaderThrowAndClear(bool bPlayerBelievesDoorLocked)
+{
+	return CanBreachAndClear(bPlayerBelievesDoorLocked); // FIXME
+}
+
 event function bool CanBangAndClear()
 {
 	return DoesAnOfficerHaveUsableEquipment(Slot_Flashbang);
@@ -450,6 +511,11 @@ event function bool CanStingAndClear()
 	return DoesAnOfficerHaveUsableEquipment(Slot_StingGrenade);
 }
 
+event function bool CanLeaderThrowAndClear()
+{
+	return true; // FIXME
+}
+
 event function bool CanDeployThrownItem(EquipmentSlot ThrownItemEquipmentSlot)
 {
 	return DoesAnOfficerHaveUsableEquipment(ThrownItemEquipmentSlot);
@@ -457,7 +523,23 @@ event function bool CanDeployThrownItem(EquipmentSlot ThrownItemEquipmentSlot)
 
 event function bool CanDeployShotgun(Door TargetDoor)
 {
-	return TargetDoor.IsClosed() && DoesAnOfficerHaveUsableEquipment(Slot_Breaching, 'BreachingShotgun');
+	if(!TargetDoor.IsClosed())
+	{
+		return false;
+	}
+
+	if(DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun'))
+	{
+		return true;
+	}
+	else if(DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun'))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 event function bool CanDeployC2(Door TargetDoor, bool bLeftSide)
@@ -478,17 +560,18 @@ event function bool CanDeployPepperSpray()
 
 event function bool CanDeployTaser()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Taser');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Taser') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Taser');
 }
 
 event function bool CanDeployLessLethalShotgun()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'LessLethalSG');
+
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'BeanbagShotgunBase') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'BeanbagShotgunBase');
 }
 
 event function bool CanDeployGrenadeLauncher()
 {
-    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'HK69GrenadeLauncher') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'HK69GrenadeLauncher');
+    return DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'GrenadeLauncherBase') || DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'GrenadeLauncherBase');
 }
 
 event function bool CanDeployPepperBallGun()
@@ -910,6 +993,29 @@ function bool StingAndClear(Pawn CommandGiver, vector CommandOrigin, Door Target
 	return false;
 }
 
+function bool LeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor) {
+	local SquadLeaderThrowAndClearGoal SquadGoal;
+
+	if (CanExecuteCommand()) {
+		if(!IsSubElement() || !IsOtherSubElementUsingDoor(TargetDoor)) {
+			if(CanLeaderThrowAndClear()) {
+				SquadGoal = new class'SquadLeaderThrowAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor);
+				assert(SquadGoal != None);
+
+				PostCommandGoal(SquadGoal);
+				return true;
+			} else {
+				// TODO trigger generic reply
+			}
+		} else {
+			TriggerOtherTeamDoingBehaviorSpeech();
+		}
+	}
+
+
+	return false;
+}
+
 // How Breach and Clear is supposed to work.
 
 // If the player believes the door is unlocked:
@@ -920,7 +1026,7 @@ function bool StingAndClear(Pawn CommandGiver, vector CommandOrigin, Door Target
 //  |-> The door is locked AND an Officer has the means (shotgun, C2, toolkit) to make it open -> The Officers will breach and clear normally
 //  \-> The door is locked AND an Officer does not have the means (see above) to make it open -> The Officers will report that they do not have the necessary equipment
 
-function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachAndClearGoal SquadBreachAndClearGoal;
 
@@ -934,11 +1040,26 @@ function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door Targe
 			{
 				if (CanBreachAndClearLockedDoor())
 				{
-					SquadBreachAndClearGoal = new class'SquadBreachAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
-					assert(SquadBreachAndClearGoal != None);
+					if(DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+					{
+						SquadBreachAndClearGoal = new class'SquadBreachAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
+						assert(SquadBreachAndClearGoal != None);
 
-					PostCommandGoal(SquadBreachAndClearGoal);
-					return true;	// command issued
+						PostCommandGoal(SquadBreachAndClearGoal);
+						return true;	// command issued
+					}
+					else if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
 				}
 				else
 				{
@@ -971,7 +1092,7 @@ function bool BreachAndClear(Pawn CommandGiver, vector CommandOrigin, Door Targe
 	return false;
 }
 
-function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachBangAndClearGoal SquadBreachBangAndClearGoal;
 
@@ -996,10 +1117,25 @@ function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door T
 					// respond to not being able to breach a locked door
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
 				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
 				else
 				{
 					// we can execute this command
-					SquadBreachBangAndClearGoal = new class'SquadBreachBangAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachBangAndClearGoal = new class'SquadBreachBangAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachBangAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachBangAndClearGoal);
@@ -1031,7 +1167,7 @@ function bool BreachBangAndClear(Pawn CommandGiver, vector CommandOrigin, Door T
 	return false;
 }
 
-function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachGasAndClearGoal SquadBreachGasAndClearGoal;
 
@@ -1053,9 +1189,24 @@ function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door Ta
 					// respond to not being able to breach a locked door
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
 				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
 				else
 				{
-					SquadBreachGasAndClearGoal = new class'SquadBreachGasAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachGasAndClearGoal = new class'SquadBreachGasAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachGasAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachGasAndClearGoal);
@@ -1087,7 +1238,7 @@ function bool BreachGasAndClear(Pawn CommandGiver, vector CommandOrigin, Door Ta
 	return false;
 }
 
-function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment)
+function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod)
 {
 	local SquadBreachStingAndClearGoal SquadBreachStingAndClearGoal;
 
@@ -1109,9 +1260,24 @@ function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 					// respond to not being able to breach a locked door
 					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
 				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
 				else
 				{
-					SquadBreachStingAndClearGoal = new class'SquadBreachStingAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment);
+					SquadBreachStingAndClearGoal = new class'SquadBreachStingAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
 					assert(SquadBreachStingAndClearGoal != None);
 
 					PostCommandGoal(SquadBreachStingAndClearGoal);
@@ -1140,6 +1306,52 @@ function bool BreachStingAndClear(Pawn CommandGiver, vector CommandOrigin, Door 
 		}
 	}
 
+	return false;
+}
+
+function bool BreachLeaderThrowAndClear(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor, optional bool UseBreachingEquipment, optional int BreachingMethod) {
+	local SquadBreachLeaderThrowAndClearGoal SquadGoal;
+
+	if(CanExecuteCommand()) {
+		if(!IsSubElement() || !IsOtherSubElementUsingDoor(TargetDoor)) {
+			if(UseBreachingEquipment) {
+				if(!CanBreachAndClearLockedDoor()) {
+					ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+				}
+				else if(!DoesTeamHaveSufficientBreachingEquipment(BreachingMethod))
+				{
+					if(BreachingMethod == 1)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+					}
+					else if(BreachingMethod == 2)
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerShotgunUnavailableSpeech();
+					}
+					else
+					{
+						ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerDoorBreachingEquipmentUnavailableSpeech();
+					}
+				}
+				else {
+					SquadGoal = new class'SquadBreachLeaderThrowAndClearGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor, UseBreachingEquipment, BreachingMethod);
+					assert(SquadGoal != None);
+
+					PostCommandGoal(SquadGoal);
+					return true;
+				}
+			} else {
+				if(ISwatDoor(TargetDoor).IsLocked()) {
+					StackUpAndTryDoorAt(CommandGiver, CommandOrigin, TargetDoor, true);
+				} else {
+					LeaderThrowAndClear(CommandGiver, CommandOrigin, TargetDoor);
+				}
+				return true;
+			}
+		} else {
+			TriggerOtherTeamDoingBehaviorSpeech();
+		}
+	}
 	return false;
 }
 
@@ -1247,6 +1459,7 @@ function bool PickLock(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 {
 	local SquadPickLockGoal SquadPickLockGoal;
 
+	log("PickLock()");
 	// only post the goal if we are allowed
 	if (CanExecuteCommand())
 	{
@@ -1264,6 +1477,7 @@ function bool PickLock(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 			else
 			{
 				// respond to not being able to pick a lock
+				assertWithDescription(false, "An officer didn't have a toolkit...! Best investigate this...");
 				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerToolkitUnavailableSpeech();
 			}
 		}
@@ -1272,7 +1486,7 @@ function bool PickLock(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 			TriggerOtherTeamDoingBehaviorSpeech();
 		}
 	}
-
+	log("Cannot execute picklock command");
 	return false;
 }
 
@@ -1467,6 +1681,11 @@ function bool SecureEvidence(Pawn CommandGiver, vector CommandOrigin, Actor Evid
 	return Secure(CommandGiver, CommandOrigin, Evidence);
 }
 
+function bool DisableTarget(Pawn CommandGiver, vector CommandOrigin, Actor Target)
+{
+	return Secure(CommandGiver, CommandOrigin, Target);
+}
+
 function bool MoveTo(Pawn CommandGiver, vector CommandOrigin, vector TargetLocation)
 {
 	local SquadMoveToGoal CurrentSquadMoveToGoal;
@@ -1645,31 +1864,6 @@ function bool DeployPepperSpray(Pawn CommandGiver, vector CommandOrigin, Pawn Ta
 	return false;
 }
 
-function bool DisableTarget(Pawn CommandGiver, vector CommandOrigin, Actor Target)
-{
-	local SquadDisableTargetGoal CurrentSquadDisableTargetGoal;
-
-	// only post the goal if we are allowed
-	if (CanExecuteCommand())
-	{
-		// if we're not a sub element, or if the other team is already interacting with the Target
-		if (!IsSubElement() || !IsOtherSubElementInteractingWith(Target))
-		{
-			CurrentSquadDisableTargetGoal = new class'SquadDisableTargetGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, Target);
-			assert(CurrentSquadDisableTargetGoal != None);
-
-			PostCommandGoal(CurrentSquadDisableTargetGoal);
-			return true;	// command issued
-		}
-		else
-		{
-			TriggerOtherTeamDoingBehaviorSpeech();
-		}
-	}
-
-	return false;
-}
-
 function bool DeployShotgun(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
 {
 	local SquadDeployShotgunGoal CurrentSquadDeployShotgunGoal;
@@ -1824,6 +2018,36 @@ function bool DropLightstick(Pawn CommandGiver, vector CommandOrigin)
 		return true;
 	}
 	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Engine.ICareAboutGrenadesGoingOff implementation
+
+simulated function OnFlashbangWentOff(Pawn Thrower) {
+	local ICareAboutGrenadesGoingOff CastGoal;
+	log("Flashbang went off and CurrentSquadCommandGoal is " $CurrentSquadCommandGoal);
+	if(CurrentSquadCommandGoal.IsA('ICareAboutGrenadesGoingOff')) {
+		CastGoal = ICareAboutGrenadesGoingOff(CurrentSquadCommandGoal);
+		CastGoal.OnFlashbangWentOff(Thrower);
+	}
+}
+
+simulated function OnCSGasWentOff(Pawn Thrower) {
+	local ICareAboutGrenadesGoingOff CastGoal;
+  log("CS Gas went off and CurrentSquadCommandGoal is " $CurrentSquadCommandGoal);
+	if(CurrentSquadCommandGoal.IsA('ICareAboutGrenadesGoingOff')) {
+		CastGoal = ICareAboutGrenadesGoingOff(CurrentSquadCommandGoal);
+		CastGoal.OnCSGasWentOff(Thrower);
+	}
+}
+
+simulated function OnStingerWentOff(Pawn Thrower) {
+	local ICareAboutGrenadesGoingOff CastGoal;
+  log("Stinger went off and CurrentSquadCommandGoal is "$CurrentSquadCommandGoal);
+	if(CurrentSquadCommandGoal.IsA('ICareAboutGrenadesGoingOff')) {
+		CastGoal = ICareAboutGrenadesGoingOff(CurrentSquadCommandGoal);
+		CastGoal.OnStingerWentOff(Thrower);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

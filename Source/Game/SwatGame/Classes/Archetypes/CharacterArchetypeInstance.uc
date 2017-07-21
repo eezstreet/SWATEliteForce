@@ -21,6 +21,12 @@ var bool PepperKillsMe; // Will pepper spray kill me?
 var bool Fearless;  // Will I scream if I'm in a room with a suspect?
 var bool Polite;  // Will I forgo shooting hostages?
 var bool Insane; // Will I kill basically everyone?
+var bool Wandering; // Will I wander instead of patrol?
+
+var bool DOAConversion; // Whether to convert to DOA some time after being incapacitated
+var bool StaticDOAConversion; // For units that are incapacitated at the start: how long to wait before becoming a DOA
+var float DOAConversionTime; // The amount of time it will take to convert to a DOA
+var float StaticDOAConversionTime; // The amount of time it will take to convert to a static DOA
 
 var class<Equipment> SelectedEquipment1Class;
 var class<Equipment> SelectedEquipment2Class;
@@ -85,4 +91,29 @@ function bool IsPolite()
 function bool IsInsane()
 {
   return Insane;
+}
+
+function bool Wanders()
+{
+  return Wandering;
+}
+
+function bool ConvertsToDOA()
+{
+  return DOAConversion;
+}
+
+function bool ConvertsToDOA_Static()
+{
+  return StaticDOAConversion;
+}
+
+function float GetDOAConversionTime()
+{
+  return DOAConversionTime;
+}
+
+function float GetDOAConversionTime_Static()
+{
+  return StaticDOAConversionTime;
 }

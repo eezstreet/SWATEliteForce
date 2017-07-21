@@ -14,7 +14,7 @@ simulated function OnPlayerUse()
     local SwatGamePlayerController LPC;
 
     LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
-    
+
     if( LPC != None )
         DefaultFireFocusActor = LPC.GetFocusInterface(Focus_Fire).GetDefaultFocusActor();
 
@@ -91,5 +91,6 @@ simulated function Actor GetOther()
 {
 	return Other;
 }
+
 
 simulated protected function AssertOtherIsValid() { assert(false); } //subclasses must implement

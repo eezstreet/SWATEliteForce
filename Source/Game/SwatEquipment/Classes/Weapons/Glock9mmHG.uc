@@ -1,6 +1,1 @@
-class Glock9mmHG extends Handgun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class Glock9mmHG extends Handgun config(SwatEquipment);

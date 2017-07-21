@@ -17,6 +17,7 @@ function OnBoobyTrapTriggered(SwatGame.BoobyTrap Pawn, Actor Triggerer)
 {
   NumTrapsTriggered++;
   ChatMessageEvent('PenaltyIssued');
+  GetGame().CampaignStats_TrackPenaltyIssued();
 
   if (GetGame().DebugLeadership)
       log("[LEADERSHIP] "$class.name
@@ -32,9 +33,10 @@ function string Status()
 //interface IProcedure implementation
 function int GetCurrentValue()
 {
-  log("[LEADERSHIP] "$class.name
-    $" is returning with NumTrapsTriggered = "$ string(NumTrapsTriggered));
-    return PenaltyPerTrap * NumTrapsTriggered;
+  if (GetGame().DebugLeadershipStatus)
+    log("[LEADERSHIP] "$class.name
+      $" is returning with NumTrapsTriggered = "$ string(NumTrapsTriggered));
+  return PenaltyPerTrap * NumTrapsTriggered;
 }
 
 /*defaultproperties

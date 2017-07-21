@@ -1,11 +1,11 @@
 class SwatPlayerController extends Engine.PlayerController
-    config(SwatGame)
+    config(User)
     dependsOn(SwatGuiConfig)
     native;
 
 // If set to 1, you will not be allowed to suicide in multiplayer games.
 // If set to 0, you will be allowed to suicide as long as you are not
-// in the process of being arrested and are not the VIP and already 
+// in the process of being arrested and are not the VIP and already
 // arrested.
 #define DISALLOW_SUICIDE 1
 
@@ -26,12 +26,12 @@ var int VOIPIgnoreStaticArray[MAX_PLAYERS];	//list of PlayerIDs ignored by this 
 replication
 {
     reliable if( Role<ROLE_Authority )
-        ServerSetSettings, ServerSetAdminSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart;
+        ServerSetSettings, ServerSetAdminSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
 		Kick, KickBan, SAD, Switch, StartGame, AbortGame,
-		ServerStartKickReferendum, ServerStartBanReferendum, ServerStartLeaderReferendum, ServerStartMapChangeReferendum, ServerVoteYes, ServerVoteNo;
+		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
 		VOIPIgnore, VOIPUnIgnore, VOIPClearIgnore;
@@ -47,7 +47,7 @@ native function bool ShouldAutoJoinOnStartUp();
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-	
+
 	//always clear this flag at the beginning a of a level, because a player may no longer be admin
     ShouldDisplayPRIIds = false;
 
@@ -106,7 +106,7 @@ function NotifyTakeHit(pawn InstigatedBy, vector HitLocation, int Damage, class<
 	if ( (instigatedBy != None) && (instigatedBy != self.pawn) )
     {
         //Log("PLAYING FLASH BECAUSE TOOK "$Damage$" DAMAGE "$DamageType$" from "$InstigatedBy$", Health now = "$pawn.Health);
-		if ((Damage > 0 || bGodMode) && self.pawn.Health > 0) 
+		if ((Damage > 0 || bGodMode) && self.pawn.Health > 0)
         {
             ClientFlash(FlashScale, FlashFog);
         }
@@ -114,7 +114,7 @@ function NotifyTakeHit(pawn InstigatedBy, vector HitLocation, int Damage, class<
     }
 
 	TriggerHitSpeech();
-} 
+}
 
 function DamageShake(int damage)
 {
@@ -156,7 +156,7 @@ exec function Suicide()
 
 #if DISALLOW_SUICIDE
 
-    // Designers do not want to allow suicide, especially in MP ... to many ways to 
+    // Designers do not want to allow suicide, especially in MP ... to many ways to
     // cheat (e.g., suicide when nonlethaled to avoid losing points from
     // being arrested or killed) and break things.
     return;
@@ -182,7 +182,7 @@ exec function Suicide()
         mplog(self$" Suicide(): SwatPlayer(Pawn) == None, allowing suicide");
     }
 
-    // don't let the player suicide while being arrested, as this 
+    // don't let the player suicide while being arrested, as this
     // will let the player cheat the arresting team out of the arrest
     // points. Also don't let the VIP suicide while he's arrested.
     if (! (IsInProcessOfBeingArrested || IsVIPAndCurrentlyArrested) )
@@ -197,6 +197,67 @@ exec function Suicide()
 #endif // DISALLOW_SUICIDE
 }
 
+function bool ShouldHideCrosshairsDueToIronsights()
+{
+  local HandheldEquipment Equipment;
+
+  if(!WantsZoom)
+  {
+    // Not in zoom, so we don't have to worry about this
+    return false;
+  }
+  if(GetIronsightsDisabled())
+  {
+    // We use the traditional zoom method instead of ironsights
+    return false;
+  }
+
+  Equipment = Pawn.GetActiveItem();
+  if(!Equipment.ShouldHideCrosshairsInIronsights())
+  {
+    // The currently selected piece of equipment always shows the crosshair when zooming 
+    return false;
+  }
+
+  return true;
+}
+
+function bool GetIronsightsDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bNoIronSights;
+}
+
+function bool GetViewmodelDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bHideFPWeapon;
+}
+
+function bool GetCrosshairDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bHideCrosshairs || ShouldHideCrosshairsDueToIronsights();
+}
+
+function bool GetInertiaDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.bNoWeaponInertia;
+}
+
 //overridden from Engine.PlayerController
 exec function SetName( coerce string S)
 {
@@ -207,9 +268,9 @@ exec function SetName( coerce string S)
     if( S == "" )
         return;
 
-    // get the guiconfig object    
+    // get the guiconfig object
     GC = SwatRepo(Level.GetRepo()).GuiConfig;
-    
+
     ReplaceText( S, "[b]", "{b}" );
     ReplaceText( S, "[B]", "{B}" );
     ReplaceText( S, "[i]", "{i}" );
@@ -232,16 +293,16 @@ exec function SetName( coerce string S)
     	    S = Left( S, index ) $ Right( S, len(S) - (index+1) );
     	}
     } until (index >= Len(S));
-    	
+
     //Cap the Max length = 20 characters
     if( Len(S) > GC.MPNameLength )
         S = Left(S,GC.MPNameLength);
-        
+
     //empty string is still not a valid name - no change should be made
     if( S == "" )
         return;
-        
-    
+
+
 	if( Level.GetLocalPlayerController() == self )
     {
         //set the new name & save it
@@ -254,7 +315,7 @@ exec function SetName( coerce string S)
     //update the URL with the new name
 	if( Level.GetLocalPlayerController() == self )
 	    UpdateURL("Name", GC.MPName, true);
-	
+
 	//dkaplan - this was in PlayerController after UpdateURL... why? It doesn't save anything new in the player controller!
 	//  this causes the failed to write SwatGame.ini error message after you quit the game
 	//SaveConfig();
@@ -273,7 +334,7 @@ function ChangeName( coerce string S )
 private simulated function LogPlayerIDs(GameReplicationInfo GRI)
 {
 	local int i;
-	
+
 	// List the players and their IDs
 	log("-----------------");
 	log("ID\tPLAYERNAME");
@@ -285,25 +346,25 @@ private simulated function LogPlayerIDs(GameReplicationInfo GRI)
 }
 
 // Shorthand for KickBanID
-exec function KBID(String S) 
+exec function KBID(String S)
 {
 	KickBanID(S);
 }
 
 // Kickban the player who is at index S in the GameRelicationInfo.PRIArray
-exec function KickBanID(String S) 
+exec function KickBanID(String S)
 {
     KickOrBanByID( S, true );
 }
 
 // Shorthand for KickID
-exec function KID(String S) 
+exec function KID(String S)
 {
 	KickID(S);
 }
 
 // Kick the player who is at index S in the GameRelicationInfo.PRIArray
-exec function KickID(String S) 
+exec function KickID(String S)
 {
     KickOrBanByID( S, false );
 }
@@ -312,7 +373,7 @@ simulated function KickOrBanByID( String S, bool bKickBan )
 {
     local int ID, i;
     local PlayerReplicationInfo PRI;
-    
+
 	// Make sure it's a number. We don't want to cast to an integer without checking
 	// because if the cast fails it will return 0, which would result in
 	// kicking the player at ID 0 when it really shouldn't kick anyone.
@@ -325,16 +386,16 @@ simulated function KickOrBanByID( String S, bool bKickBan )
 	}
 
     ID = int(S);
-    
+
     //handle invalid ID number
     if( ID < 0 || ID > 15 )
         return;
-    
+
     PRI = SwatGameReplicationInfo(GameReplicationInfo).PRIStaticArray[ID];
-    
+
     if( PRI == None )
         return;
-        
+
     if( bKickBan )
     	KickBan(PRI.PlayerName);
     else
@@ -382,25 +443,30 @@ exec function ToggleIDs()
         ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
 }
 
+function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
+{
+  Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Set the ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function ServerSetSettings( ServerSettings Settings, 
-                            EMPMode newGameType, 
-                            int newMapIndex, 
-                            int newNumRounds, 
-                            int newMaxPlayers, 
+function ServerSetSettings( ServerSettings Settings,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
                             int newDeathLimit,
-                            int newPostGameTimeLimit, 
-                            int newRoundTimeLimit, 
-                            int newMPMissionReadyTime, 
-                            bool newbShowTeammateNames, 
+                            int newPostGameTimeLimit,
+                            int newRoundTimeLimit,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
                             bool newbShowEnemyNames,
 							bool newbAllowReferendums,
-                            bool newbNoRespawn, 
-                            bool newbQuickRoundReset, 
-                            float newFriendlyFireAmount, 
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
                             float newEnemyFireAmount,
 							float newArrestRoundTimeDeduction,
 							int newAdditionalRespawnTime,
@@ -409,20 +475,20 @@ function ServerSetSettings( ServerSettings Settings,
 							bool newbDisableTeamSpecificWeapons)
 {
     Settings.SetServerSettings( self,
-                                newGameType, 
-                                newMapIndex, 
-                                newNumRounds, 
-                                newMaxPlayers, 
+                                newGameType,
+                                newMapIndex,
+                                newNumRounds,
+                                newMaxPlayers,
                                 newDeathLimit,
-                                newPostGameTimeLimit, 
-                                newRoundTimeLimit, 
-                                newMPMissionReadyTime, 
-                                newbShowTeammateNames, 
-                                newbShowEnemyNames, 
+                                newPostGameTimeLimit,
+                                newRoundTimeLimit,
+                                newMPMissionReadyTime,
+                                newbShowTeammateNames,
+                                newbShowEnemyNames,
 								newbAllowReferendums,
-                                newbNoRespawn, 
-                                newbQuickRoundReset, 
-                                newFriendlyFireAmount, 
+                                newbNoRespawn,
+                                newbQuickRoundReset,
+                                newFriendlyFireAmount,
                                 newEnemyFireAmount,
 								newArrestRoundTimeDeduction,
 								newAdditionalRespawnTime,
@@ -435,16 +501,16 @@ function ServerSetSettings( ServerSettings Settings,
 // Set the Admin ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function ServerSetAdminSettings( ServerSettings Settings, 
-                            String newServerName, 
-                            String newPassword, 
-                            bool newbPassworded, 
+function ServerSetAdminSettings( ServerSettings Settings,
+                            String newServerName,
+                            String newPassword,
+                            bool newbPassworded,
                             bool newbLAN )
 {
     Settings.SetAdminServerSettings( self,
-                                newServerName, 
-                                newPassword, 
-                                newbPassworded, 
+                                newServerName,
+                                newPassword,
+                                newbPassworded,
                                 newbLAN );
 }
 
@@ -641,7 +707,7 @@ simulated event bool VOIPIsIgnored(int PlayerID)
 	return false;
 }
 
-// can this player hear "PlayerID" speaking? 
+// can this player hear "PlayerID" speaking?
 function bool VOIPIsSpeaking(int PlayerID)
 {
 	local int i;
@@ -659,24 +725,14 @@ function bool VOIPIsSpeaking(int PlayerID)
 // Voting replicated function
 ///////////////////////////////////////////////////////////////////////////////
 
-exec function ServerStartKickReferendum(String PlayerName)
+exec function ServerStartReferendum(PlayerController PC, class<Voting.Referendum> ReferendumClass, optional PlayerController Target, optional String TargetStr)
 {
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartKickReferendum(self, PlayerName);
+  SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartReferendum(PC, ReferendumClass, Target, TargetStr);
 }
 
-exec function ServerStartBanReferendum(String PlayerName)
+exec function ServerStartReferendumForPlayer(PlayerController PC, class<Voting.Referendum> ReferendumClass, string PlayerName)
 {
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartBanReferendum(self, PlayerName);
-}
-
-exec function ServerStartLeaderReferendum(String PlayerName)
-{
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartLeaderReferendum(self, PlayerName);
-}
-
-exec function ServerStartMapChangeReferendum(EMPMode GameType, String MapName)
-{
-	SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartMapChangeReferendum(self, MapName, GameType);
+  SwatGameReplicationInfo(Level.GetGameReplicationInfo()).StartReferendumForPlayer(PC, ReferendumClass, PlayerName);
 }
 
 exec function ServerVoteYes()

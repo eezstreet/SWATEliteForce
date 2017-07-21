@@ -25,8 +25,8 @@ PocketFriendlyName=Tactical Aid 4
 [Pocket_EquipFive]
 PocketFriendlyName=Tactical Aid 5
 
-[Pocket_Breaching]
-PocketFriendlyName=Breaching Device
+[Pocket_EquipSix]
+PocketFriendlyName=Tactical Aid 6
 
 [Pocket_BodyArmor]
 PocketFriendlyName=Body Armor
@@ -147,7 +147,7 @@ Caption=SECONDARY
 Caption=TACTICAL
 
 [SwatSPLoadoutPanel_breachingtablabel]
-Caption=BREACHING + PROTECTION
+Caption=PROTECTION
 
 [SwatSPLoadoutPanel_equipmentpanelheaderlabel]
 Caption=EQUIPMENT
@@ -279,7 +279,7 @@ Hint=View the timeline of events.
 
 [SwatBriefingMenu_NewEquipment]
 Caption=NEW EQUIPMENT
-Hint=Choose your entry option.
+Hint=View new equipment that has been unlocked.
 
 [SwatTimelinePanel_ExtendedTimeline]
 Hint=View details about the progression of events.
@@ -390,7 +390,7 @@ Caption=CS Gas
 [SwatSPLoadoutPanel_Pocket_EquipFive_Label]
 Caption=Stinger
 
-[SwatSPLoadoutPanel_Pocket_Breaching_Label]
+[SwatSPLoadoutPanel_Pocket_EquipSix_Label]
 Caption=C2 (x3)
 
 [SwatSPLoadoutPanel_0_TabButton]
@@ -441,8 +441,8 @@ Caption=Stinger
 Hint=Select this item.
 
 [SwatSPLoadoutPanel_3_TabButton]
-Caption=BREACHING
-Hint=Select breaching equipment.
+Caption=PROTECTION
+Hint=Select protective equipment.
 
 [SwatSPLoadoutPanel_4_TabButton]
 Caption=PROTECTION
@@ -505,8 +505,8 @@ Caption=HOST GAME
 Hint=Create a multiplayer game.
 
 [SwatMainMenu_TrainingButton]
-Caption=NEW FEATURES
-Hint=This should probably be removed.
+Caption=TRAINING
+Hint=Learn to play SWAT: Elite Force
 
 [SwatMainMenu_bottomblack]
 Hint=Campaign
@@ -2308,12 +2308,12 @@ Caption=Helmet
 Hint=Select this item.
 
 [SwatMPLoadoutPanel_4_TabButton]
-Caption=PROTECTION
-Hint=Choose protective equipment.
+Caption=SKIN
+Hint=Choose your skin.
 
 [SwatMPLoadoutPanel_3_TabButton]
-Caption=BREACHING
-Hint=Choose breaching equipment.
+Caption=PROTECTION
+Hint=Choose protective equipment.
 
 [SwatMPLoadoutPanel_Pocket_EquipFive_Button]
 Caption=Stinger
@@ -2371,7 +2371,7 @@ Caption=Helmet
 [SwatMPLoadoutPanel_Pocket_BodyArmor_Label]
 Caption=Light Armor
 
-[SwatMPLoadoutPanel_Pocket_Breaching_Label]
+[SwatMPLoadoutPanel_Pocket_EquipSix_Label]
 Caption=C2 (x3)
 
 [SwatMPLoadoutPanel_Pocket_EquipFive_Label]
@@ -2524,7 +2524,7 @@ Hint=Disconnect from the server.
 
 [SwatMPPage_StartButton]
 Caption=READY
-Hint=Click in when you are ready to begin.
+Hint=Toggle whether you are ready to begin.
 
 [SwatMPPage_MissionLoadingStatusText]
 Caption=Loading...
@@ -2532,6 +2532,7 @@ Caption=Loading...
 [SwatMPPage]
 ReadyString=READY
 ContinueString=CONTINUE
+UnreadyString=NOT READY
 GameModeAndLevelString=%2                Mode: %1
 
 [SwatIntroMenu_WaitDialogueDoNotUse_CaptionLabel]
@@ -2624,10 +2625,10 @@ Hint=Set the time between rounds.
 Hint=Set the time between rounds.
 
 [SwatServerSetupAdvancedPanel_mpautobalancelabel]
-Caption=Show Enemy Names
+Caption=Enable Snipers
 
 [SwatServerSetupAdvancedPanel_mpautobalancecheckbox]
-Hint=Check this box to show enemy names.
+Hint=Check this box to enable Snipers.
 
 [SwatServerSetupAdvancedPanel_mpallowreferendumslabel]
 Caption=Allow Voting
@@ -2907,11 +2908,11 @@ Hint=Remove the selected map from the map rotation.
 
 [SwatServerSetupMenu_AdvancedButton]
 Caption=ADVANCED
-Hint=Select equipment for your team.
+Hint=Choose more advanced options for your server.
 
 [SwatServerSetupMenu_QuickStartButton]
 Caption=QUICK START
-Hint=Select equipment for your team.
+Hint=Change basic settings for your server.
 
 [SwatServerSetupMenu_StartServerButton]
 Caption=START
@@ -4536,7 +4537,7 @@ Text=[u][b]USING THE COMMAND MENU[\b][\u]||[c=A0A0A0](Style 2 (default) behavior
 Text=[u][b]USING THE FLASHLIGHT[\b][\u]||[b][k=ToggleFlashlight][\b] - Toggle flashlight on/off||All of your primary weapons are equipped with attached flashlights.  Use the flashlight to navigate dark areas and search areas for suspects and hostages.
 
 [DefaultCommandChange]
-Text=[u][b]QUICK COMMANDS CONTINUED[\b][\u]||[b][k=GiveDefaultCommand][\b] - Order Quick Command||Point your reticle at the door with the red light.  Notice that the Quick command changes to "Open and Clear".||[c=15CC11]Order the element to "Open and Clear" on the door with the barrier.
+Text=[u][b]USING THE COMMAND MENU[\b][\u]||[c=A0A0A0](Style 2 (default) behavior displayed)[\c]|Hold [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b] - Open command menu|Release [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b] - Give highlighted command|[b][k=fire][\b] - Close menu||In many contexts there are numerous possible commands that the team could perform.  To access these commands open the Command menu by holding down [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b].||Move the mouse to highlight the command you wish to give.  Release the button when the command you wish to give is highlighted.  This will order your team to perform the command, and close the menu.  If you do not want to issue any orders, press [b][k=Fire][\b] or select the Exit Menu choice to close the menu.||Try issuing a [b]OPEN AND CLEAR[\b] command on this door. The command is located in the OPEN submenu.
 
 [DefaultCommand]
 Text=[u][b]QUICK COMMANDS[\b][\u]||[b][k=GiveDefaultCommand][\b] - Order Quick Command||Your reticle is context sensitive.  There are many different commands that you can give to the team.  In the lower right of your screen the Quick Command is displayed.  This command is the most common order you can give your team for the current context under your reticle.||[c=15CC11]Press [b][k=GiveDefaultCommand][\b] when the Quick Command displays "Fall In" to command your team to follow you.
@@ -4713,7 +4714,7 @@ Text=DEPLOY FLASHBANG
 Text=DEPLOY TASER
 
 [Command_Deploy_GrenadeLauncher]
-Text=DEPLOY GRENADE LAUNCHER
+Text=DEPLOY TRIPLE BATON
 
 [Command_Deploy_Lightstick]
 Text=MARK WITH LIGHTSTICK
@@ -4734,7 +4735,19 @@ Text=MOVE >>
 Text=MIRROR CORNER
 
 [Command_MirrorUnderDoor]
-Text=MIRROR UNDER DOOR
+Text=MIRROR/SCAN DOOR
+
+[Command_PosNegPage]
+Text=AFFIRM/DENY >>
+
+[Command_MovingPage]
+Text=MOVING >>
+
+[Command_Response_NoSuspectsVisible]
+Text=NO SUSPECTS VISIBLE
+
+[Command_Response_SuspsectSpotted]
+Text=SUSPECT SPOTTED!
 
 [Command_MirrorRoom]
 Text=MIRROR ROOM
@@ -4789,6 +4802,21 @@ Text=BREACH & CLEAR
 
 [Command_MoveAndClear]
 Text=MOVE & CLEAR
+
+[Command_BreachLeaderThrowAndClear]
+Text=BREACH, LEADER & CLEAR
+
+[Command_BreachLeaderThrowAndMakeEntry]
+Text=BREACH, LEADER & MAKE ENTRY
+
+[Command_LeaderThrowAndClear]
+Text=LEADER THROW & CLEAR
+
+[Command_OpenLeaderThrowAndClear]
+Text=OPEN, LEADER & CLEAR
+
+[Command_OpenLeaderThrowAndMakeEntry]
+Text=OPEN, LEADER & MAKE ENTRY
 
 [Command_PickLock]
 Text=PICK LOCK
@@ -5042,8 +5070,6 @@ TimeLineTime=("16:26 ","16:33 ","16:51")
 TimeLineShortDescription=("911 Call","First units arrive","Tactical entry begun")
 TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol Units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
 LoadingText=1401 Gower St., FunTime Amusement Arcade
-NewEquipmentName=Cobra Stun Gun
-NewEquipmentDescription=The Cobra is a dual-purpose less-lethal weapon. It fires small electrodes into the target and then sends a powerful electric charge down thin wires still connected to the hand unit. The electrical discharge causes involuntary contraction of the target's muscle tissue regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. It has a longer range than its Taser forbearer, and can fire darts in groups of four or two separate groups of two. It can also be used in ''touch-stun'' mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors.
 
 [SP-AutoGarage]
 PrimarySpawnPoint=Parking Garage Entrance
@@ -5085,30 +5111,7 @@ TimeLinePlot=(0,18,35,100)
 TimeLineTime=("9:04","9:22","9:47","11:32")
 TimeLineShortDescription=("911 Call","First Units Arrive"," CNT Attempts Contact ","Shots Heard - Tactical entry begun")
 TimeLineLongDescription=(" - 911 emergency call received from post office guard."," - Patrol officers arrive and establish containment perimeter.  SWAT and CNT notified."," - CNT (Crisis Negotiation Team) attempts contact without response.","  - Shots fired. Decision made to go tactical.")
-NewEquipmentName=40mm Grenade Launcher
-NewEquipmentDescription=The grenade launcher has become a standard piece of police equipment for use in unusual situations such as hostage rescue or riot control. It's ability to fire a wide range of direct and indirect less-lethal ammunitions has proved it to be extremely versatile.
 LoadingText=796 Newbury St., Our Sisters of Mercy
-
-[SP-Hotel]
-PrimarySpawnPoint=Elevator Shaft
-SecondarySpawnPoint=Stairwell
-CampaignObjectiveHostageSpawn=("Lawrence Adams","James Bettencourt")
-MissionDescription=("Hostage Rescue","1700 West 7th Ave.","May 1 - 18:12")
-BriefingText=("Ok, men, this one's a zoo, and it isn't going to get any better.   The self declared militia group America Now has taken real estate heir James Betincourt Junior and Lawrence Adams, his general contractor, hostage.  Apparently they were touring a current project, the Old Granite Hotel, and were taken while inspecting Adams' work.  Now the suspects are holed up on the top two floors of the hotel, demanding twelve million dollars ransom by midnight.   They claim that Betincourt Investments owes this as a ''downpayment on their debt to the American People.''","|America Now is a small but active domestic militia group.  They are fiercely isolationist, opposing immigration, free trade, and foreign owned interests.   Most of their previous actions have been against foreign owned properties, either sabotaging them in the building stage or engaging in serious vandalism, making the properties too expensive to maintain.  This is their first kidnapping, and it may indicate a shift in the group's tactics.  Given the public nature of the incident, the group is clearly looking for publicity as well.  We've spoken with the media, and received some co-operation; however, it's not clear how long that will last.","|Expect the America Now suspects to be well equipped, and to act as a group, but their inexperience with hostages may make them even more dangerous to the civilians.  Take extra care.","|Now...on to the victims.  James Betincourt Junior is the son of the CEO and majority owner of Betincourt Investments, a French based property development company.  Six months ago, they purchased the Granite out of bankruptcy for twelve million dollars, and have been renovating it ever since.  Junior has been in charge of the renovations, and was doing an inspection of the renovation work when he was captured.  Lawrence Adams is the general contractor and the architect in charge of doing the renovation work. ","|The suspects are on the top two floors of the hotel, the sixth and the seventh.   You'll find the blueprints on the board.  We've cut power to the elevators, and one of them is trapped between the fifth and sixth floor.  You can either go up the stairs, or down the elevator shaft.  Recent gunshots were reported coming from the seventh floor, so it's time to go in.  ")
-LocationInfoText=("The Old Granite Hotel, 1700 West 7th Ave.","|","Sierra One is covering Side 1, Level 7 -- the exposed construction area.")
-HostageName=("James Betincourt, Jr.","Lawrence Adams")
-HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Brown|Height: 6' 1''|Weight: 160|DOB: 01/04/75|Age: 33","Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 5' 11''|Weight: 190|DOB: 04/19/66|Age: 42")
-HostageDescription=("Son of James Betincourt, CEO and president of Betincourt Investments.  Betincourt Investments is the owner of the Old Granite.","Lawrence Adams is the general contractor for the remodeling of the Old Granite Hotel.  ")
-SuspectName=("Unknown")
-SuspectVitals=("")
-SuspectDescription=("Wearing bulletproof vests and masks, equipped with machine guns.")
-EntryOptionTitle=("Elevator Shaft","Stairwell")
-EntryDescription=("Entry from on top of the elevator car stopped on level 5.","Stairwell entry from Level 5.")
-TimeLinePlot=(0,31,38,42,48,58,96,100)
-TimeLineTime=("12:30","14:17","14:40","14:53","15:12","15:47","17:57","18:12")
-TimeLineShortDescription=("Arranged meeting","Lost contact","Ransom demand","SWAT arrives","Additional demands","Additional demands","Negotiations fail","Tactical entry begun")
-TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - Charles Betincourt, owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 milllion dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
-LoadingText=1700 West 7th Ave., Old Granite Hotel
 
 [SP-ABomb]
 PrimarySpawnPoint=Front Entrance
@@ -5191,8 +5194,6 @@ TimeLinePlot=(0,15,30,50,60,100)
 TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
 TimeLineShortDescription=("Suspects Enter Auditorium","Patrol Cars Arrive","Perimeter Established"," CNT Arrive","Suspect Demands"," Shots Fired.")
 TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enter.")
-NewEquipmentName=Ammo Pouch
-NewEquipmentDescription=The ammo pouch clips to the back of the belt in place of a grenade. It allows the wearer to carry two additional clips of ammunition for their primary weapon.|The ammo pouch can be selected under the Tactical tab in the Equipment section.|Note that the ammo pouch does not provide extra ammunition for the pepper-ball gun.
 LoadingText=1801 Sellers St., The Sellers Street Auditorium
 
 [SP-JewelryHeist]
@@ -5255,8 +5256,6 @@ TimeLinePlot=(0,10,30,20,70,100)
 TimeLineTime=("17:12","17:19","17:26","17:41","17:48","17:59")
 TimeLineShortDescription=("Suspects Enter Building."," Bomb Detonates.","Police Units Arrive.","Fire Crews Arrive.","Rescue Crew Fired Upon, SWAT Called.","Tactical entry begun")
 TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire Crews Arrive."," - Fire under control, rescue crew fired upon."," - Swat officers make tactical entry ")
-NewEquipmentName=Night Vision Goggles
-NewEquipmentDescription=NVGs work by amplifying available light and allow the wearer to see in  dark areas. Due to their lack of colour and limited field of vision, the goggles can make it more difficult to distinguish friend from foe.|The NVG are used instead of the flashlight and are turned on and off using the same key (default V).
 LoadingText=2112 Geddy Ave., The Department of Agriculture
 
 [SP-Hospital]
@@ -5319,8 +5318,6 @@ TimeLinePlot=(0,75,85,100)
 TimeLineTime=("15:00","18:17","18:41","19:08")
 TimeLineShortDescription=("Search Warrant Issued.","Perimeter Established.","SWAT Arrives","SWAT Enter")
 TimeLineLongDescription=(" - Search Warrant Issued."," - Perimeter established."," - SWAT arrives on scene and makes initial assessment. "," - Swat officers make tactical entry ")
-NewEquipmentName=5.7x28 mm Submachine Gun
-NewEquipmentDescription=Designed by a leading European arms manufacturer, this ''personal defense weapon'' was originally intended for use by troops who did not use full-sized rifles, but for whom pistols were ineffective against targets with modern body armor. Since its introduction law enforcement and military personnel throughout Europe and the Middle East have adopted it. It's high reliability, large ammunition capacity, and excellent balance makes it a desirable weapon.
 LoadingText=653 Tovanen St., Stetchkov Drug Lab
 
 [SP-Subway]
@@ -5342,8 +5339,6 @@ TimeLinePlot=(0,44,100)
 TimeLineTime=("17:04","17:16","17:33")
 TimeLineShortDescription=("911 Call"," First Units Arrive"," SWAT Enter")
 TimeLineLongDescription=(" - 911 Call received and SWAT notified"," - First units arrive and perimeter established and confirmed."," - SWAT goes tactical ")
-NewEquipmentName=Colt Accurized Rifle
-NewEquipmentDescription=The Colt Accurized Rifle occupies the mid ground between an assault rifle and a dedicated sniper rifle. The CAR combines accurate fire at range with the large ammo capacity required for urban field use, plus mounting points for a variety of scopes. Firing a 5.56mm round from a 20 round magazine, the CAR is only capable of firing in semiautomatic mode. Its length can make it a difficult weapon to wield in close quarters.
 LoadingText=Fresnal St. Station
 
 [SP-Warehouse]
@@ -5363,11 +5358,29 @@ EntryOptionTitle=("Side 4, Level 1","Side 1, Level 1")
 EntryDescription=("Main Entrance","Side Dock Entrance")
 TimeLinePlot=(0,80,90,100)
 TimeLineTime=("19:04","19:27","19:35","19:47")
-TimeLineShortDescription=(" Arrest Warrant Issued.", "First units arrive.", "Perimeter Established.", "SWAT Entry.")
 TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
-NewEquipmentName=Mark 19 Semi-Automatic Pistol
-NewEquipmentDescription=This semiautomatic pistol holds eight .50 Action Express rounds, providing the greatest stopping power of any handgun outside a revolver.
 LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
+
+[SP-Hotel]
+PrimarySpawnPoint=Elevator Shaft
+SecondarySpawnPoint=Stairwell
+CampaignObjectiveHostageSpawn=("Lawrence Adams","James Bettencourt")
+MissionDescription=("Hostage Rescue","1700 West 7th Ave.","May 1 - 18:12")
+BriefingText=("Ok, men, this one's a zoo, and it isn't going to get any better.   The self declared militia group America Now has taken real estate heir James Betincourt Junior and Lawrence Adams, his general contractor, hostage.  Apparently they were touring a current project, the Old Granite Hotel, and were taken while inspecting Adams' work.  Now the suspects are holed up on the top two floors of the hotel, demanding twelve million dollars ransom by midnight.   They claim that Betincourt Investments owes this as a ''downpayment on their debt to the American People.''","|America Now is a small but active domestic militia group.  They are fiercely isolationist, opposing immigration, free trade, and foreign owned interests.   Most of their previous actions have been against foreign owned properties, either sabotaging them in the building stage or engaging in serious vandalism, making the properties too expensive to maintain.  This is their first kidnapping, and it may indicate a shift in the group's tactics.  Given the public nature of the incident, the group is clearly looking for publicity as well.  We've spoken with the media, and received some co-operation; however, it's not clear how long that will last.","|Expect the America Now suspects to be well equipped, and to act as a group, but their inexperience with hostages may make them even more dangerous to the civilians.  Take extra care.","|Now...on to the victims.  James Betincourt Junior is the son of the CEO and majority owner of Betincourt Investments, a French based property development company.  Six months ago, they purchased the Granite out of bankruptcy for twelve million dollars, and have been renovating it ever since.  Junior has been in charge of the renovations, and was doing an inspection of the renovation work when he was captured.  Lawrence Adams is the general contractor and the architect in charge of doing the renovation work. ","|The suspects are on the top two floors of the hotel, the sixth and the seventh.   You'll find the blueprints on the board.  We've cut power to the elevators, and one of them is trapped between the fifth and sixth floor.  You can either go up the stairs, or down the elevator shaft.  Recent gunshots were reported coming from the seventh floor, so it's time to go in.  ")
+LocationInfoText=("The Old Granite Hotel, 1700 West 7th Ave.","|","Sierra One is covering Side 1, Level 7 -- the exposed construction area.")
+HostageName=("James Betincourt, Jr.","Lawrence Adams")
+HostageVitals=("Sex: Male|Descent: Caucasian|Hair: Brown|Eyes: Brown|Height: 6' 1''|Weight: 160|DOB: 01/04/75|Age: 33","Sex: Male|Descent: Caucasian|Hair: Black|Eyes: Blue|Height: 5' 11''|Weight: 190|DOB: 04/19/66|Age: 42")
+HostageDescription=("Son of James Betincourt, CEO and president of Betincourt Investments.  Betincourt Investments is the owner of the Old Granite.","Lawrence Adams is the general contractor for the remodeling of the Old Granite Hotel.  ")
+SuspectName=("Unknown")
+SuspectVitals=("")
+SuspectDescription=("Wearing bulletproof vests and masks, equipped with machine guns.")
+EntryOptionTitle=("Elevator Shaft","Stairwell")
+EntryDescription=("Entry from on top of the elevator car stopped on level 5.","Stairwell entry from Level 5.")
+TimeLinePlot=(0,31,38,42,48,58,96,100)
+TimeLineTime=("12:30","14:17","14:40","14:53","15:12","15:47","17:57","18:12")
+TimeLineShortDescription=("Arranged meeting","Lost contact","Ransom demand","SWAT arrives","Additional demands","Additional demands","Negotiations fail","Tactical entry begun")
+TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - Charles Betincourt, owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 milllion dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
+LoadingText=1700 West 7th Ave., Old Granite Hotel
 
 [SP-DNA]
 PrimarySpawnPoint=Front Door
@@ -5440,6 +5453,9 @@ Description=Neutralize Javier Arias
 
 [Rescue_Bogard]
 Description=Rescue Oscar Bogard
+
+[Neutralize_Moretti]
+Description=Neutralize Adam Moretti
 
 [Training_ProtectOfficers]
 Description=Do not kill your fellow officers

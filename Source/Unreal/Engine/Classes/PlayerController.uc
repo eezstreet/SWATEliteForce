@@ -48,6 +48,7 @@ var bool	bBlockCloseCamera;
 var bool	bValidBehindCamera;
 var bool	bForcePrecache;
 var bool	bClientDemo;
+var public bool bSecondaryWeaponLast; // when true, last weapon equipped is the secondary weapon
 var const bool bAllActorsRelevant;	// used by UTTV.  DO NOT SET THIS TRUE - it has a huge impact on network performance
 var bool	bShortConnectTimeOut;	// when true, reduces connect timeout to 15 seconds
 var bool	bPendingDestroy;		// when true, playercontroller is being destroyed
@@ -83,6 +84,7 @@ var int ShowFlags;
 var int ExShowFlags;
 #endif
 var int Misc1,Misc2;
+
 var int RendMap;
 var float        OrthoZoom;     // Orthogonal/map view zoom factor.
 var const actor ViewTarget;
@@ -94,7 +96,7 @@ var rotator OldCameraRot;
 var transient array<CameraEffect> CameraEffects;	// A stack of camera effects.
 
 #if IG_SWAT		//tcohen: weapon zoom
-var float BaseFOV;
+var globalconfig float BaseFOV;
 var float ZoomedFOV;
 var config private float ZoomTime;
 var config private float ZoomBezierPt1X;
@@ -137,7 +139,7 @@ var vector      TargetViewLocation;
 #else
 var float		TargetEyeHeight;
 #endif
-var rotator		TargetViewRotation; 
+var rotator		TargetViewRotation;
 var rotator     BlendedTargetViewRotation;
 
 var HUD	myHUD;	// heads up display info
@@ -153,7 +155,7 @@ var EMusicTransition	Transition;
 // when they get position updates from the server.
 var SavedMove SavedMoves;	// buffered moves pending position updates
 var SavedMove FreeMoves;	// freed moves, available for buffering
-var SavedMove PendingMove;	
+var SavedMove PendingMove;
 var float CurrentTimeStamp,LastUpdateTime,ServerTimeStamp,TimeMargin, ClientUpdateTime;
 var globalconfig float MaxTimeMargin;
 
@@ -270,7 +272,6 @@ var private Timer ManualFlushTimer;  // Timer used to trigger a manual "FLUSH" c
 var StatsInterface Stats;
 #endif
 
-
 replication
 {
 	// Things the server should send to the client.
@@ -291,8 +292,8 @@ replication
 		ClientSetHUD,ClientReliablePlaySound, //FOV, StartZoom,     //IG_SWAT    //tcohen: weapon zoom
 		//ToggleZoom, StopZoom, EndZoom,    //IG_SWAT   //tcohen: weapon zoom
         ClientSetMusic, ClientRestart,
-		ClientAdjustGlow, 
-		ClientSetBehindView, ClientSetFixedCamera, ClearProgressMessages, 
+		ClientAdjustGlow,
+		ClientSetBehindView, ClientSetFixedCamera, ClearProgressMessages,
         SetProgressMessage, SetProgressTime,
 		GivePawn, ClientGotoState,
 		ClientChangeVoiceChatter,
@@ -309,15 +310,15 @@ replication
         ClientStopForceFeedback, ClientTravel;
 	unreliable if( Role==ROLE_Authority )
         //SetFOVAngle,  //IG_SWAT   //tcohen: weapon zoom
-        ClientShake, ClientFlash,  
+        ClientShake, ClientFlash,
 		ClientAdjustPosition, ShortClientAdjustPosition, VeryShortClientAdjustPosition, LongClientAdjustPosition;
 	unreliable if( (!bDemoRecording || bClientDemoRecording && bClientDemoNetFunc) && Role==ROLE_Authority )
 		ClientHearSound;
     reliable if( bClientDemoRecording && ROLE==ROLE_Authority )
 		DemoClientSetHUD;
 
-    reliable if ( Role < ROLE_Authority )
-        ActiveViewport;
+    /*reliable if ( Role < ROLE_Authority )
+        ActiveViewport;*/
 
 	// Functions client can call.
 	unreliable if( Role<ROLE_Authority )
@@ -329,7 +330,7 @@ replication
 		//TMC removed PrevItem, ActivateItem,
         ServerReStartGame, AskForPawn,
 		ChangeName, ChangeTeam, Suicide,
-        //TMC removed ServerThrowWeapon, 
+        //TMC removed ServerThrowWeapon,
         BehindView, Typing,
 		ServerChangeVoiceChatter,
 		ServerGetVoiceChatters,
@@ -393,13 +394,13 @@ returns an integer to use as a pitch to orient player view along current ground 
 */
 native(524) final function int FindStairRotation(float DeltaTime);
 
-native event INT ClientHearSound ( 
-	actor Actor, 
+native event INT ClientHearSound (
+	actor Actor,
 #if !IG_EFFECTS
-	int Id, 
+	int Id,
 #endif
-	sound S, 
-	vector SoundLocation, 
+	sound S,
+	vector SoundLocation,
 	vector Parameters,
 #if IG_EFFECTS
     float InnerRadius,
@@ -436,13 +437,10 @@ event PostBeginPlay()
 	DesiredFOV = DefaultFOV;
 #endif
 	SetViewTarget(self);  // MUST have a view target!
-#if IG_SWAT
-	if ( Level.NetMode == NM_Standalone || Level.IsCOOPServer )
-#else
+
 	if ( Level.NetMode == NM_Standalone )
-#endif
 		AddCheats();
-    
+
 #if !IG_SHARED	// rowan: this was essentially an epic hack.. we handle this better now by explicitly precaching actors on the client
 	//bForcePrecache = (Role < ROLE_Authority);
  //   ForcePrecacheTime = Level.TimeSeconds + 2;
@@ -454,15 +452,15 @@ event PostBeginPlay()
 }
 
 #if IG_RWO //dkaplan: added rwo broacasts
-simulated function ClientBroadcastReactToDamaged( String UniqueIdentifier, 
-                                                int Damage, 
-                                                Pawn EventInstigator, 
-                                                vector HitLocation, 
-                                                vector Momentum, 
+simulated function ClientBroadcastReactToDamaged( String UniqueIdentifier,
+                                                int Damage,
+                                                Pawn EventInstigator,
+                                                vector HitLocation,
+                                                vector Momentum,
                                                 class<DamageType> DamageType)
 {
     local  Actor SourceActor;
-    
+
         SourceActor = FindByUniqueID( None, UniqueIdentifier );
 
         if( SourceActor == None )
@@ -477,11 +475,11 @@ simulated function ClientBroadcastReactToDamaged( String UniqueIdentifier,
     SourceActor.ReactToDamaged( Damage, EventInstigator, HitLocation, Momentum, DamageType );
 }
 
-simulated function ClientBroadcastReactToBumped(String UniqueIdentifier, 
+simulated function ClientBroadcastReactToBumped(String UniqueIdentifier,
                                                 Actor Other )
 {
     local  Actor SourceActor;
-    
+
         SourceActor = FindByUniqueID( None, UniqueIdentifier );
 
         if( SourceActor == None )
@@ -496,11 +494,11 @@ simulated function ClientBroadcastReactToBumped(String UniqueIdentifier,
     SourceActor.ReactToBumped( Other );
 }
 
-simulated function ClientBroadcastReactToUsed( String UniqueIdentifier, 
+simulated function ClientBroadcastReactToUsed( String UniqueIdentifier,
                                                 Actor Other )
 {
     local  Actor SourceActor;
-    
+
         SourceActor = FindByUniqueID( None, UniqueIdentifier );
 
         if( SourceActor == None )
@@ -515,11 +513,11 @@ simulated function ClientBroadcastReactToUsed( String UniqueIdentifier,
     SourceActor.ReactToUsed( Other );
 }
 
-simulated function ClientBroadcastReactToTriggered( String UniqueIdentifier, 
+simulated function ClientBroadcastReactToTriggered( String UniqueIdentifier,
                                                 Actor Other )
 {
     local  Actor SourceActor;
-    
+
         SourceActor = FindByUniqueID( None, UniqueIdentifier );
 
         if( SourceActor == None )
@@ -535,7 +533,7 @@ simulated function ClientBroadcastReactToTriggered( String UniqueIdentifier,
 }
 
 #endif
-#if IG_SWAT 
+#if IG_SWAT
 simulated function ClientBroadcastSoundEffectSpecification( name EffectSpecification,
                                                             Actor Source,
                                                             Actor Target,
@@ -551,7 +549,7 @@ simulated function ClientBroadcastSoundEffectSpecification( name EffectSpecifica
 simulated function TriggerSoundEffectSpecification( name EffectSpecification,
                                                     Actor Source,
                                                     Actor Target,
-                                                    int SpecificSoundRef, 
+                                                    int SpecificSoundRef,
                                                     optional Material Material,
                                                     optional Vector overrideWorldLocation,
                                                     optional Rotator overrideWorldRotation,
@@ -559,9 +557,9 @@ simulated function TriggerSoundEffectSpecification( name EffectSpecification,
 
 // RPC on the client that triggers the given effect event on the given source actor.
 // If the SourceActor is not relevant and cannont be referenced by uniqueID, the call is ignored.
-simulated function ClientBroadcastEffectEvent(  Actor SourceActor, 
+simulated function ClientBroadcastEffectEvent(  Actor SourceActor,
                                                 String UniqueIdentifier,
-                                                string EffectEvent, 
+                                                string EffectEvent,
                                                 optional Actor Other,
                                                 optional Material TargetMaterial,
                                                 optional Vector HitLocation,
@@ -588,9 +586,9 @@ simulated function ClientBroadcastEffectEvent(  Actor SourceActor,
 
 // RPC on the client that UNtriggers the given effect event on the given source actor.
 // If the SourceActor is not relevant and cannont be referenced by uniqueID, the call is ignored.
-simulated function ClientBroadcastUnTriggerEffectEvent(  Actor SourceActor, 
+simulated function ClientBroadcastUnTriggerEffectEvent(  Actor SourceActor,
                                                 String UniqueIdentifier,
-                                                string EffectEvent, 
+                                                string EffectEvent,
                                                 optional String ReferenceTag )
 {
     if( SourceActor == None )
@@ -612,9 +610,9 @@ simulated function ClientBroadcastUnTriggerEffectEvent(  Actor SourceActor,
 #if IG_SWAT //dkaplan: broadcast Triggers
 // RPC on the client that triggers on the given source actor.
 // If the SourceActor is not relevant and cannont be referenced by uniqueID, the call is ignored.
-simulated function ClientBroadcastTrigger(  Actor SourceActor, 
-                                            String UniqueIdentifier, 
-                                            Actor Other, 
+simulated function ClientBroadcastTrigger(  Actor SourceActor,
+                                            String UniqueIdentifier,
+                                            Actor Other,
                                             Pawn EventInstigator )
 {
     if( SourceActor == None )
@@ -642,6 +640,11 @@ simulated function ClientAIDroppedWeapon( string WeaponModelUniqueID, vector Loc
 
 #endif // IG_SWAT
 
+exec function History()
+{
+	Console(Player.InteractionMaster.Console).ToggleLog();
+}
+
 exec function SetSpectateSpeed(Float F)
 {
 	SpectateSpeed = F;
@@ -664,7 +667,7 @@ function ClientCapBandwidth(int Cap)
 	if ( (Player != None) && (Player.CurrentNetSpeed > Cap) )
 		SetNetSpeed(Cap);
 }
-		
+
 function PendingStasis()
 {
 	bStasis = true;
@@ -678,14 +681,7 @@ function AddCheats()
         return;
 
     // Assuming that this never gets called for NM_Client
-#if IG_SWAT && (!IG_THIS_IS_SHIPPING_VERSION) // ckline: so we can use cheats to debug multiplayer	
-  #if IG_THIS_IS_SHIPPING_VERSION // sanity check
-  #error REMOVE THIS HACK BEFORE SHIPPING
-  #endif
-	if ( CheatManager == None && (Level.NetMode == NM_Standalone || Level.IsCOOPServer) )
-#else
 	if ( CheatManager == None && (Level.NetMode == NM_Standalone) )
-#endif
 		CheatManager = new(self) CheatClass;
 }
 
@@ -725,8 +721,8 @@ function SpawnDefaultHUD()
 {
 	myHUD = spawn(class'HUD',self);
 }
-	
-/* Reset() 
+
+/* Reset()
 reset actor to initial state - used when restarting level without reloading.
 */
 function Reset()
@@ -744,7 +740,7 @@ function Reset()
 function CleanOutSavedMoves()
 {
     local SavedMove Next;
-	
+
 	// clean out saved moves
 	while ( SavedMoves != None )
 	{
@@ -789,8 +785,8 @@ function AskForPawn()
         //mplog( "...calling ServerRestartPlayer()." );
 		bFrozen = false;
 		ServerRestartPlayer();
-	}		
-}	
+	}
+}
 
 function GivePawn(Pawn NewPawn)
 {
@@ -805,7 +801,7 @@ function GivePawn(Pawn NewPawn)
 	Pawn = NewPawn;
 	NewPawn.Controller = self;
 	ClientRestart();
-}	
+}
 
 /* GetFacingDirection()
 returns direction faced relative to movement dir
@@ -891,7 +887,7 @@ function ClientSetHUD(class<HUD> newHUDType, class<Scoreboard> newScoringType)
 
 	if ( (myHUD == None) || ((newHUDType != None) && (newHUDType != myHUD.Class)) )
 	{
-		NewHUD = spawn(newHUDType, self); 
+		NewHUD = spawn(newHUDType, self);
 		if ( NewHUD != None )
 		{
 			if ( myHUD != None )
@@ -958,7 +954,7 @@ function ViewFlash(float DeltaTime)
 
     if ( Pawn != None )
     {
-        goalScale += Pawn.HeadVolume.ViewFlash.X; 
+        goalScale += Pawn.HeadVolume.ViewFlash.X;
         goalFog += Pawn.HeadVolume.ViewFog;
     }
 	Step = 0.6 * delta;
@@ -985,30 +981,34 @@ event ClientMessage( coerce string S, optional Name Type )
 	TeamMessage(PlayerReplicationInfo, S, Type);
 }
 
-event TeamMessage( PlayerReplicationInfo PRI, coerce string S, name Type  )
+event TeamMessage( PlayerReplicationInfo PRI, coerce string S, name Type, optional string Location  )
 {
 	if ( myHUD != None )
 	myHUD.Message( PRI, S, Type );
 
     if ( ((Type == 'Say') || (Type == 'TeamSay')) && (PRI != None) )
-		S = PRI.PlayerName$": "$S;
+		S = PRI.PlayerName$" ("$Location$"): "$S;
 
-    Player.Console.Message( S, 6.0 );
+    Player.Console.Message( S, 0 );
+}
+
+function ConsoleMessage(string S) {
+	Player.InteractionMaster.Console.Message(S, 0);
 }
 
 simulated function PlayBeepSound();
 
 simulated function PlayAnnouncement(sound ASound, byte AnnouncementLevel, optional bool bForce)
-{	
+{
 	local float Atten;
-	
+
 	if ( AnnouncementLevel > AnnouncerLevel )
 		return;
 	if ( !bForce && (Level.TimeSeconds - LastPlaySound < 1) )
 		return;
 	LastPlaySound = Level.TimeSeconds;	// so voice messages won't overlap
 	LastPlaySpeech = Level.TimeSeconds;	// don't want chatter to overlap announcements
-	
+
 	Atten = FClamp(0.1 + float(AnnouncerVolume)*0.225,0.2,1.0);
 #if IG_EFFECTS
     ClientPlaySound(ASound,true,Atten);
@@ -1021,7 +1021,7 @@ function bool AllowVoiceMessage(name MessageType)
 {
 	if ( Level.NetMode == NM_Standalone )
 		return true;
-		
+
 	if ( Level.TimeSeconds - OldMessageTime < 3 )
 	{
 		if ( (MessageType == 'TAUNT') || (MessageType == 'AUTOTAUNT') )
@@ -1035,11 +1035,11 @@ function bool AllowVoiceMessage(name MessageType)
 		OldMessageTime = Level.TimeSeconds;
 	return true;
 }
-	
+
 //Play a sound client side (so only client will hear it
 simulated function ClientPlaySound(sound ASound, optional bool bVolumeControl, optional float inAtten
 #if !IG_EFFECTS
-                                   , optional ESoundSlot slot 
+                                   , optional ESoundSlot slot
 #endif
                                    )
 {
@@ -1091,11 +1091,11 @@ simulated event OnFinishedPrecaching(bool doExtraFlush)
         // after alt-tabbing back into full screen mode after alt-tabbing out
         // of it.
         ManualFlushTimer = new class'Timer';
-        
+
         if (Level.GetEngine().EnableDevTools)
             log("Starting timer at time "$Level.TimeSeconds$" to flush all viewports manually in "$PostFullscreenManualFlushDelay$" seconds.");
-        
-        ManualFlushTimer.TimerDelegate = FlushAllViewports; 
+
+        ManualFlushTimer.TimerDelegate = FlushAllViewports;
         ManualFlushTimer.StartTimer( PostFullscreenManualFlushDelay, false );
     }
 #endif
@@ -1125,14 +1125,14 @@ simulated event Destroyed()
 	// cheatmanager, adminmanager, and playerinput cleaned up in C++ PostScriptDestroyed()
 
     StopFeedbackEffect();
- 
+
 	if ( Pawn != None )
 	{
 #if !IG_SWAT // ckline: removed vehicles
 		// If its a vehicle, just destroy the driver, otherwise do the normal.
 		DrivenVehicle = KVehicle(Pawn);
 		if(DrivenVehicle != None)
-		{	
+		{
 			Driver = DrivenVehicle.Driver;
 			DrivenVehicle.KDriverLeave(true); // Force the driver out of the car
 			Driver.Destroy();
@@ -1141,7 +1141,7 @@ simulated event Destroyed()
 		{
 			DrivenHVehicle = HavokVehicle(Pawn);
 			if(DrivenHVehicle != None)
-			{	
+			{
 				Driver = DrivenHVehicle.Driver;
 				DrivenHVehicle.DriverLeave(true); // Force the driver out of the car
 				Driver.Destroy();
@@ -1150,7 +1150,7 @@ simulated event Destroyed()
 			{
 				DrivenSVehicle = SVehicle(Pawn);
 				if(DrivenSVehicle != None)
-				{	
+				{
 					Driver = DrivenSVehicle.Driver;
 					DrivenSVehicle.KDriverLeave(true); // Force the driver out of the car
 					Driver.Destroy();
@@ -1191,7 +1191,7 @@ simulated event Destroyed()
 		SavedMoves.Destroy();
 		SavedMoves = Next;
 	}
-    
+
     if( PlayerSecurity != None )
     {
         PlayerSecurity.Destroy();
@@ -1208,7 +1208,7 @@ function ClientSetMusic( string NewSong, EMusicTransition NewTransition )
 	Song        = NewSong;
 	Transition  = NewTransition;
 }
-	
+
 // ------------------------------------------------------------------------
 // Zooming/FOV change functions
 
@@ -1235,6 +1235,30 @@ exec function SetZoom(bool Zoom, optional bool Instantly)
     }
 }
 
+exec function FOV(float F)
+{
+	local float fFOV;
+
+	if( (F >= 70.0) )
+	{
+		fFOV = FClamp(F, 70, 120);
+		BaseFOV = fFOV;
+	}
+}
+
+exec function SetFOVTemporary(float F)
+{
+	if(F >= 70.0)
+	{
+		BaseFOV = FClamp(F, 70, 120);
+	}
+}
+
+exec function SaveFOVSettings()
+{
+	SaveConfig();
+}
+
 function FixFOV();  //defunct for SWAT
 #else   //!IG_SWAT
 
@@ -1245,7 +1269,7 @@ function ToggleZoom()
 	else
 		StartZoom();
 }
-	
+
 function StartZoom()
 {
 	ZoomLevel = 0.0;
@@ -1348,7 +1372,7 @@ simulated private function InternalReload()
     if (!Weapon.IsIdle()) return; //can only do one thing at a time
 
     if (!Weapon.Ammo.CanReload() ) return;
-        
+
     Weapon.Reload();
 }
 
@@ -1423,7 +1447,7 @@ function ClientVoiceMessage(PlayerReplicationInfo Sender, PlayerReplicationInfo 
 
 	if ( (Sender == None) || (Sender.voicetype == None) || (Player.Console == None) )
 		return;
-		
+
 	V = Spawn(Sender.voicetype, self);
 	if ( V != None )
 		V.ClientInitialize(Sender, Recipient, messagetype, messageID);
@@ -1442,16 +1466,16 @@ compressed version of server move for bandwidth saving
 */
 function ShortServerMove
 (
-	float TimeStamp, 
+	float TimeStamp,
 	vector ClientLoc,
 	bool NewbRun,
 	bool NewbDuck,
-	bool NewbJumpStatus, 
+	bool NewbJumpStatus,
 #if IG_SWAT
     bool NewbLeanLeft,
     bool NewbLeanRight,
 #endif
-	byte ClientRoll, 
+	byte ClientRoll,
 	int View
 )
 {
@@ -1462,25 +1486,25 @@ function ShortServerMove
         DCLICK_None,ClientRoll,View);
 }
 
-/* ServerMove() 
+/* ServerMove()
 - replicated function sent by client to server - contains client movement and firing info
 Passes acceleration in components so it doesn't get rounded.
 */
 function ServerMove
 (
-	float TimeStamp, 
-	vector InAccel, 
+	float TimeStamp,
+	vector InAccel,
 	vector ClientLoc,
 	bool NewbRun,
 	bool NewbDuck,
-	bool NewbJumpStatus, 
+	bool NewbJumpStatus,
     bool NewbDoubleJump,
 #if IG_SWAT
     bool NewbLeanLeft,
     bool NewbLeanRight,
 #endif
-	eDoubleClickDir DoubleClickMove, 
-	byte ClientRoll, 
+	eDoubleClickDir DoubleClickMove,
+	byte ClientRoll,
 	int View,
 	optional byte OldTimeDelta,
 	optional int OldAccel
@@ -1519,7 +1543,7 @@ function ServerMove
 			if ( Accel.Z > 127 )
 				Accel.Z = -1 * (Accel.Z - 128);
 			Accel *= 20;
-			
+
 			OldbRun = ( (OldAccel & 64) != 0 );
             OldbDoubleJump = ( (OldAccel & 32) != 0 );
 			NewbPressedJump = ( (OldAccel & 16) != 0 );
@@ -1552,7 +1576,7 @@ function ServerMove
                 OldDoubleClickMove, Accel, rot(0,0,0));
 			CurrentTimeStamp = OldTimeStamp;
 		}
-	}		
+	}
 
 	// View components
 	ViewPitch = View/32768;
@@ -1626,7 +1650,7 @@ function ServerMove
             maxPitch = 0;
 		If ( (ViewPitch > maxPitch * RotationRate.Pitch) && (ViewPitch < 65536 - maxPitch * RotationRate.Pitch) )
 		{
-			If (ViewPitch < 32768) 
+			If (ViewPitch < 32768)
 				Rot.Pitch = maxPitch * RotationRate.Pitch;
 			else
 				Rot.Pitch = 65536 - maxPitch * RotationRate.Pitch;
@@ -1686,26 +1710,26 @@ function ServerMove
 			{
 					ShortClientAdjustPosition
 					(
-						TimeStamp, 
-						GetStateName(), 
-						ClientPhysics, 
-						ClientLoc.X, 
-						ClientLoc.Y, 
-						ClientLoc.Z, 
+						TimeStamp,
+						GetStateName(),
+						ClientPhysics,
+						ClientLoc.X,
+						ClientLoc.Y,
+						ClientLoc.Z,
 						ClientBase
 					);
 			}
 			else
 				ClientAdjustPosition
 				(
-					TimeStamp, 
-					GetStateName(), 
-					ClientPhysics, 
-					ClientLoc.X, 
-					ClientLoc.Y, 
-					ClientLoc.Z, 
-					ClientVel.X, 
-					ClientVel.Y, 
+					TimeStamp,
+					GetStateName(),
+					ClientPhysics,
+					ClientLoc.X,
+					ClientLoc.Y,
+					ClientLoc.Z,
+					ClientVel.X,
+					ClientVel.Y,
 					ClientVel.Z,
 					ClientBase
 				);
@@ -1713,14 +1737,14 @@ function ServerMove
 		else
 			LongClientAdjustPosition
 			(
-				TimeStamp, 
-				GetStateName(), 
-				ClientPhysics, 
-				ClientLoc.X, 
-				ClientLoc.Y, 
-				ClientLoc.Z, 
-				ClientVel.X, 
-				ClientVel.Y, 
+				TimeStamp,
+				GetStateName(),
+				ClientPhysics,
+				ClientLoc.X,
+				ClientLoc.Y,
+				ClientLoc.Z,
+				ClientVel.X,
+				ClientVel.Y,
 				ClientVel.Z,
 				ClientBase,
 				ClientFloor.X,
@@ -1729,7 +1753,7 @@ function ServerMove
 			);
 	}
 	//log("Server moved stamp "$TimeStamp$" location "$Pawn.Location$" Acceleration "$Pawn.Acceleration$" Velocity "$Pawn.Velocity);
-}	
+}
 
 // Only executed on server
 function ServerDrive(float InForward, float InStrafe, float InUp, bool InJump)
@@ -1749,18 +1773,18 @@ function ProcessMove ( float DeltaTime, vector newAccel, eDoubleClickDir DoubleC
 }
 
 final function MoveAutonomous
-(	
-	float DeltaTime, 	
+(
+	float DeltaTime,
 	bool NewbRun,
 	bool NewbDuck,
-	bool NewbPressedJump, 
+	bool NewbPressedJump,
     bool NewbDoubleJump,
 #if IG_SWAT
     bool NewbLeanLeft,
     bool NewbLeanRight,
 #endif
-	eDoubleClickDir DoubleClickMove, 
-	vector newAccel, 
+	eDoubleClickDir DoubleClickMove,
+	vector newAccel,
 	rotator DeltaRot
 )
 {
@@ -1789,7 +1813,7 @@ final function MoveAutonomous
     bDoubleJump = NewbDoubleJump;
 	HandleWalking();
 	ProcessMove(DeltaTime, newAccel, DoubleClickMove, DeltaRot);
-	if ( Pawn != None )	
+	if ( Pawn != None )
 		Pawn.AutonomousPhysics(DeltaTime);
 	else
 		AutonomousPhysics(DeltaTime);
@@ -1802,10 +1826,10 @@ bandwidth saving version, when velocity is zeroed, and pawn is walking
 */
 function VeryShortClientAdjustPosition
 (
-	float TimeStamp, 
-	float NewLocX, 
-	float NewLocY, 
-	float NewLocZ, 
+	float TimeStamp,
+	float NewLocX,
+	float NewLocY,
+	float NewLocZ,
 	Actor NewBase
 )
 {
@@ -1821,12 +1845,12 @@ bandwidth saving version, when velocity is zeroed
 */
 function ShortClientAdjustPosition
 (
-	float TimeStamp, 
-	name newState, 
+	float TimeStamp,
+	name newState,
 	EPhysics newPhysics,
-	float NewLocX, 
-	float NewLocY, 
-	float NewLocZ, 
+	float NewLocX,
+	float NewLocY,
+	float NewLocZ,
 	Actor NewBase
 )
 {
@@ -1842,14 +1866,14 @@ function ShortClientAdjustPosition
 */
 function ClientAdjustPosition
 (
-	float TimeStamp, 
-	name newState, 
+	float TimeStamp,
+	name newState,
 	EPhysics newPhysics,
-	float NewLocX, 
-	float NewLocY, 
-	float NewLocZ, 
-	float NewVelX, 
-	float NewVelY, 
+	float NewLocX,
+	float NewLocY,
+	float NewLocZ,
+	float NewVelX,
+	float NewVelY,
 	float NewVelZ,
 	Actor NewBase
 )
@@ -1861,19 +1885,19 @@ function ClientAdjustPosition
 	LongClientAdjustPosition(TimeStamp,newState,newPhysics,NewLocX,NewLocY,NewLocZ,NewVelX,NewVelY,NewVelZ,NewBase,Floor.X,Floor.Y,Floor.Z);
 }
 
-/* LongClientAdjustPosition 
+/* LongClientAdjustPosition
 long version, when care about pawn's floor normal
 */
 function LongClientAdjustPosition
 (
-	float TimeStamp, 
-	name newState, 
+	float TimeStamp,
+	name newState,
 	EPhysics newPhysics,
-	float NewLocX, 
-	float NewLocY, 
-	float NewLocZ, 
-	float NewVelX, 
-	float NewVelY, 
+	float NewLocX,
+	float NewLocY,
+	float NewLocZ,
+	float NewVelX,
+	float NewVelY,
 	float NewVelZ,
 	Actor NewBase,
 	float NewFloorX,
@@ -1884,7 +1908,7 @@ function LongClientAdjustPosition
     local vector NewLocation, NewVelocity, NewFloor;
 	local Actor MoveActor;
     local SavedMove CurrentMove;
- 
+
 	// update ping
 	if ( (PlayerReplicationInfo != None) && !bDemoOwner )
 	{
@@ -1917,9 +1941,9 @@ function LongClientAdjustPosition
 		if ( Pawn.bTearOff )
 		{
 			Pawn = None;
-			if ( !IsInState('GameEnded') && !IsInState('Dead') 
+			if ( !IsInState('GameEnded') && !IsInState('Dead')
 #if IG_SWAT //dkaplan we also dont want to transition to DEAD if we are already in observer cam
-			      && !IsInState('ObserveTeam') 
+			      && !IsInState('ObserveTeam')
 #endif
 			    )
 			{
@@ -1935,7 +1959,7 @@ function LongClientAdjustPosition
 			SetViewTarget(Pawn);
 		}
 	}
-	else 
+	else
     {
 		MoveActor = self;
  	   	if( GetStateName() != newstate )
@@ -1952,7 +1976,7 @@ function LongClientAdjustPosition
 			}
 			else if ( NewState == 'Dead'
 #if IG_SWAT //darren we dont want to transition to DEAD if we are already in observer cam
-			      && !IsInState('ObserveTeam') 
+			      && !IsInState('ObserveTeam')
 #endif
                     )
 				GotoState(NewState);
@@ -1979,7 +2003,7 @@ function LongClientAdjustPosition
             CurrentMove.NextMove = FreeMoves;
             FreeMoves = CurrentMove;
 			if ( CurrentMove.TimeStamp == CurrentTimeStamp )
-			{ 
+			{
 				FreeMoves.Clear();
 				if ( (VSize(CurrentMove.SavedLocation - NewLocation) < 3)
 					&& (VSize(CurrentMove.SavedVelocity - NewVelocity) < 3)
@@ -2015,7 +2039,7 @@ function LongClientAdjustPosition
 		    && (MoveActor.CollisionHeight > Pawn(MoveActor).CrouchHeight)
 		    && !Pawn(MoveActor).bIsCrouched
 		    && (newPhysics == PHYS_Walking)
-		    && (MoveActor.Physics != PHYS_Karma) && (MoveActor.Physics != PHYS_KarmaRagDoll) 
+		    && (MoveActor.Physics != PHYS_Karma) && (MoveActor.Physics != PHYS_KarmaRagDoll)
 		    && (MoveActor.Physics != PHYS_Havok) && (MoveActor.Physics != PHYS_HavokSkeletal) )
 	    {
 		    MoveActor.SetPhysics(newPhysics);
@@ -2114,7 +2138,7 @@ function ClientUpdatePosition()
             PendingMove.bLeanLeft, PendingMove.bLeanRight,
 #endif
             PendingMove.DoubleClickMove, PendingMove.Acceleration, rot(0,0,0));
-     
+
 	//log("Client updated position to "$Pawn.Location);
 	bUpdating = false;
 	bDuck = realbDuck;
@@ -2163,7 +2187,7 @@ final function SavedMove GetFreeMove()
 		FreeMoves = FreeMoves.NextMove;
 		s.NextMove = None;
 		return s;
-	}	
+	}
 }
 
 function int CompressAccel(int C)
@@ -2175,27 +2199,27 @@ function int CompressAccel(int C)
 	return C;
 }
 
-/* 
+/*
 ========================================================================
 Here's how player movement prediction, replication and correction works in network games:
 
-Every tick, the PlayerTick() function is called.  It calls the PlayerMove() function (which is implemented 
-in various states).  PlayerMove() figures out the acceleration and rotation, and then calls ProcessMove() 
+Every tick, the PlayerTick() function is called.  It calls the PlayerMove() function (which is implemented
+in various states).  PlayerMove() figures out the acceleration and rotation, and then calls ProcessMove()
 (for single player or listen servers), or ReplicateMove() (if its a network client).
 
-ReplicateMove() saves the move (in the PendingMove list), calls ProcessMove(), and then replicates the move 
-to the server by calling the replicated function ServerMove() - passing the movement parameters, the client's 
+ReplicateMove() saves the move (in the PendingMove list), calls ProcessMove(), and then replicates the move
+to the server by calling the replicated function ServerMove() - passing the movement parameters, the client's
 resultant position, and a timestamp.
 
-ServerMove() is executed on the server.  It decodes the movement parameters and causes the appropriate movement 
-to occur.  It then looks at the resulting position and if enough time has passed since the last response, or the 
+ServerMove() is executed on the server.  It decodes the movement parameters and causes the appropriate movement
+to occur.  It then looks at the resulting position and if enough time has passed since the last response, or the
 position error is significant enough, the server calls ClientAdjustPosition(), a replicated function.
 
-ClientAdjustPosition() is executed on the client.  The client sets its position to the servers version of position, 
-and sets the bUpdatePosition flag to true.  
+ClientAdjustPosition() is executed on the client.  The client sets its position to the servers version of position,
+and sets the bUpdatePosition flag to true.
 
-When PlayerTick() is called on the client again, if bUpdatePosition is true, the client will call 
-ClientUpdatePosition() before calling PlayerMove().  ClientUpdatePosition() replays all the moves in the pending 
+When PlayerTick() is called on the client again, if bUpdatePosition is true, the client will call
+ClientUpdatePosition() before calling PlayerMove().  ClientUpdatePosition() replays all the moves in the pending
 move list which occured after the timestamp of the move the server was adjusting.
 */
 
@@ -2204,9 +2228,9 @@ move list which occured after the timestamp of the move the server was adjusting
 //
 function ReplicateMove
 (
-	float DeltaTime, 
-	vector NewAccel, 
-	eDoubleClickDir DoubleClickMove, 
+	float DeltaTime,
+	vector NewAccel,
+	eDoubleClickDir DoubleClickMove,
 	rotator DeltaRot
 )
 {
@@ -2249,11 +2273,11 @@ function ReplicateMove
 #else
 	NewMove.SetMoveFor(Level.TimeSeconds, self, DeltaTime, NewAccel, DoubleClickMove);
 #endif
-	
+
 	// Simulate the movement locally.
     bDoubleJump = false;
 	ProcessMove(NewMove.Delta, NewMove.Acceleration, NewMove.DoubleClickMove, DeltaRot);
-    
+
 	if ( Pawn != None )
 		Pawn.AutonomousPhysics(NewMove.Delta);
 	else
@@ -2270,12 +2294,12 @@ function ReplicateMove
 	}
     NewMove.PostUpdate(self);
     NetMoveDelta = FMax(80.0/Player.CurrentNetSpeed, 0.015);
-	
+
     // Decide whether to hold off on move
     // send if double click move, jump, or fire unless really too soon, or if newmove.delta big enough
-    if ( !Level.bCapFramerate && !PendingMove.bPressedJump && !PendingMove.bDoubleJump 
+    if ( !Level.bCapFramerate && !PendingMove.bPressedJump && !PendingMove.bDoubleJump
 		&& ((PendingMove.DoubleClickMove == DCLICK_None) || (PendingMove.DoubleClickMove == DCLICK_Active))
-		&& ((PendingMove.Acceleration == NewAccel) || ((Normal(NewAccel) Dot Normal(PendingMove.Acceleration)) > 0.95)) 
+		&& ((PendingMove.Acceleration == NewAccel) || ((Normal(NewAccel) Dot Normal(PendingMove.Acceleration)) > 0.95))
 		&& (PendingMove.Delta < NetMoveDelta - ClientUpdateTime) )
 	{
 		return;
@@ -2296,8 +2320,8 @@ function ReplicateMove
 		// old move important to replicate redundantly
 		OldTimeDelta = FMin(255, (Level.TimeSeconds - OldMove.TimeStamp) * 500);
 		BuildAccel = 0.05 * OldMove.Acceleration + vect(0.5, 0.5, 0.5);
-		OldAccel = (CompressAccel(BuildAccel.X) << 23) 
-					+ (CompressAccel(BuildAccel.Y) << 15) 
+		OldAccel = (CompressAccel(BuildAccel.X) << 23)
+					+ (CompressAccel(BuildAccel.Y) << 15)
 					+ (CompressAccel(BuildAccel.Z) << 7);
 		if ( OldMove.bRun )
 			OldAccel += 64;
@@ -2321,11 +2345,11 @@ function ReplicateMove
 	if ( (NewMove.Acceleration == vect(0,0,0)) && (NewMove.DoubleClickMove == DCLICK_None) && !NewMove.bDoubleJump )
 		ShortServerMove
 		(
-			NewMove.TimeStamp, 
-			MoveLoc, 
+			NewMove.TimeStamp,
+			MoveLoc,
 			NewMove.bRun,
 			NewMove.bDuck,
-			bJumpStatus, 
+			bJumpStatus,
 #if IG_SWAT
             NewMove.bLeanLeft,
             NewMove.bLeanRight,
@@ -2336,29 +2360,29 @@ function ReplicateMove
 	else
 		ServerMove
 		(
-			NewMove.TimeStamp, 
-			NewMove.Acceleration * 10, 
-			MoveLoc, 
+			NewMove.TimeStamp,
+			NewMove.Acceleration * 10,
+			MoveLoc,
 			NewMove.bRun,
 			NewMove.bDuck,
-			bJumpStatus, 
+			bJumpStatus,
             NewMove.bDoubleJump,
 #if IG_SWAT
             NewMove.bLeanLeft,
             NewMove.bLeanRight,
 #endif
-			NewMove.DoubleClickMove, 
+			NewMove.DoubleClickMove,
 			ClientRoll,
 			(32767 & (Rotation.Pitch/2)) * 32768 + (32767 & (Rotation.Yaw/2)),
 			OldTimeDelta,
-			OldAccel 
+			OldAccel
 		);
 }
 
 function HandleWalking()
 {
 	if ( Pawn != None )
-		Pawn.SetWalking( (bRun != 0) && !Region.Zone.IsA('WarpZoneInfo') ); 
+		Pawn.SetWalking( (bRun != 0) && !Region.Zone.IsA('WarpZoneInfo') );
 }
 
 function ServerRestartGame()
@@ -2369,13 +2393,13 @@ function SetFOVAngle(float newFOV)
 {
 	FOVAngle = newFOV;
 }
-	 
+
 function ClientFlash( float scale, vector fog )
 {
     FlashScale = scale * vect(1,1,1);
     flashfog = 0.001 * fog;
 }
-   
+
 function ClientAdjustGlow( float scale, vector fog )
 {
 	ConstantGlowScale += scale;
@@ -2391,7 +2415,7 @@ private function ClientShake(vector ShakeRoll, vector OffsetMag, vector ShakeRat
 	if ( (MaxShakeRoll < ShakeRoll.X) || (ShakeRollTime < 0.01 * ShakeRoll.Y) )
 {
 		MaxShakeRoll = ShakeRoll.X;
-		ShakeRollTime = 0.01 * ShakeRoll.Y;	
+		ShakeRollTime = 0.01 * ShakeRoll.Y;
 		ShakeRollRate = 0.01 * ShakeRoll.Z;
 }
 	if ( VSize(OffsetMag) > VSize(MaxShakeOffset) )
@@ -2475,7 +2499,7 @@ Save game to slot 9
 */
 exec function QuickSave()
 {
-	if ( (Pawn.Health > 0) 
+	if ( (Pawn.Health > 0)
 		&& (Level.NetMode == NM_Standalone) )
 	{
 		ClientMessage(QuickSaveString);
@@ -2503,8 +2527,8 @@ function bool SetPause( BOOL bPause )
         bFire = 0;
         bAltFire = 0;
 	    return Level.Game.SetPause(bPause, self);
-    } 
-    else 
+    }
+    else
         return false;
 }
 
@@ -2584,7 +2608,7 @@ function ServerUse()
 
 	if (Pawn==None)
 		return;
-	
+
 	// Send the 'DoUse' event to each actor player is touching.
 	ForEach Pawn.TouchingActors(class'Actor', A)
 	{
@@ -2640,9 +2664,9 @@ exec function ChangeTeam( int N )
 	if ( Level.Game.bTeamGame && (PlayerReplicationInfo.Team != OldTeam) )
     {
 		if ( Pawn != None )
-		    Pawn.Died( None, class'DamageType', Pawn.Location 
+		    Pawn.Died( None, class'DamageType', Pawn.Location
 #if IG_SWAT
-                      ,vect(0,0,0) // hit momentum 
+                      ,vect(0,0,0) // hit momentum
 #endif
             );
     }
@@ -2705,7 +2729,7 @@ function EnterStartState()
 	{
 		NewState = Pawn.WaterMovementState;
 	}
-	else  
+	else
 		NewState = Pawn.LandMovementState;
 
 	if ( IsInState(NewState) )
@@ -2735,18 +2759,18 @@ function ClientRestart()
 	SetViewTarget(Pawn);
 	bBehindView = Pawn.PointOfView();
     CleanOutSavedMoves();
-    
+
     // Reset all player movement flags while we're respawning.
     bDuck = 0;
     bRun = 0;
 #if IG_SWAT
     bLeanLeft = 0;
     bLeanRight = 0;
-    bIgnoreNextRunRelease = true;    
-    bIgnoreNextCrouchRelease = true;    
+    bIgnoreNextRunRelease = true;
+    bIgnoreNextCrouchRelease = true;
 #endif
 
-	EnterStartState();	
+	EnterStartState();
 }
 
 exec function BehindView( Bool B )
@@ -2762,7 +2786,7 @@ exec function ToggleBehindView()
 {
 // dbeswick: integrated 20/6/05
 #if IG_SWAT // prevent cheating in net games
-    if (Level.NetMode != NM_Standalone) 
+    if (Level.NetMode != NM_Standalone)
         return;
 #endif
 	ServerToggleBehindview();
@@ -2787,23 +2811,22 @@ event TravelPostAccept()
 
 event PlayerTick( float DeltaTime )
 {
-#if IG_SWAT
-    LastDeltaTime = DeltaTime;
-#endif
+	LastDeltaTime = DeltaTime;
+
 
 #if !IG_SHARED	// rowan: this is essentially a hack.. we handle this better now by explicitly precaching actors on the client
 	//if ( bForcePrecache && (Level.TimeSeconds > ForcePrecacheTime) )
 	//{
 	//	bForcePrecache = false;
 	//	Level.FillRenderPrecacheArrays();
-	//}		
+	//}
 #endif
 	PlayerInput.PlayerInput(DeltaTime);
 	if ( bUpdatePosition )
 		ClientUpdatePosition();
 	PlayerMove(DeltaTime);
 
-#if IG_SHARED	
+#if IG_SHARED
 	if ( Level.NetMode == NM_Client )
 	{
 		// IGB: mcj--I'm adding this here. It has to happen on the network clients,
@@ -2839,7 +2862,7 @@ simulated function rotator AdjustAim(Ammunition FiredAmmunition, vector projStar
 	FireDir = vector(Rotation);
 	if ( FiredAmmunition.bInstantHit )
 		HitActor = Trace(HitLocation, HitNormal, projStart + 10000 * FireDir, projStart, true);
-	else 
+	else
 		HitActor = Trace(HitLocation, HitNormal, projStart + 4000 * FireDir, projStart, true);
 	if ( (HitActor != None) && HitActor.bProjTarget )
 	{
@@ -2858,14 +2881,14 @@ simulated function rotator AdjustAim(Ammunition FiredAmmunition, vector projStar
 		{
 			bestAim = 0.93;
 			if ( FiredAmmunition.bInstantHit )
-				bestAim = 0.97; 
+				bestAim = 0.97;
 			if ( FOVAngle < DefaultFOV - 8 )
 				bestAim = 0.99;
 		}
 		else
 		{
 			if ( FiredAmmunition.bInstantHit )
-				bestAim = 0.98; 
+				bestAim = 0.98;
 			if ( FOVAngle != DefaultFOV )
 				bestAim = 0.995;
 		}
@@ -2884,7 +2907,7 @@ simulated function rotator AdjustAim(Ammunition FiredAmmunition, vector projStar
 	if ( !FiredAmmunition.bInstantHit )
 	{
 		projspeed = FiredAmmunition.ProjectileClass.default.speed;
-		BestDist = vsize(BestTarget.Location + BestTarget.Velocity * FMin(2, 0.02 + BestDist/projSpeed) - projStart); 
+		BestDist = vsize(BestTarget.Location + BestTarget.Velocity * FMin(2, 0.02 + BestDist/projSpeed) - projStart);
 		bLeading = true;
 		FireDir = BestTarget.Location + BestTarget.Velocity * FMin(2, 0.02 + BestDist/projSpeed) - projStart;
 		AimSpot = projStart + bestDist * Normal(FireDir);
@@ -2916,14 +2939,14 @@ simulated function rotator AdjustAim(Ammunition FiredAmmunition, vector projStar
 			else
 				AimRot.Yaw = AimRot.Yaw + 375 - Rand(750);
 			return AimRot;
-		}	
+		}
 	}
 	else if ( !FastTrace(projStart + 0.9 * bestDist * Normal(FireDir), projStart) )
 	{
 		FireDir = BestTarget.Location - projStart;
 		AimSpot = projStart + bestDist * Normal(FireDir);
 	}
-		
+
 	return rotator(AimSpot - projStart);
 }
 #endif
@@ -2947,21 +2970,21 @@ function AdjustView(float DeltaTime )
 	if ( FOVAngle != DesiredFOV )
 	{
 		if ( FOVAngle > DesiredFOV )
-			FOVAngle = FOVAngle - FMax(7, 0.9 * DeltaTime * (FOVAngle - DesiredFOV)); 
-		else 
-			FOVAngle = FOVAngle - FMin(-7, 0.9 * DeltaTime * (FOVAngle - DesiredFOV)); 
+			FOVAngle = FOVAngle - FMax(7, 0.9 * DeltaTime * (FOVAngle - DesiredFOV));
+		else
+			FOVAngle = FOVAngle - FMin(-7, 0.9 * DeltaTime * (FOVAngle - DesiredFOV));
 		if ( Abs(FOVAngle - DesiredFOV) <= 10 )
 			FOVAngle = DesiredFOV;
 	}
 
 	// adjust FOV for weapon zooming
 	if ( bZooming )
-	{	
+	{
 		ZoomLevel += DeltaTime * 1.0;
 		if (ZoomLevel > 0.9)
 			ZoomLevel = 0.9;
 		DesiredFOV = FClamp(90.0 - (ZoomLevel * 88.0), 1, 170);
-	} 
+	}
 #endif
 }
 
@@ -2983,7 +3006,7 @@ function CalcBehindView(out vector CameraLocation, out rotator CameraRotation, f
 		ViewDist = FMin( (CameraLocation - HitLocation) Dot View, Dist );
 	else
 		ViewDist = Dist;
-    
+
     if ( !bBlockCloseCamera || !bValidBehindCamera || (ViewDist > 10 + FMax(ViewTarget.CollisionRadius, ViewTarget.CollisionHeight)) )
 	{
 		//Log("Update Cam ");
@@ -2997,7 +3020,7 @@ function CalcBehindView(out vector CameraLocation, out rotator CameraRotation, f
 		SetRotation(OldCameraRot);
 	}
 
-    CameraLocation = OldCameraLoc; 
+    CameraLocation = OldCameraLoc;
     CameraRotation = OldCameraRot;
 }
 
@@ -3176,7 +3199,7 @@ event PlayerCalcView(out actor ViewActor, out vector CameraLocation, out rotator
 		return;
 	}
 
-    if ( ViewTarget.IsA('Projectile') && !bBehindView ) 
+    if ( ViewTarget.IsA('Projectile') && !bBehindView )
     {
         CameraLocation += (ViewTarget.CollisionHeight) * vect(0,0,1);
         CameraRotation = Rotation;
@@ -3259,13 +3282,13 @@ function ViewShake(float DeltaTime)
 		// modify shake offset
 		ShakeOffset.X += DeltaTime * ShakeOffsetRate.X;
 		CheckShake(MaxShakeOffset.X, ShakeOffset.X, ShakeOffsetRate.X, ShakeOffsetTime.X);
-		
+
 		ShakeOffset.Y += DeltaTime * ShakeOffsetRate.Y;
 		CheckShake(MaxShakeOffset.Y, ShakeOffset.Y, ShakeOffsetRate.Y, ShakeOffsetTime.Y);
-		
+
 		ShakeOffset.Z += DeltaTime * ShakeOffsetRate.Z;
 		CheckShake(MaxShakeOffset.Z, ShakeOffset.Z, ShakeOffsetRate.Z, ShakeOffsetTime.Z);
-	}				
+	}
 
 	ViewRotation = Rotation;
 
@@ -3293,11 +3316,11 @@ function TurnAround()
 		TurnRot180.Yaw += 32768;
 		bSetTurnRot = true;
 	}
-	
+
 	DesiredRotation = TurnRot180;
 	bRotateToDesired = ( DesiredRotation.Yaw != Rotation.Yaw );
 }
-					
+
 function UpdateRotation(float DeltaTime, float maxPitch)
 {
 	local rotator newRotation, ViewRotation;
@@ -3330,7 +3353,7 @@ function UpdateRotation(float DeltaTime, float maxPitch)
 	ViewRotation.Pitch = ViewRotation.Pitch & 65535;
 	If ((ViewRotation.Pitch > 18000) && (ViewRotation.Pitch < 49152))
 	{
-		If (aLookUp > 0) 
+		If (aLookUp > 0)
 			ViewRotation.Pitch = 18000;
 		else
 			ViewRotation.Pitch = 49152;
@@ -3367,7 +3390,7 @@ function UpdateRotation(float DeltaTime, float maxPitch)
 
 	ViewShake(deltaTime);
 	ViewFlash(deltaTime);
-		
+
 	NewRotation = ViewRotation;
 	NewRotation.Roll = Rotation.Roll;
 
@@ -3394,7 +3417,7 @@ ignores SeePlayer, HearNoise, Bump;
 		return false;
 	}
 
-	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)	
+	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)
 	{
 		local vector OldAccel;
 		local bool OldCrouch;
@@ -3439,19 +3462,19 @@ ignores SeePlayer, HearNoise, Bump;
 		GetAxes(Pawn.Rotation,X,Y,Z);
 
 		// Update acceleration.
-		NewAccel = aForward*X + aStrafe*Y; 
+		NewAccel = aForward*X + aStrafe*Y;
 		NewAccel.Z = 0;
 		if ( VSize(NewAccel) < 1.0 )
 			NewAccel = vect(0,0,0);
 		DoubleClickMove = PlayerInput.CheckForDoubleClickMove(DeltaTime);
-		
-		GroundPitch = 0;	
+
+		GroundPitch = 0;
 		ViewRotation = Rotation;
 		if ( Pawn.Physics == PHYS_Walking )
 		{
 			// tell pawn about any direction changes to give it a chance to play appropriate animation
 			//if walking, look up/down stairs - unless player is rotating view
-			if ( (bLook == 0) 
+			if ( (bLook == 0)
                 && (((Pawn.Acceleration != Vect(0,0,0)) && bSnapToLevel) || !bKeyboardLook) )
 			{
 				if ( bLookUpStairs || bSnapToLevel )
@@ -3466,10 +3489,10 @@ ignores SeePlayer, HearNoise, Bump;
 						ViewRotation.Pitch -= 65536;
 					ViewRotation.Pitch = ViewRotation.Pitch * (1 - 12 * FMin(0.0833, deltaTime));
                     if ( Abs(ViewRotation.Pitch) < 200 )
-						ViewRotation.Pitch = 0;	
+						ViewRotation.Pitch = 0;
 				}
 			}
-		}	
+		}
 		else
 		{
 			if ( !bKeyboardLook && (bLook == 0) && bCenterView )
@@ -3479,7 +3502,7 @@ ignores SeePlayer, HearNoise, Bump;
 					ViewRotation.Pitch -= 65536;
 				ViewRotation.Pitch = ViewRotation.Pitch * (1 - 12 * FMin(0.0833, deltaTime));
                 if ( Abs(ViewRotation.Pitch) < 200 )
-					ViewRotation.Pitch = 0;	
+					ViewRotation.Pitch = 0;
 			}
 		}
 		Pawn.CheckBob(DeltaTime, Y);
@@ -3519,7 +3542,7 @@ ignores SeePlayer, HearNoise, Bump;
 			Pawn.SetPhysics(PHYS_Walking);
 		}
 	}
-	
+
 	function EndState()
 	{
 
@@ -3550,7 +3573,7 @@ ignores SeePlayer, HearNoise, Bump;
 		return false;
 	}
 
-	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)	
+	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)
 	{
 		local vector OldAccel;
 
@@ -3577,13 +3600,13 @@ ignores SeePlayer, HearNoise, Bump;
 		// Update acceleration.
 #if !IG_SWAT // ckline: we don't support ladders
 		if ( Pawn.OnLadder != None )
-			NewAccel = aForward*Pawn.OnLadder.ClimbDir; 
+			NewAccel = aForward*Pawn.OnLadder.ClimbDir;
 		else
 #endif
 			NewAccel = aForward*X + aStrafe*Y;
 		if ( VSize(NewAccel) < 1.0 )
 			NewAccel = vect(0,0,0);
-		
+
 		ViewRotation = Rotation;
 
 		// Update rotation.
@@ -3603,7 +3626,7 @@ ignores SeePlayer, HearNoise, Bump;
 		Pawn.ShouldCrouch(false);
 		bPressedJump = false;
 	}
-	
+
 	function EndState()
 	{
 		if ( Pawn != None )
@@ -3618,7 +3641,7 @@ state PlayerDriving
 {
 ignores SeePlayer, HearNoise, Bump;
 
-	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)	
+	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)
 	{
 
 	}
@@ -3688,16 +3711,16 @@ ignores SeePlayer, HearNoise, Bump;
 			if(DrivenSVehicle == None)
 			{
 				DrivenHVehicle = HavokVehicle(Pawn);
-				
+
 				// Double URGH! Can't remove the Karma specific stuff in SVehicle, so can't
 				// really use it as a base class..
-				
+
 				if(DrivenHVehicle == None)
 				{
 					log("PlayerDriving.PlayerMove: No Vehicle");
 					return;
 				}
-				
+
 				if(InForward > 1)
 					DrivenHVehicle.Throttle = 1;
 				else if(InForward < -1)
@@ -3718,10 +3741,10 @@ ignores SeePlayer, HearNoise, Bump;
 					DrivenHVehicle.Rise = 1;
 				else
 					DrivenHVehicle.Rise = 0;
-					
+
 				return;
 			}
-			
+
 			//log("Drive:"$InForward$" Steer:"$InStrafe);
 
 			if(InForward > 1)
@@ -3793,7 +3816,7 @@ ignores SeePlayer, HearNoise, Bump;
 				DrivenVehicle.VehicleCeaseFire(false);
 				DrivenVehicle.bVehicleIsFiring = false;
 			}
-			
+
 			if(bAltFire == 0 && DrivenVehicle.bVehicleIsAltFiring)
 		{
 				DrivenVehicle.VehicleCeaseFire(true);
@@ -3809,7 +3832,7 @@ ignores SeePlayer, HearNoise, Bump;
 	{
 		CleanOutSavedMoves();
 	}
-	
+
 	function EndState()
 	{
 		CleanOutSavedMoves();
@@ -3826,11 +3849,11 @@ ignores SeePlayer, HearNoise, Bump;
 	event bool NotifyHitWall(vector HitNormal, actor HitActor)
 	{
 		Pawn.SetPhysics(PHYS_Spider);
-		Pawn.SetBase(HitActor, HitNormal);	
+		Pawn.SetBase(HitActor, HitNormal);
 		return true;
 	}
 
-	// if spider mode, update rotation based on floor					
+	// if spider mode, update rotation based on floor
 	function UpdateRotation(float DeltaTime, float maxPitch)
 	{
         local rotator ViewRotation;
@@ -3863,17 +3886,17 @@ ignores SeePlayer, HearNoise, Bump;
 			CrossDir = Normal(RealFloor Cross OldFloor);
 			FwdDir = CrossDir Cross MyFloor;
 			OldFwdDir = CrossDir Cross OldFloor;
-			ViewX = MyFloor * (OldFloor Dot ViewX) 
-						+ CrossDir * (CrossDir Dot ViewX) 
+			ViewX = MyFloor * (OldFloor Dot ViewX)
+						+ CrossDir * (CrossDir Dot ViewX)
 						+ FwdDir * (OldFwdDir Dot ViewX);
 			ViewX = Normal(ViewX);
-			
-			ViewZ = MyFloor * (OldFloor Dot ViewZ) 
-						+ CrossDir * (CrossDir Dot ViewZ) 
+
+			ViewZ = MyFloor * (OldFloor Dot ViewZ)
+						+ CrossDir * (CrossDir Dot ViewZ)
 						+ FwdDir * (OldFwdDir Dot ViewZ);
 			ViewZ = Normal(ViewZ);
-			OldFloor = MyFloor;  
-			ViewY = Normal(MyFloor Cross ViewX); 
+			OldFloor = MyFloor;
+			ViewY = Normal(MyFloor Cross ViewX);
 		}
 
 		if ( (aTurn != 0) || (aLookUp != 0) )
@@ -3901,7 +3924,7 @@ ignores SeePlayer, HearNoise, Bump;
 					ViewZ = Normal(ViewX Cross ViewY);
 				}
 			}
-			
+
 			// calculate new Y axis
 			ViewY = Normal(MyFloor Cross ViewX);
 		}
@@ -3924,8 +3947,8 @@ ignores SeePlayer, HearNoise, Bump;
 			GotoState(Pawn.WaterMovementState);
 		return false;
 	}
-	
-	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)	
+
+	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)
 	{
 		local vector OldAccel;
 
@@ -3943,7 +3966,7 @@ ignores SeePlayer, HearNoise, Bump;
 		local rotator OldRotation, ViewRotation;
 		local bool	bSaveJump;
 
-		GroundPitch = 0;	
+		GroundPitch = 0;
 		ViewRotation = Rotation;
 
 		if ( !bKeyboardLook && (bLook == 0) && bCenterView )
@@ -3958,7 +3981,7 @@ ignores SeePlayer, HearNoise, Bump;
 		UpdateRotation(DeltaTime, 1);
 
 		// Update acceleration.
-		NewAccel = aForward*Normal(ViewX - OldFloor * (OldFloor Dot ViewX)) + aStrafe*ViewY; 
+		NewAccel = aForward*Normal(ViewX - OldFloor * (OldFloor Dot ViewX)) + aStrafe*ViewY;
 		if ( VSize(NewAccel) < 1.0 )
 			NewAccel = vect(0,0,0);
 
@@ -3986,13 +4009,13 @@ ignores SeePlayer, HearNoise, Bump;
 		DoubleClickDir = DCLICK_None;
 		Pawn.ShouldCrouch(false);
 		bPressedJump = false;
-		if (Pawn.Physics != PHYS_Falling) 
+		if (Pawn.Physics != PHYS_Falling)
 			Pawn.SetPhysics(PHYS_Spider);
 		GroundPitch = 0;
 		Pawn.bCrawler = true;
 		Pawn.SetCollisionSize(Pawn.Default.CollisionHeight,Pawn.Default.CollisionHeight);
 	}
-	
+
 	function EndState()
 	{
 		GroundPitch = 0;
@@ -4004,7 +4027,7 @@ ignores SeePlayer, HearNoise, Bump;
 		}
 	}
 }
-	
+
 // Player movement.
 // Player Swimming
 state PlayerSwimming
@@ -4024,7 +4047,7 @@ ignores SeePlayer, HearNoise, Bump;
 			GotoState(Pawn.LandMovementState);
 		return bUpdating;
 	}
-	
+
 	function bool NotifyPhysicsVolumeChange( PhysicsVolume NewVolume )
 	{
 		local actor HitActor;
@@ -4039,7 +4062,7 @@ ignores SeePlayer, HearNoise, Bump;
 			    {
 				    Pawn.velocity.Z = FMax(Pawn.JumpZ,420) + 2 * Pawn.CollisionRadius; //set here so physics uses this for remainder of tick
 				    GotoState(Pawn.LandMovementState);
-			    }				
+			    }
 			    else if ( (Pawn.Velocity.Z > 160) || !Pawn.TouchingWaterVolume() )
 				    GotoState(Pawn.LandMovementState);
 			    else //check if in deep water
@@ -4065,10 +4088,10 @@ ignores SeePlayer, HearNoise, Bump;
 		return false;
 	}
 
-	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)	
+	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)
 	{
 		local vector X,Y,Z, OldAccel;
-	
+
 		GetAxes(Rotation,X,Y,Z);
 		OldAccel = Pawn.Acceleration;
 		Pawn.Acceleration = NewAccel;
@@ -4081,13 +4104,13 @@ ignores SeePlayer, HearNoise, Bump;
 	{
 		local rotator oldRotation;
 		local vector X,Y,Z, NewAccel;
-	
+
 		GetAxes(Rotation,X,Y,Z);
 
-		NewAccel = aForward*X + aStrafe*Y + aUp*vect(0,0,1); 
+		NewAccel = aForward*X + aStrafe*Y + aUp*vect(0,0,1);
 		if ( VSize(NewAccel) < 1.0 )
 			NewAccel = vect(0,0,0);
-	
+
 		//add bobbing when swimming
 		Pawn.CheckBob(DeltaTime, Y);
 
@@ -4106,10 +4129,10 @@ ignores SeePlayer, HearNoise, Bump;
 	{
 		if ( !Pawn.PhysicsVolume.bWaterVolume && (Role == ROLE_Authority) )
 			GotoState(Pawn.LandMovementState);
-	
+
 		Disable('Timer');
 	}
-	
+
 	function BeginState()
 	{
 		Disable('Timer');
@@ -4127,20 +4150,20 @@ ignores SeePlayer, HearNoise, Bump;
 
 		GetAxes(Rotation,X,Y,Z);
 
-		Pawn.Acceleration = aForward*X + aStrafe*Y; 
+		Pawn.Acceleration = aForward*X + aStrafe*Y;
 		if ( VSize(Pawn.Acceleration) < 1.0 )
 			Pawn.Acceleration = vect(0,0,0);
 		if ( bCheatFlying && (Pawn.Acceleration == vect(0,0,0)) )
 			Pawn.Velocity = vect(0,0,0);
 		// Update rotation.
 		UpdateRotation(DeltaTime, 2);
-		
+
 		if ( Role < ROLE_Authority ) // then save this move and replicate it
 			ReplicateMove(DeltaTime, Pawn.Acceleration, DCLICK_None, rot(0,0,0));
 		else
 			ProcessMove(DeltaTime, Pawn.Acceleration, DCLICK_None, rot(0,0,0));
 	}
-	
+
 	function BeginState()
 	{
 		Pawn.SetPhysics(PHYS_Flying);
@@ -4159,7 +4182,7 @@ state BaseSpectating
 		return true;
 	}
 
-	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)	
+	function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot)
 	{
 		Acceleration = NewAccel;
         MoveSmooth(SpectateSpeed * Normal(Acceleration) * DeltaTime);
@@ -4178,8 +4201,8 @@ state BaseSpectating
 			BlendedTargetViewRotation.Roll = BlendRot(DeltaTime, BlendedTargetViewRotation.Roll, TargetViewRotation.Roll & 65535);
 		}
 		GetAxes(Rotation,X,Y,Z);
-	
-		Acceleration = 0.02 * (aForward*X + aStrafe*Y + aUp*vect(0,0,1));  
+
+		Acceleration = 0.02 * (aForward*X + aStrafe*Y + aUp*vect(0,0,1));
 
 		UpdateRotation(DeltaTime, 1);
 
@@ -4213,7 +4236,7 @@ function ServerViewNextPlayer()
     bWasSpec = !bBehindView && (ViewTarget != Pawn) && (ViewTarget != self);
     PlayerReplicationInfo.bOnlySpectator = true;
     RealTeam = PlayerReplicationInfo.Team;
-	
+
 	// view next player
 	for ( C=Level.ControllerList; C!=None; C=C.NextController )
 	{
@@ -4225,7 +4248,7 @@ function ServerViewNextPlayer()
 			{
                 Pick = C;
 				break;
-			}	
+			}
 			else
                 bFound = ( (RealViewTarget == C) || (ViewTarget == C) );
 		}
@@ -4252,10 +4275,10 @@ function ServerViewSelf()
 function LoadPlayers()
 {
 	local int i;
-	
+
 	if ( GameReplicationInfo == None )
 		return;
-		
+
 	for ( i=0; i<GameReplicationInfo.PRIArray.Length; i++ )
 		GameReplicationInfo.PRIArray[i].UpdatePrecacheRenderData();
 }
@@ -4289,7 +4312,7 @@ state Spectating extends BaseSpectating
 
 	function EndState()
 	{
-		PlayerReplicationInfo.bIsSpectator = false;		
+		PlayerReplicationInfo.bIsSpectator = false;
 		bCollideWorld = false;
 	}
 }
@@ -4334,7 +4357,7 @@ ignores SeePlayer, HearNoise, NotifyBump, TakeDamage, PhysicsVolumeChange;
         LoadPlayers();
 		ServerReStartPlayer();
 	}
-	
+
 	exec function AltFire(optional float F)
 	{
         Fire();
@@ -4374,14 +4397,14 @@ ignores SeePlayer, HearNoise, KilledBy;
 
 	function LongClientAdjustPosition
 	(
-		float TimeStamp, 
-		name newState, 
+		float TimeStamp,
+		name newState,
 		EPhysics newPhysics,
-		float NewLocX, 
-		float NewLocY, 
-		float NewLocZ, 
-		float NewVelX, 
-		float NewVelY, 
+		float NewLocX,
+		float NewLocY,
+		float NewLocZ,
+		float NewVelX,
+		float NewVelY,
 		float NewVelZ,
 		Actor NewBase,
 		float NewFloorX,
@@ -4442,12 +4465,12 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 	function ServerReStartPlayer()
 	{
 	}
-	
+
 	function bool IsSpectating()
 	{
 		return true;
 	}
-	
+
 	function ServerReStartGame()
 	{
 		Level.Game.RestartGame();
@@ -4462,7 +4485,7 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 		else if ( TimerRate <= 0 )
 			SetTimer(1.5, false);
 	}
-	
+
 	exec function AltFire( optional float F )
 	{
 		Fire();
@@ -4484,7 +4507,7 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 			ViewRotation.Pitch = ViewRotation.Pitch & 65535;
 			If ((ViewRotation.Pitch > 18000) && (ViewRotation.Pitch < 49152))
 			{
-				If (aLookUp > 0) 
+				If (aLookUp > 0)
 					ViewRotation.Pitch = 18000;
 				else
 					ViewRotation.Pitch = 49152;
@@ -4506,19 +4529,19 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 
 	function ServerMove
 	(
-		float TimeStamp, 
-		vector InAccel, 
+		float TimeStamp,
+		vector InAccel,
 		vector ClientLoc,
 		bool NewbRun,
 		bool NewbDuck,
-		bool NewbJumpStatus, 
-        bool NewbDoubleJump, 
+		bool NewbJumpStatus,
+        bool NewbDoubleJump,
 #if IG_SWAT
         bool NewbLeanLeft,
         bool NewbLeanRight,
 #endif
-		eDoubleClickDir DoubleClickMove, 
-		byte ClientRoll, 
+		eDoubleClickDir DoubleClickMove,
+		byte ClientRoll,
 		int View,
 		optional byte OldTimeDelta,
 		optional int OldAccel
@@ -4536,26 +4559,26 @@ ignores SeePlayer, HearNoise, KilledBy, NotifyBump, HitWall, NotifyHeadVolumeCha
 	{
 		bFrozen = false;
 	}
-	
+
 	function LongClientAdjustPosition
 	(
-		float TimeStamp, 
-		name newState, 
+		float TimeStamp,
+		name newState,
 		EPhysics newPhysics,
-		float NewLocX, 
-		float NewLocY, 
-		float NewLocZ, 
-		float NewVelX, 
-		float NewVelY, 
+		float NewLocX,
+		float NewLocY,
+		float NewLocZ,
+		float NewVelX,
+		float NewVelY,
 		float NewVelZ,
 		Actor NewBase,
 		float NewFloorX,
 		float NewFloorY,
 		float NewFloorZ
 	)
-	{   
+	{
 	}
-		 
+
 	function BeginState()
 	{
 		local Pawn P;
@@ -4643,7 +4666,7 @@ ignores SeePlayer, HearNoise, KilledBy;
         LoadPlayers();
 		ServerReStartPlayer();
 	}
-	
+
 	exec function AltFire( optional float F )
 	{
 			Fire();
@@ -4651,8 +4674,8 @@ ignores SeePlayer, HearNoise, KilledBy;
 
 	function ServerMove
 	(
-		float TimeStamp, 
-		vector Accel, 
+		float TimeStamp,
+		vector Accel,
 		vector ClientLoc,
 		bool NewbRun,
 		bool NewbDuck,
@@ -4662,8 +4685,8 @@ ignores SeePlayer, HearNoise, KilledBy;
         bool NewbLeanLeft,
         bool NewbLeanRight,
 #endif
-		eDoubleClickDir DoubleClickMove, 
-		byte ClientRoll, 
+		eDoubleClickDir DoubleClickMove,
+		byte ClientRoll,
 		int View,
 		optional byte OldTimeDelta,
 		optional int OldAccel
@@ -4671,7 +4694,7 @@ ignores SeePlayer, HearNoise, KilledBy;
 	{
 		Global.ServerMove(
 					TimeStamp,
-					Accel, 
+					Accel,
 					ClientLoc,
 					false,
 					false,
@@ -4681,8 +4704,8 @@ ignores SeePlayer, HearNoise, KilledBy;
                     false,
                     false,
 #endif
-					DoubleClickMove, 
-					ClientRoll, 
+					DoubleClickMove,
+					ClientRoll,
 					View);
 	}
 
@@ -4706,7 +4729,7 @@ ignores SeePlayer, HearNoise, KilledBy;
 			ViewRotation.Pitch = ViewRotation.Pitch & 65535;
 			If ((ViewRotation.Pitch > 18000) && (ViewRotation.Pitch < 49152))
 			{
-				If (aLookUp > 0) 
+				If (aLookUp > 0)
 					ViewRotation.Pitch = 18000;
 				else
 					ViewRotation.Pitch = 49152;
@@ -4726,11 +4749,11 @@ ignores SeePlayer, HearNoise, KilledBy;
 	{
 		if (!bFrozen)
 			return;
-			
+
 		bFrozen = false;
 		bPressedJump = false;
 	}
-	
+
 	function BeginState()
 	{
 		if ( (Pawn != None) && (Pawn.Controller == self) )
@@ -4750,12 +4773,12 @@ ignores SeePlayer, HearNoise, KilledBy;
         bBlockCloseCamera = true;
 		bValidBehindCamera = false;
 		FindGoodView();
-        SetTimer(1.0, false); 
+        SetTimer(1.0, false);
 		StopForceFeedback();
 		ClientPlayForceFeedback("Damage");  // jdf
 		CleanOutSavedMoves();
 	}
-	
+
 	function EndState()
 	{
 		bBlockCloseCamera = false;
@@ -4781,14 +4804,14 @@ function FindGoodView()
 	local float bestdist, newdist;
 	local int startYaw;
 	local actor ViewActor;
-	
+
 	ViewRotation = Rotation;
 	ViewRotation.Pitch = 56000;
 	tries = 0;
 	besttry = 0;
 	bestdist = 0.0;
 	startYaw = ViewRotation.Yaw;
-	
+
 	for (tries=0; tries<16; tries++)
 	{
 		cameraLoc = ViewTarget.Location;
@@ -4797,12 +4820,12 @@ function FindGoodView()
 		newdist = VSize(cameraLoc - ViewTarget.Location);
 		if (newdist > bestdist)
 		{
-			bestdist = newdist;	
+			bestdist = newdist;
 			besttry = tries;
 		}
 		ViewRotation.Yaw += 4096;
 	}
-		
+
 	ViewRotation.Yaw = startYaw + besttry * 4096;
 	SetRotation(ViewRotation);
 }
@@ -4813,7 +4836,7 @@ simulated function ClearHeldCommandCaptions(Actor Team);
 #endif
 
 //------------------------------------------------------------------------------
-// Control options	
+// Control options
 function ChangeStairLook( bool B )
 {
 	bLookUpStairs = B;
@@ -4860,7 +4883,7 @@ event ServerChangeVoiceChatter( PlayerController Player, int IpAddr, int Handle,
 event ServerGetVoiceChatters( PlayerController Player )
 {
 	local int i;
-	
+
 	if( (Level.NetMode == NM_DedicatedServer) || (Level.NetMode == NM_ListenServer) )
 	{
 		for( i=0; i<Level.Game.VoiceChatters.Length; i++ )
@@ -4877,12 +4900,12 @@ simulated function ClientChangeVoiceChatter( int IpAddr, int Handle, bool Add )
 {
 	ChangeVoiceChatter( IpAddr, Handle, Add );
 }
-	
+
 simulated function ClientLeaveVoiceChat()
 {
 	LeaveVoiceChat();
 }
-	
+
 native final function LeaveVoiceChat();
 native final function ChangeVoiceChatter( int IpAddr, int Handle, bool Add );
 
@@ -4893,7 +4916,7 @@ simulated event StartClientDemoRec()
 {
 	// Here we replicate functions which the demo never saw.
 	DemoClientSetHUD( MyHud.Class, MyHud.ScoreBoard.Class );
-	
+
 	// tell server to replicate more stuff to me
 	bClientDemo = true;
 	ServerSetClientDemo();
@@ -4916,7 +4939,7 @@ function ServerUTrace()
 {
 	if( Level.NetMode != NM_Standalone /*&& AdminManager == None*/ )
 		return;
-	
+
 	UTrace();
 }
 exec function UTrace()
@@ -4929,7 +4952,7 @@ exec function UTrace()
 	SetUTracing( !IsUTracing() );
 	log("UTracing changed to "$IsUTracing()$" at "$Level.TimeSeconds);
 }
-#endif // IG_UDN_UTRACE_DEBUGGING 
+#endif // IG_UDN_UTRACE_DEBUGGING
 
 #if IG_SWAT
 //tcohen: stubs for accuracy & recoil
@@ -4996,6 +5019,30 @@ exec function Suppress( string NameToSuppress )
 
 native function SuppressName( Name NameToSuppress );
 #endif
+
+function bool GetIronsightsDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetViewmodelDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetCrosshairDisabled()
+{
+	assert(false);
+	return false;
+}
+
+function bool GetInertiaDisabled()
+{
+	assert(false);
+	return false;
+}
 
 // =====================================================================================================================
 // =====================================================================================================================

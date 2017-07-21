@@ -1,4 +1,4 @@
-class RoundBasedAmmo extends Engine.Ammunition;
+class RoundBasedAmmo extends Engine.SwatAmmo;
 
 var(Ammo) config int DefaultEnemyRounds;
 var(Ammo) config int DefaultOfficerRounds;
@@ -7,51 +7,56 @@ var(Ammo) config int DefaultBandolierRounds;
 var int CurrentRounds;
 var int ReserveRounds;
 
+// Ammo and weight related
+var int StartingRounds;
+
+
 
 replication
 {
 	// Things the server should send to the client.
 	//reliable if( bNetOwner && bNetDirty && (Role==ROLE_Authority) )
-	reliable if( bNetInitial && (Role==ROLE_Authority) )
-		CurrentRounds, ReserveRounds;
+	reliable if( Role==ROLE_Authority )
+		CurrentRounds, ReserveRounds, StartingRounds;
 }
 
+simulated function InitializeAmmo(int StartingAmmoAmount) {
+	local int AmmoCount;
+	local ICarryGuns Pawn;
+	local FiredWeapon Weapon;
+	local RoundBasedWeapon RBWeapon;
 
-// Executes only on the server.
-simulated function Initialize(bool bUsingAmmoBandolier)
-{
-    local RoundBasedWeapon Weapon;
-    local Pawn Pawn;
-
-    Super.Initialize(bUsingAmmoBandolier);
-
-    Weapon = RoundBasedWeapon(Owner);
-    assert(Weapon != None);
-
-    Pawn = Pawn(Weapon.Owner);
-    assert(Pawn != None);
-
-	if (bUsingAmmoBandolier)
-	{
-		DefaultEnemyRounds += DefaultBandolierRounds;
-		DefaultOfficerRounds += DefaultBandolierRounds;
+	if(StartingAmmoAmount <= 0) {
+		StartingAmmoAmount = 25;
 	}
 
-    if (Pawn.IsA('SwatEnemy'))
-        ReserveRounds = DefaultEnemyRounds;
-    else
-    if (Pawn.IsA('SwatOfficer') || Pawn.IsA('SwatPlayer'))
-        ReserveRounds = DefaultOfficerRounds;
-    else
-        assertWithDescription(false,
-            "[tcohen] RoundBasedAmmo::Initialize() (class "$class.name$") expected Pawn Owner to be either a SwatEnemy or a SwatOfficer, but "$Pawn$" is neither. (Owner Weapon is "$Weapon$")");
-    
-    //we should have enough rounds to initially fill the magazine
-    assertWithDescription(ReserveRounds >= Weapon.MagazineSize,
-        "[tcohen] RoundBasedAmmo::Initialize() (class "$class.name$") can't fill "$Weapon$"'s Magazine. MagazineSize is "$Weapon.MagazineSize$", but the ammo only has "$ReserveRounds$" rounds.");
+	Weapon = FiredWeapon(Owner);
+	RBWeapon = RoundBasedWeapon(Weapon);
+	Pawn = ICarryGuns(Weapon.Owner);
 
-    CurrentRounds = Weapon.MagazineSize;
-    ReserveRounds -= CurrentRounds;
+	if(!Pawn.IsA('SwatEnemy')) {
+		AmmoCount = StartingAmmoAmount;
+	} else {
+		AmmoCount = DefaultEnemyRounds;
+	}
+
+	log("RoundBasedAmmo::InitializeAmmo: "$AmmoCount$" shells");
+
+	ReserveRounds = AmmoCount;
+	CurrentRounds = RBWeapon.MagazineSize;
+	ReserveRounds -= CurrentRounds;
+}
+
+simulated function float GetCurrentAmmoWeight() {
+	local int TotalAmmo;
+
+	TotalAmmo = ReserveRounds + CurrentRounds;
+
+	return TotalAmmo * WeightPerReloadLoaded;
+}
+
+simulated function float GetCurrentAmmoBulk() {
+	return ReserveRounds * BulkPerReload;
 }
 
 simulated function bool IsEmpty()
@@ -59,7 +64,7 @@ simulated function bool IsEmpty()
     return (CurrentRounds == 0 && ReserveRounds == 0);
 }
 
-simulated function bool IsFull() 
+simulated function bool IsFull()
 {
 	local RoundBasedWeapon Weapon;
 
@@ -92,9 +97,32 @@ simulated function bool NeedsReload()
     return (CurrentRounds == 0);
 }
 
+simulated function bool ShouldReload()
+{
+    local RoundBasedWeapon Weapon;
+
+    Weapon = RoundBasedWeapon(Owner);
+    assert(Weapon != None);
+
+    //we should never have more rounds loaded than the weapon can hold
+    assert(CurrentRounds <= Weapon.MagazineSize);
+
+    return (CurrentRounds <= Weapon.MagazineSize);
+}
+
 simulated function int RoundsRemainingBeforeReload()
 {
     return GetCurrentRounds();
+}
+
+simulated function int RoundsComparedBeforeReload()
+{
+    local RoundBasedWeapon Weapon;
+
+    Weapon = RoundBasedWeapon(Owner);
+    assert(Weapon != None);
+
+    return Weapon.MagazineSize;
 }
 
 simulated function OnRoundUsed(Pawn User, Equipment Launcher)
@@ -140,6 +168,7 @@ simulated function UpdateHUD()
     if (Pawn(Owner.Owner).Controller != LPC) return; //the player doesn't own this ammo
 
     LPC.GetHUDPage().AmmoStatus.SetWeaponStatus( self );
+		LPC.GetHUDPage().UpdateWeight();
 }
 
 function int GetCurrentRounds()
@@ -167,14 +196,14 @@ function int GetInitialReserveRounds()
     return DefaultOfficerRounds-GetMagazineSize();
 }
 
-simulated function int GetClip( int index ) 
-{ 
+simulated function int GetClip( int index )
+{
     if( index == 0 )
         return CurrentRounds;
     else if( index == 1 )
         return ReserveRounds;
 
-    return 0; 
+    return 0;
 }
 
 simulated function SetClip(int index, int amount)

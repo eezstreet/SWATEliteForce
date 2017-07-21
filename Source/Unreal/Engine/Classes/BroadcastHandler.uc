@@ -1,10 +1,10 @@
 //=============================================================================
 // BroadcastHandler
 //
-// Message broadcasting is delegated to BroadCastHandler by the GameInfo.  
-// The BroadCastHandler handles both text messages (typed by a player) and 
-// localized messages (which are identified by a LocalMessage class and id).  
-// GameInfos produce localized messages using their DeathMessageClass and 
+// Message broadcasting is delegated to BroadCastHandler by the GameInfo.
+// The BroadCastHandler handles both text messages (typed by a player) and
+// localized messages (which are identified by a LocalMessage class and id).
+// GameInfos produce localized messages using their DeathMessageClass and
 // GameMessageClass classes.
 //
 // This is a built-in Unreal class and it shouldn't be modified.
@@ -40,9 +40,9 @@ function bool AllowsBroadcast( actor broadcaster, int Len )
 }
 
 
-function BroadcastText( PlayerReplicationInfo SenderPRI, PlayerController Receiver, coerce string Msg, optional name Type )
+function BroadcastText( PlayerReplicationInfo SenderPRI, PlayerController Receiver, coerce string Msg, optional name Type, optional string Location )
 {
-	Receiver.TeamMessage( SenderPRI, Msg, Type );
+	Receiver.TeamMessage( SenderPRI, Msg, Type, Location );
 }
 
 function BroadcastLocalized( Actor Sender, PlayerController Receiver, class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Core.Object OptionalObject )
@@ -51,7 +51,7 @@ function BroadcastLocalized( Actor Sender, PlayerController Receiver, class<Loca
 }
 
 #if IG_SWAT // dbeswick: broadcast send to Target only
-function Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
+function Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
 #else
 function Broadcast( Actor Sender, coerce string Msg, optional name Type )
 #endif
@@ -62,7 +62,9 @@ function Broadcast( Actor Sender, coerce string Msg, optional name Type )
 
 	// see if allowed (limit to prevent spamming)
 	if ( !AllowsBroadcast(Sender, Len(Msg)) )
+	{
 		return;
+	}
 
 	if ( Pawn(Sender) != None )
 		PRI = Pawn(Sender).PlayerReplicationInfo;
@@ -79,7 +81,7 @@ function Broadcast( Actor Sender, coerce string Msg, optional name Type )
 #else
 			if ( (P != None) && (P.PlayerReplicationInfo.bOnlySpectator || P.PlayerReplicationInfo.bOutOfLives) )
 #endif
-				BroadcastText(PRI, P, Msg, Type);
+				BroadcastText(PRI, P, Msg, Type, Location);
 		}
 	}
 	else
@@ -92,12 +94,12 @@ function Broadcast( Actor Sender, coerce string Msg, optional name Type )
 #else
 		if ( P != None )
 #endif
-		BroadcastText(PRI, P, Msg, Type);
+		BroadcastText(PRI, P, Msg, Type, Location);
 	}
 }
 }
 
-function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type )
+function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type, optional string Location )
 {
 	local Controller C;
 	local PlayerController P;
@@ -113,7 +115,7 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
 			P = PlayerController(C);
 			if ( (P != None) && (P.PlayerReplicationInfo.Team == Sender.PlayerReplicationInfo.Team)
 				&& (P.PlayerReplicationInfo.bOnlySpectator || P.PlayerReplicationInfo.bOutOfLives) )
-				BroadcastText(Sender.PlayerReplicationInfo, P, Msg, Type);
+				BroadcastText(Sender.PlayerReplicationInfo, P, Msg, Type, Location);
 		}
 	}
 	else
@@ -122,7 +124,7 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
 	{
 		P = PlayerController(C);
 		if ( (P != None) && (P.PlayerReplicationInfo.Team == Sender.PlayerReplicationInfo.Team) )
-			BroadcastText(Sender.PlayerReplicationInfo, P, Msg, Type);
+			BroadcastText(Sender.PlayerReplicationInfo, P, Msg, Type, Location);
 	}
 }
 }

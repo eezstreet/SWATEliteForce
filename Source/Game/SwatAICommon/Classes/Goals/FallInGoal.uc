@@ -9,6 +9,6 @@ class FallInGoal extends OfficerCommandGoal;
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-    priority   = 80
+    priority   = 75
     goalName   = "FallIn"
 }

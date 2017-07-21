@@ -5,6 +5,8 @@ class SwatPlayer extends SwatRagdollPawn
                 Engine.IReactToStingGrenade,
                 Engine.IReactToC2Detonation,
                 Engine.IReactToDazingWeapon,
+                Engine.IAmAffectedByWeight,
+                Engine.ICarryGuns,
                 ICanUseC2Charge,
                 ICanQualifyForUse,
                 Engine.ICanBeTased,
@@ -154,6 +156,33 @@ replication
         ClientDoFlashbangReaction, ClientDoGassedReaction, ClientDoStungReaction,
         ClientDoPepperSprayedReaction, ClientDoTasedReaction,
         bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
+{
+  return LoadOut.GetTacticalAidAvailableCount(Slot);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IAmAffectedByWeight implementation
+simulated function float GetTotalWeight() {
+  return LoadOut.GetTotalWeight();
+}
+
+simulated function float GetTotalBulk() {
+  return LoadOut.GetTotalBulk();
+}
+
+simulated function float GetWeightMovementModifier() {
+  return LoadOut.GetWeightMovementModifier();
+}
+
+simulated function float GetBulkQualifyModifier() {
+  return LoadOut.GetBulkQualifyModifier();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -370,11 +399,28 @@ simulated function EAnimationSet GetP90LowReadyAimPoseSet()             { if (Re
 simulated function EAnimationSet GetOptiwandLowReadyAimPoseSet()        { if (ReasonForLowReady == 'Obstruction' && !IsUsingOptiwand()) return kAnimationSetOptiwandExtremeLowReady;       else return Super.GetOptiwandLowReadyAimPoseSet(); }
 simulated function EAnimationSet GetPaintballLowReadyAimPoseSet()       { if (ReasonForLowReady == 'Obstruction') return kAnimationSetPaintballExtremeLowReady;      else return Super.GetPaintballLowReadyAimPoseSet(); }
 
-simulated protected function bool CanPawnUseLowReady() { return true; }
+simulated protected function bool CanPawnUseLowReady()
+{
+  local HandheldEquipment Equipment;
+  local PlayerController SGPC;
+
+  SGPC = PlayerController(Controller);
+  if(SGPC == None)
+    return False;
+
+  Equipment = Self.GetActiveItem();
+  if(Equipment.IsA('Optiwand'))
+    return false;
+  else if(SGPC.WantsZoom && !Equipment.ShouldLowReadyInIronsights())
+    return false;
+    
+  return true;
+}
 
 simulated function SetLowReady(bool bEnable, optional name Reason)
 {
     if (bEnable == IsLowReady()) return;        //already there
+    if (!CanPawnUseLowReady() && bEnable) return;
 
     Super.SetLowReady(bEnable, Reason);
 
@@ -424,6 +470,30 @@ simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
     //mplog( "...Skins[3]="$Skins[3] );
 }
 
+simulated function bool PrimaryIsA(name HandheldEquipmentName) {
+  local FiredWeapon PrimaryWeapon;
+
+  PrimaryWeapon = LoadOut.GetPrimaryWeapon();
+
+  return PrimaryWeapon.IsA(HandheldEquipmentName);
+}
+
+simulated function bool SecondaryIsA(name HandheldEquipmentName) {
+  local FiredWeapon BackupWeapon;
+
+  BackupWeapon = LoadOut.GetBackupWeapon();
+
+  return BackupWeapon.IsA(HandheldEquipmentName);
+}
+
+simulated function bool HasAWeaponOfType(name WeaponType) {
+  local FiredWeapon PrimaryWeapon, BackupWeapon;
+
+  PrimaryWeapon = LoadOut.GetPrimaryWeapon();
+  BackupWeapon = LoadOut.GetBackupWeapon();
+
+  return PrimaryWeapon.IsA(WeaponType) || BackupWeapon.IsA(WeaponType);
+}
 
 simulated function DoDefaultEquip()
 {
@@ -1498,6 +1568,36 @@ simulated function float GetFireTweenTime()
         return 0.0;
 }
 
+simulated function AdjustPlayerMovementSpeed() {
+  local float OriginalFwd, OriginalBck, OriginalSde;
+  local float ModdedFwd, ModdedBck, ModdedSde;
+  local float TotalWeight;
+
+  local AnimationSetManager AnimationSetManager;
+  local AnimationSet setObject;
+
+  AnimationSetManager = SwatRepo(Level.GetRepo()).GetAnimationSetManager();
+  setObject = AnimationSetManager.GetAnimationSet(GetMovementAnimSet());
+
+  OriginalFwd = setObject.AnimSpeedForward;
+  OriginalBck = setObject.AnimSpeedBackward;
+  OriginalSde = setObject.AnimSpeedSidestep;
+
+  ModdedFwd = OriginalFwd;
+  ModdedBck = OriginalBck;
+  ModdedSde = OriginalSde;
+
+  ModdedFwd *= LoadOut.GetWeightMovementModifier();
+  ModdedBck *= LoadOut.GetWeightMovementModifier();
+  ModdedSde *= LoadOut.GetWeightMovementModifier();
+
+  AnimSet.AnimSpeedForward = ModdedFwd;
+  AnimSet.AnimSpeedBackward = ModdedBck;
+  AnimSet.AnimSpeedSidestep = ModdedSde;
+
+  TotalWeight = LoadOut.GetTotalWeight();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1668,6 +1768,8 @@ simulated state ThrowingPrep
     {
         Global.Tick(dTime);
 
+        AdjustPlayerMovementSpeed();
+
         if (!DoneThrowing)
         {
             if ( Controller == Level.GetLocalPlayerController() )
@@ -1747,6 +1849,8 @@ simulated state Throwing
     simulated function Tick(float dTime)
     {
         Global.Tick(dTime);
+
+        AdjustPlayerMovementSpeed();
 
         if (!DoneThrowing)
         {
@@ -1860,8 +1964,17 @@ simulated state ThrowingFinish
         //    $", ThrowHeldTime="$ThrowHeldTime
         //    $".  ThrowSpeedTimeFactor * ThrowHeldTime = "$ThrowSpeedTimeFactor * ThrowHeldTime
         //    $", FClamp(ThrowSpeedTimeFactor * ThrowHeldTime, ThrowSpeedRange.Min, ThrowSpeedRange.Max) = "$FClamp(ThrowSpeedTimeFactor * ThrowHeldTime, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
-        ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
-        ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+        if(ThrownWeapon.IsA('Lightstick'))
+        {
+          // Lightsticks can be dropped at the feet. Grenades, not so much.
+          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, ThrowSpeedRange.Max));
+        }
+        else
+        {
+          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+        }
     }
 
     simulated function EndState()
@@ -1945,6 +2058,10 @@ Begin:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+simulated function Tick(float dTime) {
+    AdjustPlayerMovementSpeed();
+}
 
 
 //ICanThrowWeapons implementation
@@ -2196,48 +2313,47 @@ Function ReactToFlashbangGrenade(
     local rotator CameraRotation;
     local bool FOVMatters;          //the player's field-of-view affects flashbang reaction in SP and in CoOp, but not in regular MP
     local bool CanSee;
+    local bool HasVisionProtection;
 
     if ( Level.NetMode == NM_Client )
         return;
 
     if ( HasProtection( 'IProtectFromFlashbang' ) )
-        return;
+        HasVisionProtection = true;
 
     //cheat
     if (Controller != None && Controller.bGodMode)
         return;
 
-	if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
+	  if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
         return;
 
-	if (Grenade != None)
-	{
-		GrenadeLocation = Grenade.Location;
-		Direction       = Location - Grenade.Location;
-		Distance        = VSize(Direction);
-		if (Instigator == None)
-			Instigator = Pawn(Grenade.Owner);
-	}
-	else
-	{
-		GrenadeLocation = Location; // we were hit by a cheat command without an actual grenade
+  	if (Grenade != None)
+  	{
+        GrenadeLocation = Grenade.Location;
+    		Direction       = Location - Grenade.Location;
+    		Distance        = VSize(Direction);
+    		if (Instigator == None)
+    			Instigator = Pawn(Grenade.Owner);
+	  }
+    else
+  	{
+  		GrenadeLocation = Location; // we were hit by a cheat command without an actual grenade
 		                            // so the hit location is the player's location
-		Distance        = 0;
-	}
+  		Distance        = 0;
+  	}
 
     PlayerController(Controller).PlayerCalcView(ViewTarget, CameraLocation, CameraRotation);
     FOVMatters = Level.NetMode == NM_Standalone || Level.IsPlayingCOOP;
-    CanSee =    !FOVMatters
+    CanSee =   !HasVisionProtection
+            && (!FOVMatters
             ||  PointWithinInfiniteCone(
 					 CameraLocation,
 					 Vector(CameraRotation),
 					 GrenadeLocation,
-					 Controller.FOVAngle * DEGREES_TO_RADIANS);
+					 Controller.FOVAngle * DEGREES_TO_RADIANS));
 log("TMC FOVMatters="$FOVMatters$", CanSee="$CanSee);
-    if  (
-            bTestingCameraEffects
-        ||  (Distance <= StunRadius && CanSee)
-		)
+    if  (bTestingCameraEffects ||  (Distance <= StunRadius && CanSee))
     {
         if (Level.NetMode != NM_Client)
         {
@@ -2512,7 +2628,7 @@ private function DirectHitByGrenade(
                     Location,							  // vector HitLocation
                     vect(0,0,0),                          // vector Momentum
 														  // class<DamageType> DamageType
-                    class<DamageType>(DynamicLoadObject("SwatEquipment.HK69GrenadeLauncher", class'Class')) );
+                    class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')) );
     }
 }
 
@@ -2521,6 +2637,9 @@ private function DirectHitByGrenade(
 //
 
 function ReactToLessLeathalShotgun(
+    Pawn Instigator,
+    float Damage,
+    Vector MomentumVector,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -2534,6 +2653,17 @@ function ReactToLessLeathalShotgun(
 	// The OnAdded call is a side effect of RefreshCameraEffects in ApplyDazedEffect called below.
 	LastStingWeapon = LessLethalShotgun;
 	ApplyDazedEffect(PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration);
+
+  if (Damage > 0.0)
+  {
+      // event Actor::TakeDamage()
+      TakeDamage( Damage,                               // int Damage
+                  Instigator,                           // Pawn EventInstigator
+                  Location,							  // vector HitLocation
+                  MomentumVector,                          // vector Momentum
+                            // class<DamageType> DamageType
+                  class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+  }
 }
 
 function ReactToGLTripleBaton(
@@ -2767,6 +2897,8 @@ function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration 
     local name Reason;
     local name NewControllerState;
     local name NewPawnState;
+
+    SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(self, Taser);
 
     if ( Level.NetMode == NM_Client )
         return;
@@ -3202,9 +3334,9 @@ simulated function bool CanBeUnarrestedNow()
 
 
 //return the time it takes for a Player to "qualify" to arrest me
-simulated function float GetQualifyTimeForArrest()
+simulated function float GetQualifyTimeForArrest(Pawn arrester)
 {
-    return QualifyTimeForArrest;
+  return QualifyTimeForArrest;
 }
 
 // Executes only on server
@@ -3768,6 +3900,14 @@ simulated function OnLightstickKeyFrame()
 		GetActiveItem().OnUseKeyFrame();
 }
 ///////////////////////////////////////////////////////////////////////////////
+
+simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
+  if(LoadOut.IsWeaponPrimary(in)) {
+    return LoadOut.GetPrimaryAmmoCount();
+  } else {
+    return LoadOut.GetSecondaryAmmoCount();
+  }
+}
 
 defaultproperties
 {

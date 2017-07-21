@@ -24,12 +24,12 @@ function LoadMultiPlayerLoadout()
     DestroyLoadouts();
 }
 
-protected function SpawnLoadouts() 
+protected function SpawnLoadouts()
 {
     LoadLoadOut( "CurrentMultiplayerLoadOut", true );
 }
 
-protected function DestroyLoadouts() 
+protected function DestroyLoadouts()
 {
     if( MyCurrentLoadOut != None )
         MyCurrentLoadOut.destroy();
@@ -47,12 +47,16 @@ function LoadLoadOut( String loadOutName, optional bool bForceSpawn )
     SwatGUIController(Controller).SetMPLoadOut( MyCurrentLoadOut );
 }
 
+function SaveCurrentLoadout() {
+  SaveLoadOut( "CurrentMultiPlayerLoadout" );
+}
+
 function ChangeLoadOut( Pocket thePocket )
 {
     local class<actor> theItem;
 //log("[dkaplan] changing loadout for pocket "$GetEnum(Pocket,thePocket) );
     Super.ChangeLoadOut( thePocket );
-    SaveLoadOut( "CurrentMultiPlayerLoadout" ); //save to current loadout
+    SaveCurrentLoadout(); //save to current loadout
 
     switch (thePocket)
     {
@@ -64,14 +68,9 @@ function ChangeLoadOut( Pocket thePocket )
         case Pocket_SecondaryAmmo:
             SwatGUIController(Controller).SetMPLoadOutPocketWeapon( Pocket_SecondaryWeapon, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_SecondaryWeapon], MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_SecondaryAmmo] );
             break;
-        case Pocket_Breaching:
-            SwatGUIController(Controller).SetMPLoadOutPocketItem( Pocket.Pocket_Breaching, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_Breaching] );
-            SwatGUIController(Controller).SetMPLoadOutPocketItem( Pocket.Pocket_HiddenC2Charge1, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] );
-            SwatGUIController(Controller).SetMPLoadOutPocketItem( Pocket.Pocket_HiddenC2Charge2, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] );
-            break;
-		case Pocket_CustomSkin:
-			SwatGUIController(Controller).SetMPLoadOutPocketCustomSkin( Pocket_CustomSkin, String(EquipmentList[thePocket].GetObject()) );
-			break;
+		    case Pocket_CustomSkin:
+			      SwatGUIController(Controller).SetMPLoadOutPocketCustomSkin( Pocket_CustomSkin, String(EquipmentList[thePocket].GetObject()) );
+			      break;
         default:
             theItem = class<actor>(EquipmentList[thePocket].GetObject());
             SwatGUIController(Controller).SetMPLoadOutPocketItem( thePocket, theItem );
@@ -79,38 +78,74 @@ function ChangeLoadOut( Pocket thePocket )
     }
 }
 
+protected function MagazineCountChange(GUIComponent Sender) {
+  local GUINumericEdit SenderEdit;
+  SenderEdit = GUINumericEdit(Sender);
+
+  Super.MagazineCountChange(Sender);
+
+  if(ActivePocket == Pocket_PrimaryWeapon) {
+    SwatGUIController(Controller).SetMPLoadoutPrimaryAmmo(SenderEdit.Value);
+  } else if(ActivePocket == Pocket_SecondaryWeapon) {
+    SwatGUIController(Controller).SetMPLoadoutSecondaryAmmo(SenderEdit.Value);
+  }
+
+  SaveCurrentLoadout();
+}
+
+
 function bool CheckValidity( eNetworkValidity type )
 {
     return (type == NETVALID_MPOnly) || (Super.CheckValidity( type ));
 }
 
-function bool CheckTeamValidity( eTeamValidity type )
+function bool CheckCampaignValid( class EquipmentClass )
 {
-	local bool IsSuspect;
+	local int MissionIndex;
+	local int i;
+	local int CampaignPath;
+	local ServerSettings Settings;
 
-	if (PlayerOwner().Level.IsPlayingCOOP)
-	{
-		IsSuspect = false; // In coop the player is never a suspect
+	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+
+	MissionIndex = (Settings.ArrestRoundTimeDeduction & -65536) >> 16;
+	CampaignPath = Settings.ArrestRoundTimeDeduction & 65535;
+
+	// Any equipment above the MissionIndex is currently unavailable
+	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
+    // Check first set of equipment
+		for (i = MissionIndex + 1; i < GC.MissionName.Length; ++i)
+			if (GC.MissionEquipment[i] == EquipmentClass)
+				return false;
+
+    // Check second set of equipment
+    for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
+      if(GC.MissionEquipment[i] == EquipmentClass)
+        return false;
 	}
-	else
-	{
-		assert(PlayerOwner() != None);
+	return true;
+}
 
-		// If we don't have access to a team object assume the item is valid for the players future team
-		// This case should only be true right after a level change when the player has no control over their team or loadout anyway
-		// but we don't want the client to reset the loadout based on team without knowing the team. The server will never allow
-		// an illegal loadout anyway so this is just a lax client side check.
-		if (PlayerOwner().PlayerReplicationInfo == None || NetTeam(PlayerOwner().PlayerReplicationInfo.Team) == None)
-			return true;
+function bool CheckWeightBulkValidity() {
+  local float Weight;
+  local float Bulk;
 
-		// The suspect team always has a team number of 1
-		IsSuspect = (NetTeam(PlayerOwner().PlayerReplicationInfo.Team).GetTeamNumber() == 1);
-	}
+  Weight = MyCurrentLoadOut.GetTotalWeight();
+  Bulk = MyCurrentLoadOut.GetTotalBulk();
 
-	       // Item is usable by any team   or // Suspect only item and player is suspect    or // SWAT only item and player is not a suspect
-	return Super.CheckTeamValidity( type ) || (type == TEAMVALID_SuspectsOnly && IsSuspect) || (type == TEAMVALID_SWATOnly && !IsSuspect);
+  if(Weight > MyCurrentLoadOut.GetMaximumWeight()) {
+    TooMuchWeightModal();
+    return false;
+  } else if(Bulk > MyCurrentLoadOut.GetMaximumBulk()) {
+    TooMuchBulkModal();
+    return false;
+  }
+
+  return true;
 }
 
 defaultproperties
 {
+  EquipmentOverWeightString="You are equipped with too much weight. Your loadout will be changed to the default if you don't adjust it."
+  EquipmentOverBulkString="You are equipped with too much bulk. Your loadout will be changed to the default if you don't adjust it."
 }

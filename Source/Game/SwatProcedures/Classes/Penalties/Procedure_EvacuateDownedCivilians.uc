@@ -6,6 +6,7 @@ class Procedure_EvacuateDownedCivilians extends SwatGame.Procedure
 var config int PenaltyPerDownedHostage;
 
 var array<SwatPawn> UnevacuatedDownedHostages;
+var array<SwatPawn> ReportedDownedHostages;
 
 function PostInitHook()
 {
@@ -34,6 +35,9 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
     if(IsInArray(Pawn, UnevacuatedDownedHostages))
         return;
 
+    if(IsInArray(Pawn, ReportedDownedHostages))
+        return;
+
     Add( Pawn, UnevacuatedDownedHostages );
 }
 
@@ -43,7 +47,8 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
         return;   //we only care about officers
 
     if(ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedHostageKilled' &&
-        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedInjCivilianSecured') {
+        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedInjCivilianSecured' &&
+        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedDOA') {
         // We're reporting them, but not for the reason we SHOULD be reporting them.
         return;
     }
@@ -55,6 +60,7 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
             $". UnevacuatedDownedHostages.length="$UnevacuatedDownedHostages.length);
 
     Remove( SwatPawn(ReportedCharacter), UnevacuatedDownedHostages );
+    Add(SwatPawn(ReportedCharacter), ReportedDownedHostages);
 }
 
 function string Status()

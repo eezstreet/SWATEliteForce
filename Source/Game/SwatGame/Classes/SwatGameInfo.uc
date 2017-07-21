@@ -7,7 +7,7 @@ class SwatGameInfo extends Engine.GameInfo
     dependsOn(SwatGUIConfig)
     native;
 
-//import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
+import enum eDifficultyLevel from SwatGUIConfig;
 import enum EEntryType from SwatGame.SwatStartPointBase;
 import enum Pocket from Engine.HandheldEquipment;
 import enum EOfficerStartType from SwatGame.SwatOfficerStart;
@@ -52,7 +52,7 @@ var DebugFrameData CurrentDebugFrameData;
 var private SpawningManager SpawningManager;
 
 // The Repo
-var private SwatRepo Repo;
+var public SwatRepo Repo;
 
 
 var GameEventsContainer GameEvents;
@@ -389,7 +389,10 @@ final function OnMissionObjectiveCompleted(Objective Objective)
     //TODO/COOP: Broadcast message to all clients, have the clients internally dispatchMessage
     dispatchMessage(new class'MessageMissionObjectiveCompleted'(Objective.name));
 
-    if( Repo.GuiConfig.CurrentMission.IsMissionCompleted() )
+    log("Repo("$Repo$").GuiConfig("$Repo.GuiConfig$").CurrentMission("$Repo.GuiConfig.CurrentMission$").Objectives("$Repo.GuiConfig.CurrentMission.Objectives$")");
+    log("Repo("$Repo$").MissionObjectives("$Repo.MissionObjectives$")");
+
+    if( Repo.GuiConfig.CurrentMission.IsMissionCompleted(Repo.MissionObjectives) )
     {
         if( !bAlreadyCompleted && !bAlreadyFailed )
             MissionCompleted();
@@ -465,7 +468,7 @@ final function MissionEnded()
         Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Client &&
         Repo.GuiConfig.SwatGameRole != GAMEROLE_MP_Host )
     {
-        if( Repo.GuiConfig.CurrentMission.IsMissionCompleted() )
+        if( Repo.GuiConfig.CurrentMission.IsMissionCompleted(Repo.MissionObjectives) )
             MissionCompleted();
         else
         MissionFailed();
@@ -803,6 +806,12 @@ function bool CampaignObjectivesAreInEffect()
     return GetCustomScenario().UseCampaignObjectives;
 }
 
+// TODO: change incapacitations to death for swat officers
+function CheckForCampaignDeath(Pawn Incapacitated)
+{
+  Repo.UpdateCampaignPawnDied(Incapacitated);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -1049,7 +1058,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
         if( Level.IsTraining )
         {
             LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'TrainingLoadOut');
-            LoadOutSpec = None;
+            LoadOutSpec = Spawn(class'DynamicLoadOutSpec', PlayerPawn, 'TrainingLoadOut');
         }
         else
         {
@@ -1117,6 +1126,10 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 				theNetPlayer.SetCustomSkinClassName( "SwatGame.DefaultCustomSkin" );
 
             LoadOutSpec = theNetPlayer.GetLoadoutSpec();
+
+            // Alter it *ex post facto* to have the correct ammo counts
+            LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
+            LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -1727,10 +1740,29 @@ function InitVoiceReplicationInfo()
 		VoiceReplicationInfo.DefaultChannel = i;
 }
 
-private function bool ShouldSpawnOfficerRedOne()  { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedOne);  }
-private function bool ShouldSpawnOfficerRedTwo()  { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedTwo);  }
-private function bool ShouldSpawnOfficerBlueOne() { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueOne); }
-private function bool ShouldSpawnOfficerBlueTwo() { return ((Repo.GuiConfig.CurrentMission.CustomScenario == None) || Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueTwo); }
+private function bool ShouldSpawnOfficerRedOne()  {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(0);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedOne;
+}
+
+private function bool ShouldSpawnOfficerRedTwo()  {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(1);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerRedTwo;
+}
+
+private function bool ShouldSpawnOfficerBlueOne() {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(2);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueOne;
+}
+
+private function bool ShouldSpawnOfficerBlueTwo() {
+  if(Repo.GuiConfig.CurrentMission.CustomScenario == None) {
+    return Repo.CheckOfficerPermadeathInformation(3);
+  } else return Repo.GuiConfig.CurrentMission.CustomScenario.HasOfficerBlueTwo;
+}
 
 private function bool ShouldSpawnOfficerAtStart(SwatOfficerStart OfficerStart, EEntryType DesiredEntryType)
 {
@@ -2002,21 +2034,21 @@ function NetTeam GetTeamFromID( int TeamID )
 
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
 {
-//log( self$"::Broadcast( "$Msg$" )" );
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
+//log( self$"::Broadcast( "$Msg$" "$Location$" )" );
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
 }
 
 //overridden from Engine.GameInfo
-function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type )
+function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type, optional string Location )
 {
 //log( self$"::BroadcastTeam( "$Sender$", "$Msg$" ), sender.statename = "$Sender.GetStateName() );
     if( Sender.IsInState( 'ObserveTeam' ) ||
         Sender.IsInState( 'Dead' ) )
         BroadcastObservers( Sender, Msg, Type );
 
-	BroadcastHandler.BroadcastTeam(Sender,Msg,Type);
+	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
 }
 
 function BroadcastObservers( Controller Sender, coerce string Msg, optional name Type )
@@ -2165,7 +2197,7 @@ function Killed( Controller Killer, Controller Killed, Pawn KilledPawn, class<Da
 // Set NonInteractive to false if the call is not due to user input
 function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional bool NonInteractive)
 {
-	local SwatGameReplicationInfo SGRI;
+	//local SwatGameReplicationInfo SGRI;
 	local TeamInfo CurrentTeam;
 	local TeamInfo NewTeam;
 
@@ -2227,9 +2259,10 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	}
 
 	// Stop a new team member from stating a referendum straight away
-	SGRI = SwatGameReplicationInfo(GameReplicationInfo);
-	if (SGRI != None && SGRI.RefMgr != None)
-		SGRI.RefMgr.AddVoterToCooldownList(Player.PlayerReplicationInfo.PlayerId);
+  // ??? why --eez
+	//SGRI = SwatGameReplicationInfo(GameReplicationInfo);
+	//if (SGRI != None && SGRI.RefMgr != None)
+	//	SGRI.RefMgr.AddVoterToCooldownList(Player.PlayerReplicationInfo.PlayerId);
 
 	Player.PlayerReplicationInfo.Team = NewTeam;
 }
@@ -2340,6 +2373,8 @@ function TogglePlayerReady( SwatGamePlayerController Player )
 
     if( SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus == STATUS_NotReady )
         SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus = STATUS_Ready;
+    else if(SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus == STATUS_Ready)
+        SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).COOPPlayerStatus = STATUS_NotReady;
     SwatPlayerReplicationInfo(Player.PlayerReplicationInfo).TogglePlayerIsReady();
 
 #if !IG_THIS_IS_SHIPPING_VERSION
@@ -2697,6 +2732,172 @@ function ProcessServerTravel(string URL, bool bItems)
 	Super.ProcessServerTravel(URL, bItems);
 
 	Level.GetGamespyManager().OnLevelChange();
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// Campaign stat interface
+
+function bool ShouldTrackCampaignStats() {
+  local bool OutValue;
+
+  OutValue = Level.NetMode == NM_Standalone &&
+         GetCustomScenario() == None &&
+         Repo.GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign;
+
+  if(OutValue == false) {
+    log("ShouldTrackCampaignStats() returned false, won't track campaign stats for this session.");
+  }
+  return OutValue;
+}
+
+function CampaignStats_TrackMissionCompleted()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.MissionsCompleted++;
+}
+
+function CampaignStats_TrackPlayerIncapacitation()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.TimesIncapacitated++;
+}
+
+function CampaignStats_TrackPlayerInjury()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.TimesInjured++;
+}
+
+function CampaignStats_TrackOfficerIncapacitation()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.OfficersIncapacitated++;
+}
+
+function CampaignStats_TrackPenaltyIssued()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.PenaltiesIssued++;
+}
+
+function CampaignStats_TrackSuspectRemoved()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsRemoved++;
+}
+
+function CampaignStats_TrackSuspectNeutralized()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsNeutralized++;
+
+  CampaignStats_TrackSuspectRemoved(); // Also add to the "Threats Removed" stat
+}
+
+function CampaignStats_TrackSuspectIncapacitated()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsIncapacitated++;
+
+  CampaignStats_TrackSuspectRemoved(); // Also add to the "Threats Removed" stat
+}
+
+function CampaignStats_TrackSuspectArrested()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.SuspectsArrested++;
+
+  CampaignStats_TrackSuspectRemoved(); // Also add to the "Threats Removed" stat
+}
+
+function CampaignStats_TrackCivilianRestrained()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.CiviliansRestrained++;
+}
+
+function CampaignStats_TrackTOCReport()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.TOCReports++;
+}
+
+function CampaignStats_TrackEvidenceSecured()
+{
+  local Campaign Campaign;
+
+  if(!ShouldTrackCampaignStats()) {
+    return;
+  }
+
+  Campaign = Repo.GetCampaign();
+  Campaign.EvidenceSecured++;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

@@ -45,76 +45,32 @@ private function bool CanUseIdleBasedOnWeapon()
 {
 //	if (m_Pawn.logTyrion)
 //		log(self.name@" CanUseIdleBasedOnWeapon - IdleWeaponStatus:"@OurIdleDefinition.IdleWeaponStatus@" EquipmentName:"@m_Pawn.GetActiveItem().Name);
+  local SwatWeapon Weapon;
 
 	// if the idle is based on an active item, make sure we have it equipped
 	if (OurIdleDefinition.IdleWeaponStatus != IdleWeaponDoesNotMatter)
 	{
-		// if the idle definition says that we can idle with any weapon, just make sure we have an active item
-		if ((OurIdleDefinition.IdleWeaponStatus == IdleWithAnyWeapon) && (m_Pawn.GetActiveItem() == None))
-		{
-			return false;
-		}
-		// dbeswick: SAW idle definition
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithSAW) && 
-			     ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('SAWMG')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with a machine gun, make sure we have it equipped
-		// special case: if it's an G36k MG, we have a special idle set
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithMachineGun) && 
-			     ((m_Pawn.GetActiveItem() == None) || !m_Pawn.GetActiveItem().IsA('MachineGun') || m_Pawn.GetActiveItem().IsA('SAWMG') || m_Pawn.GetActiveItem().IsA('G36kMG')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with the G36k MG, make sure we have it equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithG36) && 
-				 ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('G36kMG')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with a sub machine gun, make sure we have it equipped
-		// special case: if it's an UMP SMG, we have a special idle set
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithSubMachineGun) && 
-			     ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('SubMachineGun') || m_Pawn.GetActiveItem().IsA('UMP45SMG')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with the UMP 45 SMG, make sure we have it equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithUMP) && 
-				 ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('UMP45SMG')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with a handgun, make sure we have it equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithHandgun) && 
-				 ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('Handgun')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with a shotgun, make sure we have it equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithShotgun) && 
-			     ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('Shotgun')))
-		{
-			return false;			
-		}
-		// if the idle definition says that we should be idling with a paintball gun, make sure we have it equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithPaintballGun) &&
-				 ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('CSBallLauncher')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling with a grenade, make sure we have it equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithGrenade) &&
-				 ((m_Pawn.GetActiveItem() == None) || ! m_Pawn.GetActiveItem().IsA('ThrownWeapon')))
-		{
-			return false;
-		}
-		// if the idle definition says that we should be idling without a weapon, make sure we have none equipped
-		else if ((OurIdleDefinition.IdleWeaponStatus == IdleWithoutWeapon) && (m_Pawn.GetActiveItem() != None))
-		{
-			return false;
-		}
+    Weapon = SwatWeapon(m_Pawn.GetActiveItem());
+
+    switch(OurIdleDefinition.IdleWeaponStatus)
+    {
+      case IdleWithAnyWeapon:
+        return !(m_Pawn.GetActiveItem() == None);
+      case IdleWithoutWeapon:
+        return m_Pawn.GetActiveItem() == None;
+      case IdleWithGrenade:
+        return m_Pawn.GetActiveItem() != None && m_Pawn.GetActiveItem().IsA('ThrownWeapon');
+      case IdleWithSAW:
+      case IdleWithMachineGun:
+      case IdleWithG36:
+      case IdleWithSubMachineGun:
+      case IdleWithUMP:
+      case IdleWithHandgun:
+      case IdleWithShotgun:
+      case IdleWithPaintballGun:
+      case IdleWithP90:
+        return Weapon != None && Weapon.ValidIdleCategory(OurIdleDefinition.IdleWeaponStatus);
+    }
 	}
 
 	// no problems with the weapon
@@ -143,7 +99,7 @@ function bool CanUseIdleBasedOnAggression()
 {
 	assert(m_Pawn != None);
 
-	// only test for problems if we are a SwatAICharacter (hostage or enemy), 
+	// only test for problems if we are a SwatAICharacter (hostage or enemy),
 	// and this idle definition says that aggression does matter
 	if (m_Pawn.IsA('SwatAICharacter') && (OurIdleDefinition.IdleCharacterAggression != AggressionDoesNotMatter))
 	{
@@ -236,7 +192,7 @@ function bool CanUseIdleAction()
 
 		return false;
 	}
-	
+
 //	if (m_Pawn.logTyrion)
 //		log(m_Pawn $ " for anim. " $ AnimatorIdleDefinition(OurIdleDefinition).AnimationName $ " is " $ OurIdleDefinition.Weight);
 
@@ -258,7 +214,7 @@ function float selectionHeuristic( AI_Goal goal )
 {
     local float Heuristic;
 	assert(goal.IsA('IdleGoal'));
-	
+
 	// if we don't have a pawn yet, set it
 	if (m_Pawn == None)
 	{
@@ -282,7 +238,7 @@ function float selectionHeuristic( AI_Goal goal )
 			Heuristic = 1.0;
 		}
 	}
-    
+
     return Heuristic;
 }
 

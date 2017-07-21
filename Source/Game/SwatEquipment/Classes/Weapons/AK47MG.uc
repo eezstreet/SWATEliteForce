@@ -1,6 +1,1 @@
-class AK47MG extends MachineGun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class AK47MG extends MachineGun config(SwatEquipment);

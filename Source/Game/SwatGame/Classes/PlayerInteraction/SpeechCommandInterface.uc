@@ -81,6 +81,14 @@ simulated function ProcessRule(name Rule, name Value)
 			}
 			break;
 
+		case 'Actions':
+			if(Value == 'TOCReport') {
+				IssueTOCOrder();
+			} else if(Value == 'Compliance') {
+				IssueComplianceOrder();
+			}
+			break;
+
 		default:
 			log("[SPEECHCOMMAND] Unknown rule.");
 	}
@@ -116,6 +124,72 @@ simulated function bool ShouldSpeakTeam()
 simulated function bool ShouldSpeak()
 {
 	return false;
+}
+
+simulated function IssueComplianceOrder()
+{
+	local SwatGamePlayerController Player;
+
+	Player = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+	Player.ServerIssueCompliance();
+}
+
+simulated function IssueTOCOrder()
+{
+	local SwatGamePlayerController PlayerController;
+	local SwatPlayer Player;
+	local Actor Target;
+	local SwatAI TargetAI;
+	local array<IInterested_GameEvent_ReportableReportedToTOC> Interested;
+	local Procedure SwatProcedure;
+	local int i;
+	local name EffectEventName;
+	local bool IsReported;
+	local SwatAI AIListener;
+	local SwatPlayer PlayerListener;
+
+	PlayerController = SwatGamePlayerController(Level.GetLocalPlayerController());
+	if (PlayerController == None) return;
+	Player = PlayerController.GetSwatPlayer();
+	if (Player == None) return;
+	
+	Target = GetPendingTOCReportTargetActor();
+	TargetAI = SwatAI(Target);
+	
+	//if the target is an AI and can be used, report them to TOC _without triggering the report effect_
+	//(we still get the sound effect for the response from TOC)
+	if (TargetAI == None) {
+		//PlayerController.IssueMessage("No valid TargetAI", 'SpeechManagerNotification'); //for easy debugging
+	} else {
+		if (!TargetAI.CanBeUsedNow()) {
+			//PlayerController.IssueMessage("This AI can't be used now", 'SpeechManagerNotification'); //for easy debugging
+		} else {
+			//get the array of all listeners that have been registered to the TOC event
+			Interested = SwatGameInfo(Level.Game).GameEvents.ReportableReportedToTOC.Interested;
+			//loop through the listeners and call the ones that don't trigger sound effects
+			for (i=0; i<Commands.Length - 1; ++i)
+			{
+				//listeners on SwatAI and on the Player will trigger sound effects, so we don't trigger them
+				AIListener = SwatAI(Interested[i]);
+				PlayerListener = SwatPlayer(Interested[i]);
+				if (AIListener == None && PlayerListener == None)
+				{
+					Interested[i].OnReportableReportedToTOC(TargetAI, Player);
+					IsReported = true;
+				}
+			}
+			if (IsReported) {
+				TargetAI.PostUsed(); //mark the target as reported
+				//try to play the response-from-toc sound effect
+				EffectEventName = TargetAI.GetEffectEventForReportResponseFromTOC();
+				if (EffectEventName != '') 
+				{
+					Player.TriggerEffectEvent(EffectEventName, TargetAI, , , , , , , 'TOC');
+				}
+			}
+		}
+	}
 }
 
 simulated function GiveCommandSP()
@@ -164,7 +238,7 @@ simulated function PostUpdate(SwatGamePlayerController Player)
 simulated protected function Actor GetPendingCommandTargetActor()
 {
 	local Actor FocusActor;
-
+	
 	// try foci at recognition
 	PendingCommandFoci = RecognitionFoci;
 	PendingCommandFociLength = RecognitionFociLength;
@@ -180,6 +254,29 @@ simulated protected function Actor GetPendingCommandTargetActor()
 		FocusActor = Super.GetPendingCommandTargetActor();
 	}
 	
+	return FocusActor;
+}
+
+//Get the pending command target actor using different logic to support AI characters
+simulated protected function Actor GetPendingTOCReportTargetActor()
+{
+	local Actor FocusActor;
+
+	// try foci at recognition
+	PendingCommandFoci = RecognitionFoci;
+	PendingCommandFociLength = RecognitionFociLength;
+	log("[SPEECHCOMMAND] Try recognition foci ("$PendingCommandFoci[0].Actor$")");
+	FocusActor = PendingCommandFoci[0].Actor;
+
+	if (FocusActor == None)
+	{
+		// try foci at phrase start
+		PendingCommandFoci = PhraseStartFoci;
+		PendingCommandFociLength = PhraseStartFociLength;
+		log("[SPEECHCOMMAND] Try phrase start foci ("$PendingCommandFoci[0].Actor$")");
+		FocusActor = PendingCommandFoci[0].Actor;
+	}
+
 	return FocusActor;
 }
 

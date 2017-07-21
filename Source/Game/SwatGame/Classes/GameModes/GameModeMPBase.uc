@@ -349,7 +349,11 @@ function SwatMPStartPoint FindNetPlayerStart( Controller Player )
     thePlayerController = SwatGamePlayerController( Player );
     assert( thePlayerController != None );
 
-    TeamID = thePlayerController.SwatRepoPlayerItem.TeamID;
+    if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
+	{TeamID = SwatRepo(Level.GetRepo()).GuiConfig.GetDesiredEntryPoint() * 2;}
+	else
+	{TeamID = thePlayerController.SwatRepoPlayerItem.TeamID;}
+	
     TheNetTeam = SGI.GetTeamFromID( TeamID );
 
     TheStartCluster = CurrentStartCluster[TeamID];

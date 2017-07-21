@@ -85,7 +85,7 @@ function initAction(AI_Resource r, AI_Goal goal)
 	ActivateVisionSensor();
 	ActivateHearingSensor();
 	ActivateThreatenedSensor();
-	
+
 	FindIdleGoal();
 
 	StartPatrolling();
@@ -256,7 +256,7 @@ function cleanup()
 		VisionSensor.deactivateSensor(self);
 		VisionSensor = None;
 	}
-	
+
 	if (ThreatenedSensor != None)
 	{
 		ThreatenedSensor.deactivateSensor(self);
@@ -405,7 +405,7 @@ protected function bool HasLineOfSightToDoor(Door TestDoor)
 	local int i;
 
 	DoorModels = ISwatDoor(TestDoor).GetDoorModels();
-	
+
 	for(i=0; i<DoorModels.Length; ++i)
 	{
 		if (m_Pawn.LineOfSightTo(DoorModels[i]))
@@ -420,7 +420,7 @@ protected function bool HasLineOfSightToDoor(Door TestDoor)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Compliance 
+// Compliance
 
 // This is a shared event response (no overriding!)
 // Called when someone orders us to comply
@@ -451,7 +451,7 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 				if (m_Pawn.logAI)
 					log(m_Pawn.Name$" will comply - morale is: " $ GetCurrentMorale() $ " RandomChance is: " $ RandomChance);
 
-				bWillComply = true;  
+				bWillComply = true;
 			}
 			else
 			{
@@ -463,13 +463,18 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 
 			// don't listen for compliance until morale changes
 			bListeningForCompliance = false;
+			// and if we are armed, insane suspects, become threats (SANITY CHECKS DAMN IT!)
+            if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard')) || (!m_Pawn.IsA('SwatHostage'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None) && ISwatAICharacter(m_Pawn).IsInsane())
+            {
+                ISwatEnemy(m_Pawn).BecomeAThreat();
+            }
 
 			// reset how many compliance orders we've ignored
 			ComplianceOrdersIgnored = 0;
 
 			if (bWillComply)
 			{
-				PostComplianceGoal();   
+				PostComplianceGoal();
 			}
 		}
 		else
@@ -705,7 +710,7 @@ private function RemoveIdleGoal()
 	}
 }
 
-// removes any goals that aren't related to dying or incapacitation 
+// removes any goals that aren't related to dying or incapacitation
 // (except Idle, which is special case)
 // subclasses should always call down the chain
 function RemoveNonDeathGoals()
@@ -776,7 +781,7 @@ function RemoveNonDeathGoals()
 		CurrentStungGoal.Release();
 		CurrentStungGoal = None;
 	}
-	
+
 	// remove the patrol goal
 	if (CurrentPatrolGoal != None)
 	{
@@ -865,7 +870,7 @@ function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vect
 	if ((Damage > 0) && m_Pawn.IsConscious())
 	{
    		// only react if we're not already reacting
-		if ((CurrentIncapacitatedGoal == None) && 
+		if ((CurrentIncapacitatedGoal == None) &&
 			(CurrentReactToBeingShotGoal == None))
 		{
 			CurrentReactToBeingShotGoal = new class'ReactToBeingShotGoal'(characterResource(), RegionHit, HitLocation, HitNormal);
@@ -881,7 +886,7 @@ function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vect
 
 		NotifyTookHit();
 
-		// Allow subclasses to decrement morale, 
+		// Allow subclasses to decrement morale,
 		// but we don't start listening for compliance to avoid having players shooting a character in a leg to get him to comply
 		ChangeMorale(-GetShotMoraleModification(), "Shot", true);
 	}
@@ -927,7 +932,7 @@ protected function bool ShouldScream()
 protected function PlayFlinch()
 {
 	local name FlinchAnimationName;
-	
+
 	log("PlayFlinch called on server for " $ m_Pawn.Name);
 
 	// don't flinch if we're already animating on the special channel or if we're moving
@@ -981,7 +986,7 @@ function NotifyFlashbanged(vector FlashbangLocation, float StunnedDuration)
 			FlashbangedAction(CurrentFlashbangedGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
 		}
 	}
-	
+
 	if (CurrentFlashbangedGoal == None)
 	{
 		CurrentFlashbangedGoal = new class'FlashbangedGoal'(characterResource(), FlashbangLocation, StunnedDuration);
@@ -1010,7 +1015,7 @@ function NotifyGassed(vector GasContainerLocation, float StunnedDuration)
 			GassedAction(CurrentGassedGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
 		}
 	}
-	
+
 	if (CurrentGassedGoal == None)
 	{
 		CurrentGassedGoal = new class'GassedGoal'(characterResource(), GasContainerLocation, StunnedDuration);
@@ -1038,7 +1043,7 @@ function NotifyPepperSprayed(vector PepperSprayLocation, float StunnedDuration)
 			PepperSprayedAction(CurrentPepperSprayedGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
 		}
 	}
-	
+
 	if (CurrentPepperSprayedGoal == None)
 	{
 		CurrentPepperSprayedGoal = new class'PepperSprayedGoal'(characterResource(), PepperSprayLocation, StunnedDuration);
@@ -1071,7 +1076,7 @@ function NotifyTased(vector TaserLocation, float StunnedDuration)
 			TasedAction(CurrentTasedGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
 		}
 	}
-	
+
 	if (CurrentTasedGoal == None)
 	{
 		CurrentTasedGoal = new class'TasedGoal'(characterResource(), TaserLocation, StunnedDuration);
@@ -1100,7 +1105,7 @@ function NotifyStunnedByC2Detonation(vector C2ChargeLocation, float StunnedDurat
 			StunnedByC2Action(CurrentStunnedByC2Goal.achievingAction).ExtendBeingStunned(StunnedDuration);
 		}
 	}
-	
+
 	if (CurrentStunnedByC2Goal == None)
 	{
 		CurrentStunnedByC2Goal = new class'StunnedByC2Goal'(characterResource(), C2ChargeLocation, StunnedDuration);
@@ -1130,7 +1135,7 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 			StungAction(CurrentStungGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
 		}
 	}
-	
+
 	if (CurrentStungGoal == None)
 	{
 		CurrentStungGoal = new class'StungGoal'(characterResource(), Grenade, StungGrenadeLocation, StunnedDuration);
@@ -1182,7 +1187,7 @@ function float GetCurrentMorale()
 function ChangeMorale(float inChangeAmount, string inReasonForChange, optional bool bDoNotStartListeningForCompliance)
 {
     local MoraleHistoryEntry NewMoraleHistoryEntry;
-	
+
 	// don't change morale if we are already compliant or restrained
 	if ((CurrentComplianceGoal == None || inReasonForChange == "Unobserved Compliance") && (CurrentRestrainedGoal == None))
 	{
@@ -1365,7 +1370,7 @@ protected function bool MoveToActor(Actor Destination, int MovementBehaviorPrior
 protected function MoveMinimumDistanceAwayFromLocation(vector Location, float MinimumDistance)
 {
 	local NavigationPoint ClosestPointToMoveTo;
-	
+
 	// don't find a new place to move to if we're already moving
 	if (CanMoveToActor())
 	{
@@ -1423,7 +1428,7 @@ event SetDebugBlackboardInfo()
     m_Pawn.AddDebugMessage("Morale:             "@GetCurrentMorale());
 	m_Pawn.AddDebugMessage("Aggressive:         "@ISwatAI(m_Pawn).IsAggressive());
 	m_Pawn.AddDebugMessage("Idle Category:      "@ISwatAI(m_Pawn).GetIdleCategory());
-    
+
     // allow subclasses to add debug messages
     SetSpecificDebugInfo();
 }

@@ -7,7 +7,7 @@ var() config string MapName "Name of the map that corresponds with this mission"
 var() Editconst string FriendlyName "Name of the mission that will be displayed in the GUI";
 
 //the Mission Objectives
-var() EditConst Editinline MissionObjectives Objectives "The objectives for this mission";
+var() public EditConst Editinline MissionObjectives Objectives "The objectives for this mission";
 
 //Generic mission info
 var() config localized array<string> MissionDescription "A generic description of this mission (for the mission selection screen)";
@@ -32,7 +32,7 @@ var() config localized array<string> SuspectName "The name of this Suspect";
 var() config localized array<string> SuspectVitals "A description of this Suspects vital stats";
 var() config localized array<string> SuspectDescription "A description of this Suspect";
 var() config array<Material> SuspectImage "A picture of this Suspect, default should be -no picture available-";
- 
+
 //Entry option info
 var() config localized array<string> EntryOptionTitle "The title (usually 1 word) of this entry option";
 var() config localized array<string> EntryDescription "The description of this entry option";
@@ -47,6 +47,9 @@ var() config localized array<string> TimeLineLongDescription "The description to
 var() config Material NewEquipmentImage "The image of the new piece of equipment available for this mission";
 var() config localized string NewEquipmentName "The name of the new piece of equipment available for this mission";
 var() config localized string NewEquipmentDescription "The description of the new piece of equipment available for this mission";
+var() config Material SecondEquipmentImage "The image of the second piece of new equipment for this mission";
+var() config localized string SecondEquipmentName "The name of the second piece of new equipment for this mission";
+var() config localized string SecondEquipmentDescription "The description of the second piece of new equipment for this mission";
 
 //Level Loading info
 var() config localized string LoadingText "Text that will be displayed for the mission on the Loading Screen";
@@ -60,7 +63,7 @@ var() config bool bHas911DispatchAudio;
 function Initialize( string theFriendlyName, CustomScenario inCustomScenario)
 {
     FriendlyName = theFriendlyName;
-    
+
     Objectives = new(None, string(self.Name), 0) class'MissionObjectives';
 
     CustomScenario = inCustomScenario;
@@ -69,23 +72,37 @@ function Initialize( string theFriendlyName, CustomScenario inCustomScenario)
         CustomScenario.MutateMissionObjectives(Objectives);
 }
 
-function bool IsMissionCompleted()
+function bool IsMissionCompleted(optional MissionObjectives Pass)
 {
     local int i;
+
+    if(Objectives == None)
+    {
+      Objectives = Pass;
+    }
+
+    log(self$"::IsMissionCompleted: Objectives.Length = "$Objectives.Objectives.Length);
     for (i=0; i<Objectives.Objectives.length; i++)
     {
+        log("SwatMission("$self$"): Objectives["$i$"]: "$Objectives.Objectives[i]$": IsPrimaryObjective("$Objectives.Objectives[i].IsPrimaryObjective$"): Status:"$Objectives.Objectives[i].GetStatus());
         if  (   Objectives.Objectives[i].IsA('Objective_Do')    //completion of 'Objective_Do's is required for mission success
                 && Objectives.Objectives[i].IsPrimaryObjective  //only primary objectives count
                 && Objectives.Objectives[i].GetStatus() != ObjectiveStatus_Completed
             )
             return false;
     }
-    return true;    
+    return true;
 }
 
-function bool IsMissionFailed()
+function bool IsMissionFailed(optional MissionObjectives Pass)
 {
     local int i;
+
+    if(Objectives == None)
+    {
+      Objectives = Pass;
+    }
+
     for (i=0; i<Objectives.Objectives.length; i++)
     {
         if  ( Objectives.Objectives[i].IsPrimaryObjective  //only primary objectives count
@@ -93,12 +110,18 @@ function bool IsMissionFailed()
             )
             return true;
     }
-    return false;    
+    return false;
 }
 
-function bool IsMissionTerminal()
+function bool IsMissionTerminal(optional MissionObjectives Pass)
 {
     local int i;
+
+    if(Objectives == None)
+    {
+      Objectives = Pass;
+    }
+
     for (i=0; i<Objectives.Objectives.length; i++)
     {
         if  ( Objectives.Objectives[i].IsTerminal  //only terminal objectives count
@@ -106,7 +129,7 @@ function bool IsMissionTerminal()
             )
             return true;
     }
-    return false;    
+    return false;
 }
 
 function bool HasMetDifficultyRequirement()
@@ -122,4 +145,3 @@ function SetHasMetDifficultyRequirement( bool inSuccess )
 defaultproperties
 {
 }
-

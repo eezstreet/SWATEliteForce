@@ -18,6 +18,8 @@ var(StaticConfig)   Config  bool    bDisplayConnects "if true, will display conn
 
 var() private config localized string TeamChatMessage;
 var() private config localized string GlobalChatMessage;
+var() private config localized string TeamChatMessageLocalized;
+var() private config localized string GlobalChatMessageLocalized;
 
 var() private config localized string NameChangeMessage;
 var() private config localized string KickMessage;
@@ -45,10 +47,7 @@ var() private config localized string SuspectsArrestMessage;
 var() private config localized string YesVoteMessage;
 var() private config localized string NoVoteMessage;
 
-var() private config localized string KickReferendumStartedMessage;
-var() private config localized string BanReferendumStartedMessage;
-var() private config localized string LeaderReferendumStartedMessage;
-var() private config localized string MapReferendumStartedMessage;
+var() private config localized string ReferendumStartedMessage;
 
 var() private config localized string ReferendumAlreadyActiveMessage;
 var() private config localized string ReferendumStartCooldownMessage;
@@ -155,6 +154,7 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
             MsgText = FormatTextString( EquipNotAvailableString, SlotNames[ int(StrA) ] );
             break;
 
+        case 'SpeechManagerNotification':
         case 'Caption':
             MsgText = StrA;
             break;
@@ -194,6 +194,16 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
             MsgIsChat = true;
             break;
 
+        case 'SayLocalized':
+            MsgText = FormatTextString(GlobalChatMessageLocalized, StrA, StrB, StrC);
+            MsgIsChat = true;
+            break;
+
+        case 'TeamSayLocalized':
+            MsgText = FormatTextString(TeamChatMessageLocalized, StrA, StrB, StrC);
+            MsgIsChat = true;
+            break;
+
 		case 'StatsValidatedMessage':
 			MsgText = StatsValidatedMessage;
 			break;
@@ -229,22 +239,9 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 			MsgText = FormatTextString( NoVoteMessage, StrA );
 			break;
 
-		case 'KickReferendumStarted':
-			MsgText = FormatTextString( KickReferendumStartedMessage, StrA, StrB );
-			break;
-
-		case 'BanReferendumStarted':
-			MsgText = FormatTextString( BanReferendumStartedMessage, StrA, StrB );
-			break;
-
-		case 'LeaderReferendumStarted':
-			MsgText = FormatTextString( LeaderReferendumStartedMessage, StrA, StrB );
-			break;
-
-		case 'MapReferendumStarted':
-			MsgText = FormatTextString( MapReferendumStartedMessage, StrA, StrB,
-				SwatRepo(PlayerOwner().Level.GetRepo()).GuiConfig.GetGameModeName(EMPMode(int(StrC))) );
-			break;
+    case 'ReferendumStarted':
+      MsgText = FormatTextString(ReferendumStartedMessage, StrA);
+      break;
 
 		case 'ReferendumAlreadyActive':
 			MsgText = FormatTextString( ReferendumAlreadyActiveMessage );
@@ -643,11 +640,6 @@ defaultproperties
 	YesVoteMessage="[c=ff00ff]%1 voted yes"
 	NoVoteMessage="[c=ff00ff]%1 voted no"
 
-	KickReferendumStartedMessage="[c=ff00ff]%1 has started a vote to kick %2"
-	BanReferendumStartedMessage="[c=ff00ff]%1 has started a vote to ban %2"
-	LeaderReferendumStartedMessage="[c=ff00ff]%1 has started a vote to promote %2 to leader"
-	MapReferendumStartedMessage="[c=ff00ff]%1 has started a vote to change the map to %2 and the game mode to %3"
-
 	COOPMessageLeaderSelected="[c=ffff00][b]%1[\\b] has been promoted to leader."
 
 	StatsValidatedMessage = "[c=ffff00][b][STATS][\\b] The server has validated your profile and is tracking statistics."
@@ -668,7 +660,9 @@ defaultproperties
 	ReferendumFailedMessage="[c=ff00ff]The vote failed"
 
     TeamChatMessage="[c=808080][b]%1[\\b]: %2"
-    GlobalChatMessage="[c=00ff00][b]%1[\\b]: %2"
+    GlobalChatMessage="[c=00ff00][b]%1[\\b][c=00ff00]: %2"
+    TeamChatMessageLocalized="[c=808080][b]%1 (%2)[\\b]: %3"
+    GlobalChatMessageLocalized="[c=00ff00][b]%1 [\\c][c=ffffff](%2)[\\c][\\b][c=00ff00]: %3"
     SwatSuicideMessage="[c=0000ff][b]%1[\\b] suicided!"
     SuspectsSuicideMessage="[c=ff0000][b]%1[\\b] suicided!"
     SwatTeamKillMessage="[c=0000ff][b]%1[\\b] betrayed [b]%2[\\b] with a %3!"
@@ -687,6 +681,8 @@ defaultproperties
     SniperAlertedString="[c=ffffff]Press %1 to activate the sniper view."
     EquipNotAvailableString="[c=ffffff]No %1 available to equip."
     DebugMessageString="[c=ffffff]DEBUG_MSG: %1"
+
+    ReferendumStartedMessage="[c=ff00ff]%1[\\c]"
 
     PromptToDebriefMessage="[c=ffffff]Press '[k=GUICloseMenu]' to proceed to Debrief."
     SomeoneString="someone"

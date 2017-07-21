@@ -30,6 +30,11 @@ function TriggerDoorBlockedSpeech()
 	TriggerSpeech('DoorBlocked', true);
 }
 
+function TriggerDoorOpeningSpeech()
+{
+	TriggerSpeech('ShotAtBreachedDoor', true);
+}
+
 function TriggerFleeSpeech()
 {
 	TriggerSpeech('AnnouncedFlee');
@@ -55,11 +60,20 @@ function TriggerUncompliantSpeech()
 	TriggerSpeech('AnnouncedNonCompliant', true);
 }
 
+function TriggerShotAFriendSpeech()
+{
+	TriggerSpeech('ShotAFriend');
+}
+
 function TriggerDownedOfficerSpeech()
 {
 	TriggerSpeech('ReactedDownOfficer');
 }
 
+function TriggerDownedSuspectSpeech()
+{
+	TriggerSpeech('ReactedDownSuspect');
+}
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {

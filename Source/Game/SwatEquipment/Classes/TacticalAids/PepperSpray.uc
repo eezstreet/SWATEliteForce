@@ -7,9 +7,9 @@ var config float MomentumToPenetrateThreshold;
 var config float PlayerPepperSprayedDuration;
 var config float AIPepperSprayedDuration;
 
-// When a Player (non-AI) being peppered has protective 
-// equipment that protects him from pepper, then the duration of 
-// effect will be scaled by this value. 
+// When a Player (non-AI) being peppered has protective
+// equipment that protects him from pepper, then the duration of
+// effect will be scaled by this value.
 // I.e., PlayerDuration *= <XXX>PlayerProtectiveEquipmentDurationScaleFactor
 // Where XXX is SP or MP depending on whether it's a single-player or
 // multiplayer game
@@ -31,7 +31,7 @@ simulated function TraceFire()
 
     GetPerfectFireStart(StartLocation, StartDirection);
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (DebugDrawAccuracyCone)
     {
         Level.GetLocalPlayerController().myHUD.AddDebugCone(
@@ -44,7 +44,7 @@ simulated function TraceFire()
 
     if ( Level.NetMode == NM_Client )
         return;
-    
+
     //find all things implementing 'ICanBePepperSprayed' that are within Range
     foreach RadiusActors(class'ICanBePepperSprayed', Candidate, Range, StartLocation)
     {
@@ -52,13 +52,13 @@ simulated function TraceFire()
         CandidateViewPoint = SwatPawn(Candidate).GetViewPoint();
 //        log("PepperSpray testing sprayable actor within radius: "$Candidate.Name);
 
-        //disqualify if Candidate is not within the spray "cone", 
+        //disqualify if Candidate is not within the spray "cone",
 		// but if the candidate is a SwatAI, and the distance between the view point and the origin of the pepper spray is small, do not disqualify
 
-        if  (   
+        if  (
                 !PointWithinInfiniteCone(
-                    StartLocation, 
-                    Vector(StartDirection), 
+                    StartLocation,
+                    Vector(StartDirection),
                     CandidateViewPoint,
                     2 * (GetAimError() * DEGREES_TO_RADIANS))
             &&  (
@@ -67,18 +67,18 @@ simulated function TraceFire()
                 )
             )
         {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
             if (DebugDrawAccuracyCone)
             {
                 // draw misses (outside cone) in red
                 Level.GetLocalPlayerController().myHUD.AddDebugLine(
-                        StartLocation, 
+                        StartLocation,
                         CandidateViewPoint,
                         class'Engine.Canvas'.Static.MakeColor(255,0,0),
                         8);
                 Level.GetLocalPlayerController().myHUD.AddDebugBox(
                         CandidateViewPoint,
-                        3, 
+                        3,
                         class'Engine.Canvas'.Static.MakeColor(255,0,0),
                         8);
             }
@@ -104,10 +104,10 @@ simulated function TraceFire()
         //disqualify if trace is blocked by someting with adequate momentum to penetrate
         TraceBlocked = false;
         foreach TraceActors(
-            class'Actor', 
-            HitActor, 
-            HitLocation, 
-            HitNormal, 
+            class'Actor',
+            HitActor,
+            HitLocation,
+            HitNormal,
             HitMaterial,
             CandidateViewPoint,
             StartLocation,
@@ -118,7 +118,7 @@ simulated function TraceFire()
             {
 //                log("   PepperSpray hit target before anything else");
                 break;
-            }  
+            }
             else
             if  (
                     HitActor.class.name != 'LevelInfo'
@@ -140,45 +140,45 @@ simulated function TraceFire()
         if (!TraceBlocked)
         {
 //            log("   Calling ReactToBeingPepperSprayed on "$Candidate);
-            
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
             if (DebugDrawAccuracyCone)
             {
                 // draw hits in green
                 Level.GetLocalPlayerController().myHUD.AddDebugLine(
-                        StartLocation, 
+                        StartLocation,
                         CandidateViewPoint,
                         class'Engine.Canvas'.Static.MakeColor(0,255,0),
                         8);
                 Level.GetLocalPlayerController().myHUD.AddDebugBox(
                         CandidateViewPoint,
-                        3, 
+                        3,
                         class'Engine.Canvas'.Static.MakeColor(0,255,0),
                         8);
             }
 #endif
             //okay, Candidate is a qualified victim
             Candidate.ReactToBeingPepperSprayed(
-                self, 
-                PlayerPepperSprayedDuration, 
-                AIPepperSprayedDuration, 
+                self,
+                PlayerPepperSprayedDuration,
+                AIPepperSprayedDuration,
                 SPPlayerProtectiveEquipmentDurationScaleFactor,
                 MPPlayerProtectiveEquipmentDurationScaleFactor);
         }
         else
         {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
             if (DebugDrawAccuracyCone)
             {
                 // draw blocked shots (inside cone but trace was blocked) in aquamarine
                 Level.GetLocalPlayerController().myHUD.AddDebugLine(
-                        StartLocation, 
+                        StartLocation,
                         CandidateViewPoint,
                         class'Engine.Canvas'.Static.MakeColor(0,255,255),
                         8);
                 Level.GetLocalPlayerController().myHUD.AddDebugBox(
                         CandidateViewPoint,
-                        3, 
+                        3,
                         class'Engine.Canvas'.Static.MakeColor(0,255,255),
                         8);
             }
@@ -200,6 +200,20 @@ simulated latent function EndFiring()
     }
 }
 
+// Sticky selection: if this item is equipped, then we switch to a grenade, then use a grenade, it switches to this item
+simulated function bool HasStickySelection()
+{
+  return false;
+}
+
+function OnGivenToOwner()
+{
+  // Need to override this, because otherwise we get problems
+  Super.OnGivenToOwner();
+
+  Ammo.InitializeAmmo(10);
+}
+
 //which slot should be equipped after this item becomes unavailable
 simulated function EquipmentSlot GetSlotForReequip()
 {
@@ -211,4 +225,5 @@ defaultproperties
     Slot=Slot_PepperSpray
     SPPlayerProtectiveEquipmentDurationScaleFactor=0
     MPPlayerProtectiveEquipmentDurationScaleFactor=0
+    bIsLessLethal=true
 }

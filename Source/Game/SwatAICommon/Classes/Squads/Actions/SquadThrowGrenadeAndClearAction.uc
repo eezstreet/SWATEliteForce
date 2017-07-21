@@ -14,7 +14,7 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 {
 	// if the goal that was achieved is the open door goal
 	// start running again.
-	// NOTE that this must be called before the super.goalAchievedCB 
+	// NOTE that this must be called before the super.goalAchievedCB
 	// because the super will unpost and release the goal
 	if (goal == CurrentOpenDoorGoal)
 	{
@@ -29,7 +29,7 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 //
 // Stacking up
 
-// any grenade throws in a move and clear should be preceded by a stack up 
+// any grenade throws in a move and clear should be preceded by a stack up
 // (according to the designers, and I agree)
 protected function bool ShouldStackUpIfOfficersInRoomToClear() { return true; }
 

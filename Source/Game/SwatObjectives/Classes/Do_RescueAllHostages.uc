@@ -34,8 +34,13 @@ function OnMissionStarted()
 //IInterested_GameEvent_PawnDied Implementation
 function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 {
+    local SwatHostage Hostage;
+
     if (!Pawn.IsA('SwatHostage'))
         return;                             //we don't care
+
+    Hostage = SwatHostage(Pawn);
+    if(Hostage.IsDOA()) return; // It's a DOA, it doesn't count towards the objective
 
     if (Game.DebugObjectives)
         log("[OBJECTIVES] The "$class.name
@@ -83,12 +88,12 @@ private function CheckComplete(name DebugWhy)
 	{
 		CurrentHostage = SwatHostage(PawnIter);
 
-		if ((CurrentHostage != None) && !CurrentHostage.IsArrested() && !CurrentHostage.IsIncapacitated())
+		if ((CurrentHostage != None) && !CurrentHostage.IsArrested() && !CurrentHostage.IsIncapacitated() && !CurrentHostage.IsDOA())
         {
             if (Game.DebugObjectives && (CurrentHostage != None))
                 log("[OBJECTIVES] ... It is not yet complete because "$CurrentHostage
                     $" is not rescued (not arrested and not incapacitated).");
-        
+
             return;                         //we're not done yet
         }
 	}

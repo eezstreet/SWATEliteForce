@@ -6,6 +6,7 @@ class Procedure_EvacuateDownedSuspects extends SwatGame.Procedure
 var config int PenaltyPerDownedSuspect;
 
 var array<SwatPawn> UnevacuatedDownedSuspects;
+var array<SwatPawn> ReportedDownedSuspects;
 
 function PostInitHook()
 {
@@ -34,6 +35,9 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
     if(IsInArray(Pawn, UnevacuatedDownedSuspects))
         return;
 
+    if(IsInArray(Pawn, ReportedDownedSuspects))
+        return;
+
     Add( Pawn, UnevacuatedDownedSuspects );
 }
 
@@ -60,6 +64,7 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
             $". UnevacuatedDownedSuspects.length="$UnevacuatedDownedSuspects.length);
 
     Remove( SwatPawn(ReportedCharacter), UnevacuatedDownedSuspects );
+    Add( SwatPawn(ReportedCharacter), ReportedDownedSuspects);
 }
 
 function string Status()

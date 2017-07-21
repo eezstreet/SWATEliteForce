@@ -44,7 +44,6 @@ function cleanup()
 function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorCode )
 {
 	super.goalNotAchievedCB(goal, child, errorCode);
-	log("[eezstreet] - Lightstick: goalNotAchievedCB with errorcode " $errorCode);
 
 	// if our movement goal fails, we succeed so we don't get reposted!
 	if (goal == CurrentMoveToLocationGoal)
@@ -79,14 +78,13 @@ latent function MoveIntoPosition()
 latent function DropLightstick()
 {
 	Lightstick = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_Lightstick);
-	log("[eezstreet] trying to drop lightstick...");
 	if ( Lightstick == None) {
-		log("[eezstreet] lightstick == None. help?");
 		return;
 	}
 
-	log("[eezstreet] droplightstick() successful");
-	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLightstickSpeech();
+	if (DropLightstickGoal(achievingGoal).GetPlaySpeech()) {
+		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerDeployingLightstickSpeech();
+	}
 	Lightstick.LatentUse();
 }
 

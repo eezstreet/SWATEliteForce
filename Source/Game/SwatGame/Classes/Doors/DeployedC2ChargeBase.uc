@@ -1,5 +1,5 @@
 class DeployedC2ChargeBase extends RWOSupport.DeployedTacticalAid
-    Implements IAmUsedByToolkit, ICanBeDisabled, SwatAICommon.IDeployedC2Charge
+    Implements IAmUsedByToolkit, ICanBeDisabled, SwatAICommon.IDeployedC2Charge, IDisableableByAI
     config(SwatEquipment);
 
 var(C2Charge) StaticMesh PreviewStaticMesh;
@@ -9,7 +9,7 @@ var config float QualifyTimeForToolkit;
 
 var config float Damage;
 //damage is applied to Pawns within a cone.  this is the angle at the cone's vertex.
-var config float DamageAngle;       
+var config float DamageAngle;
 var config float DamageRadius;
 
 // distance that we will stun any actors that implement IReactToC2Detonation
@@ -21,6 +21,7 @@ var config bool DebugBlast;
 
 var private SwatDoor AssociatedDoor;
 var private SwatPawn DeployedBy;
+var private bool CurrentlyDeployed;
 
 var Rotator BackwardVectorOffset;       //this is the direction, relative to the facing direction of a DeployedC2Charge, in which the charge affects pawns.  in other words, a DeployedC2Charge should affect pawns in the direction of Rotation + BackwardVectorOffset.
 var array<Pawn> Victims;
@@ -51,6 +52,7 @@ simulated function OnDeployed(SwatPawn inDeployedBy)
     SetCollision(true, false, false);
     Show();
     Deployedby = inDeployedBy;
+    CurrentlyDeployed = true;
 }
 
 simulated function OnDetonated()
@@ -65,6 +67,7 @@ simulated function OnDetonated()
             "[tcohen] DeployedC2ChargeBase::OnDetonated() DeployedBy=None");
 
     TriggerEffectEvent('Detonated', AssociatedDoor, AssociatedDoor.GetCurrentMaterial(0));
+    SwatGameInfo(Level.Game).GameEvents.C2Detonated.Triggered(DeployedBy, self);
 
     ICanUseC2Charge(DeployedBy).SetDeployedC2Charge(None);
 
@@ -76,6 +79,8 @@ simulated function OnDetonated()
 
         Hide();
     }
+
+    CurrentlyDeployed = false;
 }
 
 function AffectVictims()
@@ -90,7 +95,7 @@ function AffectVictims()
     //a DeployedC2Charge affects Pawns in the "backward" direction from their forward-facing vector
 	AffectDirection = Rotation + BackwardVectorOffset;
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (DebugBlast)
     {
         Level.GetLocalPlayerController().myHUD.AddDebugCone(
@@ -118,14 +123,14 @@ function AffectVictims()
         if  (
                 VSize(VictimActor.Location - Location) < StunRadius
             &&  PointWithinInfiniteCone(
-                    Location, 
-                    Vector(AffectDirection), 
+                    Location,
+                    Vector(AffectDirection),
                     VictimActor.Location,
                     StunAngle * DEGREES_TO_RADIANS)
             &&  (Abs(VictimActor.Location.Z - Location.Z) < 150)
             )
         {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
             if (DebugBlast)
                 Level.GetLocalPlayerController().myHUD.AddDebugLine(
                         Location,
@@ -141,8 +146,8 @@ function AffectVictims()
         if  (
                 VSize(VictimActor.Location - Location) < DamageRadius
             &&  PointWithinInfiniteCone(
-                    Location, 
-                    Vector(AffectDirection), 
+                    Location,
+                    Vector(AffectDirection),
                     VictimActor.Location,
                     DamageAngle * DEGREES_TO_RADIANS)
             )
@@ -151,7 +156,7 @@ function AffectVictims()
 
             if (FastTrace(VictimActor.Location, OriginForTrace))
             {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
                 if (DebugBlast)
                     Level.GetLocalPlayerController().myHUD.AddDebugLine(
                             OriginForTrace,
@@ -162,18 +167,18 @@ function AffectVictims()
 #endif
 
                 // Calculate damage momentum
-                Momentum = DamageMomentumMagnitude * Normal( VictimActor.Location - OriginForTrace); 
+                Momentum = DamageMomentumMagnitude * Normal( VictimActor.Location - OriginForTrace);
 
                 VictimActor.TakeDamage(
-                        Damage, 
-                        DeployedBy, 
-                        VictimActor.Location, 
-                        Momentum, 
-                        class'ConcussiveDamageType');  
+                        Damage,
+                        DeployedBy,
+                        VictimActor.Location,
+                        Momentum,
+                        class'ConcussiveDamageType');
             }
             else
             {
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
                 if (DebugBlast)
                     Level.GetLocalPlayerController().myHUD.AddDebugLine(
                             OriginForTrace,
@@ -200,6 +205,7 @@ function OnUsingByToolkitBegan( Pawn User );
 // Called when qualifying completes successfully.
 function OnUsedByToolkit(Pawn User)
 {
+    CurrentlyDeployed = false;
     GotoState('Removed');
 }
 
@@ -210,7 +216,13 @@ function OnUsingByToolkitInterrupted( Pawn User );
 //ICanBeDisabled implementation
 simulated function bool IsActive()
 {
-    return true;
+    return CurrentlyDeployed;
+}
+
+//IDisableableByAI implementation
+simulated function bool IsDisableableNow()
+{
+  return IsActive();
 }
 
 state Removed

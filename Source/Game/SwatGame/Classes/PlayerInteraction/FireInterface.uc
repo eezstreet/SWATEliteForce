@@ -19,7 +19,7 @@ simulated protected function bool PreUpdateHook(SwatGamePlayerController Player,
     PlayerPawn = SwatPlayer(Player.Pawn);
     ActiveItem = PlayerPawn.GetActiveItem();
 
-    if  (   
+    if  (
             Player.ActiveViewport != None   //player is controlling a viewport
         ||  ActiveItem == None              //no active item
         ||  !ActiveItem.IsIdle()            //active item is busy
@@ -44,7 +44,7 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
 
     if( Player == Level.GetLocalPlayerController() )
         Player.GetHUDPage().Reticle.CenterPreviewImage = None;
-        
+
     HUDPage.Feedback.FireText = "";
 
     Player.EquipmentSlotForQualify = SLOT_Invalid;
@@ -52,12 +52,12 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
 
 native function bool RejectFocus(
         PlayerController Player,
-        Actor CandidateActor, 
-        vector CandidateLocation, 
-        vector CandidateNormal, 
-        Material CandidateMaterial, 
-        ESkeletalRegion CandidateSkeletalRegion, 
-        float Distance, 
+        Actor CandidateActor,
+        vector CandidateLocation,
+        vector CandidateNormal,
+        Material CandidateMaterial,
+        ESkeletalRegion CandidateSkeletalRegion,
+        float Distance,
         bool Transparent);
 
 simulated protected event PostFocusAdded(PlayerInterfaceContext inContext, Actor Target, ESkeletalRegion SkeletalRegionHit)
@@ -82,20 +82,45 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
     local FireInterfaceDoorRelatedContext Context;
     local SwatGamePlayerController Player;
     local HUDPageBase HUD;
-    
-    Context = FireInterfaceDoorRelatedContext(inContext);
+    local Door theDoor;
+
     Player = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+    Context = FireInterfaceDoorRelatedContext(inContext);
+
+    if(Context.SideEffect == 'OnlyOnLockable') {
+      // Hijacking the unused SideEffect system to pass whatever parameter we want!
+      theDoor = Door(Target);
+      if(!theDoor.CanBeLocked()) {
+        return;
+      }
+    }
+
     HUD = Player.GetHUDPage();
-    
+
     HUD.Feedback.FireText = Context.FireFeedbackText;
     HUD.Reticle.CenterPreviewImage = Context.ReticleImage;
     UpdateReticlePreviewAlpha(Player, HUD, Target, SkeletalRegionHit);
 
     Player.EquipmentSlotForQualify = Context.EquipmentSlotForQualify;
 
+    if(Context.SideEffect == 'SwapEquipmentSlot')
+    {
+      if(Player.SwatPlayer.PrimaryIsA(Context.HasA))
+      {
+        Player.EquipmentSlotForQualify = Slot_PrimaryWeapon;
+      }
+      else if(Player.SwatPlayer.SecondaryIsA(Context.HasA))
+      {
+        Player.EquipmentSlotForQualify = Slot_SecondaryWeapon;
+      }
+    }
+
     //handle any side effect
     switch (Context.SideEffect)
     {
+        case 'OnlyOnLockable':
+        case 'SwapEquipmentSlot':
         case '':
             break;  //no side effect
 
@@ -113,9 +138,9 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
 //
 
 function UpdateReticlePreviewAlpha(
-        SwatGamePlayerController Player, 
-        HUDPageBase HUD, 
-        Actor Target, 
+        SwatGamePlayerController Player,
+        HUDPageBase HUD,
+        Actor Target,
         ESkeletalRegion SkeletalRegion)
 {
     local SwatDoor Door;

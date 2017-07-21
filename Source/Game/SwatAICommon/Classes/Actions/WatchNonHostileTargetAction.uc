@@ -6,7 +6,7 @@ class WatchNonHostileTargetAction extends SwatCharacterAction;
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 // AI that we're watching
@@ -28,7 +28,7 @@ var private Pawn					LastSpokenToWatchTarget;
 var private float					NextSpokenToWatchTargetTime;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Init / cleanup
 
 function initAction(AI_Resource r, AI_Goal goal)
@@ -37,7 +37,7 @@ function initAction(AI_Resource r, AI_Goal goal)
 
 	// find the initial watch target
 	FindInitialWatchTarget();
-	
+
 	if (m_Pawn.logTyrion)
 		log(m_Pawn.Name $ " is going to watch CurrentWatchTarget: " $ CurrentWatchTarget);
 }
@@ -66,7 +66,7 @@ function cleanup()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Selection Heuristic
 
 private function Pawn GetPotentialWatchTarget()
@@ -81,7 +81,7 @@ private function Pawn GetPotentialWatchTarget()
 private function FindInitialWatchTarget()
 {
 	CurrentWatchTarget = GetPotentialWatchTarget();
-	
+
 	if (CurrentWatchTarget != None)
 	{
 		// claim the watch target
@@ -157,7 +157,7 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // State Code
 
 function AimAtWatchTarget()
@@ -208,7 +208,7 @@ private function SpeakToCompliantTarget()
 
 state Running
 {
- Begin:	
+ Begin:
 	if (! class'Pawn'.static.checkConscious(CurrentWatchTarget))
 	{
 		fail(ACT_GENERAL_FAILURE);
@@ -232,7 +232,7 @@ state Running
 	}
 
 	// try and find a new watch target
-	// if we find one, we will aim at them, 
+	// if we find one, we will aim at them,
 	// if we don't we just wait for a bit and try again later
 	if (FindNewWatchTarget())
 	{

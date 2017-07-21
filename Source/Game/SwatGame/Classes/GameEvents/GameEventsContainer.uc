@@ -31,7 +31,8 @@ var GameEvent_EnemyFiredWeapon          EnemyFiredWeapon;
 var GameEvent_GrenadeDetonated          GrenadeDetonated;
 var GameEvent_SuspectEscaped            SuspectEscaped;
 var GameEvent_BoobyTrapTriggered        BoobyTrapTriggered;
-var GameEvent_PawnTased					PawnTased;
+var GameEvent_PawnTased					        PawnTased;
+var GameEvent_C2Detonated               C2Detonated;
 
 overloaded function Construct()
 {
@@ -61,5 +62,6 @@ overloaded function Construct()
     GrenadeDetonated            = new(none) class'GameEvent_GrenadeDetonated';
     SuspectEscaped              = new(none) class'GameEvent_SuspectEscaped';
     BoobyTrapTriggered          = new(none) class'GameEvent_BoobyTrapTriggered';
-	PawnTased					= new(none) class'GameEvent_PawnTased';
+	  PawnTased					          = new(none) class'GameEvent_PawnTased';
+    C2Detonated                 = new(None) class'GameEvent_C2Detonated';
 }

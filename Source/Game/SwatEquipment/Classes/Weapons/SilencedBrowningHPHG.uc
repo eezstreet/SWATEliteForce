@@ -1,0 +1,1 @@
+class SilencedBrowningHPHG extends BrowningHPHG;

@@ -2,7 +2,7 @@
 // OrderComplianceAction.uc - EngageTargetAction class
 // The Action that causes an Officer AI to engage a target for compliance
 
-class OrderComplianceAction extends SwatWeaponAction 
+class OrderComplianceAction extends SwatWeaponAction
 	implements Tyrion.ISensorNotification
 	config(AI)
     dependson(ISwatAI)
@@ -12,6 +12,7 @@ class OrderComplianceAction extends SwatWeaponAction
 
 import enum EUpperBodyAnimBehavior from ISwatAI;
 import enum EUpperBodyAnimBehaviorClientId from UpperBodyAnimBehaviorClients;
+import enum EComplianceWeaponAnimation from SwatWeapon;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,11 +77,11 @@ private function ActivateComplianceSensor()
 private latent function SetOrderComplianceAim()
 {
 	ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_OrderComplianceAction);
-	
+
 	// @HACK: See comments in ISwatAI::LockAim for more info.
 	ISwatAI(m_Pawn).AimAtActor(TargetPawn);
 	ISwatAI(m_Pawn).LockAim();
-	
+
 	// just make sure we're aimed at him
 	LatentAimAtActor(TargetPawn);
 }
@@ -132,24 +133,31 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 function name GetComplyOrderAnimName()
 {
 	local HandheldEquipment ActiveItem;
+	local SwatWeapon EquippedWeapon;
 
 	ActiveItem = m_Pawn.GetActiveItem();
+	EquippedWeapon = SwatWeapon(ActiveItem);
 
-	if (ActiveItem.IsA('MachineGun'))
+	if(EquippedWeapon != None)
 	{
-		return ComplyMGOrderAnims[Rand(ComplyMGOrderAnims.Length)];
-	}
-	else if (ActiveItem.IsA('Shotgun'))
-	{
-		return ComplySGOrderAnims[Rand(ComplySGOrderAnims.Length)];
-	}
-	else if (ActiveItem.IsA('SubMachineGun'))
-	{
-		return ComplySMGOrderAnims[Rand(ComplySMGOrderAnims.Length)];
-	}
-	else if (ActiveItem.IsA('CSBallLauncher'))
-	{
-		return ComplyPepperBallOrderAnims[Rand(ComplyPepperBallOrderAnims.Length)];
+		switch(EquippedWeapon.ComplianceAnimation)
+		{
+			case Compliance_Machinegun:
+				return ComplyMGOrderAnims[Rand(ComplyMGOrderAnims.Length)];
+
+			case Compliance_Shotgun:
+				return ComplySGOrderAnims[Rand(ComplySGOrderAnims.Length)];
+
+			case Compliance_SubmachineGun:
+				return ComplySMGOrderAnims[Rand(ComplySMGOrderAnims.Length)];
+
+			case Compliance_CSBallLauncher:
+				return ComplyPepperBallOrderAnims[Rand(ComplyPepperBallOrderAnims.Length)];
+
+			case Compliance_Handgun:
+			default:
+				return ComplyHGOrderAnims[Rand(ComplyHGOrderAnims.Length)];
+		}
 	}
 	else
 	{
@@ -191,6 +199,14 @@ private function SetTimeToStopTryingToEngage()
 	TimeToStopTryingToEngage = Level.TimeSeconds + MaximumTimeToWaitToEngage;
 }
 
+private function bool ShouldEngageImmediately() {
+	local SwatAIRepository SwatAIRepo;
+	SwatAIRepo = SwatAIRepository(Level.AIRepo);
+
+	// test to see if we're moving and clearing
+	return (SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
+}
+
 state Running
 {
  Begin:
@@ -203,9 +219,11 @@ state Running
 			OrderToComply();
 
 			// reset the timer
-			SetTimeToStopTryingToEngage();
+			if(!ShouldEngageImmediately()) {
+				SetTimeToStopTryingToEngage();
 
-			sleep(RandRange(MinComplianceOrderSleepTime, MaxComplianceOrderSleepTime));
+				sleep(RandRange(MinComplianceOrderSleepTime, MaxComplianceOrderSleepTime));
+			}
 		}
 		else
 		{

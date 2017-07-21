@@ -1,7 +1,7 @@
-class GasMaskBase extends Engine.ProtectiveEquipment
+class GasMaskBase extends Engine.Headgear
     implements IProtectFromCSGas, IProtectFromPepperSpray;
 
-function QualifyProtectedRegion() 
+function QualifyProtectedRegion()
 {
     assertWithDescription(ProtectedRegion < REGION_Body_Max,
         "[Carlos] The GaskMaskBase class "$class.name

@@ -6,12 +6,34 @@ class Campaign extends Core.Object
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
 
 var config localized string StringName;
-var config int CampaignPath;
 
 var config array<Name> MissionResultNames;
 var array<MissionResults> MissionResults;
 var config private int availableIndex;  //the index of the highest mission that is unlocked in the Campaign
 var config private bool HACK_HasPlayedCreditsOnCampaignCompletion;
+
+// SEF additions
+var config int CampaignPath;  // Which campaign path we're on (0 = SWAT 4 + TSS, 1 = Extra Missions, 2 = All Missions)
+var config bool PlayerPermadeath; // Whether the campaign has player permadeath enabled
+var config bool PlayerDied; // Player permadeath only - true if the campaign is KIA
+var config bool OfficerPermadeath; // Whether the campaign has officer permadeath enabled
+var config bool RedOneDead; // Whether Red One is dead.
+var config bool RedTwoDead; // Whether Red Two is dead.
+var config bool BlueOneDead; // Whether Blue One is dead.
+var config bool BlueTwoDead; // Whether Blue Two is dead.
+
+var(Stats) config int MissionsCompleted; // The number of missions that have been successfully completed
+var(Stats) config int TimesIncapacitated; // Number of times that you have been incapacitated in this campaign
+var(Stats) config int TimesInjured; // Number of times that you have been injured in this campaign
+var(Stats) config int OfficersIncapacitated; // Total number of officers that have been incapacitated in this campaign
+var(Stats) config int PenaltiesIssued; // The number of penalties that have been issued on your campaign
+var(Stats) config int SuspectsRemoved; // Total number of suspects "removed" (neutralized, incapacitated, arrested)
+var(Stats) config int SuspectsNeutralized; // Total number of suspects neutralized
+var(Stats) config int SuspectsIncapacitated; // Total number of suspects incapacitated
+var(Stats) config int SuspectsArrested; // Total number of suspects arrested
+var(Stats) config int CiviliansRestrained; // Total number of civilians restrained
+var(Stats) config int TOCReports; // Total number of reports filed to TOC
+var(Stats) config int EvidenceSecured; // Total number of evidence secured
 
 overloaded function Construct()
 {
@@ -47,13 +69,13 @@ final function MissionEnded(name Mission, eDifficultyLevel difficulty, bool Comp
 
 log("[dkaplan] Adding Mission result for mission: "$Mission);
     index = GetMissionIndex(Mission);
-    
+
     if( (index >= MissionResults.length) ) //mission was never played before
     {
         MissionResults[index] = new(,(StringName$"_"$Mission)) class'SwatGame.MissionResults';
         MissionResultNames[index] = Mission;
     }
-    
+
     Assert( MissionResults[index] != None );
 
     //add this mission result
@@ -72,11 +94,25 @@ final function MissionResults GetMissionResults(name Mission)
 {
     local int index;
 
-    index = GetMissionIndex(Mission);
-log( "[dkaplan] getting mission results for mission " $ Mission $ ", index = " $ index );
+    if(CampaignPath == 2)
+    { // In All Missions, we can complete the missions in whatever order we want to
+      for(index = 0; index < MissionResultNames.length; index++)
+      {
+        if(MissionResultNames[index] == Mission)
+        {
+          return MissionResults[index];
+        }
+      }
+    }
+    else
+    { // It's safe to assume we have a score, since they need to be completed sequentially
+      index = GetMissionIndex(Mission);
+      log( "[dkaplan] getting mission results for mission " $ Mission $ ", index = " $ index );
 
-    //(GetMissionIndex() returns MissionResults.length if Mission is not found.)
-    return MissionResults[index];
+      //(GetMissionIndex() returns MissionResults.length if Mission is not found.)
+      return MissionResults[index];
+    }
+
 }
 
 //returns the index of Mission in MissionResults, or MissionResults.length if not found.

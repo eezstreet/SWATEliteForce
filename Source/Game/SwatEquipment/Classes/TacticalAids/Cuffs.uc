@@ -40,7 +40,7 @@ simulated latent protected function OnUsingBegan()
 simulated function UsedHook()
 {
     local SwatGamePlayerController SGPC;
-    
+
     mplog( self$"---Cuffs::UsedHook(). Other="$Other$", Owner="$Owner );
 
     Assert( Pawn(Other) != None );
@@ -84,7 +84,12 @@ simulated function bool ShouldUseAlternate()
 
 simulated function float GetQualifyDuration()
 {
-    return ICanBeArrested(Other).GetQualifyTimeForArrest();
+    return ICanBeArrested(Other).GetQualifyTimeForArrest(Pawn(Owner)); // Don't apply
+}
+
+simulated function float GetQualifyModifier()
+{
+  return 1.0;
 }
 
 // IAmUsedOnOther implementation

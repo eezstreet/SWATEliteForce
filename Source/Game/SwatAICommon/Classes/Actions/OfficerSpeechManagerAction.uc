@@ -12,9 +12,29 @@ class OfficerSpeechManagerAction extends CharacterSpeechManagerAction;
 // Speech Requests
 
 // Officers
-function TriggerOfficerDownSpeech()
+function TriggerOfficerDownSpeech(pawn Officer)
 {
 	TriggerSpeech('ReportedOfficerDown', true);
+}
+
+function TriggerBlueOneDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedB1Down', true);
+}
+
+function TriggerBlueTwoDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedB2Down', true);
+}
+
+function TriggerRedOneDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedR1Down', true);
+}
+
+function TriggerRedTwoDownSpeech(pawn Officer)
+{
+	TriggerSpeech('ReportedR2Down', true);
 }
 
 function TriggerLeadDownSpeech()
@@ -41,6 +61,11 @@ function TriggerReactedThirdShotSpeech()
 function TriggerSuspectSpottedSpeech()
 {
 	TriggerSpeech('ReportedSuspectSpotted', true);
+}
+
+function TriggerSuspectLostSpeech()
+{
+	TriggerSpeech('AnnouncedLostTarget', true);
 }
 
 function TriggerSuspectDownSpeech(Pawn Suspect)
@@ -84,20 +109,20 @@ function TriggerHostageSpottedSpeech(Pawn Hostage)
 {
 	assert(Hostage.IsA('SwatHostage'));
 
-	if (ISwatHostage(Hostage).GetHostageCommanderAction().IsInDanger())
-	{
-		TriggerSpeech('ReportedHostageSpottedWithThreat', true);
-	}
-	else
-	{
-		TriggerSpeech('ReportedHostageSpottedNoThreat', true);
-	}
+	TriggerSpeech('ReportedCivilianSpotted', true);
 }
 
 function TriggerHostageDownSpeech(Pawn Hostage)
 {
-	// @NOTE: There is no generic speech for downed hostages
-	TriggerSpeech('ReportedHostageIncapacitated', true);
+	if (Hostage.IsIncapacitated())
+	{
+		TriggerSpeech('ReportedHostageIncapacitated', true);
+	}
+	else
+	{
+		TriggerSpeech('ReportedHostageDead', true);
+	}
+
 }
 
 function TriggerHostageWontComplySpeech(Pawn Hostage)
@@ -229,14 +254,24 @@ function TriggerDoorIsAlreadyWedgedSpeech()
 	TriggerSpeech('AnnouncedDoorIsAlreadyWedged');
 }
 
+function TriggerDeployingLessLethalShotgunSpeech()
+{
+	TriggerSpeech('ReportedDeployingBeanBag');
+}
+
 function TriggerLessLethalShotgunUnavailableSpeech()
 {
 	TriggerSpeech('ReportedBeanBagUnavailable');
 }
 
+function TriggerDeployingGrenadeLauncherSpeech()
+{
+	TriggerSpeech('RepliedDeployingGL');
+}
+
 function TriggerGrenadeLauncherUnavailableSpeech()
 {
-	TriggerSpeech('ReportedBeanBagUnavailable');
+	TriggerSpeech('RepliedCantDeployGL');
 }
 
 function TriggerDeployingPepperBallSpeech()
@@ -254,14 +289,29 @@ function TriggerWedgeUnavailableSpeech()
 	TriggerSpeech('ReportedWedgesUnavailable');
 }
 
+function TriggerDeployingFlashbangSpeech()
+{
+	TriggerSpeech('ReportedDeployingFlashbang');
+}
+
 function TriggerFlashbangUnavailableSpeech()
 {
 	TriggerSpeech('ReportedFlashbangUnavailable');
 }
 
+function TriggerDeployingGasSpeech()
+{
+	TriggerSpeech('ReportedDeployingGas');
+}
+
 function TriggerGasUnavailableSpeech()
 {
 	TriggerSpeech('ReportedGasUnavailable');
+}
+
+function TriggerDeployingStingSpeech()
+{
+	TriggerSpeech('ReportedDeployingSting');
 }
 
 function TriggerStingUnavailableSpeech()
@@ -297,6 +347,11 @@ function TriggerShotgunUnavailableSpeech()
 function TriggerPepperSprayUnavailableSpeech()
 {
 	TriggerSpeech('ReportedPepperUnavailable');
+}
+
+function TriggerDeployingPepperSpraySpeech()
+{
+	TriggerSpeech('ReportedDeployingPepper');
 }
 
 function TriggerMirrorUnavailableSpeech()

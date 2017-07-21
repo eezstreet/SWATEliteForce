@@ -19,10 +19,15 @@ var(Ammo) config            int         ShotsPerRound           "The number of s
 
 var(Ammo) config            bool        RoundsNeverPenetrate    "If true, then impact will always cause round to lose all momentum to its victim";
 
-simulated function Initialize(bool bUsingAmmoBandolier);
+simulated function InitializeAmmo(int StartingAmmoAmount);
+simulated function float GetCurrentAmmoWeight();
+simulated function float GetCurrentAmmoBulk();
 
 //returns true iff there is no ammo loaded (ie. weapon cannot currently be fired).  does not check IsEmpty or CanReload
 simulated function bool NeedsReload() { assert(false); return false; } //subclasses must implement
+
+//returns true iff AI should reload this weapon.
+simulated function bool ShouldReload() { assert(false); return false; } //subclasses must implement
 
 //returns true iff there is ammo remaining that is not loaded
 simulated function bool CanReload() { assert(false); return false; } //subclasses must implement
@@ -38,6 +43,9 @@ simulated function bool IsLastRound() { assert(false); return false; } //subclas
 
 //returns the number of rounds that can be shot before the clip or magazine is empty and must be reloaded
 simulated function int RoundsRemainingBeforeReload() { assert(false); return 0; }   //subclasses must implement
+
+//returns the number of rounds that the clip has. I need this one so that both Round and Clip weapons can be reloaded mid-magazine -J21C
+simulated function int RoundsComparedBeforeReload() { assert(false); return 0; }   //subclasses must implement
 
 simulated function OnRoundUsed(Pawn User, Equipment Launcher)  //subclasses must implement
 {
@@ -76,10 +84,26 @@ static function class<Actor> GetRenderableActorClass()
     return default.Class;
 }
 
+simulated function bool CanShredArmor()
+{
+  return true;
+}
+
+simulated function BallisticsLog(string Message) {
+  if(Level.AnalyzeBallistics) {
+    log("[BALLISTICS] "$Message);
+  }
+}
+
 simulated function int GetClip( int index ) { Assert(false); return 0; } //subclasses must implement
 simulated function SetClip(int index, int amount) { Assert(false); } //subclasses must implement
 simulated function int GetCurrentClip() { Assert(false); return 0; } //subclasses must implement
 simulated function SetCurrentClip(int Clip) { Assert(false); } //subclasses must implement
+
+simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector NormalizedBulletDirection, Material HitMaterial, float Momentum, int BounceNumber);
+simulated function float GetRicochetMomentumModifier();
+simulated function float GetDrag();
+simulated function float GetMinimumMomentum() { assert(false); return 0; } // subclasses must implement
 
 defaultproperties
 {

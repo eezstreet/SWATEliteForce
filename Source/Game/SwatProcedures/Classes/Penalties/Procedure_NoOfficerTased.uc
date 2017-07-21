@@ -1,6 +1,6 @@
 class Procedure_NoOfficerTased extends SwatGame.Procedure
 	implements IInterested_GameEvent_PawnTased;
-	
+
 var config int PenaltyPerInfraction;
 
 var int numInfractions;
@@ -11,7 +11,7 @@ function PostInitHook()
 
     //register for notifications that interest me
     GetGame().GameEvents.PawnTased.Register(self);
-	
+
 	numInfractions = 0;
 }
 
@@ -20,8 +20,10 @@ function OnPawnTased(Pawn Pawn, Actor Taser)
 {
     if (!Pawn.IsA('SwatOfficer') && !Pawn.IsA('SwatPlayer')) return;
 	if (!Taser.IsA('SwatPlayer')) return;
-			
+
 	numInfractions++;
+	ChatMessageEvent('PenaltyIssued');
+	GetGame().CampaignStats_TrackPenaltyIssued();
 }
 
 function string Status()

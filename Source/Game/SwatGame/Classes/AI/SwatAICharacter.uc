@@ -15,7 +15,7 @@ class SwatAICharacter extends SwatAI
 
 import enum AIEquipment from ISwatAICharacter;
 
-var Mesh OfficerMesh; // have to use a separate variable to work around script compiler bug
+var int Dummy;        // Data that can be filled with something else --eez
 var private float InitialMorale;
 var protected name VoiceType;
 var protected name CharacterType;
@@ -223,6 +223,10 @@ protected function bool ShouldReactToNonLethals()
     return true;
 }
 
+///////////////////////////////////////
+
+function UnbecomeAThreat();
+
 ///////////////////////////////////////////////////////////////////////////////
 
 simulated private function SpawnRestrainedHandcuffs()
@@ -406,8 +410,16 @@ protected function InitializePatrolling(PatrolList Patrol)
 function InitializeFromArchetypeInstance()
 {
     local CharacterArchetypeInstance Instance;
+    local Mesh OfficerMesh;
+    local Mesh OfficerHeavyMesh;
+    local Mesh OfficerNoArmorMesh;
 
     Super.InitializeFromArchetypeInstance();
+
+    // This is so nasty. Ideally we should be setting this stuff in the Archetype, but then we would have to change EVERY archetype. That's no bueno.
+    OfficerMesh = class'SwatAICharacterConfig'.static.GetOfficerMesh();
+    OfficerHeavyMesh = class'SwatAICharacterConfig'.static.GetOfficerHeavyMesh();
+    OfficerNoArmorMesh = class'SwatAICharacterConfig'.static.GetOfficerNoArmorMesh();
 
     Instance = CharacterArchetypeInstance(ArchetypeInstance);
     assert(Instance != None);   //ArchetypeInstance should always be set before InitializeFromArchetypeInstance() is called
@@ -425,7 +437,7 @@ function InitializeFromArchetypeInstance()
     // Some hostages/enemies use the SWAT officer skeleton with different clothing and skin.
     // We need to handle this case separately because that skeleton has a different number of
     // materials than the other enemy/hostage meshes.
-    if (Mesh == OfficerMesh)
+    if (Mesh == OfficerMesh || Mesh == OfficerHeavyMesh || Mesh == OfficerNoArmorMesh)
     {
         Skins[0] = Instance.PantsMaterial;
         Skins[1] = Instance.FaceMaterial;
@@ -545,6 +557,15 @@ simulated function bool IsInsane()
   return OurArchetypeInstance.Insane;
 }
 
+simulated function bool Wanders()
+{
+  local CharacterArchetypeInstance OurArchetypeInstance;
+
+  OurArchetypeInstance = CharacterArchetypeInstance(GetArchetypeInstance());
+
+  return OurArchetypeInstance.Wandering;
+}
+
 simulated function bool IsFemale()
 {
 	local SwatAIRepository SwatAIRepo;
@@ -640,11 +661,14 @@ private function DirectHitByGrenade(Pawn Instigator, float Damage, float AISting
 	if ( CantBeDazed() )
         return;
 
-	if (Damage > 0.0)
+	if (Damage > 0.0) {
 		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0),
-				   class<DamageType>(DynamicLoadObject("SwatEquipment.HK69GrenadeLauncher", class'Class')));
+				   class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')));
+  }
 
-	ApplyDazedEffect(None, Location, AIStingDuration);
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+	 ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -652,6 +676,9 @@ private function DirectHitByGrenade(Pawn Instigator, float Damage, float AISting
 // IReactToDazingWeapon implementation
 
 function ReactToLessLeathalShotgun(
+    Pawn Instigator,
+    float Damage,
+    Vector MomentumVector,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
@@ -660,7 +687,20 @@ function ReactToLessLeathalShotgun(
     if ( CantBeDazed() )
         return;
 
-	ApplyDazedEffect(None, Location, AIStingDuration);
+        if (Damage > 0.0)
+        {
+            // event Actor::TakeDamage()
+            TakeDamage( Damage,                               // int Damage
+                        Instigator,                           // Pawn EventInstigator
+                        Location,							  // vector HitLocation
+                        MomentumVector,                          // vector Momentum
+                                  // class<DamageType> DamageType
+                        class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+        }
+
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+	   ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 // Triple baton rounds are launched from the grenade launcher but are handle differently than a direct hit from a launched grenade
@@ -700,10 +740,13 @@ function ReactToMeleeAttack(
         return;
 
 	// Only apply damage if the damage wont kill the target. You can't kill someone with the melee attack.
-    if (Damage > 0.0 && Damage < Health)
+    if (Damage > 0.0 && Damage < Health) {
         TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), MeleeDamageType);
+    }
 
-	ApplyDazedEffect(None, Location, AIStingDuration);
+  // Don't apply the dazed effect if we are a threat and we got incapacitated
+  if(Health > IncapacitatedHealthAmount || !IsAThreat())
+	 ApplyDazedEffect(None, Location, AIStingDuration);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1080,7 +1123,6 @@ function OnEscaped()
 
 defaultproperties
 {
-	OfficerMesh=Mesh'SWATMaleAnimation2.SwatOfficer'
     bNoRepMesh=false
 	bReplicateAnimations=true
     DesiredAIEquipment=AIE_Invalid

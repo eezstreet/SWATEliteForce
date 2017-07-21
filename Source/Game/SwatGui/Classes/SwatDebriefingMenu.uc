@@ -28,6 +28,7 @@ var() private config localized string MissionFailedString;
 var() private config localized string MissionCompletedDifficultyReqFailedString;
 var() private config localized string ContinueMissionCompletedString;
 var() private config localized string ContinueMissionFailedString;
+var() private config localized string ContinueMissionEndCampaignString;
 var() private config localized string MainMenuString;
 var() private config localized string ContinueString;
 
@@ -45,7 +46,11 @@ function InitComponent(GUIComponent MyOwner)
 
 function InternalOnActivate()
 {
+    local Campaign theCampaign;
+
     MyQuitButton.OnClick=InternalOnClick;
+
+    theCampaign = SwatGUIController(Controller).GetCampaign();
 
     //display mission info
     if( !(GC.CurrentMission.IsMissionFailed()) )
@@ -54,9 +59,9 @@ function InternalOnActivate()
             MyMissionOutcome.SetCaption( MissionCompletedString );
         else
             MyMissionOutcome.SetCaption( MissionCompletedDifficultyReqFailedString );
-        
-        // if playing a quick mission, always "fail" back to the mission select 
-        if( GC.CurrentMission.CustomScenario != None || !GC.CurrentMission.HasMetDifficultyRequirement() ) 
+
+        // if playing a quick mission, always "fail" back to the mission select
+        if( GC.CurrentMission.CustomScenario != None || !GC.CurrentMission.HasMetDifficultyRequirement() )
             MyContinueButton.SetCaption( ContinueMissionFailedString );
         else
             MyContinueButton.SetCaption( ContinueMissionCompletedString );
@@ -64,12 +69,24 @@ function InternalOnActivate()
     else
     {
         MyMissionOutcome.SetCaption( MissionFailedString );
-        MyContinueButton.SetCaption( ContinueMissionFailedString );
+
+        if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+          MyContinueButton.SetCaption(ContinueMissionEndCampaignString);
+        } else {
+          MyContinueButton.SetCaption( ContinueMissionFailedString );
+        }
     }
-        
+
+    MyRestartButton.SetEnabled(true);
+    MyLoadoutButton.SetEnabled(true);
+    if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+      MyRestartButton.SetEnabled(false);
+      MyLoadoutButton.SetEnabled(false);
+    }
+
     if( GC.SwatGameRole == GAMEROLE_SP_Other )
         MyContinueButton.SetCaption( MainMenuString );
-        
+
     if( bOpeningSubMenu )
         OpenLoadout();
     else
@@ -94,7 +111,7 @@ function OpenDebriefing()
     MyLoadoutPanel.DeActivate();
 
     MyMissionOutcome.Show();
-    
+
     MyDebriefingButton.DisableComponent();
     MyLoadoutButton.EnableComponent();
     if( PlayerOwner().Level.IsTraining )
@@ -124,7 +141,9 @@ function InternalOnClick(GUIComponent Sender)
 	        SwatGUIController(Controller).GameOver();
             break;
 		case MyRestartButton:
-		    GameStart();
+            if(MyLoadoutPanel.CheckWeightBulkValidity()) {
+		            GameStart();
+            }
             break;
 		case MyDebriefingButton:
 		    OpenDebriefing();
@@ -133,7 +152,7 @@ function InternalOnClick(GUIComponent Sender)
 		    OpenLoadout();
             break;
 		case MyQuitButton:
-            Quit(); 
+            Quit();
             break;
 	}
 }
@@ -141,7 +160,7 @@ function InternalOnClick(GUIComponent Sender)
 function PerformClose()
 {
     //do nothing on this menu
-    //SwatGUIController(Controller).GameOver(); 
+    //SwatGUIController(Controller).GameOver();
 }
 
 protected function bool ShouldSetSplashCameraPosition()
@@ -152,11 +171,12 @@ protected function bool ShouldSetSplashCameraPosition()
 defaultproperties
 {
     OnActivate=InternalOnActivate
-    
+
     MissionCompletedString="[c=ffffff]Mission [c=00ff00]Completed[c=ffffff]!"
     MissionCompletedDifficultyReqFailedString="[c=ffffff]Mission [c=ff0000]Completed[c=ffffff]!"
     MissionFailedString="[c=ffffff]Mission [c=ff0000]Failed[c=ffffff]!"
     MainMenuString="MAIN MENU"
     ContinueMissionCompletedString="NEXT MISSION"
     ContinueMissionFailedString="SELECT MISSION"
+    ContinueMissionEndCampaignString="END CAMPAIGN"
 }

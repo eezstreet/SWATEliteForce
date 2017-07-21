@@ -11,6 +11,11 @@ import enum EquipmentSlot from Engine.HandheldEquipment;
 //
 // Events
 
+protected function TriggerDeployingGrenadeSpeech()
+{
+	ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerDeployingFlashbangSpeech();
+}
+
 protected function TriggerThrowGrenadeMoveUpSpeech()
 {
 	ISwatOfficer(Thrower).GetOfficerSpeechManagerAction().TriggerMoveUpBangsSpeech();

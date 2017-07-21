@@ -35,7 +35,17 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 {
     if (!Pawn.IsA('SwatEnemy')) return;
 
-    if (WasAThreat)
+//    if (WasAThreat)
+//   {
+//        if (GetGame().DebugLeadership)
+//            log("[LEADERSHIP] "$class.name
+//                $"::OnPawnIncapacitated() did *not* add "$Pawn.name
+//                $" to its list of IncapacitatedEnemies because the SwatEnemy was a threat (so the force was authorized).");
+//
+//       return; //the force was authorized
+//    }
+	
+    if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat())
     {
         if (GetGame().DebugLeadership)
             log("[LEADERSHIP] "$class.name
@@ -58,6 +68,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
     AssertNotInArray( Pawn, IncapacitatedEnemies, 'IncapacitatedEnemies' );
     Add( Pawn, IncapacitatedEnemies );
     ChatMessageEvent('PenaltyIssued');
+    GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name

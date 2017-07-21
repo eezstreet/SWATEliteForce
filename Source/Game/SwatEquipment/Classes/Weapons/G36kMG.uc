@@ -1,6 +1,1 @@
-class G36kMG extends MachineGun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class G36kMG extends MachineGun config(SwatEquipment);

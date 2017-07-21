@@ -150,6 +150,24 @@ private function CheckUpdateOfficerAssignmentsForEnemy(Pawn Enemy)
 	}
 }
 
+private function CheckUpdateOfficerAssignmentsForHostage(Pawn Hostage)
+{
+	local int i;
+
+	assert(Hostage != None);
+	assert(Hostage.IsA('SwatHostage'));
+
+	for(i=0; i<Blackboard.EncounteredHostages.Length; ++i)
+	{
+		// if we have encountered this hostage, update officer assignments so that we deal with him
+		if (Blackboard.EncounteredHostages[i] == Hostage)
+		{
+			UpdateOfficerAssignments();
+			break;
+		}
+	}
+}
+
 // notification that an enemy has become a threat
 function NotifyEnemyBecameThreat(Pawn Enemy)
 {
@@ -158,6 +176,18 @@ function NotifyEnemyBecameThreat(Pawn Enemy)
 
 // notification that an enemy is stunned
 function NotifyEnemyStunned(Pawn Enemy)
+{
+	CheckUpdateOfficerAssignmentsForEnemy(Enemy);
+}
+
+// notification that a hostage is stunned
+function NotifyHostageStunned(Pawn Hostage)
+{
+	CheckUpdateOfficerAssignmentsForHostage(Hostage);
+}
+
+// notification that an enemy has unbecome a threat
+function NotifyEnemyUnbecameThreat(Pawn Enemy)
 {
 	CheckUpdateOfficerAssignmentsForEnemy(Enemy);
 }
@@ -217,8 +247,8 @@ private function bool FindCompliantTargetToWatch(Pawn Officer, out Pawn Complian
 //		log("CompliantAIIter is: " $ CompliantAIIter $ " IsAIBeingWatched: " $ Blackboard.IsAIBeingWatched(CompliantAIIter) $ " LineOfSight: " $ Officer.LineOfSightTo(CompliantAIIter));
 //		log("Distance to CompliantIter: " $ VSize(CompliantAIIter.Location - Officer.Location) $ " MaxWatchTargetDistance: " $ MaxWatchTargetDistance);
 
-		if (!Blackboard.IsAIBeingWatched(CompliantAIIter) && 
-			(VSize(CompliantAIIter.Location - Officer.Location) < MaxWatchTargetDistance) && 
+		if (!Blackboard.IsAIBeingWatched(CompliantAIIter) &&
+			(VSize(CompliantAIIter.Location - Officer.Location) < MaxWatchTargetDistance) &&
 			(Officer == GetClosestOfficerThatCanHit(CompliantAIIter)))
 		{
 			CompliantTargets[CompliantTargets.Length] = CompliantAIIter;
@@ -246,8 +276,8 @@ private function bool FindRestrainedTargetToWatch(Pawn Officer, out Pawn Restrai
 	{
 		RestrainedAIIter = Blackboard.RestrainedAIs[i];
 
-		if (!Blackboard.IsAIBeingWatched(RestrainedAIIter) && 
-			(VSize(RestrainedAIIter.Location - Officer.Location) < MaxWatchTargetDistance) && 
+		if (!Blackboard.IsAIBeingWatched(RestrainedAIIter) &&
+			(VSize(RestrainedAIIter.Location - Officer.Location) < MaxWatchTargetDistance) &&
 			(Officer == GetClosestOfficerThatCanHit(RestrainedAIIter)))
 		{
 			RestrainedTargets[RestrainedTargets.Length] = RestrainedAIIter;
@@ -360,7 +390,7 @@ function bool IsPawnWithinDistanceOfOfficers(Pawn TestPawn, float Distance, bool
 	if (TestPawn.Level.NetMode == NM_Standalone)
 	{
 		Player = TestPawn.Level.GetLocalPlayerController().Pawn;
-	
+
 		// make sure the player is alive before testing based on them
 		if (class'Pawn'.static.checkConscious(Player))
 		{
@@ -372,7 +402,7 @@ function bool IsPawnWithinDistanceOfOfficers(Pawn TestPawn, float Distance, bool
 		for(i=0; i<GetNumOfficers(); ++i)
 		{
 			IterOfficer = GetOfficer(i);
-	
+
 			if ((VSize2D(IterOfficer.Location - TestPawn.Location) < Distance) && (! bRequiresLineOfSight || TestPawn.LineOfSightTo(IterOfficer)))
 				return true;
 		}
@@ -412,7 +442,7 @@ function bool IsActorWithinDistanceOfOfficers(Actor TestActor, float Distance)
 	if (TestActor.Level.NetMode == NM_Standalone)
 	{
 		Player = TestActor.Level.GetLocalPlayerController().Pawn;
-	
+
 		// make sure the player is alive before testing based on them
 		if (class'Pawn'.static.checkConscious(Player))
 		{
@@ -424,7 +454,7 @@ function bool IsActorWithinDistanceOfOfficers(Actor TestActor, float Distance)
 		for(i=0; i<GetNumOfficers(); ++i)
 		{
 			IterOfficer = GetOfficer(i);
-	
+
 			if (VSize2D(IterOfficer.Location - TestActor.Location) < Distance)
 				return true;
 		}
@@ -498,7 +528,7 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 	{
 		if (CanAssignAnyOfficerToTarget(Seen))
 		{
-			// this may need to be moved because this will be called every time we see a Enemy or Hostage 
+			// this may need to be moved because this will be called every time we see a Enemy or Hostage
 			// (then it will be called too often I think)
 			UpdateOfficerAssignments();
 		}
@@ -521,24 +551,55 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 		}
 
 		// if the officer doesn't have a current assignment
-		// we only want to engage Seen if they aren't compliant, restrained, or incapacitated, 
+		// we only want to engage Seen if they aren't compliant, restrained, or incapacitated,
 		// if they are a threat or not ignoring us, and we can assign any officer to them
-		if (! ISwatAI(Seen).IsCompliant() && 
-			! ISwatAI(Seen).IsArrested() && 
+		if (! ISwatAI(Seen).IsCompliant() &&
+			! ISwatAI(Seen).IsArrested() &&
 			! Seen.IsIncapacitated() &&
 			(Seen.IsAThreat() || ! ISwatAI(Seen).GetCommanderAction().IsIgnoringComplianceOrders()) &&
 			CanAssignAnyOfficerToTarget(Seen))
 		{
-			// this may need to be moved because this will be called every time we see a Enemy or Hostage 
+			// this may need to be moved because this will be called every time we see a Enemy or Hostage
 			// (then it will be called too often I think)
 			UpdateOfficerAssignments();
-		}	
+		}
 	}
 }
 
-function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost)
+//if WasLostRecently is true, we won't play the officer speech
+function OfficerLostPawn(Pawn OfficerViewer, Pawn Lost, bool WasLostRecently)
 {
-	// do nothing for now.
+	assert(OfficerViewer != None);
+	assert(Lost != None);
+
+	if (Lost.IsA('SwatPlayer'))
+	{
+		if (CanAssignAnyOfficerToTarget(Lost))
+		{
+			// this may need to be moved because this will be called every time we see a Enemy or Hostage
+			// (then it will be called too often I think)
+			UpdateOfficerAssignments();
+		}
+	}
+	else
+	{
+		if (Blackboard.HasAIBeenEncountered(Lost))
+		{
+			if (Lost.IsA('SwatEnemy'))
+			{
+				OfficerLostEnemy(OfficerViewer, Lost, WasLostRecently);
+				Blackboard.RemoveAssignedTarget(Lost);
+			}
+			else
+			{
+				// sanity check
+				assert(Lost.IsA('SwatHostage'));
+
+				OfficerLostHostage(OfficerViewer, Lost);
+				Blackboard.RemoveAssignedTarget(Lost);
+			}
+		}
+	}
 }
 
 function bool HasTurnedOnPlayer()
@@ -598,7 +659,7 @@ private function PlayerCrossedDamageThreshold(Pawn Player)
 	Blackboard.PlayerEnemy = Player;
 
 	Element = SwatAIRepo.GetElementSquad();
-	
+
 	// make it so we see the player
 	for(i=0; i<Element.Pawns.Length; ++i)
 	{
@@ -658,19 +719,39 @@ private function OfficerSawHostage(Pawn OfficerViewer, Pawn SeenHostage)
 	}
 }
 
+private function OfficerLostHostage(Pawn OfficerViewer, Pawn LostHostage)
+{
+	Blackboard.UpdateHostage(LostHostage);
+}
+
 private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 {
-	Blackboard.UpdateEnemy(SeenEnemy);
-
-	// only say something if the hostage is not already arrested or compliant
+	// only say something if the suspect is not already arrested or compliant
 	if (! ISwatAI(SeenEnemy).IsCompliant() &&
-		! ISwatAI(SeenEnemy).IsArrested())
+		! ISwatAI(SeenEnemy).IsArrested() &&
+		! Blackboard.IsAnAssignedTarget(SeenEnemy))
 	{
 		// trigger a sound for the viewer to say
 		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectSpottedSpeech();
 	}
+	Blackboard.UpdateEnemy(SeenEnemy);
+
 }
 
+private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy, bool WasLostRecently)
+{
+	// only say something if the hostage is not already arrested or compliant, and wasn't lost recently
+	if (! ISwatAI(LostEnemy).IsCompliant() &&
+		! ISwatAI(LostEnemy).IsArrested() &&
+		class'Pawn'.static.checkConscious(LostEnemy) &&
+		Blackboard.IsAnAssignedTarget(LostEnemy) &&
+		! WasLostRecently)
+	{
+		// trigger a sound for the viewer to say
+		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectLostSpeech();
+	}
+	Blackboard.UpdateEnemy(LostEnemy);
+}
 private function ClearCommandGoalsForOfficer(Pawn Officer)
 {
 	if (Officer.logTyrion)
@@ -755,7 +836,7 @@ private function bool IsOfficerClearingIntoRoom(Pawn Officer, name RoomName)
 		{
 			if (Officer.logAI)
 				log("IsOfficerClearingIntoRoom - BlueTeam - RoomName: " $ RoomName $ " RoomToClear: " $ SwatAIRepo.GetBlueSquad().GetRoomNameToClear());
-				
+
 			return (RoomName == SwatAIRepo.GetBlueSquad().GetRoomNameToClear());
 		}
 	}
@@ -775,19 +856,33 @@ private event bool CanAssignOfficerToTarget(Pawn Officer, Pawn Target)
 	if (Target.IsA('SwatEnemy'))
 		bIsTargetAThreat = ISwatEnemy(Target).IsAThreat();
 
-	if (! IsOfficerDeployingNonLethal(Officer) &&
-		! IsOfficerBreaching(Officer) &&
-		(Target.IsInRoom(Officer.GetRoomName()) || IsOfficerClearingIntoRoom(Officer, Target.GetRoomName()) ||
-		 ((!Target.IsA('SwatEnemy') || !bIsTargetAThreat) && Officer.LineOfSightTo(Target)) ||
-		 (Target.IsA('SwatEnemy') && bIsTargetAThreat && Officer.CanHit(Target)) ||
-		 ((bIsTargetAThreat || !Blackboard.AreAnyAssignedTargetsThreatening()) && (FindEngagingPointForOfficerInRoom(Officer, Target, 0.0) != None))))
+	if(IsOfficerDeployingNonLethal(Officer) || IsOfficerBreaching(Officer))
 	{
-		return true;
-	}
-	else
-	{
+		// Don't assign us if we're applying less lethal equipment
 		return false;
 	}
+
+	if(FindEngagingPointForOfficerInRoom(Officer, Target, 0.0) != None)
+	{ // DO NOT assign us if we cannot find a point to engage our target from
+		if(Target.IsInRoom(Officer.GetRoomName()))
+		{
+			// DO assign us if we're in the same room
+			return true;
+		}
+
+		if(IsOfficerClearingIntoRoom(Officer, Target.GetRoomName()))
+		{
+			// DO assign us if we are in another room, and we are clearing.
+			return true;
+		}
+
+		if(Officer.CanHit(Target) || Officer.LineOfSightTo(Target))
+		{ // DO assign us if we can hit the target or they are within LOS
+			return true;
+		}
+	}
+
+	return false;
 }
 
 private function bool CanAssignAnyOfficerToTarget(Pawn Target)
@@ -795,7 +890,7 @@ private function bool CanAssignAnyOfficerToTarget(Pawn Target)
 	local int i;
 	local Pawn Officer;
 	local array<Pawn> OfficersOrderedByDistanceToTarget;
-	
+
 	// we're gonna test based on distance, in the hopes that the closer members will be able to hit first
 	for(i=0; i<GetNumOfficers(); ++i)
 	{

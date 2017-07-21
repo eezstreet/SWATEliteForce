@@ -517,10 +517,14 @@ function NotifyNearbyEnemyKilled(Pawn NearbyEnemy, Pawn Officer)
 	if (Officer != None)
 	{
 		ChangeMorale(- GetNearbyEnemyKilledMoraleModification(), "Nearby Enemy " $ NearbyEnemy.Name $ " Killed By " $ Officer.Name);
+	// do some speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDownedSuspectSpeech();
 	}
 	else
 	{
 		ChangeMorale(- GetNearbyEnemyKilledMoraleModification(), "Nearby Enemy " $ NearbyEnemy.Name $ " Killed By an inanimate object");
+	// do some speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerDownedSuspectSpeech();
 	}
 }
 
@@ -606,7 +610,7 @@ function OnPawnLostVisionNotification()
 	// if who we're dealing with now (if anyone) matches up with the last person we lost
 	if (CurrentEnemy == VisionSensor.LastPawnLost)
 	{
-		if (! IsRunningAway() && ! IsTakingCover() && !IsThreateningHostage())
+		if (!IsRunningAway() /*&& ! IsTakingCover()*/ && !IsThreateningHostage())
 		{
 			if ((GetBetterEnemy() != None) && (GetBetterEnemy() != CurrentEnemy))
 			{
@@ -652,6 +656,19 @@ function LostPawnTimerTriggered()
 	SetCurrentEnemy(None);
 
 	InterruptCurrentEngagement();
+}
+
+function NotifyEnemyShotByEnemy(Pawn EnemyShot, float Damage, Pawn EnemyInstigator)
+{
+	assert(EnemyInstigator != None);
+	assert(EnemyShot != None);
+
+	TriggerShotAFriendSpeech(EnemyInstigator);
+}
+
+private function TriggerShotAFriendSpeech(Pawn EnemyInstigator)
+{
+	ISwatEnemy(EnemyInstigator).GetEnemySpeechManagerAction().TriggerShotAFriendSpeech();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -862,7 +879,8 @@ function bool WasSurprised()
 	if (bWasSurprised)
 	{
 		// we're no longer surprised!
-		bWasSurprised = false;
+		// Bad.....you are still surprised -J21C
+		//bWasSurprised = false;
 		return true;
 	}
 }

@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
-class SwatPawn extends Engine.Pawn 
-    implements  SwatAICommon.ISwatPawn, 
-                Engine.ICanToggleWeaponFlashlight, 
+class SwatPawn extends Engine.Pawn
+    implements  SwatAICommon.ISwatPawn,
+                Engine.ICanToggleWeaponFlashlight,
                 ICanBeArrested
 	dependson(AnimationSetManager)
     abstract
@@ -13,6 +13,8 @@ class SwatPawn extends Engine.Pawn
 
 import enum EAnimationSet from AnimationSetManager;
 import enum AimPenaltyType from FiredWeapon;
+import enum WeaponAimAnimationType from SwatWeapon;
+import enum WeaponLowReadyAnimationType from SwatWeapon;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -218,7 +220,7 @@ var protected config float			QualifyTimeForArrest;
 // Fire Modes
 var bool                            bWantsToContinueAutoFiring;  //if auto-firing, should contine.  NOTE: This does *not* indicate whether the Pawn is currently firing at all.
 
-// shadows 
+// shadows
 var (Shadow) float ShadowLightDistance "Specifies how far the shadow-casting light source is from the pawn";
 var (Shadow) float ShadowExtraDrawScale "This allows us to contol the scale of the shadow texture when it is rendered onto the world";
 var (Shadow) float MaxShadowTraceDistance "Distance from the pawn after shadows do not project onto surfaces";
@@ -242,7 +244,7 @@ var config private float LeanBezierPt2Y;
 // shut down the optiwand after Controller has been set back to None.
 var Controller CachedPlayerControllerForOptiwand;
 
-// Crombie: we need to extend the render bounding box so that ragdolls don't disappear at 
+// Crombie: we need to extend the render bounding box so that ragdolls don't disappear at
 // certain angles when we die
 var const float RenderBoundingBoxExpansionSize;
 const kDeathRenderBoundingBoxExpansionSize = 100.0;
@@ -283,9 +285,25 @@ replication
 
 simulated event PostBeginPlay()
 {
+    local int ShadowDetail;
+	local string ShadowDetailString;
+    
     log( self$"---SwatPawn::PostBeginPlay()." );
 
     Super.PostBeginPlay();
+
+    //New for the "High" shadow quality setting. -K.F.
+    ShadowDetailString = Level.GetLocalPlayerController().ConsoleCommand( "SHADOWDETAIL GET" );
+    ShadowDetail = int(ShadowDetailString);
+	// bAcceptsShadowProjectors cannot be set using any kind of conditional logic. 
+	// You can't do "if (ShadowDetail >= 3) bAcceptsShadowProjectors = true;"
+	// You can't do "if (ShadowDetailString == "3") bAcceptsShadowProjectors = true;"
+	// You can't do "bAcceptsShadowProjectors = (ShadowDetail > 3)"
+	// Any such approach will set the value, but the value will not be *applied*. 
+	// Don't believe me? Try it. Anyway, it is safe to always set this to true, since 
+	// it will only have an effect when ShadowProjector's bProjectActor property is true 
+	//   -K.F.
+	bAcceptsShadowProjectors = true; 
 
     if (bActorShadows && Level.NetMode != NM_DedicatedServer)
     {
@@ -300,10 +318,16 @@ simulated event PostBeginPlay()
         Shadow.CullDistance = ShadowCullDistance;
         Shadow.Resolution = 256;
         Shadow.InitShadow();
+        
+        if (ShadowDetail >= 3) //3 = "High"
+        {
+            Shadow.Resolution = 512;
+            //Level.GetLocalPlayerController().ConsoleMessage("High quality shadows enabled!");
+        }
     }
-
+    
     // Initialize the perlin noise object for mouth movement
-        InitAnimationForCurrentMesh();
+    InitAnimationForCurrentMesh();
     InitMouthMovementPerlinNoise();
 }
 
@@ -319,7 +343,7 @@ simulated event Destroyed()
 {
  	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPawn::Destroyed(). controller="$Controller );
-		
+
     Super.Destroyed();
     if ( Level.NetMode != NM_Client )
     {
@@ -352,7 +376,7 @@ private native function InitNativeAnimationSystemForPawn();
 
 // returns the male animation groups by default
 // overridden in SwatAICharacter to allow for female animation groups.
-// NOTE: this will probably need to be done differently in the future, but 
+// NOTE: this will probably need to be done differently in the future, but
 // for now it allows the animators to have the females in game and using
 // the female animations [crombie]
 simulated function array<string> GetAnimPackageGroups()
@@ -554,6 +578,7 @@ simulated function EAnimationSet GetCuffedAimPoseSet()                  { return
 simulated function EAnimationSet GetEquipmentAimSet()
 {
     local HandheldEquipment Equipment;
+    local SwatWeapon Weapon;
 
     if (ShouldUseCuffedAnims())
     {
@@ -561,52 +586,42 @@ simulated function EAnimationSet GetEquipmentAimSet()
     }
 
     Equipment = GetActiveItem();
+    Weapon = SwatWeapon(Equipment);
     if (GetActiveItem() != None)
     {
-        if (Equipment.IsA('Handgun') || Equipment.IsA('Taser'))
+        if(Weapon != None)
         {
-            return GetHandgunAimPoseSet();
-        }
-        else if (Equipment.IsA('SubMachineGun'))
-        {
-            // Special case aim pose for the UMP
-            if (Equipment.IsA('UMP45SMG'))
-            {
-                return GetUMPAimPoseSet();
-            }
-			// Special case aim pose for the P90
-			else if (Equipment.IsA('FNP90SMG'))
-			{
-				return GetP90AimPoseSet();
-			}
-            else
-            {
-                return GetSubMachineGunAimPoseSet();
-            }
-        }
-        else if (Equipment.IsA('MachineGun'))
-        {
-            // Special case aim pose for the m4 the swat officers use
-            if (Equipment.IsA('M4A1MG'))
-            {
-                return GetM4AimPoseSet();
-            }
-            else
-            {
-                return GetMachineGunAimPoseSet();
-            }
-        }
-		else if (Equipment.IsA('ColtAccurizedRifle'))
-		{
-			return GetMachineGunAimPoseSet();
-		}
-		else if (Equipment.IsA('HK69GrenadeLauncher'))
-		{
-			return GetMachineGunAimPoseSet();
-		}
-        else if (Equipment.IsA('Shotgun'))
-        {
-            return GetShotgunAimPoseSet();
+          switch(Weapon.GetAimAnimation())
+          {
+            case WeaponAnimAim_Handgun:
+              return GetHandgunAimPoseSet();
+            case WeaponAnimAim_SubmachineGun:
+              return GetSubMachineGunAimPoseSet();
+            case WeaponAnimAim_MachineGun:
+              return GetMachineGunAimPoseSet();
+            case WeaponAnimAim_Shotgun:
+              return GetShotgunAimPoseSet();
+            case WeaponAnimAim_Grenade:
+              return GetThrownWeaponAimPoseSet();
+            case WeaponAnimAim_TacticalAid:
+              return GetTacticalAidAimPoseSet();
+            case WeaponAnimAim_TacticalAidUse:
+              return GetTacticalAidUseAimPoseSet();
+            case WeaponAnimAim_PepperSpray:
+              return GetPepperSprayAimPoseSet();
+            case WeaponAnimAim_M4:
+              return GetM4AimPoseSet();
+            case WeaponAnimAim_UMP:
+              return GetUMPAimPoseSet();
+            case WeaponAnimAim_P90:
+              return GetP90AimPoseSet();
+            case WeaponAnimAim_Optiwand:
+              return GetOptiwandAimPoseSet();
+            case WeaponAnimAim_Paintball:
+              return GetPaintballAimPoseSet();
+            case WeaponAnimAim_Cuffed:
+              return GetCuffedAimPoseSet();
+          }
         }
         else if (Equipment.IsA('ThrownWeapon'))
         {
@@ -634,10 +649,6 @@ simulated function EAnimationSet GetEquipmentAimSet()
         else if (Equipment.IsA('Optiwand'))
         {
             return GetOptiwandAimPoseSet();
-        }
-        else if (Equipment.IsA('CSBallLauncher'))
-        {
-            return GetPaintballAimPoseSet();
         }
         else if (Equipment.IsA('IAmCuffed'))
         {
@@ -688,6 +699,8 @@ simulated function EAnimationSet GetPaintballLowReadyAimPoseSet()       { if (!b
 simulated function EAnimationSet GetLowReadySet()
 {
     local HandheldEquipment Equipment;
+    local SwatWeapon Weapon;
+
     assert(bIsLowReady == true);
 
     // No low-ready while cuffed
@@ -697,44 +710,38 @@ simulated function EAnimationSet GetLowReadySet()
     }
 
     Equipment = GetActiveItem();
+    Weapon = SwatWeapon(Equipment);
     if (GetActiveItem() != None)
     {
-        if (Equipment.IsA('Handgun') || Equipment.IsA('Taser'))
+        if(Weapon != None)
         {
-            return GetHandgunLowReadyAimPoseSet();
-        }
-        else if (Equipment.IsA('SubMachineGun'))
-        {
-            // Special case aim pose for the UMP
-            if (Equipment.IsA('UMP45SMG'))
-            {
-                return GetUMPLowReadyAimPoseSet();
-            }
-			// Special case aim pose for the P90
-            else if (Equipment.IsA('FNP90SMG'))
-            {
-                return GetP90LowReadyAimPoseSet();
-            }
-            else
-            {
-                return GetSubMachineGunLowReadyAimPoseSet();
-            }
-        }
-        else if (Equipment.IsA('MachineGun'))
-        {
-            // Special case aim pose for the m4 the swat officers use
-            if (Equipment.IsA('M4A1MG'))
-            {
-                return GetM4LowReadyAimPoseSet();
-            }
-            else
-            {
-                return GetMachineGunLowReadyAimPoseSet();
-            }
-        }
-        else if (Equipment.IsA('Shotgun'))
-        {
-            return GetShotgunLowReadyAimPoseSet();
+          switch(Weapon.GetLowReadyAnimation())
+          {
+            case WeaponAnimLowReady_Handgun:
+              return GetHandgunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_SubmachineGun:
+              return GetSubMachineGunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_MachineGun:
+              return GetMachineGunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_Shotgun:
+              return GetShotgunLowReadyAimPoseSet();
+            case WeaponAnimLowReady_Grenade:
+              return GetThrownWeaponLowReadyAimPoseSet();
+            case WeaponAnimLowReady_TacticalAid:
+              return GetTacticalAidLowReadyAimPoseSet();
+            case WeaponAnimLowReady_PepperSpray:
+              return GetPepperSprayLowReadyAimPoseSet();
+            case WeaponAnimLowReady_M4:
+              return GetM4LowReadyAimPoseSet();
+            case WeaponAnimLowReady_UMP:
+              return GetUMPLowReadyAimPoseSet();
+            case WeaponAnimLowReady_P90:
+              return GetP90LowReadyAimPoseSet();
+            case WeaponAnimLowReady_Optiwand:
+              return GetOptiwandLowReadyAimPoseSet();
+            case WeaponAnimLowReady_Paintball:
+              return GetPaintballLowReadyAimPoseSet();
+          }
         }
         else if (Equipment.IsA('ThrownWeapon'))
         {
@@ -755,10 +762,6 @@ simulated function EAnimationSet GetLowReadySet()
         else if (Equipment.IsA('Optiwand'))
         {
             return GetOptiwandLowReadyAimPoseSet();
-        }
-        else if (Equipment.IsA('CSBallLauncher'))
-        {
-            return GetPaintballLowReadyAimPoseSet();
         }
     }
 
@@ -888,7 +891,7 @@ simulated event ChangeAnimation()
 }
 
 // allow subclasses to override
-simulated protected function SetAdditionalAnimSets(); 
+simulated protected function SetAdditionalAnimSets();
 
 ///////////////////////////////////////
 
@@ -970,7 +973,7 @@ simulated event OnNonlethalEffectChanged()
 {
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPawn::OnNonlethalEffectChanged()." );
-	    
+
     if ( Level.GetLocalPlayerController().Pawn != Self )
     {
         ChangeAnimation();
@@ -990,7 +993,7 @@ simulated event OnArrestedStatusChanged()
 {
  	if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPawn::OnArrestedStatusChanged()." );
-    
+
     if ( Level.GetLocalPlayerController().Pawn != Self )
     {
         ChangeAnimation();
@@ -1011,7 +1014,7 @@ function ServerSetAimRotation( Rotator Rotator )
 //log( self$"::ServerSetAimRotation( "$Rotator$" )" );
     if( IsBeingArrestedNow() )
         return;
-        
+
 	AnimAimRotator = Rotator;
     AnimAimType    = kAAT_Rotation;
 }
@@ -1233,7 +1236,7 @@ simulated function int AnimLoopSpecial(Name AnimName, optional float TweenTime, 
     return channel;
 }
 
-simulated function int AnimLoopEquipment(EAnimPlayType AnimPlayType, Name AnimName, optional float TweenTime, 
+simulated function int AnimLoopEquipment(EAnimPlayType AnimPlayType, Name AnimName, optional float TweenTime,
 										 optional name Bone, optional float Rate)
 {
     local int channel;
@@ -1322,7 +1325,7 @@ simulated private function AnimSetTweenAndBoneForChannel(int channel, float Twee
 
     if (Bone == '')
         Bone = AnimBoneBase;
-    
+
     AnimBlendParams(
         channel,
         previousChannelAlpha,
@@ -1372,7 +1375,7 @@ simulated function bool AnimGetFlag(EAnimFlag flag)
 
 native function bool AnimAreChannelsAtZeroAlpha(int StartChannel, int LastChannel);
 
-// starting at the first channel after the lean animations, up until the mouth anim. channel, 
+// starting at the first channel after the lean animations, up until the mouth anim. channel,
 // returns true if all of the channels alpha's are zero, false otherwise
 native function bool AnimAreAimingChannelsMuted();
 
@@ -1385,9 +1388,9 @@ simulated function float GetAnimBaseYaw()
 
 native function AnimSnapBaseToAim();
 
-simulated function bool AnimIsBaseAtAim()			
-{ 
-	return ! bIsAnimBaseTurnToYawValid; 
+simulated function bool AnimIsBaseAtAim()
+{
+	return ! bIsAnimBaseTurnToYawValid;
 }
 
 native function AnimSnapRotationToBase();
@@ -1412,7 +1415,7 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 
 	// update the size of the predicted rendering box (so we don't disappear at certain angles)
 	SetRenderBoundingBoxExpansionSize(kDeathRenderBoundingBoxExpansionSize);
-    
+
     //if the SwatPawn was auto firing, then it should stop, now that it has died
     bWantsToContinueAutoFiring = false;
 
@@ -1448,7 +1451,7 @@ simulated event SetWalking(bool bNewIsWalking)
 simulated singular event BaseChange()
 {
 	local BlockingVolume BaseBlockingVolume;
-	
+
 	super.BaseChange();
 
 	BaseBlockingVolume = BlockingVolume(Base);
@@ -1517,7 +1520,7 @@ function SetIsFlashbanged( bool Value )
 {
     if (Level.GetEngine().EnableDevTools)
 		mplog( self$"---SwatPawn::SetIsFlashbanged(). Value="$Value );
-		
+
     bIsFlashbanged = Value;
 }
 
@@ -1525,7 +1528,7 @@ function SetIsGassed( bool Value )
 {
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPawn::SetIsGassed(). Value="$Value );
-	    
+
     bIsGassed = Value;
 }
 
@@ -1533,7 +1536,7 @@ function SetIsPepperSprayed( bool Value )
 {
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPawn::SetIsPepperSprayed(). Value="$Value );
-	    
+
     bIsPepperSprayed = Value;
 }
 
@@ -1541,7 +1544,7 @@ function SetIsStung( bool Value )
 {
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPawn::SetIsStung(). Value="$Value );
-	    
+
     bIsStung = Value;
 }
 
@@ -1549,7 +1552,7 @@ function SetIsStunnedByC2( bool Value )
 {
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPawn::SetIsStunnedByC2(). Value="$Value );
-	    
+
     bIsStunnedByC2 = Value;
 }
 
@@ -1557,7 +1560,7 @@ function SetIsTased( bool Value )
 {
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---SwatPawn::SetIsTased(). Value="$Value );
-	    
+
     bIsTased = Value;
 }
 
@@ -1595,11 +1598,11 @@ simulated function float GetDelayBeforeFlashlightShutoff()
 {
     if (isIncapacitated() || isDead())
         return 10; // so flashlights turn off a while after the pawn dies
-    else 
+    else
         return 0;
 }
 
-// Switches the desired flashlight state on/off (default state is OFF). 
+// Switches the desired flashlight state on/off (default state is OFF).
 simulated function ToggleDesiredFlashlightState()
 {
     ServerToggleDesiredFlashlightState();
@@ -1646,11 +1649,11 @@ simulated final protected function SetDesiredFlashlightState(bool DesireFlashlig
 	{
 		// We should only toggle the desired flashlight state if the current
 		// weapon actually has a flashlight. That way you won't unexpectly have
-		// your flashlight turned on when you switch to the MP5 from the (flashlight-less) 
+		// your flashlight turned on when you switch to the MP5 from the (flashlight-less)
 		// Taser if you accidentally had pushed the flashlight toggle button with
 		// the taser equipped.
 		CurrentWeapon = FiredWeapon(GetActiveItem());
-		if (None != CurrentWeapon && CurrentWeapon.HasFlashlight()) 
+		if (None != CurrentWeapon && CurrentWeapon.HasFlashlight())
 		{
 			FlashlightShouldBeOn = DesireFlashlightOn;
 			UpdateFlashlight();
@@ -1694,7 +1697,7 @@ simulated function UpdateFlashlight()
     local FiredWeapon CurrentWeapon;
 
     CurrentWeapon = FiredWeapon(GetActiveItem());
-    if (None != CurrentWeapon) 
+    if (None != CurrentWeapon)
     {
 		// Ask the weapon to make its flashlight state matches the desired
 		// state. We also do this after a weapon is equipped.
@@ -1728,11 +1731,12 @@ simulated function bool CanIssueComplianceTo(Pawn otherPawn)
 {
 	assert(otherPawn != None);
 
-	// if the other pawn is a swat ai character, within the correct distance, 
+	// if the other pawn is a swat ai character, within the correct distance,
 	// and there is line of sight to the character
 	if (otherPawn.IsA('SwatAICharacter') &&
 		(VSize(otherPawn.Location - Location) <= MaxComplianceIssueDistance) &&
 		LineOfSightTo(otherPawn) &&
+//    otherPawn.PlayerCanSeeMe() &&
         SwatCharacterResource(otherPawn.characterAI).CommonSensorAction.GetComplySensor() != None)
 	{
 		return true;
@@ -1756,15 +1760,76 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 	SwatCharacterResource(TargetPawn.characterAI).CommonSensorAction.GetComplySensor().NotifyComply(self);
 }
 
+// returns true if we should issue a taunt to the subject
+// returns false otherwise
+// out bool says if it's a suspect
+simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect, out int bIsAggressiveHostage)
+{
+  local Actor TraceActor;
+  local Actor CandidateActor;
+  local vector TraceStart, TraceEnd;
+  local vector HitLocation, HitNormal;
+  local Material HitMaterial;
+
+  TraceStart = CameraLocation;
+  TraceEnd = TraceStart + (CameraRotation * TraceDistance);
+
+  bIsSuspect = 0; // This should be filled out first
+  bIsAggressiveHostage = 0; // This should be filled out first
+
+
+  foreach TraceActors(
+    class'Actor',
+    TraceActor,
+    HitLocation,
+    HitNormal,
+    HitMaterial,
+    TraceEnd,
+    TraceStart
+    )
+    {
+      // If we find a SwatEnemy or SwatHostage, stop the trace immediately
+      if(TraceActor.IsA('SwatEnemy') || TraceActor.IsA('SwatHostage')) {
+        CandidateActor = TraceActor;
+        break;
+      }
+    }
+
+    if(CandidateActor == None) {
+      // There's nothing there
+      return false;
+    }
+
+    if(CandidateActor.IsA('SwatEnemy') && !CandidateActor.IsA('SwatUndercover'))
+	{
+      bIsSuspect = 1;
+    }
+	else
+	{
+      bIsSuspect = 0;
+    }
+
+    if(CandidateActor.IsA('SwatHostage') && (ISwatAI(CandidateActor).IsAggressive()))
+	{
+      bIsAggressiveHostage = 1;
+    }
+	else
+	{
+      bIsAggressiveHostage = 0;
+    }
+
+    if(SwatPawn(CandidateActor).bArrested) {
+      return true; // They're already handcuffed
+    }
+    return false; // They...aren't.
+}
+
 // returns true if any character that we are yelling at had a weapon equipped
 // returns false otherwise
-simulated function bool IssueCompliance(optional out int checkIfCuffed, optional out int isSuspect)
+simulated function bool IssueCompliance()
 {
 	local Pawn Iter;
 	local bool ACharacterHasAWeaponEquipped;
-	
-	checkIfCuffed = 0;
-	isSuspect = 0;
 
 	for(Iter = Level.pawnList; Iter != None; Iter = Iter.nextPawn)
 	{
@@ -1777,24 +1842,12 @@ simulated function bool IssueCompliance(optional out int checkIfCuffed, optional
 				if (SwatPawn(Iter).HasFiredWeaponEquipped())
 				{
 					ACharacterHasAWeaponEquipped = true;
-					checkIfCuffed = 0;
 					break;
-				}
-				if (SwatPawn(Iter).bArrested) {
-					checkIfCuffed = 1;
-				}
-				if (SwatPawn(Iter).IsA('SwatEnemy')) 
-				{
-					isSuspect = 1;
-				}
-				if (SwatPawn(Iter).IsA('SwatHostage')) 
-				{
-					isSuspect = 0;
 				}
 			}
 		}
 	}
-	
+
 	return ACharacterHasAWeaponEquipped;
 }
 
@@ -1823,7 +1876,7 @@ simulated function OnArrestBegan(Pawn Arrester)
     BeingArrested = true;
 }
 
-//if the arrester completes the qualification process, 
+//if the arrester completes the qualification process,
 //  then the ICanBeArrested gets OnArrested()
 
 // FINAL - so we can be sure that bArrested is always set to true
@@ -1834,7 +1887,7 @@ simulated function OnArrested(Pawn Arrester)
 	    mplog( self$"---SwatPawn::OnArrested(). Arrester="$Arrester );
 
 	// this is here to handle the split second in time in SP when the officer finishes equipping his cuffs
-	// vs. the time when the AI finishes equipping the IAmCuffed; in SP, the AI becomes arrested when 
+	// vs. the time when the AI finishes equipping the IAmCuffed; in SP, the AI becomes arrested when
 	// he finishes equipping his IAmCuffed
 	if (! bArrested)
 	{
@@ -1867,7 +1920,7 @@ simulated function OnArrestInterrupted(Pawn Arrester)
 }
 
 //return the time it takes for a Player to "qualify" to arrest me
-simulated function float GetQualifyTimeForArrest()
+simulated function float GetQualifyTimeForArrest(Pawn Arrester)
 {
     return QualifyTimeForArrest;
 }
@@ -1875,7 +1928,7 @@ simulated function float GetQualifyTimeForArrest()
 //returns whether we've been arrested
 simulated native function bool IsArrested();
 
-// returns who arrested us 
+// returns who arrested us
 simulated function Pawn GetArrester()
 {
 	return ArrestedBy;
@@ -1910,17 +1963,19 @@ simulated function UpdateHUDFireMode()
     local SwatGamePlayerController PC;
 
     PC = SwatGamePlayerController(Controller);
-    
+
     if( PC == Level.GetLocalPlayerController() && PC.HasHUDPage())
         SwatGamePlayerController(Controller).GetHUDPage().UpdateFireMode();
 }
 
-function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation, 
+function PostTakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
 						Vector momentum, class<DamageType> damageType)
 {
     local HandheldEquipment ActiveItem;
 
     Super.PostTakeDamage(Damage, instigatedBy, hitLocation, Momentum, DamageType);
+
+    log("PostTakeDamage on "$self$" - Damage ="$Damage$", DamageType="$damageType);
 
     if (Damage > 0)
     {
@@ -1951,7 +2006,7 @@ event int GetTeamNumber();
 ///////////////////////////////////////////////////////////////////////////////
 
 function UnPossessed()
-{	
+{
     //cache off the name of this player
     MenuName = PlayerReplicationInfo.PlayerName;
     Super.UnPossessed();
@@ -1959,7 +2014,7 @@ function UnPossessed()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// In MP this will broadcast the stop all effect event call to every client, including the server. 
+// In MP this will broadcast the stop all effect event call to every client, including the server.
 // In standalone, behaves exactly the same way as a StopAllEffectEvents call.
 simulated function BroadcastStopAllSounds()
 {
@@ -1969,13 +2024,13 @@ simulated function BroadcastStopAllSounds()
     {
         Itr = Level.ControllerList;
         while ( Itr != None ) // Walk the controller list
-        {    
+        {
             if ( Itr.IsA( 'SwatGamePlayerController' ) )
                 SwatGamePlayerController(Itr).ClientBroadcastStopAllSounds( Self, UniqueID() );
-                
+
             Itr = Itr.NextController;
         }
-    } 
+    }
     else
     {
         StopAllSounds();
@@ -2011,7 +2066,7 @@ event bool HavokCharacterCollision(HavokCharacterObjectInteractionEvent data, ou
 		ImpulseDir = res.ObjectImpulse / ImpulseMag;
 		res.ObjectImpulse = ImpulseDir * H.ClampImpulse(ImpulseMag * HavokObjectInteractionFactor);
 	}
-	
+
 	return true;
 }
 
@@ -2088,4 +2143,3 @@ defaultproperties
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-

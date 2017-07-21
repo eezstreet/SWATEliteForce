@@ -1,10 +1,19 @@
 class BoobyTrap extends RWOSupport.ReactiveStaticMesh
-      implements IUseArchetype, ICanBeDisabled;
+      implements IUseArchetype, ICanBeDisabled, ICanBeSpawned, IDisableableByAI;
 
 var() SwatDoor                    BoobyTrapDoor;
 var config float                QualifyTime;
 var() bool                        bActive;
 var() name                        AttachSocket;
+
+var protected BoobyTrapSpawner SpawnedFrom;   //the Spawner that I was spawned from
+var private Name SpawnedFromName;
+
+replication
+{
+    reliable if ( Role == ROLE_Authority )
+        bActive, SpawnedFromName;
+}
 
 function PostBeginPlay()
 {
@@ -47,6 +56,13 @@ simulated function bool IsActive()
 {
     return bActive;
 }
+
+// IDisableableByAI interface
+simulated function bool IsDisableableNow()
+{
+  return IsActive();
+}
+
 // end of Interface implementation
 
 
@@ -58,7 +74,7 @@ function Deactivate()
 
 function ReactToUsed(Actor Other)
 {
-    if ( bActive && Other.IsA('Toolkit') )
+    if ( bActive && (Other.IsA('Toolkit') || Other.IsA('SwatDoor')) )
     {
         Super.ReactToUsed(Other);
         Deactivate();
@@ -100,6 +116,9 @@ final function InitializeFromSpawner(Spawner Spawner)
     BoobySpawner = BoobyTrapSpawner(Spawner);
     assert(BoobySpawner != None);
 
+    SpawnedFrom = BoobySpawner;
+    SpawnedFromName = BoobySpawner.Name;
+
     foreach DynamicActors(class'SwatDoor', Door, BoobySpawner.DoorTag)
     {
         BoobyTrapDoor = Door;
@@ -112,6 +131,24 @@ final function InitializeFromSpawner(Spawner Spawner)
     OnBoobyTrapInitialize();
 }
 
+function Spawner GetSpawner()
+{
+    return SpawnedFrom;
+}
+
+simulated function PostNetBeginPlay()
+{
+    Super.PostNetBeginPlay();
+
+    ReactToTriggered( None );
+}
 
 final function Internal_InitializeFromArchetypeInstance(ArchetypeInstance Instance);
 final function InitializeFromArchetypeInstance();
+
+defaultproperties
+{
+  bAlwaysRelevant=true
+  RemoteRole=ROLE_DumbProxy
+  bUseCollisionBoneBoundingBox=true
+}

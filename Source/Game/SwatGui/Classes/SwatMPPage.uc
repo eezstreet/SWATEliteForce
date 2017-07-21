@@ -32,11 +32,10 @@ var(SWATGui) private EditInline Config GUIButton MyVotingButton;
 var(SWATGui) private EditInline Config SwatMPLoadoutPanel  MyMPLoadoutPanel;
 var(SWATGui) private EditInline Config SwatMPScoresPanel  MyMPScoresPanel;
 var(SWATGui) private EditInline Config SwatMPVotingPanel  MyMPVotingPanel;
+var(SWATGui) private EditInline Config SwatCampaignCoopMapPanel MyCampaignPanel;
 
 var(SWATGui) private EditInline Config GUIButton		    MyGameSettingsButton;
 var(SWATGui) private EditInline Config GUIButton		    MyServerSettingsButton;
-
-var(SWATGui) private EditInline Config GUIButton			MyProfileButton;
 
 var(SWATGui) private EditInline Config GUILabel MyGameInfoLabel;
 var(SWATGui) private EditInline Config GUIScrollTextBox MyServerInfoBox;
@@ -45,6 +44,7 @@ var(SWATGui) private EditInline Config SwatChatPanel  MyChatPanel;
 var(SWATGui) private localized config String BombsRemaining;
 var(SWATGui) private localized config String RoundsRemainingString;
 var(SWATGui) private localized config String ReadyString;
+var(SWATGui) private localized config String UnreadyString;
 var(SWATGui) private localized config String ContinueString;
 var(SWATGui) private localized config String GameModeAndLevelString;
 
@@ -58,14 +58,22 @@ var() private config localized string LoadMapString;
 var() private config localized string DownloadString;
 #endif
 
+var(SWATGui) private EditInline Config GUILabel MyNextMapLabel;
+var() private config localized string NextMapString;
+var() private config localized string HostNeedsToPickMapString;
+
 var(SWATGui) private EditInline Config GUIImage         LoadingImage;
 var(SWATGui) private            config array<Material>  DefaultImages;
 
 var() private config localized string ConfirmAbortString;
 var() private config localized string WaitingForPlayersString;
 
+var() private config localized string ServerSetupString;
+var() private config localized string CampaignSetupString;
+
 var private EMPMode CachedGameMode;
 var private string CachedTitle;
+var private bool bPressedReady;
 
 ////////////////////////////////////////////////////////////////////////
 // Initial Setup of Page
@@ -79,16 +87,14 @@ function InitComponent(GUIComponent MyOwner)
 
     MyLoadoutButton.OnClick=CommonOnClick;
     MyScoresButton.OnClick=CommonOnClick;
-	MyVotingButton.OnClick=CommonOnClick;
+	  MyVotingButton.OnClick=CommonOnClick;
 
     MyGameSettingsButton.OnClick=CommonOnClick;
     MyServerSettingsButton.OnClick=CommonOnClick;
-    
-    CachedGameMode = MPM_BarricadedSuspects;
-    MyGameInfoLabel.SetCaption( GC.GetGameModeName(MPM_BarricadedSuspects) );
-    MyServerInfoBox.SetContent( GC.GetGameDescription(MPM_BarricadedSuspects) );
 
-	MyProfileButton.OnClick=OnProfileButton;
+    CachedGameMode = MPM_COOP;
+    MyGameInfoLabel.SetCaption( GC.GetGameModeName(MPM_COOP) );
+    MyServerInfoBox.SetContent( GC.GetGameDescription(MPM_COOP) );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -100,6 +106,7 @@ event HandleParameters(string Param1, string Param2, optional int param3)
     Super.HandleParameters( Param1, Param2, param3 );
 
     SwatGuiController(Controller).SetPlayerNotReady();
+    bPressedReady = false;
     MyStartButton.EnableComponent();
 }
 
@@ -117,28 +124,29 @@ event PostActivate()
 
 private function bool IsAdminable()
 {
-    return ( GC.SwatGameRole == GAMEROLE_MP_Host &&
-             ( GC.SwatGameState == GAMESTATE_PreGame || 
-               GC.SwatGameState == GAMESTATE_MidGame || 
+    return ( /*GC.SwatGameRole == GAMEROLE_MP_Host &&*/
+             ( GC.SwatGameState == GAMESTATE_PreGame ||
+               GC.SwatGameState == GAMESTATE_MidGame ||
                GC.SwatGameState == GAMESTATE_PostGame ) );
 }
 
 private function SetupPopup()
 {
     local bool bAdminable;
-	local bool ShowGamespyProfile;
+    local SwatGameReplicationInfo SGRI;
+
+    SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
 
     OpenScores();
 
     bAdminable = IsAdminable();
 
-	// hide gamespy profile button on listen servers
-	ShowGamespyProfile = SwatGUIController(Controller).Repo.Level.NetMode != NM_ListenServer;
-	if (!ShowGamespyProfile)
-	{
-        MyProfileButton.Hide();
-        MyProfileButton.DeActivate();
-	}
+    // The Server Setup button becomes a Campaign button where you can pick the next mission
+    if(SwatGUIController(Controller).coopcampaign) {
+      MyServerSettingsButton.SetCaption(CampaignSetupString);
+    } else {
+      MyServerSettingsButton.SetCaption(ServerSetupString);
+    }
 
     //big state check to determin component visibility/activity
     if( GC.SwatGameState == GAMESTATE_PreGame )
@@ -148,15 +156,20 @@ private function SetupPopup()
         MyLoadingTextLabel.Hide();
         LoadingImage.Hide();
 
-        MyStartButton.SetCaption( ReadyString );
+        if(!bPressedReady)
+          MyStartButton.SetCaption( ReadyString );
+        else
+          MyStartButton.SetCaption( UnreadyString );
 
-//        MyServerSettingsButton.SetVisibility( bAdminable );
-//        MyServerSettingsButton.SetActive( bAdminable );
+        MyServerSettingsButton.SetVisibility( bAdminable );
+        MyServerSettingsButton.SetActive( bAdminable );
 
 #if IG_SWAT_PROGRESS_BAR
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+        MyNextMapLabel.Hide();
     }
     else if( GC.SwatGameState == GAMESTATE_MidGame && bPopup )
     {
@@ -181,9 +194,7 @@ private function SetupPopup()
         MyBackButton.DeActivate();
         MyGameSettingsButton.Hide();
         MyGameSettingsButton.DeActivate();
-        MyProfileButton.Hide();
-        MyProfileButton.DeActivate();
-        
+
         MyMPScoresPanel.MyChangeTeamButton.Hide();
         MyMPScoresPanel.MyChangeTeamButton.DeActivate();
         MyMPScoresPanel.MyToggleVOIPIgnoreButton.Hide();
@@ -193,6 +204,8 @@ private function SetupPopup()
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+      MyNextMapLabel.Hide();
     }
     else if( GC.SwatGameState == GAMESTATE_MidGame && !bPopup )
     {
@@ -203,13 +216,15 @@ private function SetupPopup()
 
         MyStartButton.SetCaption( ContinueString );
 
-//        MyServerSettingsButton.SetVisibility( bAdminable );
-//        MyServerSettingsButton.SetActive( bAdminable );
+        MyServerSettingsButton.SetVisibility( bAdminable );
+        MyServerSettingsButton.SetActive( bAdminable );
 
 #if IG_SWAT_PROGRESS_BAR
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+        MyNextMapLabel.Hide();
     }
     else if( GC.SwatGameState == GAMESTATE_PostGame )
     {
@@ -221,10 +236,13 @@ private function SetupPopup()
 //        MyStartButton.Hide();
 //        MyStartButton.DeActivate();
 //        MyStartButton.DisableComponent();
-        MyStartButton.SetCaption( ReadyString );
-        
-//        MyServerSettingsButton.SetVisibility( bAdminable );
-//        MyServerSettingsButton.SetActive( bAdminable );
+        if(!bPressedReady)
+          MyStartButton.SetCaption( ReadyString );
+        else
+          MyStartButton.SetCaption( UnreadyString );
+
+        MyServerSettingsButton.SetVisibility( bAdminable );
+        MyServerSettingsButton.SetActive( bAdminable );
 
 //        MyScoresButton.Hide();
 //        MyScoresButton.DeActivate();
@@ -239,10 +257,12 @@ private function SetupPopup()
         MissionLoadingProgressBar.Hide();
         MissionLoadingStatusText.Hide();
 #endif
+
+        MyNextMapLabel.Show();
     }
     else if( GC.SwatGameState == GAMESTATE_ClientTravel )
     {
-        //display mission loading image only when leaving a mission where you were playing COOP, 
+        //display mission loading image only when leaving a mission where you were playing COOP,
         //  and only if there are any loading images available
         if( SwatGUIController(Controller).Repo.Level.IsPlayingCOOP && DefaultImages.Length > 0 )
         {
@@ -269,9 +289,7 @@ private function SetupPopup()
         MyBackButton.DeActivate();
         MyGameSettingsButton.Hide();
         MyGameSettingsButton.DeActivate();
-        MyProfileButton.Hide();
-        MyProfileButton.DeActivate();
-        
+
         MyMPScoresPanel.MyTitleLabel.Hide();
         MyMPScoresPanel.MyChangeTeamButton.Hide();
         MyMPScoresPanel.MyChangeTeamButton.DeActivate();
@@ -296,6 +314,8 @@ private function SetupPopup()
         MissionLoadingProgressBar.Show();
         MissionLoadingStatusText.Show();
 #endif
+
+        MyNextMapLabel.Hide();
     }
     else
     {
@@ -305,13 +325,18 @@ private function SetupPopup()
 
 function InternalOnActivate()
 {
-    SetFocusInstead(MyServerInfoBox);
-    
+	SetFocusInstead(MyServerInfoBox);
+
     DisplayGameInfo();
 
     MyMPLoadoutPanel.LoadMultiPlayerLoadout();
 
     SetTimer( 1.0, true );
+
+	if (SwatGUIController(Controller).coopcampaign)
+	{
+    MyNextMapLabel.Hide();
+	}
 }
 
 function InternalOnDeActivate()
@@ -329,17 +354,26 @@ function DisplayGameInfo()
 
     SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
     Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
-    
+
     if( SGRI == None || Settings == None )
         return;
-    
+
+    if(GC.SwatGameState == GAMESTATE_PostGame)
+    {
+        if(SGRI.NextMap == "") {
+          MyNextMapLabel.SetCaption(HostNeedsToPickMapString);
+        } else {
+          MyNextMapLabel.SetCaption(NextMapString $ SGRI.NextMap);
+        }
+    }
+
     MyServerNameLabel.SetCaption( Settings.ServerName );
-    
+
     if( SGRI.bWaitingForPlayers )
         MyWaitingForPlayersLabel.SetCaption( WaitingForPlayersString );
     else
         MyWaitingForPlayersLabel.SetCaption( "" );
-        
+
     if( CachedGameMode != Settings.GameType || CachedTitle != PlayerOwner().Level.Summary.Title )
     {
         CachedTitle = PlayerOwner().Level.Summary.Title;
@@ -347,9 +381,9 @@ function DisplayGameInfo()
         MyGameInfoLabel.SetCaption( FormatTextString( GameModeAndLevelString, GC.GetGameModeName(Settings.GameType), CachedTitle ) );
         MyServerInfoBox.SetContent( GC.GetGameDescription(Settings.GameType) );
     }
-    
-    if( Settings.GameType == EMPMode.MPM_COOP && 
-        GC.CurrentMission != None && 
+
+    if( Settings.GameType == EMPMode.MPM_COOP &&
+        GC.CurrentMission != None &&
         MyGameInfoLabel.GetCaption() != GC.CurrentMission.FriendlyName )
     {
         MyGameInfoLabel.SetCaption( GC.CurrentMission.FriendlyName );
@@ -362,10 +396,10 @@ function DisplayGameInfo()
         }
 
         MyServerInfoBox.SetContent( displayString );
-        
+
         MyRoundsLabel.Hide();
     }
-    
+
     if( Settings.GameType == EMPMode.MPM_RapidDeployment )
     {
         BombsRemainingCount = SGRI.TotalNumberOfBombs - SGRI.DiffusedBombs;
@@ -376,7 +410,7 @@ function DisplayGameInfo()
     {
         MyBombsRemainingLabel.Hide();
     }
-    
+
     MyRoundsLabel.SetCaption( FormatTextString( RoundsRemainingString, string( Settings.RoundNumber + 1 ), string( Settings.NumRounds ) ) );
 }
 
@@ -393,29 +427,48 @@ function CommonOnClick(GUIComponent Sender)
 	switch (Sender)
 	{
 		case MyStartButton:
-            SwatGuiController(Controller).SetPlayerReady();
-            MyStartButton.DisableComponent();
-	        ResumeGame();
+            if(!bPressedReady) {
+              if(MyMPLoadoutPanel.CheckWeightBulkValidity()) {
+                SwatGuiController(Controller).SetPlayerReady();
+                bPressedReady = true;
+                MyStartButton.SetCaption(UnreadyString);
+              }
+            } else {
+              SwatGuiController(Controller).SetPlayerNotReady();
+              bPressedReady = false;
+              MyStartButton.SetCaption(ReadyString);
+            }
+	          ResumeGame();
             break;
 		case MyBackButton:
             OnDlgReturned=InternalOnDlgReturned;
             OpenDlg( ConfirmAbortString, QBTN_YesNo, "Abort" );
             break;
 		case MyLoadoutButton:
-            OpenLoadout(); 
+            if(bPressedReady)
+            {
+              SwatGuiController(Controller).SetPlayerNotReady();
+              MyStartButton.SetCaption(ReadyString);
+              bPressedReady = false;
+            }
+            OpenLoadout();
             break;
 		case MyScoresButton:
-            OpenScores(); 
+            OpenScores();
             break;
 		case MyVotingButton:
-            OpenVoting(); 
+            OpenVoting();
             break;
 		case MyGameSettingsButton:
-			OpenGameSettings();
-			break;
+			      OpenGameSettings();
+			      break;
 		case MyServerSettingsButton:
-			Controller.OpenMenu("SwatGui.SwatServerSetupMenu", "SwatServerSetupMenu", "InGame"); 
-			break;
+            if(SwatGUIControllerBase(Controller).coopcampaign) {
+              OpenCampaign();
+            } else {
+			        Controller.OpenMenu("SwatGui.SwatServerSetupMenu", "SwatServerSetupMenu", "InGame");
+            }
+			      break;
 	}
 }
 
@@ -434,20 +487,37 @@ private function InternalOnDlgReturned( int Selection, String passback )
 
 protected function AbortGame()
 {
-    SwatGuiController(Controller).PlayerDisconnect(); 
+    SwatGuiController(Controller).PlayerDisconnect();
 }
 
 function ResumeGame()
 {
     if( GC.SwatGameState == GAMESTATE_ClientTravel )
         return;
-    
+
     if( GC.SwatGameState != GAMESTATE_MidGame )
     {
         return;
     }
-            
+
 	Controller.CloseMenu();
+}
+
+private function OpenCampaign()
+{
+  MyCampaignPanel.Show();
+  MyCampaignPanel.Activate();
+  MyMPVotingPanel.Hide();
+  MyMPVotingPanel.DeActivate();
+  MyMPScoresPanel.Hide();
+  MyMPScoresPanel.DeActivate();
+  MyMPLoadoutPanel.Hide();
+  MyMPLoadoutPanel.DeActivate();
+
+  MyServerSettingsButton.Focus();
+  MyScoresButton.EnableComponent();
+  MyLoadoutButton.EnableComponent();
+  MyVotingButton.EnableComponent();
 }
 
 private function OpenVoting()
@@ -458,6 +528,8 @@ private function OpenVoting()
     MyMPScoresPanel.DeActivate();
 	MyMPLoadoutPanel.Hide();
     MyMPLoadoutPanel.DeActivate();
+  MyCampaignPanel.Hide();
+  MyCampaignPanel.DeActivate();
 
 	MyVotingButton.Focus();
 	MyScoresButton.EnableComponent();
@@ -467,21 +539,23 @@ private function OpenVoting()
 private function OpenScores()
 {
     local bool bPlayingCOOP;
-    
+
     bPlayingCOOP = SwatGUIController(Controller).Repo.Level.IsPlayingCOOP;
-    
+
 //    MyChatPanel.SetVisibility( !bPlayingCOOP );
 //    MyChatPanel.SetActive( !bPlayingCOOP );
     MyServerInfoBox.SetVisibility( !bPlayingCOOP || GC.SwatGameState != GAMESTATE_PostGame );
     MyServerInfoBox.SetActive( !bPlayingCOOP || GC.SwatGameState != GAMESTATE_PostGame );
     MyGameInfoLabel.SetVisibility( !bPlayingCOOP || GC.SwatGameState != GAMESTATE_PostGame );
-    
+
 	MyMPVotingPanel.Hide();
     MyMPVotingPanel.DeActivate();
     MyMPScoresPanel.Show();
     MyMPScoresPanel.Activate();
     MyMPLoadoutPanel.Hide();
     MyMPLoadoutPanel.DeActivate();
+    MyCampaignPanel.Hide();
+    MyCampaignPanel.DeActivate();
 
 	MyVotingButton.EnableComponent();
     MyScoresButton.Focus();
@@ -502,6 +576,8 @@ private function OpenLoadout()
     MyMPScoresPanel.DeActivate();
     MyMPLoadoutPanel.Show();
     MyMPLoadoutPanel.Activate();
+    MyCampaignPanel.Hide();
+    MyCampaignPanel.DeActivate();
 
 	MyVotingButton.EnableComponent();
     MyScoresButton.EnableComponent();
@@ -547,7 +623,7 @@ protected function bool HandleKeyEventFirstCrack( out byte Key, out byte State, 
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -566,7 +642,7 @@ protected function bool HandleKeyEvent( out byte Key, out byte State, float delt
             return true;
         }
     }
-            
+
     return Super.HandleKeyEvent( Key, State, delta );
 }
 
@@ -575,7 +651,7 @@ function OnProgress(string PercentComplete, string ExtraInfo)
 {
 	log("  SwatMissionLoadingMenu ONPROGRESS Received: ["$PercentComplete$"] ["$ExtraInfo$"]");
 	MissionLoadingProgressBar.Value = float(PercentComplete);
-	
+
     if( ExtraInfo == "LoadSplash" )
         MissionLoadingStatusText.SetCaption( LoadSplashString );
     else if( ExtraInfo == "WaitForConnection" )
@@ -584,7 +660,7 @@ function OnProgress(string PercentComplete, string ExtraInfo)
         MissionLoadingStatusText.SetCaption( LoadMapString );
     else if( ExtraInfo == "Download" )
         MissionLoadingStatusText.SetCaption( DownloadString );
-    
+
 	if (Controller != None)
 		Controller.PaintProgress();
 }
@@ -624,6 +700,14 @@ defaultproperties
     WaitForConnectionString="Connecting..."
     LoadMapString="Loading..."
     DownloadString="Downloading..."
-    
+
+    NextMapString="Next Map: "
+    HostNeedsToPickMapString="Waiting for host to pick next map..."
+
+    ServerSetupString="SERVER SETUP"
+    CampaignSetupString="CAMPAIGN"
+
+    bPressedReady = false;
+
     ConfirmAbortString="Disconnect from the current game?"
 }

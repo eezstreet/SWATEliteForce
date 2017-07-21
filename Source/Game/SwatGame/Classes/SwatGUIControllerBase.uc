@@ -25,6 +25,9 @@ import enum EMPMode from Engine.Repo;
 // how long since we last polled
 var private Float CumulativeDelta;
 
+// Whether this is a coop campaign
+var() bool coopcampaign;
+
 function bool GetDispatchDisabled();
 function SetDispatchDisabled(bool newValue);
 
@@ -146,6 +149,11 @@ function UseCampaign(string inCampaign)
     }
 }
 
+function NoCampaign()
+{
+  Campaign = None;
+}
+
 final function Campaigns GetCampaigns()
 {
     return Campaigns;
@@ -163,9 +171,9 @@ final function bool CampaignExists(string inCampaign)
     return Campaigns.CampaignExists(inCampaign);
 }
 
-final function Campaign AddCampaign(string inCampaign, int campPath)
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath)
 {
-    return Campaigns.AddCampaign(inCampaign, campPath);
+    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath);
 }
 
 final function DeleteCampaign(string inCampaign)
@@ -179,7 +187,46 @@ final function MissionResults GetMissionResults(name Mission)
     return Campaign.GetMissionResults(Mission);
 }
 
+final function UpdateCampaignDeathInformation(Pawn Pawn) {
+  local Campaign theCampaign;
 
+  theCampaign = GetCampaign();
+
+  if(Pawn.IsA('SwatPlayer') && theCampaign.PlayerPermadeath) {
+    theCampaign.PlayerDied = true;
+  } else if(Pawn.IsA('SwatOfficer') && theCampaign.OfficerPermadeath) {
+    if(Pawn.IsA('OfficerRedOne')) {
+      theCampaign.RedOneDead = true;
+    } else if(Pawn.IsA('OfficerRedTwo')) {
+      theCampaign.RedTwoDead = true;
+    } else if(Pawn.IsA('OfficerBlueOne')) {
+      theCampaign.BlueOneDead = true;
+    } else if(Pawn.IsA('OfficerBlueTwo')) {
+      theCampaign.BlueTwoDead = true;
+    }
+  }
+}
+
+final function bool CheckCampaignForOfficerSpawn(int StartType) {
+  local Campaign theCampaign;
+
+  theCampaign = GetCampaign();
+
+  if(theCampaign.OfficerPermadeath){
+    switch(StartType) {
+      case 0:
+        return !theCampaign.RedOneDead;
+      case 1:
+        return !theCampaign.RedTwoDead;
+      case 2:
+        return !theCampaign.BlueOneDead;
+      case 3:
+        return !theCampaign.BlueTwoDead;
+    }
+  } else {
+    return true;
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // Server -> Client Notifications
@@ -312,6 +359,21 @@ function SetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class
     }
 }
 
+function SetMPLoadOutPrimaryAmmo(int Amount)
+{
+  if(SwatGamePlayerController(ViewportOwner.Actor) != None)
+  {
+    SwatGamePlayerController(ViewportOwner.Actor).ServerSetMPLoadOutPrimaryAmmo(Amount);
+  }
+}
+
+function SetMPLoadOutSecondaryAmmo(int Amount)
+{
+  if(SwatGamePlayerController(ViewportOwner.Actor) != None)
+  {
+    SwatGamePlayerController(ViewportOwner.Actor).ServerSetMPLoadOutSecondaryAmmo(Amount);
+  }
+}
 
 function SetMPLoadOutPocketCustomSkin( Pocket Pocket, String CustomSkinClassName )
 {

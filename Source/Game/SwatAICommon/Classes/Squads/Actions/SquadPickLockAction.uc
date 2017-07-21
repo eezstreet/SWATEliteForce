@@ -12,6 +12,7 @@ class SquadPickLockAction extends SquadStackUpAction;
 state Running
 {
 Begin:
+	log("Began SquadPickLockAction");
 	StackUpSquad(true);
 
 	WaitForZulu();

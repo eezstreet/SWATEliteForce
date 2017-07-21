@@ -27,7 +27,7 @@ var() private config localized string ConfirmNoTrainingString;
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
-    
+
 	Super.InitComponent(MyOwner);
 
     MyInstantActionButton.OnClick=InternalOnClick;
@@ -39,7 +39,7 @@ function InitComponent(GUIComponent MyOwner)
     MyJoinButton.OnClick=InternalOnClick;
     MyGameSettingsButton.OnClick=InternalOnClick;
     MyCreditsButton.OnClick=InternalOnClick;
-    
+
     for( i = 0; i < Controls.Length; i++ )
         Controls[i].ShowPositionDelay = -1.0;
 }
@@ -47,10 +47,10 @@ function InitComponent(GUIComponent MyOwner)
 function InternalOnActivate()
 {
     local int i;
-    
+
     for( i = 0; i < Controls.Length; i++ )
         Controls[i].ShowPositionDelay = -1.0;
-    
+
     MyQuitButton.OnClick=InternalOnClick;
 
     //ensure we are displaying help text if appropriate
@@ -75,9 +75,9 @@ function InternalOnDlgReturned( int Selection, optional string Passback )
                 //continue to load into the campaign, training was intentionally skipped by this player
                 GC.bEverRanTraining = true;
                 GC.SaveConfig();
-            
+
                 SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Campaign );
-			    Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu"); 
+			    Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
             }
             break;
     }
@@ -91,63 +91,67 @@ function InternalOnClick(GUIComponent Sender)
 		case MyInstantActionButton:
 			//Ryan: Training is not used in the expansion pack
 		    //if you have never played or clicked through training
-            //if( !GC.bEverRanTraining )
-            //{
-            //    //play training first
-            //    GC.bEverRanTraining = true;
-            //    GC.SaveConfig();
+            if( !GC.bEverRanTraining )
+            {
+                //play training first
+                GC.bEverRanTraining = true;
+                GC.SaveConfig();
 
-            //    GC.SetCurrentMission( 'SP-Training', TrainingFriendlyString );
-            //}
-            //else
-            //{
-		        GC.LoadLastMissionPlayed();
-		    //}
-		    SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Other );
-            GameStart();
+                GC.SetCurrentMission( 'SP-Training', TrainingFriendlyString );
+                GameStart();
+            }
+            else
+            {
+              SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Other );
+              GameStart();
+		        }
+
             break;
 		case MyTrainingButton:
-            Controller.OpenMenu("SwatGui.SwatNewFeaturesMenu", "SwatNewFeaturesMenu");
+            GC.bEverRanTraining = true;
+            SwatGuiController(Controller).Repo.RoleChange(GAMEROLE_SP_Other);
+            GC.SetCurrentMission('SP-Training', TrainingFriendlyString);
+            GameStart();
             break;
 		case MyCampaignButton:
 			// dbeswick: no training for expansion
 		    //if you have never played or clicked through training
-            /*if( !GC.bEverRanTraining )
+            if( !GC.bEverRanTraining )
             {
                 OnDlgReturned=InternalOnDlgReturned;
                 OpenDlg( PromptToGotoTrainingFirstString, QBTN_YesNo, "FirstTrainingPrompt" );
             }
             else
-            {*/
+            {
                 SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Campaign );
-			    Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu"); 
-			//}
-			break;
+			          Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
+			     }
+			     break;
 		case MyPlayCustomButton:
             SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Custom );
-			Controller.OpenMenu("SwatGui.SwatCustomMenu", "SwatCustomMenu"); 
+			Controller.OpenMenu("SwatGui.SwatCustomMenu", "SwatCustomMenu");
 			break;
 		case MyCustomMissionButton:
             //todo, remove when chage over
 //            SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Custom );
-			Controller.OpenMenu("SwatGui.CustomScenarioPage", "CustomScenarioPage"); 
+			Controller.OpenMenu("SwatGui.CustomScenarioPage", "CustomScenarioPage");
 			break;
 		case MyHostButton:
             SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_MP_Host );
-			Controller.OpenMenu("SwatGui.SwatServerSetupMenu", "SwatServerSetupMenu"); 
+			Controller.OpenMenu("SwatGui.SwatServerSetupMenu", "SwatServerSetupMenu");
 			break;
 		case MyJoinButton:
             SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_MP_Client );
-			Controller.OpenMenu("SwatGui.SwatServerBrowserMenu", "SwatServerBrowserMenu"); 
+			Controller.OpenMenu("SwatGui.SwatServerBrowserMenu", "SwatServerBrowserMenu");
 			break;
 		case MyGameSettingsButton:
-			Controller.OpenMenu("SwatGui.SwatGameSettingsMenu", "SwatGameSettingsMenu"); 
+			Controller.OpenMenu("SwatGui.SwatGameSettingsMenu", "SwatGameSettingsMenu");
 			break;
 		case MyCreditsButton:
-			Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu"); 
+			Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu");
 			break;
 		case MyQuitButton:
-            Quit(); 
+            Quit();
             break;
 	}
 }
@@ -160,10 +164,10 @@ function PerformClose()
 defaultproperties
 {
     OnActivate=InternalOnActivate
-	
+
 	TrainingFriendlyString="Training"
 	StyleName="STY_MainMenu"
-	
+
 	PromptToGotoTrainingFirstString="SWAT (R) 4 requires challenging squad-based tactics and compliance with law-enforcement procedures. It is [b]strongly[\\b] recommended that you play the training mission before attempting other SWAT engagements. Continue anyway?"
 	ConfirmNoTrainingString="Are you sure that you do not want to play the training mission?"
 }

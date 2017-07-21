@@ -226,7 +226,7 @@ latent function ReportTarget()
 
 private function TriggerReassuranceSpeech()
 {
-	if (CompliantTarget.IsA('SwatHostage'))
+	if (CompliantTarget.IsA('SwatHostage') || CompliantTarget.IsA('SwatUndercover'))
 	{
 		if (ISwatAI(CompliantTarget).IsAggressive())
 		{
@@ -241,7 +241,7 @@ private function TriggerReassuranceSpeech()
 
 private function TriggerFinishedArrestSpeech()
 {
-	if (CompliantTarget.IsA('SwatEnemy'))
+	if (CompliantTarget.IsA('SwatEnemy') && !CompliantTarget.IsA('SwatUndercover'))
 	{
 		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerArrestedSuspectSpeech();
 	}
@@ -251,7 +251,7 @@ private function TriggerFinishedArrestSpeech()
 
 function TriggerTargetRestrainedSpeech()
 {
-	if (CompliantTarget.IsA('SwatEnemy'))
+	if (CompliantTarget.IsA('SwatEnemy') && !CompliantTarget.IsA('SwatUndercover'))
 	{
 		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerReportedSuspectSecuredSpeech();
 	}

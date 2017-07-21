@@ -711,7 +711,7 @@ private function bool CanAimAtNewPoint()
 		if (! MovementResource.requiredResourcesAvailable(achievingGoal.priority, 0))
 			return false;
 	}
-	
+
 	// by default we can aim at the new point
 	return true;
 }
@@ -760,6 +760,16 @@ Begin:
 		bInitialDelay = false;
 	}
 
+  if(AimAroundGoal(achievingGoal).CancelWhenCompliant && (ISwatAI(m_Pawn).IsCompliant() || ISwatAI(m_Pawn).IsArrested()))
+  {
+    instantSucceed();
+  }
+
+  if(AimAroundGoal(achievingGoal).CancelWhenStunned && false)
+  {
+    // FIXME: need a check here...
+  }
+
     if (!bOnlyAimIfMoving || (VSize(m_Pawn.Velocity) > 0.0))
     {
 		// now aim at the point
@@ -769,7 +779,7 @@ Begin:
     {
         // if we're not going to choose to aim at anything based on our not moving,
         // we shouldn't have a current aim target
-        CurrentAimPoint = None; 
+        CurrentAimPoint = None;
     }
 
     if (bDoOnce)

@@ -1,7 +1,7 @@
 class Weapon extends HandheldEquipment
 	abstract
 	native
-    nativereplication;
+  nativereplication;
 
 // MCJ: All the interesting stuff has moved out of this class into others. I
 // don't think it needs to be native or have nativereplication anymore. Once
@@ -26,14 +26,14 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 	Canvas.DrawText(T, false);
 	YPos += YL;
 	Canvas.SetPos(4,YPos);
-	
+
 #if !IG_DISABLE_UNREAL_ACTOR_SOUND_MANAGEMENT // ckline: use IG_EFFECTS system instead of old Unreal per-actor sound specifications
-	if ( DrawType == DT_StaticMesh )		
+	if ( DrawType == DT_StaticMesh )
 		Canvas.DrawText("     StaticMesh "$StaticMesh$" AmbientSound "$AmbientSound, false);
-	else 
+	else
 		Canvas.DrawText("     Mesh "$Mesh$" AmbientSound "$AmbientSound, false);
 #else
-	if ( DrawType == DT_StaticMesh )		
+	if ( DrawType == DT_StaticMesh )
 		Canvas.DrawText("     StaticMesh ", false);
 #endif
 
@@ -46,7 +46,7 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
 		T = "     AnimSequence "$Anim$" Frame "$frame$" Rate "$rate;
 		if ( bAnimByOwner )
 			T= T$" Anim by Owner";
-		
+
 		Canvas.DrawText(T, false);
 		YPos += YL;
 		Canvas.SetPos(4,YPos);

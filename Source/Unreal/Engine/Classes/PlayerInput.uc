@@ -11,7 +11,7 @@ class PlayerInput extends Core.Object within PlayerController
 
 var globalconfig	bool	bInvertMouse;
 
-var bool		bWasForward;	// used for doubleclick move 
+var bool		bWasForward;	// used for doubleclick move
 var bool		bWasBack;
 var bool		bWasLeft;
 var bool		bWasRight;
@@ -43,11 +43,11 @@ function bool InvertLook();
 event PlayerInput( float DeltaTime )
 {
 	local float FOVScale, MouseScale;
-				
+
 	// Ignore input if we're playing back a client-side demo.
 	if( Outer.bDemoOwner && !Outer.default.bDemoOwner )
 		return;
-				
+
 	// Check for Double click move
 	// flag transitions
 	bEdgeForward = (bWasForward ^^ (aBaseY > 0));
@@ -58,7 +58,7 @@ event PlayerInput( float DeltaTime )
 	bWasBack = (aBaseY < 0);
 	bWasLeft = (aStrafe < 0);
 	bWasRight = (aStrafe > 0);
-	
+
 	// Smooth and amplify mouse movement
 #if IG_SWAT //tcohen: weapon zoom
     if (WantsZoom)
@@ -122,7 +122,7 @@ event PlayerInput( float DeltaTime )
 	}
 	else
 		aForward += aBaseY;
-		
+
 	aBaseY = 0;
 
 	// Handle walking.
@@ -131,8 +131,14 @@ event PlayerInput( float DeltaTime )
 
 exec function SetSmoothingMode(byte B)
 {
-	MouseSmoothingMode = B;
+	UpdateSmoothing(B);
 	log("Smoothing mode "$MouseSmoothingMode);
+}
+
+exec function SetMouseAcceleration(float F)
+{
+	UpdateAccel(F);
+	log("Mouse acceleration "$F);
 }
 
 exec function SetSmoothingStrength(float F)
@@ -143,10 +149,10 @@ exec function SetSmoothingStrength(float F)
 function float AccelerateMouse(float aMouse)
 {
 	local float Accel;
-	
+
 	if ( abs(aMouse) == 0 )
 		return 0;
-		
+
 	Accel = MouseAccelThreshold * MouseSensitivity;
 	if ( abs(aMouse) < Accel )
 	{
@@ -170,7 +176,7 @@ function float SmoothMouse(float aMouse, float DeltaTime, out byte SampleCount, 
 		ZeroTime[Index] += DeltaTime;
 		if ( ZeroTime[Index] < MouseSamplingTime )
 		{
-			SamplingTime[Index] += DeltaTime; 
+			SamplingTime[Index] += DeltaTime;
 			MaybeTime[Index] += DeltaTime;
 			aMouse = SmoothedMouse[Index];
 		}
@@ -194,10 +200,10 @@ function float SmoothMouse(float aMouse, float DeltaTime, out byte SampleCount, 
 		{
 			MouseSamples[Index] += SampleCount;
 			if ( DeltaTime > MouseSamplingTime * (SampleCount + 1) )
-				SamplingTime[Index] += MouseSamplingTime * SampleCount; 
+				SamplingTime[Index] += MouseSamplingTime * SampleCount;
 			else
 			{
-				SamplingTime[Index] += DeltaTime; 
+				SamplingTime[Index] += DeltaTime;
 				aMouse = aMouse * DeltaTime/(MouseSamplingTime * SampleCount);
 			}
 		}
@@ -240,7 +246,7 @@ function float SmoothMouse(float aMouse, float DeltaTime, out byte SampleCount, 
 function UpdateSensitivity(float F)
 {
 	MouseSensitivity = FMax(0,F);
-    default.MouseSensitivity = MouseSensitivity; 
+    default.MouseSensitivity = MouseSensitivity;
 	class'PlayerInput'.static.StaticSaveConfig();
 }
 
@@ -300,22 +306,22 @@ function Actor.eDoubleClickDir CheckForDoubleClickMove(float DeltaTime)
 				DoubleClickDir = OldDoubleClick;
 			else if ( DoubleClickDir != OldDoubleClick )
 				DoubleClickTimer = DoubleClickTime + 0.5 * DeltaTime;
-			else 
+			else
 				DoubleClickMove = DoubleClickDir;
 		}
 
 		if (DoubleClickDir == DCLICK_Done)
 		{
 			DoubleClickTimer = FMin(DoubleClickTimer-DeltaTime,0);
-			if (DoubleClickTimer < -0.35) 
+			if (DoubleClickTimer < -0.35)
 			{
 				DoubleClickDir = DCLICK_None;
 				DoubleClickTimer = DoubleClickTime;
 			}
-		}		
+		}
 		else if ((DoubleClickDir != DCLICK_None) && (DoubleClickDir != DCLICK_Active))
 		{
-			DoubleClickTimer -= DeltaTime;			
+			DoubleClickTimer -= DeltaTime;
 			if (DoubleClickTimer < 0)
 			{
 				DoubleClickDir = DCLICK_None;

@@ -47,12 +47,24 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
 simulated protected event PostContextMatched(PlayerInterfaceContext Context, Actor Target)
 {
     local string localUseFeedbackText, localOtherFeedbackText;
+    local SwatHostage Hostage;
+    local UseInterfaceContext UseContext;
+
+    UseContext = UseInterfaceContext(Context);
 
     if (UseInterfaceContext(Context).IsGlass)
         LookingThruGlass = true;
 
-    localUseFeedbackText = UseInterfaceContext(Context).UseFeedbackText;
-    localOtherFeedbackText = UseInterfaceContext(Context).OtherFeedbackText;
+    localUseFeedbackText = UseContext.UseFeedbackText;
+    localOtherFeedbackText = UseContext.OtherFeedbackText;
+
+    if(localUseFeedbackText ~= "Report Dead Hostage") {
+      // EXTREME HACK
+      Hostage = SwatHostage(Target);
+      if(Hostage.IsDOA()) {
+        localUseFeedbackText = "Report DOA";
+      }
+    }
 
     if (localUseFeedbackText != "")
         UseFeedbackText = localUseFeedbackText;
@@ -63,9 +75,9 @@ simulated protected event PostContextMatched(PlayerInterfaceContext Context, Act
 simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedContext inContext, Actor Target, ESkeletalRegion SkeletalRegionHit)
 {
     local UseInterfaceDoorRelatedContext Context;
-    
+
     Context = UseInterfaceDoorRelatedContext(inContext);
-    
+
     UseFeedbackText = Context.UseFeedbackText;
     OtherFeedbackText = Context.OtherFeedbackText;
 }
@@ -113,7 +125,7 @@ simulated function Interact()
     }
 //  else
 //      TMC TODO need feedback "nothing to use here"
-        
+
 }
 
 cpptext

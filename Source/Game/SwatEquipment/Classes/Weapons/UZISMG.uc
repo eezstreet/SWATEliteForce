@@ -1,6 +1,1 @@
-class UZISMG extends SubMachineGun;
-
-defaultproperties
-{
-    Slot=Slot_Invalid
-}
+class UZISMG extends SubMachineGun config(SwatEquipment);

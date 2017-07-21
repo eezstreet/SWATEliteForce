@@ -1,4 +1,4 @@
-class BadguyUMP45SMG extends SubMachineGun;
+class BadguyUMP45SMG extends UMP45SMG;
 
 defaultproperties
 {
