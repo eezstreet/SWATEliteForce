@@ -452,9 +452,10 @@ All weapons have been changed to have correct muzzle velocities.
 	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
 	- Can breach doors; chance to breach is dependent on ammo type
-* Added two new head armor items:
+* Added three new head armor items:
 	- Riot Helmet: Offers slightly less protection than the Helmet, but also cuts Pepper Spray and Gas durations in half
 	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
+	- S10 Helmet: Offers protection from CS gas and pepper spray, as well as ballistic protection. However, it is bulky and restricts the field of view.
 * Added new weapons from the SAS mod, most have a suppressor as well:
 	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine. (no silenced version)
 	- SG552 Commando: Versatile assault rifle
@@ -578,7 +579,7 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- The civilians have a very small chance to die from the taser
 	- The suspects are Polite
 	- Made loading screen text consistent with other missions ("Stetchkov Drug Lab, 653 Tovanen St." -> "653 Tovanen St., Stetchkov Drug Lab")
-	- Unlocks the Taser C2 Series Stun Gun
+	- Unlocks the Taser C2 Series Stun Gun and the S10 Helmet
 * Fresnal St. Station
 	- Cut content restored: Conversation where Lead tells TOC they found Officer Wilkins
 	- The elderly have a chance to die from the taser
@@ -700,6 +701,7 @@ Once you have selected your map settings and have started the server at least on
   * Added a cut weapon from the game: The M1Super90.
   * 3-packs of Wedges, Flashbangs, CS Gas and Stingers have been added. They have 3 tactical items, with the equivalent weight and bulk of five of those items.
   * All shotguns now have Frangible Breaching Ammo, which doesn't ricochet or overpenetrate a door.
+  * The gas mask is now called the Respirator and no longer restricts field of view. A new gas mask, the S10 Helmet, has been added!
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
      * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines RESTRAIN ALL and SECURE ALL. 
@@ -722,6 +724,7 @@ Once you have selected your map settings and have started the server at least on
 - Added Suppressed M4A1
 - Added Suppressed G36C
 - Added Suppressed UMP
+- Added S10 Helmet
 - Added Breaching Shotgun as a weapon (M870 Breaching). The M870 Breaching will always breach a door 100% of the time regardless of its material.
 - Added Wedge 3-Pack, CS Gas 3-Pack, Flashbang 3-Pack, and Stinger 3-Pack.
 - Lightsticks are now treated the same as grenades, instead of being an instant-use item.
@@ -729,6 +732,7 @@ Once you have selected your map settings and have started the server at least on
 - Breaching tab removed; sixth tactical slot added.
 - Added frangible breaching ammo for all shotguns. Frangible breaching ammo is guaranteed to never overpenetrate a door and is better against unarmored targets than the comparable Sabot Slug.
 - AI will now drop lightsticks as they clear rooms.
+- The Gas Mask has been renamed Respirator and no longer restricts your field of view.
 - Tactical items (grenades, wedges, lightsticks, C2) now show the number of items left when equipped.
 - Rewrote the voting code from scratch. No longer allowed to vote for gametype; can vote to end current map or to go to next map.
 - Can vote in Career CO-OP if "Enable Voting" is checked in the map settings panel. (Voting specific maps and voting for next map are not allowed in this mode)
