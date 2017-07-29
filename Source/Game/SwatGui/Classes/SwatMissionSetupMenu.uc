@@ -88,43 +88,48 @@ function InternalOnClick(GUIComponent Sender)
 	local float CampaignInfo;
 	local int CampaignPath, MissionIndex;
 	local SwatCampaignCoopSettingsPanel ServerPanel;
+	local SwatGUIController GUIController;
+	local SwatPlayerController PlayerController;
 
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+	GUIController = SwatGUIController(Controller);
+	PlayerController = SwatPlayerController(PlayerOwner());
 
 	switch (Sender)
 	{
 	    case MyQuitButton:
             Quit();
             break;
-			case MyServerSetupButton:
-						MyTabControl.OpenTab(3);
-						break;
+		case MyServerSetupButton:
+			MyTabControl.OpenTab(3);
+			break;
 		case MyStartButton:
-            if(SwatGUIController(Controller).SPLoadoutPanel == None || SwatGUIController(Controller).SPLoadoutPanel.CheckWeightBulkValidity()) {
-				if (SwatGUIController(Controller).coopcampaign)
+            if(GUIController.SPLoadoutPanel == None || GUIController.SPLoadoutPanel.CheckWeightBulkValidity())
+			{
+				if (GUIController.coopcampaign)
 				{
 					ServerPanel = SwatCampaignCoopSettingsPanel(MyTabControl.GetTab(3).TabPanel);
 
 					CampaignInfo = 666 ^ 666;
-					CampaignPath = SwatGUIController(Controller).GetCampaign().CampaignPath;
-					MissionIndex = SwatGUIController(Controller).GetCampaign().GetAvailableIndex() << 16;
+					CampaignPath = GUIController.GetCampaign().CampaignPath;
+					MissionIndex = GUIController.GetCampaign().GetAvailableIndex() << 16;
 					CampaignInfo = MissionIndex | CampaignPath;
 
-					SwatPlayerController(PlayerOwner()).ServerSetDirty(Settings);
-					SwatPlayerController(PlayerOwner()).ServerSetAdminSettings(
+					PlayerController.ServerSetDirty(Settings);
+					PlayerController.ServerSetAdminSettings(
 						Settings,
 						GC.MPName $ " Coop Campaign",
 						ServerPanel.MyPasswordBox.VisibleText,
 						ServerPanel.MyPasswordedButton.bChecked,
 						ServerPanel.MyPublishModeBox.GetIndex() == 0
 					);
-					SwatPlayerController(PlayerOwner()).ServerSetSettings(
+					PlayerController.ServerSetSettings(
 						Settings,
 						EMPMode.MPM_COOP,
 						0, 1, ServerPanel.MyMaxPlayersSpinner.Value, 0, 60, 1, 10,
 						true,
 						true,
-						false,
+						ServerPanel.MyVotingEnabledBox.bChecked,
 						true,
 						true,
 						1, 1, CampaignInfo, 0,
@@ -133,9 +138,12 @@ function InternalOnClick(GUIComponent Sender)
 						true
 					);
 					GC.SaveConfig();
-					SwatGUIController(Controller).LoadLevel(GC.CurrentMission.Name $ "?listen");
+					GUIController.LoadLevel(GC.CurrentMission.Name $ "?listen");
 				}
-				else {GameStart();}
+				else
+				{
+					GameStart();
+				}
             }
             break;
 		case MyBackButton:
