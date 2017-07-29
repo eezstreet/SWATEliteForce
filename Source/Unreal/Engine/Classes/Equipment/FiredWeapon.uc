@@ -330,103 +330,138 @@ simulated function TraceFire()
 // (and not, for example, an actor or levelinfo that is in between our target)
 simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace)
 {
-  local vector PerfectFireStartLocation, HitLocation, StartTrace, ExitLocation, PreviousExitLocation;
-  local vector HitNormal, ExitNormal;
-  local float Distance;
-  local rotator PerfectFireStartDirection;
-  local Actor Victim;
-  local Material HitMaterial, ExitMaterial;
-  local ESkeletalRegion HitRegion;
-  local float Momentum, MtP;
+    local vector PerfectFireStartLocation, HitLocation, StartTrace, ExitLocation, PreviousExitLocation;
+    local vector HitNormal, ExitNormal;
+    local float Distance;
+    local rotator PerfectFireStartDirection;
+    local Actor Victim;
+    local Material HitMaterial, ExitMaterial;
+    local ESkeletalRegion HitRegion;
+    local float Momentum, MtP;
 
-  GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
+    GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
-  StartTrace = Pawn(Owner).GetEyeLocation();
-  EndTrace = Target.Location;
+    StartTrace = Pawn(Owner).GetEyeLocation();
+    EndTrace = Target.Location;
 
-  Distance = VSize(EndTrace - StartTrace);
+    Distance = VSize(EndTrace - StartTrace);
 
-  if(Distance >= Range)
-  {
-    return false; // We can't hit it because it is too far away.
-  }
-
-  Momentum = MuzzleVelocity * Ammo.Mass;
-  PreviousExitLocation = ExitLocation;
-
-
-  foreach TraceActors(
-      class'Actor',
-      Victim,
-      HitLocation,
-      HitNormal,
-      HitMaterial,
-      EndTrace,
-      StartTrace,
-      /*optional extent*/,
-      true, //bSkeletalBoxTest
-      HitRegion,
-      true,   //bGetMaterial
-      true,   //bFindExitLocation
-      ExitLocation,
-      ExitNormal,
-      ExitMaterial )
-  {
-
-  MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
-
-    if(Victim.IsA('LevelInfo'))
-    { // LevelInfo is hidden AND blocks all bullets!
-      return false;
-    }
-    else if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
+    if(Distance >= Range)
     {
-      continue; // Not something we need to worry about
+        return false; // We can't hit it because it is too far away.
     }
-    else if(Victim != Target && Ammo.RoundsNeverPenetrate)
-    {
-      // Our bullet type doesn't penetrate and we didn't hit our target..
-      return false;
-    }
-    else if(Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
-    {
-      // This might be redundant, but it doesn't seem to work otherwise.
-      return false;
-    }
-    else if(Victim.DrawType == DT_StaticMesh)
-    {
-      // The bullet hits a static mesh.
-      Momentum -= MtP;
-	  continue;
-    }
-    else if(Momentum <= 0 && MomentumMatters)
-    {
-      // The bullet lost all of its momentum
-      return false;
-    }
-    else if(Victim != Target)
-    {
-      Momentum -= MtP;
 
-      // We hit something that isn't our target
-      if(Owner.IsA('SwatEnemy'))
-      {
-        // Suspects don't care, as long as they aren't hitting a buddy
-        // FIXME: make this based on Polite? skill level?
-        if(!Victim.IsA('SwatEnemy'))
-        {
-          return true;
+    Momentum = MuzzleVelocity * Ammo.Mass;
+    PreviousExitLocation = ExitLocation;
+
+
+    foreach TraceActors(
+        class'Actor',
+        Victim,
+        HitLocation,
+        HitNormal,
+        HitMaterial,
+        EndTrace,
+        StartTrace,
+        /*optional extent*/,
+        true, //bSkeletalBoxTest
+        HitRegion,
+        true,   //bGetMaterial
+        true,   //bFindExitLocation
+        ExitLocation,
+        ExitNormal,
+        ExitMaterial )
+    {
+
+        MtP = Victim.GetMomentumToPenetrate(HitLocation, HitNormal, HitMaterial);
+
+        if(Victim.IsA('LevelInfo'))
+        { // LevelInfo is hidden AND blocks all bullets!
+            return false;
         }
-      }
-      return false;
-    }
-    else
-    {
-      return true;
-    }
+        else if(Victim == Owner || Victim == Self || Victim.DrawType == DT_None  || Victim.bHidden)
+        {
+            continue; // Not something we need to worry about
+        }
+        else if(Victim != Target && Ammo.RoundsNeverPenetrate)
+        {
+            // Our bullet type doesn't penetrate and we didn't hit our target..
+            return false;
+        }
+        else if(Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
+        {
+            // This might be redundant, but it doesn't seem to work otherwise.
+            return false;
+        }
+        else if(Victim.DrawType == DT_StaticMesh)
+        {
+            // The bullet hits a static mesh.
+            Momentum -= MtP;
+            continue;
+        }
+        else if(Momentum <= 0 && MomentumMatters)
+        {
+            // The bullet lost all of its momentum
+            return false;
+        }
+        else if(Victim != Target)
+        {
+            Momentum -= MtP;
 
-  }
-  return false;
+            // We hit something that isn't our target
+            if(Owner.IsA('SwatEnemy'))
+            {
+                // Suspects don't care, as long as they aren't hitting a buddy
+                // FIXME: make this based on Polite? skill level?
+                if(!Victim.IsA('SwatEnemy'))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Used by the AI - whether a bullet fired from this weapon will hit the intended target with no interruptions.
+// Key areas where this is used: ThreatenHostageAction
+simulated function bool HitsTargetWithNoInterruptions(Actor Target)
+{
+    local Actor Victim;
+    local vector StartTrace, EndTrace, HitLocation, HitNormal;
+    local Material HitMaterial;
+
+    StartTrace = Pawn(Owner).GetEyeLocation();
+    EndTrace = Target.Location;
+
+    foreach TraceActors(
+        class'Actor',
+        Victim,
+        HitLocation,
+        HitNormal,
+        HitMaterial,
+        EndTrace,
+        StartTrace)
+    {
+        if(Victim.IsA('LevelInfo'))
+        {
+            return false; // Hit a bsp = bad
+        }
+        else if(Victim == self || Victim == Owner || Victim.DrawType == DT_None || Victim.bHidden)
+        {
+            continue; // We hit ourselves, our owner, or something that is invisible. It's probably fine.
+        }
+        else if(Victim != Target)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 //call once to give the weapon perfect accuracy the next time it fires.
