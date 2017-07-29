@@ -6,9 +6,9 @@ class Object
 	native
 	noexport;
 
-// 
+//
 // Shared codebase features
-// 
+//
 #define IG_SHARED 1
 
 #define IG_THIS_IS_SHIPPING_VERSION 1
@@ -54,7 +54,7 @@ class Object
 #define IG_SPEED_HACK_PROTECTION 0
 #define IG_CAPTIONS 1
 #define IG_BINK_ROQ_INTERGRATION 1
-// 
+//
 // Features that are not in the shared codebase go below
 //
 #define IG_ALL_KNOWING_AIS 1
@@ -62,10 +62,10 @@ class Object
 #define IG_LEVEL_LOAD_ACTOR_CALLBACK 1
 #define IG_BATTLEROOM 1
 #define IG_RWO 1
-#define IG_LEVELINFO_SUBCLASS 0                                            
+#define IG_LEVELINFO_SUBCLASS 0
 #define IG_SMOOTH_PHYSICS_STEPPING 1
 
-// Define the following project-specific symbols to 0 so the script compiler 
+// Define the following project-specific symbols to 0 so the script compiler
 // won't warn about undefined symbols. These MUST stay as 0 in the shared engine.
 #define IG_TRIBES3 0
 #define IG_SWAT 1
@@ -366,7 +366,7 @@ native      static final function	  float Asin  ( float A );
 native(188) static final function     float Cos   ( float A );
 native      static final function     float Acos  ( float A );
 native(189) static final function     float Tan   ( float A );
-native(190) static final function     float Atan  ( float A, float B ); 
+native(190) static final function     float Atan  ( float A, float B );
 native(191) static final function     float Exp   ( float A );
 native(192) static final function     float Loge  ( float A );
 native(193) static final function     float Sqrt  ( float A );
@@ -476,7 +476,7 @@ static function String FormatTextString( string Format, optional coerce string P
     Format = ReplaceExpression( Format, "%1", Param1 );
     Format = ReplaceExpression( Format, "%2", Param2 );
     Format = ReplaceExpression( Format, "%3", Param3 );
-        
+
     return Format;
 }
 
@@ -484,7 +484,7 @@ static function string GetFirstField( out string In, string Seperator )
 {
     local int Index;
     local string RetStr;
-    
+
     Index = InStr( In, Seperator );
     if( Index >= 0 )
     {
@@ -495,7 +495,7 @@ static function string GetFirstField( out string In, string Seperator )
     {
         RetStr = In;
         In = "";
-    }   
+    }
     return RetStr;
 }
 
@@ -536,7 +536,7 @@ native      static final function Quat QuatSlerp(Quat A, Quat B, float Alpha);
 // General functions.
 
 #if IG_UC_ALLOCATOR // karl: Added Allocator
-// Called by new operator (on the default object of a particular class).  
+// Called by new operator (on the default object of a particular class).
 // Allocates and returns an object of that class.
 native static function Object Allocate( Object Context,				// auto parameter, calling object
 										optional Object Outer,		// override outer object
@@ -569,7 +569,7 @@ native static function ATLog(coerce string msg);
 #if IG_UDN_UTRACE_DEBUGGING // ckline: UDN UTrace code
 native static final function SetUTracing( bool bNewUTracing );
 native static final function bool IsUTracing();
-#endif 
+#endif
 
 #if IG_SWAT // tcohen: debug sentinel
 //How to use a DebugSentinel:
@@ -615,8 +615,8 @@ native(118) final function Disable( name ProbeFunc );
 native final iterator function AllProperties ( class FromClass, class TerminatingSuperClass, out Name PropName, optional out string PropType );
 native final iterator function AllEditableProperties ( class FromClass, class TerminatingSuperClass, out Name PropName, optional out string PropType );
 #endif
-#if IG_SHARED // david: Get all classes of a given type 
-// Gets all classes of a given type 
+#if IG_SHARED // david: Get all classes of a given type
+// Gets all classes of a given type
 // Specify 'None' to return all registered classes
 native final iterator function AllClasses ( class BaseClass, out class OutClass );
 #endif
@@ -632,7 +632,7 @@ native static final function object FindObject( string ObjectName, class ObjectC
 
 // Configuration.
 native(536) final function SaveConfig(
-#if IG_ACTOR_CONFIG || IG_GUI_LAYOUT //dkaplan - Update to allow config file and config section to be explicitly set 
+#if IG_ACTOR_CONFIG || IG_GUI_LAYOUT //dkaplan - Update to allow config file and config section to be explicitly set
 			optional string OverrideSectionName, optional string FileName
 #endif
 #if IG_SHARED // ckline
@@ -643,7 +643,7 @@ native(536) final function SaveConfig(
 
 native static final function StaticSaveConfig();
 
-native static final function ResetConfig( 
+native static final function ResetConfig(
 #if IG_ACTOR_CONFIG //no section header override if this is not defined
 			optional string OverrideName, optional string FileName
 #endif
@@ -680,7 +680,7 @@ event BeginState();
 //
 // Called immediately before going out of the current state,
 // while within the GotoState call that caused the state change.
-// 
+//
 event EndState();
 
 #if IG_UC_CLASS_CONSTRUCTOR // karl: Added class constructor
@@ -715,9 +715,9 @@ native function int WrapAngleNegPiToPi(int angle);
 // ConeOrigin: Point from which the cone originates
 // ConeDirection: The direction of the central axis (centerline) of the cone
 // TestPoint: the point in question
-// FullAngleRadian: the full angle of the cone. That is, if 
-//     TestPoint is within (FullAngleRadians/2.0) radians on either side of the 
-//     line extending Origin in the direction specified by Facing, then this 
+// FullAngleRadian: the full angle of the cone. That is, if
+//     TestPoint is within (FullAngleRadians/2.0) radians on either side of the
+//     line extending Origin in the direction specified by Facing, then this
 //     function will return true.
 native function bool PointWithinInfiniteCone(vector ConeOrigin, vector ConeDirection, vector TestPoint, float FullAngleRadians);
 

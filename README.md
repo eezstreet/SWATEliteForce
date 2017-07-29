@@ -713,7 +713,7 @@ Once you have selected your map settings and have started the server at least on
   * The main menu now has a link to Discord and the Wiki and shows the mod version.
   * The Join Game menu now won't show duplicate servers, the player sorting is better, and there is a link to download the server browser plugin.
   * You can now apply a tab (or a whole loadout) to another officer, another team, or element. It's much easier now to keep a consistent loadout amongst your men.
-  * You can now vote (in multiplayer) to end the current map, or to go to the next map.
+  * You can now vote (in multiplayer) to end the current map, or to go to the next map. You can also vote in Career CO-OP mode.
 
 ### ALL CHANGES ###
 - Added ironsights to most weapons; several weapons have had their first person weapon model tweaked to have right-side faces and other improvements.
@@ -727,10 +727,11 @@ Once you have selected your map settings and have started the server at least on
 - Lightsticks are now treated the same as grenades, instead of being an instant-use item.
 - C2 is now considered a tactical item.
 - Breaching tab removed; sixth tactical slot added.
-- Added frangible breaching ammo for all shotguns.
+- Added frangible breaching ammo for all shotguns. Frangible breaching ammo is guaranteed to never overpenetrate a door and is better against unarmored targets than the comparable Sabot Slug.
 - AI will now drop lightsticks as they clear rooms.
 - Tactical items (grenades, wedges, lightsticks, C2) now show the number of items left when equipped.
 - Rewrote the voting code from scratch. No longer allowed to vote for gametype; can vote to end current map or to go to next map.
+- Can vote in Career CO-OP if "Enable Voting" is checked in the map settings panel. (Voting specific maps and voting for next map are not allowed in this mode)
 - The breaching shotgun fire interface will now show for all shotguns, not just the breaching shotgun.
 - The pick lock fire interface will now show if you have a shotgun equipped.
 - Drastically improved the layout of commands in the Classic Command Interface (CCI)
@@ -764,6 +765,8 @@ Once you have selected your map settings and have started the server at least on
 - Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them. This has been fixed.
 - Fixed SEF bug: Wedges not depleting weight when used
 - Fixed SEF bug: AI-controlled officers were more focused on falling in than engaging suspects at times.
+- Fixed SEF bug: Beanbag shotguns tended to not work correctly.
+- Fixed SEF bug: New shotgun ammo types (0 buck, 1 buck, 4 buck) didn't have correct drag values.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
 - Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
 - Fixed TSS bug: Duplicate servers in the server browser
