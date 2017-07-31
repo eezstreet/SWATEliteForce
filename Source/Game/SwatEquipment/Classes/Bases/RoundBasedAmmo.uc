@@ -105,7 +105,7 @@ simulated function bool ShouldReload()
     assert(Weapon != None);
 
     //we should never have more rounds loaded than the weapon can hold
-    assert(CurrentRounds < Weapon.MagazineSize);
+    assert(CurrentRounds <= Weapon.MagazineSize);
 
     return (CurrentRounds < Weapon.MagazineSize);
 }
