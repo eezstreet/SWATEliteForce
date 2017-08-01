@@ -720,18 +720,20 @@ Once you have selected your map settings and have started the server at least on
 ### ALL CHANGES ###
 - Added ironsights to most weapons; several weapons have had their first person weapon model tweaked to have right-side faces and other improvements.
 - Added broad-secure commands (SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, DISABLE ALL)
-- Added first person weapon inertia (weapon sways with movement)
+- Added first person weapon inertia (weapon sways with movement). Disabled by default, enable through Game Controls in Settings.
 - Added Suppressed M4A1
 - Added Suppressed G36C
 - Added Suppressed UMP
+- Added M1Super90
 - Added S10 Helmet
-- Added Breaching Shotgun as a weapon (M870 Breaching). The M870 Breaching will always breach a door 100% of the time regardless of its material.
+- Added M870 Breaching. It will always breach a door 100% of the time.
 - Added Wedge 3-Pack, CS Gas 3-Pack, Flashbang 3-Pack, and Stinger 3-Pack.
 - Lightsticks are now treated the same as grenades, instead of being an instant-use item.
 - C2 is now considered a tactical item.
 - Breaching tab removed; sixth tactical slot added.
 - Added frangible breaching ammo for all shotguns. Frangible breaching ammo is guaranteed to never overpenetrate a door and is better against unarmored targets than the comparable Sabot Slug.
 - AI will now drop lightsticks as they clear rooms.
+- Improved textures for MP5, UMP, M870, M870 Less Lethal, MP5SSD6 and G36K
 - The Gas Mask has been renamed Respirator and no longer restricts your field of view.
 - Tactical items (grenades, wedges, lightsticks, C2) now show the number of items left when equipped.
 - Rewrote the voting code from scratch. No longer allowed to vote for gametype; can vote to end current map or to go to next map.
@@ -741,7 +743,7 @@ Once you have selected your map settings and have started the server at least on
 - Drastically improved the layout of commands in the Classic Command Interface (CCI)
 - Added the ability to assign the currently selected tab to an officer, team, or Element.
 - You can now assign the current loadout to an officer, team, or Element.
-- Pepper spray now shows the number of reserve cans when equipped
+- Pepper spray now shows the number of reserve cans when equipped (press the Pepper Spray hotkey to swap canisters once one is depleted)
 - Reorganized DEPLOY command sub-menu
 - Suspects will fire upon hostages twice as quickly.
 - Pepper spray now takes a moment or two to affect targets, like CS gas does.
@@ -766,16 +768,18 @@ Once you have selected your map settings and have started the server at least on
 - Externalized the position of the weapon in first person and in iron sights.
 - LaunchSEF.exe now works correctly on Windows XP.
 - Cut Content Restored: M1Super90 Defense shotgun added
-- Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them. This has been fixed.
+- Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them.
 - Fixed SEF bug: Wedges not depleting weight when used
 - Fixed SEF bug: AI-controlled officers were more focused on falling in than engaging suspects at times.
 - Fixed SEF bug: Beanbag shotguns tended to not work correctly.
 - Fixed SEF bug: New shotgun ammo types (0 buck, 1 buck, 4 buck) didn't have correct drag values.
+- Fixed SEF bug: Suspects would shoot at you while fleeing even if they couldn't hit you.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
-- Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
 - Fixed TSS bug: Duplicate servers in the server browser
 - Fixed TSS bug: Weird player count sorting in the server browser
 - Fixed TSS bug: Lightsticks don't drop if the player is wearing heavy armor
+- Fixed TSS bug: If a suspect unlocks a door, it will still be "known" as a locked door.
+- Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
 
 ### v5.3 ###
 Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
