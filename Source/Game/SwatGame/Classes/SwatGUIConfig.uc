@@ -138,15 +138,33 @@ var(MPSettings) config           eVoiceType     PreferredVoiceType "Selected voi
 // If it's set to RANDOM, then it will be re-cached when next queried
 var                               eVoiceType     CachedRandomVoice;
 
-var config bool bNoIronSights;		// Use old-style zoom?
-var config bool bHideFPWeapon;		// Hide first person weapon?
-var config bool bHideCrosshairs;	// Hide crosshairs at all times?
-var config bool bNoWeaponInertia;	// No weapon inertia?
-var() config int NotUsed;
-var() config int NotUsed2;
-var() config int NotUsed3;
-var() config int NotUsed4;
-var() config int NotUsed5;
+/*
+ * Usermod options, for extra storage space in SwatGUIConfig.uc without breaking the game.
+ * These were originally taken up by (pointless) network selection things which got migrated into constants.
+ * For strings, use ExtraStrOptions.
+ * For floats, booleans, and integers, use ExtraIntOptions.
+ * You might need to do some finangling in order for ExtraIntOptions to store the data correctly.
+ * --eezstreet
+ */
+
+// These enums can be for reference or direct use
+enum eExtraStrings
+{
+    ExtraStr_Dummy, // Not currently used
+};
+
+enum eExtraInts
+{
+    ExtraInt_IronsightsDisabled,    // Boolean
+    ExtraInt_ViewmodelDisabled,     // Boolean
+    ExtraInt_CrosshairDisabled,     // Boolean
+    ExtraInt_InertiaDisabled,       // Boolean
+};
+
+var() config            array<string>    ExtraStrOptions "Extra (usermod) options for saving, as strings";
+var() config            array<int>       ExtraIntOptions "Extra (usermod) options for saving, as integers";
+
+
 var(MPSettings) config           int           NetSpeedSelection "Selected speed for network connection";
 
 var(MPSettings) Config float MPPostMissionTime "Time (in seconds) between when the round has been completed and the MPPage is brought up";
@@ -189,7 +207,7 @@ var(GameSettings) Config Bool bShowHelp "If true, help text will be displayed fo
 var(GameSettings) Config Bool bAlwaysRun "If true, the player will run by default rather than walk";
 var(GameSettings) Config Bool bShowCustomSkins "If true, custom skins will be shown in MP games";
 
-var(GameSettings) int MPNameLength "The max length of the name the player will use for Multiplayer Games";
+var(GameSettings) const config int MPNameLength "The max length of the name the player will use for Multiplayer Games";
 var(GameSettings) localized String MPNameAllowableCharSet "The allowable character set for the name the player will use for Multiplayer Games";
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -708,4 +726,6 @@ defaultproperties
     VoiceTypeChoices(3)="Girard"
     VoiceTypeChoices(4)="Fields"
     VoiceTypeChoices(5)="Jackson"
+
+    ExtraIntOptions[3]=0
 }
