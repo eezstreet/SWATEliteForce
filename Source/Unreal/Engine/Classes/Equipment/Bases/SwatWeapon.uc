@@ -7,9 +7,9 @@ class SwatWeapon extends FiredWeapon
  */
 enum WeaponEquipType
 {
-  WeaponEquip_PrimaryOnly,
-  WeaponEquip_SecondaryOnly,
-  WeaponEquip_Either
+    WeaponEquip_PrimaryOnly,
+    WeaponEquip_SecondaryOnly,
+    WeaponEquip_Either
 };
 
 /*
@@ -19,16 +19,16 @@ enum WeaponEquipType
  */
 enum WeaponEquipClass
 {
-  WeaponClass_AssaultRifle,             // Assault Rifles (M4, M16, AKM, etc.)
-  WeaponClass_MarksmanRifle,            // Marksman Rifles (scoped rifles)
-  WeaponClass_SubmachineGun,            // Submachine Guns (MP5, G36C, Uzi, etc.)
-  WeaponClass_Shotgun,                  // Shotguns (M4, Nova, M870, BSG)
-  WeaponClass_LightMachineGun,          // Light Machine Guns (M249 SAW)
-  WeaponClass_MachinePistol,            // Machine Pistols; SMGs that don't have a stock (MP5K, TEC-9)
-  WeaponClass_Pistol,                   // Pistols (Desert Eagle, M1911, Glock, ... but not tasers!)
-  WeaponClass_LessLethal,               // Less-lethal shotguns, tasers, and pepperball
-  WeaponClass_GrenadeLauncher,          // Grenade Launchers (ARWEN 37, HK69)
-  WeaponClass_Uncategorized             // Not categorized! Find one!
+    WeaponClass_AssaultRifle,             // Assault Rifles (M4, M16, AKM, etc.)
+    WeaponClass_MarksmanRifle,            // Marksman Rifles (scoped rifles)
+    WeaponClass_SubmachineGun,            // Submachine Guns (MP5, G36C, Uzi, etc.)
+    WeaponClass_Shotgun,                  // Shotguns (M4, Nova, M870, BSG)
+    WeaponClass_LightMachineGun,          // Light Machine Guns (M249 SAW)
+    WeaponClass_MachinePistol,            // Machine Pistols; SMGs that don't have a stock (MP5K, TEC-9)
+    WeaponClass_Pistol,                   // Pistols (Desert Eagle, M1911, Glock, ... but not tasers!)
+    WeaponClass_LessLethal,               // Less-lethal shotguns, tasers, and pepperball
+    WeaponClass_GrenadeLauncher,          // Grenade Launchers (ARWEN 37, HK69)
+    WeaponClass_Uncategorized             // Not categorized! Find one!
 };
 
 /*
@@ -36,36 +36,36 @@ enum WeaponEquipClass
  */
 enum WeaponAimAnimationType
 {
-  WeaponAnimAim_Handgun,
-  WeaponAnimAim_SubmachineGun,
-  WeaponAnimAim_MachineGun,
-  WeaponAnimAim_Shotgun,
-  WeaponAnimAim_Grenade,
-  WeaponAnimAim_TacticalAid,
-  WeaponAnimAim_TacticalAidUse,
-  WeaponAnimAim_PepperSpray,
-  WeaponAnimAim_M4,
-  WeaponAnimAim_UMP,
-  WeaponAnimAim_P90,
-  WeaponAnimAim_Optiwand,
-  WeaponAnimAim_Paintball,
-  WeaponAnimAim_Cuffed
+    WeaponAnimAim_Handgun,
+    WeaponAnimAim_SubmachineGun,
+    WeaponAnimAim_MachineGun,
+    WeaponAnimAim_Shotgun,
+    WeaponAnimAim_Grenade,
+    WeaponAnimAim_TacticalAid,
+    WeaponAnimAim_TacticalAidUse,
+    WeaponAnimAim_PepperSpray,
+    WeaponAnimAim_M4,
+    WeaponAnimAim_UMP,
+    WeaponAnimAim_P90,
+    WeaponAnimAim_Optiwand,
+    WeaponAnimAim_Paintball,
+    WeaponAnimAim_Cuffed
 };
 
 enum WeaponLowReadyAnimationType
 {
-  WeaponAnimLowReady_Handgun,
-  WeaponAnimLowReady_SubmachineGun,
-  WeaponAnimLowReady_MachineGun,
-  WeaponAnimLowReady_Shotgun,
-  WeaponAnimLowReady_Grenade,
-  WeaponAnimLowReady_TacticalAid,
-  WeaponAnimLowReady_PepperSpray,
-  WeaponAnimLowReady_M4,
-  WeaponAnimLowReady_UMP,
-  WeaponAnimLowReady_P90,
-  WeaponAnimLowReady_Optiwand,
-  WeaponAnimLowReady_Paintball
+    WeaponAnimLowReady_Handgun,
+    WeaponAnimLowReady_SubmachineGun,
+    WeaponAnimLowReady_MachineGun,
+    WeaponAnimLowReady_Shotgun,
+    WeaponAnimLowReady_Grenade,
+    WeaponAnimLowReady_TacticalAid,
+    WeaponAnimLowReady_PepperSpray,
+    WeaponAnimLowReady_M4,
+    WeaponAnimLowReady_UMP,
+    WeaponAnimLowReady_P90,
+    WeaponAnimLowReady_Optiwand,
+    WeaponAnimLowReady_Paintball
 };
 
 /*
@@ -74,19 +74,19 @@ enum WeaponLowReadyAnimationType
 
 enum EIdleWeaponStatus
 {
-	IdleWeaponDoesNotMatter,
-  IdleWithSAW,
-  IdleWithMachineGun,
-	IdleWithG36,
-	IdleWithSubMachineGun,
-	IdleWithUMP,
-  IdleWithHandgun,
-	IdleWithShotgun,
-	IdleWithPaintballGun,
-	IdleWithGrenade,
-  IdleWithP90,
-	IdleWithAnyWeapon,
-  IdleWithoutWeapon
+    IdleWeaponDoesNotMatter,
+    IdleWithSAW,
+    IdleWithMachineGun,
+    IdleWithG36,
+    IdleWithSubMachineGun,
+    IdleWithUMP,
+    IdleWithHandgun,
+    IdleWithShotgun,
+    IdleWithPaintballGun,
+    IdleWithGrenade,
+    IdleWithP90,
+    IdleWithAnyWeapon,
+    IdleWithoutWeapon
 };
 
 /*
@@ -95,11 +95,11 @@ enum EIdleWeaponStatus
 
 enum EComplianceWeaponAnimation
 {
-  Compliance_Machinegun,
-  Compliance_Shotgun,
-  Compliance_SubmachineGun,
-  Compliance_CSBallLauncher,
-  Compliance_Handgun
+    Compliance_Machinegun,
+    Compliance_Shotgun,
+    Compliance_SubmachineGun,
+    Compliance_CSBallLauncher,
+    Compliance_Handgun
 };
 
 var(Firing) config int MagazineSize;
@@ -109,6 +109,7 @@ var(Firing) config WeaponLowReadyAnimationType LowReadyAnimation;
 var(Firing) config array<EIdleWeaponStatus> IdleWeaponCategory;
 var(Firing) config EComplianceWeaponAnimation ComplianceAnimation;
 var(Firing) protected config bool ShowCrosshairInIronsights "Whether to show the crosshair in ironsights";
+var(Firing) protected config bool WalkInIronsights "Whether to walk while in ironsights";
 
 // Manufacturer Information
 var(AdvancedDescription) protected localized config string Manufacturer         "The Manufacturer in the Advanced Information panel (localized)";
@@ -162,6 +163,11 @@ simulated function float GetChoke()
 simulated function bool ShouldHideCrosshairsInIronsights()
 {
   return !ShowCrosshairInIronsights;
+}
+
+simulated function bool ShouldWalkInIronsights()
+{
+    return WalkInIronsights;
 }
 
 simulated function UpdateAmmoDisplay()
@@ -410,4 +416,5 @@ defaultproperties
   bPenetratesDoors=true
   ZoomedAimErrorModifier = 0.75
   ComplianceAnimation=Compliance_Handgun
+  WalkInIronsights=true
 }

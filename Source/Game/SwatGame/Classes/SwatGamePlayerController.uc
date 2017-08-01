@@ -5698,6 +5698,9 @@ function ServerSetAlwaysRun( bool NewValue )
 function HandleWalking()
 {
     local bool WantsToWalk; //versus run
+    local HandheldEquipment ActiveItem;
+
+    ActiveItem = Pawn.GetActiveItem();
 
     if ( IsLocationFrozen() )
     {
@@ -5715,7 +5718,7 @@ function HandleWalking()
 	if ( Pawn != None )
     {
         //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version.
-        WantsToWalk = WantsZoom || bool(bRun) == bAlwaysRun;
+        WantsToWalk = (WantsZoom && ActiveItem.ShouldWalkInIronsights()) || bool(bRun) == bAlwaysRun;
 		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') );
 
         if (aForward == 0 && aStrafe == 0)

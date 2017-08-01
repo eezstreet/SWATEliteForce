@@ -1298,6 +1298,11 @@ simulated function bool ShouldHideCrosshairsInIronsights()
   return false; // Only weapons do
 }
 
+simulated function bool ShouldWalkInIronsights()
+{
+    return false; // Only weapons do
+}
+
 simulated function vector GetIronsightsLocationOffset()
 {
 	local vector IronsightsLocation;
