@@ -342,7 +342,7 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
     GetPerfectFireStart(PerfectFireStartLocation, PerfectFireStartDirection);
 
     StartTrace = Pawn(Owner).GetEyeLocation();
-    EndTrace = Target.Location;
+    EndTrace = Pawn(Target).GetChestLocation();
 
     Distance = VSize(EndTrace - StartTrace);
 

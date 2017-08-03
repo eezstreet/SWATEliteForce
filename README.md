@@ -763,6 +763,7 @@ Once you have selected your map settings and have started the server at least on
 - Added a Discord and Wiki button to the main menu
 - Removed the CHECK FOR PATCH button in the server browser; added a DOWNLOAD PLUGIN button.
 - Removed map filter from server browser filter menu (was causing lag)
+- C2 now triggers dynamic music (like grenades and the AI shooting does)
 - In CO-OP, instead of the Ready button disabling the Equipment panel, hitting the Equipment button will automatically Un-Ready yourself.
 - Added a console command to change the position of the weapon in first person.
 - Externalized the position of the weapon in first person and in iron sights.
@@ -774,6 +775,7 @@ Once you have selected your map settings and have started the server at least on
 - Fixed SEF bug: Beanbag shotguns tended to not work correctly.
 - Fixed SEF bug: New shotgun ammo types (0 buck, 1 buck, 4 buck) didn't have correct drag values.
 - Fixed SEF bug: Suspects would shoot at you while fleeing even if they couldn't hit you.
+- Fixed SEF bug: Reynolds couldn't have Optiwand equipped if it wasn't in his fifth tactical slot.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
 - Fixed TSS bug: Duplicate servers in the server browser
 - Fixed TSS bug: Weird player count sorting in the server browser

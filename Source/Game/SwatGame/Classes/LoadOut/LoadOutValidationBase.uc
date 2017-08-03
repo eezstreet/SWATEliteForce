@@ -54,7 +54,7 @@ simulated function PrintLoadOutSpecToMPLog()
 function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
 {
     local class<FiredWeapon> Weap;
-    local class OptiwandClass, AmmoBandolierClass, C2Class, PepperSprayClass;
+    local class OptiwandClass;
     local int i;
 
     switch( pock )
