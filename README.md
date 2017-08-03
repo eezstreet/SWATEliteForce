@@ -763,6 +763,7 @@ Once you have selected your map settings and have started the server at least on
 - Added a Discord and Wiki button to the main menu
 - Removed the CHECK FOR PATCH button in the server browser; added a DOWNLOAD PLUGIN button.
 - Removed map filter from server browser filter menu (was causing lag)
+- C2 now triggers dynamic music (like grenades and the AI shooting does)
 - In CO-OP, instead of the Ready button disabling the Equipment panel, hitting the Equipment button will automatically Un-Ready yourself.
 - Added a console command to change the position of the weapon in first person.
 - Externalized the position of the weapon in first person and in iron sights.
