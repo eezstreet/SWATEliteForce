@@ -74,11 +74,8 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
     if ( DynamicSpec == None )
         return;
 
-    for( i = 0; i <= Pocket.Pocket_Unused2; i++ )
+    for( i = 0; i <= Pocket.Pocket_Toolkit; i++ )
     {
-        if ( i == Pocket.Pocket_Detonator || i == Pocket.Pocket_Cuffs || i == Pocket.Pocket_IAmCuffed )
-            continue;
-
         if( ValidateEquipmentForPocket( Pocket(i), DynamicSpec.LoadOutSpec[i] ) &&
             ValidForLoadoutSpec( DynamicSpec.LoadOutSpec[i], Pocket(i) ) )
 		{
