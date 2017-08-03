@@ -2108,7 +2108,7 @@ event bool CanHit(Actor Target)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
 	StartTrace = GetEyeLocation();
-    EndTrace = Target.Location;
+    EndTrace = Pawn(Target).GetChestLocation();
 
     if(Value)
     {
