@@ -77,7 +77,7 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
     for( i = 0; i <= Pocket.Pocket_Toolkit; i++ )
     {
         if( ValidateEquipmentForPocket( Pocket(i), DynamicSpec.LoadOutSpec[i] ) &&
-            ValidForLoadoutSpec( DynamicSpec.LoadOutSpec[i], Pocket(i) ) )
+            DynamicSpec.ValidForLoadoutSpec( DynamicSpec.LoadOutSpec[i], Pocket(i) ) )
 		{
 			LoadOutSpec[i] = DynamicSpec.LoadOutSpec[i];
 		}
@@ -172,7 +172,6 @@ simulated protected function ValidatePocketCustomSkin(bool IsSuspect)
 {
 	local int i;
 	local int NumEquipment;
-	local class<actor> DLOClass;
 
 	AssertWithDescription(LoadOutSpec[Pocket.Pocket_CustomSkin] == None, "The custom skin entry in LoadOutSpec must be None, but is currently "$LoadOutSpec[Pocket.Pocket_CustomSkin]$". Setting to None");
 
