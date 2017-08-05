@@ -400,9 +400,13 @@ latent function Flee()
 
     // post the move to goal and wait for it to complete
     CurrentMoveToActorGoal.postGoal(self);
+
+	// trigger the speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerCallForHelpSpeech();
+
     WaitForGoal(CurrentMoveToActorGoal);
 
-    // remove the most to goal
+    // remove the move to goal
     CurrentMoveToActorGoal.unPostGoal(self);
 	CurrentMoveToActorGoal.Release();
 	CurrentMoveToActorGoal = None;
