@@ -400,6 +400,8 @@ latent function LockDoor(Door TargetDoor)
 		CurrentMoveToDoorGoal.SetWalkThreshold(0.0);
 
 		CurrentMoveToDoorGoal.postGoal(self);
+		// do some speech
+		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerBarricadeSpeech();
 		WaitForGoal(CurrentMoveToDoorGoal);
 		CurrentMoveToDoorGoal.unPostGoal(self);
 
@@ -557,7 +559,7 @@ Begin:
 	// trigger the barricade speech based on a die roll
 	if (FRand() < ReactionSpeechChance)
 	{
-		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerBarricadeSpeech();
+		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerBarricadingSpeech();
 	}
 
 	// crouch if we're supposed to
