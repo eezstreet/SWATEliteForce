@@ -769,6 +769,7 @@ Once you have selected your map settings and have started the server at least on
 - Externalized the position of the weapon in first person and in iron sights.
 - LaunchSEF.exe now works correctly on Windows XP.
 - Cut Content Restored: M1Super90 Defense shotgun added
+- Cut Content Restored: Enemies will now use the unused "ReportedBarricading" lines.
 - Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them.
 - Fixed SEF bug: Wedges not depleting weight when used
 - Fixed SEF bug: AI-controlled officers were more focused on falling in than engaging suspects at times.
@@ -782,6 +783,8 @@ Once you have selected your map settings and have started the server at least on
 - Fixed TSS bug: Lightsticks don't drop if the player is wearing heavy armor
 - Fixed TSS bug: If a suspect unlocks a door, it will still be "known" as a locked door.
 - Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
+- Fixed TSS bug: The enemy "CallForHelp" speech was rarely/if at all triggering.
+- Fixed TSS bug: The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
 
 ### v5.3 ###
 Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
