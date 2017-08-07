@@ -855,12 +855,13 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   //log("Update the list of weapons for the current category...");
   RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
 
-  //log("Set the selected weapon...");
+  log("Set the selected weapon: CurrentWeaponEquipClass="$CurrentWeaponEquipClass$", CurrentWeapon="$CurrentWeapon);
   CategoryNum = MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
   WeaponNum = MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
 
   if(CategoryNum == -1 || WeaponNum == -1) {
     // The equipment failed to validate. Try again.
+    log("!! Equipment could not be found, resetting to default !!");
     WeaponNum = 0;
     if(bPrimaryWeapon) {
       CurrentWeaponEquipClass = DefaultPrimaryClass;
@@ -1053,21 +1054,22 @@ defaultproperties
 {
 	FailedToValidate = -1
 
-  EquipmentCategoryNames[0]="Assault Rifles"
-  EquipmentCategoryNames[1]="Marksman Rifles"
-  EquipmentCategoryNames[2]="Submachine Guns"
-  EquipmentCategoryNames[3]="Shotguns"
-  EquipmentCategoryNames[4]="Light Machine Guns"
-  EquipmentCategoryNames[5]="Machine Pistols"
-  EquipmentCategoryNames[6]="Pistols"
-  EquipmentCategoryNames[7]="Less Lethal"
-  EquipmentCategoryNames[8]="Grenade Launchers"
-  EquipmentCategoryNames[9]="Uncategorized"
+    EquipmentCategoryNames[0]="Uncategorized"
+    EquipmentCategoryNames[1]="Assault Rifles"
+    EquipmentCategoryNames[2]="Marksman Rifles"
+    EquipmentCategoryNames[3]="Submachine Guns"
+    EquipmentCategoryNames[4]="Shotguns"
+    EquipmentCategoryNames[5]="Light Machine Guns"
+    EquipmentCategoryNames[6]="Machine Pistols"
+    EquipmentCategoryNames[7]="Pistols"
+    EquipmentCategoryNames[8]="Less Lethal"
+    EquipmentCategoryNames[9]="Grenade Launchers"
+    EquipmentCategoryNames[10]="No Weapon"
 
-  DefaultPrimaryClass=WeaponClass_AssaultRifle
-  DefaultSecondaryClass=WeaponClass_Pistol
+    DefaultPrimaryClass=WeaponClass_AssaultRifle
+    DefaultSecondaryClass=WeaponClass_Pistol
 
-  RatingString="NIJ 0101.05 Rating: "
-  WeightString="Weight: "
-  SpecialString="Extra Protection: "
+    RatingString="NIJ 0101.05 Rating: "
+    WeightString="Weight: "
+    SpecialString="Extra Protection: "
 }

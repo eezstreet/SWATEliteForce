@@ -19,6 +19,7 @@ enum WeaponEquipType
  */
 enum WeaponEquipClass
 {
+    WeaponClass_Uncategorized,            // Not categorized! Find one!
     WeaponClass_AssaultRifle,             // Assault Rifles (M4, M16, AKM, etc.)
     WeaponClass_MarksmanRifle,            // Marksman Rifles (scoped rifles)
     WeaponClass_SubmachineGun,            // Submachine Guns (MP5, G36C, Uzi, etc.)
@@ -28,7 +29,7 @@ enum WeaponEquipClass
     WeaponClass_Pistol,                   // Pistols (Desert Eagle, M1911, Glock, ... but not tasers!)
     WeaponClass_LessLethal,               // Less-lethal shotguns, tasers, and pepperball
     WeaponClass_GrenadeLauncher,          // Grenade Launchers (ARWEN 37, HK69)
-    WeaponClass_Uncategorized             // Not categorized! Find one!
+    WeaponClass_NoCategory,               // No category (No Weapon)
 };
 
 /*
