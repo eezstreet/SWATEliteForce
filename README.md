@@ -1,20 +1,23 @@
 # INTRODUCTION #
 
-SWAT 4 is a fantastic game. It took all of the shortcomings of SWAT 3 - mainly the poor GUI and lack of realism and made it into a nicely packaged product.
+SWAT 4 is a fantastic, if horrendously bugged product. I've spent countless hours playing the game, mostly in CO-OP on servers new and old, and there always seemed to be a glimmer of potential that has never been truly realized by games that followed it.
 
-Unfortunately it's very apparent that this game was rushed. There's tons of bugs, especially in multiplayer, and a cursory glance at the files reveals loads of missing content that never made the final cut of the game.
-I spoke to one of the programmers - Terrance Cohen - through email, about the game. They received a great deal of input from SWAT and police alike to make the most realistic game that they could but ultimately had to cut quite a bit of their original vision down to make the game more appealing towards...well, gamers.
-I think I could do better.
-There are very many glaring inaccuracies with the game. For starters, the game doesn't penalize you for killing hostages with the snipers, which I think is silly. Suspects have a much greater variety of behaviors and are made to be more realistic. There's some rather baffling logic here. You can't equip your officers with gas masks and the ammo pouch doesn't display what actually happens with your weapons.
+The best way to explain SWAT: Elite Force in short is a complete overhaul of the original game. The broken AI is fixed, cut content has been restored, and every weapon is precisely calibrated to its real world counterpart. The main campaign, a combination of the vanilla game and The Stetchkov Syndicate, has a carefully crafted unlock system that you can play through with a friend to complete. If that isn't what you'd prefer, there's also an All Missions campaign which allows you to play through any mission, including custom ones on the hard drive, with any equipment in the game, including some which is multiplayer sepcific. Even after you've completed the campaign, there's various flavors of permadeath to tackle...if you think you're Elite enough...
 
-Enter SWAT Elite Force.
-I originally wanted to try and market this mod as a police officer trainer, but I stopped getting interest in the project after encountering some bugs. I picked the game up again and started playing on |ESF| and remembered this mod. So, I started work on it again and took a much harder look at the engine, trying to figure out how everything works, and resumed work on it. I think I've got it to the point where people would really like it.
+The gameplay itself has been drastically changed. You can now aim down the sights, and there are now traps to disarm. Doors can have their lock checked with the melee key. Suspects can employ a wide variety of personality types, from your usual, sideways-shooting crook to insane domestic terrorists which murder civilians at whim to heavily armored thugs with light machine guns. Your team is much, much smarter too, and with the restored Speech Recognition feature, you can even order them around with an attached microphone. You'll need the extra speed too, because incapacitated civilians that spawn around the map will die if you aren't quick enough, which will impact your score. The command system has been vastly improved with a new LEADER THROW set of commands that let you be the one to throw the grenade, and SEARCH AND SECURE, which orders your officers to restrain all compliant hostages/suspects and secure all evidence in range. After restraining a suspect or hostage, your team will also report it to TOC.
 
-I wish I could do more with the game. I'm not an artist by any means, so a lot of the other things that I wish I could do (TASER rounds for shotguns, fixing a lot of the bad bump maps and flat shaded textures) aren't in the pipes. I do plan on dabbling with maps at some point, so there may be a custom campaign. I may include some community maps as part of the new campaign.
+The equipment system is incredibly robust. There's over 40 pieces of new equipment, some of which was cut from the original game. You'll need to manage your team's weight and bulk. Too much equipment, and an officer will become too overencumbered. By carrying less weight, you and your officers will move faster, and by carrying less bulk, you and your officers will interact with things faster. In singleplayer, you can also pick your team's helmet and body armor, which protect you similar to how they did in multiplayer. The breaching tab has been removed - instead, there are now six tactical slots and the breaching equipment is available as other equipment. There's twice as many ammo options as in the original game, and the choices matter, since new factors like drag (how much momentum the bullet loses over distance) and ricochet potential (how likely a bullet is to bounce off a surface) vary. Grenades and wedges come in 3-packs, at the cost of consuming more weight and bulk. Less lethal equipment is truly less lethal, since tasers may incapacitate or even kill the elderly, those in poor health, or drug users, and beanbags, stingers and flashbangs can be hazardous at close range.
 
-Since Version 3, the mod has gained a large following. I've since been able to enlist the help of others to work on the mod, and it's become a team effort in improving the game.
+The game is much more approachable as well, with a cleaned up user interface which functions well on modern widescreen resolutions. There's also an FOV slider and a mouse smoothing checkbox, preventing you from having to tinker with game files to accomplish the same thing. Perhaps most importantly, the game actually warns you when you've encountered a penalty. 
+
+Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be used to train police officers in a similar vein to Canadian Forces: Direct Action. After peeking at the games files however, I uncovered a wealth of unused content and decided to contact the original developers about the game. Over time, the game became a much larger, insane overhaul. It's been called the best way to play the game by most people, and I'm proud of that. Perhaps you'll find it to be the same.
+
+--eezstreet
+
+
 
 # TABLE OF CONTENTS #
+
 1. How to Install
 2. Changes, Summarized
 3. Frequently Asked Questions (FAQ)
@@ -29,9 +32,12 @@ Since Version 3, the mod has gained a large following. I've since been able to e
 8. Credits
 9. License
 
+
 # HOW TO INSTALL #
+
 Copy the folder containing this folder (SEF) into your SWAT 4 directory (the one containing Content and ContentExpansion).
-By default, this folder is located in C:/Program Files (x86)/SWAT 4 or C:/Program Files (x86)/Sierra/SWAT 4
+For the CD copy of the game, this folder is located in C:/Program Files (x86)/SWAT 4 or C:/Program Files (x86)/Sierra/SWAT 4
+For the GOG version of the game, it's usually located in C:/GOG Games/SWAT 4
 
 !!! CAUTION !!!
 Do not extract the SEF folder *into* your Content or ContentExpansion folders (and therefore overwrite things), otherwise the mod will not work correctly.
@@ -43,77 +49,92 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 
 NOTE: You may run into an issue with the game not saving your settings, or throwing an assertion failure at times in the Settings menu. This is mostly a problem with Windows Vista and up; try giving the folder write permissions or "Total Control". Alternatively you can make your SWAT4x.exe run in administrator mode.
 
+
 # CHANGES, SUMMARIZED #
-	* The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
-	* New campaign options! Now you will have a good reason to create more than one campaign...
-		** A new EXTRA MISSIONS campaign. These are curated missions which have voice acting, full maps, and scripting, and they are designed to feel like part of the original game.
-		** Now you can create an ALL MISSIONS campaign. This pulls all of the installed maps from your hard drive and makes them into a campaign, albeit without briefings. Great for use with an installed custom map pack, such as the Mega Map Pack!
-		** ..and of course, the original SWAT 4 + TSS missions are a third campaign option.
-		** PERMADEATH. There are two Permadeath options, for the extra challenge. AI Permadeath makes slain SWAT officers never come back, and Player Permadeath ends your campaign once you die.
-		** CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath) campaign in multiplayer. Help your friends complete their campaigns!
-	* Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
-		** Suspects will also try to shoot at you as they're fleeing.
-		** Suspects now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
-	* Smarter Officer AI!
-		** Upon restraining a target, SWAT officers will now report it to TOC automatically!
-		** SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
-		** SWAT officers can now take cover like suspects do (including leaning around corners)
-		** SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
-		** SWAT officers will drop a lightstick after clearing a room.
-	* Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
-		** This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
-	* New secondary objective: collect drug evidence. Static drug bags have been replaced with new ones that can be collected.
-		** The bags count towards the "Secure All Evidence" procedure.
-	* More equipment options.
-		** Over 25 new pieces of equipment have been added, including shotguns, assault rifles, submachine guns, tactical gear, and armor.
-		** The player can carry armor and all helmet options in singleplayer.
-		** The breaching slot has been removed and replaced with a sixth tactical slot. The breaching shotgun is a weapon now.
-		** The player can select how many magazines they would like to bring in the mission.
-		** There is a new Advanced Information Panel in the loadout menu that lets you view information such as manufacturer, magazine size, etc.
-		** Heavy armor now shows a health percentage on the HUD. Heavy armor at 100% health can stop almost any bullet in the game, but as it takes damage, it loses the ability to protect you. It can only be shattered by bullets and sabot slugs, not buckshot or other rounds.
-		** 3-packs have been added for wedges and grenades.
-		** All secondary weapons equippable as primaries, and some primaries equippable as secondaries.
-	* Equipment is also much more realistic.
-		** Weapons can be aimed down the sights, for better accuracy, using the zoom key.
-		** All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is.
-		** Bullets of certain types (FMJ, buckshot, etc) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
-		** Bullets are now subject to drag; they lose damage over distance.
-		** Less lethal equipment is now actually LESS LETHAL. Some equipment (tasers, beanbag shotgun) can incapacitate or kill if used incorrectly.
-		** All equipment has been modified to use real values.
-		** Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
-		** For more information, see the EQUIPMENT section.
-	* Doors behave more realistically
-		** Any shotgun can be used to breach any door.
-		** A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The M870 Breaching can breach any door in one shot.
-		** When doors are breached with shotguns, they do not swing open like when breached with C2. You have to shoot the knob and then open the door.
-		** Broken doors can now be closed and/or wedged.
-	* Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
-		** Functions exactly the same as in the Speech Recognition Improvement mod by MulleDK9. Not all commands from that mod are present however.
-		** See the SpeechCommands.txt file for more information on how to issue orders using the Speech Command Interface.
-	* Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.
-		** You can now issue BREACH commands on unlocked doors.
-		** You can now pick which style of BREACH you would like - either C2 & CLEAR or SHOTGUN & CLEAR
-		** New CHECK FOR TRAPS command allows your AI companions to check doors for those all-important traps.
-		** LEADER THROW commands: Now you can be the one to throw the grenade!
-		** Lightsticks are broken into two commands: DROP LIGHTSTICK (where you order the nearest AI officer to drop a lightstick at their feet) and MARK WITH LIGHTSTICK (where you order an AI to drop a lightstick at what you're aiming at)
-	* Harsher penalties.
-		** Hostages that are incapacitated at the start can now become DOAs if not reported in time. This has an impact on your score.
-		** Hostages and suspects that become incapacitated or killed now need to be reported to TOC, otherwise there is a penalty.
-		** AI controlled officers can now trigger Unauthorized Use of Force when they use C2.
-		** Snipers can now trigger Unauthorized Use of Force and Unauthorized Use of Deadly Force.
-		** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
-		** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
-	* Important QOL (quality-of-life) and playability features that are essential to playing the game.
-		** There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
-		** Option to disable the initial dispatch briefings.
-		** The game will tell you when you incur a penalty or complete an objective.
-		** Wedges, grenades, lightsticks and C2 all show how many pieces you have left, while you have them equipped.
-	* Multiplayer improvements!
-		** Snipers are now available in multiplayer.
-		** New kinds of voting: Next Map and End Current Map
-		** The chat now reports which room a person is when they send a chat message
-		** You can enable or disable friendly fire in CO-OP.
-		** You can now un-ready yourself in the pre-game lobby.
+
+The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
+
+New campaign options! Now you will have a good reason to create more than one campaign...
+ * A new EXTRA MISSIONS campaign. These are curated missions which have voice acting, full maps, and scripting, and they are designed to feel like part of the original game.
+ * Now you can create an ALL MISSIONS campaign. This pulls all of the installed maps from your hard drive and makes them into a campaign, albeit without briefings. Great for use with an installed custom map pack, such as the Mega Map Pack!
+ * ..and of course, the original SWAT 4 + TSS missions are a third campaign option.
+ * PERMADEATH. There are two Permadeath options, for the extra challenge. AI Permadeath makes slain SWAT officers never come back, and Player Permadeath ends your campaign once you die.
+ * CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath) campaign in multiplayer. Help your friends complete their campaigns!
+
+Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
+ * Suspects will also try to shoot at you as they're fleeing.
+ * Suspects may now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
+ * Suspects have new equipment and may equip heavy armor.
+
+Smarter Officer AI!
+ * Upon restraining a target, SWAT officers will now report it to TOC automatically!
+ * SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
+ * SWAT officers can now take cover like suspects do (including leaning around corners)
+ * SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
+ * SWAT officers will drop a lightstick after clearing a room.
+
+Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
+ * This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
+
+New secondary objectives.
+ * Some maps have drug bags which may need to be collected to get a perfect score.
+ * Incapacitated civilians may bleed out and die if they aren't reported to TOC in time, which impacts your score slightly.
+
+More equipment options.
+ * Over 40 new pieces of equipment have been added, including shotguns, assault rifles, submachine guns, tactical gear, and armor.
+ * The player can carry armor and all helmet options in singleplayer.
+ * The breaching tab is removed and replaced with a sixth tactical slot.
+ * The player can select how many magazines they would like to bring in the mission.
+ * Heavy armor now shows a health percentage on the HUD. Heavy armor at 100% health can stop almost any bullet in the game, but as it takes damage, it loses the ability to protect you. It can only be shattered by bullets and sabot slugs, not buckshot or other rounds.
+ * 3-packs have been added for wedges and grenades.
+ * All secondary weapons equippable as primaries, and some primaries now equippable as secondaries.
+
+Equipment is also much more realistic.
+ * Weapons can be aimed down the sights, for better accuracy, using the zoom key.
+ * All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is.
+ * Bullets of certain types (FMJ, buckshot, etc) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
+ * Bullets are now subject to drag; they lose damage over distance.
+ * Less lethal equipment is now actually LESS LETHAL. Some equipment (tasers, beanbag shotgun) can incapacitate or kill if used incorrectly.
+ * All equipment has been modified to use real values.
+ * Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
+
+Doors behave more realistically
+ * Any shotgun can be used to breach any door.
+ * A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The M870 Breaching can breach any door in one shot.
+ * When doors are breached with shotguns, they do not swing open like when breached with C2. You have to shoot the knob and then open the door.
+ * Broken doors can now be closed and/or wedged.
+
+Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
+ * See the SpeechCommands.md file for more information on how to issue orders using the Speech Command Interface.
+
+Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.
+ * You can now issue BREACH commands on unlocked doors.
+ * You can now pick which style of BREACH you would like - either C2 & CLEAR or SHOTGUN & CLEAR
+ * New CHECK FOR TRAPS command allows your AI companions to check doors for those all-important traps.
+ * LEADER THROW commands: Now you can be the one to throw the grenade!
+ * Lightsticks are broken into two commands: DROP LIGHTSTICK (where you order the nearest AI officer to drop a lightstick at their feet) and MARK WITH LIGHTSTICK (where you order an AI to drop a lightstick at what you're aiming at)
+ * New RESTRAIN ALL, SECURE ALL, DISABLE ALL and SEARCH AND SECURE commands order officers to secure all targets near the player.
+
+Harsher penalties for tougher gameplay.
+ * Hostages and suspects that become incapacitated or killed now need to be reported to TOC, otherwise there is a penalty.
+ * AI controlled officers can now trigger Unauthorized Use of Force when they use C2.
+ * Snipers can now trigger Unauthorized Use of Force and Unauthorized Use of Deadly Force.
+ ** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
+ ** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
+
+Important QOL (quality-of-life) and playability features that are essential to playing the game.
+ * There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
+ * Option to disable the initial dispatch briefings.
+ * The game will tell you when you incur a penalty or complete an objective.
+ * Wedges, grenades, lightsticks and C2 all show how many pieces you have left, while you have them equipped.
+ * You can now assign loadout tabs (or whole loadouts) to one officer, a team, or the whole element.
+
+Multiplayer improvements!
+ * Snipers are now available in multiplayer.
+ * New kinds of voting: Next Map and End Current Map
+ * The chat now reports which room a person is when they send a chat message
+ * You can enable or disable friendly fire in CO-OP.
+ * You can now un-ready yourself in the pre-game lobby.
 
 
 # FREQUENTLY ASKED QUESTIONS (FAQ) #
@@ -235,22 +256,22 @@ Whether or not a shotgun breaches the door successfully is random and depends up
 Generally it takes about 2-3 shots on a wooden door and 3-4 shots on a metal door to breach it successfully.
 
 ## BEANBAGS DON'T WORK!
-Beanbags don't stun people unless they do damage. Damage falls off over distance and is negated by body armor to some extent.
-For best results, aim for the limbs (arms/legs) where a target is less likely to be fatally hit (and is less armored at the same time)
+Beanbags can be negated by body armor. Try aiming for unarmored parts of the body.
 
 ## HOW DO I DISARM A TRAP?
 You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around. Or just take the penalty.
 
+
 # KNOWN ISSUES #
+
 Please read the FAQ before looking here! It's entirely possible that what you are seeing is intentional behavior.
   * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
-  * Seems to crash in specific circumstances on doors, such as trying to blow a door that's currently being closed. Not sure if it's an original game bug.
-  * Sometimes crashes with a RotateActorAction, for reasons that aren't known.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
   * Occasionally in an All Missions campaign it will display the wrong equipment icons in the loadout menu for some pieces of equipment.
-  * 
+  * SWAT officers will stop following you or covering an area when they engage with a suspect. Problem of the original game.
   * "gui_tex package version mismatch" when joining a server --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
+
 
 # OTHER MINOR CHANGES #
 
@@ -406,9 +427,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- Changed the name (TASER C2 Series Stun Gun)
 	- Changed the description
 	- Reduced the range (The C2 series can only fire up to 15 feet)
-		This is good for balance too!
 	- Like the TASER stun gun, the Cobra stun gun has a chance to incapacitate or kill hostages.
-		The double fire mode doesn't increase the chance of cardiac arrest, but it does increase lethality. Use caution.
 	- May now be equipped as a Primary Weapon
 	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
 * Colt Python:
@@ -429,7 +448,12 @@ All weapons have been changed to have correct muzzle velocities.
 * Helmet:
 	- Renamed to Tactical Helmet
 	- Provides protection against flashbangs in singleplayer
+* Gas Mask:
+	- Renamed to Respirator
+	- View obstruction effect removed
+	- In the SWAT 4 + TSS campaign, this item must be unlocked.
 * C2:
+	- Now available as a Tactical item
 	- Increased the damage radius, stun angle and stun radius. It is riskier to use C2.
 * Pepperball Gun:
 	- May now be equipped as a Secondary Weapon
@@ -442,21 +466,21 @@ All weapons have been changed to have correct muzzle velocities.
 * M4Super90:
 	- Now fires in a spread that isn't dictated by crosshair accuracy
 	- May now be equipped as a Secondary Weapon
-	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck
+	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck, Frangible Breaching
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
 	- Corrected magazine size (5 -> 7). SWAT 4 uses the magazine size from a civilian version of the shotgun. The Law Enforcement and Military models have 7 round magazines.
 	- Can breach doors; chance to breach is dependent on ammo type
 * Nova Pump:
 	- Now fires in a spread that isn't dictated by crosshair accuracy
 	- Corrected invalid magazine size (8 -> 7)
-	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck
+	- Added new ammo types: 000 Buck, 0 buck, 1 buck, 4 buck, Frangible Breaching
 	- Renamed "12 Gauge Slug" -> "Sabot Slug"
 	- Can breach doors; chance to breach is dependent on ammo type
 * Added three new head armor items:
 	- Riot Helmet: Offers slightly less protection than the Helmet, but also cuts Pepper Spray and Gas durations in half
 	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
 	- S10 Helmet: Offers protection from CS gas and pepper spray, as well as ballistic protection. However, it is bulky and restricts the field of view.
-* Added new weapons from the SAS mod, most have a suppressor as well:
+* Added new weapons from the SAS mod, most have a suppressed version as well:
 	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine. (no silenced version)
 	- SG552 Commando: Versatile assault rifle
 	- HK33: Heavy-duty assault rifle (does not include a silenced version, but has a marksman version)
@@ -468,6 +492,11 @@ All weapons have been changed to have correct muzzle velocities.
 	- Remington M870 Shotgun: Shortened shotgun that can be equipped as primary or secondary weapon (no silenced version)
 * Added new weapons (exclusive to this mod):
 	- Less Lethal M870: Beanbag shotgun available as a secondary.
+	- M870 Breaching: Technically the breaching shotgun from the original game, now as an actual weapon.
+	- M1Super90 Shotgun: Cut weapon from the original game.
+* Added 3-Packs (tactical) of the following. They are equivalent weight and bulk of five items:
+	- Grenades
+	- Wedges
 * Ammo Pouch:
 	- Removed.
 
@@ -658,7 +687,8 @@ BOTH PLAYERS will need to do the following:
 Download and install GameRanger. It can be found at http://gameranger.com
 Next, GameRanger will automatically detect SWAT 4 and SWAT 4: The Stetchkov Syndicate, if all is OK.
 You may need to manually detect these, if GameRanger doesn't do it for you.
-Then, you will need to modify the Stetchkov Syndicate game in Gameranger so it points to the LaunchSEF.exe file in SEF/Extras/LaunchSEF.exe.
+You will need to rename the LaunchSEF.exe in SEF/Extras to SWAT4X.exe so Gameranger will recognize it. (It's named LaunchSEF.exe so that it isn't automatically detected!)
+Then, you will need to modify the Stetchkov Syndicate game in Gameranger so it points to the Swat4X.exe file in SEF/Extras/Swat4X.exe.
 
 THE HOST will need to do the following:
 Create a game room, as a SWAT 4: The Stetchkov Syndicate game. (TIP: if this is going to be a publicly joinable game, be sure to mention it's using the SEF mod and specify the version!)
@@ -669,6 +699,14 @@ The other players will automatically connect to your game while you are loading 
 THE CLIENT will need to do the following:
 Join a public game, or your friend's game. That's all you really need to do.
 
+### TROUBLESHOOTING ###
+**NOTE: If you have the mod installed incorrectly, LaunchSEF.exe won't work!**
+Make sure you have the Microsoft Visual Studio 2017 Redistributable. It is required to run LaunchSEF.exe and other applications. Download it here: 
+
+64-bit operating system: https://go.microsoft.com/fwlink/?LinkId=746572
+32-bit operating system: https://go.microsoft.com/fwlink/?LinkId=746571
+
+If GameRanger "aborts" when it launches, you may have some application (antivirus?) interfering with LaunchSEF.exe. If this happens, copy all .exe and .dll files from ContentExpansion/System into SEF/System and point GameRanger to the Swat4X.exe that is in SEF/System. This is kind of an ultra last resort option however!
 
 ## Traditional Method (TCP/IP) ##
 SWAT: Elite Force v4 was the first version of this mod to allow for multiplayer play. v5 introduced Campaign CO-OP and allowed for publishing of games to Swat4Stats without a CD-key (removing DRM that GOG didn't).
@@ -691,9 +729,9 @@ Once you have selected your map settings and have started the server at least on
 
 #### MAJOR FEATURES ####
 - First person improvements!
-  * By hitting the zoom key, you will transition into Iron Sights!
+  * By hitting the zoom key, you will transition into (fully 3D) Iron Sights! While in Iron Sights, you suffer less recoil and firing your weapon affects your accuracy less. The visual representation of iron sights can be disabled in favor of the old behavior in the Game Options menu, if you prefer.
   * Lightsticks are thrown like grenades now. Chuck them across the room, or just drop them at your feet!
-  * Tactical equipment now shows how many items you have left on the HUD, so you are never left guessing!
+  * Tactical equipment (grenades, lightsticks, C2, pepper spray, wedges) now show how many you have in reserve on the HUD.
 - Equipment changes!
   * The breaching tab has been removed and a sixth tactical slot has been added.
   * C2 is now considered a tactical piece of equipment, and the breaching shotgun is a weapon. The breaching shotgun will breach a door 100% of the time, unlike other shotguns where this chance is random.
@@ -704,18 +742,17 @@ Once you have selected your map settings and have started the server at least on
   * The gas mask is now called the Respirator and no longer restricts field of view. A new gas mask, the S10 Helmet, has been added!
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
-     * SECURE ALL, RESTRAIN ALL and DISABLE ALL commands order your squad to search the entire map. SEARCH AND SECURE combines RESTRAIN ALL and SECURE ALL. 
-     * NOTE: SECURE ALL will not look for drug bags until the mission is complete. This is so your team will not rush to secure mission objectives that are across the map.
+     * SECURE ALL, RESTRAIN ALL, and DISABLE ALL will secure all evidence, restrain all compliant hostages/suspects, or disable all devices in a radius around the player, OR everything in the same room (whichever is farther). SEARCH AND SECURE combines all three of these commands.
   * The lightstick commands got moved back to the DEPLOY submenu, and all of the DEPLOY commands were reorganized based on how frequently they are used.
   * The Classic Command Interface (CCI) has had all of its commands reorganized to play better.
 - More AI improvements!
   * High skilled suspects are much more dangerous.
   * Enemies have figured out how to equip heavy armor! Your AP rounds will be very important.
 - Menu improvements!
-  * The main menu now has a link to Discord and the Wiki and shows the mod version.
-  * The Join Game menu now won't show duplicate servers, the player sorting is better, and there is a link to download the server browser plugin.
-  * You can now apply a tab (or a whole loadout) to another officer, another team, or element. It's much easier now to keep a consistent loadout amongst your men.
+  * You can now apply a single tab (or a whole loadout) to another officer, another team, or element. It's much easier now to keep a consistent loadout amongst your men.
   * You can now vote (in multiplayer) to end the current map, or to go to the next map. You can also vote in Career CO-OP mode.
+  * The Join Game menu now won't show duplicate servers, the player sorting is better, and there is a link to download the server browser plugin.
+  * The main menu now has a link to Discord and the Wiki and shows the mod version.
 
 ### ALL CHANGES ###
 - Added ironsights to most weapons; several weapons have had their first person weapon model tweaked to have right-side faces and other improvements.
