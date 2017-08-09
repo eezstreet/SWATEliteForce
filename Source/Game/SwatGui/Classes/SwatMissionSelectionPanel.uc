@@ -28,6 +28,12 @@ var(DEBUG) private Campaign theCampaign;
 var() private config localized string DifficultyLabelString;
 var() private localized config string ByString;
 
+// Only shows on All Missions campaigns
+var(SWATGui) protected EditInline Config GUIRadioButton PrimaryEntranceSelection;
+var(SWATGui) protected EditInline Config GUIRadioButton SecondaryEntranceSelection;
+var(SWATGui) protected EditInline Config GUILabel PrimaryEntranceLabel;
+var(SWATGui) protected EditInline Config GUILabel SecondaryEntranceLabel;
+
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
@@ -273,14 +279,55 @@ event Timer()
 
 event Show()
 {
-  theCampaign = SwatGUIController(Controller).GetCampaign();
+    theCampaign = SwatGUIController(Controller).GetCampaign();
 
-  Super.Show();
-  if(GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && theCampaign.CampaignPath == 2)
-  {
-    SetTimer(0.1);
-  }
+    Super.Show();
+    if(GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && theCampaign.CampaignPath == 2)
+    {
+        SetTimer(0.1);
+
+        PrimaryEntranceSelection.Show();
+        SecondaryEntranceSelection.Show();
+        PrimaryEntranceLabel.Show();
+        SecondaryEntranceLabel.Show();
+
+        if(GC.GetDesiredEntryPoint() == ET_Primary)
+        {
+            SetRadioGroup(PrimaryEntranceSelection);
+        }
+        else
+        {
+            SetRadioGroup(SecondaryEntranceSelection);
+        }
+    }
+    else
+    {
+        PrimaryEntranceSelection.Hide();
+        SecondaryEntranceSelection.Hide();
+        PrimaryEntranceLabel.Hide();
+        SecondaryEntranceLabel.Hide();
+    }
 }
+
+function SetRadioGroup( GUIRadioButton group )
+{
+    Super.SetRadioGroup( group );
+
+    if(GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && theCampaign.CampaignPath == 2)
+    {
+        switch (group)
+        {
+    		case PrimaryEntranceSelection:
+    			GC.SetDesiredEntryPoint(ET_Primary);
+    			break;
+    		case SecondaryEntranceSelection:
+    			GC.SetDesiredEntryPoint(ET_Secondary);
+    			break;
+    	}
+    }
+
+}
+
 
 private function PopulateCustomScenarioList()
 {

@@ -750,6 +750,7 @@ Once you have selected your map settings and have started the server at least on
   * Enemies have figured out how to equip heavy armor! Your AP rounds will be very important.
 - Menu improvements!
   * You can now apply a single tab (or a whole loadout) to another officer, another team, or element. It's much easier now to keep a consistent loadout amongst your men.
+  * You can now select which entrance to use in an All Missions campaign.
   * You can now vote (in multiplayer) to end the current map, or to go to the next map. You can also vote in Career CO-OP mode.
   * The Join Game menu now won't show duplicate servers, the player sorting is better, and there is a link to download the server browser plugin.
   * The main menu now has a link to Discord and the Wiki and shows the mod version.
@@ -773,6 +774,7 @@ Once you have selected your map settings and have started the server at least on
 - Improved textures for MP5, UMP, M870, M870 Less Lethal, MP5SSD6 and G36K
 - The Gas Mask has been renamed Respirator and no longer restricts your field of view.
 - Tactical items (grenades, wedges, lightsticks, C2) now show the number of items left when equipped.
+- You can now select which entry point to use on an All Missions Campaign by selecting it in the Mission Selection menu.
 - Rewrote the voting code from scratch. No longer allowed to vote for gametype; can vote to end current map or to go to next map.
 - Can vote in Career CO-OP if "Enable Voting" is checked in the map settings panel. (Voting specific maps and voting for next map are not allowed in this mode)
 - The breaching shotgun fire interface will now show for all shotguns, not just the breaching shotgun.
