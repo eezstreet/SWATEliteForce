@@ -814,6 +814,8 @@ Once you have selected your map settings and have started the server at least on
 - Fixed SEF bug: New shotgun ammo types (0 buck, 1 buck, 4 buck) didn't have correct drag values.
 - Fixed SEF bug: Suspects would shoot at you while fleeing even if they couldn't hit you.
 - Fixed SEF bug: Reynolds couldn't have Optiwand equipped if it wasn't in his fifth tactical slot.
+- Fixed SEF bug: Picking an All Missions Campaign and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing your campaign again.
+- Fixed SEF bug: Picking Career CO-OP and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing Career CO-OP again.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
 - Fixed TSS bug: Duplicate servers in the server browser
 - Fixed TSS bug: Weird player count sorting in the server browser
