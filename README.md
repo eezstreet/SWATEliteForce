@@ -823,6 +823,8 @@ Once you have selected your map settings and have started the server at least on
 - Fixed SEF bug: Reynolds couldn't have Optiwand equipped if it wasn't in his fifth tactical slot.
 - Fixed SEF bug: Picking an All Missions Campaign and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing your campaign again.
 - Fixed SEF bug: Picking Career CO-OP and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing Career CO-OP again.
+- Fixed SEF bug: Lots of equipment was missing from selection in Quick Missions.
+- Fixed SEF bug: Quick Missions which had locked loadouts still let you pick which weapon to use.
 - Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
 - Fixed TSS bug: Duplicate servers in the server browser
 - Fixed TSS bug: Weird player count sorting in the server browser
@@ -831,6 +833,7 @@ Once you have selected your map settings and have started the server at least on
 - Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
 - Fixed TSS bug: The enemy "CallForHelp" speech was rarely/if at all triggering.
 - Fixed TSS bug: The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
+- Fixed TSS bug: Applying a loadout to the whole team while in a Quick Mission which has locked loadouts no longer works; it will prevent it from applying to locked officers.
 
 ### v5.3 ###
 Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
