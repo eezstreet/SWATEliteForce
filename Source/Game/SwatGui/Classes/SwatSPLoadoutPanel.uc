@@ -313,7 +313,8 @@ function bool CheckValidity( eNetworkValidity type )
     local int CampaignPath;
 
     CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
-    if(CampaignPath == 2) {
+    if(CampaignPath == 2)
+    {
       return true;
     }
 
@@ -326,7 +327,13 @@ function bool CheckCampaignValid( class EquipmentClass )
 	local int i;
 	local int CampaignPath;
 
-    if(EquipmentClass == None) {
+    if(EquipmentClass == None)
+    {
+        return true;
+    }
+
+    if(GC.CurrentMission != None && GC.CurrentMission.CustomScenario != None)
+    {
         return true;
     }
 
@@ -340,30 +347,44 @@ function bool CheckCampaignValid( class EquipmentClass )
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     // Check first set of equipment
 		for (i = MissionIndex + 1; i < GC.MissionName.Length; ++i)
-			if (GC.MissionEquipment[i] == EquipmentClass) {
-        log("CheckCampaignValid failed on "$EquipmentClass);
+        {
+            if (GC.MissionEquipment[i] == EquipmentClass) {
+                log("CheckCampaignValid failed on "$EquipmentClass);
 				return false;
-      }
+            }
+        }
 
-    // Check second set of equipment
-    for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
-      if(GC.MissionEquipment[i] == EquipmentClass) {
-        log("CheckCampaignValid failed on "$EquipmentClass);
-        return false;
-      }
-	}
+        // Check second set of equipment
+        for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
+        {
+            if(GC.MissionEquipment[i] == EquipmentClass)
+            {
+                log("CheckCampaignValid failed on "$EquipmentClass);
+                return false;
+            }
+        }
+    }
+
 	return true;
 }
 
 // Returns true if this loadout has any equipment that cannot be unlocked.
 function bool CheckLoadoutForInvalidUnlocks(DynamicLoadOutSpec Loadout) {
-  local int i;
-  for(i = 0; i < Pocket.EnumCount; i++) {
-    if(!CheckCampaignValid(Loadout.LoadoutSpec[i])) {
-      return true;
+    local int i;
+
+    if(GC.CurrentMission != None && GC.CurrentMission.CustomScenario != None)
+    {
+        return false;
     }
-  }
-  return false;
+
+    for(i = 0; i < Pocket.EnumCount; i++)
+    {
+        if(!CheckCampaignValid(Loadout.LoadoutSpec[i]))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 //////////////////////////////////////////////////////////
@@ -715,7 +736,8 @@ private function LoadCustomLoadout()
     CustomLO = PlayerOwner().Spawn( class'DynamicLoadOutSpec', None, name( LoadLoadoutName ) );
     log("Loading custom loadout: ("$LoadLoadoutName$" / "$CustomLO$"");
 
-    if(CheckLoadoutForInvalidUnlocks(CustomLO)) {
+    if(CheckLoadoutForInvalidUnlocks(CustomLO))
+    {
       Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
       Controller.TopPage().OpenDlg( EquipmentNotUnlocked, QBTN_Ok, "EquipmentNotUnlocked" );
 

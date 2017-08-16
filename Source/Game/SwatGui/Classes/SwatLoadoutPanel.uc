@@ -680,71 +680,92 @@ private function InternalSelectorButtonOnClick(GUIComponent Sender)
 
 private function InternalComboBoxOnSelection(GUIComponent Sender)
 {
-  switch(Sender) {
-    case MyWeaponCategoryBox:
-      if(!SwitchedTabs) {
-        RepopulateWeaponInformationForNewCategory(WeaponEquipClass(GUIComboBox(Sender).List.GetExtraIntData()));
-      }
-      break;
-    case MyWeaponBox:
-      SwitchedWeapons = true;
+    switch(Sender)
+    {
+        case MyWeaponCategoryBox:
+            if(!SwitchedTabs)
+            {
+                RepopulateWeaponInformationForNewCategory(WeaponEquipClass(GUIComboBox(Sender).List.GetExtraIntData()));
+            }
+            break;
 
-      if(ActiveTab == 0) {
-          ActivePocket = Pocket_PrimaryWeapon;
-          ActiveAmmoPocket = Pocket_PrimaryAmmo;
-      } else {
-          ActivePocket = Pocket_SecondaryWeapon;
-          ActiveAmmoPocket = Pocket_SecondaryAmmo;
-      }
-      ChangeLoadOut(ActivePocket);
-      RepopulateAmmoInformationForNewWeapon(class<SwatWeapon>(MyCurrentLoadout.LoadoutSpec[ActivePocket]));
+        case MyWeaponBox:
+            SwitchedWeapons = true;
 
-      // If the cause of the change was due to a tab switch, then reset the ammo
-      if(SwitchedTabs) {
-        MyAmmoBox.List.FindObjectData(class<SwatAmmo>(MyCurrentLoadout.LoadoutSpec[ActiveAmmoPocket]), false, true);
-      } else {
-        ChangeLoadOut(ActiveAmmoPocket);
-      }
+            if(ActiveTab == 0)
+            {
+                ActivePocket = Pocket_PrimaryWeapon;
+                ActiveAmmoPocket = Pocket_PrimaryAmmo;
+            }
+            else
+            {
+                ActivePocket = Pocket_SecondaryWeapon;
+                ActiveAmmoPocket = Pocket_SecondaryAmmo;
+            }
 
-      // Either way, we need to update the ammo display
-      UpdateIndex(ActiveAmmoPocket);
-      DisplayEquipment(ActiveAmmoPocket);
+            ChangeLoadOut(ActivePocket);
+            RepopulateAmmoInformationForNewWeapon(class<SwatWeapon>(MyCurrentLoadout.LoadoutSpec[ActivePocket]));
 
-      SwitchedWeapons = false;
-      break;
-    case MyAmmoBox:
-      if(PopulatingAmmoInformation) {
-        break;
-      }
+            // If the cause of the change was due to a tab switch, then reset the ammo
+            if(SwitchedTabs)
+            {
+                MyAmmoBox.List.FindObjectData(class<SwatAmmo>(MyCurrentLoadout.LoadoutSpec[ActiveAmmoPocket]), false, true);
+            }
+            else
+            {
+                ChangeLoadOut(ActiveAmmoPocket);
+            }
 
-      if(!SwitchedTabs && !SwitchedWeapons) {
-        if(ActiveTab == 0) {
-          ActivePocket = Pocket_PrimaryAmmo;
-        } else {
-          ActivePocket = Pocket_SecondaryAmmo;
-        }
-        ChangeLoadOut(ActivePocket);
-      }
-      else {
-        if(ActiveTab == 0) {
-          ActivePocket = Pocket_PrimaryWeapon;
-          ChangeLoadOut(Pocket_PrimaryAmmo);
-          UpdateIndex(Pocket_PrimaryAmmo);
-          DisplayEquipment(Pocket_PrimaryAmmo);
-        } else {
-          ActivePocket = Pocket_SecondaryWeapon;
-          ChangeLoadOut(Pocket_SecondaryAmmo);
-          UpdateIndex(Pocket_SecondaryAmmo);
-          DisplayEquipment(Pocket_SecondaryAmmo);
-        }
-        DisplayEquipment(ActivePocket);
-      }
-      break;
-  }
+            // Either way, we need to update the ammo display
+            UpdateIndex(ActiveAmmoPocket);
+            DisplayEquipment(ActiveAmmoPocket);
+            DisplayEquipment(ActivePocket);
 
-  UpdateIndex(ActivePocket);
-  DisplayEquipment(ActivePocket);
-  UpdateWeights();
+            SwitchedWeapons = false;
+            break;
+
+        case MyAmmoBox:
+            if(PopulatingAmmoInformation)
+            {
+                break;
+            }
+
+            if(!SwitchedTabs && !SwitchedWeapons)
+            {
+                if(ActiveTab == 0)
+                {
+                    ActivePocket = Pocket_PrimaryAmmo;
+                }
+                else
+                {
+                    ActivePocket = Pocket_SecondaryAmmo;
+                }
+                ChangeLoadOut(ActivePocket);
+            }
+            else
+            {
+                if(ActiveTab == 0)
+                {
+                    ActivePocket = Pocket_PrimaryWeapon;
+                    ChangeLoadOut(Pocket_PrimaryAmmo);
+                    UpdateIndex(Pocket_PrimaryAmmo);
+                    DisplayEquipment(Pocket_PrimaryAmmo);
+                }
+                else
+                {
+                    ActivePocket = Pocket_SecondaryWeapon;
+                    ChangeLoadOut(Pocket_SecondaryAmmo);
+                    UpdateIndex(Pocket_SecondaryAmmo);
+                    DisplayEquipment(Pocket_SecondaryAmmo);
+                }
+                DisplayEquipment(ActivePocket);
+            }
+            break;
+    }
+
+    UpdateIndex(ActivePocket);
+    DisplayEquipment(ActivePocket);
+    UpdateWeights();
 }
 
 private function InternalTabButtonOnClick(GUIComponent Sender)
