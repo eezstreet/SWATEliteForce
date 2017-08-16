@@ -805,29 +805,109 @@ function InternalOnDeleteDlgReturned( int returnButton, optional string Passback
     }
 }
 
-function TooMuchWeightModal() {
-  Controller.TopPage().OnDlgReturned=None;
-  Super.TooMuchWeightModal();
+function TooMuchWeightModal()
+{
+    Controller.TopPage().OnDlgReturned=None;
+    Super.TooMuchWeightModal();
 }
 
-function TooMuchBulkModal() {
-  Controller.TopPage().OnDlgReturned=None;
-  Super.TooMuchBulkModal();
+function TooMuchBulkModal()
+{
+    Controller.TopPage().OnDlgReturned=None;
+    Super.TooMuchBulkModal();
 }
 
-function bool CheckWeightBulkValidity() {
-  local int i;
+function bool CheckWeightBulkValidity()
+{
+    local int i;
 
-  for(i = 0; i < LoadOutOwner.EnumCount; i++) {
-    if(MyCurrentLoadOuts[i].GetTotalWeight() > MyCurrentLoadOuts[i].GetMaximumWeight()) {
-      TooMuchWeightModal();
-      return false;
-    } else if(MyCurrentLoadOuts[i].GetTotalBulk() > MyCurrentLoadOuts[i].GetMaximumBulk()) {
-      TooMuchBulkModal();
-      return false;
+    for(i = 0; i < LoadOutOwner.EnumCount; i++)
+    {
+        if(MyCurrentLoadOuts[i].GetTotalWeight() > MyCurrentLoadOuts[i].GetMaximumWeight())
+        {
+            TooMuchWeightModal();
+            return false;
+        }
+        else if(MyCurrentLoadOuts[i].GetTotalBulk() > MyCurrentLoadOuts[i].GetMaximumBulk())
+        {
+            TooMuchBulkModal();
+            return false;
+        }
     }
-  }
-  return true;
+    return true;
+}
+
+// This is dumb but necessary. Whenever you add an item to a combo box, it gets reenabled again.
+// As a result, when the categorization info gets repopulated, it will tend to re-enable itself
+// in situations with locked loadouts --eez
+protected function UpdateCategorizationInfo(bool bPrimaryWeapon)
+{
+    Super.UpdateCategorizationInfo(bPrimaryWeapon);
+
+    if(GC.CurrentMission.CustomScenario == None)
+    {
+        return;
+    }
+
+    switch(ActiveLoadOutOwner)
+    {
+        case LoadOutOwner_RedOne:
+            if(GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+        case LoadOutOwner_RedTwo:
+            if(GC.CurrentMission.CustomScenario.RedTwoLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+        case LoadOutOwner_BlueOne:
+            if(GC.CurrentMission.CustomScenario.BlueOneLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+        case LoadOutOwner_BlueTwo:
+            if(GC.CurrentMission.CustomScenario.BlueTwoLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
