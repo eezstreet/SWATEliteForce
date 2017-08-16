@@ -54,6 +54,7 @@ var(SWATGui) config localized String NoLoadoutNameEntered;
 var(SWATGui) config localized String ConfirmOverwrite;
 var(SWATGui) config localized String ConfirmDelete;
 var(SWATGui) config localized String EquipmentNotUnlocked;
+var(SWATGui) config localized String OfficerLocked;
 
 var private bool bDontLoadCustom;
 var private bool bSavePopupOpen;
@@ -325,9 +326,9 @@ function bool CheckCampaignValid( class EquipmentClass )
 	local int i;
 	local int CampaignPath;
 
-  if(EquipmentClass == None) {
-    return true;
-  }
+    if(EquipmentClass == None) {
+        return true;
+    }
 
 	assert(SwatGUIControllerBase(Controller) != None);
 	assertWithDescription(SwatGUIControllerBase(Controller).GetCampaign() != None, "GetCampaign() returned None. Campaign progression for equipment access wont work correctly.");
@@ -370,63 +371,163 @@ function bool CheckLoadoutForInvalidUnlocks(DynamicLoadOutSpec Loadout) {
 // Multi-apply stuff --eez
 function AttemptMultiApply(GUIComponent Sender)
 {
-  local MultiApplyType selected;
+    local MultiApplyType selected;
 
-  selected = MultiApplyType(MyMultiApplySelect.GetInt());
+    selected = MultiApplyType(MyMultiApplySelect.GetInt());
 
-  switch(selected) {
-    case MultiApply_Element:
-    case MultiApply_Lead:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player]);
-      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_Player));
-      if(selected == MultiApply_Lead) break;
-    case MultiApply_BlueTeam:
-    case MultiApply_B1:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne]);
-      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
-      if(selected == MultiApply_B1) break;
-    case MultiApply_B2:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo]);
-      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
-      if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam) break;
-    case MultiApply_RedTeam:
-    case MultiApply_R1:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne]);
-      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
-      if(selected == MultiApply_R1) break;
-    case MultiApply_R2:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo]);
-      SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
-      break;
-  }
+    // FIXME: there has to be a way to make this cleaner...
+    switch(selected)
+    {
+        case MultiApply_Element:
+        case MultiApply_Lead:
+            CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player]);
+            SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_Player));
+            if(selected == MultiApply_Lead)
+            {
+                break;
+            }
+
+        case MultiApply_BlueTeam:   // NOTE: falls through from the above
+        case MultiApply_B1:
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
+            }
+            if(selected == MultiApply_B1)
+            {
+                break;
+            }
+
+        case MultiApply_B2:         // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueTwoLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
+            }
+            if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam)
+            {
+                break;
+            }
+
+        case MultiApply_RedTeam:
+        case MultiApply_R1:         // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
+            }
+            if(selected == MultiApply_R1)
+            {
+                break;
+            }
+
+        case MultiApply_R2:         // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedTwoLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
+            }
+            break;
+    }
 }
 
 function AttemptMultiApplyLoadout(GUIComponent Sender)
 {
-  local MultiApplyType selected;
+    local MultiApplyType selected;
 
-  selected = MultiApplyType(MyMultiApplyLoadoutSelect.GetInt());
+    selected = MultiApplyType(MyMultiApplyLoadoutSelect.GetInt());
 
-  switch(selected) {
-    case MultiApply_Element:
-    case MultiApply_Lead:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_Player));
-      if(selected == MultiApply_Lead) break;
-    case MultiApply_BlueTeam:
-    case MultiApply_B1:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
-      if(selected == MultiApply_B1) break;
-    case MultiApply_B2:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
-      if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam) break;
-    case MultiApply_RedTeam:
-    case MultiApply_R1:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
-      if(selected == MultiApply_R1) break;
-    case MultiApply_R2:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
-      break;
-  }
+    // FIXME: there has to be a cleaner way of doing this...
+    switch(selected)
+    {
+        case MultiApply_Element:
+        case MultiApply_Lead:
+            CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_Player));
+            if(selected == MultiApply_Lead)
+            {
+                break;
+            }
+
+        case MultiApply_BlueTeam:       // NOTE: falls through from the above
+        case MultiApply_B1:
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
+            }
+            if(selected == MultiApply_B1)
+            {
+                break;
+            }
+
+        case MultiApply_B2:             // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueTwoLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
+            }
+            if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam)
+            {
+                break;
+            }
+
+        case MultiApply_RedTeam:        // NOTE: falls through from the above
+        case MultiApply_R1:
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
+            }
+            if(selected == MultiApply_R1)
+            {
+                break;
+            }
+
+        case MultiApply_R2:             // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
+            }
+            break;
+    }
 }
 
 function SetRadioGroup(GUIRadioButton group)
@@ -738,6 +839,7 @@ defaultproperties
     ConfirmDelete="Delete loadout '%1'?"
 
     EquipmentNotUnlocked="This loadout contains equipment that hasn't been unlocked yet. You are not able to use it until you have unlocked the equipment."
+    OfficerLocked="Some of the officers that you applied that equipment to have their loadout locked, so those officers have not been changed."
 
     OfficerInfo(0)="A recent transfer from Los Angeles, the Sergeant is cool under fire and always business like.  With a new element to command he will have to gain the respect of his squad while on the job."
     OfficerInfo(1)="A thirty year veteran of the force, and 25 year veteran of SWAT, Officer Reynolds is the most experienced member of the element.  His experience has taught him that staying calm can be the key to survival as a SWAT officer.  Realizing the value of his experience, he is always willing to give his advice to the element."
