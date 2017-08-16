@@ -488,6 +488,9 @@ function SetRadioGroup(GUIRadioButton group)
         MyDeleteCustomButton.DisableComponent();
         MyMultiApplyButton.DisableComponent();
         MyMultiApplyLoadoutButton.DisableComponent();
+        MyWeaponCategoryBox.DisableComponent();
+        MyWeaponBox.DisableComponent();
+        MyAmmoBox.DisableComponent();
     }
     else
     {
@@ -499,6 +502,9 @@ function SetRadioGroup(GUIRadioButton group)
         MyDeleteCustomButton.EnableComponent();
         MyMultiApplyButton.EnableComponent();
         MyMultiApplyLoadoutButton.EnableComponent();
+        MyWeaponCategoryBox.EnableComponent();
+        MyWeaponBox.EnableComponent();
+        MyAmmoBox.EnableComponent();
         InitialDisplay();
     }
 
