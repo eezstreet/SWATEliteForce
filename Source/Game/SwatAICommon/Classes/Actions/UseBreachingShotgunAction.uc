@@ -119,11 +119,11 @@ latent function EquipBreachingShotgun()
     BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_PrimaryWeapon));
 		if(BreachingShotgun == None || !BreachingShotgun.IsA('Shotgun'))
 			BreachingShotgun = FiredWeapon(Officer.GetItemAtSlot(SLOT_SecondaryWeapon));
-			
-    // If we've been put into this action, we expect that the officer has a
-    // breaching shotgun
-    assert(BreachingShotgun != None);
-    assert(BreachingShotgun.IsA('Shotgun'));
+
+	if(BreachingShotgun == None || !BreachingShotgun.IsA('Shotgun'))
+	{
+		instantFail(ACT_NO_WEAPONS_AVAILABLE);
+	}
 
     if (!BreachingShotgun.IsEquipped())
     {
