@@ -148,6 +148,7 @@ Multiplayer improvements!
  * Why can't I play in Barricaded Suspects, VIP Escort, Smash and Grab, or Rapid Deployment?
  * Are you going to add AI officers in CAREER CO-OP?
  * Does this mod work with other mods?
+ * I played in singleplayer, but there's very few missions (1 or 2). Why?
  * Are there more missions for Extra Missions coming out?
  * I can't find X piece of equipment! Did you remove it?
  * Breaching doors with the shotgun doesn't work!
@@ -236,6 +237,9 @@ Here's a good list of mods that won't work, even with tinkering:
 - Any kind of code mod (11-99 enhancement mod, SSF, ...)
 - SAS mod; the weapons from that mod are included with SEF though.
 - Speech Recognition Improvement; the Speech Recognition feature is available but not all of the commands from that mod are present.
+
+## I PLAYED IN SINGLEPLAYER, BUT THERE'S VERY FEW MISSIONS (1 OR 2). WHY?
+You most likely selected the Extra Missions path when you started the career. There's three options: Extra Missions (missions added by the mod), SWAT 4 + TSS (the original game's missions), and All Missions (all missions from your hard drive, with no equipment progression). 
 
 ## ARE THERE MORE MISSIONS FOR EXTRA MISSIONS COMING OUT?
 Yes.
@@ -804,6 +808,7 @@ Once you have selected your map settings and have started the server at least on
 - Removed map filter from server browser filter menu (was causing lag)
 - C2 now triggers dynamic music (like grenades and the AI shooting does)
 - In CO-OP, instead of the Ready button disabling the Equipment panel, hitting the Equipment button will automatically Un-Ready yourself.
+- SWAT 4 + TSS now selected as the default campaign path (instead of Extra Missions)
 - Added a console command to change the position of the weapon in first person.
 - Externalized the position of the weapon in first person and in iron sights.
 - LaunchSEF.exe now works correctly on Windows XP.
