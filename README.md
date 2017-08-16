@@ -742,7 +742,7 @@ Once you have selected your map settings and have started the server at least on
   * The gas mask is now called the Respirator and no longer restricts field of view. A new gas mask, the S10 Helmet, has been added!
 - Command interface overhaul!
   * New commands: SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, and DISABLE ALL.
-     * SECURE ALL, RESTRAIN ALL, and DISABLE ALL will secure all evidence, restrain all compliant hostages/suspects, or disable all devices in a radius around the player, OR everything in the same room (whichever is farther). SEARCH AND SECURE combines all three of these commands.
+     * SECURE ALL, RESTRAIN ALL, and DISABLE ALL will secure all evidence, restrain all compliant hostages/suspects, or disable all devices in a radius around the player, OR everything in the same room (whichever is farther, if the mission is NOT complete). SEARCH AND SECURE combines all three of these commands.
   * The lightstick commands got moved back to the DEPLOY submenu, and all of the DEPLOY commands were reorganized based on how frequently they are used.
   * The Classic Command Interface (CCI) has had all of its commands reorganized to play better.
 - More AI improvements!
