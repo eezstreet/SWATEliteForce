@@ -98,12 +98,15 @@ simulated function UpdateHandsForRendering()
     local vector Change;
     local float DeltaTime;
     local vector Velocity, Acceleration;
-	local float MaxInertiaOffset;
+    local float MaxInertiaOffset;
+	local SwatWeapon Weapon;
 
     OwnerPawn = Pawn(Owner);
     OwnerController = PlayerController(OwnerPawn.Controller);
     DeltaTime = OwnerController.LastDeltaTime;
     HandsPass.Length = HandAnimationPass.EnumCount;
+    
+    bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
 
     EquippedItem = OwnerPawn.GetActiveItem();
     if (EquippedItem != None)
@@ -111,7 +114,7 @@ simulated function UpdateHandsForRendering()
         EquippedFirstPersonModel = EquippedItem.FirstPersonModel;
         if (EquippedFirstPersonModel != None)
         {
-            EquippedFirstPersonModel.bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
+            EquippedFirstPersonModel.bOwnerNoSee = bOwnerNoSee;
         }
     }
 
@@ -140,6 +143,11 @@ simulated function UpdateHandsForRendering()
     	//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
     	//NewRotation += EquippedItem.GetDefaultRotationOffset();
     	Offset = EquippedItem.GetDefaultLocationOffset();
+    }
+    
+    Weapon = SwatWeapon(EquippedItem);
+    if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
+        EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
     }
 
     //scale animation position change based on framerate
@@ -186,8 +194,6 @@ simulated function UpdateHandsForRendering()
     {
         NewLocation = TargetLocation;
     }
-
-    bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
 
     // Special-case exception: even if hands/weapon rendering is disabled,
     // the hands and weapon should be shown when the optiwand is equipped
