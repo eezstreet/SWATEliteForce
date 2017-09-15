@@ -1465,10 +1465,40 @@ exec function NextFireMode()
         FiredWeapon(ActiveItem).NextFireMode();
 }
 
+exec function SetWeaponFlashlightPos(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting flashlight to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightPosition_1stPerson = offset;
+	}
+}
+
+exec function SetWeaponFlashlightRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting weapon flashlight rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightRotation_1stPerson = Rotation;
+	}
+}
+
 exec function SetWeaponViewOffset(vector offset)
 {
 	local HandheldEquipment ActiveItem;
 	local SwatWeapon ActiveWeapon;
+
+	log("Setting default view offset to "$offset);
 
     ActiveItem = Pawn.GetActiveItem();
 	ActiveWeapon = SwatWeapon(ActiveItem);
@@ -1481,6 +1511,8 @@ exec function SetWeaponViewRotation(rotator Rotation)
 {
 	local HandheldEquipment ActiveItem;
 	local SwatWeapon ActiveWeapon;
+
+	log("Setting default weapon rotation to "$Rotation);
 
     ActiveItem = Pawn.GetActiveItem();
 	ActiveWeapon = SwatWeapon(ActiveItem);

@@ -485,7 +485,7 @@ Description=This specially designed tactical wedge is slid under the door and th
 FriendlyName=Door Wedge
 
 [Wedge3pack]
-Description=This pack of three door wedges contains three times as many wedges, but occupies three times as much space and weight.
+Description=This pack of three door wedges contains three times as many wedges, but occupies five times as much space and weight.
 FriendlyName=Wedge 3-Pack
 
 [Optiwand]
@@ -509,15 +509,15 @@ Description=The stun grenade is a diversionary device that stuns and disorients 
 FriendlyName=M84 Flashbang
 
 [Sting3pack]
-Description=This 3-pack of stingers contains three times as many stingers, but occupies three times as much space and weight.
+Description=This 3-pack of stingers contains three times as many stingers, but occupies five times as much space and weight.
 FriendlyName=Stinger 3-Pack
 
 [CS3pack]
-Description=This 3-pack of gas grenades contains three times as many CS gas grenades, but occupies three times as much space and weight.
+Description=This 3-pack of gas grenades contains three times as many CS gas grenades, but occupies five times as much space and weight.
 FriendlyName=CS Gas 3-Pack
 
 [Flashbang3pack]
-Description=This 3-pack of flashbangs contains three times as many flashbangs, but occupies three times as much space.
+Description=This 3-pack of flashbangs contains three times as many flashbangs, but occupies five times as much space and weight.
 FriendlyName=Flashbang 3-Pack
 
 [BreachingSG]

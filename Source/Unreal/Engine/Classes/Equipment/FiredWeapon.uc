@@ -79,10 +79,10 @@ var config bool DebugDrawAccuracyCone  "If true, when the weapon is fired the ga
 
 // flashlights
 var(Flashlight) private config bool HasAttachedFlashlight           "If true, this weapon will enable flashlight on/off toggling and create a light source at located at the socket specified in the FlashlightSocketName property";
-var(Flashlight) private config vector  FlashlightPosition_1stPerson "Positional offset from the EquippedSocket on this weapon's FirstPersonModel to the point from which the flashlight emanates";
-var(Flashlight) private config rotator FlashlightRotation_1stPerson "Same idea as FlashlightPosition_1stPerson, but rotational offset";
-var(Flashlight) private config vector  FlashlightPosition_3rdPerson "Positional offset from the EquippedSocket on this weapon's ThirdPersonModel to the point from which the flashlight emanates";
-var(Flashlight) private config rotator FlashlightRotation_3rdPerson "Same idea as FlashlightPosition_3rdPerson, but rotational offset";
+var(Flashlight) public config vector  FlashlightPosition_1stPerson "Positional offset from the EquippedSocket on this weapon's FirstPersonModel to the point from which the flashlight emanates";
+var(Flashlight) public config rotator FlashlightRotation_1stPerson "Same idea as FlashlightPosition_1stPerson, but rotational offset";
+var(Flashlight) public config vector  FlashlightPosition_3rdPerson "Positional offset from the EquippedSocket on this weapon's ThirdPersonModel to the point from which the flashlight emanates";
+var(Flashlight) public config rotator FlashlightRotation_3rdPerson "Same idea as FlashlightPosition_3rdPerson, but rotational offset";
 const FLASHLIGHT_TEXTURE_INDEX = 1;                      // Material index for the flashlight "glow" texture
 
 // State used for determining if a 3rd person flashlight projection is

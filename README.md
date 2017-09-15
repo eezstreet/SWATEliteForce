@@ -760,6 +760,7 @@ Once you have selected your map settings and have started the server at least on
   * The main menu now has a link to Discord and the Wiki and shows the mod version.
 
 ### ALL CHANGES ###
+- Added Brewer County Courthouse mission, with new, fully voiced enemy types, new music, scripted sequences, and more.
 - Added ironsights to most weapons; several weapons have had their first person weapon model tweaked to have right-side faces and other improvements.
 - Added broad-secure commands (SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, DISABLE ALL)
 - Added first person weapon inertia (weapon sways with movement). Disabled by default, enable through Game Controls in Settings.
@@ -789,7 +790,8 @@ Once you have selected your map settings and have started the server at least on
 - Pepper spray now shows the number of reserve cans when equipped (press the Pepper Spray hotkey to swap canisters once one is depleted)
 - Reorganized DEPLOY command sub-menu
 - Suspects will fire upon hostages twice as quickly.
-- Pepper spray now takes a moment or two to affect targets, like CS gas does.
+- St. Micheal's Medical Center will spawn more suspects in Multiplayer modes and also spawns heavy enemies.
+- Custom Maps which use St. Micheal's Medical Center or Mt. Threshold Research Center suspects will no longer have those suspects be insane, in order to prevent custom maps from becoming too difficult to play
 - High skill suspects are more likely to react to a thrown grenade now.
 - High skill suspects have much better accuracy.
 - High skill suspects will fire more rounds in a full-auto burst.
@@ -834,6 +836,9 @@ Once you have selected your map settings and have started the server at least on
 - Fixed TSS bug: The enemy "CallForHelp" speech was rarely/if at all triggering.
 - Fixed TSS bug: The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
 - Fixed TSS bug: Applying a loadout to the whole team while in a Quick Mission which has locked loadouts no longer works; it will prevent it from applying to locked officers.
+- Fixed TSS bug: Enemies could (rarely) spawn in an unreachable spot in The Wolcott Projects
+- Fixed TSS bug: Hostages that spawn on the train platform (in Fresnal St. Station) could scream endlessly after a suspect escaped.
+- Fixed TSS bug: Unreachable mirror point near the train platform in Fresnal St. Station (removed)
 
 ### v5.3 ###
 Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
