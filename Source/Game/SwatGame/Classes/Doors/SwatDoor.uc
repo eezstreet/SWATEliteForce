@@ -674,6 +674,43 @@ simulated function OnUnlocked()
     }
 }
 
+simulated function bool TryDoorLock(SwatGamePlayerController Caller)
+{
+	if(IsClosing() || IsOpening() || IsEmptyDoorWay() || IsOpen())
+	{
+		return false;
+	}
+
+	if(!bCanBeLocked || IsBroken())
+	{
+		Caller.DoorCannotBeLocked();
+		return true;
+	}
+
+	if(bIsLocked)
+	{
+		BroadcastEffectEvent('LockedDoorTried');
+		UpdateOfficerDoorKnowledge(true);
+		Caller.DoorIsLocked();
+
+		LockedKnowledge[0] = 1;
+		LockedKnowledge[1] = 1;
+		LockedKnowledge[2] = 1;
+	}
+	else
+	{
+		BroadcastEffectEvent('Unlocked');
+		UpdateOfficerDoorKnowledge(false);
+		Caller.DoorIsNotLocked();
+
+		LockedKnowledge[0] = 0;
+		LockedKnowledge[1] = 0;
+		LockedKnowledge[2] = 0;
+	}
+
+	return true;
+}
+
 // FIXME: there might be more that's required to get this to work correctly..?
 simulated function OnDoorLockedByOperator() {
 	if(bIsLocked) {

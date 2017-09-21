@@ -91,12 +91,17 @@ function UpdateHUD()
   LPC.GetHUDPage().UpdateWeight();
 }
 
-//which slot should be equipped after this item becomes unavailable
 simulated function EquipmentSlot GetSlotForReequip()
 {
-    return Slot_Invalid;
+  local SwatGame.SwatGamePlayerController LPC;
 
-    //returning Slot_Invalid means equip the default.
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
+
+  if(LPC.bSecondaryWeaponLast)
+    return Slot_SecondaryWeapon;
+  return Slot_PrimaryWeapon;
 }
 
 defaultproperties

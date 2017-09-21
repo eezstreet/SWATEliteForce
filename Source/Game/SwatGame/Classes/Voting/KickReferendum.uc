@@ -15,13 +15,13 @@ function ReferendumDecided(bool YesVotesWin)
 	if (YesVotesWin)
 	{
 		mplog("The kick referendum was successful. Kicking " $ TargetPRI.PlayerName);
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumSucceeded');
+		Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 		Level.Game.VotedToBeKicked(TargetPC);
 	}
 	else
 	{
 		mplog("The kick referendum was unsuccessful. " $ TargetPRI.PlayerName $ " will not be kicked");
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumFailed');
+		Level.Game.Broadcast(None, "", 'ReferendumFailed');
 	}
 }
 

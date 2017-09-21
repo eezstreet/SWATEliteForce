@@ -88,18 +88,10 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
 
     Context = FireInterfaceDoorRelatedContext(inContext);
 
-    if(Context.SideEffect == 'C2SideEffect') {
-      if(Player.SwatPlayer.GetActiveItem().IsA('Shotgun')) {
-        return;
-      }
-    }
-    else if(Context.SideEffect == 'OnlyOnLockable') {
+    if(Context.SideEffect == 'OnlyOnLockable') {
       // Hijacking the unused SideEffect system to pass whatever parameter we want!
       theDoor = Door(Target);
       if(!theDoor.CanBeLocked()) {
-        return;
-      }
-      if(Player.SwatPlayer.GetActiveItem().IsA('Shotgun')) {
         return;
       }
     }
@@ -112,11 +104,23 @@ simulated protected event PostDoorRelatedFocusAdded(PlayerInterfaceDoorRelatedCo
 
     Player.EquipmentSlotForQualify = Context.EquipmentSlotForQualify;
 
+    if(Context.SideEffect == 'SwapEquipmentSlot')
+    {
+      if(Player.SwatPlayer.PrimaryIsA(Context.HasA))
+      {
+        Player.EquipmentSlotForQualify = Slot_PrimaryWeapon;
+      }
+      else if(Player.SwatPlayer.SecondaryIsA(Context.HasA))
+      {
+        Player.EquipmentSlotForQualify = Slot_SecondaryWeapon;
+      }
+    }
+
     //handle any side effect
     switch (Context.SideEffect)
     {
         case 'OnlyOnLockable':
-        case 'C2SideEffect':
+        case 'SwapEquipmentSlot':
         case '':
             break;  //no side effect
 

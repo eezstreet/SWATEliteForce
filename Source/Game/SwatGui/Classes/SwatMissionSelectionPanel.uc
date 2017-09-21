@@ -28,6 +28,12 @@ var(DEBUG) private Campaign theCampaign;
 var() private config localized string DifficultyLabelString;
 var() private localized config string ByString;
 
+// Only shows on All Missions campaigns
+var(SWATGui) protected EditInline Config GUIRadioButton PrimaryEntranceSelection;
+var(SWATGui) protected EditInline Config GUIRadioButton SecondaryEntranceSelection;
+var(SWATGui) protected EditInline Config GUILabel PrimaryEntranceLabel;
+var(SWATGui) protected EditInline Config GUILabel SecondaryEntranceLabel;
+
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
@@ -47,12 +53,15 @@ function InitComponent(GUIComponent MyOwner)
 
 function InternalOnActivate()
 {
-    if( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom )
-    {
-        Assert( GC.GetCustomScenarioPack() != None );
+    log("SwatMissionSelectionPanel("$self$"):InternalOnActivate(Role="$GC.SwatGameRole$")");
 
+    if( GC.GetCustomScenarioPack() != None || GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom )
+    {
         theCampaign = None;
         MyCampaignNameLabel.SetCaption(GC.GetPakFriendlyName());
+
+        MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+        MyMissionSelectionBox.List.UpdateSortFunction();
 
         PopulateCustomScenarioList();
 
@@ -60,8 +69,6 @@ function InternalOnActivate()
     }
     else
     {
-        //Assert( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Campaign );	// ok seriously? seriously?
-
         theCampaign = SwatGUIController(Controller).GetCampaign();
 
         if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
@@ -193,23 +200,29 @@ private function ShowMissionDescription()
         {
             Content = Content $ GC.CurrentMission.MissionDescription[i] $ "|";
         }
+
+        if(theCampaign.CampaignPath == 2)
+        {
+            LevelSummary = LevelSummary(MyMissionSelectionBox.List.GetObjectAtIndex(MyMissionSelectionBox.GetIndex()));
+            MyThumbnail.Image = LevelSummary.Screenshot;
+            MyMissionNameLabel.SetCaption(LevelSummary.Title);
+            GC.CurrentMission.MapName = MyMissionSelectionBox.List.GetItemAtIndex(MyMissionSelectionBox.GetIndex());
+            MyMissionInfo.SetContent(FormatTextString(ByString, LevelSummary.Author, LevelSummary.Description));
+            MyDifficultyLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(GC.CurrentDifficulty)] ) );
+        }
+        else
+        {
+            MyThumbnail.Image = GC.CurrentMission.Thumbnail;
+            MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
+            MyMissionInfo.SetContent( Content );
+        }
     }
     else
     {
         Content = GC.CurrentMission.CustomScenario.Notes;
-    }
-
-    if(theCampaign.CampaignPath == 2) {
-      LevelSummary = LevelSummary(MyMissionSelectionBox.List.GetObjectAtIndex(MyMissionSelectionBox.GetIndex()));
-      MyThumbnail.Image = LevelSummary.Screenshot;
-      MyMissionNameLabel.SetCaption(LevelSummary.Title);
-      GC.CurrentMission.MapName = MyMissionSelectionBox.List.GetItemAtIndex(MyMissionSelectionBox.GetIndex());
-      MyMissionInfo.SetContent(FormatTextString(ByString, LevelSummary.Author, LevelSummary.Description));
-      MyDifficultyLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(GC.CurrentDifficulty)] ) );
-    } else {
-      MyThumbnail.Image = GC.CurrentMission.Thumbnail;
-      MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
-      MyMissionInfo.SetContent( Content );
+        MyThumbnail.Image = GC.CurrentMission.Thumbnail;
+        MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
+        MyMissionInfo.SetContent( Content );
     }
 }
 
@@ -266,14 +279,55 @@ event Timer()
 
 event Show()
 {
-  theCampaign = SwatGUIController(Controller).GetCampaign();
+    theCampaign = SwatGUIController(Controller).GetCampaign();
 
-  Super.Show();
-  if(theCampaign.CampaignPath == 2)
-  {
-    SetTimer(0.1);
-  }
+    Super.Show();
+    if(GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && theCampaign.CampaignPath == 2)
+    {
+        SetTimer(0.1);
+
+        PrimaryEntranceSelection.Show();
+        SecondaryEntranceSelection.Show();
+        PrimaryEntranceLabel.Show();
+        SecondaryEntranceLabel.Show();
+
+        if(GC.GetDesiredEntryPoint() == ET_Primary)
+        {
+            SetRadioGroup(PrimaryEntranceSelection);
+        }
+        else
+        {
+            SetRadioGroup(SecondaryEntranceSelection);
+        }
+    }
+    else
+    {
+        PrimaryEntranceSelection.Hide();
+        SecondaryEntranceSelection.Hide();
+        PrimaryEntranceLabel.Hide();
+        SecondaryEntranceLabel.Hide();
+    }
 }
+
+function SetRadioGroup( GUIRadioButton group )
+{
+    Super.SetRadioGroup( group );
+
+    if(GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && theCampaign.CampaignPath == 2)
+    {
+        switch (group)
+        {
+    		case PrimaryEntranceSelection:
+    			GC.SetDesiredEntryPoint(ET_Primary);
+    			break;
+    		case SecondaryEntranceSelection:
+    			GC.SetDesiredEntryPoint(ET_Secondary);
+    			break;
+    	}
+    }
+
+}
+
 
 private function PopulateCustomScenarioList()
 {
@@ -306,6 +360,8 @@ private function PopulateCustomScenarioList()
         }
     }   until (ScenarioIterator < 0);
 
+    MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+    MyMissionSelectionBox.List.UpdateSortFunction();
 	MyMissionSelectionBox.List.bSortForward=true;
     MyMissionSelectionBox.List.Sort();
 
@@ -319,34 +375,38 @@ private function PopulateCampaignMissionList()
     bAddingMissions=true;
 
     MyMissionSelectionBox.List.Clear();
-  	if(theCampaign.CampaignPath == 0) {
+  	if(theCampaign.CampaignPath == 0)
+    {
   		for(index = 0;index < GC.MissionName.length;index++)
   		{
-  			if( index <= theCampaign.GetAvailableIndex() ) {
+  			if( index <= theCampaign.GetAvailableIndex() )
+            {
   				MyMissionSelectionBox.List.Add(string(GC.MissionName[index]),,GC.FriendlyName[index],index,,true);
-        }
-  		}
-  	} else if(theCampaign.CampaignPath == 1) {
-  		for(index = 0; index < ExtraMissionName.length; index++) {
-  			if(index <= theCampaign.GetAvailableIndex() ) {
+            }
+  	     }
+  	}
+    else if(theCampaign.CampaignPath == 1)
+    {
+  		for(index = 0; index < ExtraMissionName.length; index++)
+        {
+  			if(index <= theCampaign.GetAvailableIndex() )
+            {
   				MyMissionSelectionBox.List.Add(string(ExtraMissionName[index]),,ExtraFriendlyName[index],index,,true);
   			}
   		}
-  	} else if(theCampaign.CampaignPath == 2) {
-      //Controller.OpenWaitDialog();
-      //SetTimer(1.0);
-      //ListAllMissions();
-      //Controller.CloseWaitDialog();
-    }
+  	}
 
 
-    if(theCampaign.CampaignPath == 2) {
+    if(theCampaign.CampaignPath == 2)
+    {
       MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
-    } else {
+    }
+    else
+    {
       MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
     }
     MyMissionSelectionBox.List.UpdateSortFunction();
-	  MyMissionSelectionBox.List.bSortForward=true;
+	MyMissionSelectionBox.List.bSortForward=true;
     MyMissionSelectionBox.List.Sort();
 
     bAddingMissions=false;

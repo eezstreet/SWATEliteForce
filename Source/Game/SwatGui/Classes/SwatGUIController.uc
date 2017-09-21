@@ -447,7 +447,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
             break;
         case 'PenaltyIssued':
         case 'ObjectiveCompleted':
-            SendMessageToChat(Msg, Type, true);
+            SendMessageToChat(Msg, Type, true );
             ImportantMessageDisplays[eIMDType.IMD_GameMessages].MessageRecieved( Msg );
             break;
         case 'MissionCompleted':

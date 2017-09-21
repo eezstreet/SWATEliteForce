@@ -25,8 +25,8 @@ PocketFriendlyName=Tactical Aid 4
 [Pocket_EquipFive]
 PocketFriendlyName=Tactical Aid 5
 
-[Pocket_Breaching]
-PocketFriendlyName=Breaching Device
+[Pocket_EquipSix]
+PocketFriendlyName=Tactical Aid 6
 
 [Pocket_BodyArmor]
 PocketFriendlyName=Body Armor
@@ -147,7 +147,7 @@ Caption=SECONDARY
 Caption=TACTICAL
 
 [SwatSPLoadoutPanel_breachingtablabel]
-Caption=BREACHING + PROTECTION
+Caption=PROTECTION
 
 [SwatSPLoadoutPanel_equipmentpanelheaderlabel]
 Caption=EQUIPMENT
@@ -390,7 +390,7 @@ Caption=CS Gas
 [SwatSPLoadoutPanel_Pocket_EquipFive_Label]
 Caption=Stinger
 
-[SwatSPLoadoutPanel_Pocket_Breaching_Label]
+[SwatSPLoadoutPanel_Pocket_EquipSix_Label]
 Caption=C2 (x3)
 
 [SwatSPLoadoutPanel_0_TabButton]
@@ -441,8 +441,8 @@ Caption=Stinger
 Hint=Select this item.
 
 [SwatSPLoadoutPanel_3_TabButton]
-Caption=BREACHING
-Hint=Select breaching equipment.
+Caption=PROTECTION
+Hint=Select protective equipment.
 
 [SwatSPLoadoutPanel_4_TabButton]
 Caption=PROTECTION
@@ -2308,12 +2308,12 @@ Caption=Helmet
 Hint=Select this item.
 
 [SwatMPLoadoutPanel_4_TabButton]
-Caption=PROTECTION
-Hint=Choose protective equipment.
+Caption=SKIN
+Hint=Choose your skin.
 
 [SwatMPLoadoutPanel_3_TabButton]
-Caption=BREACHING
-Hint=Choose breaching equipment.
+Caption=PROTECTION
+Hint=Choose protective equipment.
 
 [SwatMPLoadoutPanel_Pocket_EquipFive_Button]
 Caption=Stinger
@@ -2371,7 +2371,7 @@ Caption=Helmet
 [SwatMPLoadoutPanel_Pocket_BodyArmor_Label]
 Caption=Light Armor
 
-[SwatMPLoadoutPanel_Pocket_Breaching_Label]
+[SwatMPLoadoutPanel_Pocket_EquipSix_Label]
 Caption=C2 (x3)
 
 [SwatMPLoadoutPanel_Pocket_EquipFive_Label]
@@ -4534,7 +4534,7 @@ Text=[u][b]USING THE OPTIWAND[\b][\u]||[b]9[\b] - Equip OptiWand||Press and hold
 Text=[u][b]USING THE COMMAND MENU[\b][\u]||[c=A0A0A0](Style 2 (default) behavior displayed)[\c]|Hold [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b] - Open command menu|Release [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b] - Give highlighted command|[b][k=fire][\b] - Close menu||In many contexts there are numerous possible commands that the team could perform.  To access these commands open the Command menu by holding down [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b].||Move the mouse to highlight the command you wish to give.  Release the button when the command you wish to give is highlighted.  This will order your team to perform the command, and close the menu.  If you do not want to issue any orders, press [b][k=Fire][\b] or select the Exit Menu choice to close the menu.
 
 [Flashlight]
-Text=[u][b]USING THE FLASHLIGHT[\b][\u]||[b][k=ToggleFlashlight][\b] - Toggle flashlight on/off||All of your primary weapons are equipped with attached flashlights.  Use the flashlight to navigate dark areas and search areas for suspects and hostages.
+Text=[u][b]ILLUMINATION[\b][\u]||[b][k=ToggleFlashlight][\b] - Toggle flashlight or nightvision on/off||Most weapons are equipped with attached flashlights. Use the flashlight or nightvision goggles to navigate and search dark areas for suspects and hostages.||[b][k=EquipSlot 14][\b] - Equip lightsticks||Lightsticks can also be used to illuminate darkened areas, or to mark cleared areas. Once equipped, they can be thrown like a grenade. Your team will automatically drop lightsticks as they clear rooms.
 
 [DefaultCommandChange]
 Text=[u][b]USING THE COMMAND MENU[\b][\u]||[c=A0A0A0](Style 2 (default) behavior displayed)[\c]|Hold [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b] - Open command menu|Release [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b] - Give highlighted command|[b][k=fire][\b] - Close menu||In many contexts there are numerous possible commands that the team could perform.  To access these commands open the Command menu by holding down [b][k=OpenGraphicCommandInterface | RightMouseAlias][\b].||Move the mouse to highlight the command you wish to give.  Release the button when the command you wish to give is highlighted.  This will order your team to perform the command, and close the menu.  If you do not want to issue any orders, press [b][k=Fire][\b] or select the Exit Menu choice to close the menu.||Try issuing a [b]OPEN AND CLEAR[\b] command on this door. The command is located in the OPEN submenu.
@@ -4714,7 +4714,7 @@ Text=DEPLOY FLASHBANG
 Text=DEPLOY TASER
 
 [Command_Deploy_GrenadeLauncher]
-Text=DEPLOY GRENADE LAUNCHER
+Text=DEPLOY TRIPLE BATON
 
 [Command_Deploy_Lightstick]
 Text=MARK WITH LIGHTSTICK
@@ -5358,7 +5358,6 @@ EntryOptionTitle=("Side 4, Level 1","Side 1, Level 1")
 EntryDescription=("Main Entrance","Side Dock Entrance")
 TimeLinePlot=(0,80,90,100)
 TimeLineTime=("19:04","19:27","19:35","19:47")
-TimeLineShortDescription=(" Arrest Warrant Issued.", "First units arrive.", "Perimeter Established.", "SWAT Entry.")
 TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
 LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
 

@@ -54,6 +54,7 @@ var(SWATGui) config localized String NoLoadoutNameEntered;
 var(SWATGui) config localized String ConfirmOverwrite;
 var(SWATGui) config localized String ConfirmDelete;
 var(SWATGui) config localized String EquipmentNotUnlocked;
+var(SWATGui) config localized String OfficerLocked;
 
 var private bool bDontLoadCustom;
 var private bool bSavePopupOpen;
@@ -97,6 +98,8 @@ function InitComponent(GUIComponent MyOwner)
     MyMultiApplySelect.AddItem(MultiApplyStr[i],,,i);
     MyMultiApplyLoadoutSelect.AddItem(MultiApplyStr[i],,,i);
   }
+  MyMultiApplySelect.SetIndex(0);
+  MyMultiApplyLoadoutSelect.SetIndex(0);
   MyMultiApplyButton.OnClick=AttemptMultiApply;
   MyMultiApplyLoadoutButton.OnClick=AttemptMultiApplyLoadout;
 }
@@ -260,11 +263,9 @@ function CopyThisPage(DynamicLoadOutSpec to)
       to.LoadoutSpec[Pocket.Pocket_EquipThree] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipThree];
       to.LoadoutSpec[Pocket.Pocket_EquipFour] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipFour];
       to.LoadoutSpec[Pocket.Pocket_EquipFive] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipFive];
+      to.LoadoutSpec[Pocket.Pocket_EquipSix] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_EquipSix];
       break;
     case 3:
-      // Breaching tab. Remove?
-      break;
-    case 4:
       // Protection tab. Copy helmet and body armor
       to.LoadoutSpec[Pocket.Pocket_HeadArmor] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_HeadArmor];
       to.LoadoutSpec[Pocket.Pocket_BodyArmor] = MyCurrentLoadOut.LoadoutSpec[Pocket.Pocket_BodyArmor];
@@ -312,7 +313,8 @@ function bool CheckValidity( eNetworkValidity type )
     local int CampaignPath;
 
     CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
-    if(CampaignPath == 2) {
+    if(CampaignPath == 2)
+    {
       return true;
     }
 
@@ -325,9 +327,15 @@ function bool CheckCampaignValid( class EquipmentClass )
 	local int i;
 	local int CampaignPath;
 
-  if(EquipmentClass == None) {
-    return true;
-  }
+    if(EquipmentClass == None)
+    {
+        return true;
+    }
+
+    if(GC.CurrentMission != None && GC.CurrentMission.CustomScenario != None)
+    {
+        return true;
+    }
 
 	assert(SwatGUIControllerBase(Controller) != None);
 	assertWithDescription(SwatGUIControllerBase(Controller).GetCampaign() != None, "GetCampaign() returned None. Campaign progression for equipment access wont work correctly.");
@@ -339,30 +347,44 @@ function bool CheckCampaignValid( class EquipmentClass )
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     // Check first set of equipment
 		for (i = MissionIndex + 1; i < GC.MissionName.Length; ++i)
-			if (GC.MissionEquipment[i] == EquipmentClass) {
-        log("CheckCampaignValid failed on "$EquipmentClass);
+        {
+            if (GC.MissionEquipment[i] == EquipmentClass) {
+                log("CheckCampaignValid failed on "$EquipmentClass);
 				return false;
-      }
+            }
+        }
 
-    // Check second set of equipment
-    for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
-      if(GC.MissionEquipment[i] == EquipmentClass) {
-        log("CheckCampaignValid failed on "$EquipmentClass);
-        return false;
-      }
-	}
+        // Check second set of equipment
+        for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
+        {
+            if(GC.MissionEquipment[i] == EquipmentClass)
+            {
+                log("CheckCampaignValid failed on "$EquipmentClass);
+                return false;
+            }
+        }
+    }
+
 	return true;
 }
 
 // Returns true if this loadout has any equipment that cannot be unlocked.
 function bool CheckLoadoutForInvalidUnlocks(DynamicLoadOutSpec Loadout) {
-  local int i;
-  for(i = 0; i < Pocket.EnumCount; i++) {
-    if(!CheckCampaignValid(Loadout.LoadoutSpec[i])) {
-      return true;
+    local int i;
+
+    if(GC.CurrentMission != None && GC.CurrentMission.CustomScenario != None)
+    {
+        return false;
     }
-  }
-  return false;
+
+    for(i = 0; i < Pocket.EnumCount; i++)
+    {
+        if(!CheckCampaignValid(Loadout.LoadoutSpec[i]))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 //////////////////////////////////////////////////////////
@@ -370,58 +392,163 @@ function bool CheckLoadoutForInvalidUnlocks(DynamicLoadOutSpec Loadout) {
 // Multi-apply stuff --eez
 function AttemptMultiApply(GUIComponent Sender)
 {
-  local MultiApplyType selected;
+    local MultiApplyType selected;
 
-  selected = MultiApplyType(MyMultiApplySelect.GetInt());
+    selected = MultiApplyType(MyMultiApplySelect.GetInt());
 
-  switch(selected) {
-    case MultiApply_Element:
-    case MultiApply_Lead:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player]);
-      if(selected == MultiApply_Lead) break;
-    case MultiApply_BlueTeam:
-    case MultiApply_B1:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne]);
-      if(selected == MultiApply_B1) break;
-    case MultiApply_B2:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo]);
-      if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam) break;
-    case MultiApply_RedTeam:
-    case MultiApply_R1:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne]);
-      if(selected == MultiApply_R1) break;
-    case MultiApply_R2:
-      CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo]);
-      break;
-  }
+    // FIXME: there has to be a way to make this cleaner...
+    switch(selected)
+    {
+        case MultiApply_Element:
+        case MultiApply_Lead:
+            CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player]);
+            SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_Player));
+            if(selected == MultiApply_Lead)
+            {
+                break;
+            }
+
+        case MultiApply_BlueTeam:   // NOTE: falls through from the above
+        case MultiApply_B1:
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
+            }
+            if(selected == MultiApply_B1)
+            {
+                break;
+            }
+
+        case MultiApply_B2:         // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueTwoLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
+            }
+            if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam)
+            {
+                break;
+            }
+
+        case MultiApply_RedTeam:
+        case MultiApply_R1:         // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
+            }
+            if(selected == MultiApply_R1)
+            {
+                break;
+            }
+
+        case MultiApply_R2:         // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedTwoLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyThisPage(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo]);
+                SaveLoadout("Current"$GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
+            }
+            break;
+    }
 }
 
 function AttemptMultiApplyLoadout(GUIComponent Sender)
 {
-  local MultiApplyType selected;
+    local MultiApplyType selected;
 
-  selected = MultiApplyType(MyMultiApplyLoadoutSelect.GetInt());
+    selected = MultiApplyType(MyMultiApplyLoadoutSelect.GetInt());
 
-  switch(selected) {
-    case MultiApply_Element:
-    case MultiApply_Lead:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_Player));
-      if(selected == MultiApply_Lead) break;
-    case MultiApply_BlueTeam:
-    case MultiApply_B1:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
-      if(selected == MultiApply_B1) break;
-    case MultiApply_B2:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
-      if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam) break;
-    case MultiApply_RedTeam:
-    case MultiApply_R1:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
-      if(selected == MultiApply_R1) break;
-    case MultiApply_R2:
-      CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
-      break;
-  }
+    // FIXME: there has to be a cleaner way of doing this...
+    switch(selected)
+    {
+        case MultiApply_Element:
+        case MultiApply_Lead:
+            CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_Player], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_Player));
+            if(selected == MultiApply_Lead)
+            {
+                break;
+            }
+
+        case MultiApply_BlueTeam:       // NOTE: falls through from the above
+        case MultiApply_B1:
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueOne));
+            }
+            if(selected == MultiApply_B1)
+            {
+                break;
+            }
+
+        case MultiApply_B2:             // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.BlueTwoLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_BlueTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_BlueTwo));
+            }
+            if(selected == MultiApply_B2 || selected == MultiApply_BlueTeam)
+            {
+                break;
+            }
+
+        case MultiApply_RedTeam:        // NOTE: falls through from the above
+        case MultiApply_R1:
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedOne], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedOne));
+            }
+            if(selected == MultiApply_R1)
+            {
+                break;
+            }
+
+        case MultiApply_R2:             // NOTE: falls through from the above
+            if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
+                Controller.TopPage().OpenDlg( OfficerLocked, QBTN_Ok, "OfficerLocked" );
+            }
+            else
+            {
+                CopyLoadOut(MyCurrentLoadOuts[LoadOutOwner.LoadOutOwner_RedTwo], MyCurrentLoadOut, GetConfigName(LoadOutOwner.LoadOutOwner_RedTwo));
+            }
+            break;
+    }
 }
 
 function SetRadioGroup(GUIRadioButton group)
@@ -483,6 +610,9 @@ function SetRadioGroup(GUIRadioButton group)
         MyDeleteCustomButton.DisableComponent();
         MyMultiApplyButton.DisableComponent();
         MyMultiApplyLoadoutButton.DisableComponent();
+        MyWeaponCategoryBox.DisableComponent();
+        MyWeaponBox.DisableComponent();
+        MyAmmoBox.DisableComponent();
     }
     else
     {
@@ -494,6 +624,9 @@ function SetRadioGroup(GUIRadioButton group)
         MyDeleteCustomButton.EnableComponent();
         MyMultiApplyButton.EnableComponent();
         MyMultiApplyLoadoutButton.EnableComponent();
+        MyWeaponCategoryBox.EnableComponent();
+        MyWeaponBox.EnableComponent();
+        MyAmmoBox.EnableComponent();
         InitialDisplay();
     }
 
@@ -603,7 +736,8 @@ private function LoadCustomLoadout()
     CustomLO = PlayerOwner().Spawn( class'DynamicLoadOutSpec', None, name( LoadLoadoutName ) );
     log("Loading custom loadout: ("$LoadLoadoutName$" / "$CustomLO$"");
 
-    if(CheckLoadoutForInvalidUnlocks(CustomLO)) {
+    if(CheckLoadoutForInvalidUnlocks(CustomLO))
+    {
       Controller.TopPage().OnPopupReturned=InternalOnPopupReturned;
       Controller.TopPage().OpenDlg( EquipmentNotUnlocked, QBTN_Ok, "EquipmentNotUnlocked" );
 
@@ -693,29 +827,109 @@ function InternalOnDeleteDlgReturned( int returnButton, optional string Passback
     }
 }
 
-function TooMuchWeightModal() {
-  Controller.TopPage().OnDlgReturned=None;
-  Super.TooMuchWeightModal();
+function TooMuchWeightModal()
+{
+    Controller.TopPage().OnDlgReturned=None;
+    Super.TooMuchWeightModal();
 }
 
-function TooMuchBulkModal() {
-  Controller.TopPage().OnDlgReturned=None;
-  Super.TooMuchBulkModal();
+function TooMuchBulkModal()
+{
+    Controller.TopPage().OnDlgReturned=None;
+    Super.TooMuchBulkModal();
 }
 
-function bool CheckWeightBulkValidity() {
-  local int i;
+function bool CheckWeightBulkValidity()
+{
+    local int i;
 
-  for(i = 0; i < LoadOutOwner.EnumCount; i++) {
-    if(MyCurrentLoadOuts[i].GetTotalWeight() > MyCurrentLoadOuts[i].GetMaximumWeight()) {
-      TooMuchWeightModal();
-      return false;
-    } else if(MyCurrentLoadOuts[i].GetTotalBulk() > MyCurrentLoadOuts[i].GetMaximumBulk()) {
-      TooMuchBulkModal();
-      return false;
+    for(i = 0; i < LoadOutOwner.EnumCount; i++)
+    {
+        if(MyCurrentLoadOuts[i].GetTotalWeight() > MyCurrentLoadOuts[i].GetMaximumWeight())
+        {
+            TooMuchWeightModal();
+            return false;
+        }
+        else if(MyCurrentLoadOuts[i].GetTotalBulk() > MyCurrentLoadOuts[i].GetMaximumBulk())
+        {
+            TooMuchBulkModal();
+            return false;
+        }
     }
-  }
-  return true;
+    return true;
+}
+
+// This is dumb but necessary. Whenever you add an item to a combo box, it gets reenabled again.
+// As a result, when the categorization info gets repopulated, it will tend to re-enable itself
+// in situations with locked loadouts --eez
+protected function UpdateCategorizationInfo(bool bPrimaryWeapon)
+{
+    Super.UpdateCategorizationInfo(bPrimaryWeapon);
+
+    if(GC.CurrentMission.CustomScenario == None)
+    {
+        return;
+    }
+
+    switch(ActiveLoadOutOwner)
+    {
+        case LoadOutOwner_RedOne:
+            if(GC.CurrentMission.CustomScenario.RedOneLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+        case LoadOutOwner_RedTwo:
+            if(GC.CurrentMission.CustomScenario.RedTwoLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+        case LoadOutOwner_BlueOne:
+            if(GC.CurrentMission.CustomScenario.BlueOneLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+        case LoadOutOwner_BlueTwo:
+            if(GC.CurrentMission.CustomScenario.BlueTwoLoadOut != 'Any')
+            {
+                MyWeaponCategoryBox.DisableComponent();
+                MyWeaponBox.DisableComponent();
+                MyAmmoBox.DisableComponent();
+            }
+            else
+            {
+                MyWeaponCategoryBox.EnableComponent();
+                MyWeaponBox.EnableComponent();
+                MyAmmoBox.EnableComponent();
+            }
+            break;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -727,6 +941,7 @@ defaultproperties
     ConfirmDelete="Delete loadout '%1'?"
 
     EquipmentNotUnlocked="This loadout contains equipment that hasn't been unlocked yet. You are not able to use it until you have unlocked the equipment."
+    OfficerLocked="Some of the officers that you applied that equipment to have their loadout locked, so those officers have not been changed."
 
     OfficerInfo(0)="A recent transfer from Los Angeles, the Sergeant is cool under fire and always business like.  With a new element to command he will have to gain the respect of his squad while on the job."
     OfficerInfo(1)="A thirty year veteran of the force, and 25 year veteran of SWAT, Officer Reynolds is the most experienced member of the element.  His experience has taught him that staying calm can be the key to survival as a SWAT officer.  Realizing the value of his experience, he is always willing to give his advice to the element."

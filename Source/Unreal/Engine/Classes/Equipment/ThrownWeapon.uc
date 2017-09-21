@@ -4,7 +4,7 @@ class ThrownWeapon extends Weapon
 
 var private float ThrowSpeed;                   //set this with SetThrowSpeed() before calling Use()
 
-var config class<SwatGrenadeProjectile> ProjectileClass;
+var config class<Actor> ProjectileClass;
 
 var config name HandsPreThrowAnimation;
 var config name ThirdPersonPreThrowAnimation;
@@ -48,8 +48,8 @@ simulated latent protected function DoUsingHook()
         // Pawn
         PawnThrowAnimationChannel = PawnOwner.AnimPlayEquipment(
 			kAPT_Normal,
-            GetThirdPersonThrowAnimation(), 
-            ICanThrowWeapons(PawnOwner).GetPawnThrowTweenTime(), 
+            GetThirdPersonThrowAnimation(),
+            ICanThrowWeapons(PawnOwner).GetPawnThrowTweenTime(),
 			ICanThrowWeapons(PawnOwner).GetPawnThrowRootBone());
 
         // Hands
@@ -84,7 +84,7 @@ simulated function UsedHook()
         assertWithDescription(Holder != None,
                               "[tcohen] "$class.name$" was notified OnThrown(), but its Owner ("$Owner
                               $") cannot throw weapons.");
-        
+
         Holder.GetThrownProjectileParams(InitialLocation, ThrownDirection);
 
 		// dbeswick: stats
@@ -98,10 +98,11 @@ simulated function UsedHook()
     }
 }
 
-function SwatGrenadeProjectile SpawnProjectile(vector inLocation, vector inVelocity)
+function Actor SpawnProjectile(vector inLocation, vector inVelocity)
 {
-    local SwatGrenadeProjectile Projectile;
-    
+    local Actor Projectile;
+    local SwatGrenadeProjectile GrenadeProjectile;
+
     Projectile = Owner.Spawn(
             ProjectileClass,
             Owner,
@@ -109,16 +110,16 @@ function SwatGrenadeProjectile SpawnProjectile(vector inLocation, vector inVeloc
             inLocation,
             ,                   //SpawnRotation: default
             true);              //bNoCollisionFail
-    assertWithDescription(Projectile != None,
-        "[tcohen] The thrown "$class.name
-        $" failed to spawn its projectile of class "$ProjectileClass
-        $".  Make sure that the specified ProjectileClass is a subclass of SwatGrenadeProjectile, and Check the log for spawning errors.");
 
-    Projectile.Velocity = inVelocity;
+    Projectile.SetInitialVelocity(inVelocity);
 
     Projectile.TriggerEffectEvent('Thrown');
 
-	RegisterInterestedGrenadeRegistrantWithProjectile(Projectile);
+    GrenadeProjectile = SwatGrenadeProjectile(Projectile);
+    if(GrenadeProjectile != None)
+    {
+      RegisterInterestedGrenadeRegistrantWithProjectile(GrenadeProjectile);
+    }
 
     return Projectile;
 }
@@ -138,7 +139,7 @@ event Destroyed()
 // Registering for Grenade Detonation
 //
 
-// Register the clients interested in grenade detonation, that are already registered with the weapon, 
+// Register the clients interested in grenade detonation, that are already registered with the weapon,
 // on the newly spawned projectile
 function RegisterInterestedGrenadeRegistrantWithProjectile(SwatGrenadeProjectile Projectile)
 {
@@ -233,4 +234,3 @@ defaultproperties
     CollisionRadius=5
     CollisionHeight=5
 }
-

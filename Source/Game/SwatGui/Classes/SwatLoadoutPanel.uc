@@ -438,18 +438,6 @@ function ChangeLoadOut( Pocket thePocket )
         case Pocket_SecondaryWeapon:
             LoadAmmoForWeapon( thePocket, class<FiredWeapon>(theItem) );
             break;
-        case Pocket_Breaching:
-            if( theItem == class'SwatEquipment.C2Charge' )
-            {
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] = class'SwatEquipment.C2Charge';
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] = class'SwatEquipment.C2Charge';
-            }
-            else
-            {
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] = None;
-                MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] = None;
-            }
-            break;
     }
 }
 
@@ -692,71 +680,92 @@ private function InternalSelectorButtonOnClick(GUIComponent Sender)
 
 private function InternalComboBoxOnSelection(GUIComponent Sender)
 {
-  switch(Sender) {
-    case MyWeaponCategoryBox:
-      if(!SwitchedTabs) {
-        RepopulateWeaponInformationForNewCategory(WeaponEquipClass(GUIComboBox(Sender).List.GetExtraIntData()));
-      }
-      break;
-    case MyWeaponBox:
-      SwitchedWeapons = true;
+    switch(Sender)
+    {
+        case MyWeaponCategoryBox:
+            if(!SwitchedTabs)
+            {
+                RepopulateWeaponInformationForNewCategory(WeaponEquipClass(GUIComboBox(Sender).List.GetExtraIntData()));
+            }
+            break;
 
-      if(ActiveTab == 0) {
-          ActivePocket = Pocket_PrimaryWeapon;
-          ActiveAmmoPocket = Pocket_PrimaryAmmo;
-      } else {
-          ActivePocket = Pocket_SecondaryWeapon;
-          ActiveAmmoPocket = Pocket_SecondaryAmmo;
-      }
-      ChangeLoadOut(ActivePocket);
-      RepopulateAmmoInformationForNewWeapon(class<SwatWeapon>(MyCurrentLoadout.LoadoutSpec[ActivePocket]));
+        case MyWeaponBox:
+            SwitchedWeapons = true;
 
-      // If the cause of the change was due to a tab switch, then reset the ammo
-      if(SwitchedTabs) {
-        MyAmmoBox.List.FindObjectData(class<SwatAmmo>(MyCurrentLoadout.LoadoutSpec[ActiveAmmoPocket]), false, true);
-      } else {
-        ChangeLoadOut(ActiveAmmoPocket);
-      }
+            if(ActiveTab == 0)
+            {
+                ActivePocket = Pocket_PrimaryWeapon;
+                ActiveAmmoPocket = Pocket_PrimaryAmmo;
+            }
+            else
+            {
+                ActivePocket = Pocket_SecondaryWeapon;
+                ActiveAmmoPocket = Pocket_SecondaryAmmo;
+            }
 
-      // Either way, we need to update the ammo display
-      UpdateIndex(ActiveAmmoPocket);
-      DisplayEquipment(ActiveAmmoPocket);
+            ChangeLoadOut(ActivePocket);
+            RepopulateAmmoInformationForNewWeapon(class<SwatWeapon>(MyCurrentLoadout.LoadoutSpec[ActivePocket]));
 
-      SwitchedWeapons = false;
-      break;
-    case MyAmmoBox:
-      if(PopulatingAmmoInformation) {
-        break;
-      }
+            // If the cause of the change was due to a tab switch, then reset the ammo
+            if(SwitchedTabs)
+            {
+                MyAmmoBox.List.FindObjectData(class<SwatAmmo>(MyCurrentLoadout.LoadoutSpec[ActiveAmmoPocket]), false, true);
+            }
+            else
+            {
+                ChangeLoadOut(ActiveAmmoPocket);
+            }
 
-      if(!SwitchedTabs && !SwitchedWeapons) {
-        if(ActiveTab == 0) {
-          ActivePocket = Pocket_PrimaryAmmo;
-        } else {
-          ActivePocket = Pocket_SecondaryAmmo;
-        }
-        ChangeLoadOut(ActivePocket);
-      }
-      else {
-        if(ActiveTab == 0) {
-          ActivePocket = Pocket_PrimaryWeapon;
-          ChangeLoadOut(Pocket_PrimaryAmmo);
-          UpdateIndex(Pocket_PrimaryAmmo);
-          DisplayEquipment(Pocket_PrimaryAmmo);
-        } else {
-          ActivePocket = Pocket_SecondaryWeapon;
-          ChangeLoadOut(Pocket_SecondaryAmmo);
-          UpdateIndex(Pocket_SecondaryAmmo);
-          DisplayEquipment(Pocket_SecondaryAmmo);
-        }
-        DisplayEquipment(ActivePocket);
-      }
-      break;
-  }
+            // Either way, we need to update the ammo display
+            UpdateIndex(ActiveAmmoPocket);
+            DisplayEquipment(ActiveAmmoPocket);
+            DisplayEquipment(ActivePocket);
 
-  UpdateIndex(ActivePocket);
-  DisplayEquipment(ActivePocket);
-  UpdateWeights();
+            SwitchedWeapons = false;
+            break;
+
+        case MyAmmoBox:
+            if(PopulatingAmmoInformation)
+            {
+                break;
+            }
+
+            if(!SwitchedTabs && !SwitchedWeapons)
+            {
+                if(ActiveTab == 0)
+                {
+                    ActivePocket = Pocket_PrimaryAmmo;
+                }
+                else
+                {
+                    ActivePocket = Pocket_SecondaryAmmo;
+                }
+                ChangeLoadOut(ActivePocket);
+            }
+            else
+            {
+                if(ActiveTab == 0)
+                {
+                    ActivePocket = Pocket_PrimaryWeapon;
+                    ChangeLoadOut(Pocket_PrimaryAmmo);
+                    UpdateIndex(Pocket_PrimaryAmmo);
+                    DisplayEquipment(Pocket_PrimaryAmmo);
+                }
+                else
+                {
+                    ActivePocket = Pocket_SecondaryWeapon;
+                    ChangeLoadOut(Pocket_SecondaryAmmo);
+                    UpdateIndex(Pocket_SecondaryAmmo);
+                    DisplayEquipment(Pocket_SecondaryAmmo);
+                }
+                DisplayEquipment(ActivePocket);
+            }
+            break;
+    }
+
+    UpdateIndex(ActivePocket);
+    DisplayEquipment(ActivePocket);
+    UpdateWeights();
 }
 
 private function InternalTabButtonOnClick(GUIComponent Sender)
@@ -867,12 +876,13 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   //log("Update the list of weapons for the current category...");
   RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
 
-  //log("Set the selected weapon...");
+  log("Set the selected weapon: CurrentWeaponEquipClass="$CurrentWeaponEquipClass$", CurrentWeapon="$CurrentWeapon);
   CategoryNum = MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
   WeaponNum = MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
 
   if(CategoryNum == -1 || WeaponNum == -1) {
     // The equipment failed to validate. Try again.
+    log("!! Equipment could not be found, resetting to default !!");
     WeaponNum = 0;
     if(bPrimaryWeapon) {
       CurrentWeaponEquipClass = DefaultPrimaryClass;
@@ -1065,21 +1075,22 @@ defaultproperties
 {
 	FailedToValidate = -1
 
-  EquipmentCategoryNames[0]="Assault Rifles"
-  EquipmentCategoryNames[1]="Marksman Rifles"
-  EquipmentCategoryNames[2]="Submachine Guns"
-  EquipmentCategoryNames[3]="Shotguns"
-  EquipmentCategoryNames[4]="Light Machine Guns"
-  EquipmentCategoryNames[5]="Machine Pistols"
-  EquipmentCategoryNames[6]="Pistols"
-  EquipmentCategoryNames[7]="Less Lethal"
-  EquipmentCategoryNames[8]="Grenade Launchers"
-  EquipmentCategoryNames[9]="Uncategorized"
+    EquipmentCategoryNames[0]="Uncategorized"
+    EquipmentCategoryNames[1]="Assault Rifles"
+    EquipmentCategoryNames[2]="Marksman Rifles"
+    EquipmentCategoryNames[3]="Submachine Guns"
+    EquipmentCategoryNames[4]="Shotguns"
+    EquipmentCategoryNames[5]="Light Machine Guns"
+    EquipmentCategoryNames[6]="Machine Pistols"
+    EquipmentCategoryNames[7]="Pistols"
+    EquipmentCategoryNames[8]="Less Lethal"
+    EquipmentCategoryNames[9]="Grenade Launchers"
+    EquipmentCategoryNames[10]="No Weapon"
 
-  DefaultPrimaryClass=WeaponClass_AssaultRifle
-  DefaultSecondaryClass=WeaponClass_Pistol
+    DefaultPrimaryClass=WeaponClass_AssaultRifle
+    DefaultSecondaryClass=WeaponClass_Pistol
 
-  RatingString="NIJ 0101.05 Rating: "
-  WeightString="Weight: "
-  SpecialString="Extra Protection: "
+    RatingString="NIJ 0101.05 Rating: "
+    WeightString="Weight: "
+    SpecialString="Extra Protection: "
 }

@@ -62,7 +62,9 @@ function Broadcast( Actor Sender, coerce string Msg, optional name Type )
 
 	// see if allowed (limit to prevent spamming)
 	if ( !AllowsBroadcast(Sender, Len(Msg)) )
+	{
 		return;
+	}
 
 	if ( Pawn(Sender) != None )
 		PRI = Pawn(Sender).PlayerReplicationInfo;

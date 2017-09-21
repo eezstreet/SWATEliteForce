@@ -8,7 +8,7 @@ function ReferendumDecided(bool YesVotesWin)
   if (YesVotesWin)
 	{
 		mplog("The endmap referendum was successful.");
-		Level.Game.BroadcastTeam(None, "", 'ReferendumSucceeded');
+		Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 
     bEndingMap = true;
 
@@ -17,7 +17,7 @@ function ReferendumDecided(bool YesVotesWin)
 	else
 	{
 		mplog("The endmap referendum failed");
-		Level.Game.BroadcastTeam(None, "", 'ReferendumFailed');
+		Level.Game.Broadcast(None, "", 'ReferendumFailed');
 	}
 }
 

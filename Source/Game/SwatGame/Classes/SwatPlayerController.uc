@@ -197,6 +197,67 @@ exec function Suicide()
 #endif // DISALLOW_SUICIDE
 }
 
+function bool ShouldHideCrosshairsDueToIronsights()
+{
+  local HandheldEquipment Equipment;
+
+  if(!WantsZoom)
+  {
+    // Not in zoom, so we don't have to worry about this
+    return false;
+  }
+  if(GetIronsightsDisabled())
+  {
+    // We use the traditional zoom method instead of ironsights
+    return false;
+  }
+
+  Equipment = Pawn.GetActiveItem();
+  if(!Equipment.ShouldHideCrosshairsInIronsights())
+  {
+    // The currently selected piece of equipment always shows the crosshair when zooming
+    return false;
+  }
+
+  return true;
+}
+
+function bool GetIronsightsDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.ExtraIntOptions[0] == 1;
+}
+
+function bool GetViewmodelDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.ExtraIntOptions[1] == 1;
+}
+
+function bool GetCrosshairDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.ExtraIntOptions[2] == 1 || ShouldHideCrosshairsDueToIronsights();
+}
+
+function bool GetInertiaDisabled()
+{
+  local SwatGuiConfig GC;
+
+  GC = SwatRepo(Level.GetRepo()).GuiConfig;
+
+	return GC.ExtraIntOptions[3] == 1;
+}
+
 //overridden from Engine.PlayerController
 exec function SetName( coerce string S)
 {

@@ -30,6 +30,7 @@ function cleanup()
 //
 // State Code
 
+// FIXME: Define this somewhere higher up in the hierarchy so we aren't defining this twice
 private function bool CanOfficerUseBreachingShotgun(Pawn Officer)
 {
 	local HandheldEquipment Equipment;
@@ -37,17 +38,17 @@ private function bool CanOfficerUseBreachingShotgun(Pawn Officer)
 
 	assert(class'Pawn'.static.checkConscious(Officer));
 
-    Equipment = ISwatOfficer(Officer).GetItemAtSlot(SLOT_Breaching);
-    if ((Equipment != None) && Equipment.IsA('BreachingShotgun'))
-    {
-		Weapon = FiredWeapon(Equipment);
-		assert(Weapon != None);
+	Weapon = FiredWeapon(ISwatOfficer(Officer).GetItemAtSlot(SLOT_PrimaryWeapon));
+	if(Weapon != None && Weapon.IsA('Shotgun') && (!Weapon.NeedsReload() || Weapon.CanReload()))
+	{
+		return true;
+	}
 
-		if (! Weapon.NeedsReload() || Weapon.CanReload())
-		{
-			return true;
-		}
-    }
+	Weapon = FiredWeapon(ISwatOfficer(Officer).GetItemAtSlot(SLOT_SecondaryWeapon));
+	if(Weapon != None && Weapon.IsA('Shotgun') && (!Weapon.NeedsReload() || Weapon.CanReload()))
+	{
+		return true;
+	}
 
 	return false;
 }

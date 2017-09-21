@@ -264,7 +264,9 @@ latent function AttackTarget()
 
 latent function WildGunnerAttackTarget()
 {
-    local FiredWeapon CurrentWeapon;
+    local FiredWeapon CurrentWeapon;	
+	local float TimeElapsed;
+	local float MandatedWait;
 
 	ReadyWeapon();
 
@@ -304,6 +306,18 @@ latent function WildGunnerAttackTarget()
 	if (bHavePerfectAim)
 		CurrentWeapon.SetPerfectAimNextShot();
 
+	// Delay before firing, idiots (I'm pissed ok!)		
+	if (WaitTimeBeforeFiring > 0)
+		Sleep(WaitTimeBeforeFiring);
+
+	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
+	TimeElapsed = Level.TimeSeconds - StartActionTime;
+	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
+	if(TimeElapsed < MandatedWait) 
+	{
+		Sleep(MandatedWait - TimeElapsed);
+	}
+
 	ShootInAimDirection(CurrentWeapon);
 
 	if (ShouldSucceed())
@@ -330,10 +344,7 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 
-//  if(bHavePerfectAim)
 		LatentAimAtActor(Target);
-//	else
-//		SetGunDirection(Target);
 
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
@@ -341,9 +352,6 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if(TimeElapsed < MandatedWait) {
 		Sleep(MandatedWait - TimeElapsed);
 	}
-
-//	if(!bHavePerfectAim)
-//  	SetGunDirection(Target);
 
   ShootWeaponAt(Target);
 }
@@ -361,7 +369,8 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
 	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
-	if(TimeElapsed < MandatedWait) {
+	if(TimeElapsed < MandatedWait) 
+	{
 		Sleep(MandatedWait - TimeElapsed);
 	}
 

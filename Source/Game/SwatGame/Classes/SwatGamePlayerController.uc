@@ -283,7 +283,7 @@ replication
 {
     // Things the server should send to the client
     reliable if ( bNetOwner && bNetDirty && (Role == ROLE_Authority) )
-        SwatPlayer;
+        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -1465,6 +1465,98 @@ exec function NextFireMode()
         FiredWeapon(ActiveItem).NextFireMode();
 }
 
+exec function SetWeaponFlashlightPos(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting flashlight to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightPosition_1stPerson = offset;
+	}
+}
+
+exec function SetWeaponFlashlightRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting weapon flashlight rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightRotation_1stPerson = Rotation;
+	}
+}
+
+exec function SetWeaponViewOffset(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting default view offset to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.DefaultLocationOffset = offset;
+	}
+}
+
+exec function SetWeaponViewRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting default weapon rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.DefaultRotationOffset = Rotation;
+	}
+}
+
+exec function SetIronSightOffset(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.IronSightLocationOffset = offset;
+	}
+}
+
+exec function SetIronSightRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.IronSightRotationOffset = Rotation;
+	}
+}
+
+exec function SetWeaponViewInertia(float Inertia)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.ViewInertia = Inertia;
+	}
+}
+
 simulated function SwatDoor GetDoorInWay()
 {
     local SwatDoor DoorActor;
@@ -2252,13 +2344,22 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     }
 }
 
+simulated function bool CheckDoorLock(SwatDoor Door)
+{
+  return Door.TryDoorLock(self);
+}
+
 simulated function InternalMelee()
 {
 	local HandheldEquipment Item;
   local HandheldEquipment PendingItem;
+  local Actor Candidate;
+  local vector HitLocation, HitNormal, CameraLocation, TraceEnd;
+  local rotator CameraRotation;
+  local Material HitMaterial;
 
 	if (Level.GetEngine().EnableDevTools)
-        log( "...in SwatGamePlayerController::InternalMeleeAttack()" );
+        log( "...in SwatGamePlayerController::InternalMelee()" );
 
 	// We don't want the player to be able to melee if he's currently under
     // the influence of nonlethals.
@@ -2279,8 +2380,35 @@ simulated function InternalMelee()
     return;
   }
 
+  // Determine if we are trying to check the lock or if we are trying to punch someone
+  CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
+  TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
+  foreach TraceActors(
+    class'Actor',
+    Candidate,
+    HitLocation,
+    HitNormal,
+    HitMaterial,
+    TraceEnd,
+    CameraLocation
+    )
+  {
+    if(Candidate.IsA('SwatPawn'))
+    {
+      break; // We intend to melee.
+    }
+    else if(Candidate.IsA('SwatDoor'))
+    {
+      if(CheckDoorLock(SwatDoor(Candidate)))
+        return;
+    }
+  }
+
 	if (!Item.bAbleToMelee)
 		return;
+
+  if(WantsZoom)
+    return; // Not allowed while zooming
 
 	if ( SwatPlayer.ValidateMelee() )
 	{
@@ -3429,6 +3557,21 @@ function ServerViewNextPlayer()
 
 ///////////////////
 
+function DoorCannotBeLocked()
+{
+  ClientMessage("[c=FFFFFF]This door cannot be locked.", 'SpeechManagerNotification');
+}
+
+function DoorIsLocked()
+{
+  ClientMessage("[c=FFFFFF]The door is locked.", 'SpeechManagerNotification');
+}
+
+function DoorIsNotLocked()
+{
+  ClientMessage("[c=FFFFFF]The door is not locked.", 'SpeechManagerNotification');
+}
+
 function DoSetEndRoundTarget( Actor Target, string TargetName, bool TargetIsOnSWAT )
 {
     Assert( Level.NetMode != NM_Client );
@@ -4412,10 +4555,10 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
         {
             myHUD.AddTextMessage(s, class'ChatTeamMessage', PRI);
         }
-		else
-		{
-	    	myHUD.Message( PRI, S, Type );
-		}
+    		else
+    		{
+    	    	myHUD.Message( PRI, S, Type );
+    		}
     }
 
     Player.Console.Message(S, 6.0);
@@ -5587,6 +5730,9 @@ function ServerSetAlwaysRun( bool NewValue )
 function HandleWalking()
 {
     local bool WantsToWalk; //versus run
+    local HandheldEquipment ActiveItem;
+
+    ActiveItem = Pawn.GetActiveItem();
 
     if ( IsLocationFrozen() )
     {
@@ -5604,7 +5750,7 @@ function HandleWalking()
 	if ( Pawn != None )
     {
         //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version.
-        WantsToWalk = bool(bRun) == bAlwaysRun;
+        WantsToWalk = (WantsZoom && ActiveItem.ShouldWalkInIronsights()) || bool(bRun) == bAlwaysRun;
 		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') );
 
         if (aForward == 0 && aStrafe == 0)

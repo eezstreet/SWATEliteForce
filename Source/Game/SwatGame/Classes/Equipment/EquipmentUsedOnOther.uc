@@ -92,4 +92,5 @@ simulated function Actor GetOther()
 	return Other;
 }
 
+
 simulated protected function AssertOtherIsValid() { assert(false); } //subclasses must implement

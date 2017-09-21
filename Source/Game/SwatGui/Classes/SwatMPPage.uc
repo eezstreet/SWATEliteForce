@@ -432,13 +432,11 @@ function CommonOnClick(GUIComponent Sender)
                 SwatGuiController(Controller).SetPlayerReady();
                 bPressedReady = true;
                 MyStartButton.SetCaption(UnreadyString);
-                MyLoadoutButton.DeActivate();
               }
             } else {
               SwatGuiController(Controller).SetPlayerNotReady();
               bPressedReady = false;
               MyStartButton.SetCaption(ReadyString);
-              MyLoadoutButton.Activate();
             }
 	          ResumeGame();
             break;
@@ -447,6 +445,12 @@ function CommonOnClick(GUIComponent Sender)
             OpenDlg( ConfirmAbortString, QBTN_YesNo, "Abort" );
             break;
 		case MyLoadoutButton:
+            if(bPressedReady)
+            {
+              SwatGuiController(Controller).SetPlayerNotReady();
+              MyStartButton.SetCaption(ReadyString);
+              bPressedReady = false;
+            }
             OpenLoadout();
             break;
 		case MyScoresButton:

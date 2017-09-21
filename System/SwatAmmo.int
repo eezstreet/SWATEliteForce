@@ -130,7 +130,9 @@ FriendlyName=.357 Magnum JHP
 GUIImage=Texture'gui_tex.ammo_357cal_JHP'
 
 [BreachingShotgunAmmo]
-FriendlyName=Frangible Breaching Shot
+FriendlyName=12 Gauge Frangible
+GUIImage=Texture'gui_tex.ammo_frangible'
+Description=Frangible rounds are commonly used when breaching doors. The dimpled slug design allows the round to cut uniform holes in surfaces without overpenetrating. And, unlike buckshot, it won't ricochet on hard metal surfaces. While it can be used as a replacement for buckshot or sabot slugs, it is relatively ill-equipped to do so.
 
 [VIPPIstolAmmo_JHP]
 Description=VIP JHP Ammo description

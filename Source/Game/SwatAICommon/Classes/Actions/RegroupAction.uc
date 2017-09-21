@@ -233,10 +233,41 @@ function float GetSkillSpecificAttackChance()
 
 function bool ShouldAttackWhileRegrouping()
 {
-	assert(m_Pawn != None);
-	assert(m_Pawn.IsA('SwatEnemy'));
+    local Pawn CurrentEnemy;
 
-	return (ISwatAI(m_Pawn).HasUsableWeapon() && (FRand() < GetSkillSpecificAttackChance()));
+	assert(m_Pawn != None);
+
+	if(!m_Pawn.IsA('SwatEnemy')) {
+	    return false; // Sanity check - anything below this point might have unintended consequences
+	}
+
+    CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+	if(CurrentEnemy == None)
+	{
+		return false;
+	}
+
+	if(CurrentEnemy.IsA('SniperPawn'))
+	{
+	    return false; // We should not be able to target SniperPawns
+	}
+
+	if(!m_Pawn.CanHit(CurrentEnemy))
+	{
+		return false; // Don't attack if we can't hit them
+	}
+
+	if(!ISwatAI(m_Pawn).HasUsableWeapon())
+	{
+	    return false; // Can't fire if we don't have a usable weapon
+	}
+
+	if(FRand() < GetSkillSpecificAttackChance())
+	{
+	    return false;
+	}
+
+    return true;
 }
 
 function AttackWhileRegrouping()
@@ -299,7 +330,7 @@ private function NavigationPoint FindRegroupDestination()
 	// this function is slow
     for (PawnIter = Level.pawnList; PawnIter != None; PawnIter = PawnIter.nextPawn)
     {
-		if ((PawnIter != m_Pawn) && PawnIter.IsA('SwatEnemy') && class'Pawn'.static.checkConscious(PawnIter) && !PawnIter.IsArrested() && !PawnIter.IsArrested())
+		if ((PawnIter != m_Pawn) && PawnIter.IsA('SwatEnemy') && class'Pawn'.static.checkConscious(PawnIter) && !PawnIter.IsCompliant() && !PawnIter.IsArrested())
         {
 			PawnIterRoomName = PawnIter.GetRoomName();
 
@@ -362,6 +393,10 @@ latent function Regroup()
 
         // post the move to goal and wait for it to complete
         CurrentMoveToActorGoal.postGoal(self);
+		
+		// trigger the speech
+		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerCallForHelpSpeech();
+
         WaitForGoal(CurrentMoveToActorGoal);
         CurrentMoveToActorGoal.unPostGoal(self);
 

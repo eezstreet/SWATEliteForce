@@ -21,14 +21,14 @@ function ReferendumDecided(bool YesVotesWin)
 		if (GMC != None)
 		{
 			mplog("The leader referendum was successful. Promoting " $ TargetPRI.PlayerName $ " to leader");
-			Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumSucceeded');
+			Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 			GMC.SetLeader(NetTeam(TargetPC.PlayerReplicationInfo.Team), SwatGamePlayerController(TargetPC));
 		}
 	}
 	else
 	{
 		mplog("The leader referendum was unsuccessful. " $ TargetPRI.PlayerName $ " will not be promoted to leader");
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumFailed');
+		Level.Game.Broadcast(None, "", 'ReferendumFailed');
 	}
 }
 

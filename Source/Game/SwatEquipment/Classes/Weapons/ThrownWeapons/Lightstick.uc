@@ -1,137 +1,85 @@
 class Lightstick extends Engine.SwatGrenade
 	config(SwatEquipment);
 
-import enum EquipmentSlot from Engine.HandheldEquipment;
-
-var config class<LightstickProjectile> LightstickClass;
-var config float ThrowVelocity;
-var config float AIThrowVelocity;
-var config int Quantity;
 var config string BaseThirdPersonThrowAnim;
-var config name BaseThirdPersonThrowAnimNet;
+var bool Used;
 
-var private bool Used;
+////////////////////////////////////////////////////////////////////
+//
+// New stuff for HUD --eez
 
-replication
+simulated function EquippedHook()
 {
-	reliable if (Role == ROLE_Authority)
-		Quantity;
-}
-
-simulated function CreateModels()
-{
-	Super.CreateModels();
-
-	// hide third person model
-    if (ThirdPersonModel != None)
-       ThirdPersonModel.Hide();
+  Super.EquippedHook();
+  UpdateHUD();
 }
 
 simulated function UsedHook()
 {
-    local ICanThrowWeapons Holder;
-    local vector InitialLocation;
-    local rotator ThrownDirection;
-	local LightstickProjectile Projectile;
-	local vector Rot;
+  Super.UsedHook();
+  UpdateHUD();
 
-	if (Used)
-		return;
-
-	Used = true;
-
-	// hide third person model
-    if (ThirdPersonModel != None)
-       ThirdPersonModel.Hide();
-
-	if ( Quantity > 0 && Level.NetMode != NM_Client )
-    {
-        Holder = ICanThrowWeapons(Owner);
-        assertWithDescription(Holder != None,
-                              "[tcohen] "$class.name$" was notified OnThrown(), but its Owner ("$Owner
-                              $") cannot throw weapons.");
-
-        Holder.GetThrownProjectileParams(InitialLocation, ThrownDirection);
-
-		if (Owner.IsA('NetPlayer'))
-		{
-			// start location for the grenade is where the weapon's third person model is
-			InitialLocation = NetPlayer(Owner).GetActiveItem().GetThirdPersonModel().Location;
-		}
-		else
-		{
-			InitialLocation += vector(ThrownDirection) * (Owner.CollisionRadius + 5);
-		}
-
-		Projectile = Spawn(
-            LightstickClass,
-            None,
-            ,                   //tag: default
-            InitialLocation,
-            ,                   //SpawnRotation: default
-            true);              //bNoCollisionFail
-
-		Projectile.TriggerEffectEvent('Thrown');
-
-		Rot.X = FRand() * 65535;
-		Rot.Y = FRand() * 65535;
-		Rot.Z = FRand() * 65535;
-
-		if (Owner.IsA('SwatPlayer'))
-		{
-			Projectile.CurrentVelocity = Owner.Velocity + vector(ThrownDirection) * ThrowVelocity;
-		}
-		else
-		{
-			Projectile.CurrentVelocity = vector(Owner.Rotation) * AIThrowVelocity;
-		}
-
-		Projectile.CurrentAngular = Rot;
-		Projectile.HavokSetLinearVelocity(Projectile.CurrentVelocity);
-		Projectile.HavokSetAngularVelocity(Projectile.CurrentAngular);
-
-		if(Owner.IsA('SwatAI'))
-		{
-			log("[eezstreet] " $Owner$ " threw a lightstick. Quantity remaining: "$Quantity);
-		}
-		Quantity--;
-    }
+	log(self$"Lightstick UsedHook");
 }
 
-simulated function OnPostEquipped()
+simulated latent protected function PreUsed()
 {
-    SwatPlayer(Owner).GotoState('Throwing');
+	Super.PreUsed();
+
+	if(Owner.IsA('SwatAI'))
+	{
+		Used = false;
+
+		if (ThirdPersonModel != None)
+	        ThirdPersonModel.PlayUse(0);
+	}
 }
 
-simulated function UpdateAvailability()
+simulated function OnUsingFinishedHook()
 {
-    SetAvailable(Quantity > 0);
+	if(Owner.IsA('SwatAI'))
+	{
+		if (!Used)
+			UsedHook();
+
+			Used = false;
+	}
+
 }
 
-//See HandheldEquipment::OnForgotten() for an explanation of the notion of "Forgotten".
-//Lightsticks become "magically" Available again after they have been Forgotten.
-simulated function OnForgotten()
+function UpdateHUD()
 {
-    SetAvailable(Quantity > 0);
+  local SwatGame.SwatGamePlayerController LPC;
+  local int ReserveGrenades;
+
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return; //the player doesn't own this ammo
+
+  ReserveGrenades = GetAvailableCount();
+  ReserveGrenades--; // We are holding one
+  if(ReserveGrenades < 0)
+  {
+    ReserveGrenades = 0;
+  }
+
+  LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveGrenades, self);
+  LPC.GetHUDPage().UpdateWeight();
 }
 
 function name GetThirdPersonThrowAnimation()
 {
 	local FiredWeapon FiredWeapon;
 
-	if (Owner.IsA('SwatAI'))
+	if(Owner.IsA('SwatAI'))
 	{
 		FiredWeapon = FiredWeapon(SwatPawn(Owner).GetActiveItem());
 
-		if (FiredWeapon != None)
+		if(FiredWeapon != None)
 			return name(BaseThirdPersonThrowAnim $ FiredWeapon.LightstickThrowAnimPostfix);
 	}
-	else
-	{
-		return BaseThirdPersonThrowAnimNet;
-	}
 
-	return '';
+	return Super.GetThirdPersonThrowAnimation();
 }
 
 // Lightstick need not be equipped for AIs to use
@@ -143,53 +91,9 @@ simulated function bool ValidateUse( optional bool Prevalidate )
 		return Super.ValidateUse(Prevalidate);
 }
 
-simulated latent protected function PreUsed()
-{
-	Super.PreUsed();
-	Used = false;
-
-	if (ThirdPersonModel != None)
-        ThirdPersonModel.PlayUse(0);
-
-	// make sure EquipStatus is set so third person model shows up
-	if (!Owner.IsA('SwatPlayer'))
-		PreEquip();
-}
-
-simulated function OnUsingFinishedHook()
-{
-	if (!Used)
-		UsedHook();
-
-		Used = false;
-
-	if (Owner.IsA('SwatPlayer'))
-	{
-		SwatPlayer(Owner).DoDefaultEquip();
-	}
-}
-
-simulated function CheckTickEquipped()
-{
-}
-
-simulated function bool ShouldDisplayReticle()
-{
-	return false;
-}
-
 defaultproperties
 {
     Slot=Slot_Lightstick
-    LightstickClass=class'SwatEquipment.LightstickProjectile'
-	ThrowVelocity=100
-	AIThrowVelocity=25
-	Quantity=25
-	UnavailableAfterUsed=false
-	BaseThirdPersonThrowAnim="LightStickDrop_"
-	BaseThirdPersonThrowAnimNet="LightStickDrop_MP"
-	HandsPreThrowAnimation="GlowPreThrow"
-	HandsThrowAnimation="GlowThrow"
-
-	InstantUnequip = false
+	  ProjectileClass=class'SwatEquipment.LightstickProjectile'
+		BaseThirdPersonThrowAnim="LightStickDrop_"
 }

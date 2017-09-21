@@ -243,6 +243,14 @@ enum ECommand
     Command_ShotgunStingAndMakeEntry,
     Command_ShotgunLeaderThrowAndMakeEntry,
 
+    //
+    // v6
+    //
+    Command_CleanSweep,   // Secure literally everything on the map
+    Command_RestrainAll,        // Restrain all targets in the same room as target
+    Command_SecureAll,          // Secure all evidence in the same room as target
+    Command_DisableAll,         // Disable all targets in the same room
+
     Command_Static,
 };
 
@@ -806,6 +814,8 @@ simulated function bool CommandUsesC2(Command Command) {
     case Command_C2GasAndMakeEntry:
     case Command_C2StingAndClear:
     case Command_C2StingAndMakeEntry:
+    case Command_C2LeaderThrowAndClear:
+    case Command_C2LeaderThrowAndMakeEntry:
       return true;
   }
   return false;
@@ -822,6 +832,8 @@ simulated function bool CommandUsesShotgun(Command Command) {
     case Command_ShotgunGasAndMakeEntry:
     case Command_ShotgunStingAndClear:
     case Command_ShotgunStingAndMakeEntry:
+    case Command_ShotgunLeaderThrowAndClear:
+    case Command_ShotgunLeaderThrowAndMakeEntry:
       return true;
   }
   return false;
@@ -831,6 +843,17 @@ simulated function bool CommandUsesLightstick(Command Command) {
   switch(Command.Command) {
     case Command_Drop_Lightstick:
     case Command_Deploy_Lightstick:
+      return true;
+  }
+  return false;
+}
+
+simulated function bool CommandIsCleanSweep(Command Command) {
+  switch(Command.Command) {
+    case Command_CleanSweep:
+    case Command_RestrainAll:
+    case Command_SecureAll:
+    case Command_DisableAll:
       return true;
   }
   return false;
@@ -859,11 +882,23 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
     } else if (Level.NetMode == NM_Standalone && CommandUsesC2(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Breaching)) {
       Status = Pad_GreyedOut;
     } else if (Level.NetMode == NM_Standalone && CommandUsesShotgun(Command)) {
-      // BIG OL FIXME
-      Status = Pad_Normal;
+      if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_PrimaryWeapon, 'Shotgun'))
+      {
+        Status = Pad_Normal;
+      }
+      else if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_SecondaryWeapon, 'Shotgun'))
+      {
+        Status = Pad_Normal;
+      }
+      else
+      {
+        Status = Pad_GreyedOut;
+      }
     } else if (IsLeaderThrowCommand(Command)) {
       Status = Pad_Normal;
     } else if (CommandUsesC2(Command) || CommandUsesShotgun(Command)) {
+      Status = Pad_Normal;
+    } else if (CommandIsCleanSweep(Command)) {
       Status = Pad_Normal;
     }
     else if  (
@@ -1661,6 +1696,120 @@ simulated function bool IsExpectedCommandSource(name CommandSource)
     return CommandSource == ExpectedCommandSource;
 }
 
+// Inserts a sorted actor for the clean sweep command
+simulated private function InsertSweepTarget(Actor Target, int HandleMethod, out array<Actor> SortedArray, out array<int> SortedHandleMethod)
+{
+    local float Distance;
+    local int i;
+    local Pawn FirstOfficer;
+    local float MaxSweepDistance;
+    local bool UseSweepFilter, SweepFilterExpires;
+    local SwatGameInfo SwatGameInfo;
+
+    SwatGameInfo = SwatGameInfo(Level.Game);
+
+    FirstOfficer = PendingCommandTeam.GetFirstOfficer();
+    if(FirstOfficer == None)
+    {   // No officers alive
+        return;
+    }
+
+    Distance = FirstOfficer.GetPathfindingDistanceToActor(Target);
+    MaxSweepDistance = class'CommonCommandSettings'.default.fMaxSweepDistance;
+    UseSweepFilter = class'CommonCommandSettings'.default.bUseSweepDistanceFilter;
+    SweepFilterExpires = class'CommonCommandSettings'.default.bSweepFilterExpires;
+
+    if(!SweepFilterExpires || !SwatGameInfo.Repo.GuiConfig.CurrentMission.IsMissionCompleted(SwatGameInfo.Repo.MissionObjectives))
+    {
+        if(UseSweepFilter && MaxSweepDistance < Distance)
+        {   // Too far away
+            return;
+        }
+    }
+
+
+    for(i = 0; i < SortedArray.Length; i++)
+    {
+        if(Distance < FirstOfficer.GetPathfindingDistanceToActor(Target))
+        {   // This object's distance is less than the current one (but more than the last one) - add it.
+            SortedArray.Insert(i, 1);
+            SortedArray[i] = Target;
+            SortedHandleMethod.Insert(i, 1);
+            SortedHandleMethod[i] = HandleMethod;
+            break;
+        }
+    }
+
+    if(i >= SortedArray.Length)
+    {   // It's the farthest away object, so add it to the end
+        SortedArray[SortedArray.Length] = Target;
+        SortedHandleMethod[SortedHandleMethod.Length] = HandleMethod;
+    }
+}
+
+// This handles all of the new, broad secure commands that are available in V6
+simulated function CleanSweepCommand(Pawn CommandGiver,
+  vector PendingCommandOrigin, bool Restrain, bool Evidence, bool Disable)
+{
+    local array<int> SortedHandleMethod;
+    local array<Actor> SortedHandleActor;
+    local ICanBeArrested ArrestableActor;
+    local IEvidence EvidenceActor;
+    local IDisableableByAI DisableableActor;
+    local Actor a;
+    local int i;
+
+    // Find everything that we need to restrain/collect/disable
+    foreach AllActors(class 'Actor', A)
+    {
+        if(Restrain)
+        {
+            ArrestableActor = ICanBeArrested(A);
+            if(ArrestableActor != None) {
+                if(ArrestableActor.CanBeArrestedNow())
+                {
+                    InsertSweepTarget(A, 0, SortedHandleActor, SortedHandleMethod);
+                }
+            }
+        }
+        if(Evidence)
+        {
+            EvidenceActor = IEvidence(A);
+            if(EvidenceActor != None && EvidenceActor.CanBeUsedNow())
+            {
+                InsertSweepTarget(A, 1, SortedHandleActor, SortedHandleMethod);
+            }
+        }
+        if(Disable)
+        {
+            DisableableActor = IDisableableByAI(A);
+            if(DisableableActor != None) {
+                if(DisableableActor.IsDisableableNow())
+                {
+                    InsertSweepTarget(A, 2, SortedHandleActor, SortedHandleMethod);
+                }
+            }
+        }
+    }
+
+    // Deal with each actor in the sorted order
+    for(i = 0; i < SortedHandleActor.Length; i++)
+    {
+        switch(SortedHandleMethod[i])
+        {
+            case 0:
+                PendingCommandTeam.Restrain(CommandGiver, PendingCommandOrigin, Pawn(SortedHandleActor[i]));
+                break;
+            case 1:
+                PendingCommandTeam.SecureEvidence(CommandGiver, PendingCommandOrigin, SortedHandleActor[i]);
+                break;
+            case 2:
+                PendingCommandTeam.DisableTarget(CommandGiver, PendingCommandOrigin, SortedHandleActor[i]);
+                break;
+        }
+    }
+}
+
 //send the pending command to the officers, now that any necessary speech has completed
 simulated function SendCommandToOfficers()
 {
@@ -2137,6 +2286,39 @@ simulated function SendCommandToOfficers()
                     PendingCommandOrigin,
                     SwatDoor(PendingCommandTargetActor));
             break;
+
+        // New broad secure commands for V6
+        case Command_CleanSweep:
+            CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                    PendingCommandOrigin,
+                    true,
+                    true,
+                    false);
+            break;
+
+        case Command_RestrainAll:
+            CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                    PendingCommandOrigin,
+                    true,
+                    false,
+                    false);
+            break;
+
+        case Command_SecureAll:
+             CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                     PendingCommandOrigin,
+                     false,
+                     true,
+                     false);
+              break;
+
+        case Command_DisableAll:
+              CleanSweepCommand(Level.GetLocalPlayerController().Pawn,
+                      PendingCommandOrigin,
+                      false,
+                      false,
+                      true);
+              break;
 
         //Commands that require a valid Pawn
 

@@ -795,6 +795,19 @@ function SwapServerSettings()
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+//  Restart the map (like from a referendum or otherwise)
+//
+function NetRestartRound()
+{
+  SwapServerSettings();
+
+  ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
+  ClearRoundsWon();
+  NetSwitchLevelsFromMapVote("?restart"); // Undocumented engine feature; restarts the current map
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 //  Determine whether or not to quick restart the next round
 //
 function NetNextRound()

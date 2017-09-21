@@ -1,40 +1,10 @@
-///////////////////////////////////////////////////////////////////////////////
+/*deprecated*/ class SquadDisableTargetGoal extends SquadCommandGoal;
 
-class SquadDisableTargetGoal extends SquadCommandGoal;
+// This class is deprecated and should not be used any more.
+// It exists only to resolve some references.
+// The behavior is now handled in SquadSecureGoal.
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Variables
-
-var(parameters) Actor Target;
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Constructors
-
-// Use this constructor
-overloaded function construct( AI_Resource r, Pawn inCommandGiver, vector inCommandOrigin, Actor inTarget )
+overloaded function construct( AI_Resource r, Actor Target)
 {
-	super.construct(r, inCommandGiver, inCommandOrigin);
 
-	assert(inTarget != None);
-	Target = inTarget;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Accessors
-
-function bool IsInteractingWith(Actor TestActor)
-{
-	return (Target == TestActor);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-defaultproperties
-{
-    goalName = "SquadDisableTarget"
-}
-
-///////////////////////////////////////////////////////////////////////////////

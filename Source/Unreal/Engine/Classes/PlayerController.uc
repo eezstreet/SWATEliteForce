@@ -56,7 +56,7 @@ var globalconfig bool bNoVoiceMessages;
 var globalconfig bool bNoVoiceTaunts;
 var globalconfig bool bNoAutoTaunts;
 var globalconfig bool bAutoTaunt;
-var globalconfig bool bNoMatureLanguage;
+var public bool bSecondaryWeaponLast;
 var globalconfig bool bDynamicNetSpeed;
 
 var(VoiceChat)               bool           bVoiceChatEnabled;	    // Whether voice chat is enabled on this client
@@ -83,6 +83,7 @@ var int ShowFlags;
 var int ExShowFlags;
 #endif
 var int Misc1,Misc2;
+
 var int RendMap;
 var float        OrthoZoom;     // Orthogonal/map view zoom factor.
 var const actor ViewTarget;
@@ -269,7 +270,6 @@ var private Timer ManualFlushTimer;  // Timer used to trigger a manual "FLUSH" c
 #if IG_SWAT // dbeswick: stats
 var StatsInterface Stats;
 #endif
-
 
 replication
 {
@@ -2810,9 +2810,8 @@ event TravelPostAccept()
 
 event PlayerTick( float DeltaTime )
 {
-#if IG_SWAT
-    LastDeltaTime = DeltaTime;
-#endif
+	LastDeltaTime = DeltaTime;
+
 
 #if !IG_SHARED	// rowan: this is essentially a hack.. we handle this better now by explicitly precaching actors on the client
 	//if ( bForcePrecache && (Level.TimeSeconds > ForcePrecacheTime) )
@@ -5019,6 +5018,30 @@ exec function Suppress( string NameToSuppress )
 
 native function SuppressName( Name NameToSuppress );
 #endif
+
+function bool GetIronsightsDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetViewmodelDisabled()
+{
+	assert(false); // must be implemented by subclass
+	return false;
+}
+
+function bool GetCrosshairDisabled()
+{
+	assert(false);
+	return false;
+}
+
+function bool GetInertiaDisabled()
+{
+	assert(false);
+	return false;
+}
 
 // =====================================================================================================================
 // =====================================================================================================================

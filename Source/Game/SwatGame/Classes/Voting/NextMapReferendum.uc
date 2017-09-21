@@ -8,7 +8,7 @@ function ReferendumDecided(bool YesVotesWin)
   if (YesVotesWin)
 	{
 		mplog("The nextmap referendum was successful.");
-		Level.Game.BroadcastTeam(None, "", 'ReferendumSucceeded');
+		Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 
     bSwitchingMaps = true;
 
@@ -17,7 +17,7 @@ function ReferendumDecided(bool YesVotesWin)
 	else
 	{
 		mplog("The nextmap referendum failed");
-		Level.Game.BroadcastTeam(None, "", 'ReferendumFailed');
+		Level.Game.Broadcast(None, "", 'ReferendumFailed');
 	}
 }
 
@@ -26,7 +26,7 @@ function Timer()
 	bSwitchingMaps = false;
 
 	// Travel to the new map
-	SwatRepo(Level.GetRepo()).NetSwitchLevelsFromMapVote(SwatRepo(Level.GetRepo()).GetSGRI().NextMap);
+	SwatRepo(Level.GetRepo()).NetSwitchLevels(true);
 }
 
 simulated function String ReferendumDescription()

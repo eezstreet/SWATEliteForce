@@ -240,7 +240,7 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 			break;
 
     case 'ReferendumStarted':
-      MsgText = FormatTextString(ReferendumStartedMessage, MsgText);
+      MsgText = FormatTextString(ReferendumStartedMessage, StrA);
       break;
 
 		case 'ReferendumAlreadyActive':

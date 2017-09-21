@@ -54,7 +54,7 @@ simulated function PrintLoadOutSpecToMPLog()
 function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
 {
     local class<FiredWeapon> Weap;
-    local class OptiwandClass, AmmoBandolierClass, C2Class, PepperSprayClass;
+    local class OptiwandClass;
     local int i;
 
     switch( pock )
@@ -94,44 +94,16 @@ function bool ValidForLoadoutSpec( class<actor> newEquip, Pocket pock )
         case Pocket_EquipThree:
         case Pocket_EquipFour:
         case Pocket_EquipFive:
+        case Pocket_EquipSix:
             //ensure only 1 optiwand per loadout
             OptiwandClass = class(DynamicLoadObject("SwatEquipment.Optiwand",class'class'));
             if( ClassIsChildOf( newEquip, OptiwandClass ) )
             {
-                for( i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++ )
+                for( i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipSix; i++ )
                     if( pock != i && LoadOutSpec[i] != None && ClassIsChildOf( LoadOutSpec[i], OptiwandClass ) )
                         return false;
             }
-
-            //ensure only 1 pepper spray per loadout
-            PepperSprayClass = class(DynamicLoadObject("SwatEquipment.PepperSpray", class'class'));
-            if( ClassIsChildOf(newEquip, PepperSprayClass)) {
-              for( i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++ )
-                  if( pock != i && LoadOutSpec[i] != None && ClassIsChildOf( LoadOutSpec[i], AmmoBandolierClass ) )
-                      return false;
-            }
-
-			      //ensure only 1 ammo bandolier per loadout
-            AmmoBandolierClass = class(DynamicLoadObject("SwatEquipment.AmmoBandolier",class'class'));
-            if( ClassIsChildOf( newEquip, AmmoBandolierClass ) )
-            {
-                for( i = Pocket.Pocket_EquipOne; i <= Pocket.Pocket_EquipFive; i++ )
-                    if( pock != i && LoadOutSpec[i] != None && ClassIsChildOf( LoadOutSpec[i], AmmoBandolierClass ) )
-                        return false;
-            }
             break;
-        case Pocket_HiddenC2Charge1:
-        case Pocket_HiddenC2Charge2:
-            C2Class = class(DynamicLoadObject("SwatEquipment.C2Charge",class'class'));
-            // if class is C2, ensure Pocket_Breaching contains a C2
-            if( ClassIsChildOf( newEquip, C2Class ) )
-            {
-                if( LoadOutSpec[Pocket.Pocket_Breaching] == None ||
-                    !ClassIsChildOf( LoadOutSpec[Pocket.Pocket_Breaching], C2Class ) )
-                    return false;
-            }
-            else if( newEquip != None ) //if not C2 or None, then this is not valid
-                return false;
     }
     return true;
 }

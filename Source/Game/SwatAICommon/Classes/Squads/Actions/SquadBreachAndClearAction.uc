@@ -14,6 +14,7 @@ class SquadBreachAndClearAction extends SquadMoveAndClearAction
 var private UseBreachingShotgunGoal CurrentUseBreachingShotgunGoal;
 var private UseBreachingChargeGoal  CurrentUseBreachingChargeGoal;
 var protected OpenDoorGoal			CurrentOpenDoorGoal;
+var private int BreachingMethod;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -131,8 +132,6 @@ protected function bool ShouldThrowerBeFirstOfficer()
 
 protected function SetBreacher(optional bool skipBreacher)
 {
-	local int BreachingMethod;
-
 	BreachingMethod = SquadBreachAndClearGoal(achievingGoal).GetBreachingMethod();
 
 	switch(BreachingMethod) {
@@ -155,20 +154,19 @@ protected function SetBreacher(optional bool skipBreacher)
 
 protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
 {
-	local HandheldEquipment Equipment;
 	local FiredWeapon Weapon;
 
-    Equipment = ISwatOfficer(Officer).GetItemAtSlot(SLOT_Breaching);
-    if ((Equipment != None) && Equipment.IsA('BreachingShotgun'))
-    {
-		Weapon = FiredWeapon(Equipment);
-		assert(Weapon != None);
+	Weapon = FiredWeapon(ISwatOfficer(Officer).GetItemAtSlot(SLOT_PrimaryWeapon));
+	if(Weapon != None && Weapon.IsA('Shotgun') && (!Weapon.NeedsReload() || Weapon.CanReload()))
+	{
+		return true;
+	}
 
-		if (! Weapon.NeedsReload() || Weapon.CanReload())
-		{
-			return true;
-		}
-    }
+	Weapon = FiredWeapon(ISwatOfficer(Officer).GetItemAtSlot(SLOT_SecondaryWeapon));
+	if(Weapon != None && Weapon.IsA('Shotgun') && (!Weapon.NeedsReload() || Weapon.CanReload()))
+	{
+		return true;
+	}
 
 	return false;
 }
@@ -332,25 +330,21 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 
 	while ((SwatDoorTarget.IsLocked() || bForceBreachAction)/* && !SwatDoorTarget.IsBroken()*/ && !TargetDoor.IsOpening() && !TargetDoor.IsOpen())
 	{
-		if (CanOfficerBreachWithShotgun(Breacher))
+		if (BreachingMethod == 0 || BreachingMethod == 2 && CanOfficerBreachWithShotgun(Breacher))
 		{
-			log("CanOfficerBreachWithShotgun()");
 			PreTargetDoorBreached();
 			UseBreachingShotgun();	// <-- "WaitForZulu" happens here
 			PostTargetDoorBreached();
 		}
-		else if (CanOfficerBreachWithC2(Breacher))
+		else if (BreachingMethod == 0 || BreachingMethod == 1 && CanOfficerBreachWithC2(Breacher))
 		{
-			log("SquadBreachAndClearAction: PlaceAndUseBreachingCharge()");
 			PlaceAndUseBreachingCharge();	// <-- "WaitForZulu" happens here
-			log("SquadBreachAndClearAction: PostTargetDoorBreached()");
 			PostTargetDoorBreached();
 		}
 		else
 		{
 			assert(DoesAnOfficerHaveUsableEquipment(Slot_Toolkit));
 
-			log("SquadBreachAndClearAction: PreTargetDoorBreached()");
 			PreTargetDoorBreached();
 			WaitForZulu();
 

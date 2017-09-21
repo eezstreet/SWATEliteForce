@@ -27,7 +27,7 @@ var(Viewmodel) config name		LightstickThrowAnimPostfix	"Postfix appended to the 
 
 enum EquipmentSlot
 {
-    Slot_Invalid,           //0
+  Slot_Invalid,           //0
 	Slot_PrimaryWeapon,     //1
 	Slot_SecondaryWeapon,   //2
 	Slot_Flashbang,         //3
@@ -61,15 +61,15 @@ enum Pocket
     Pocket_EquipThree,             //  6
     Pocket_EquipFour,              //  7
     Pocket_EquipFive,              //  8
-    Pocket_Breaching,              //  9
+    Pocket_EquipSix,               //  9
     Pocket_BodyArmor,              // 10
     Pocket_HeadArmor,              // 11
     Pocket_Toolkit,                // 12
     Pocket_Detonator,              // 13
     Pocket_Cuffs,                  // 14
     Pocket_IAmCuffed,              // 15
-    Pocket_HiddenC2Charge1,        // 16
-    Pocket_HiddenC2Charge2,        // 17
+    Pocket_Unused1,                // 16
+    Pocket_Unused2,                // 17
     Pocket_SimpleBackPouch,        // 18
     Pocket_SimpleHipPouch,         // 19
     Pocket_SimpleHolster,          // 20
@@ -77,7 +77,7 @@ enum Pocket
     Pocket_SimpleRadioPouch,       // 22
     Pocket_HeadEffectProtection,   // 23
     Pocket_Lightstick,             // 24
-	Pocket_CustomSkin,             // 25
+	  Pocket_CustomSkin,             // 25
     Pocket_Invalid                 // 26
 };
 
@@ -116,7 +116,7 @@ var(Melee) config float MeleeHeavilyArmoredPlayerStingDuration;
 var(Melee) config float MeleeNonArmoredPlayerStingDuration;
 var(Melee) config float MeleeAIStingDuration;
 
-var private bool Available;             //eg. not Thrown.  We don't remove items from LoadOut so that we have a record of them having been there.
+var bool Available;
 var bool UnavailableAfterUsed;          //if true, then Available is set to false after used
 var bool EquipOtherAfterUsed;           //if true, then a Holder should DoDefaultEquip() after this item is used.
                                         //  Note: if UnavailableAfterUsed is true, then EquipOtherAfterUsed is assumed!
@@ -126,11 +126,16 @@ var(Viewmodel) config bool ShouldHaveFirstPersonModel;     //Most HandheldEquipm
 var(Viewmodel) config bool ShouldHaveThirdPersonModel;     //Most HandheldEquipment requires a valid ThirdPersonModelClass.  But some (eg. SniperRifle) don't... so this allows us to
                                                 //  not provide a ThirdPersonModel, and at the same time assert that HHEquipment that should have a ThirdPersonModel does.
 
-var float FramerateCompensationDelay;   //[see comments in DoEquipping()]
-
 var HandheldEquipmentPickup Pickup;
 
 var() private config float RagdollDeathImpactMomentumMultiplier;
+var private int AvailableCount;             //eg. not Thrown.  We don't remove items from LoadOut so that we have a record of them having been there.
+
+replication
+{
+  reliable if(Role == ROLE_Authority)
+    AvailableCount;
+}
 
 function PostBeginPlay()
 {
@@ -462,7 +467,7 @@ simulated latent private function DoEquipping()
     OwnersActiveItem = Pawn(Owner).GetActiveItem();
     if (OwnersActiveItem != None && OwnersActiveItem != self)
     {
-        if (OwnersActiveItem.Available)
+        if (OwnersActiveItem.AvailableCount > 0)
         {
             OwnersActiveItem.Unequip();
             if (Pickup != None)
@@ -515,7 +520,7 @@ simulated latent private function DoEquipping()
           && Pawn(Owner).Controller != None
           &&  Pawn(Owner).Controller.GetEquipmentSlotForQualify() != SLOT_Invalid )
     {
-        Sleep(FramerateCompensationDelay);
+        Sleep(0.2);
     }
 
 	OnPostEquipped();
@@ -668,6 +673,7 @@ simulated function HACK_QuickUnequipForAIDropWeapon()
     ThirdPersonModel.OnUnequipKeyFrame(); // true means 'never hide after unequipping'
 
     // disable the weapon, it can no longer be used
+    log(self$"SetAvailable(false) because HACK_QuickUnequipForAIDropWeapon");
     SetAvailable(false);
 
     // HandheldEquipmentModels are hidden in OnUnEquipKeyframe if they
@@ -837,6 +843,11 @@ simulated final function OnUseKeyFrame( optional bool ForceUse )
 
         UsedHook();
 
+        if(UnavailableAfterUsed)
+          AvailableCount--;
+
+        log(self$"::OnUseKeyFrame. AvailableCount is now "$AvailableCount);
+
         UpdateAvailability();
 
         UsingStatus = ActionStatus_HitKeyFrame;
@@ -849,8 +860,17 @@ simulated function UsedHook();    //for subclasses
 //  even in training
 simulated function UpdateAvailability()
 {
-    if (UnavailableAfterUsed && !Level.IsTraining)
-        SetAvailable(false);
+    if (AvailableCount <= 0 && !Level.IsTraining)
+      SetAvailable(false);
+    if(AvailableCount < 0)
+      AvailableCount = 0; // Don't let this go negative
+    if(Level.IsTraining)
+      AvailableCount = 1;
+}
+
+simulated function DecrementAvailableCount()
+{
+  UpdateAvailability();
 }
 
 simulated final protected function OnUsingFinished()
@@ -1120,12 +1140,49 @@ simulated final function bool HasMeleeTarget()
 
 simulated final function bool IsAvailable()
 {
-    return Available;
+    return AvailableCount > 0 && Available;
+}
+
+simulated final function int GetAvailableCount()
+{
+  return AvailableCount;
+}
+
+simulated final function SetAvailableCount(int NewCount)
+{
+  if(NewCount == 0)
+  {
+    log(self$"SetAvailable(false) because SetAvailableCount is 0");
+    SetAvailable(false);
+  }
+  else
+  {
+    AvailableCount = NewCount;
+    SetAvailable(true);
+  }
+}
+
+simulated function int GetDefaultAvailableCount()
+{
+  return 1;
 }
 
 simulated final function SetAvailable(bool inAvailable)
 {
-	Available = inAvailable;
+  if(!inAvailable)
+  {
+    log(self$"SetAvailable() set to "$inAvailable);
+  }
+  if(Available && !inAvailable)
+  {
+    AvailableCount = 0;
+  }
+  else if(inAvailable)
+  {
+    AvailableCount = GetDefaultAvailableCount();
+  }
+
+  Available = inAvailable;
 
     if ( !inAvailable )
     {
@@ -1217,33 +1274,78 @@ static function class<Actor> GetRenderableActorClass()
     return default.ThirdPersonModelClass;
 }
 
+simulated function vector GetDefaultLocationOffset()
+{
+	local vector DefaultLocationOffset;
+
+	return DefaultLocationOffset;
+}
+
+simulated function Rotator GetDefaultRotationOffset()
+{
+	local Rotator DefaultRotationOffset;
+
+	return DefaultRotationOffset;
+}
+
+simulated function bool ShouldLowReadyInIronsights()
+{
+  return true;
+}
+
+simulated function bool ShouldHideCrosshairsInIronsights()
+{
+  return false; // Only weapons do
+}
+
+simulated function bool ShouldWalkInIronsights()
+{
+    return false; // Only weapons do
+}
+
 simulated function vector GetIronsightsLocationOffset()
 {
 	local vector IronsightsLocation;
 
-    return IronsightsLocation;
-}
-
-simulated function vector GetPlayerViewOffset()
-{
-	local vector PlayerViewOffset;
-
-    return PlayerViewOffset;
+	return IronsightsLocation;
 }
 
 simulated function Rotator GetIronsightsRotationOffset()
 {
 	local Rotator IronsightsRotation;
 
-    return IronsightsRotation;
+	return IronsightsRotation;
 }
 
-simulated function rotator GetPlayerViewRotation()
+simulated function float GetViewInertia()
 {
-	local rotator PlayerViewRotation;
+	local float Inertia;
 
-    return PlayerViewRotation;
+	return Inertia;
 }
+
+simulated function float GetMaxInertiaOffset()
+{
+	local float Offset;
+
+	return Offset;
+}
+
+simulated function float GetIronSightAnimationProgress()
+{
+	local float IronSightAnimationPosition;
+
+	return IronSightAnimationPosition;
+}
+simulated function SetIronSightAnimationProgress(float value) { }
+
+simulated function array<vector> GetAnimationSplinePoints()
+{
+	local array<vector> AnimationSplinePoints;
+
+	return AnimationSplinePoints;
+}
+simulated function AddAnimationSplinePoint(vector value) { }
 
 event Destroyed()
 {
@@ -1333,6 +1435,26 @@ cpptext
     UBOOL InFirstPersonView();
 }
 
+simulated function float GetWeight()
+{
+  return AvailableCount * GetItemWeight();
+}
+
+simulated function float GetBulk()
+{
+  return AvailableCount * GetItemBulk();
+}
+
+simulated function float GetItemWeight()
+{
+  return 0.0f; // Has to be implemented by subclasses
+}
+
+simulated function float GetItemBulk()
+{
+  return 0.0f;
+}
+
 defaultproperties
 {
     Slot=Slot_Invalid
@@ -1361,6 +1483,5 @@ defaultproperties
 
     ZoomedFOV=0
 
-    FramerateCompensationDelay=0.2
 	ZoomBlurOverlay=Material'HUD.DefaultZoomBlurOverlay'
 }

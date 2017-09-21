@@ -1,5 +1,5 @@
 class BoobyTrap extends RWOSupport.ReactiveStaticMesh
-      implements IUseArchetype, ICanBeDisabled, ICanBeSpawned;
+      implements IUseArchetype, ICanBeDisabled, ICanBeSpawned, IDisableableByAI;
 
 var() SwatDoor                    BoobyTrapDoor;
 var config float                QualifyTime;
@@ -56,6 +56,13 @@ simulated function bool IsActive()
 {
     return bActive;
 }
+
+// IDisableableByAI interface
+simulated function bool IsDisableableNow()
+{
+  return IsActive();
+}
+
 // end of Interface implementation
 
 

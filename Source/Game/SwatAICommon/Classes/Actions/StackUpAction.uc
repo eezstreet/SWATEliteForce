@@ -9,6 +9,7 @@ class StackUpAction extends SwatCharacterAction;
 //
 // StackUpAction variables
 
+var private ReloadGoal					CurrentReloadGoal;
 var private MoveToActorGoal				CurrentMoveToActorGoal;
 var private AimAtTargetGoal				CurrentAimAtTargetGoal;
 
@@ -36,6 +37,12 @@ function SetStackUpPoint(StackUpPoint NewStackUpPoint)
 function Cleanup()
 {
 	super.cleanup();
+	
+	if (CurrentReloadGoal != None)
+	{
+		CurrentReloadGoal.Release();
+		CurrentReloadGoal = None;
+	}
 
 	if (CurrentMoveToActorGoal != None)
 	{
@@ -53,6 +60,21 @@ function Cleanup()
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Aiming at Targets
+
+function PostReloadGoal()
+{
+	assert(CurrentReloadGoal == None);
+
+	CurrentReloadGoal = new class'ReloadGoal'(weaponResource(), achievingGoal.priority);
+	assert(CurrentReloadGoal != None);
+	CurrentReloadGoal.AddRef();
+	CurrentReloadGoal.postGoal(self);
+	
+	CurrentReloadGoal.unPostGoal(self);
+
+	CurrentReloadGoal.Release();
+	CurrentReloadGoal = None;
+}
 
 function PostAimAtTargetGoal()
 {
@@ -118,6 +140,8 @@ state Running
 {
 Begin:
 	SleepInitialDelayTime(true);
+	
+	PostReloadGoal();
 
 	PostAimAtTargetGoal();
 	
