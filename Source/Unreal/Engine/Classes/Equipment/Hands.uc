@@ -145,9 +145,11 @@ simulated function UpdateHandsForRendering()
     	Offset = EquippedItem.GetDefaultLocationOffset();
     }
     
+	//look-down-scope animation for marksman (scoped) weapons
     Weapon = SwatWeapon(EquippedItem);
     if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
         EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
+		bHidden = (AnimationProgress >= 0.99);
     }
 
     //scale animation position change based on framerate
