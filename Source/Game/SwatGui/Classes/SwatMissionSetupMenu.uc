@@ -133,13 +133,13 @@ function InternalOnClick(GUIComponent Sender)
 						0, // Map index
 						1, // Number of rounds
 						ServerPanel.MyMaxPlayersSpinner.Value, // Max players
-						ServerPanel.MyVotingEnabledBox.bChecked,
+						0,	// Not used
 						60, // Post-Round time (Not necessary in campaign CO-OP)
 						1, // Unused
 						10, // Mission ready time (Not necessary in campaign CO-OP)
 						true, // Show teammate names
 						true, // Not used
-						true, // Allow voting
+						ServerPanel.MyVotingEnabledBox.bChecked, // Allow voting
 						true, // No respawning
 						true, // Quick round reset
 						1, // Friendly fire amount (FIXME: Make this configurable)
