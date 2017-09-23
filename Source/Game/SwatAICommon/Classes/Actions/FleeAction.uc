@@ -229,28 +229,41 @@ function float GetSkillSpecificAttackChance()
 
 function bool ShouldAttackWhileFleeing()
 {
-  local Pawn CurrentEnemy;
+    local Pawn CurrentEnemy;
 
 	assert(m_Pawn != None);
 
-  if(!m_Pawn.IsA('SwatEnemy')) {
-    return false; // Sanity check - anything below this point might have unintended consequences
-  }
+	if(!m_Pawn.IsA('SwatEnemy')) {
+	    return false; // Sanity check - anything below this point might have unintended consequences
+	}
 
-  CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
-  if(CurrentEnemy.IsA('SniperPawn')) {
-    return false; // We should not be able to target SniperPawns
-  }
+    CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+	if(CurrentEnemy == None)
+	{
+		return false;
+	}
 
-  if(!ISwatAI(m_Pawn).HasUsableWeapon()) {
-    return false; // Can't fire if we don't have a usable weapon
-  }
+	if(CurrentEnemy.IsA('SniperPawn'))
+	{
+	    return false; // We should not be able to target SniperPawns
+	}
 
-  if(FRand() < GetSkillSpecificAttackChance()) {
-    return false;
-  }
+	if(!m_Pawn.CanHit(CurrentEnemy))
+	{
+		return false; // Don't attack if we can't hit them
+	}
 
-  return true;
+	if(!ISwatAI(m_Pawn).HasUsableWeapon())
+	{
+	    return false; // Can't fire if we don't have a usable weapon
+	}
+
+	if(FRand() < GetSkillSpecificAttackChance())
+	{
+	    return false;
+	}
+
+    return true;
 }
 
 function AttackWhileFleeing()
@@ -387,9 +400,13 @@ latent function Flee()
 
     // post the move to goal and wait for it to complete
     CurrentMoveToActorGoal.postGoal(self);
+
+	// trigger the speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerCallForHelpSpeech();
+
     WaitForGoal(CurrentMoveToActorGoal);
 
-    // remove the most to goal
+    // remove the move to goal
     CurrentMoveToActorGoal.unPostGoal(self);
 	CurrentMoveToActorGoal.Release();
 	CurrentMoveToActorGoal = None;

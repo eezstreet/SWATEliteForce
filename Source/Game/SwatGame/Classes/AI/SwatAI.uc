@@ -2004,26 +2004,26 @@ simulated function vector GetAimOrigin()
 
 simulated function vector EyePosition()
 {
-    local vector vEyeHeight;	
+    local vector vEyeHeight;
 	local FiredWeapon ActiveItem;
 
 	ActiveItem = FiredWeapon(GetActiveItem());
-	
+
     if(bIsCrouched)
 		{
 			if(ActiveItem.bAimAtHead)
-			vEyeHeight.Z = 40;    
-			else
-			vEyeHeight.Z = 0;
-		}    
-	else
-		{
-			if(ActiveItem.bAimAtHead)
-			vEyeHeight.Z = 32;    
+			vEyeHeight.Z = 40;
 			else
 			vEyeHeight.Z = 0;
 		}
-		
+	else
+		{
+			if(ActiveItem.bAimAtHead)
+			vEyeHeight.Z = 32;
+			else
+			vEyeHeight.Z = 0;
+		}
+
 	return vEyeHeight;
 }
 
@@ -2031,10 +2031,10 @@ simulated function vector GetEyeLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bone01Eye');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 
@@ -2107,9 +2107,9 @@ event bool CanHit(Actor Target)
   if(bDebugSensor)
   {
     TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
-	StartTrace = GetEyeLocation();  
-    EndTrace = Target.Location;
-	
+	StartTrace = GetEyeLocation();
+    EndTrace = Pawn(Target).GetChestLocation();
+
     if(Value)
     {
       Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
@@ -2158,7 +2158,7 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 		{
 			return FireMode_Auto;
 		}
-		if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+		else if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
 		{
 			return FireMode_Single;
 		}
@@ -2174,10 +2174,14 @@ function FireMode GetDefaultAIFireModeForWeapon(FiredWeapon Weapon)
 	{
 		return FireMode_Burst;
 	}
-	else if (Weapon.HasFireMode(FireMode_Single) || Weapon.HasFireMode(FireMode_SingleTaser))
+	else if (Weapon.HasFireMode(FireMode_Single))
 	{
 		return FireMode_Single;
 	}
+    else if (Weapon.HasFireMode(FireMode_SingleTaser))
+    {
+        return FireMode_SingleTaser;
+    }
 	else if (Weapon.HasFireMode(FireMode_Auto))
 	{
 		return FireMode_Auto;

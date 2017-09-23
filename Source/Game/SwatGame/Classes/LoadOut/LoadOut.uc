@@ -74,13 +74,10 @@ simulated protected function MutateLoadOutSpec(DynamicLoadOutSpec DynamicSpec, b
     if ( DynamicSpec == None )
         return;
 
-    for( i = 0; i <= Pocket.Pocket_Unused2; i++ )
+    for( i = 0; i <= Pocket.Pocket_Toolkit; i++ )
     {
-        if ( i == Pocket.Pocket_Detonator || i == Pocket.Pocket_Cuffs || i == Pocket.Pocket_IAmCuffed )
-            continue;
-
         if( ValidateEquipmentForPocket( Pocket(i), DynamicSpec.LoadOutSpec[i] ) &&
-            ValidForLoadoutSpec( DynamicSpec.LoadOutSpec[i], Pocket(i) ) )
+            DynamicSpec.ValidForLoadoutSpec( DynamicSpec.LoadOutSpec[i], Pocket(i) ) )
 		{
 			LoadOutSpec[i] = DynamicSpec.LoadOutSpec[i];
 		}
@@ -124,6 +121,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
 
     if(GetTotalWeight() > GetMaximumWeight() || GetTotalBulk() > GetMaximumBulk()) {
       // We are overweight. We need to completely respawn our gear from scratch.
+      AssertWithDescription(false, "Loadout "$self$" exceeds maximum weight. It's getting reset to the default equipment.");
       for(i = 0; i < Pocket.EnumCount; i++) {
         LoadOutSpec[i] = DLOClassForPocket(Pocket(i), 0);
 
@@ -151,16 +149,6 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
             //replace with default for pocket
             LoadOutSpec[i] = DLOClassForPocket( Pocket(i), 0 );
         }
-
-		    if( !ValidateEquipmentForTeam( Pocket(i), LoadOutSpec[i], IsSuspect ) )
-		    {
-			       //replace with default for pocket
-             LoadOutSpec[i] = DLOClassForPocket( Pocket(i), 0 );
-
-			       //also replace with default for dependent pocket if valid
-			       if( GC.AvailableEquipmentPockets[i].DependentPocket != Pocket_Invalid )
-				         LoadOutSpec[GC.AvailableEquipmentPockets[i].DependentPocket] = DLOClassForPocket(GC.AvailableEquipmentPockets[i].DependentPocket, 0 );
-		    }
     }
 
     return true;
@@ -175,7 +163,6 @@ simulated protected function ValidatePocketCustomSkin(bool IsSuspect)
 {
 	local int i;
 	local int NumEquipment;
-	local class<actor> DLOClass;
 
 	AssertWithDescription(LoadOutSpec[Pocket.Pocket_CustomSkin] == None, "The custom skin entry in LoadOutSpec must be None, but is currently "$LoadOutSpec[Pocket.Pocket_CustomSkin]$". Setting to None");
 
@@ -230,44 +217,7 @@ simulated protected function bool ValidateEquipmentForPocket( Pocket pock, class
         if( CheckClass == EquipClass )
         {
             Valid = CheckValidity( GC.AvailableEquipmentPockets[pock].Validity[i] );
-            break;
-        }
-    }
-
-    return Valid;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Validate a single piece of quipment in a given pocket for team.
-//      Returns true iff the equipment class is valid for the current team
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-simulated protected function bool ValidateEquipmentForTeam( Pocket pock, class<Actor> CheckClass, bool IsSuspect )
-{
-    local int i;
-    local class<Actor> EquipClass;
-    local int NumEquipment;
-    local bool Valid;
-	local ServerSettings Settings;
-
-	Settings = ServerSettings(Level.CurrentServerSettings);
-
-	if (Settings != None && Settings.bDisableTeamSpecificWeapons)
-		return true;
-
-    NumEquipment = GC.AvailableEquipmentPockets[pock].EquipmentClassName.Length;
-
-    if( CheckClass == None && NumEquipment == 0)
-        return true;
-
-    for( i = 0; i < NumEquipment; i++ )
-    {
-        EquipClass = DLOClassForPocket( pock, i );
-
-        //did we find it?
-        if( CheckClass == EquipClass )
-        {
-            Valid = CheckTeamValidity( GC.AvailableEquipmentPockets[pock].TeamValidity[i], IsSuspect );
+            assertWithDescription(Valid, "This thing called "$CheckClass$" isn't valid");
             break;
         }
     }

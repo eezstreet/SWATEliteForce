@@ -610,7 +610,7 @@ function OnPawnLostVisionNotification()
 	// if who we're dealing with now (if anyone) matches up with the last person we lost
 	if (CurrentEnemy == VisionSensor.LastPawnLost)
 	{
-		if (! IsRunningAway() && ! IsTakingCover() && !IsThreateningHostage())
+		if (!IsRunningAway() /*&& ! IsTakingCover()*/ && !IsThreateningHostage())
 		{
 			if ((GetBetterEnemy() != None) && (GetBetterEnemy() != CurrentEnemy))
 			{

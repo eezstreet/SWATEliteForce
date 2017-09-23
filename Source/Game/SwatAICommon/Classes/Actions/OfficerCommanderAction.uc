@@ -190,7 +190,7 @@ function OnPawnEncounteredVisionNotification()
 	{
 		assert(VisionSensor.LastPawnLost != none);
 
-		Enemy = VisionSensor.LastPawnSeen;		
+		Enemy = VisionSensor.LastPawnSeen;
 	}
 
 	GetHive().OfficerSawPawn(m_Pawn, Enemy);
@@ -225,7 +225,7 @@ function OnHeardNoise()
 		SoundOrigin   = HearingSensor.LastSoundHeardOrigin;
 
 		if (IsDeadlyNoise(SoundCategory))
-		{	
+		{
 //			log(m_Pawn.Name $ " heard a DeadlyNoise - HeardActor: " $ HeardActor $ " Is a fired weapon: " $ HeardActor.IsA('FiredWeaponModel'));
 
 			if (HeardActor.IsA('FiredWeaponModel'))
@@ -254,9 +254,9 @@ function OnHeardNoise()
 				}
 			}
 		}
-		else if (SoundCategory == 'Footsteps') 
+		else if (SoundCategory == 'Footsteps')
 		{
-			if (!HeardPawn.IsA('SwatPlayer') && ! ISwatAI(HeardPawn).isCompliant() && ! ISwatAI(HeardPawn).isArrested() && 
+			if (!HeardPawn.IsA('SwatPlayer') && ! ISwatAI(HeardPawn).isCompliant() && ! ISwatAI(HeardPawn).isArrested() &&
 			   (HeardPawn.IsA('SwatHostage') || HeardPawn.IsA('SwatEnemy')))
 			{
 				ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
@@ -269,7 +269,7 @@ function OnHeardNoise()
 		{
 			LastDoorInteractor = ISwatDoor(HeardActor).GetLastInteractor();
 
-			// if we heard a door, and we have a line of sight to 
+			// if we heard a door, and we have a line of sight to
 			if (LastDoorInteractor.IsA('SwatHostage') || LastDoorInteractor.IsA('SwatEnemy'))
 			{
 				if (HasLineOfSightToDoor(Door(HeardActor)))
@@ -457,7 +457,7 @@ private latent function EngageAssignment()
 		CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment))
 	{
 		AttackTarget(CurrentAssignment);
-	
+
 		if (CurrentAttackEnemyGoal != None)
 		{
 			bCompletedEngagementGoals = CurrentAttackEnemyGoal.hasCompleted();
@@ -470,7 +470,7 @@ private latent function EngageAssignment()
 	else
 	{
 		EngageTargetForCompliance(CurrentAssignment);
-		
+
 		if (CurrentEngageForComplianceGoal != None)
 		{
 			bCompletedEngagementGoals = CurrentEngageForComplianceGoal.hasCompleted();
@@ -515,7 +515,7 @@ state Running
 			pause();
 	}
 
-	// it is possible for our assignment to be cleared between the time we are paused, 
+	// it is possible for our assignment to be cleared between the time we are paused,
 	// when runAction is called, and when we actually continue executing state code
 	// so in that case we should check again to make sure our assignment hasn't been cleared
 	if (CurrentAssignment != None)
