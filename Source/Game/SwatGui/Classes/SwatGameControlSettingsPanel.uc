@@ -175,10 +175,42 @@ function SaveSettings()
     if( SwatGamePlayerController(PlayerOwner()) != None )
         SwatGamePlayerController(PlayerOwner()).SetAlwaysRun( GC.bAlwaysRun );
 
-    GC.bNoIronSights = MyOldZoomCheckbox.bChecked;
-    GC.bHideFPWeapon = MyHideFPModelCheckbox.bChecked;
-    GC.bHideCrosshairs = MyHideCrosshairsCheckbox.bChecked;
-    GC.bNoWeaponInertia = MyDisableInertiaCheckbox.bChecked;
+    // Ugly....but it seems that UScript does not support the ternary operator --eez
+    if(MyOldZoomCheckbox.bChecked)
+    {
+        GC.ExtraIntOptions[0] = 1;
+    }
+    else
+    {
+        GC.ExtraIntOptions[0] = 0;
+    }
+
+    if(MyHideFPModelCheckbox.bChecked)
+    {
+        GC.ExtraIntOptions[1] = 1;
+    }
+    else
+    {
+        GC.ExtraIntOptions[1] = 0;
+    }
+
+    if(MyHideCrosshairsCheckbox.bChecked)
+    {
+        GC.ExtraIntOptions[2] = 1;
+    }
+    else
+    {
+        GC.ExtraIntOptions[2] = 0;
+    }
+
+    if(MyDisableInertiaCheckbox.bChecked)
+    {
+        GC.ExtraIntOptions[3] = 1;
+    }
+    else
+    {
+        GC.ExtraIntOptions[3] = 0;
+    }
 
 	GC.bShowCustomSkins = MyCustomSkinsCheck.bChecked;
 	//log("Saving, GC.bShowCustomSkins now"@GC.bShowCustomSkins);
@@ -227,10 +259,10 @@ function LoadSettings()
 	MyCustomSkinsCheck.SetChecked( GC.bShowCustomSkins );
 	//log("GC.bShowCustomSkins is "$GC.bShowCustomSkins);
 
-    MyOldZoomCheckbox.SetChecked(GC.bNoIronSights);
-    MyHideFPModelCheckbox.SetChecked(GC.bHideFPWeapon);
-    MyHideCrosshairsCheckbox.SetChecked(GC.bHideCrosshairs);
-    MyDisableInertiaCheckbox.SetChecked(GC.bNoWeaponInertia);
+    MyOldZoomCheckbox.SetChecked(GC.ExtraIntOptions[0] == 1);
+    MyHideFPModelCheckbox.SetChecked(GC.ExtraIntOptions[1] == 1);
+    MyHideCrosshairsCheckbox.SetChecked(GC.ExtraIntOptions[2] == 1);
+    MyDisableInertiaCheckbox.SetChecked(GC.ExtraIntOptions[3] == 1);
 
     MouseXMultiplier = float(PlayerOwner().ConsoleCommand("Get WinDrv.WindowsClient MouseXMultiplier"));
     MouseYMultiplier = float(PlayerOwner().ConsoleCommand("Get WinDrv.WindowsClient MouseYMultiplier"));

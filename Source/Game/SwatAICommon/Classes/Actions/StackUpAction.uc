@@ -70,7 +70,6 @@ function PostReloadGoal()
 	CurrentReloadGoal.AddRef();
 	CurrentReloadGoal.postGoal(self);
 	
-	assert(CurrentReloadGoal != None);
 	CurrentReloadGoal.unPostGoal(self);
 
 	CurrentReloadGoal.Release();
@@ -142,7 +141,7 @@ state Running
 Begin:
 	SleepInitialDelayTime(true);
 	
-//	PostReloadGoal();
+	PostReloadGoal();
 
 	PostAimAtTargetGoal();
 	

@@ -104,9 +104,9 @@ function InitComponent(GUIComponent MyOwner)
 
 	// Campaign path selection box
 	MyCampaignPathBox.Clear();
-  MyCampaignPathBox.List.Add(StringM, , , 0);	// Original Missions
-	MyCampaignPathBox.List.Add(StringN, , , 1);	// SWAT 4 campaign
-  MyCampaignPathBox.List.Add(StringO, , , 2); // All missions
+    MyCampaignPathBox.List.Add(StringM, , , 0);	// Original Missions
+	MyCampaignPathBox.List.Add(StringN, , , 1);	// Extra Missions
+    MyCampaignPathBox.List.Add(StringO, , , 2); // All missions
 
     MyCampaignSelectionBox.OnChange=InternalOnChange;
 	MyCampaignPathBox.OnChange=InternalOnChange;
@@ -140,7 +140,7 @@ private function InternalOnActivate()
 	if (SwatGUIController(Controller).coopcampaign) {LoadoutTabButton.Hide();}
 	else{LoadoutTabButton.Show();}
 
-	MyCampaignPathBox.SetIndex(1);	// Use SWAT 4 missions as the default
+	MyCampaignPathBox.SetIndex(2);	// Use SWAT 4 missions as the default (it's sorted as the third option)
 
 	if( MyCampaignSelectionBox.Find(SwatGUIController(Controller).GetCampaigns().CurCampaignName) == "" )
     	MyCampaignSelectionBox.SetIndex(0);

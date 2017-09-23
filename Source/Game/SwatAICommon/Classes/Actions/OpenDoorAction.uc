@@ -100,6 +100,10 @@ private function UpdateDoorKnowledge()
 	{
 		ISwatAI(m_Pawn).GetCommanderAction().NotifyDoorBlocked(TargetDoor);
 	}
+	else if(!m_Pawn.IsA('SwatOfficer'))
+	{ // SWAT officers should already know about the door because of the stuff done above
+		SwatAIRepository(Level.AIRepo).NotifyOfficersDoorCanOpen(TargetDoor);
+	}
 }
 
 latent function OpenDoor()
@@ -174,7 +178,7 @@ state Running
 	// if it was blocked, try opening again soon
 	if (! bIsDoorBlockedBeforeOpen)
 	{
-		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && /*!SwatDoorTarget.IsBroken() &&*/ !SwatDoorTarget.IsWedged())
+		while (TargetDoor.IsClosed() && !TargetDoor.IsOpening() && !SwatDoorTarget.IsWedged())
 		{
 			yield();
 		}

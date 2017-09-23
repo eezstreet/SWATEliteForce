@@ -861,9 +861,11 @@ simulated function UsedHook();    //for subclasses
 simulated function UpdateAvailability()
 {
     if (AvailableCount <= 0 && !Level.IsTraining)
-        SetAvailable(false);
+      SetAvailable(false);
     if(AvailableCount < 0)
       AvailableCount = 0; // Don't let this go negative
+    if(Level.IsTraining)
+      AvailableCount = 1;
 }
 
 simulated function DecrementAvailableCount()
@@ -1286,9 +1288,19 @@ simulated function Rotator GetDefaultRotationOffset()
 	return DefaultRotationOffset;
 }
 
+simulated function bool ShouldLowReadyInIronsights()
+{
+  return true;
+}
+
 simulated function bool ShouldHideCrosshairsInIronsights()
 {
   return false; // Only weapons do
+}
+
+simulated function bool ShouldWalkInIronsights()
+{
+    return false; // Only weapons do
 }
 
 simulated function vector GetIronsightsLocationOffset()

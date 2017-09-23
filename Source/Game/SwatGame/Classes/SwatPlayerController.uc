@@ -215,7 +215,7 @@ function bool ShouldHideCrosshairsDueToIronsights()
   Equipment = Pawn.GetActiveItem();
   if(!Equipment.ShouldHideCrosshairsInIronsights())
   {
-    // The currently selected piece of equipment always shows the crosshair when zooming 
+    // The currently selected piece of equipment always shows the crosshair when zooming
     return false;
   }
 
@@ -228,7 +228,7 @@ function bool GetIronsightsDisabled()
 
   GC = SwatRepo(Level.GetRepo()).GuiConfig;
 
-	return GC.bNoIronSights;
+	return GC.ExtraIntOptions[0] == 1;
 }
 
 function bool GetViewmodelDisabled()
@@ -237,7 +237,7 @@ function bool GetViewmodelDisabled()
 
   GC = SwatRepo(Level.GetRepo()).GuiConfig;
 
-	return GC.bHideFPWeapon;
+	return GC.ExtraIntOptions[1] == 1;
 }
 
 function bool GetCrosshairDisabled()
@@ -246,7 +246,7 @@ function bool GetCrosshairDisabled()
 
   GC = SwatRepo(Level.GetRepo()).GuiConfig;
 
-	return GC.bHideCrosshairs || ShouldHideCrosshairsDueToIronsights();
+	return GC.ExtraIntOptions[2] == 1 || ShouldHideCrosshairsDueToIronsights();
 }
 
 function bool GetInertiaDisabled()
@@ -255,7 +255,7 @@ function bool GetInertiaDisabled()
 
   GC = SwatRepo(Level.GetRepo()).GuiConfig;
 
-	return GC.bNoWeaponInertia;
+	return GC.ExtraIntOptions[3] == 1;
 }
 
 //overridden from Engine.PlayerController

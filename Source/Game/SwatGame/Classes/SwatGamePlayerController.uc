@@ -1465,10 +1465,40 @@ exec function NextFireMode()
         FiredWeapon(ActiveItem).NextFireMode();
 }
 
+exec function SetWeaponFlashlightPos(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting flashlight to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightPosition_1stPerson = offset;
+	}
+}
+
+exec function SetWeaponFlashlightRotation(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting weapon flashlight rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightRotation_1stPerson = Rotation;
+	}
+}
+
 exec function SetWeaponViewOffset(vector offset)
 {
 	local HandheldEquipment ActiveItem;
 	local SwatWeapon ActiveWeapon;
+
+	log("Setting default view offset to "$offset);
 
     ActiveItem = Pawn.GetActiveItem();
 	ActiveWeapon = SwatWeapon(ActiveItem);
@@ -1481,6 +1511,8 @@ exec function SetWeaponViewRotation(rotator Rotation)
 {
 	local HandheldEquipment ActiveItem;
 	local SwatWeapon ActiveWeapon;
+
+	log("Setting default weapon rotation to "$Rotation);
 
     ActiveItem = Pawn.GetActiveItem();
 	ActiveWeapon = SwatWeapon(ActiveItem);
@@ -2312,9 +2344,9 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     }
 }
 
-simulated function CheckDoorLock(SwatDoor Door)
+simulated function bool CheckDoorLock(SwatDoor Door)
 {
-  Door.TryDoorLock(self);
+  return Door.TryDoorLock(self);
 }
 
 simulated function InternalMelee()
@@ -2350,14 +2382,14 @@ simulated function InternalMelee()
 
   // Determine if we are trying to check the lock or if we are trying to punch someone
   CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
-  TraceEnd = vector(CameraRotation) * Item.MeleeRange;
+  TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
   foreach TraceActors(
     class'Actor',
     Candidate,
     HitLocation,
     HitNormal,
     HitMaterial,
-    CameraLocation + TraceEnd,
+    TraceEnd,
     CameraLocation
     )
   {
@@ -2367,13 +2399,16 @@ simulated function InternalMelee()
     }
     else if(Candidate.IsA('SwatDoor'))
     {
-      CheckDoorLock(SwatDoor(Candidate));
-      return;
+      if(CheckDoorLock(SwatDoor(Candidate)))
+        return;
     }
   }
 
 	if (!Item.bAbleToMelee)
 		return;
+
+  if(WantsZoom)
+    return; // Not allowed while zooming
 
 	if ( SwatPlayer.ValidateMelee() )
 	{
@@ -5695,6 +5730,9 @@ function ServerSetAlwaysRun( bool NewValue )
 function HandleWalking()
 {
     local bool WantsToWalk; //versus run
+    local HandheldEquipment ActiveItem;
+
+    ActiveItem = Pawn.GetActiveItem();
 
     if ( IsLocationFrozen() )
     {
@@ -5712,7 +5750,7 @@ function HandleWalking()
 	if ( Pawn != None )
     {
         //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version.
-        WantsToWalk = bool(bRun) == bAlwaysRun;
+        WantsToWalk = (WantsZoom && ActiveItem.ShouldWalkInIronsights()) || bool(bRun) == bAlwaysRun;
 		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') );
 
         if (aForward == 0 && aStrafe == 0)

@@ -19,9 +19,9 @@ function float selectionHeuristic( AI_Goal goal )
 	WeaponClip = CurrentWeapon.Ammo.RoundsRemainingBeforeReload();
 	CurrentCapacity = CurrentWeapon.Ammo.RoundsComparedBeforeReload();
 	CutOff = 0.9;
-	
+
 	if (CurrentWeapon != None)
-	{	
+	{
 		if ((m_Pawn.IsA('SwatOfficer')) && CurrentWeapon.ShouldReload() && CurrentWeapon.CanReload())
 		{
 			return 1.0;
@@ -39,11 +39,11 @@ function float selectionHeuristic( AI_Goal goal )
 private function bool IsWeaponFull()
 {
 	local FiredWeapon CurrentWeapon;
-	
+
 	CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
-	
+
 	if (CurrentWeapon != None)
-	{	
+	{
 		if ((m_Pawn.IsA('SwatOfficer')) && CurrentWeapon.ShouldReload() && CurrentWeapon.CanReload())
 		{
 			return false;
@@ -51,10 +51,10 @@ private function bool IsWeaponFull()
 		else if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
 		{
 			return false;
-		}	
+		}
 	}
-		
-	else return false;
+
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

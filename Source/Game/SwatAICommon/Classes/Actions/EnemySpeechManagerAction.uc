@@ -16,9 +16,16 @@ function TriggerOfficerEncounteredSpeech()
 		TriggerSpeech('AnnouncedSpottedOfficerSurprised');
 	}
 	else if (! ISwatAI(m_Pawn).IsAggressive() && (ISwatEnemy(m_Pawn).GetEnemySkill() < EnemySkill_High))
-	{
-		TriggerSpeech('AnnouncedSpottedOfficerScared');
-	}
+    {
+        if (FRand() < 0.5)
+        {
+            TriggerSpeech('AnnouncedSpottedOfficerScared');
+        }
+        else
+        {
+            TriggerSpeech('AnnouncedSpottedOfficerSurprised');
+        }
+    }
 	else
 	{
 		TriggerSpeech('AnnouncedSpottedOfficer');
@@ -53,6 +60,12 @@ function TriggerInvestigateSpeech()
 function TriggerBarricadeSpeech()
 {
 	TriggerSpeech('AnnouncedBarricade', true);
+}
+
+// Such a creative name I know -sandman332
+function TriggerBarricadingSpeech()
+{
+	TriggerSpeech('ReportedBarricading', true);
 }
 
 function TriggerUncompliantSpeech()

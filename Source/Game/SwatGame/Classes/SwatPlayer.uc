@@ -402,9 +402,18 @@ simulated function EAnimationSet GetPaintballLowReadyAimPoseSet()       { if (Re
 simulated protected function bool CanPawnUseLowReady()
 {
   local HandheldEquipment Equipment;
+  local PlayerController SGPC;
+
+  SGPC = PlayerController(Controller);
+  if(SGPC == None)
+    return False;
+
   Equipment = Self.GetActiveItem();
   if(Equipment.IsA('Optiwand'))
     return false;
+  else if(SGPC.WantsZoom && !Equipment.ShouldLowReadyInIronsights())
+    return false;
+    
   return true;
 }
 

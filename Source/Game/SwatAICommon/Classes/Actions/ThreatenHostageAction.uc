@@ -281,6 +281,11 @@ function bool CanAimAtHostage()
 
 	CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
 
+	if(!CurrentWeapon.HitsTargetWithNoInterruptions(Hostage))
+	{	// We can't aim at them because our trace failed
+		return false;
+	}
+
 	return ((CurrentWeapon != None) && m_Pawn.CanHit(Hostage) && ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Hostage));
 }
 

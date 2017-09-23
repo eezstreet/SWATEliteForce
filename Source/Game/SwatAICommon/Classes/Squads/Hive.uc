@@ -748,9 +748,9 @@ private function OfficerLostEnemy(Pawn OfficerViewer, Pawn LostEnemy, bool WasLo
 		! WasLostRecently)
 	{
 		// trigger a sound for the viewer to say
-//		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectLostSpeech();
+		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectLostSpeech();
 	}
-//	Blackboard.UpdateEnemy(LostEnemy);
+	Blackboard.UpdateEnemy(LostEnemy);
 }
 private function ClearCommandGoalsForOfficer(Pawn Officer)
 {
