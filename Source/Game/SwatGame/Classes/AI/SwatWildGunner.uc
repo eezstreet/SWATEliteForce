@@ -7,6 +7,13 @@ class SwatWildGunner extends SwatEnemy
 var bool bIsFiring;
 var protected WildGunnerAdjustAimGoal	AdjustAimGoal;
 
+const            LowSkillMinTimeBeforeShooting = 0.75;
+const            LowSkillMaxTimeBeforeShooting = 1.1;
+const            MediumSkillMinTimeBeforeShooting = 0.7;
+const            MediumSkillMaxTimeBeforeShooting = 0.85;
+const            HighSkillMinTimeBeforeShooting = 0.5;
+const            HighSkillMaxTimeBeforeShooting = 0.65;
+
 ///////////////////////////////////////////////////////////////////////////////
 // ISwatWildGunner implementation
 
