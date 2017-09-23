@@ -729,9 +729,24 @@ Once you have selected your map settings and have started the server at least on
 
 # VERSION HISTORY #
 
+#### v6.1
+
+ - The accuracy system has been overhauled entirely. Weapons are easier to aim in general now.
+ - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
+ - Added a Map Filter combobox to the Host Game menu. You can filter maps in the list by their source (All Maps, Custom Maps or Stock Maps)
+ - Reduced suspect and civilian field of view (120 -> 80)
+ - Increased officer field of view (120 -> 180)
+ - Officers react faster to suspects.
+ - Reduced the amount of sway on the sniper scope
+ - Fixed P90 flashlight
+ - Fixed M4Super90 iron sights position
+ - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
+
+
 ### v6 ###
 
 #### MAJOR FEATURES ####
+
 - First person improvements!
   * By hitting the zoom key, you will transition into (fully 3D) Iron Sights! While in Iron Sights, you suffer less recoil and firing your weapon affects your accuracy less. The visual representation of iron sights can be disabled in favor of the old behavior in the Game Options menu, if you prefer.
   * Lightsticks are thrown like grenades now. Chuck them across the room, or just drop them at your feet!
