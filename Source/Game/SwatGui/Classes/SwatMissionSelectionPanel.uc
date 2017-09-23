@@ -33,6 +33,7 @@ var(SWATGui) protected EditInline Config GUIRadioButton PrimaryEntranceSelection
 var(SWATGui) protected EditInline Config GUIRadioButton SecondaryEntranceSelection;
 var(SWATGui) protected EditInline Config GUILabel PrimaryEntranceLabel;
 var(SWATGui) protected EditInline Config GUILabel SecondaryEntranceLabel;
+var(SWATGui) protected EditInline Config GUIButton RandomMapButton;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -49,6 +50,7 @@ function InitComponent(GUIComponent MyOwner)
 
 	MyMissionSelectionBox.OnChange=MyMissionSelectionBox_OnChange;
     MyDifficultySelector.OnChange=MyDifficultySelector_OnChange;
+	RandomMapButton.OnClick=RandomMap_OnClick;
 }
 
 function InternalOnActivate()
@@ -77,14 +79,14 @@ function InternalOnActivate()
         }
 
         if(theCampaign.CampaignPath == 2)
-        {
-          MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
-          MyMissionSelectionBox.List.UpdateSortFunction();
+        {	// All Missions uses alphabetic sorting
+        	MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
+        	MyMissionSelectionBox.List.UpdateSortFunction();
         }
         else
-        {
-          MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
-          MyMissionSelectionBox.List.UpdateSortFunction();
+        {	// Other paths use their campaign sorting
+        	MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+        	MyMissionSelectionBox.List.UpdateSortFunction();
         }
 
         MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
@@ -184,6 +186,17 @@ function MyMissionSelectionBox_OnChange(GUIComponent Sender)
         DisplayMissionResults( theCampaign.GetMissionResults( name(MyMissionSelectionBox.List.Get()) ) );
 
     ShowMissionDescription();
+}
+
+function RandomMap_OnClick(GUIComponent Sender)
+{
+	// Pick a random map from the list
+	local int Selection;
+
+	Selection = Rand(MyMissionSelectionBox.List.ElementCount());
+	MyMissionSelectionBox.SetIndex(Selection);
+
+	// Advance us to the equipment page
 }
 
 private function ShowMissionDescription()
@@ -299,6 +312,8 @@ event Show()
         {
             SetRadioGroup(SecondaryEntranceSelection);
         }
+
+		RandomMapButton.Show();
     }
     else
     {
@@ -306,6 +321,7 @@ event Show()
         SecondaryEntranceSelection.Hide();
         PrimaryEntranceLabel.Hide();
         SecondaryEntranceLabel.Hide();
+		RandomMapButton.Hide();
     }
 }
 
