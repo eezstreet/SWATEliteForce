@@ -710,6 +710,12 @@ function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 	return LoadOut.GetItemAtSlot(Slot);
 }
 
+// overridden from ISwatAI
+function float GetTimeToWaitBeforeFiring()
+{
+	return RandRange(0.05, 0.1);
+}
+
 // overridden from SwatAI
 protected function float GetLengthOfTimeToFireFullAuto()
 {
@@ -1080,6 +1086,8 @@ defaultproperties
     CollisionHeight             =  68.0
 
     OfficerLoadOutType="OfficerLoadOut"
+    // Peripheral vision is 90 degrees on either side (for a total of 180 degrees)
+    PeripheralVision            = 0.0
 
 	bAlwaysUseWalkAimErrorWhenMoving=true
 	bAlwaysTestPathReachability=true
