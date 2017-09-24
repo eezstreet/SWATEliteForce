@@ -29,12 +29,22 @@ FriendlyName=Respirator
 GUIImage=Texture'gui_tex.equip_gasmask'
 
 [HeavyBodyArmor]
-Description=Heavy body armor is laden with ceramic plates that provide Level III protection from ballistic penetrations.  Even when hit with FMJ rounds, it provides exceptional protection from pistols, submachineguns, rifles and armor piercing shotgun slugs.  However, the ceramic plates only can reliably stop one impact, after that they start to break, reducing the armor's ballistic protection.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but can reduce an officer's mobility and slowdown his actions.
+Description=Heavy body armor is laden with ceramic plates that provide Level III protection from ballistic penetrations.  Even when hit with FMJ rounds, it provides exceptional protection from pistols, submachineguns, 7.62 rifles and armor piercing shotgun slugs.  However, the ceramic plates only can reliably stop one impact, after that they start to break, reducing the armor's ballistic protection.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but reduce an officer's mobility and slowdown his actions.
 FriendlyName=Heavy Armor
 GUIImage=Texture'gui_tex.equip_heavyarmor'
 
 [LightBodyArmor]
-Description=This is the basic and common level II kevlar body armor worn during normal operations.  Light armor provides protection from hollow point rounds, buckshot and small caliber full metal jacket rounds, but does little to stop rifle caliber full metal jacket rounds and shotgun slugs.
+Description=This is the basic and common level II kevlar body armor worn during normal operations.  Light armor provides protection from pistol hollow point rounds, smaller variants of buckshot and small caliber full metal jacket rounds, but does little to stop rifle caliber rounds, larger variants of buckshot out of long barrels or shotgun slugs.
 FriendlyName=Light Armor
+GUIImage=Texture'gui_tex.equip_lightarmor'
+
+[EnhancedBodyArmor]
+Description=Enhanced body armor is laden with steel plates rated Level III+ protection from ballistic penetrations.  Even when hit with AP rounds, it provides exceptional protection from pistols, submachineguns, rifles and armor piercing shotgun slugs.  Moreover, the steel plates can reliably stop multiple impacts without damaging, giving them an advantage compared to ceramic plate armor.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but greatly impair an officer's mobility and slowdown his actions.
+FriendlyName=Enhanced Armor
+GUIImage=Texture'gui_tex.equip_heavyarmor'
+
+[MediumBodyArmor]
+Description=This is a more resistant level IIIa kevlar body armor worn during high risk operations.  Medium armor provides increased protection compared to standard light armor, including hollow point rounds, most forms of buckshot, shotgun slugs and small caliber full metal jacket rounds. However, it can't stop rifle caliber rounds or armor piercing pistol ammunition.
+FriendlyName=Medium Armor
 GUIImage=Texture'gui_tex.equip_lightarmor'
 

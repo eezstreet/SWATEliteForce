@@ -19,6 +19,7 @@ var(parameters) Pawn Enemy;
 // behaviors we use
 var protected MoveOfficerToEngageGoal   CurrentMoveOfficerToEngageGoal;
 var protected AttackTargetGoal			CurrentAttackTargetGoal;
+var private ReportGoal CurrentReportGoal;
 
 // constants
 const kMinAttackEnemyUpdateTime = 0.1;
@@ -60,6 +61,11 @@ function cleanup()
 	{
 		CurrentAttackTargetGoal.Release();
 		CurrentAttackTargetGoal = None;
+	}
+	if(CurrentReportGoal != None)
+	{
+		CurrentReportGoal.Release();
+		CurrentReportGoal = None;
 	}
 }
 
@@ -127,6 +133,24 @@ private function AttackEnemyWithWeapon()
 	CurrentAttackTargetGoal.postGoal(self);
 }
 
+latent function ReportTarget()
+{
+	local ISwatAI target;
+
+	target = ISwatAI(Enemy);
+	if(target.CanBeUsedNow()) {
+		CurrentReportGoal = new class 'ReportGoal'(characterResource(), target, m_Pawn.controller);
+		assert(CurrentReportGoal != None);
+		CurrentReportGoal.AddRef();
+
+		CurrentReportGoal.postGoal(self);
+		WaitForGoal(CurrentReportGoal);
+		CurrentReportGoal.unPostGoal(self);
+
+		CurrentReportGoal.Release();
+		CurrentReportGoal = None;
+	}
+}
 
 state Running
 {
@@ -147,9 +171,11 @@ state Running
 
 		sleep(RandRange(kMinAttackEnemyUpdateTime, kMaxAttackEnemyUpdateTime));
 	}
-
+	
 	// enemy must be dead
+	ReportTarget();
 	succeed();
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////
