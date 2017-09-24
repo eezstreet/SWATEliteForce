@@ -147,7 +147,7 @@ var private int AutoFireShotIndex;                          //while firing in Fi
 
 var private bool PerfectAimNextShot;                        //for special purposes, we want to be able to take a shot with perfect aim, ie. Officers with shotguns
 
-var(Damage) private config float OverrideArmDamageModifier;
+var(Damage) public config float OverrideArmDamageModifier;
 
 var(AI) config bool OfficerWontEquipAsPrimary					"If true Officer will use secondary weapon unless ordered otherwise";
 
