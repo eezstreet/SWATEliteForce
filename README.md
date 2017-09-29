@@ -732,6 +732,7 @@ Once you have selected your map settings and have started the server at least on
 #### v6.1
 
  - The accuracy system has been overhauled entirely. Weapons are easier to aim in general now.
+ - Bulk now affects your weapon switching and reloading speed. Having less bulk means that you will reload your weapons faster and switch between equipment faster.
  - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
  - Added a Map Filter combobox to the Host Game menu. You can filter maps in the list by their source (All Maps, Custom Maps or Stock Maps)
  - Reduced suspect and civilian field of view (120 -> 80)
