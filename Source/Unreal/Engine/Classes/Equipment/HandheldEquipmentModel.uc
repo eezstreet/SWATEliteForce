@@ -211,14 +211,38 @@ simulated function SetEquipped(bool Equipped) { bIsEquipped = Equipped; }
 
 simulated function PlayEquip()
 {
+	local float EquipRate;
+	local Hands Hands;
+	local Pawn HandsOwner;
+	
     AssertWithDescription(!IsEquipped(),
         "[tcohen] "$name$" (of class "$class.name$") was called to PlayEquip().  But it thinks its already equipped.");
+
+	EquipRate = HandheldEquipment.EquipAnimationRate;
+
+	if(Owner.IsA('Hands'))
+	{
+		Hands = Hands(Owner);
+		HandsOwner = Pawn(Hands.Owner);
+		if(HandsOwner.IsA('IAmAffectedByWeight'))
+		{
+			EquipRate *= IAmAffectedByWeight(HandsOwner).GetBulkSpeedModifier();
+		}
+	}
+	else if(Owner.IsA('IAmAffectedByWeight'))
+	{	// apply the bulk reload speed modifier
+		EquipRate *= IAmAffectedByWeight(Owner).GetBulkSpeedModifier();
+	}
+	else
+	{
+		log("PlayReload was called on "$Owner);
+	}
 
     //play any specified animations on model and holder
     if (EquipAnimation != '')
         PlayAnim(
             EquipAnimation,
-            HandheldEquipment.EquipAnimationRate);
+            EquipRate);
     if (HolderEquipAnimation != '')
     {
         if (Owner.IsA('SwatPawn'))
@@ -228,13 +252,13 @@ simulated function PlayEquip()
                 HolderEquipAnimation,
                 HolderEquipTweenTime,
                 HolderAnimationRootBone,
-                HandheldEquipment.EquipAnimationRate);
+                EquipRate);
         }
         else
         {
             Owner.PlayAnim(
                 HolderEquipAnimation,
-                HandheldEquipment.EquipAnimationRate,
+                EquipRate,
 				HolderEquipTweenTime);
             HolderEquipAnimationChannel = 0;
         }
@@ -282,6 +306,29 @@ simulated function PlayUnequip()
     // (ie. depending if we're unequiping because we're getting arrested in
     // multiplayer) [darren]
     local name HolderUnequipAnimationForContext;
+	local float UnequipRate;
+	local Hands Hands;
+	local Pawn HandsOwner;
+
+	UnequipRate = HandheldEquipment.UnequipAnimationRate;
+
+	if(Owner.IsA('Hands'))
+	{
+		Hands = Hands(Owner);
+		HandsOwner = Pawn(Hands.Owner);
+		if(HandsOwner.IsA('IAmAffectedByWeight'))
+		{
+			UnequipRate *= IAmAffectedByWeight(HandsOwner).GetBulkSpeedModifier();
+		}
+	}
+	else if(Owner.IsA('IAmAffectedByWeight'))
+	{	// apply the bulk reload speed modifier
+		UnequipRate *= IAmAffectedByWeight(Owner).GetBulkSpeedModifier();
+	}
+	else
+	{
+		log("PlayReload was called on "$Owner);
+	}
 
     AssertWithDescription(IsEquipped(),
         "[tcohen] "$name
@@ -290,7 +337,7 @@ simulated function PlayUnequip()
 
     //play any specified animations on model and holder
     if (UnequipAnimation != '')
-        PlayAnim(UnequipAnimation, HandheldEquipment.UnequipAnimationRate);
+        PlayAnim(UnequipAnimation, UnequipRate);
 
     HolderUnequipAnimationForContext = GetHolderUnequipAnimationForContext();
     if (HolderUnequipAnimationForContext != '')
@@ -302,13 +349,13 @@ simulated function PlayUnequip()
                 HolderUnequipAnimationForContext,
                 ,
                 HolderAnimationRootBone,
-                HandheldEquipment.UnequipAnimationRate);
+                UnequipRate);
         }
         else
         {
             Owner.PlayAnim(
                 HolderUnequipAnimationForContext,
-                HandheldEquipment.UnequipAnimationRate,
+                UnequipRate,
                 0.5);   //tween time
             HolderUnEquipAnimationChannel = 0;
         }

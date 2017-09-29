@@ -796,28 +796,49 @@ function float GetWeightMovementModifier() {
 }
 
 function float GetBulkQualifyModifier() {
-  local float totalBulk;
-  local float maxBulk, minBulk;
-  local float minQualifyModifier, maxQualifyModifier;
+	local float totalBulk;
+	local float maxBulk, minBulk;
+	local float minQualifyModifier, maxQualifyModifier;
 
-  totalBulk = GetTotalBulk();
-  minBulk = GetMinimumBulk();
-  maxBulk = GetMaximumBulk();
-  minQualifyModifier = GetMinimumQualifyModifer();
-  maxQualifyModifier = GetMaximumQualifyModifer();
+	totalBulk = GetTotalBulk();
+	minBulk = GetMinimumBulk();
+	maxBulk = GetMaximumBulk();
+	minQualifyModifier = GetMinimumQualifyModifer();
+	maxQualifyModifier = GetMaximumQualifyModifer();
 
-  if(totalBulk < minBulk) {
-    // There are legitimate reasons that we don't meet the minimum bulk - Training mission comes to mind
-    totalBulk = minBulk;
-  }
+	if(totalBulk < minBulk) {
+	    // There are legitimate reasons that we don't meet the minimum bulk - Training mission comes to mind
+	    totalBulk = minBulk;
+	}
 
-  assertWithDescription(totalBulk <= maxBulk,
-    "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
+	assertWithDescription(totalBulk <= maxBulk,
+	    "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
 
-  totalBulk -= minBulk;
-  maxBulk -= minBulk;
+	totalBulk -= minBulk;
+	maxBulk -= minBulk;
 
-  return ((totalBulk / maxBulk) * (maxQualifyModifier - minQualifyModifier)) + minQualifyModifier;
+	return ((totalBulk / maxBulk) * (maxQualifyModifier - minQualifyModifier)) + minQualifyModifier;
+}
+
+function float GetBulkSpeedModifier() {
+	local float totalBulk;
+	local float maxBulk, minBulk;
+	local float minSpeedModifier, maxSpeedModifier;
+
+	totalBulk = GetTotalBulk();
+	minBulk = GetMinimumBulk();
+	maxBulk = GetMaximumBulk();
+	minSpeedModifier = GetMinimumSpeedModifier();
+	maxSpeedModifier = GetMaximumSpeedModifier();
+
+	if(totalBulk < minBulk) {
+		totalBulk = minBulk;
+	}
+
+	totalBulk -= minBulk;
+	maxBulk -= minBulk;
+
+	return ((1.0 - (totalBulk / maxBulk)) * (maxSpeedModifier - minSpeedModifier)) + minSpeedModifier;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
