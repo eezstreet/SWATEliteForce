@@ -28,6 +28,13 @@ var bool StaticDOAConversion; // For units that are incapacitated at the start: 
 var float DOAConversionTime; // The amount of time it will take to convert to a DOA
 var float StaticDOAConversionTime; // The amount of time it will take to convert to a static DOA
 
+var bool UseEmpathyModifier;
+var float EmpathyPepperSprayAmount;
+var float EmpathyTaserAmount;
+var float EmpathyShotAmount;
+var float EmpathyPepperBallAmount;
+var float EmpathyStungAmount;	// applies to all blunt damage
+
 var class<Equipment> SelectedEquipment1Class;
 var class<Equipment> SelectedEquipment2Class;
 var class<Equipment> SelectedEquipment3Class;
@@ -116,4 +123,34 @@ function float GetDOAConversionTime()
 function float GetDOAConversionTime_Static()
 {
   return StaticDOAConversionTime;
+}
+
+function bool EmpathyModifierEnabled()
+{
+	return UseEmpathyModifier;
+}
+
+function float GetEmpathyPepperSprayAmount()
+{
+	return EmpathyPepperSprayAmount;
+}
+
+function float GetEmpathyTaserAmount()
+{
+	return EmpathyTaserAmount;
+}
+
+function float GetEmpathyShotAmount()
+{
+	return EmpathyShotAmount;
+}
+
+function float GetEmpathyPepperBallAmount()
+{
+	return EmpathyPepperBallAmount;
+}
+
+function float GetEmpathyStungAmount()
+{
+	return EmpathyStungAmount;
 }
