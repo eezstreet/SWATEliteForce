@@ -40,14 +40,37 @@ simulated function SetHandHeldEquipment(HandheldEquipment HHE)
 
 simulated function PlayReload()
 {
+	local float ReloadRate;
+	local Pawn HandsOwner;
+	local Hands Hands;
+
     SelectedReloadAnimation = SelectReloadAnimation();
     SelectedHolderReloadAnimation = SelectHolderReloadAnimation();
+	ReloadRate = FiredWeapon(HandheldEquipment).ReloadAnimationRate;
+
+	if(Owner.IsA('Hands'))
+	{
+		Hands = Hands(Owner);
+		HandsOwner = Pawn(Hands.Owner);
+		if(HandsOwner.IsA('IAmAffectedByWeight'))
+		{
+			ReloadRate *= IAmAffectedByWeight(HandsOwner).GetBulkSpeedModifier();
+		}
+	}
+	else if(Owner.IsA('IAmAffectedByWeight'))
+	{	// apply the bulk reload speed modifier
+		ReloadRate *= IAmAffectedByWeight(Owner).GetBulkSpeedModifier();
+	}
+	else
+	{
+		log("PlayReload was called on "$Owner);
+	}
 
     //play any specified animations on model and holder
     if (SelectedReloadAnimation != '')
         PlayAnim(
             SelectedReloadAnimation,
-            FiredWeapon(HandheldEquipment).ReloadAnimationRate);
+            ReloadRate);
     if (SelectedHolderReloadAnimation != '')
     {
         if (Owner.IsA('SwatPawn'))
@@ -57,13 +80,13 @@ simulated function PlayReload()
                 SelectedHolderReloadAnimation,
                 ReloadTweenTime,
                 HolderAnimationRootBone,
-                FiredWeapon(HandheldEquipment).ReloadAnimationRate);
+                ReloadRate);
 		}
         else
 		{
             Owner.PlayAnim(
                 SelectedHolderReloadAnimation,
-                FiredWeapon(HandheldEquipment).ReloadAnimationRate,
+                ReloadRate,
                 0.2);
 			HolderReloadAnimationChannel = 0;
 		}

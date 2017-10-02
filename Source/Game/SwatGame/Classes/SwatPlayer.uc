@@ -185,6 +185,11 @@ simulated function float GetBulkQualifyModifier() {
   return LoadOut.GetBulkQualifyModifier();
 }
 
+simulated function float GetBulkSpeedModifier() {
+	log("GetBulkSpeedModifier: modifier is "$LoadOut.GetBulkSpeedModifier());
+	return LoadOut.GetBulkSpeedModifier();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // IControllableThroughViewport Interface
@@ -413,7 +418,7 @@ simulated protected function bool CanPawnUseLowReady()
     return false;
   else if(SGPC.WantsZoom && !Equipment.ShouldLowReadyInIronsights())
     return false;
-    
+
   return true;
 }
 

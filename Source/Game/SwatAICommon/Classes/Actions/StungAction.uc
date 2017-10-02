@@ -35,6 +35,11 @@ protected function float GetMoraleModificationAmount()
 	return ISwatAI(m_Pawn).GetCommanderAction().GetStungMoraleModification();
 }
 
+protected function float GetEmpathyModifierForCharacter(ISwatAICharacter target)
+{
+	return Target.GetStungEmpathy();
+}
+
 function bool ShouldAffectMoraleAgain()
 {
 	// the stung behavior does affect morale again
