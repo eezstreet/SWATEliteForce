@@ -132,6 +132,14 @@ simulated function float GetMaximumQualifyModifer() {
   return /*MaximumQualifyModifier*/ 2.0;
 }
 
+simulated function float GetMinimumSpeedModifier() {
+	return 0.85;
+}
+
+simulated function float GetMaximumSpeedModifier() {
+	return 1.75;
+}
+
 simulated function float GetMinimumMovementModifier() {
   return /*MinimumMovementModifier*/ 0.7;
 }

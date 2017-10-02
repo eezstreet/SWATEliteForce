@@ -196,7 +196,7 @@ function RandomMap_OnClick(GUIComponent Sender)
 	Selection = Rand(MyMissionSelectionBox.List.ElementCount());
 	MyMissionSelectionBox.SetIndex(Selection);
 
-	// Advance us to the equipment page
+	// Advance us to the equipment page (?)
 }
 
 private function ShowMissionDescription()

@@ -94,6 +94,10 @@ simulated function float GetBulkQualifyModifier() {
   return LoadOut.GetBulkQualifyModifier();
 }
 
+simulated function float GetBulkSpeedModifier() {
+	return LoadOut.GetBulkSpeedModifier();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Engine Events
