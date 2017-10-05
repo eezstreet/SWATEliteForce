@@ -369,7 +369,7 @@ event NotifyStartedMoving()
         NotifyStoppedMovingTimer.StopTimer();
     }
 
-    SetUpperBodyAnimBehavior(kUBAB_LowReady, kUBABCI_AvoidCollisions);
+    SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AvoidCollisions);
 }
 
 event NotifyStoppedMoving()
@@ -686,9 +686,7 @@ function bool ShouldPlayFullBodyHitAnimation()
 // Only allow low-ready if the officer is not aiming at a staircase aim point
 protected function bool CanPawnUseLowReady()
 {
-    local StaircaseAimPoint StaircaseAimPoint;
-    StaircaseAimPoint = StaircaseAimPoint(AnimAimActor);
-    return StaircaseAimPoint == None;
+    return true;
 }
 
 simulated function EAnimationSet GetStandingInjuredAnimSet()    { return kAnimationSetOfficerInjuredStanding; }
@@ -697,7 +695,7 @@ simulated function EAnimationSet GetCrouchingInjuredAnimSet()   { return kAnimat
 function EUpperBodyAnimBehavior GetMovementUpperBodyAimBehavior()
 {
 	// by default we use low ready when moving
-	return kUBAB_LowReady;
+	return kUBAB_AimWeapon;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

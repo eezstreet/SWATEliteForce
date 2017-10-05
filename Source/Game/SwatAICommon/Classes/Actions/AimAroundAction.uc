@@ -613,7 +613,11 @@ function FindBestPointToAimAt()
 
     if (!bAimWeapon)
     {
-		if (CurrentWeapon == None)
+		if (CurrentWeapon == None && m_pawn.IsA('SwatOfficer'))
+		{
+			CurrentUpperBodyAnimBehavior = kUBAB_AimWeapon;
+		}
+		else if (CurrentWeapon == None)
 		{
 			CurrentUpperBodyAnimBehavior = kUBAB_FullBody;
 		}
