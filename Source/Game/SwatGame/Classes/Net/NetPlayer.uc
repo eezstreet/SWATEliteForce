@@ -79,8 +79,8 @@ replication
 
     reliable if ( Role == ROLE_Authority )
         OnDoorUnlocked;
-    
-    //dkaplan: remote pawns also need to know the ammo amount to avoid empty clip -need reload problems    
+
+    //dkaplan: remote pawns also need to know the ammo amount to avoid empty clip -need reload problems
     //reliable if ( Role == ROLE_Authority && RemoteRole == ROLE_AutonomousProxy )
     reliable if ( Role == ROLE_Authority )
         CurrentWeaponPocket, CurrentAmmoCounts, CurrentClip, bThisPlayerHasTheItem;
@@ -102,7 +102,7 @@ function InitializeReplicatedCounts()
 	    mplog( self$"---NetPlayer::InitializeReplicatedCounts()." );
 
     Assert( Level.NetMode != NM_Client );
-    
+
     LoadOutSpecCount = 0;
     for ( i = 0; i < Pocket.EnumCount; ++i )
     {
@@ -161,7 +161,7 @@ simulated event PostNetBeginPlay()
 
         SwitchToMesh( VIPMesh );
     }
-    
+
     //mplog(self$" calling SwatPlayer.RefreshCameraEffects("$self$")");
     RefreshCameraEffects(self);
 }
@@ -228,7 +228,7 @@ simulated event PostReplication()
 
     GetLoadoutSpec(); // force the NetPlayer to create one.
     CopyReplicatedSpecToDynamicSpec();
-    
+
     //mplog( "dynamic loadout spec:" );
     //DynamicLoadOutSpec.PrintLoadoutspecToMPLog();
 
@@ -249,7 +249,7 @@ simulated event PostReplication()
 //
 // Animation Set Overriding
 
-simulated function EAnimationSet GetStandingWalkAnimSet()					
+simulated function EAnimationSet GetStandingWalkAnimSet()
 {
     local LoadOut theLoadOut;
 
@@ -264,22 +264,22 @@ simulated function EAnimationSet GetStandingWalkAnimSet()
 	}
 	else
 	{
-		return kAnimationSetStealthStanding; 
+		return kAnimationSetStealthStanding;
 	}
 }
 
-simulated function EAnimationSet GetStandingRunAnimSet()					
-{ 
+simulated function EAnimationSet GetStandingRunAnimSet()
+{
     local LoadOut theLoadOut;
 
     theLoadOut = GetLoadOut();
 	if (theLoadOut != None && theLoadOut.HasHeavyArmor())
 	{
-		return kAnimationSetDynamicStandingHeavyArmor; 
+		return kAnimationSetDynamicStandingHeavyArmor;
 	}
 	else if (theLoadOut != None && theLoadOut.HasNoArmor())
 	{
-		return kAnimationSetDynamicStandingNoArmor; 
+		return kAnimationSetDynamicStandingNoArmor;
 	}
 	else
 	{
@@ -287,22 +287,22 @@ simulated function EAnimationSet GetStandingRunAnimSet()
 	}
 }
 
-simulated function EAnimationSet GetCrouchingAnimSet()						
-{ 
+simulated function EAnimationSet GetCrouchingAnimSet()
+{
     local LoadOut theLoadOut;
 
     theLoadOut = GetLoadOut();
 	if (theLoadOut != None && theLoadOut.HasHeavyArmor())
 	{
-		return kAnimationSetCrouchingHeavyArmor; 
+		return kAnimationSetCrouchingHeavyArmor;
 	}
 	else if (theLoadOut != None && theLoadOut.HasNoArmor())
 	{
-		return kAnimationSetCrouchingNoArmor; 
+		return kAnimationSetCrouchingNoArmor;
 	}
 	else
 	{
-		return kAnimationSetCrouching; 
+		return kAnimationSetCrouching;
 	}
 }
 
@@ -428,7 +428,7 @@ simulated function OnArrestBegan(Pawn Arrester)
 
     LastArrester = SwatPlayer(Arrester);
 
-    // We need to first interrupt the current state. 
+    // We need to first interrupt the current state.
     InterruptState('BeingCuffed');
     if ( Controller != None )
         Controller.InterruptState('BeingCuffed');
@@ -497,7 +497,7 @@ simulated function OnArrestInterrupted(Pawn Arrester)
 
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---NetPlayer::OnArrestInterrupted(). Arrester="$Arrester );
-    
+
     if ( Controller != None )
     {
         Controller.GotoState( 'PlayerWalking' );
@@ -527,7 +527,7 @@ simulated function bool CanBeUsedByToolkitNow()
     //mplog( self$"---NetPlayer::CanBeUsedByToolkitNow()." );
     //mplog( "...IsArrested()="$IsArrested() );
     //mplog( "...IsTheVIP()="$IsTheVIP() );
-        
+
     //a Toolkit can be used to unarrest a NetPlayer iff (s)he is arrested
     return IsArrested() && IsTheVIP();
 }
@@ -683,12 +683,12 @@ simulated function String GetHumanReadableName()
     // who are mentioned in the message to get a different message from the
     // other players.
 
-//     if (IsControlledByLocalHuman()) 
+//     if (IsControlledByLocalHuman())
 //     {
 //         return "You";  // returned for local player in *MP* games only
 //     }
 
-    // Superclass will return correct name for remotely controlled 
+    // Superclass will return correct name for remotely controlled
 	// pawns in MP games (implementation in Pawn.uc handles querying
 	// player's chosen name in net games).
     return Super.GetHumanReadableName();
@@ -799,14 +799,14 @@ simulated function DynamicLoadOutSpec GetLoadoutSpec()
             DynamicLoadOutSpec = Spawn(class'DynamicLoadOutSpec', None, 'CurrentMultiPlayerLoadout');
         Assert( DynamicLoadOutSpec != None );
     }
-    
+
     return DynamicLoadOutSpec;
 }
 
 simulated private function CopyReplicatedSpecToDynamicSpec()
 {
     local int i;
- 
+
     for ( i = 0; i < Pocket.EnumCount; i++ )
     {
         DynamicLoadOutSpec.LoadOutSpec[i] = ReplicatedLoadOutSpec[i];
@@ -827,15 +827,15 @@ simulated function TakeDamageEffectsHook( int Damage, Pawn EventInstigator, vect
     Super.TakeDamageEffectsHook(Damage, EventInstigator, HitLocation, Momentum, DamageType);
 
 //log( self$"::TakeDamageEffectsHook()... Health = "$Health$", isAlive() = "$isAlive()$", Level.NetMode = "$Level.NetMode$", Controller = "$Controller$", Level.GetLocalPlayerController() = "$Level.GetLocalPlayerController() );
-        
+
     //only play this on pawns other than the local PlayerController's pawn
     //if( Controller == Level.GetLocalPlayerController() )
     //    return;
-        
+
     //we don't want to play grunts when less lethaled or non-damaged
     if( Damage <= 0 || DamageType.Name == 'LessLethalSG' )
         return;
-        
+
     //only play the grunts if alive
     if( Health > 0 )
     {
@@ -889,19 +889,19 @@ simulated function UpdateAmmoInfo()
     local FiredWeapon Weapon;
     local int i;
 	local string TheLog;
-    
+
     if( Level.NetMode != NM_ListenServer && Level.NetMode != NM_DedicatedServer )
         return;
-    
+
     Weapon = FiredWeapon(GetActiveItem());
-    
+
     //only update the info if the ActiveItem is a fired weapon
     if( Weapon == None )
         return;
-        
+
     CurrentWeaponPocket = Weapon.GetPocket();
 	CurrentClip = Weapon.Ammo.GetCurrentClip();
-	
+
 
  	if (Level.GetEngine().EnableDevTools)
 		TheLog = self$"::UpdateAmmoInfo() ... CurrentWeaponPocket = "$CurrentWeaponPocket$", CurrentClip = "$CurrentClip$", CurrentAmmoCounts = ";
@@ -909,7 +909,7 @@ simulated function UpdateAmmoInfo()
 	for( i = 0; i < MAX_CLIPS; i++ )
 	{
 		CurrentAmmoCounts[i] = Weapon.Ammo.GetClip(i);
-		
+
  	    if (Level.GetEngine().EnableDevTools)
 			TheLog = TheLog$CurrentAmmoCounts[i]$" ";
 	}
@@ -923,33 +923,33 @@ simulated event OnAmmoInfoChanged()
     local FiredWeapon Weapon;
     local int i;
     //local string TheLog;
-    
+
     if( Level.NetMode != NM_Client )
         return;
-    
+
     Weapon = FiredWeapon(GetActiveItem());
-    
+
     //only update the info if the ActiveItem is a fired weapon
     if( Weapon == None )
         return;
-        
+
     //do not do any updates if the current weapon does not match the updated information
     if( CurrentWeaponPocket != Weapon.GetPocket() )
         return;
 
     Weapon.Ammo.SetCurrentClip(CurrentClip);
-    
+
  	//TheLog = self$"::OnAmmoInfoChanged() ... CurrentWeaponPocket = "$CurrentWeaponPocket$", CurrentClip = "$CurrentClip$", CurrentAmmoCounts = ";
 
     for( i = 0; i < MAX_CLIPS; i++ )
     {
         Weapon.Ammo.SetClip( i, CurrentAmmoCounts[i] );
-		
+
 		//TheLog = TheLog$CurrentAmmoCounts[i]$" ";
     }
 
 	//log( TheLog );
-    
+
     Weapon.Ammo.UpdateHUD();
 }
 

@@ -414,7 +414,12 @@ exec function Kick( string S )
 
 exec function SAD( string S )
 {
-    SwatGameInfo(Level.Game).Admin.AdminLogin(Self, S);
+    SwatGameInfo(Level.Game).Admin.TryLogin(Self, S);
+}
+
+exec function SAL( )
+{
+	SwatGameInfo(Level.Game).Admin.TryLogout(Self);
 }
 
 exec function Switch( string S )
@@ -439,8 +444,7 @@ exec function ShowIDs()
 
 exec function ToggleIDs()
 {
-    if( SwatPlayerReplicationInfo(PlayerReplicationInfo).IsAdmin() )
-        ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
+    ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
 }
 
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)

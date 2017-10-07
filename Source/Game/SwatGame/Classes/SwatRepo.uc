@@ -10,12 +10,14 @@
 //     Viewport.Actor.GetEntryLevel()
 
 class SwatRepo extends Engine.Repo
-    native;
+	dependsOn(SwatAdmin)
+	native;
 
 import enum eSwatGameState from SwatGuiConfig;
 import enum eSwatGameRole from SwatGuiConfig;
 import enum ESwatRoundOutcome from SwatGameInfo;
 import enum EEntryType from SwatStartPointBase;
+import enum AdminPermissions from SwatAdmin;
 
 // the GUI config object holding all the gui config information
 var SwatGUIConfig GuiConfig;
@@ -283,8 +285,13 @@ event Tick( Float DeltaSeconds )
 //quickly restarts the server (updates all clients, maintaining state flow, then instantly goes to next map
 function QuickServerRestart( PlayerController PC )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if (Level.Game.IsA( 'SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_EndGame))
+		{
+			return;
+		}
+	}
 
     //set this flag to perform the quick round reset next tick
     bShouldPerformQuickRoundReset = true;
@@ -293,8 +300,13 @@ function QuickServerRestart( PlayerController PC )
 //Restarts the server from the Coop QMM lobby
 function CoopQMMServerRestart( PlayerController PC )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if (Level.Game.IsA( 'SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_EndGame))
+		{
+			return;
+		}
+	}
 
     NetNextRound();
 }
