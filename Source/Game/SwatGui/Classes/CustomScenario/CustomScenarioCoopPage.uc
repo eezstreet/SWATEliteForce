@@ -89,7 +89,7 @@ private function FillPlayerList()
 		return;
 
 	SGRI = SwatGameReplicationInfo(PlayerOwner().GameReplicationInfo);
-    
+
     if (SGRI == None)
         return;
 
@@ -138,7 +138,7 @@ function PlayScenario( string ScenarioName, string PackName )
 
     //reset the current pack
     SetCustomScenarioPack( PackName );
-    
+
     //store the selected pack & scenario data
 	GC.SetCustomScenarioPackData( CustomScenarioPack, PackPlusExtension( PackName ), PackMinusExtension( PackName ), CustomScenarioCreatorData.ScenariosPath );
     GC.SetScenarioName( ScenarioName );
@@ -163,22 +163,22 @@ function PlayScenario( string ScenarioName, string PackName )
         0,
         CurrentSettings.NumRounds,
         CurrentSettings.MaxPlayers,
-        CurrentSettings.DeathLimit,
+        CurrentSettings.Unused,
         CurrentSettings.PostGameTimeLimit,
-        CurrentSettings.RoundTimeLimit,
+        CurrentSettings.Unused2,
         480,
         CurrentSettings.bShowTeammateNames,
-        CurrentSettings.bShowEnemyNames,
-		CurrentSettings.bAllowReferendums,
+        CurrentSettings.Unused3,
+				CurrentSettings.bAllowReferendums,
         CurrentSettings.bNoRespawn,
         CurrentSettings.bQuickRoundReset,
         CurrentSettings.FriendlyFireAmount,
-        CurrentSettings.EnemyFireAmount,
-		CurrentSettings.ArrestRoundTimeDeduction,
+        CurrentSettings.Unused4,
+				CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.bUseStatTracking,
-		CurrentSettings.bDisableTeamSpecificWeapons );
+		CurrentSettings.Unused5,
+		CurrentSettings.bEnableSnipers );
 
 	// Set the server settings to dirty
 	SwatPlayerController(PlayerOwner()).ServerSetDirty(PendingSettings);
@@ -226,7 +226,7 @@ protected function bool HandleKeyEventFirstCrack( out byte Key, out byte State, 
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -245,7 +245,7 @@ protected function bool HandleKeyEvent( out byte Key, out byte State, float delt
             return true;
         }
     }
-            
+
     return Super.HandleKeyEvent( Key, State, delta );
 }
 

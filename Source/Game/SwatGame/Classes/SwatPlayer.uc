@@ -185,6 +185,11 @@ simulated function float GetBulkQualifyModifier() {
   return LoadOut.GetBulkQualifyModifier();
 }
 
+simulated function float GetBulkSpeedModifier() {
+	log("GetBulkSpeedModifier: modifier is "$LoadOut.GetBulkSpeedModifier());
+	return LoadOut.GetBulkSpeedModifier();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // IControllableThroughViewport Interface
@@ -402,9 +407,18 @@ simulated function EAnimationSet GetPaintballLowReadyAimPoseSet()       { if (Re
 simulated protected function bool CanPawnUseLowReady()
 {
   local HandheldEquipment Equipment;
+  local PlayerController SGPC;
+
+  SGPC = PlayerController(Controller);
+  if(SGPC == None)
+    return False;
+
   Equipment = Self.GetActiveItem();
   if(Equipment.IsA('Optiwand'))
     return false;
+  else if(SGPC.WantsZoom && !Equipment.ShouldLowReadyInIronsights())
+    return false;
+
   return true;
 }
 
@@ -1955,8 +1969,17 @@ simulated state ThrowingFinish
         //    $", ThrowHeldTime="$ThrowHeldTime
         //    $".  ThrowSpeedTimeFactor * ThrowHeldTime = "$ThrowSpeedTimeFactor * ThrowHeldTime
         //    $", FClamp(ThrowSpeedTimeFactor * ThrowHeldTime, ThrowSpeedRange.Min, ThrowSpeedRange.Max) = "$FClamp(ThrowSpeedTimeFactor * ThrowHeldTime, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
-        ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
-        ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+        if(ThrownWeapon.IsA('Lightstick'))
+        {
+          // Lightsticks can be dropped at the feet. Grenades, not so much.
+          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, ThrowSpeedRange.Max));
+        }
+        else
+        {
+          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+        }
     }
 
     simulated function EndState()
@@ -2042,7 +2065,7 @@ Begin:
 ////////////////////////////////////////////////////////////////////////////////
 
 simulated function Tick(float dTime) {
-  AdjustPlayerMovementSpeed();
+    AdjustPlayerMovementSpeed();
 }
 
 

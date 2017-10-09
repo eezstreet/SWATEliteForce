@@ -9,7 +9,9 @@ class SquadDeployLightstickGoal extends SquadCommandGoal;
 //
 // Variables
 
-var array<vector> DropPoints;
+var array<vector> 	DropPoints;
+
+var bool			bPlaySpeech;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -95,10 +97,24 @@ private function bool IsADropPoint(vector TestDropPoint)
 	return false;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Other
+
+function SetPlaySpeech(bool play)
+{
+	bPlaySpeech = play;
+}
+
+function bool GetPlaySpeech()
+{
+	return bPlaySpeech;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
 	goalName = "SquadDeployLightstick"
 	bRepostElementGoalOnSubElementSquad = true
+	bPlaySpeech = true;
 }

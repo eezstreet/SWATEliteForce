@@ -60,8 +60,9 @@ function InitComponent(GUIComponent MyOwner)
 	for (i=0; i<GC.CompleteMissionList.length; ++i)
 		cbo_mission.AddItem(string(GC.CompleteMissionList[i]),, GC.FriendlyName[i]);
 
-  // Add extra missions
-  cbo_mission.AddItem("SP-Meatbarn",, "Meat Barn Restaurant");
+	// Add extra missions
+	cbo_mission.AddItem("SP-Meatbarn",, "Meat Barn Restaurant");
+	cbo_mission.AddItem("SP-Courthouse",, "Brewer County Courthouse");
 
 	//fill difficulties
 	cbo_difficulty.AddItem("Any",, Data.AnyString);

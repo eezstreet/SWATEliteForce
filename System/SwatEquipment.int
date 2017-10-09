@@ -189,8 +189,19 @@ FireModes=Pump-Action
 TotalAmmoString=50 shells
 RateOfFire=150 RPM
 
+[M1Super90SG]
+Description=The M1 Super 90 is a semi-automatic 12 gauge combat shotgun with a five round magazine capacity and it accepts multiple types of 2.75" shot shells. With a tritium "glow in the dark" front sight, a fourteen-inch chrome plated barrel, a high impact polymer buttstock and a mounted flashlight, the Benelli M1 Super 90 might old, but it is a mainstay in law enforcement.
+FriendlyName=M1 Super 90 Defense
+Manufacturer=Benelli
+Caliber=12 Gauge
+CountryOfOrigin=Italy
+ProductionStart=1994
+FireModes=Semi-Automatic
+TotalAmmoString=50 shells
+RateOfFire=200 RPM
+
 [M4Super90SG]
-Description=The Benelli M4 Super 90 tactical shotgun is a highly reliable 12 gauge shotgun that has proven itself time and again in the field.  This model features an auto loader allowing for semi-automatic firing of its seven round magazine.  This powerful weapon is capable of dealing extreme damage quickly and in a reliable spread.  It only has one drawback - its bulk can make it difficult to handle in close quarters situations.
+Description=The Benelli M4 Super 90 (designated by the United States military as the M1014) is a highly reliable semi-automatic shotgun, developed in the late 90s as the final successor to the widely popular M1 series of Benelli shotguns. Its 7-round magazine is appealing to law enforcement, but its relative bulk may make it difficult to use in close quarters.
 FriendlyName=M4 Super 90
 Manufacturer=Benelli
 Caliber=12 Gauge
@@ -319,6 +330,10 @@ MagazineSizeString=25
 TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
+[UMP45sdSMG]
+Description=The UMP is the cheaper and lighter successor to the MP5.  Built largely of glass-fiber reinforced polymers, this lightweight submachine gun provides the same reliability as the MP5, but with the added punch of the larger .45 ACP caliber round.  The heavy bullet provides superior penetration of armored targets with FMJ rounds compared to its 9mm brethren, despite having a lower muzzle velocity and slower cyclical rate of fire.  This model is equipped with a fire mode selector allowing semi-automatic, two round burst and fully automatic firing modes as well as a suppressor for when stealth is paramount.
+FriendlyName=Suppressed UMP
+
 [M4A1MG]
 Description=The Colt M4A1 carbine is based on the tried and true design of the M16 assault rifle used by the United States Army.  The shorter carbine design makes it a more viable weapon than the M16 in close quarters situations.  Using 5.56x45mm rifle ammunition in both full metal jacket and jacketed hollow point configurations, the M4A1 carbine is the most powerful weapon available to SWAT officers.  It is equipped with a fire mode selector allowing semi-automatic as well as fully automatic firing.
 FriendlyName=M4A1 Carbine
@@ -331,17 +346,25 @@ MagazineSizeString=30
 TotalAmmoString=10 magazines
 RateOfFire=800 RPM
 
+[M4A1sdMG]
+Description=The Colt M4A1 carbine is based on the tried and true design of the M16 assault rifle used by the United States Army.  The shorter carbine design makes it a more viable weapon than the M16 in close quarters situations.  Using 5.56x45mm rifle ammunition in both full metal jacket and jacketed hollow point configurations, the M4A1 carbine is the most powerful weapon available to SWAT officers.  It is equipped with a fire mode selector allowing semi-automatic as well as fully automatic firing and a suppressor for when stealth is paramount.
+FriendlyName=Suppressed M4A1 Carbine
+
 [G36kMG]
-Description=The H&K G36C Carbine is a lightweight sub compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing.
-FriendlyName=G36C
+Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing.
+FriendlyName=G36K
 Manufacturer=Heckler & Koch
 Caliber=5.56x45mm DM11
 CountryOfOrigin=Germany
-ProductionStart=2001
+ProductionStart=1997
 FireModes=Semi-Automatic, 2-rd. Burst, Full-Auto
 MagazineSizeString=30
 TotalAmmoString=10 magazines
 RateOfFire=750 RPM
+
+[G36ksdMG]
+Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount.
+FriendlyName=Suppressed G36K
 
 [UziSMG]
 Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice. Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
@@ -461,6 +484,10 @@ RateOfFire=600 RPM
 Description=This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
 FriendlyName=Door Wedge
 
+[Wedge3pack]
+Description=This pack of three door wedges contains three times as many wedges, but occupies five times as much space and weight.
+FriendlyName=Wedge 3-Pack
+
 [Optiwand]
 Description=The opti-wand is a sophisticated observation device which allows officers to examine situations around corners and under closed doors without exposing themselves to lines of fire.  On top of the device is a small LCD screen which displays the images seen by the camera at the end of the expandable rod.  It is an invaluable tool for gathering intelligence on suspect and civilian locations before performing dangerous clear routines and potentially exposing your team to fire.
 FriendlyName=Optiwand
@@ -479,11 +506,30 @@ FriendlyName=M7A3 CS Grenade
 
 [FlashbangGrenade]
 Description=The stun grenade is a diversionary device that stuns and disorients people with an explosive report and a brillant flash.  People that are affected by the device can be temporarily blinded and deafened by the blast.  During this time SWAT has a significant tactical advantage over the affected persons.||Flashbangs are designed so that they will not fragment on detonation, but can still cause serious injury if detonation occurs in close proximity to a person.  Caution is advised.
-FriendlyName=M84 Stun Grenade
+FriendlyName=M84 Flashbang
+
+[Sting3pack]
+Description=This 3-pack of stingers contains three times as many stingers, but occupies five times as much space and weight.
+FriendlyName=Stinger 3-Pack
+
+[CS3pack]
+Description=This 3-pack of gas grenades contains three times as many CS gas grenades, but occupies five times as much space and weight.
+FriendlyName=CS Gas 3-Pack
+
+[Flashbang3pack]
+Description=This 3-pack of flashbangs contains three times as many flashbangs, but occupies five times as much space and weight.
+FriendlyName=Flashbang 3-Pack
 
 [BreachingSG]
-Description=The breaching shotgun is a specially modified, pump action shotgun designed to breach locked doors.  The weapon fires frangible breaching ammo that is designed to quickly break into very small pieces upon impact.  This behavior reduces penetration and increases damage upon impact with hard surfaces.  These factors make it ideal for breaking locks on doors without penetrating the door and harming someone on the other side.  The toothed extender on barrel allows officers to jam the weapon into the door and ensures the correct distance from the lock for the breaching ammo to be most effective.  Its compact design permits officers to carry the weapon on their back, allowing it to be carried in addition to the primary weapon.
-FriendlyName=Remington 870
+Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This weapon can be modified with special breaching ammunition for quick room entries, or beanbags for a less-lethal approach.||This particular variant is equipped with a special breaching nozzle, which ensures that every shot will consistently breach a door.
+FriendlyName=M870 Breaching
+Manufacturer=Remington
+Caliber=12 Gauge
+CountryOfOrigin=United States
+ProductionStart=1950
+FireModes=Pump-Action
+TotalAmmoString=50 shells
+RateOfFire=150 RPM
 
 [Toolkit]
 Description=The multi-tool serves many functions and can be used to pick locks, disable bombs and traps, and remove tactical wedges.  All officers are equipped with a toolkit.
@@ -556,10 +602,6 @@ FriendlyName=Rifle Grip Pump Shotgun
 [Pump1SG]
 Description=Pistol Grip Pump Shotgun
 FriendlyName=Pistol Grip Pump Shotgun
-
-[M1Super90SG]
-Description=Benelli M1 Super 90
-FriendlyName=Benelli M1 Super 90
 
 [BadguyM4Super90SG]
 Description=Benelli M4 Super90

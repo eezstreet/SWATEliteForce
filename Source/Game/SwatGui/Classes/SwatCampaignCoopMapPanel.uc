@@ -135,8 +135,8 @@ private function BuildCampaignMissionList()
   local ServerSettings Settings;
 
   Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
-  CampaignPath = Settings.ArrestRoundTimeDeduction & 65535;
-  CampaignAvailableIndex = (Settings.ArrestRoundTimeDeduction & -65536) >> 16;
+  CampaignPath = Settings.CampaignCOOP & 65535;
+  CampaignAvailableIndex = (Settings.CampaignCOOP & -65536) >> 16;
 
   SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
   CurrentMap = SGRI.NextMap;

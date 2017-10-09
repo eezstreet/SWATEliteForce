@@ -47,7 +47,7 @@ var(SWATGui) private EditInline GUIImage			LockedStatsIcon;
 var(SWATGui) private config int MaxResults;
 
 var() private config localized string VersionFormatString;
-var() private config localized string ModFormatString;
+var() private config localized string NewModFormatString;
 
 var SwatGameSpyManager SGSM;
 var bool bUseGameSpy;
@@ -100,15 +100,17 @@ function InitComponent(GUIComponent MyOwner)
 function InternalOnActivate()
 {
     //log( "...InternalOnActivate()." );
+	local string ShortModName;
 
-    BuildVersion = PlayerOwner().Level.BuildVersion;
-    ModName = PlayerOwner().Level.ModName;
+	ShortModName = PlayerOwner().Level.ModName;
+    BuildVersion = class'ModInfo'.default.ChangeNumber;
+    ModName = class'ModInfo'.default.ModName;
 
     VersionLabel.SetCaption( FormatTextString( VersionFormatString, BuildVersion ) );
     if( ModName ~= "SWAT 4X" )
         ModLabel.SetCaption( "" );
     else
-        ModLabel.SetCaption( FormatTextString( ModFormatString, ModName ) );
+        ModLabel.SetCaption( FormatTextString( NewModFormatString, ModName, ShortModName ) );
 
     MyQuitButton.OnClick=InternalOnClick;
     MyMainMenuButton.OnClick=InternalOnClick;
@@ -810,7 +812,7 @@ defaultproperties
     ConnectPasswordQueryString="Please enter the Password for the selected server:"
 
     VersionFormatString="Version: %1"
-    ModFormatString="Mod: %1"
+    NewModFormatString="Mod: %1 (%2)"
 
     CompatibleColorString="[c=00ff00]"
     InCompatibleColorString="[c=ff0000]"

@@ -21,6 +21,11 @@ protected function float GetMoraleModificationAmount()
 	return ISwatAI(m_Pawn).GetCommanderAction().GetPepperSprayedMoraleModification();
 }
 
+protected function float GetEmpathyModifierForCharacter(ISwatAICharacter target)
+{
+	return Target.GetPepperSprayEmpathy();
+}
+
 function bool ShouldAffectMoraleAgain()
 {
 	// the gassed behavior does not affect morale again
@@ -34,13 +39,14 @@ protected function AddAdditionalStunnedTime(float AdditionalStunnedTime)
 }
 
 // with the pepper spray we don't delay our reaction
+// pepper spray now takes some time to take effect like it does in real life
 protected function bool ShouldDelayReaction()
 {
-	return false;
+	return true;
 }
 
 // TODO: figure out if we need pepper sprayed animations
-// Shawn says that we should use the gas reaction animations 
+// Shawn says that we should use the gas reaction animations
 // and see how it plays
 function name GetReactionAnimation()
 {

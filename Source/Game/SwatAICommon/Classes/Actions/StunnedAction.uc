@@ -81,13 +81,54 @@ protected function float GetMoraleModificationAmount()
 	return 0.0;
 }
 
+protected function float GetEmpathyModifierForCharacter(ISwatAICharacter target)
+{
+	return 0.0;
+}
+
 private function AffectMorale()
 {
 	local float MoraleModification;
+	local Actor A;
+	local Pawn Character;
+
 	MoraleModification = GetMoraleModificationAmount();
 
 	MoralePenalty += MoraleModification;
-	ISwatAI(m_Pawn).GetCommanderAction().ChangeMorale(- MoraleModification, achievingGoal.GoalName);
+	MoraleModification *= -1;
+	ISwatAI(m_Pawn).GetCommanderAction().ChangeMorale(MoraleModification, achievingGoal.GoalName);
+
+	// Apply this morale modification to all targets in the same room (empathy modifier)
+	foreach m_Pawn.Level.AllActors(class 'Actor', A)
+	{
+		Character = Pawn(A);
+		if(Character == None)
+		{
+			continue;
+		}
+
+		if(!A.IsA('SwatEnemy') && !A.IsA('SwatHostage'))
+		{	// not a suspect or civilian, just keep moving along
+			continue;
+		}
+
+		if(!Character.IsInRoom(m_Pawn.GetRoomName()))
+		{	// not in the same room
+			continue;
+		}
+
+		if(Character == m_Pawn)
+		{	// cannot apply it to ourselves
+			continue;
+		}
+
+		if(ISwatAICharacter(Character).HasEmpathy())
+		{
+			ISwatAI(Character).GetCommanderAction().ChangeMorale(MoraleModification * GetEmpathyModifierForCharacter(ISwatAICharacter(Character)),
+				"Empathy from "$self$" on "$m_Pawn,
+				false);
+		}
+	}
 }
 
 private function ReturnMorale()

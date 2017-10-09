@@ -48,7 +48,7 @@ function InternalOnShow()
 
 function InternalOnActivate()
 {
-    if (SwatGUIController(Controller).coopcampaign)
+    if (GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && SwatGUIController(Controller).coopcampaign)
 	{
 		MyLoadoutButton.Hide();
 		MyLoadoutButton.DisableComponent();
@@ -57,6 +57,7 @@ function InternalOnActivate()
 	}
 	else
 	{
+		SwatGUIController(Controller).coopcampaign = false;
 		MyLoadoutButton.Show();
 		MyLoadoutButton.EnableComponent();
 		MyServerSetupButton.Hide();
@@ -69,11 +70,14 @@ function InternalOnActivate()
     bOpeningSubMenu = false;
 
     // Megahack to deal with All Campaigns having greyed-out Briefing panel
-    if(SwatGUIControllerBase(Controller).GetCampaign().CampaignPath == 2) {
-      MyTabControl.MyTabs[2].TabHeader.DisableComponent();
-    } else {
-      MyTabControl.MyTabs[2].TabHeader.EnableComponent();
-    }
+	if( GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom &&  SwatGUIControllerBase(Controller).GetCampaign().CampaignPath == 2)
+	{
+	    MyTabControl.MyTabs[2].TabHeader.DisableComponent();
+	}
+	else
+	{
+		MyTabControl.MyTabs[2].TabHeader.EnableComponent();
+	}
 }
 
 function OpenPopup( string ClassName, string ObjName )
@@ -88,54 +92,71 @@ function InternalOnClick(GUIComponent Sender)
 	local float CampaignInfo;
 	local int CampaignPath, MissionIndex;
 	local SwatCampaignCoopSettingsPanel ServerPanel;
+	local SwatGUIController GUIController;
+	local SwatPlayerController PlayerController;
 
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+	GUIController = SwatGUIController(Controller);
+	PlayerController = SwatPlayerController(PlayerOwner());
 
 	switch (Sender)
 	{
 	    case MyQuitButton:
             Quit();
             break;
-			case MyServerSetupButton:
-						MyTabControl.OpenTab(3);
-						break;
+		case MyServerSetupButton:
+			MyTabControl.OpenTab(3);
+			break;
 		case MyStartButton:
-            if(SwatGUIController(Controller).SPLoadoutPanel == None || SwatGUIController(Controller).SPLoadoutPanel.CheckWeightBulkValidity()) {
-				if (SwatGUIController(Controller).coopcampaign)
+            if(GUIController.SPLoadoutPanel == None || GUIController.SPLoadoutPanel.CheckWeightBulkValidity())
+			{
+				if (GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && GUIController.coopcampaign)
 				{
 					ServerPanel = SwatCampaignCoopSettingsPanel(MyTabControl.GetTab(3).TabPanel);
 
 					CampaignInfo = 666 ^ 666;
-					CampaignPath = SwatGUIController(Controller).GetCampaign().CampaignPath;
-					MissionIndex = SwatGUIController(Controller).GetCampaign().GetAvailableIndex() << 16;
+					CampaignPath = GUIController.GetCampaign().CampaignPath;
+					MissionIndex = GUIController.GetCampaign().GetAvailableIndex() << 16;
 					CampaignInfo = MissionIndex | CampaignPath;
 
-					SwatPlayerController(PlayerOwner()).ServerSetDirty(Settings);
-					SwatPlayerController(PlayerOwner()).ServerSetAdminSettings(
+					PlayerController.ServerSetDirty(Settings);
+					PlayerController.ServerSetAdminSettings(
 						Settings,
 						GC.MPName $ " Coop Campaign",
 						ServerPanel.MyPasswordBox.VisibleText,
 						ServerPanel.MyPasswordedButton.bChecked,
 						ServerPanel.MyPublishModeBox.GetIndex() == 0
 					);
-					SwatPlayerController(PlayerOwner()).ServerSetSettings(
+					PlayerController.ServerSetSettings(
 						Settings,
 						EMPMode.MPM_COOP,
-						0, 1, ServerPanel.MyMaxPlayersSpinner.Value, 0, 60, 1, 10,
-						true,
-						true,
-						false,
-						true,
-						true,
-						1, 1, CampaignInfo, 0,
-						false,
-						false,
-						true
+						0, // Map index
+						1, // Number of rounds
+						ServerPanel.MyMaxPlayersSpinner.Value, // Max players
+						0,	// Not used
+						60, // Post-Round time (Not necessary in campaign CO-OP)
+						1, // Unused
+						10, // Mission ready time (Not necessary in campaign CO-OP)
+						true, // Show teammate names
+						true, // Not used
+						ServerPanel.MyVotingEnabledBox.bChecked, // Allow voting
+						true, // No respawning
+						true, // Quick round reset
+						1, // Friendly fire amount (FIXME: Make this configurable)
+						1, // Not used
+						CampaignInfo, // Campaign CO-OP data
+						0, // Time between respawns
+						false, // No Leaders
+						false, // Not used
+						true // Add snipers
 					);
 					GC.SaveConfig();
-					SwatGUIController(Controller).LoadLevel(GC.CurrentMission.Name $ "?listen");
+					GUIController.LoadLevel(GC.CurrentMission.Name $ "?listen");
 				}
-				else {GameStart();}
+				else
+				{
+					GameStart();
+				}
             }
             break;
 		case MyBackButton:

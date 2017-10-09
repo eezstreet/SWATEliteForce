@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PlaceWedgeGoal.uc - PlaceWedgeGoal class
-// this goal is given to a Officer to place a wedge on a particular door
+// this goal is given to a Officer to aim at a particular spot and take cover
 
 class SWATTakeCoverAndAimAction extends SWATTakeCoverAction;
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,6 @@ private function bool CanTakeCoverAndAim()
 	// if we have a weapon, cover is available, the distance is greater than the minimum required
 	// between us and the officers, and we can find cover to attack from
 	return (ISwatAI(m_Pawn).HasUsableWeapon() && AICoverFinder.IsCoverAvailable() &&
-		!HiveMind.IsPawnWithinDistanceOfOfficers(m_Pawn, MinDistanceToTargetWhileTakingCover, true) &&
 		FindBestCoverToAimingFrom() &&
 		!CoverIsInBadPosition());
 }

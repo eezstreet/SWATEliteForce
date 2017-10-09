@@ -2,11 +2,11 @@ class PlayerTagInterface extends PlayerFocusInterface
     Config(PlayerInterface_PlayerTags)
     native;
 
-var HUDPageBase         CachedHUDPage;             
+var HUDPageBase         CachedHUDPage;
 var SwatPawn            CachedPlayerTarget;
 var SwatPawn            PlayerTargetDuringUpdate;
 
-var Timer               TagTimeoutTimer;            // Timer for how long the tag remains on the screen after a player's reticle leaves a target.  
+var Timer               TagTimeoutTimer;            // Timer for how long the tag remains on the screen after a player's reticle leaves a target.
 var Timer               HoverTimer;                 // Timer for how long it takes for a tag to initially be shown when the player puts their reticle over the target.
 
 var bool                bShowEnemyTags;             // If true, will show enemy tags
@@ -30,7 +30,7 @@ simulated function PostBeginPlay()
 
     TagTimeoutTimer = Spawn(class'Timer');
     HoverTimer = Spawn(class'Timer');
-    
+
     TagTimeoutTimer.TimerDelegate = OnTagTimeoutTimer;
     HoverTimer.TimerDelegate = OnHoverTimer;
 }
@@ -41,12 +41,12 @@ simulated function PostBeginPlay()
 
 native function bool RejectFocus(
         PlayerController Player,
-        Actor CandidateActor, 
-        vector CandidateLocation, 
-        vector CandidateNormal, 
-        Material CandidateMaterial, 
-        ESkeletalRegion CandidateSkeletalRegion, 
-        float Distance, 
+        Actor CandidateActor,
+        vector CandidateLocation,
+        vector CandidateNormal,
+        Material CandidateMaterial,
+        ESkeletalRegion CandidateSkeletalRegion,
+        float Distance,
         bool Transparent);
 
 simulated protected function bool PreUpdateHook(SwatGamePlayerController Player, HUDPageBase HUDPage)
@@ -59,18 +59,17 @@ simulated protected function bool PreUpdateHook(SwatGamePlayerController Player,
     if ( !bLoadedFromRepo )
     {
         CachedRep = SwatGameReplicationInfo(PlayerController(Owner).GameReplicationInfo);
-        mplog( "Testing repo initialization! CachedRep: "$CachedRep$", ShowFriendlyTags: "$CachedRep.ShowTeammateNames$", EnemyTags: "$CachedRep.ShowEnemyNames );           
-        if ( CachedRep != None && CachedRep.ShowTeammateNames > 0 && CachedRep.ShowEnemyNames > 0 )
+        mplog( "Testing repo initialization! CachedRep: "$CachedRep$", ShowFriendlyTags: "$CachedRep.ShowTeammateNames );
+        if ( CachedRep != None && CachedRep.ShowTeammateNames > 0 )
         {
             bLoadedFromRepo = true;
             bShowFriendlyTags = CachedRep.ShowTeammateNames == 2;
-            bShowEnemyTags = CachedRep.ShowEnemyNames == 2;
-            mplog( "Repo_Loaded! ShowFriendlyTags: "$bShowFriendlyTags$", EnemyTags: "$bShowEnemyTags );           
+            mplog( "Repo_Loaded! ShowFriendlyTags: "$bShowFriendlyTags );
         }
     }
 
     // don't want update if no tags are requested in the server options
-    return (bShowEnemyTags || bShowFriendlyTags);
+    return bShowFriendlyTags;
 }
 
 simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUDPageBase HUDPage)
@@ -91,8 +90,6 @@ simulated protected event PostFocusAdded(PlayerInterfaceContext Context, Actor T
 simulated function PostUpdate(SwatGamePlayerController Player)
 {
     local SwatPlayer LocalPlayer;
-    local bool bIsSWAT;
-    local bool bIsFriendly;
 
     LocalPlayer = SwatPlayer(SwatGamePlayerController(Owner).Pawn);
 
@@ -106,40 +103,25 @@ simulated function PostUpdate(SwatGamePlayerController Player)
             TagTimeoutTimer.StartTimer( TagTimeoutDuration, true );
         }
         else
-        {  
-            // MCJ: Kluge alert (but it's a good one). We are testing out new
-            // ways of increasing friendly recognition and reducing friendly
-            // fire. Instead of showing blue tags for teammates and red for
-            // enemies, we need to try blue for SWAT and red for
-            // Suspects. Since we're not sure if we will want to keep this
-            // change permanently, Carlos and I decided to just alter how we
-            // set bIsFriendly here and leave all the rest of the code the
-            // same. So for now, bIsFriendly will be set to true for SWAT and
-            // false for Suspects. If we decide to keep this change, we should
-            // rename the variables here and in the relevant ini files.
-            bIsSWAT = PlayerTargetDuringUpdate.GetTeamNumber() == 0;
-            bIsFriendly = PlayerTargetDuringUpdate.GetTeamNumber() == LocalPlayer.GetTeamNumber() ||
-							(PlayerTargetDuringUpdate.GetTeamNumber() == 0 && LocalPlayer.GetTeamNumber() == 2) ||
-							(PlayerTargetDuringUpdate.GetTeamNumber() == 2 && LocalPlayer.GetTeamNumber() == 0); // dbeswick: hack for coop
-            if ( (bShowFriendlyTags && bIsFriendly) || (bShowEnemyTags && !bIsFriendly) )
+        {
+            // The way Irrational did this was horrible, so I changed it --eez
+            if(bShowFriendlyTags)
             {
-				if (SwatPlayerReplicationInfo(PlayerTargetDuringUpdate.PlayerReplicationInfo) != None && 
-					SwatPlayerReplicationInfo(PlayerTargetDuringUpdate.PlayerReplicationInfo).IsLeader)
-					StartTag(bIsFriendly, CachedHUDPage.Controller.GetStyle(LeaderTagStyle));
-				else if (bIsSWAT)
-					StartTag(bIsFriendly, CachedHUDPage.Controller.GetStyle(FriendlyTagStyle));
-				else
-					StartTag(bIsFriendly, CachedHUDPage.Controller.GetStyle(EnemyTagStyle));
+              if(SwatPlayerReplicationInfo(PlayerTargetDuringUpdate.PlayerReplicationInfo).IsLeader)
+              {
+                StartTag(true, CachedHUDPage.Controller.GetStyle(LeaderTagStyle));
+              }
+              else if(PlayerTargetDuringUpdate.GetTeamNumber() == 0)
+              {
+                StartTag(true, CachedHUDPage.Controller.GetStyle(FriendlyTagStyle));
+              }
+              else if(PlayerTargetDuringUpdate.GetTeamNumber() == 2)
+              {
+                StartTag(true, CachedHUDPage.Controller.GetStyle(EnemyTagStyle));
+              }
             }
-
-            // old code
-            //bIsFriendly = PlayerTargetDuringUpdate.GetHumanReadableTeamName() == LocalPlayer.GetHumanReadableTeamName();
-            //if ( (bShowFriendlyTags && bIsFriendly) || (bShowEnemyTags && !bIsFriendly) )
-            //{
-            //    StartTag(bIsFriendly);
-            //}
         }
-    } 
+    }
     PlayerTargetDuringUpdate = None;
 }
 
@@ -154,14 +136,11 @@ simulated function StartTag( bool bFriendly, GUIStyles Style )
     // Stop updating for timeouts, we found a new focus
     TagTimeoutTimer.StopTimer();
 
-    // Update CachedPlayerTarget 
+    // Update CachedPlayerTarget
     CachedPlayerTarget = PlayerTargetDuringUpdate;
 
     // Set the hover duration
-    if ( bFriendly )
-        HoverDuration = FriendlyHoverDuration;
-    else
-        HoverDuration = EnemyHoverDuration;
+    HoverDuration = FriendlyHoverDuration;
 
     // Start the hover timer, if it's already started this will have no effect as it's passing false as the "reset" parameter
     HoverTimer.StartTimer( HoverDuration, false, false );

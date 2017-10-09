@@ -20,6 +20,20 @@ simulated function UsedHook()
     UpdateHUD();
 }
 
+// Every time we use a wedge, switch back to the primary weapon
+simulated function EquipmentSlot GetSlotForReequip()
+{
+  local SwatGame.SwatGamePlayerController LPC;
+
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
+
+  if(LPC.bSecondaryWeaponLast)
+    return Slot_SecondaryWeapon;
+  return Slot_PrimaryWeapon;
+}
+
 function UpdateHUD()
 {
   local SwatGame.SwatGamePlayerController LPC;

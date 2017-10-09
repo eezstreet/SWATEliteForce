@@ -10,12 +10,14 @@
 //     Viewport.Actor.GetEntryLevel()
 
 class SwatRepo extends Engine.Repo
-    native;
+	dependsOn(SwatAdmin)
+	native;
 
 import enum eSwatGameState from SwatGuiConfig;
 import enum eSwatGameRole from SwatGuiConfig;
 import enum ESwatRoundOutcome from SwatGameInfo;
 import enum EEntryType from SwatStartPointBase;
+import enum AdminPermissions from SwatAdmin;
 
 // the GUI config object holding all the gui config information
 var SwatGUIConfig GuiConfig;
@@ -283,8 +285,13 @@ event Tick( Float DeltaSeconds )
 //quickly restarts the server (updates all clients, maintaining state flow, then instantly goes to next map
 function QuickServerRestart( PlayerController PC )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if (Level.Game.IsA( 'SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_EndGame))
+		{
+			return;
+		}
+	}
 
     //set this flag to perform the quick round reset next tick
     bShouldPerformQuickRoundReset = true;
@@ -293,8 +300,13 @@ function QuickServerRestart( PlayerController PC )
 //Restarts the server from the Coop QMM lobby
 function CoopQMMServerRestart( PlayerController PC )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if (Level.Game.IsA( 'SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_EndGame))
+		{
+			return;
+		}
+	}
 
     NetNextRound();
 }
@@ -582,10 +594,7 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host )
             {
                 NetRoundInProgress = true;
-                if(ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
-                  GetSGRI().ServerCountdownTime = 0;
-                else
-                  GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).RoundTimeLimit;
+                GetSGRI().ServerCountdownTime = 0;
                 //Level.Game.SetPause( false, PlayerController );
             }
             break;
@@ -798,6 +807,19 @@ function SwapServerSettings()
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+//  Restart the map (like from a referendum or otherwise)
+//
+function NetRestartRound()
+{
+  SwapServerSettings();
+
+  ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
+  ClearRoundsWon();
+  NetSwitchLevelsFromMapVote("?restart"); // Undocumented engine feature; restarts the current map
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 //  Determine whether or not to quick restart the next round
 //
 function NetNextRound()
@@ -938,22 +960,22 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.MapIndex,
 		CurrentSettings.NumRounds,
 		CurrentSettings.MaxPlayers,
-		CurrentSettings.DeathLimit,
+		CurrentSettings.Unused,
 		CurrentSettings.PostGameTimeLimit,
-		CurrentSettings.RoundTimeLimit,
+		CurrentSettings.Unused2,
 		CurrentSettings.MPMissionReadyTime,
 		CurrentSettings.bShowTeammateNames,
-		CurrentSettings.bShowEnemyNames,
+		CurrentSettings.Unused3,
 		CurrentSettings.bAllowReferendums,
 		CurrentSettings.bNoRespawn,
 		CurrentSettings.bQuickRoundReset,
 		CurrentSettings.FriendlyFireAmount,
-		CurrentSettings.EnemyFireAmount,
-		CurrentSettings.ArrestRoundTimeDeduction,
+		CurrentSettings.Unused4,
+		CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.bUseStatTracking,
-		CurrentSettings.bDisableTeamSpecificWeapons
+		CurrentSettings.Unused5,
+		CurrentSettings.bEnableSnipers
 	);
 	ServerSettings(Level.PendingServerSettings).RoundNumber = CurrentSettings.RoundNumber;
 
@@ -1298,10 +1320,7 @@ function float GetExternalDamageModifier( Actor Damager, Actor Victim )
     //  for enemy damage and team damage
     if( NetPlayer(Damager) != none && NetPlayer(Victim) != None )
     {
-        if( NetPlayer(Damager).GetTeamNumber() == NetPlayer(Victim).GetTeamNumber() )
-            return GetFriendlyFireModifier();
-        else
-            return GetEnemyFireModifier();
+        return GetFriendlyFireModifier();
     }
     else
         return Super.GetExternalDamageModifier( Damager, Victim );
@@ -1309,15 +1328,7 @@ function float GetExternalDamageModifier( Actor Damager, Actor Victim )
 
 function float GetFriendlyFireModifier()
 {
-    if( ServerSettings(Level.CurrentServerSettings).EnemyFireAmount == 0.0 )
-        return 0.0;
-
     return ServerSettings(Level.CurrentServerSettings).FriendlyFireAmount;
-}
-
-function float GetEnemyFireModifier()
-{
-    return ServerSettings(Level.CurrentServerSettings).EnemyFireAmount;
 }
 
 function TrainingTextManager GetTrainingTextManager()

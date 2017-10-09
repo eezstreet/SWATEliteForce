@@ -208,13 +208,10 @@ latent function AttackTarget()
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 	}
 
-//	if(bHavePerfectAim)
-		AimAtActor(Target);
-//	else
-//		SetGunDirection(Target);
-
-  // @HACK: See comments in ISwatAI::LockAim for more info.
-  ISwatAI(m_pawn).LockAim();
+    ISwatAI(m_pawn).UnLockAim();
+	AimAtActor(Target);
+    // @HACK: See comments in ISwatAI::LockAim for more info.
+    ISwatAI(m_pawn).LockAim();
 
 	// interrupt anything the weapon is doing if it's not idle, we need to fire.
 	if(! CurrentWeapon.IsIdle())
@@ -255,7 +252,8 @@ latent function AttackTarget()
   else if (ISwatAI(m_pawn).AnimIsWeaponAimSet())
   {
       // if the weapon is currently aiming, but we can't hit the target, turn off upper body animation
-      ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_AttackTargetAction);
+	  // Don't. This might add a delay that gives suspects the upper hand.
+		ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AttackTargetAction);
   }
 
   // @HACK: See comments in ISwatAI::UnlockAim for more info.
@@ -264,8 +262,10 @@ latent function AttackTarget()
 
 latent function WildGunnerAttackTarget()
 {
-    local FiredWeapon CurrentWeapon;
-
+    local FiredWeapon CurrentWeapon;	
+	
+	StartActionTime = Level.TimeSeconds;
+	
 	ReadyWeapon();
 
     CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
@@ -287,8 +287,8 @@ latent function WildGunnerAttackTarget()
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 	}
 
-    //ISwatAI(m_pawn).UnLockAim();	// in case WildGunnerAdjustAimAction locked it when this code was executed
-	//AimAtActor(Target);
+    ISwatAI(m_pawn).UnLockAim();	// in case WildGunnerAdjustAimAction locked it when this code was executed
+	AimAtActor(Target);
     // @HACK: See comments in ISwatAI::LockAim for more info.
     ISwatAI(m_pawn).LockAim();
 
@@ -298,24 +298,32 @@ latent function WildGunnerAttackTarget()
 		CurrentWeapon.AIInterrupt();
 	}
 
-  	// make sure the correct aim behavior is set (in case it got unset when we couldn't aim at the desired target)
-	ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AttackTargetAction);
+	// if we can aim at the target
+  if (ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Target))
+  {
+		// make sure the correct aim behavior is set (in case it got unset when we couldn't aim at the desired target)
+		ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AttackTargetAction);
 
-	if (bHavePerfectAim)
-		CurrentWeapon.SetPerfectAimNextShot();
+		if (bHavePerfectAim)
+			CurrentWeapon.SetPerfectAimNextShot();
 
 	ShootInAimDirection(CurrentWeapon);
 
-	if (ShouldSucceed())
-	{
-		instantSucceed();
-	}
-	else
-	{
-		// wait until we can use the weapon again
-		sleep(ISwatAI(m_Pawn).GetTimeToWaitBetweenFiring(CurrentWeapon));
-	}
-
+		if (ShouldSucceed())
+		{
+			instantSucceed();
+		}
+		else
+		{
+			// wait until we can use the weapon again
+			sleep(ISwatAI(m_Pawn).GetTimeToWaitBetweenFiring(CurrentWeapon));
+		}
+  }
+  else if (ISwatAI(m_pawn).AnimIsWeaponAimSet())
+  {
+  	// make sure the correct aim behavior is set (in case it got unset when we couldn't aim at the desired target)
+	ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AttackTargetAction);  
+  }
     // @HACK: See comments in ISwatAI::UnlockAim for more info.
     ISwatAI(m_pawn).UnlockAim();
 }
@@ -330,21 +338,18 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 
-//  if(bHavePerfectAim)
 		LatentAimAtActor(Target);
-//	else
-//		SetGunDirection(Target);
 
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
 	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
-	if(TimeElapsed < MandatedWait) {
+	log("I, a mook, am going to wait " $ MandatedWait );
+	if(TimeElapsed < MandatedWait) 
+	{
 		Sleep(MandatedWait - TimeElapsed);
 	}
 
-//	if(!bHavePerfectAim)
-//  	SetGunDirection(Target);
-
+	log("Now I shall fire");
   ShootWeaponAt(Target);
 }
 
@@ -357,13 +362,18 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
-
+		
+		LatentAimAtActor(Target);
+		
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
 	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
-	if(TimeElapsed < MandatedWait) {
+	log("I, a Wild Gunner, am going to wait " $ MandatedWait );
+	if(TimeElapsed < MandatedWait) 
+	{
 		Sleep(MandatedWait - TimeElapsed);
 	}
+	log("Now I shall fire");
 
 	ShootWeaponAt(Target);	// (actual shooting in aim direction is handled in "GetAimRotation"
 }

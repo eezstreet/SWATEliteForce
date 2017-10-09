@@ -1,4 +1,6 @@
-class BanReferendum extends Voting.Referendum;
+class BanReferendum extends Voting.Referendum dependsOn(SwatAdmin);
+
+import enum AdminPermissions from SwatAdmin;
 
 var() config localized string ReferendumDescriptionText;
 
@@ -15,19 +17,20 @@ function ReferendumDecided(bool YesVotesWin)
 	if (YesVotesWin)
 	{
 		mplog("The ban referendum was successful. Banning " $ TargetPRI.PlayerName);
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumSucceeded');
+		Level.Game.Broadcast(None, "", 'ReferendumSucceeded');
 		Level.Game.VotedToBeBanned(TargetPC);
 	}
 	else
 	{
 		mplog("The ban referendum was unsuccessful. " $ TargetPRI.PlayerName $ " will not be banned");
-		Level.Game.BroadcastTeam(TargetPC, "", 'ReferendumFailed');
+		Level.Game.Broadcast(None, "", 'ReferendumFailed');
 	}
 }
 
 function bool ReferendumCanBeCalledOnTarget(PlayerController Caller, PlayerController Target)
 {
-	if(Target == Level.GetLocalPlayerController() || Level.Game.IsA('SwatGameInfo') && SwatGameInfo(Level.Game).Admin.IsAdmin(Target))
+	if(Target == Level.GetLocalPlayerController() || Level.Game.IsA('SwatGameInfo') &&
+		SwatGameInfo(Level.Game).Admin.ActionAllowed(Target, AdminPermissions.Permission_Immunity))
 	{
 		Level.Game.Broadcast(None, "", 'ReferendumAgainstAdmin', Caller);
 		return false;

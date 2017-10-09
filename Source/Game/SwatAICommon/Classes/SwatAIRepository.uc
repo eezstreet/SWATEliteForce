@@ -20,7 +20,7 @@ var private CharacterTypesList				CharacterTypes;
 var private ElementSquadInfo				ElementSquad;
 var private RedSquadInfo					RedSquad;
 var private BlueSquadInfo					BlueSquad;
-	
+
 var private Hive							HiveMind;
 var private Pawn							CurrentEnemyInHostageConversation;
 
@@ -35,7 +35,7 @@ event PreBeginPlay()
 	CreateCharacterTypesList();
     CreateIdleActionClassesList();
 	CreateInitialReactionClassesList();
-    
+
 	CreateHive();
 	CreateOfficerSquads();
 }
@@ -180,7 +180,7 @@ function UpdateDoorKnowledgeForOfficers(Door TargetDoor)
 			NotifyOfficersDoorWedged(TargetDoor);
 		}
 	}
-	
+
 	// if it's broken, or not wedged and locked, it can be opened
 	if ((!bDoorLocked && !bDoorWedged) || SwatTargetDoor.IsBroken())
 	{
@@ -252,7 +252,7 @@ function NotifyOfficersDoorWedgeRemoved(Door TargetDoor)
 	ISwatPawn(Level.GetLocalPlayerController().Pawn).SetDoorWedgedBelief(TargetDoor, false);
 }
 
-private function NotifyOfficersDoorCanOpen(Door TargetDoor)
+function NotifyOfficersDoorCanOpen(Door TargetDoor)
 {
 	local int i;
 	local Pawn OfficerIter;
@@ -334,7 +334,7 @@ function DeactivateEnemyHostageConversation(Pawn inEnemy)
 // Rooms
 
 // These methods are a hack to work around the fact that we haven't implemented
-// script-side support for TMaps yet. 
+// script-side support for TMaps yet.
 native function SetNavigationPointListForRoom(name RoomName, NavigationPointList NavPoints);
 native function NavigationPointList GetRoomNavigationPoints(name RoomName);
 
@@ -353,7 +353,7 @@ function AddNavigationPointToRoomList(NavigationPoint NavPoint, name RoomName)
 
         SetNavigationPointListForRoom(RoomName, NavPointList);
     }
-    
+
     // now add the NavPoint to the list for the Room
     NavPointList.Add(NavPoint);
 
@@ -372,8 +372,8 @@ function bool DoesRoomHaveAny(name RoomName, name PointClassName)
 	assertWithDescription((RoomName != ''), "SwatAIRepository::DoesRoomHaveAny - RoomName passed in is empty, a Navigation Point is missing a room name in this map!  Check for Errors in UnrealEd!");
 	assertWithDescription((PointClassName != ''), "SwatAIRepository::DoesRoomHaveAny - PointClassName is empty!");
 
-	RoomNavPointList = GetRoomNavigationPoints(RoomName);	
-    NumRoomNavPoints = RoomNavPointList.GetSize();	
+	RoomNavPointList = GetRoomNavigationPoints(RoomName);
+    NumRoomNavPoints = RoomNavPointList.GetSize();
 	for(i=0; i<NumRoomNavPoints; ++i)
 	{
 		Iter = RoomNavPointList.GetEntryAt(i);
@@ -401,7 +401,7 @@ function NavigationPoint GetClosestNavigationPointInRoom(name RoomName, vector L
 	assertWithDescription((RoomName != ''), "SwatAIRepository::GetClosestNavigationPointInRoom - RoomName passed in is empty, a Navigation Point is missing a room name in this map!  Check for Errors in UnrealEd!");
 
 	RoomNavPointList = GetRoomNavigationPoints(RoomName);
-	
+
 	// go through each point int he room and see if it matches up with what the caller wants
     NumRoomNavPoints = RoomNavPointList.GetSize();
     for(i=0; i<NumRoomNavPoints; ++i)
@@ -451,7 +451,7 @@ function FleePoint FindUnclaimedFleePointInRoom(name RoomName)
 	local FleePoint Iter, RandomPoint;
 
     RoomPoints = GetRoomNavigationPointsOfType(RoomName, 'FleePoint');
-    
+
 	for(i=0; i<RoomPoints.GetSize(); ++i)
 	{
 		Iter = FleePoint(RoomPoints.GetEntryAt(i));
@@ -531,7 +531,7 @@ event NavigationPointList GetNewNavigationPointList()
 function NavigationPoint FindClosestNavigationPointTo(vector TestLocation)
 {
     return FindClosestOfNavigationPointClass(class'NavigationPoint', TestLocation);
-} 
+}
 
 native event NavigationPointList FindAllOfNavigationPointClass(class<NavigationPoint> ClassType, optional NavigationPointList ExcludeList);
 

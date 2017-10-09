@@ -1,7 +1,8 @@
 class DynamicMusicManager extends IGSoundEffectsSubsystem.DynamicMusicManagerBase
     implements  IInterested_GameEvent_GrenadeDetonated,
-                IInterested_GameEvent_EnemyFiredWeapon
-    config(SwatGame);
+                IInterested_GameEvent_EnemyFiredWeapon,
+                IInterested_GameEvent_C2Detonated
+	config(SwatGame);
 
 var Timer           DynamicMusicTimer;
 var config float    DynamicMusicTime;
@@ -22,8 +23,9 @@ simulated function PostBeginPlay()
 
     if ( GameInfo != None && GameInfo.GameEvents != None )
     {
-        GameInfo.GameEvents.GrenadeDetonated.Register(self);    
-        GameInfo.GameEvents.EnemyFiredWeapon.Register(self);
+        GameInfo.GameEvents.GrenadeDetonated.Register(self);
+		GameInfo.GameEvents.EnemyFiredWeapon.Register(self);
+		GameInfo.GameEvents.C2Detonated.Register(self);
     }
 }
 
@@ -50,6 +52,17 @@ function OnEnemyFiredWeapon( Pawn Enemy, Actor Target )
     else
         SwatGameReplicationInfo(Level.GetGameReplicationInfo()).ServerTriggerDynamicMusic();
     }
+}
+
+function OnC2Detonated( Pawn C2Owner, DeployedC2ChargeBase C2 )
+{   
+#if DEBUG_DYNAMIC_MUSIC
+    log( "[DynamicMusicManager] On C2 detonated!" );
+#endif
+    if ( Level.NetMode == NM_Standalone )
+        TriggerDynamicMusic();
+    else
+        SwatGameReplicationInfo(Level.GetGameReplicationInfo()).ServerTriggerDynamicMusic();
 }
 
 simulated function TriggerDynamicMusic()
@@ -94,8 +107,9 @@ simulated event Destroyed()
 
     if ( GameInfo != None && GameInfo.GameEvents != None )
     {
-        GameInfo.GameEvents.GrenadeDetonated.UnRegister(self);    
-        GameInfo.GameEvents.EnemyFiredWeapon.UnRegister(self);
+        GameInfo.GameEvents.GrenadeDetonated.UnRegister(self);
+		GameInfo.GameEvents.EnemyFiredWeapon.UnRegister(self);
+		GameInfo.GameEvents.C2Detonated.UnRegister(self);
     }
 
     if (DynamicMusicTimer != None)

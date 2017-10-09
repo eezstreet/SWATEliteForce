@@ -377,6 +377,11 @@ function int InsertElement( int NewIndex, optional GUIListElem theElem, optional
 	return NewIndex;
 }
 
+function int ElementCount()
+{
+	return Elements.Length;
+}
+
 function Replace(int index, string NewItem, optional Object obj, optional string Str, optional int intData, optional bool bData)
 {
     ReplaceElement( Index, CreateElement( NewItem, obj, Str, intData, bData ) );

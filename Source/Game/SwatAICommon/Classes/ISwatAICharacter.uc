@@ -23,6 +23,13 @@ function bool IsInsane();
 function bool Wanders();
 function BecomeAware();
 
+function bool HasEmpathy();
+function float GetPepperSprayEmpathy();
+function float GetTaserEmpathy();
+function float GetShotEmpathy();
+function float GetPepperBallEmpathy();
+function float GetStungEmpathy();
+
 function SetCanBeArrested(bool Status);
 
 function SetDesiredAIEquipment( AIEquipment NewItem );

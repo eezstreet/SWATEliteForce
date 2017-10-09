@@ -68,14 +68,9 @@ function ChangeLoadOut( Pocket thePocket )
         case Pocket_SecondaryAmmo:
             SwatGUIController(Controller).SetMPLoadOutPocketWeapon( Pocket_SecondaryWeapon, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_SecondaryWeapon], MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_SecondaryAmmo] );
             break;
-        case Pocket_Breaching:
-            SwatGUIController(Controller).SetMPLoadOutPocketItem( Pocket.Pocket_Breaching, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_Breaching] );
-            SwatGUIController(Controller).SetMPLoadOutPocketItem( Pocket.Pocket_HiddenC2Charge1, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge1] );
-            SwatGUIController(Controller).SetMPLoadOutPocketItem( Pocket.Pocket_HiddenC2Charge2, MyCurrentLoadOut.LoadOutSpec[Pocket.Pocket_HiddenC2Charge2] );
-            break;
-		case Pocket_CustomSkin:
-			SwatGUIController(Controller).SetMPLoadOutPocketCustomSkin( Pocket_CustomSkin, String(EquipmentList[thePocket].GetObject()) );
-			break;
+		    case Pocket_CustomSkin:
+			      SwatGUIController(Controller).SetMPLoadOutPocketCustomSkin( Pocket_CustomSkin, String(EquipmentList[thePocket].GetObject()) );
+			      break;
         default:
             theItem = class<actor>(EquipmentList[thePocket].GetObject());
             SwatGUIController(Controller).SetMPLoadOutPocketItem( thePocket, theItem );
@@ -113,8 +108,8 @@ function bool CheckCampaignValid( class EquipmentClass )
 
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 
-	MissionIndex = (Settings.ArrestRoundTimeDeduction & -65536) >> 16;
-	CampaignPath = Settings.ArrestRoundTimeDeduction & 65535;
+	MissionIndex = (Settings.CampaignCOOP & -65536) >> 16;
+	CampaignPath = Settings.CampaignCOOP & 65535;
 
 	// Any equipment above the MissionIndex is currently unavailable
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions

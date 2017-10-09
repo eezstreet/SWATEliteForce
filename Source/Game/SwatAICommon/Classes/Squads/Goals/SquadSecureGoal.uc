@@ -45,18 +45,42 @@ function CopyAdditionalPropertiesFromTemplate(SquadCommandGoal Template)
 //
 // Restrain Targets
 
+private function AddTargetToList(Actor SecureTarget)
+{
+	SecureTargets[SecureTargets.Length] = SecureTarget;
+
+	if(achievingAction != None)
+	{
+		SquadSecureAction(achievingAction).NotifyNewSecureTarget();
+	}
+}
+
 function AddSecureTarget(Actor SecureTarget)
 {
 	assert(SecureTarget != None);
 
-	// if the target is not already on our list, and it's either not a piece of evidence, or it's a piece of evidence that can be used
-	if (! IsASecureTarget(SecureTarget) && (!SecureTarget.IsA('IEvidence') || IEvidence(SecureTarget).CanBeUsedNow()))
+	if (!IsASecureTarget(SecureTarget))	// Don't add this if it's already in the list
 	{
-		SecureTargets[SecureTargets.Length] = SecureTarget;
-
-		if (achievingAction != None)
+		if(SecureTarget.IsA('IEvidence'))
 		{
-			SquadSecureAction(achievingAction).NotifyNewSecureTarget();
+			if(IEvidence(SecureTarget).CanBeUsedNow())
+			{	// Only add evidence items that can be used
+				AddTargetToList(SecureTarget);
+			}
+		}
+		else if(SecureTarget.IsA('IDisableableByAI'))
+		{
+			if(IDisableableByAI(SecureTarget).IsDisableableNow())
+			{	// Only add disableable targets that aren't active
+				AddTargetToList(SecureTarget);
+			}
+		}
+		else if(SecureTarget.IsA('ISwatAI'))
+		{
+			if(class'Pawn'.static.checkConscious(Pawn(SecureTarget)) && !ISwatAI(SecureTarget).IsArrested())
+			{ // Only allow alive, non-restrained targets to the list
+				AddTargetToList(SecureTarget);
+			}
 		}
 	}
 }
@@ -113,7 +137,8 @@ private function ValidateSecureTargets()
 {
 	local int i;
 	local Pawn RestrainTarget;
-	
+	local IDisableableByAI DisableTarget;
+
 	for(i=0; i<SecureTargets.Length; ++i)
 	{
 		assert(SecureTargets[i] != None);
@@ -122,9 +147,18 @@ private function ValidateSecureTargets()
 		{
 			RestrainTarget = Pawn(SecureTargets[i]);
 
-			// if the target is dead or got restrained (by the player), 
+			// if the target is dead or got restrained (by the player),
 			// we remove them from the list
 			if (! class'Pawn'.static.checkConscious(RestrainTarget) || ISwatAI(RestrainTarget).IsArrested())
+			{
+				SecureTargets.Remove(i, 1);
+			}
+		}
+		else if(SecureTargets[i].IsA('IDisableableByAI'))
+		{
+			DisableTarget = IDisableableByAI(SecureTargets[i]);
+
+			if(!DisableTarget.IsDisableableNow())
 			{
 				SecureTargets.Remove(i, 1);
 			}
@@ -149,7 +183,7 @@ private function ValidateSecureTargets()
 
 function bool IsInteractingWith(Actor TestActor)
 {
-	if (TestActor.IsA('Pawn') || TestActor.IsA('IEvidence'))
+	if (TestActor.IsA('Pawn') || TestActor.IsA('IEvidence') || TestActor.IsA('IDisableableByAI'))
 	{
 		if (IsASecureTarget(TestActor))
 			return true;

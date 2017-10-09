@@ -6,12 +6,13 @@ class SquadSecureAction extends OfficerSquadAction;
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// 
+//
 // Variables
 
 var private array<Pawn>						AvailableOfficers;
 var private array<RestrainAndReportGoal>	CurrentRestrainAndReportGoals;
 var private array<SecureEvidenceGoal>		CurrentSecureEvidenceGoals;
+var private array<DisableTargetGoal>		CurrentDisableTargetGoals;
 
 var private array<Actor>					TargetsBeingSecured;
 
@@ -46,6 +47,7 @@ function cleanup()
 
 	ClearOutRestrainAndReportGoals();
 	ClearOutSecureEvidenceGoals();
+	ClearOutDisableTargetGoals();
 
 	CopyTargetsBeingSecuredToGoal();
 }
@@ -74,12 +76,24 @@ private function ClearOutSecureEvidenceGoals()
 	}
 }
 
+private function ClearOutDisableTargetGoals()
+{
+	while(CurrentDisableTargetGoals.Length > 0)
+	{
+		if(CurrentDisableTargetGoals[0] != None)
+		{
+			CurrentDisableTargetGoals[0].Release();
+			CurrentDisableTargetGoals.Remove(0, 1);
+		}
+	}
+}
+
 function CopyTargetsBeingSecuredToGoal()
 {
 	while (TargetsBeingSecured.Length > 0)
 	{
 		AddSecureTarget(TargetsBeingSecured[0]);
-		
+
 		TargetsBeingSecured.Remove(0, 1);
 	}
 }
@@ -165,12 +179,14 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 {
 	local RestrainAndReportGoal AchievedRestrainAndReportGoal;
 	local SecureEvidenceGoal AchievedSecureEvidenceGoal;
+	local DisableTargetGoal AchievedDisableTargetGoal;
 
 	super.goalAchievedCB(goal, child);
 
 	if (resource.pawn().logTyrion)
 		log("Squad R&R goal achieved was: " $ goal.Name $ " goal.IsA('RestrainAndReportGoal'): "$goal.IsA('RestrainAndReportGoal'));
 
+	// FIXME: I feel like there is a huge amount of code reuse here. Should maybe refactor this --eez
 	if (goal.IsA('RestrainAndReportGoal'))
 	{
 		assert(AI_CharacterResource(goal.resource).m_Pawn != None);
@@ -199,16 +215,33 @@ function goalAchievedCB( AI_Goal goal, AI_Action child )
 		if (isIdle())
 			runAction();
 	}
+	else if (goal.IsA('DisableTargetGoal'))
+	{
+		assert(AI_CharacterResource(goal.resource).m_Pawn != None);
+
+		AchievedDisableTargetGoal = DisableTargetGoal(goal);
+
+		RemoveTargetBeingSecured(AchievedDisableTargetGoal.Target);
+		RemoveDisableTargetGoal(AchievedDisableTargetGoal);
+
+		MakeOfficerAvailable(AI_CharacterResource(goal.resource).m_Pawn);
+
+		if(isIdle())
+			runAction();
+	}
 }
 
 function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorCode )
 {
 	local RestrainAndReportGoal NotAchievedRestrainAndReportGoal;
 	local SecureEvidenceGoal NotAchievedSecureEvidenceGoal;
+	local DisableTargetGoal NotAchievedDisableTargetGoal;
 	local Pawn Officer;
 
 	super.goalNotAchievedCB(goal, child, errorCode);
 
+
+	// FIXME: This function, like goalAchievedCB, has a ton of code reuse. Consider refactoring this.
 	if (goal.IsA('RestrainAndReportGoal'))
 	{
 		NotAchievedRestrainAndReportGoal = RestrainAndReportGoal(goal);
@@ -255,6 +288,29 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 			MakeOfficerAvailable(Officer);
 		}
 	}
+	else if(goal.IsA('DisableTargetGoal'))
+	{
+		NotAchievedDisableTargetGoal = DisableTargetGoal(goal);
+
+		Officer = AI_CharacterResource(goal.resource).m_Pawn;
+
+		// add the target who wasn't disabled back in, if we failed because we couldn't get to them
+		if(errorCode != ACT_CANT_FIND_PATH)
+		{
+			RemoveTargetBeingSecured(NotAchievedDisableTargetGoal.Target);
+			AddSecureTarget(NotAchievedDisableTargetGoal.Target);
+
+			if(isIdle())
+				runAction();
+		}
+
+		RemoveDisableTargetGoal(NotAchievedDisableTargetGoal);
+
+		if (class'Pawn'.static.checkConscious(Officer))
+		{
+			MakeOfficerAvailable(Officer);
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -293,6 +349,22 @@ function RemoveSecureEvidenceGoal(SecureEvidenceGoal Goal)
 	}
 }
 
+function RemoveDisableTargetGoal(DisableTargetGoal Goal)
+{
+	local int i;
+
+	for(i = 0; i < CurrentDisableTargetGoals.Length; i++)
+	{
+		if(CurrentDisableTargetGoals[i] == Goal)
+		{
+			CurrentDisableTargetGoals[i].unPostGoal(self);
+			CurrentDisableTargetGoals[i].Release();
+			CurrentDisableTargetGoals.Remove(i, 1);
+			break;
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Available Officers
@@ -300,7 +372,7 @@ function RemoveSecureEvidenceGoal(SecureEvidenceGoal Goal)
 private function PopulateAvailableOfficers()
 {
 	local int i;
-	
+
 	for(i=0; i<squad().pawns.length; ++i)
 	{
 		AvailableOfficers[AvailableOfficers.Length] = squad().pawns[i];
@@ -412,6 +484,25 @@ latent function SecureEvidence(IEvidence SecureEvidenceTarget)
 	CurrentSecureEvidenceGoal.postGoal(self);
 }
 
+// tells the closest officer to disable the target actor
+latent function DisableTarget(Actor DisableTarget)
+{
+	local Pawn Officer;
+	local DisableTargetGoal CurrentDisableTargetGoal;
+
+	assert(DisableTarget != None);
+
+	Officer = GetClosestAvailableOfficerToTarget(DisableTarget);
+	MakeOfficerUnavailable(Officer);
+
+	CurrentDisableTargetGoal = new class'DisableTargetGoal'(AI_Resource(Officer.characterAI), DisableTarget);
+	assert(CurrentDisableTargetGoal != None);
+	CurrentDisableTargetGoal.AddRef();
+	CurrentDisableTargetGoals[CurrentDisableTargetGoals.Length] = CurrentDisableTargetGoal;
+
+	CurrentDisableTargetGoal.postGoal(self);
+}
+
 latent function SecureCurrentTargets()
 {
 	local Actor IterTarget;
@@ -430,10 +521,14 @@ latent function SecureCurrentTargets()
 			{
 				RestrainAndReportOnTarget(Pawn(IterTarget));
 			}
+			else if(IterTarget.IsA('IDisableableByAI'))
+			{
+				DisableTarget(IterTarget);
+			}
 			else
 			{
 				assert(IterTarget.IsA('IEvidence'));
-			
+
 				SecureEvidence(IEvidence(IterTarget));
 			}
 
@@ -459,7 +554,7 @@ private function TriggerReplyToOrderSpeech()
 
 state Running
 {
-Begin:	
+Begin:
 	PopulateAvailableOfficers();
 
 	if (! bHasBeenCopied)
@@ -468,7 +563,10 @@ Begin:
 	WaitForZulu();
 
 	// while there are still targets left, or if there is still securing going on
-	while ((GetNumSecureTargets() > 0) || (CurrentRestrainAndReportGoals.Length > 0) || (CurrentSecureEvidenceGoals.Length > 0))
+	while ((GetNumSecureTargets() > 0)
+				|| (CurrentRestrainAndReportGoals.Length > 0)
+				|| (CurrentSecureEvidenceGoals.Length > 0)
+				|| (CurrentDisableTargetGoals.Length > 0))
 	{
 		SecureCurrentTargets();
 

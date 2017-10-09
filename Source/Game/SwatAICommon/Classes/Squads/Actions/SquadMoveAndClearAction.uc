@@ -68,6 +68,7 @@ var config float						CSGrenadeDelayTimeGasMask;
 var protected float						PostGrenadeThrowDelayTime;
 
 var private SwatGrenadeProjectile		Projectile;
+var private SquadDeployLightstickGoal 	LightstickGoal;
 
 const kLeaderClearPointIndex      = 1;
 const kFollowerClearPointIndex    = 0;
@@ -184,6 +185,12 @@ function cleanup()
 	{
 		FourthOfficerStackUpGoal.Release();
 		FourthOfficerStackUpGoal = None;
+	}
+	
+	if (LightstickGoal != None) 
+	{
+		LightstickGoal.Release();
+		LightstickGoal = None;
 	}
 
 	DeactivateDistanceSensors();
@@ -1598,6 +1605,20 @@ function TriggerReportedContinuingClear(Pawn Officer)
 	}
 }
 
+latent function DeployLightstick() 
+{
+	LightstickGoal = new class'SquadDeployLightstickGoal'(resource, CommandGiver, CommandOrigin );
+	LightstickGoal.SetPlaySpeech(false);
+	LightstickGoal.AddDropPoint(TargetDoor.Location);
+
+	LightstickGoal.postGoal(self);
+	WaitForGoal(LightstickGoal);
+	LightstickGoal.unPostGoal(self);
+	
+	LightstickGoal.Release();
+	LightstickGoal = None;
+}
+
 state Running
 {
 Begin:
@@ -1637,6 +1658,8 @@ Begin:
 
 	// wait for everything to cleanup...
 	WaitForAllGoalsInList(MoveAndClearGoals);
+	
+	DeployLightstick();
 
 	log("move done");
 

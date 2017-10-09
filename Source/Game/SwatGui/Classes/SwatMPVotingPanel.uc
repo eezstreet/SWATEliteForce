@@ -13,6 +13,7 @@ var(SWATGui) private EditInline Config GUIListBox MapList;
 var(SWATGui) private EditInline Config GUIButton MapButton;
 var(SWATGui) private EditInline Config GUIButton NextMapButton;
 var(SWATGui) private EditInline Config GUIButton EndMapButton;
+var(SWATGui) private EditInline Config GUIButton RestartMapButton;
 
 var(SWATGui) private EditInline Config GUILabel ReferendumDetails;
 var(SWATGui) private EditInline Config GUIButton VoteYesButton;
@@ -44,6 +45,7 @@ function InitComponent(GUIComponent MyOwner)
 
   NextMapButton.OnClick = OnSimpleReferendumClicked;
   EndMapButton.OnClick = OnSimpleReferendumClicked;
+  RestartMapButton.OnClick = OnSimpleReferendumClicked;
 
 	VoteYesButton.OnClick = OnVoteYesClicked;
 	VoteNoButton.OnClick = OnVoteNoClicked;
@@ -128,11 +130,14 @@ private function SetVotingEnabled(optional bool bForceRefresh)
 		MapButton.SetVisibility(bEnabled);
 		MapButton.SetEnabled(bEnabled);
 
-    NextMapButton.SetVisibility(bEnabled);
-    NextMapButton.SetEnabled(bEnabled);
+        NextMapButton.SetVisibility(bEnabled);
+        NextMapButton.SetEnabled(bEnabled);
 
-    EndMapButton.SetVisibility(bEnabled);
-    EndMapButton.SetEnabled(bEnabled);
+        EndMapButton.SetVisibility(bEnabled);
+        EndMapButton.SetEnabled(bEnabled);
+
+        RestartMapButton.SetVisibility(bEnabled);
+        RestartMapButton.SetEnabled(bEnabled);
 
 		BackgroundLeft.SetVisibility(bEnabled);
 		BackgroundRight.SetVisibility(bEnabled);
@@ -163,44 +168,55 @@ private function InternalOnActivate()
 
 	SetTimer(1.0, true);
 
-  if(GC.SwatGameState == GAMESTATE_MidGame)
-  {
-    EndMapButton.Show();
-    EndMapButton.EnableComponent();
-  }
-  else
-  {
-    EndMapButton.Hide();
-    EndMapButton.DisableComponent();
-  }
+    if(GC.SwatGameState == GAMESTATE_MidGame)
+    {
+        EndMapButton.Show();
+        EndMapButton.EnableComponent();
+    }
+    else
+    {
+        EndMapButton.Hide();
+        EndMapButton.DisableComponent();
+    }
+
+    if(GC.SwatGameState != GAMESTATE_PreGame)
+    {
+        RestartMapButton.Show();
+        RestartMapButton.EnableComponent();
+    }
+    else
+    {
+        RestartMapButton.Hide();
+        RestartMapButton.DisableComponent();
+    }
 
 	if (SwatGUIController(Controller).coopcampaign)
 	{
 		MapList.Hide();
 		MapList.DisableComponent();
 
-		MapButton.Hide();
+		LoadMapsButton.Hide();
+		LoadMapsButton.DisableComponent();
+
+        MapButton.Hide();
 		MapButton.DisableComponent();
 
-    NextMapButton.Hide();
-    NextMapButton.DisableComponent();
-
-		BackgroundRight.Hide();
-		BackgroundRight.DisableComponent();
+        NextMapButton.Hide();
+        NextMapButton.DisableComponent();
 	}
 	else
 	{
 		MapList.Show();
 		MapList.EnableComponent();
 
-		MapButton.Show();
+        MapButton.Show();
 		MapButton.EnableComponent();
 
-    NextMapButton.Show();
-    NextMapButton.EnableComponent();
+		LoadMapsButton.Show();
+		LoadMapsButton.EnableComponent();
 
-		BackgroundRight.Show();
-		BackgroundRight.EnableComponent();
+        NextMapButton.Show();
+        NextMapButton.EnableComponent();
 	}
 }
 
@@ -328,6 +344,9 @@ private function OnSimpleReferendumClicked(GUIComponent Sender)
       break;
     case NextMapButton:
       Referendum = class'SwatGame.NextMapReferendum';
+      break;
+    case RestartMapButton:
+      Referendum = class'SwatGame.RestartLevelReferendum';
       break;
   }
 

@@ -16,12 +16,16 @@ Description=If you can read this, there is a bug.  This Kevlar Helmet descriptio
 FriendlyName=Kevlar Helmet
 
 [RiotHelmet]
-Description=The riot helmet offers superior damage protection, while also reducing the effects of CS gas and pepper spray by reducing contact with the face. It does not, however, protect against flashbangs.
+Description=The riot helmet offers superior damage protection, while also reducing the effects of CS gas and pepper spray (by approximately half) by reducing contact with the face. It does not, however, protect against flashbangs.
 FriendlyName=Riot Helmet
 
+[helmetGasMask]
+Description=The S10 (with Kevlar Helmet) offers superior damage prevention while protecting against CS gas and pepper spray. However, it is immensely bulky and restricts the operator's field of view.
+FriendlyName=S10 Helmet
+
 [gasMask]
-Description=The gas mask provides the wearer with immunity to CS gas, and greatly reduces the duration of the effect of pepper spray.  Unfortunately it causes restricted vision and offers no ballistic protection.
-FriendlyName=Gas Mask
+Description=The respirator mask provides the wearer with immunity to CS gas and pepper spray.  Unfortunately it offers no ballistic protection.
+FriendlyName=Respirator
 GUIImage=Texture'gui_tex.equip_gasmask'
 
 [HeavyBodyArmor]

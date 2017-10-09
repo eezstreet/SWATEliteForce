@@ -35,3 +35,19 @@ function UpdateHUD()
   LPC.GetHUDPage().AmmoStatus.SetTacticalAidStatus(ReserveGrenades, self);
   LPC.GetHUDPage().UpdateWeight();
 }
+
+simulated function EquipmentSlot GetSlotForReequip()
+{
+  local SwatGame.SwatGamePlayerController LPC;
+
+  if(Level.IsTraining) // Special case, in training we want to go back to the weapon again. This is a demonstration, bruh.
+    return Super.GetSlotForReequip();
+
+  LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+  if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
+
+  if(LPC.bSecondaryWeaponLast)
+    return Slot_SecondaryWeapon;
+  return Slot_PrimaryWeapon;
+}

@@ -72,7 +72,7 @@ simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
-    if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bShowEnemyNames))
+    if ( Level.NetMode != NM_Standalone && !(ServerSettings(Level.CurrentServerSettings).bEnableSnipers))
     {
         Destroy();
         return;

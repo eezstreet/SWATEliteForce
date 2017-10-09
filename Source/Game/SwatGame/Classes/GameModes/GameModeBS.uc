@@ -58,7 +58,7 @@ function Initialize()
     assert(respawnTimer != None);
     respawnTimer.timerDelegate = DecrementRespawnTimers;
 
-    ScoreLimitForRound = ServerSettings(Level.CurrentServerSettings).DeathLimit;
+    ScoreLimitForRound = 0;
 }
 
 
@@ -151,11 +151,11 @@ function CheckIfRespawnIsNecessary( SwatGamePlayerController player )
     mplog( self$"---GameModeBS::CheckIfRespawnIsNecessary()." );
 
     TeamNumber = player.SwatRepoPlayerItem.TeamID;
-    
+
     if ( IsTeamAllDead(player, TeamNumber) )
     {
         mplog( "...team is dead." );
-        
+
         // @TODO: Should we create a notification connection point for this
         // rather than calling it directly?
         if ( TeamNumber == 0 )
@@ -212,7 +212,7 @@ private function bool IsTeamAllDead( SwatGamePlayerController playerWhoDied, int
             return false;
         }
     }
-    
+
     // Everyone on the team is dead so return true.
     mplog( "...returning true." );
     return true;

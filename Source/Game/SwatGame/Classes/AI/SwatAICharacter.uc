@@ -15,7 +15,7 @@ class SwatAICharacter extends SwatAI
 
 import enum AIEquipment from ISwatAICharacter;
 
-var Mesh OfficerMesh; // have to use a separate variable to work around script compiler bug
+var CharacterArchetypeInstance Instance;
 var private float InitialMorale;
 var protected name VoiceType;
 var protected name CharacterType;
@@ -409,9 +409,16 @@ protected function InitializePatrolling(PatrolList Patrol)
 
 function InitializeFromArchetypeInstance()
 {
-    local CharacterArchetypeInstance Instance;
+    local Mesh OfficerMesh;
+    local Mesh OfficerHeavyMesh;
+    local Mesh OfficerNoArmorMesh;
 
     Super.InitializeFromArchetypeInstance();
+
+    // This is so nasty. Ideally we should be setting this stuff in the Archetype, but then we would have to change EVERY archetype. That's no bueno.
+    OfficerMesh = class'SwatAICharacterConfig'.static.GetOfficerMesh();
+    OfficerHeavyMesh = class'SwatAICharacterConfig'.static.GetOfficerHeavyMesh();
+    OfficerNoArmorMesh = class'SwatAICharacterConfig'.static.GetOfficerNoArmorMesh();
 
     Instance = CharacterArchetypeInstance(ArchetypeInstance);
     assert(Instance != None);   //ArchetypeInstance should always be set before InitializeFromArchetypeInstance() is called
@@ -429,7 +436,7 @@ function InitializeFromArchetypeInstance()
     // Some hostages/enemies use the SWAT officer skeleton with different clothing and skin.
     // We need to handle this case separately because that skeleton has a different number of
     // materials than the other enemy/hostage meshes.
-    if (Mesh == OfficerMesh)
+    if (Mesh == OfficerMesh || Mesh == OfficerHeavyMesh || Mesh == OfficerNoArmorMesh)
     {
         Skins[0] = Instance.PantsMaterial;
         Skins[1] = Instance.FaceMaterial;
@@ -577,6 +584,36 @@ simulated function bool IsFemale()
 	// TODO - remove character type doesn't equal none test when we don't do the AnimLoadAnimPackages twice.
 	return ((CharacterType != '') && SwatAIRepo.IsAFemaleCharacterType(CharacterType));
 }
+}
+
+function bool HasEmpathy()
+{
+	return Instance.EmpathyModifierEnabled();
+}
+
+function float GetPepperSprayEmpathy()
+{
+	return Instance.GetEmpathyPepperSprayAmount();
+}
+
+function float GetTaserEmpathy()
+{
+	return Instance.GetEmpathyTaserAmount();
+}
+
+function float GetShotEmpathy()
+{
+	return Instance.GetEmpathyShotAmount(); // Not used.
+}
+
+function float GetPepperBallEmpathy()
+{
+	return Instance.GetEmpathyPepperBallAmount(); // Not used. (Uses pepper spray instead)
+}
+
+function float GetStungEmpathy()
+{
+	return Instance.GetEmpathyStungAmount();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1115,7 +1152,6 @@ function OnEscaped()
 
 defaultproperties
 {
-	OfficerMesh=Mesh'SWATMaleAnimation2.SwatOfficer'
     bNoRepMesh=false
 	bReplicateAnimations=true
     DesiredAIEquipment=AIE_Invalid
