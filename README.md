@@ -742,6 +742,7 @@ Once you have selected your map settings and have started the server at least on
  - Reduced the amount of sway on the sniper scope
  - Fixed P90 flashlight
  - Fixed M4Super90 iron sights position
+ - Fixed ambient sounds and scripted conversations on Meat Barn Restaurant
  - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
  - Fixed SEF bug: Breaching ammo would never breach the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
 
