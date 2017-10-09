@@ -79,10 +79,10 @@ var config bool DebugDrawAccuracyCone  "If true, when the weapon is fired the ga
 
 // flashlights
 var(Flashlight) private config bool HasAttachedFlashlight           "If true, this weapon will enable flashlight on/off toggling and create a light source at located at the socket specified in the FlashlightSocketName property";
-var(Flashlight) private config vector  FlashlightPosition_1stPerson "Positional offset from the EquippedSocket on this weapon's FirstPersonModel to the point from which the flashlight emanates";
-var(Flashlight) private config rotator FlashlightRotation_1stPerson "Same idea as FlashlightPosition_1stPerson, but rotational offset";
-var(Flashlight) private config vector  FlashlightPosition_3rdPerson "Positional offset from the EquippedSocket on this weapon's ThirdPersonModel to the point from which the flashlight emanates";
-var(Flashlight) private config rotator FlashlightRotation_3rdPerson "Same idea as FlashlightPosition_3rdPerson, but rotational offset";
+var(Flashlight) public config vector  FlashlightPosition_1stPerson "Positional offset from the EquippedSocket on this weapon's FirstPersonModel to the point from which the flashlight emanates";
+var(Flashlight) public config rotator FlashlightRotation_1stPerson "Same idea as FlashlightPosition_1stPerson, but rotational offset";
+var(Flashlight) public config vector  FlashlightPosition_3rdPerson "Positional offset from the EquippedSocket on this weapon's ThirdPersonModel to the point from which the flashlight emanates";
+var(Flashlight) public config rotator FlashlightRotation_3rdPerson "Same idea as FlashlightPosition_3rdPerson, but rotational offset";
 const FLASHLIGHT_TEXTURE_INDEX = 1;                      // Material index for the flashlight "glow" texture
 
 // State used for determining if a 3rd person flashlight projection is
@@ -295,6 +295,9 @@ simulated function TraceFire()
 	  local vector StartTrace, EndTrace;
     local PlayerController LocalPlayerController;
     local int Shot;
+    local float Magnitude;
+    local float AutoMagnitude;
+    local float ForeDuration, BackDuration;
 
     GetPerfectFireStart(PerfectStartLocation, PerfectStartDirection);
 
@@ -317,12 +320,30 @@ simulated function TraceFire()
 
     //TMC TODO 9/17/2003 move this into LocalFire() after Mike meets the milestone... then we don't need to do this redundant test.
     LocalPlayerController = Level.GetLocalPlayerController();
+
     if (Pawn(Owner).Controller == LocalPlayerController)    //I'm the one firing
     {
-        if (CurrentFireMode == FireMode_Auto)
-            LocalPlayerController.AddRecoil(RecoilBackDuration, RecoilForeDuration, RecoilMagnitude, AutoFireRecoilMagnitudeIncrement, AutoFireShotIndex);
-        else
-            LocalPlayerController.AddRecoil(RecoilBackDuration, RecoilForeDuration, RecoilMagnitude);
+        Magnitude = RecoilMagnitude;
+        Shot = 0;
+        AutoMagnitude = 0.0;
+        ForeDuration = RecoilForeDuration;
+        BackDuration = RecoilBackDuration;
+
+        if(CurrentFireMode == FireMode_Auto)
+        {
+            AutoMagnitude = AutoFireRecoilMagnitudeIncrement;
+            Shot = AutoFireShotIndex;
+        }
+
+        if(LocalPlayerController.WantsZoom)
+        {   // Recoil is decreased by 50% when we're zooming/aiming down sights.
+            Magnitude *= 0.5;
+            AutoMagnitude *= 0.5;
+            ForeDuration *= 0.5;
+            BackDuration *= 0.5;
+        }
+
+        LocalPlayerController.AddRecoil(BackDuration, ForeDuration, Magnitude, AutoMagnitude, Shot);
     }
 }
 
@@ -1525,7 +1546,9 @@ simulated latent private function Fire()
     local Pawn OtherForEffectEvents;
     local float TweenTime;
     local Pawn PawnOwner;
+    local PlayerController PlayerController;
     local Name EffectSubsystemToIgnore; // initialized by default to ''
+    local float Modifier;
 
     // We want to play the effects for whichever model is visible to the local
     //  player.  This would be the FirstPersonModel if the gun belongs to the player's
@@ -1558,6 +1581,13 @@ simulated latent private function Fire()
     }
 
     PawnOwner = Pawn(Owner);
+
+    PlayerController = PlayerController(PawnOwner.Controller);
+    if(PlayerController != None && PlayerController.WantsZoom)
+    {   // Reduce accuracy loss from firing by 50% while we are zoomed.
+        Modifier = 0.5;
+    }
+
     if (EffectsSource.LastRenderTime < Level.TimeSeconds - 1.0f)
         //the EffectsSource wasn't rendered recently, so we'll fall-back to playing the effects on this FiredWeapon's Owner (Pawn)
         OtherForEffectEvents = PawnOwner;
@@ -1585,7 +1615,7 @@ simulated latent private function Fire()
         if (CurrentFireMode == FireMode_Auto)
             AutoFireShotIndex++;
 
-        AddAimError(AimPenalty_Fire);
+        AddAimError(AimPenalty_Fire, Modifier);
 
         if (EffectsSource != None)
         {
@@ -1776,28 +1806,30 @@ simulated function UnEquippedHook()
 simulated native function float GetBaseAimError();
 
 //add an instantaneous penalty to this FiredWeapon's current AimError
-simulated function AddAimError(AimPenaltyType Penalty)
+simulated function AddAimError(AimPenaltyType Penalty, optional float Modifier)
 {
+    Modifier = 1.0 - Modifier;
+
     switch (Penalty)
     {
         case AimPenalty_Equip:
-            PendingAimErrorPenalty += EquippedAimErrorPenalty;
+            PendingAimErrorPenalty += EquippedAimErrorPenalty * Modifier;
             break;
 
         case AimPenalty_StandToWalk:
-            PendingAimErrorPenalty += StandToWalkAimErrorPenalty;
+            PendingAimErrorPenalty += StandToWalkAimErrorPenalty * Modifier;
             break;
 
         case AimPenalty_WalkToRun:
-            PendingAimErrorPenalty += WalkToRunAimErrorPenalty;
+            PendingAimErrorPenalty += WalkToRunAimErrorPenalty * Modifier;
             break;
 
         case AimPenalty_TakeDamage:
-            PendingAimErrorPenalty += DamagedAimErrorPenalty;
+            PendingAimErrorPenalty += DamagedAimErrorPenalty * Modifier;
             break;
 
         case AimPenalty_Fire:
-            PendingAimErrorPenalty += FiredAimErrorPenalty;
+            PendingAimErrorPenalty += FiredAimErrorPenalty * Modifier;
             break;
 
         default:

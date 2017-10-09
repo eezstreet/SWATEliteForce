@@ -2,12 +2,13 @@
 class Shotgun extends RoundBasedWeapon;
 ///////////////////////////////////////////////////////////////////////////////
 
-var config float WoodBreachingChance;
-var config float MetalBreachingChance;
+var(Shotgun) config float WoodBreachingChance "The chance to breach a wooden door, per pellet.";
+var(Shotgun) config float MetalBreachingChance "The chance to breach a metal door, per pellet.";
+var(Shotgun) config bool IgnoreAmmoOverrides "Whether to ignore breaching chance overrides from ammo types.";
 
 function bool ShouldBreach(float BreachingChance)
 {
-  return FRand() < BreachingChance;
+	return FRand() < BreachingChance;
 }
 
 function bool ShouldPenetrateMaterial(float BreachingChance)
@@ -39,25 +40,42 @@ simulated function bool HandleBallisticImpact(
 	local vector PlayerToDoor;
 	local float MaxDoorDistance;
 	local float BreachingChance;
+	local ShotgunAmmo ShotgunAmmo;
 
-  if(Role == Role_Authority)  // ONLY do this on the server!!
-  {
-      MaxDoorDistance = 99.45;		//1.5 meters in UU
+	ShotgunAmmo = ShotgunAmmo(Ammo);
+
+	if(Role == Role_Authority)  // ONLY do this on the server!!
+	{
+		MaxDoorDistance = 99.45;		//1.5 meters in UU
     	PlayerToDoor = HitLocation - Owner.Location;
 
     	switch (HitMaterial.MaterialVisualType)
     	{
-    	case MVT_ThinMetal:
-    	case MVT_ThickMetal:
-    	case MVT_Default:
-    		BreachingChance = MetalBreachingChance;
-    		break;
-    	case MVT_Wood:
-    		BreachingChance = WoodBreachingChance;
-    		break;
-    	default:
-    		BreachingChance = 0;
-    		break;
+	    	case MVT_ThinMetal:
+	    	case MVT_ThickMetal:
+	    	case MVT_Default:
+				if(!IgnoreAmmoOverrides && ShotgunAmmo.AmmoOverridesWeaponBreachChance())
+				{
+					BreachingChance = ShotgunAmmo.GetAmmoBreachChance(false);
+				}
+				else
+				{
+					BreachingChance = MetalBreachingChance;
+				}
+	    		break;
+	    	case MVT_Wood:
+				if(!IgnoreAmmoOverrides && ShotgunAmmo.AmmoOverridesWeaponBreachChance())
+				{
+					BreachingChance = ShotgunAmmo.GetAmmoBreachChance(true);
+				}
+				else
+				{
+					BreachingChance = WoodBreachingChance;
+				}
+	    		break;
+	    	default:
+	    		BreachingChance = 0;
+	    		break;
     	}
 
       if (Victim.IsA('SwatDoor') && PlayerToDoor Dot PlayerToDoor < MaxDoorDistance*MaxDoorDistance && ShouldBreach(BreachingChance) )
@@ -75,20 +93,20 @@ simulated function bool HandleBallisticImpact(
         }
       }
 
-  }
+	}
 
-  // We should still consider it to have ballistic impacts
-  return Super.HandleBallisticImpact(
-        Victim,
-        HitLocation,
-        HitNormal,
-        NormalizedBulletDirection,
-        HitMaterial,
-        HitRegion,
-        Momentum,
-        ExitLocation,
-        ExitNormal,
-        ExitMaterial);
+	// We should still consider it to have ballistic impacts
+	return Super.HandleBallisticImpact(
+	    Victim,
+	    HitLocation,
+	    HitNormal,
+	    NormalizedBulletDirection,
+	    HitMaterial,
+	    HitRegion,
+	    Momentum,
+	    ExitLocation,
+	    ExitNormal,
+	    ExitMaterial);
 }
 
 defaultproperties

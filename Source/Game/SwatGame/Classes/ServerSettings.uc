@@ -1,8 +1,10 @@
 class ServerSettings extends Engine.ReplicationInfo
-    config(SwatGuiState);
+    config(SwatGuiState)
+	dependsOn(SwatAdmin);
 
 import enum EEntryType from SwatStartPointBase;
 import enum EMPMode from Engine.Repo;
+import enum AdminPermissions from SwatAdmin;
 
 const MAX_MAPS = 40;
 var(ServerSettings) config String         Maps[MAX_MAPS];
@@ -13,22 +15,22 @@ var(ServerSettings) config int            MapIndex "What map is currently being 
 var(ServerSettings) config int            NumRounds "How many rounds to play per map";
 var(ServerSettings) config int            MaxPlayers "Maximum number of players allowed on this server";
 var(ServerSettings) config int            RoundNumber "What is the current round number";
-var(ServerSettings) config int            DeathLimit "How many deaths are required to lose a round (0 = No Death Limit)";
+var(ServerSettings) config int            Unused "Not used.";
 var(ServerSettings) config int            PostGameTimeLimit "Time between the end of the round and server loading the next level";
-var(ServerSettings) config int            RoundTimeLimit "Time limit for each round (in seconds) (0 = No Time Limit)";
+var(ServerSettings) config int            Unused2 "Not used.";
 var(ServerSettings) config int            MPMissionReadyTime "Time (in seconds) for players to ready themselves in between rounds in a MP game";
 var(ServerSettings) config bool           bShowTeammateNames "If true, will display teammates names";
-var(ServerSettings) config bool           bShowEnemyNames "If true, will display enemy names";
+var(ServerSettings) config bool           Unused3 "Not used.";
 var(ServerSettings) config bool           bAllowReferendums "If true, allow players to start referendums";
 var(ServerSettings) config bool           bNoRespawn "If true, the server will not respawn players";
 var(ServerSettings) config bool           bQuickRoundReset "If true, the server will perform a quick reset in between rounds on the same map; if false, the server will do a full SwitchLevel between rounds";
 var(ServerSettings) config float          FriendlyFireAmount "The damage modifier for friendly fire [0...1]";
-var(ServerSettings) config float          EnemyFireAmount "The damage modifier for enemy fire [0...1]";
-var(ServerSettings) config float          ArrestRoundTimeDeduction "Smash and Grab: seconds deducted when officers arrest a suspect.";
+var(ServerSettings) config float          Unused4 "Not used.";
+var(ServerSettings) config float          CampaignCOOP "Contains Campaign CO-OP settings (bitpacked)";
 var(ServerSettings) config int            AdditionalRespawnTime "Time (in seconds) added to the delay time between respawn waves.";
 var(ServerSettings) config bool           bNoLeaders "If true, new 'leader' functionality in SWAT 4 expansion is disabled.";
-var(ServerSettings) config bool           bUseStatTracking "If true and running an internet game, stat tracking will be used (requires restart).";
-var(ServerSettings) config bool           bDisableTeamSpecificWeapons "If true all weapons will be available to both teams";
+var(ServerSettings) config bool           Unused5 "Not used.";
+var(ServerSettings) config bool           bEnableSnipers "Enable snipers?";
 
 var(ServerSettings) config String         ServerName "Name of the server for display purposes";
 var(ServerSettings) localized config String DefaultServerName "Default name of the server for display purposes";
@@ -46,11 +48,11 @@ replication
 {
 	reliable if ( bNetDirty && (Role == ROLE_Authority) )
 		GameType, Maps, NumMaps, MapIndex, NumRounds,
-        MaxPlayers, RoundNumber, DeathLimit, PostGameTimeLimit,
-        RoundTimeLimit, MPMissionReadyTime, bShowTeammateNames, bShowEnemyNames, bAllowReferendums, bNoRespawn,
-        bQuickRoundReset, FriendlyFireAmount, EnemyFireAmount,
-        ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, ArrestRoundTimeDeduction,
-		bNoLeaders, bUseStatTracking, bDisableTeamSpecificWeapons;
+        MaxPlayers, RoundNumber, Unused, PostGameTimeLimit,
+        Unused2, MPMissionReadyTime, bShowTeammateNames, Unused3, bAllowReferendums, bNoRespawn,
+        bQuickRoundReset, FriendlyFireAmount, Unused4,
+        ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
+		bNoLeaders, Unused5, bEnableSnipers;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,10 +80,12 @@ function SetAdminServerSettings( PlayerController PC,
                             bool newbLAN )
 {
 log( self$"::SetAdminServerSettings( "$PC$", ServerName="$newServerName$", Password="$newPassword$", bPassworded="$newbPassworded$", bLAN="$newbLAN$" )" );
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) ) {
-      log("Couldn't set admin settings: not an admin");
-      return;
-    }
+	if(Level.Game.IsA('SwatGameInfo') &&
+		!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+	{
+		log("Couldn't set admin settings: not an admin");
+        return;
+	}
 
     ServerName = newServerName;
     Password = newPassword;
@@ -94,47 +98,51 @@ function SetServerSettings( PlayerController PC,
                             int newMapIndex,
                             int newNumRounds,
                             int newMaxPlayers,
-                            int newDeathLimit,
+                            int newUnused,
                             int newPostGameTimeLimit,
-                            int newRoundTimeLimit,
+                            int newUnused2,
                             int newMPMissionReadyTime,
                             bool newbShowTeammateNames,
-                            bool newbShowEnemyNames,
+                            bool newUnused3,
 							bool newbAllowReferendums,
                             bool newbNoRespawn,
                             bool newbQuickRoundReset,
                             float newFriendlyFireAmount,
-                            float newEnemyFireAmount,
-							float newArrestRoundTimeDeduction,	//Carries Campaigninfo in Coop Campaign
+                            float newUnused4,
+							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
-							bool newbUseStatTracking,
-							bool newbDisableTeamSpecificWeapons)
+							bool newUnused5,
+							bool newbEnableSnipers)
 {
-log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newDeathLimit="$newDeathLimit$", newPostGameTimeLimit="$newPostGameTimeLimit$", newRoundTimeLimit="$newRoundTimeLimit$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newbShowEnemyNames="$newbShowEnemyNames$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newEnemyFireAmount="$newEnemyFireAmount$" )" );
-    if( Level.Game.IsA( 'SwatGameInfo' ) && PC != None && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUnused="$newUnused$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUnused2="$newUnused2$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused4="$newUnused4$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newUnused3="$newUnused3$" )" );
+
+	if(Level.Game.IsA('SwatGameInfo') && PC != None &&
+		!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+	{
+		return;
+	}
 
     GameType = newGameType;
     MapIndex = newMapIndex;
     NumRounds = newNumRounds;
     MaxPlayers = newMaxPlayers;
-    DeathLimit = newDeathLimit;
+    Unused = newUnused;
     PostGameTimeLimit = newPostGameTimeLimit;
-    RoundTimeLimit = newRoundTimeLimit;
+    Unused2 = newUnused2;
     MPMissionReadyTime = newMPMissionReadyTime;
     bShowTeammateNames = newbShowTeammateNames;
-    bShowEnemyNames = newbShowEnemyNames;
-	bAllowReferendums = newbAllowReferendums;
+    Unused3 = newUnused3;
+	  bAllowReferendums = newbAllowReferendums;
     bNoRespawn = newbNoRespawn;
     bQuickRoundReset = newbQuickRoundReset;
     FriendlyFireAmount = newFriendlyFireAmount;
-    EnemyFireAmount = newEnemyFireAmount;
-	ArrestRoundTimeDeduction = newArrestRoundTimeDeduction;
-	AdditionalRespawnTime = newAdditionalRespawnTime;
-	bNoLeaders = newbNoLeaders;
-	bUseStatTracking = newbUseStatTracking;
-	bDisableTeamSpecificWeapons = newbDisableTeamSpecificWeapons;
+    Unused4 = newUnused4;
+	  CampaignCOOP = newCampaignCOOP;
+	  AdditionalRespawnTime = newAdditionalRespawnTime;
+	  bNoLeaders = newbNoLeaders;
+	  Unused5 = newUnused5;
+	  bEnableSnipers = newbEnableSnipers;
 
     RoundNumber=0;
 
@@ -154,8 +162,13 @@ log( self$"::SetServerSettings(...) ... saving config" );
 
 function AddMap( PlayerController PC, string MapName )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if(Level.Game.IsA('SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+		{
+			return;
+		}
+	}
 
     if( NumMaps >= MAX_MAPS )
         return;
@@ -169,8 +182,13 @@ function ClearMaps( PlayerController PC )
 {
     local int i;
 
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if(Level.Game.IsA('SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+		{
+			return;
+		}
+	}
 
     for( i = 0; i < MAX_MAPS; i++ )
     {
@@ -186,8 +204,13 @@ function ClearMaps( PlayerController PC )
 
 function SetDirty( PlayerController PC )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if(Level.Game.IsA('SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+		{
+			return;
+		}
+	}
 
     bDirty = true;
 }
@@ -240,14 +263,9 @@ private function LoadMapListForGameType()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-function bool ShouldUseStatTracking()
-{
-	return !bLan && bUseStatTracking && GameType != MPM_COOP && GameType != MPM_COOPQMM;
-}
-
 function bool IsCampaignCoop()
 {
-	return ArrestRoundTimeDeduction != (-1^0);
+	return CampaignCOOP != (-1^0);
 }
 
 function SetCampaignCoopSettings(PlayerController PC, int CampaignPath, int AvailableIndex)
@@ -258,7 +276,7 @@ function SetCampaignCoopSettings(PlayerController PC, int CampaignPath, int Avai
 
   CampaignSettings = 666 ^ 666;
   CampaignSettings = (AvailableIndex << 16) | CampaignPath;
-  ArrestRoundTimeDeduction = CampaignSettings;
+  CampaignCOOP = CampaignSettings;
 
   RetrievedCampaignPath = CampaignSettings & 65535;
   RetrievedAvailableIndex = (CampaignSettings & -65536) >> 16;
@@ -272,9 +290,7 @@ defaultproperties
 {
 	RemoteRole=ROLE_SimulatedProxy
 	bAlwaysRelevant=True
-    EnemyFireAmount=1.0
     bShouldReplicateDefaultProperties=true
-	bUseStatTracking=true
 	DefaultServerName="Swat4X Server"
 }
 

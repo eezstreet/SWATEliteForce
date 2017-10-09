@@ -15,7 +15,7 @@ class SwatAICharacter extends SwatAI
 
 import enum AIEquipment from ISwatAICharacter;
 
-var int Dummy;        // Data that can be filled with something else --eez
+var CharacterArchetypeInstance Instance;
 var private float InitialMorale;
 var protected name VoiceType;
 var protected name CharacterType;
@@ -409,7 +409,6 @@ protected function InitializePatrolling(PatrolList Patrol)
 
 function InitializeFromArchetypeInstance()
 {
-    local CharacterArchetypeInstance Instance;
     local Mesh OfficerMesh;
     local Mesh OfficerHeavyMesh;
     local Mesh OfficerNoArmorMesh;
@@ -585,6 +584,36 @@ simulated function bool IsFemale()
 	// TODO - remove character type doesn't equal none test when we don't do the AnimLoadAnimPackages twice.
 	return ((CharacterType != '') && SwatAIRepo.IsAFemaleCharacterType(CharacterType));
 }
+}
+
+function bool HasEmpathy()
+{
+	return Instance.EmpathyModifierEnabled();
+}
+
+function float GetPepperSprayEmpathy()
+{
+	return Instance.GetEmpathyPepperSprayAmount();
+}
+
+function float GetTaserEmpathy()
+{
+	return Instance.GetEmpathyTaserAmount();
+}
+
+function float GetShotEmpathy()
+{
+	return Instance.GetEmpathyShotAmount(); // Not used.
+}
+
+function float GetPepperBallEmpathy()
+{
+	return Instance.GetEmpathyPepperBallAmount(); // Not used. (Uses pepper spray instead)
+}
+
+function float GetStungEmpathy()
+{
+	return Instance.GetEmpathyStungAmount();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1702,6 +1702,11 @@ simulated private function InsertSweepTarget(Actor Target, int HandleMethod, out
     local float Distance;
     local int i;
     local Pawn FirstOfficer;
+    local float MaxSweepDistance;
+    local bool UseSweepFilter, SweepFilterExpires;
+    local SwatGameInfo SwatGameInfo;
+
+    SwatGameInfo = SwatGameInfo(Level.Game);
 
     FirstOfficer = PendingCommandTeam.GetFirstOfficer();
     if(FirstOfficer == None)
@@ -1710,11 +1715,18 @@ simulated private function InsertSweepTarget(Actor Target, int HandleMethod, out
     }
 
     Distance = FirstOfficer.GetPathfindingDistanceToActor(Target);
+    MaxSweepDistance = class'CommonCommandSettings'.default.fMaxSweepDistance;
+    UseSweepFilter = class'CommonCommandSettings'.default.bUseSweepDistanceFilter;
+    SweepFilterExpires = class'CommonCommandSettings'.default.bSweepFilterExpires;
 
-    if(class'CommonCommandSettings'.default.bUseSweepDistanceFilter && class'CommonCommandSettings'.default.fMaxSweepDistance < Distance)
-    {   // Too far away
-        return;
+    if(!SweepFilterExpires || !SwatGameInfo.Repo.GuiConfig.CurrentMission.IsMissionCompleted(SwatGameInfo.Repo.MissionObjectives))
+    {
+        if(UseSweepFilter && MaxSweepDistance < Distance)
+        {   // Too far away
+            return;
+        }
     }
+
 
     for(i = 0; i < SortedArray.Length; i++)
     {

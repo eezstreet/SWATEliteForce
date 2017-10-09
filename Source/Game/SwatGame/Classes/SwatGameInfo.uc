@@ -120,8 +120,6 @@ function PreBeginPlay()
 {
     local SwatPlayerStart Point;
 
-	UpdateStatTrackingEnabled();
-
 	ServerStats = new class<StatsInterface>(DynamicLoadObject(StatsClass(), class'class'));
 	ServerStats.SetLevel(Level);
 
@@ -161,7 +159,6 @@ function PreBeginPlay()
     Super.PreBeginPlay();
 
     Admin = Spawn( class'SwatAdmin' );
-    Admin.SetAdminPassword( SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword );
 
     RegisterNotifyGameStarted();
 
@@ -592,13 +589,7 @@ function SetupNameDisplay()
     else
         SGRI.ShowTeammateNames = 1;
 
-    if ( ServerSettings(Level.CurrentServerSettings).bShowEnemyNames )
-        SGRI.ShowEnemyNames = 2;
-    else
-        SGRI.ShowEnemyNames = 1;
-
 	mplog( "...ShowTeammateNames="$SGRI.ShowTeammateNames );
-    mplog( "...ShowEnemyNames="$SGRI.ShowEnemyNames );
 }
 
 function InitializeGameMode()
@@ -1476,7 +1467,7 @@ event PlayerController Login(string Portal, string Options, out string Error)
         theSwatRepoPlayerItem.LastAdminPassword = SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword;
 
     //attempt to log the new player in as an admin (based on their last entered password)
-    Admin.AdminLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
+    Admin.TryLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
 
     // Init player's replication info
     NewPlayer.GameReplicationInfo = GameReplicationInfo;
@@ -1610,6 +1601,7 @@ event PostLogin( PlayerController NewPlayer )
 function PlayerLoggedIn(PlayerController NewPlayer)
 {
     local SwatGamePlayerController PC;
+	local SwatPlayerReplicationInfo PRI;
 
     //dkaplan: when finished logging in,
     //
@@ -1639,17 +1631,6 @@ function PlayerLoggedIn(PlayerController NewPlayer)
             || (Level.NetMode != NM_Standalone && !PC.IsAReconnectingClient()) )
         {
             PC.ClientOnLoggedIn(ServerSettings(Level.CurrentServerSettings).GameType);
-
-            //notify of newly joined player
-            if ( Level.NetMode != NM_Standalone )
-            {
-            if( !PC.IsAReconnectingClient())
-                Broadcast( NewPlayer, NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
-            }
-
-            //notify of pre-game waiting state
-            //if( Repo.GuiConfig.SwatGameState == GAMESTATE_PreGame )
-                //NewPlayer.ClientMessage( "Waiting for round to start!", 'SwatGameEvent' );
         }
         else if ( Repo.GuiConfig.SwatGameState == GAMESTATE_MidGame )
         {
@@ -1662,6 +1643,20 @@ function PlayerLoggedIn(PlayerController NewPlayer)
             PC.ClientRoundStarted();
             PC.ClientGameEnded();
         }
+
+		//notify of newly joined player
+		if ( Level.NetMode != NM_Standalone )
+		{
+			if( !PC.IsAReconnectingClient())
+				Broadcast( NewPlayer, NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
+		}
+
+		// Set player permissions
+		PRI = SwatPlayerReplicationInfo(PC.PlayerReplicationInfo);
+		if(PRI != None)
+		{
+			PRI.SetPermissions(Admin.GuestPermissions);
+		}
     }
 
 	// This call may need to be moved at some point so that the entry point for the spawned officers
@@ -2561,34 +2556,6 @@ event DetailChange()
     }
 }
 
-function UpdateStatTrackingEnabled()
-{
-	local bool bShouldUse;
-	local SwatPlayerReplicationInfo Info;
-
-	bShouldUse = ServerSettings(Level.CurrentServerSettings).ShouldUseStatTracking();
-
-	if (bShouldUse == Level.GetGameSpyManager().bTrackingStats)
-		return;
-
-	Level.GetGameSpyManager().bTrackingStats = bShouldUse;
-
-	if (Level.GetGameSpyManager().bTrackingStats)
-	{
-		ForEach AllActors(class'SwatPlayerReplicationInfo', Info)
-		{
-			Info.bStatsRequestSent = false;
-		}
-
-		log("[Stats] Stat tracking enabled, initializing...");
-		Level.GetGameSpyManager().ConnectStats();
-	}
-	else
-	{
-		log("[Stats] Stat tracking is disabled.");
-	}
-}
-
 // Execute only on server.
 function PreQuickRoundRestart()
 {
@@ -2605,7 +2572,6 @@ function PreQuickRoundRestart()
         }
     }
 
-	UpdateStatTrackingEnabled();
 	SetupNameDisplay();
 
    // Clean up garbage when quick restarting.

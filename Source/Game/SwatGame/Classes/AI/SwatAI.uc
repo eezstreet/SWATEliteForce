@@ -3276,8 +3276,8 @@ defaultproperties
 	AnimFlags(2)                = 0
 
     EyeBoneName                 = eye_R
-    // Peripheral vision is 60 degrees on either side (for a total of 120 degrees)
-    PeripheralVision            = 0.5
+    // Peripheral vision is 40 degrees on either side (for a total of 80 degrees)
+    PeripheralVision            = 0.77
 
     Physics                     = PHYS_Walking
 

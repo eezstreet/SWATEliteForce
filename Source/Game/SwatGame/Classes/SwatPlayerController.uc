@@ -414,7 +414,12 @@ exec function Kick( string S )
 
 exec function SAD( string S )
 {
-    SwatGameInfo(Level.Game).Admin.AdminLogin(Self, S);
+    SwatGameInfo(Level.Game).Admin.TryLogin(Self, S);
+}
+
+exec function SAL( )
+{
+	SwatGameInfo(Level.Game).Admin.TryLogout(Self);
 }
 
 exec function Switch( string S )
@@ -439,8 +444,7 @@ exec function ShowIDs()
 
 exec function ToggleIDs()
 {
-    if( SwatPlayerReplicationInfo(PlayerReplicationInfo).IsAdmin() )
-        ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
+    ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
 }
 
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
@@ -457,21 +461,21 @@ function ServerSetSettings( ServerSettings Settings,
                             int newMapIndex,
                             int newNumRounds,
                             int newMaxPlayers,
-                            int newDeathLimit,
+                            int unused,
                             int newPostGameTimeLimit,
-                            int newRoundTimeLimit,
+                            int unused2,
                             int newMPMissionReadyTime,
                             bool newbShowTeammateNames,
-                            bool newbShowEnemyNames,
+                            bool unused3,
 							bool newbAllowReferendums,
                             bool newbNoRespawn,
                             bool newbQuickRoundReset,
                             float newFriendlyFireAmount,
-                            float newEnemyFireAmount,
-							float newArrestRoundTimeDeduction,
+                            float unused4,
+							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
-							bool newbUseStatTracking,
+							bool unused5,
 							bool newbDisableTeamSpecificWeapons)
 {
     Settings.SetServerSettings( self,
@@ -479,21 +483,21 @@ function ServerSetSettings( ServerSettings Settings,
                                 newMapIndex,
                                 newNumRounds,
                                 newMaxPlayers,
-                                newDeathLimit,
+                                unused,
                                 newPostGameTimeLimit,
-                                newRoundTimeLimit,
+                                unused2,
                                 newMPMissionReadyTime,
                                 newbShowTeammateNames,
-                                newbShowEnemyNames,
+                                unused3,
 								newbAllowReferendums,
                                 newbNoRespawn,
                                 newbQuickRoundReset,
                                 newFriendlyFireAmount,
-                                newEnemyFireAmount,
-								newArrestRoundTimeDeduction,
+                                unused4,
+								newCampaignCOOP,
 								newAdditionalRespawnTime,
 								newbNoLeaders,
-								newbUseStatTracking,
+								unused5,
 								newbDisableTeamSpecificWeapons );
 }
 

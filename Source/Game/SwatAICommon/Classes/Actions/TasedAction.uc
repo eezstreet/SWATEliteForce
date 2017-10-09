@@ -23,6 +23,11 @@ protected function float GetMoraleModificationAmount()
 	return ISwatAI(m_Pawn).GetCommanderAction().GetTasedMoraleModification();
 }
 
+protected function float GetEmpathyModifierForCharacter(ISwatAICharacter target)
+{
+	return Target.GetTaserEmpathy();
+}
+
 function bool ShouldAffectMoraleAgain()
 {
 	// the Tased behavior does not affect morale again

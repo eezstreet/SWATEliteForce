@@ -9,8 +9,6 @@ const MAX_MAPS = 40;
 var SwatServerSetupMenu SwatServerSetupMenu;
 
 var(SWATGui) EditInline Config GUINumericEdit      MyRoundsBox;
-var(SWATGui) EditInline Config GUINumericEdit      MyDeathLimitBox;
-var(SWATGui) EditInline Config GUINumericEdit      MyTimeLimitBox;
 var(SWATGui) EditInline Config GUIEditBox		   MyNameBox;
 var(SWATGui) EditInline Config GUIEditBox          MyServerNameBox;
 var(SWATGui) EditInline Config GUIEditBox		   MyPasswordBox;
@@ -38,6 +36,9 @@ var(SWATGui) EditInline Config GUILabel            MyIdealPlayerCount;
 var(SWATGui) EditInline Config GUILabel            MyLevelAuthor;
 var(SWATGui) EditInline Config GUILabel            MyLevelTitle;
 
+// Level Filter
+var(SWATGui) EditInline Config GUIComboBox			MyMapFilterBox;
+
 var(DEBUG) int SelectedIndex;
 var() private config localized string SelectedIndexColorString;
 
@@ -56,6 +57,15 @@ var(DEBUG) private GUIList FullMapList;
 var() private config localized string LoadingMaplistString;
 var() private config localized string LANString;
 var() private config localized string GAMESPYString;
+
+enum ServerSetupMapTypes
+{
+	MapType_All,		// All maps
+	MapType_Original,	// SWAT 4 + TSS + SEF maps
+	MapType_Custom,		// Custom Maps
+};
+
+var() private config localized array<String> MapFilterString;
 
 ///////////////////////////////////////////
 // New feature in SEFv4: Don't load the maps all in one go, instead process one map per Tick
@@ -84,7 +94,7 @@ function LoadNextMap() {
       FullMapList.Add( NextMap, Summary, Summary.Title );
   }
 
-  LoadAvailableMaps( SwatServerSetupMenu.CurGameType );
+  LoadAvailableMaps( SwatServerSetupMenu.CurGameType, MyMapFilterBox.List.GetExtraIntData() );
   LoadMapList( SwatServerSetupMenu.CurGameType );
 }
 
@@ -110,6 +120,8 @@ event Timer() {
 ///////////////////////////////////////////////////////////////////////////
 function InitComponent(GUIComponent MyOwner)
 {
+	local int i;
+
     Super.InitComponent(MyOwner);
 
     FullMapList = GUIList(AddComponent("GUI.GUIList", self.Name$"_FullMapList", true ));
@@ -119,13 +131,15 @@ function InitComponent(GUIComponent MyOwner)
     MyUseGameSpyBox.AddItem( LANString );
     MyUseGameSpyBox.AddItem( GAMESPYString );
 
-    //set the available missions for the list box
-    /*for(i = 0; i < EMPMode.EnumCount; i++) {
-      MyGameTypeBox.AddItem(GC.GetGameModeName(EMPMode(i)));
-    }*/
-	  MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOP),,, EMPMode.MPM_COOP);
-	  MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOPQMM),,, EMPMode.MPM_COOPQMM);
+	for(i = 0; i < ServerSetupMapTypes.EnumCount; i++)
+	{
+		MyMapFilterBox.AddItem(MapFilterString[i],,, i);
+	}
+	MyMapFilterBox.List.FindExtraIntData(0);
+	MyMapFilterBox.DisableComponent();	// gets re-enabled when we have finished loading all the maps
 
+	MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOP),,, EMPMode.MPM_COOP);
+	MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOPQMM),,, EMPMode.MPM_COOPQMM);
     MyGameTypeBox.List.FindExtraIntData(EMPMode.MPM_COOP);
 
     SelectedMaps.List.OnDblClick=OnSelectedMapsDblClicked;
@@ -141,6 +155,7 @@ function InitComponent(GUIComponent MyOwner)
     MyGameTypeBox.OnChange=InternalOnChange;
     MyUseGameSpyBox.OnChange=InternalOnChange;
     MyPasswordedButton.OnChange=InternalOnChange;
+	MyMapFilterBox.OnChange=InternalOnChange;
 
     MyNameBox.OnChange=OnNameSelectionChanged;
     MyNameBox.MaxWidth = GC.MPNameLength;
@@ -180,6 +195,9 @@ function InternalOnChange(GUIComponent Sender)
         case MyGameTypeBox:
             OnGameModeChanged( EMPMode(MyGameTypeBox.GetInt()) );
             break;
+		case MyMapFilterBox:
+			OnMapFilterChanged( ServerSetupMapTypes(MyMapFilterBox.GetInt()) );
+			break;
     }
 }
 
@@ -209,8 +227,6 @@ function SetSubComponentsEnabled( bool bSetEnabled )
     SelectedMaps.SetEnabled( bSetEnabled );
     DisplayOnlyMaps.SetEnabled( bSetEnabled );
     MyRoundsBox.SetEnabled( bSetEnabled );
-    MyDeathLimitBox.SetEnabled( bSetEnabled );
-    MyTimeLimitBox.SetEnabled( bSetEnabled );
     MyServerNameBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
     MyPasswordBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
     MyPasswordedButton.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
@@ -219,6 +235,7 @@ function SetSubComponentsEnabled( bool bSetEnabled )
     MyUseGameSpyBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
     MyGameTypeBox.SetEnabled( bSetEnabled );
     MyNameBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
+	MyMapFilterBox.SetEnabled(bSetEnabled);
 
     MyRemoveButton.SetVisibility( bSetEnabled );
     MyAddButton.SetVisibility( bSetEnabled );
@@ -247,7 +264,6 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
         MyQuickResetBox.SetChecked(false);
 
         MyQuickResetBox.DisableComponent();
-        MyTimeLimitBox.DisableComponent();
 
         //default 1 rounds per map for non-coop
         MyRoundsBox.SetValue( 1 );
@@ -258,38 +274,6 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
 
         //default 5 rounds per map for non-coop
         MyRoundsBox.SetValue( 5 );
-    }
-
-    //Barricaded special
-    if( NewMode == EMPMode.MPM_BarricadedSuspects )
-    {
-        MyTimeLimitBox.SetValue( 900, true );
-        MyDeathLimitBox.SetValue( 50 );
-    }
-    else
-    {
-        MyDeathLimitBox.DisableComponent();
-        MyNoRespawnButton.DisableComponent();
-    }
-
-    //Rapid deployment special
-    if( NewMode == EMPMode.MPM_RapidDeployment )
-    {
-        MyTimeLimitBox.SetValue( 600, true );
-    }
-    else
-    {
-        //Do Nothing
-    }
-
-    //VIP special
-    if( NewMode == EMPMode.MPM_VIPEscort )
-    {
-        MyTimeLimitBox.SetValue( 720, true );
-    }
-    else
-    {
-        //Do Nothing
     }
 
     MyNoRespawnButton.SetChecked(false);
@@ -344,8 +328,6 @@ function LoadServerSettings( optional bool ReadOnly )
     // Load the rest of the settings
     //
     MyRoundsBox.SetValue(Settings.NumRounds, true);
-    MyDeathLimitBox.SetValue(Settings.DeathLimit, true);
-    MyTimeLimitBox.SetValue(Settings.RoundTimeLimit, true);
     MyPasswordedButton.bForceUpdate = true;
     MyNoRespawnButton.SetChecked( Settings.bNoRespawn );
     MyQuickResetBox.SetChecked( Settings.bQuickRoundReset );
@@ -416,6 +398,14 @@ function SaveServerSettings()
     SwatPlayerController(PlayerOwner()).SetName( MyNameBox.GetText() );
 }
 
+///////////////////////////////////////////////////////////////////////////
+// MapFilter change
+///////////////////////////////////////////////////////////////////////////
+function OnMapFilterChanged( ServerSetupMapTypes NewFilter )
+{
+	// Just load the available maps
+	LoadAvailableMaps(EMPMode(MyGameTypeBox.List.GetExtraIntData()), NewFilter);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // GameMode Updates
@@ -427,7 +417,7 @@ function OnGameModeChanged( EMPMode NewMode )
     SwatServerSetupMenu.CurGameType = NewMode;
 
     //load the available map list
-    LoadAvailableMaps( NewMode );
+    LoadAvailableMaps( NewMode, 0 );
 
     //load the Map rotation for the new game mode
     LoadMapList( NewMode );
@@ -446,7 +436,59 @@ function OnGameModeChanged( EMPMode NewMode )
 ///////////////////////////////////////////////////////////////////////////
 // Maplist Management
 ///////////////////////////////////////////////////////////////////////////
-function LoadAvailableMaps( EMPMode NewMode )
+
+/*
+ * Returns true if this map is an RMX map
+ */
+function bool IsRMXMap(String LevelName)
+{
+	return InStr(LevelName, "RMX") != -1 || InStr(LevelName, "rmx") != -1 || InStr(LevelName, "COOP") != -1;
+}
+
+/*
+ * Returns true if this map is a Hardcore map
+ */
+function bool IsHardcoreMap(String LevelName)
+{
+	return InStr(LevelName, "Hardcore") != -1 || InStr(LevelName, "hardcore") != -1;
+}
+
+/*
+ * Returns true if this map (based on the author and level name) is allowed to be shown, based on the map filter.
+ */
+function bool MapAllowed(String AuthorName, String LevelName, int NewFilter)
+{
+	if(NewFilter == ServerSetupMapTypes.MapType_Custom)
+	{
+		if(IsRMXMap(LevelName) || IsHardcoreMap(LevelName))
+		{
+			return true;
+		}
+		else if(AuthorName ~= "Irrational Games" || AuthorName ~= "Irrational Games, LLC" || AuthorName ~= "SEF Team")
+		{
+			return false;
+		}
+		return true;
+	}
+	else if(NewFilter == ServerSetupMapTypes.MapType_Original)
+	{
+		if(IsRMXMap(LevelName) || IsHardcoreMap(LevelName))
+		{
+			return false;
+		}
+		else if(AuthorName ~= "Irrational Games" || AuthorName ~= "Irrational Games, LLC" || AuthorName ~= "SEF Team")
+		{
+			return true;
+		}
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+function LoadAvailableMaps( EMPMode NewMode, int NewFilter )
 {
     local int i, j;
     local LevelSummary Summary;
@@ -461,7 +503,8 @@ function LoadAvailableMaps( EMPMode NewMode )
 
         for( j = 0; j < Summary.SupportedModes.Length; j++ )
         {
-            if( Summary.SupportedModes[j] == NewMode )
+            if( Summary.SupportedModes[j] == NewMode &&
+				MapAllowed(Summary.Author, Summary.Title, NewFilter))
             {
                 AvailableMaps.List.AddElement( FullMapList.GetAtIndex(i) );
                 break;
@@ -471,11 +514,16 @@ function LoadAvailableMaps( EMPMode NewMode )
 
     AvailableMaps.List.Sort();
 
-    if(CurrentMapLoadIndex >= MapsToLoad.Length) {
-      bUpdatingMapLists = false;
+    if(CurrentMapLoadIndex >= MapsToLoad.Length)
+	{
+    	bUpdatingMapLists = false;
+		MyMapFilterBox.EnableComponent();
     }
 }
 
+/*
+ * Populates the list of selected maps
+ */
 function LoadMapList( EMPMode NewMode )
 {
     local int i, j;
@@ -502,6 +550,9 @@ function LoadMapList( EMPMode NewMode )
     }
 }
 
+/*
+ * Loads the server's list of maps
+ */
 function LoadServerMapList( GUIListBox MapListBox, ServerSettings Settings )
 {
     local int i, j;
@@ -526,7 +577,9 @@ function LoadServerMapList( GUIListBox MapListBox, ServerSettings Settings )
     }
 }
 
-
+/*
+ * Get a list of map files (.s4m) and put them in MapsToLoad
+ */
 function LoadFullMapList()
 {
 	local string FileName;
@@ -718,6 +771,10 @@ defaultproperties
     LevelTitleString="Map: %1"
     LevelAuthorString="Author: %1"
     IdealPlayerCountString="Recommended Players: %1 - %2"
+
+	MapFilterString[0]="All Maps"
+	MapFilterString[1]="Stock Maps"
+	MapFilterString[2]="Custom Maps"
 
     SelectedIndexColorString="[c=00ff00]"
 

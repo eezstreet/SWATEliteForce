@@ -6,9 +6,10 @@
 // ====================================================================
 
 class SwatServerSetupMenu extends SwatGUIPage
-     ;
+     dependsOn(SwatAdmin);
 
 import enum EMPMode from Engine.Repo;
+import enum AdminPermissions from SwatGame.SwatAdmin;
 
 var(SWATGui) EditInline Config GUIButton						MyMainMenuButton;
 var(SWATGui) EditInline Config GUIButton						StartButton;
@@ -16,8 +17,10 @@ var(SWATGui) EditInline Config GUIButton						MyQuitButton;
 
 var(SWATGui) EditInline Config SwatServerSetupQuickPanel		QuickSetupPanel;
 var(SWATGui) EditInline Config SwatServerSetupAdvancedPanel		AdvancedSetupPanel;
+var(SWATGui) EditInline Config SwatServerSetupAdminPanel		AdminPanel;
 var(SWATGui) EditInline Config GUIButton						QuickSetupButton;
 var(SWATGui) EditInline Config GUIButton						AdvancedSetupButton;
+var(SWATGui) EditInline Config GUIButton						AdminButton;
 
 var(SWATGui) EditInline Config GUIButton						ProfileButton;
 
@@ -55,10 +58,12 @@ function InitComponent(GUIComponent MyOwner)
 
 	QuickSetupPanel.SwatServerSetupMenu = self;
 	AdvancedSetupPanel.SwatServerSetupMenu = self;
+	AdminPanel.SwatServerSetupMenu = self;
 
 	QuickSetupButton.OnClick = OnQuickSetupButton;
 	AdvancedSetupButton.OnClick = OnAdvancedSetupButton;
 	ProfileButton.OnClick = OnProfileButton;
+	AdminButton.OnClick = OnAdminButton;
 
 	OnActivate = InternalOnActivate;
 }
@@ -67,6 +72,8 @@ function OpenQuickSetup()
 {
 	AdvancedSetupPanel.Hide();
 	AdvancedSetupPanel.DeActivate();
+	AdminPanel.Hide();
+	AdminPanel.DeActivate();
 	QuickSetupPanel.Show();
 	QuickSetupPanel.Activate();
 }
@@ -75,8 +82,20 @@ function OpenAdvancedSetup()
 {
 	QuickSetupPanel.Hide();
 	QuickSetupPanel.DeActivate();
+	AdminPanel.Hide();
+	AdminPanel.DeActivate();
 	AdvancedSetupPanel.Show();
 	AdvancedSetupPanel.Activate();
+}
+
+function OpenAdmin()
+{
+	QuickSetupPanel.Hide();
+	QuickSetupPanel.DeActivate();
+	AdvancedSetupPanel.Hide();
+	AdvancedSetupPanel.DeActivate();
+	AdminPanel.Show();
+	AdminPanel.Activate();
 }
 
 function OnQuickSetupButton(GUIComponent Sender)
@@ -87,6 +106,11 @@ function OnQuickSetupButton(GUIComponent Sender)
 function OnAdvancedSetupButton(GUIComponent Sender)
 {
 	OpenAdvancedSetup();
+}
+
+function OnAdminButton(GUIComponent Sender)
+{
+	OpenAdmin();
 }
 
 function OnProfileButton(GUIComponent Sender)
@@ -181,7 +205,8 @@ event HandleParameters(string Param1, string Param2, optional int param3)
 
     //if param1 == InGame, this is to be opened as an in game screen - special options apply
     bInGame = ( Param1 == "InGame" );
-    bIsAdmin = ( GC.SwatGameRole == GAMEROLE_MP_Host ) || SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).IsAdmin();
+    bIsAdmin = ( GC.SwatGameRole == GAMEROLE_MP_Host ) ||
+		SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).MyRights[AdminPermissions.Permission_ChangeSettings] > 0;
 
     StartButton.Hint = StartButtonHelpString;
     MyQuitButton.Hint = QuitButtonHelpString;
@@ -204,12 +229,12 @@ event HandleParameters(string Param1, string Param2, optional int param3)
 
 	QuickSetupPanel.HandleParameters( Param1, Param2, Param3 );
 	AdvancedSetupPanel.HandleParameters( Param1, Param2, Param3 );
+	AdminPanel.HandleParameters( Param1, Param2, Param3 );
 }
 
 function SaveServerSettings()
 {
     local ServerSettings Settings;
-    local float EnemyFireAmount;
 
     //
     // Save to the pending server settings
@@ -218,14 +243,7 @@ function SaveServerSettings()
 
 	QuickSetupPanel.SaveServerSettings();
 	AdvancedSetupPanel.SaveServerSettings();
-
-    //
-    // Update the modifiers based on checkbox value
-    //
-    if( AdvancedSetupPanel.MyEnemyFireButton.bChecked )
-        EnemyFireAmount = 0.0;
-    else
-        EnemyFireAmount = 1.0;
+	AdminPanel.SaveServerSettings();
 
     //
     // Set all server settings
@@ -235,22 +253,22 @@ function SaveServerSettings()
                                 QuickSetupPanel.SelectedIndex,
                                 QuickSetupPanel.MyRoundsBox.Value,
                                 AdvancedSetupPanel.MyMaxPlayersBox.Value,
-                                QuickSetupPanel.MyDeathLimitBox.Value,
+                                0,  // Not used
                                 AdvancedSetupPanel.MyPostGameTimeLimitBox.Value,
-                                QuickSetupPanel.MyTimeLimitBox.Value,
+                                0, // Not used
                                 AdvancedSetupPanel.MyPreGameTimeLimitBox.Value,
                                 AdvancedSetupPanel.MyShowTeammatesButton.bChecked,
-                                AdvancedSetupPanel.MyShowEnemyButton.bChecked,
-								AdvancedSetupPanel.MyAllowReferendumsButton.bChecked,
+                                false, // Not used
+								                AdvancedSetupPanel.MyAllowReferendumsButton.bChecked,
                                 QuickSetupPanel.MyNoRespawnButton.bChecked,
                                 QuickSetupPanel.MyQuickResetBox.bChecked,
                                 AdvancedSetupPanel.MyFriendlyFireSlider.GetValue(),
-                                EnemyFireAmount,
-								-1^0,
-								AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
-								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
-								AdvancedSetupPanel.MyEnableStatsCheck.bChecked,
-								!AdvancedSetupPanel.MyEnableTeamSpecificWeapons.bChecked);
+                                0.0f, // Not used
+								                -1^0,
+								                AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
+								                !AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
+								                false,  // Not used
+								                AdvancedSetupPanel.MyEnableSnipers.bChecked);
 
     GC.SaveConfig();
 }
@@ -344,7 +362,6 @@ function RefreshEnabled()
         MyQuitButton.SetEnabled( bEnableStart );
 
 	QuickSetupPanel.DoRefreshEnabled();
-	AdvancedSetupPanel.DoRefreshEnabled();
 }
 
 defaultproperties

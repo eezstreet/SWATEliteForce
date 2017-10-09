@@ -203,11 +203,15 @@ simulated function float GetTotalBulk() {
 }
 
 simulated function float GetWeightMovementModifier() {
-  return 0.0; // We don't care about this
+	return 1.0; // We don't care about this
 }
 
 simulated function float GetBulkQualifyModifier() {
-  return 0.0; // We don't care about this
+	return 1.0; // We don't care about this
+}
+
+simulated function float GetBulkSpeedModifier() {
+	return 1.0;
 }
 
 replication

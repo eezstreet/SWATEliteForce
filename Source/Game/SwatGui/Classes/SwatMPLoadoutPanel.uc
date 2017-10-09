@@ -108,8 +108,8 @@ function bool CheckCampaignValid( class EquipmentClass )
 
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 
-	MissionIndex = (Settings.ArrestRoundTimeDeduction & -65536) >> 16;
-	CampaignPath = Settings.ArrestRoundTimeDeduction & 65535;
+	MissionIndex = (Settings.CampaignCOOP & -65536) >> 16;
+	CampaignPath = Settings.CampaignCOOP & 65535;
 
 	// Any equipment above the MissionIndex is currently unavailable
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
