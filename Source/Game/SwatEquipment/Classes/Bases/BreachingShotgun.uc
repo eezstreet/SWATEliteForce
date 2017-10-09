@@ -5,7 +5,8 @@ class BreachingShotgun extends Shotgun
 
 defaultproperties
 {
-	WoodBreachingChance = 1;
-	MetalBreachingChance = 1;
+	WoodBreachingChance = 1
+	MetalBreachingChance = 1
 	bPenetratesDoors=false
+	IgnoreAmmoOverrides=true
 }
