@@ -998,7 +998,8 @@ simulated function bool SpawnBloodEffects(Ammunition Ammo,Vector ExitLocation, i
     local Rotator BloodRot;
     local Vector X, Y, Z;
 
-	NumPools = Rand(3)+1;
+	//NumPools = Rand(3)+1;
+	NumPools = Rand(4)+2;
     for ( ct = 0; ct < NumPools; ct ++ )
 	{
         BloodRot = rotator(-Direction);

@@ -313,6 +313,7 @@ private function ReactToNearbyGunshot(Actor HeardActor)
 			if (MoveToActor(RunAwayDestination, kRunFromGunshotPriority, true))
 			{
 				// scream!
+				ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerFleeSpeech();
 				Scream();
 			}
 		}
