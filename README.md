@@ -736,6 +736,7 @@ Once you have selected your map settings and have started the server at least on
  - Bulk now affects your weapon switching and reloading speed. Having less bulk means that you will reload your weapons faster and switch between equipment faster.
  - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
  - Added a Map Filter combobox to the Host Game menu. You can filter maps in the list by their source (All Maps, Custom Maps or Stock Maps)
+ - Redid the lighting on Brewer County Courthouse
  - Reduced suspect and civilian field of view (120 -> 80)
  - Increased officer field of view (120 -> 180)
  - Officers react faster to suspects.
@@ -743,6 +744,7 @@ Once you have selected your map settings and have started the server at least on
  - Fixed P90 flashlight
  - Fixed M4Super90 iron sights position
  - Fixed ambient sounds and scripted conversations on Meat Barn Restaurant
+ - Fixed multiplayer spawn points on Brewer County Courthouse
  - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
  - Fixed SEF bug: Breaching ammo would never breach the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
 
