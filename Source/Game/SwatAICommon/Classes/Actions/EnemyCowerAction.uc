@@ -81,6 +81,11 @@ function name GetInitialCowerAnimation()
 	return CrouchedInitialEnemyCowerAnimations[Rand(CrouchedInitialEnemyCowerAnimations.Length)];
 }
 
+latent function DropTheWeapon()
+{
+	ISwatEnemy(m_Pawn).ThrowWeaponDown();
+}
+
 latent function PlayCowerAnimation()
 {
 	local int IdleChannel;
@@ -95,6 +100,11 @@ latent function PlayCowerAnimation()
     
 
 	ISwatAI(m_Pawn).SetIdleCategory('Cower');
+	// Below stops officers from killing cowering enemies
+	if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
+	{
+		ISwatEnemy(m_Pawn).UnbecomeAThreat();
+	}
 }
 
 private function bool ShouldFaceTargetOfficer()
@@ -122,6 +132,8 @@ state Running
 	waitForResourcesAvailable(achievingGoal.priority, achievingGoal.priority);
 
 	useResources(class'AI_Resource'.const.RU_ARMS);
+	
+	DropTheWeapon();
 
 	if (ShouldFaceTargetOfficer())
 	{

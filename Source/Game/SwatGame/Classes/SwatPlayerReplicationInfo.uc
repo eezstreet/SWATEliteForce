@@ -5,8 +5,10 @@
 // the owning player isn't relevant (being replicated to, nor existant on,
 // that client).
 
-class SwatPlayerReplicationInfo extends Engine.PlayerReplicationInfo;
+class SwatPlayerReplicationInfo extends Engine.PlayerReplicationInfo
+	dependsOn(SwatAdmin);
 
+import enum AdminPermissions from SwatAdmin;
 
 enum COOPStatus
 {
@@ -28,7 +30,9 @@ var int SwatPlayerID; // the unique ID for each player
 var int RespawnTime;
 var bool bIsDead;
 
-var private bool bIsAdmin;
+var int MyRights[AdminPermissions.Permission_Max];
+var private SwatAdminPermissions MyPermissions;
+var bool bIsAdmin;
 
 var COOPStatus COOPPlayerStatus;
 
@@ -44,21 +48,11 @@ var bool bStatsNewPlayer;
 replication
 {
     reliable if (bNetDirty && (Role == ROLE_Authority))
-        netScoreInfo, PlayerIsReady, bIsTheVIP, SwatPlayerID, RespawnTime, COOPPlayerStatus, bIsAdmin, bIsDead, IsLeader;
+        netScoreInfo, PlayerIsReady, bIsTheVIP, SwatPlayerID, RespawnTime, COOPPlayerStatus, bIsDead, IsLeader, MyRights;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
-function SetAdmin( bool bAdmin )
-{
-    bIsAdmin = bAdmin;
-}
-
-simulated function bool IsAdmin()
-{
-    return bIsAdmin;
-}
 
 // Execute only on server.
 function TogglePlayerIsReady()
@@ -71,6 +65,24 @@ function TogglePlayerIsReady()
 simulated function bool GetPlayerIsReady()
 {
     return PlayerIsReady;
+}
+
+simulated function SetPermissions(SwatAdminPermissions Permissions)
+{
+	local int i;
+
+	MyPermissions = Permissions;
+	for(i = 0; i < AdminPermissions.Permission_Max; i++)
+	{
+		MyRights[i] = MyPermissions.AllowedPermissions[i];
+		log("SetPermissions: "$MyRights[i]);
+	}
+}
+
+// DO NOT call this on the client, MyPermissions is NOT replicated
+simulated function SwatAdminPermissions GetPermissions()
+{
+	return MyPermissions;
 }
 
 

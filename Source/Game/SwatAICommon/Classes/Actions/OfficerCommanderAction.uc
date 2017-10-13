@@ -32,7 +32,7 @@ var config float						MinFinishedEngagingTimeToAimAround;
 var config float						MaxFinishedEngagingTimeToAimAround;
 
 // Constants
-const kRotateToFaceNoiseBehaviorPriority = 50;
+const kRotateToFaceNoiseBehaviorPriority = 55;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -190,7 +190,7 @@ function OnPawnEncounteredVisionNotification()
 	{
 		assert(VisionSensor.LastPawnLost != none);
 
-		Enemy = VisionSensor.LastPawnSeen;
+		Enemy = VisionSensor.LastPawnSeen;		
 	}
 
 	GetHive().OfficerSawPawn(m_Pawn, Enemy);
@@ -216,66 +216,62 @@ function OnHeardNoise()
 	local name SoundCategory;
 	local vector SoundOrigin;
 
-	// officers only listen to sounds if they don't have an assignment
-	if (CurrentAssignment == None)
+	HeardActor    = HearingSensor.LastSoundMaker;
+	HeardPawn	  = Pawn(HeardActor);
+	SoundCategory = HearingSensor.LastSoundHeardCategory;
+	SoundOrigin   = HearingSensor.LastSoundHeardOrigin;
+
+	if (IsDeadlyNoise(SoundCategory))
+	{	
+//		log(m_Pawn.Name $ " heard a DeadlyNoise - HeardActor: " $ HeardActor $ " Is a fired weapon: " $ HeardActor.IsA('FiredWeaponModel'));
+
+		if (HeardActor.IsA('FiredWeaponModel'))
+		{
+//			log("HeardActor.Owner: " $ FiredWeaponModel(HeardActor).HandheldEquipment.Owner);
+
+			HeardPawn = Pawn(FiredWeaponModel(HeardActor).HandheldEquipment.Owner);
+		}
+		else if (HeardActor.IsA('Ammunition'))
+		{
+			// the owner's owner of ammunition is a pawn
+			HeardPawn = Pawn(HeardActor.Owner.Owner);
+		}
+
+		if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn))
+		{
+			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
+
+			if (m_Pawn.LineOfSightTo(HeardPawn))
+			{
+				RotateToFaceNoise(HeardPawn);
+			}
+			else if ((HeardActor != HeardPawn) && m_Pawn.LineOfSightTo(HeardActor))
+			{
+				RotateToFaceNoise(HeardActor);
+			}
+		}
+	}
+	else if (SoundCategory == 'Footsteps') 
 	{
-		HeardActor    = HearingSensor.LastSoundMaker;
-		HeardPawn	  = Pawn(HeardActor);
-		SoundCategory = HearingSensor.LastSoundHeardCategory;
-		SoundOrigin   = HearingSensor.LastSoundHeardOrigin;
-
-		if (IsDeadlyNoise(SoundCategory))
+		if (!HeardPawn.IsA('SwatPlayer') && ! ISwatAI(HeardPawn).isCompliant() && ! ISwatAI(HeardPawn).isArrested() && 
+		   (HeardPawn.IsA('SwatHostage') || HeardPawn.IsA('SwatEnemy')))
 		{
-//			log(m_Pawn.Name $ " heard a DeadlyNoise - HeardActor: " $ HeardActor $ " Is a fired weapon: " $ HeardActor.IsA('FiredWeaponModel'));
+			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
 
-			if (HeardActor.IsA('FiredWeaponModel'))
-			{
-//				log("HeardActor.Owner: " $ FiredWeaponModel(HeardActor).HandheldEquipment.Owner);
-
-				HeardPawn = Pawn(FiredWeaponModel(HeardActor).HandheldEquipment.Owner);
-			}
-			else if (HeardActor.IsA('Ammunition'))
-			{
-				// the owner's owner of ammunition is a pawn
-				HeardPawn = Pawn(HeardActor.Owner.Owner);
-			}
-
-			if ((HeardPawn != None) && ISwatAI(m_Pawn).IsOtherActorAThreat(HeardPawn))
-			{
-				ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
-
-				if (m_Pawn.LineOfSightTo(HeardPawn))
-				{
-					RotateToFaceNoise(HeardPawn);
-				}
-				else if ((HeardActor != HeardPawn) && m_Pawn.LineOfSightTo(HeardActor))
-				{
-					RotateToFaceNoise(HeardActor);
-				}
-			}
+			if (m_Pawn.LineOfSightTo(HeardPawn))
+				RotateToFaceNoise(HeardPawn);
 		}
-		else if (SoundCategory == 'Footsteps')
-		{
-			if (!HeardPawn.IsA('SwatPlayer') && ! ISwatAI(HeardPawn).isCompliant() && ! ISwatAI(HeardPawn).isArrested() &&
-			   (HeardPawn.IsA('SwatHostage') || HeardPawn.IsA('SwatEnemy')))
-			{
-				ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
+	}
+	else if (SoundCategory == 'DoorInteraction')
+	{
+		LastDoorInteractor = ISwatDoor(HeardActor).GetLastInteractor();
 
-				if (m_Pawn.LineOfSightTo(HeardPawn))
-					RotateToFaceNoise(HeardPawn);
-			}
-		}
-		else if (SoundCategory == 'DoorInteraction')
+		// if we heard a door, and we have a line of sight to 
+		if (LastDoorInteractor.IsA('SwatHostage') || LastDoorInteractor.IsA('SwatEnemy'))
 		{
-			LastDoorInteractor = ISwatDoor(HeardActor).GetLastInteractor();
-
-			// if we heard a door, and we have a line of sight to
-			if (LastDoorInteractor.IsA('SwatHostage') || LastDoorInteractor.IsA('SwatEnemy'))
+			if (HasLineOfSightToDoor(Door(HeardActor)))
 			{
-				if (HasLineOfSightToDoor(Door(HeardActor)))
-				{
-					RotateToFaceNoise(HeardActor);
-				}
+				RotateToFaceNoise(HeardActor);
 			}
 		}
 	}
@@ -457,7 +453,7 @@ private latent function EngageAssignment()
 		CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment))
 	{
 		AttackTarget(CurrentAssignment);
-
+	
 		if (CurrentAttackEnemyGoal != None)
 		{
 			bCompletedEngagementGoals = CurrentAttackEnemyGoal.hasCompleted();
@@ -470,7 +466,7 @@ private latent function EngageAssignment()
 	else
 	{
 		EngageTargetForCompliance(CurrentAssignment);
-
+		
 		if (CurrentEngageForComplianceGoal != None)
 		{
 			bCompletedEngagementGoals = CurrentEngageForComplianceGoal.hasCompleted();
@@ -515,7 +511,7 @@ state Running
 			pause();
 	}
 
-	// it is possible for our assignment to be cleared between the time we are paused,
+	// it is possible for our assignment to be cleared between the time we are paused, 
 	// when runAction is called, and when we actually continue executing state code
 	// so in that case we should check again to make sure our assignment hasn't been cleared
 	if (CurrentAssignment != None)

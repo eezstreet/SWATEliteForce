@@ -736,13 +736,34 @@ Once you have selected your map settings and have started the server at least on
  - Bulk now affects your weapon switching and reloading speed. Having less bulk means that you will reload your weapons faster and switch between equipment faster.
  - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
  - Added a Map Filter combobox to the Host Game menu. You can filter maps in the list by their source (All Maps, Custom Maps or Stock Maps)
+ - Redid the lighting on Brewer County Courthouse
+ - A LOT of cut speech was restored, including: "arrested" lines by the player and AI officers, lines when the player goes rogue, AI responses to commands, AI responses to dead suspects, civilian lines when shot at, and a lot of the FunTime drug dealer lines
+ - Named speakers from the TSS missions will now be labeled as such in their subtitles. For example, Andrew Norman will appear as "Andrew Norman" instead of "Male Suspect" (*). Band Members from Sellers Street Auditorium are labeled as such, and aren't "Male Civilian"
+ - More blood will appear when shooting something
+ - Suspects are now considered threats when they move towards a hostage for the purpose of threatening them.
  - Reduced suspect and civilian field of view (120 -> 80)
  - Increased officer field of view (120 -> 180)
+ - Officers now turn faster, at the same speed suspects do.
+ - Officers will no longer report that they are busy when issued an order.
  - Officers react faster to suspects.
+ - Officers will no longer take cover if they are very close to a suspect
+ - Officers use the same take-cover time as highly-skilled suspects do
+ - Officers will clear rooms quicker
+ - Officers will listen to (and respond to) sounds even when they have a current enemy
+ - Suspects drop their weapons when cowering
+ - Suspects are no longer a threat when cowering
  - Reduced the amount of sway on the sniper scope
  - Fixed P90 flashlight
  - Fixed M4Super90 iron sights position
+ - Fixed ambient sounds and scripted conversations on Meat Barn Restaurant
+ - Fixed multiplayer spawn points on Brewer County Courthouse
  - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
+ - Fixed SEF bug: Breaching ammo would never breach the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
+ - Fixed SEF bug: Some Sovereign Citizen lines did not play correctly
+ - Fixed SEF bug: Magazine count display only showed 2 digits (so pepperball only displayed as "20")
+ - Fixed TSS bug: Spoken lines by TOC on TSS missions would cut off if the player used the shout button
+ - Fixed TSS bug: Some incorrect subtitles
+ - Fixed TSS bug: Using the Bulgarian Drug Worker as a suspect in QMM will no longer cause sound bugs
 
 
 ### v6 ###
@@ -1458,7 +1479,6 @@ MINOR FEATURES / FULL CHANGES
 # CREDITS/THANK-YOUS #
 Irrational Games and Sierra for the game.
 KevinL for a tip about Voting Screen.
-sandman332 for a tip about audio
 BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
 Sebasien NovA for his modified SwatEd.exe
 Ryo Ohki for a tip about P90 and SAW animations
@@ -1478,16 +1498,10 @@ Evan Derickson
 Mad Max
 Jordan Harrison
 
-
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
 PC Power Play (Also ran a nice overview of the mod)
 StrawberryClock (Streamer)
-
-TESTING
-Oglogoth
-cjslax6
-Vylka
 
 WE ARE: ELITE SQUAD
 eezstreet: Team Lead, Programming, Map Editing
@@ -1495,7 +1509,10 @@ Jose21Crisis: Programming, Weapons Analysis
 kevinfoley: Programming, Model Editing
 Rangar: Music (Composition), Textures
 TheTCREngineer: Models
+sandman332: Programming
 
+RETIRED ELITE SQUAD
+mezzokoko: Programming
 
 .. if there is anyone I missed, feel free to send me a message and this will be corrected.
 

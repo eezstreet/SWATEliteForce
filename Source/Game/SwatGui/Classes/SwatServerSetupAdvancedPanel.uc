@@ -13,7 +13,6 @@ var(SWATGui) EditInline Config GUICheckBoxButton   MyAllowReferendumsButton;
 var(SWATGui) EditInline Config GUINumericEdit      MyPostGameTimeLimitBox;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyDedicatedServerCheck;
 var(SWATGui) EditInline Config GUILabel            MyDedicatedServerLabel;
-var(SWATGui) EditInline Config GUIEditBox          MyAdminPasswordBox;
 var(SWATGui) EditInline Config GUINumericEdit      MyAdditionalRespawnTimeBox;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableLeadersCheck;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableSnipers;
@@ -30,7 +29,7 @@ function SetSubComponentsEnabled( bool bSetEnabled )
 	MyAllowReferendumsButton.SetEnabled( bSetEnabled );
 	MyPostGameTimeLimitBox.SetEnabled( bSetEnabled );
 	MyDedicatedServerCheck.SetEnabled( bSetEnabled );
-	MyAdminPasswordBox.SetEnabled( bSetEnabled );
+
 	MyAdditionalRespawnTimeBox.SetEnabled( bSetEnabled );
 	MyEnableLeadersCheck.SetEnabled( bSetEnabled );
 	MyEnableSnipers.SetEnabled( bSetEnabled );
@@ -107,14 +106,12 @@ function LoadServerSettings( optional bool ReadOnly )
 	MyAdditionalRespawnTimeBox.SetValue( Settings.AdditionalRespawnTime );
 	MyEnableSnipers.SetChecked( !Settings.bEnableSnipers );
 
-    MyAdminPasswordBox.SetText( GC.AdminPassword );
-
 	MyEnableLeadersCheck.SetChecked( !Settings.bNoLeaders );
 }
 
 function SaveServerSettings()
 {
-    GC.AdminPassword = MyAdminPasswordBox.GetText();
+	
 }
 
 event HandleParameters(string Param1, string Param2, optional int param3)
@@ -125,9 +122,6 @@ event HandleParameters(string Param1, string Param2, optional int param3)
     MyDedicatedServerCheck.SetVisibility( !SwatServerSetupMenu.bInGame );
     MyDedicatedServerCheck.SetActive( !SwatServerSetupMenu.bInGame );
     MyDedicatedServerLabel.SetVisibility( !SwatServerSetupMenu.bInGame );
-
-    MyAdminPasswordBox.SetVisibility( GC.SwatGameRole == GAMEROLE_MP_Host );
-    MyAdminPasswordBox.SetActive( GC.SwatGameRole == GAMEROLE_MP_Host );
 }
 
 function OnActivate()

@@ -19,6 +19,9 @@ var(SWATGui) private EditInline Config GUIButton		    MyGameSettingsButton;
 var(SWATGui) private EditInline Config GUIButton		    MyCreditsButton;
 var(SWATGui) private EditInline Config GUIButton		    MyQuitButton;
 
+var(SWATGui) private EditInline Config GUILabel				MyModNameLabel;
+var(SWATGui) private EditInline Config GUILabel				MyModVersionLabel;
+
 var() private config localized string TrainingFriendlyString;
 
 var() private config localized string PromptToGotoTrainingFirstString;
@@ -47,6 +50,11 @@ function InitComponent(GUIComponent MyOwner)
 function InternalOnActivate()
 {
     local int i;
+	local string ModLongName;
+	local string ModVersion;
+
+	ModLongName = class'ModInfo'.default.ModName;
+	ModVersion = class'ModInfo'.default.ChangeNumber;
 
     for( i = 0; i < Controls.Length; i++ )
         Controls[i].ShowPositionDelay = -1.0;
@@ -57,6 +65,9 @@ function InternalOnActivate()
     Controller.bDontDisplayHelpText = !GC.bShowHelp;
     if( GC.SwatGameState == GAMESTATE_None )
     	SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_None );
+
+	MyModNameLabel.SetCaption(ModLongName);
+	MyModVersionLabel.SetCaption(ModVersion);
 }
 
 function InternalOnDlgReturned( int Selection, optional string Passback )

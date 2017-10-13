@@ -47,7 +47,7 @@ var(SWATGui) private EditInline GUIImage			LockedStatsIcon;
 var(SWATGui) private config int MaxResults;
 
 var() private config localized string VersionFormatString;
-var() private config localized string ModFormatString;
+var() private config localized string NewModFormatString;
 
 var SwatGameSpyManager SGSM;
 var bool bUseGameSpy;
@@ -62,6 +62,8 @@ var private config localized string ConnectPasswordQueryString;
 
 var string BuildVersion;
 var string ModName;
+var string ShortBuildVersion;
+var string ShortModName;
 
 var() private config string CompatibleColorString;
 var() private config string InCompatibleColorString;
@@ -100,15 +102,16 @@ function InitComponent(GUIComponent MyOwner)
 function InternalOnActivate()
 {
     //log( "...InternalOnActivate()." );
-
-    BuildVersion = PlayerOwner().Level.BuildVersion;
-    ModName = PlayerOwner().Level.ModName;
+	ShortBuildVersion = PlayerOwner().Level.BuildVersion;
+	ShortModName = PlayerOwner().Level.ModName;
+    BuildVersion = class'ModInfo'.default.ChangeNumber;
+    ModName = class'ModInfo'.default.ModName;
 
     VersionLabel.SetCaption( FormatTextString( VersionFormatString, BuildVersion ) );
     if( ModName ~= "SWAT 4X" )
         ModLabel.SetCaption( "" );
     else
-        ModLabel.SetCaption( FormatTextString( ModFormatString, ModName ) );
+        ModLabel.SetCaption( FormatTextString( NewModFormatString, ModName, ShortModName ) );
 
     MyQuitButton.OnClick=InternalOnClick;
     MyMainMenuButton.OnClick=InternalOnClick;
@@ -623,12 +626,12 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
 	if (Icon != None)
         MyServerListBox.AddNewRowElement( "Locked",Icon,,, bLocked );
 
-    if( s.ModName == ModName )
+    if( s.ModName == ShortModName )
         MyServerListBox.AddNewRowElement( "ModName",, CompatibleColorString$s.ModName );
     else
         MyServerListBox.AddNewRowElement( "ModName",, InCompatibleColorString$s.ModName );
 
-    if( s.GameVersion == BuildVersion )
+    if( s.GameVersion == ShortBuildVersion )
         MyServerListBox.AddNewRowElement( "Version",, CompatibleColorString$s.GameVersion );
     else
         MyServerListBox.AddNewRowElement( "Version",, InCompatibleColorString$s.GameVersion );
@@ -739,11 +742,11 @@ private function string GetGameSpyFilterString()
 
     if ( GC.theServerFilters.bHideIncompatibleVersions )
     {
-        result = AppendFilterString( result, "gamever='"$BuildVersion$"'" );
+        result = AppendFilterString( result, "gamever='"$ShortBuildVersion$"'" );
     }
     if ( GC.theServerFilters.bHideIncompatibleMods )
     {
-        result = AppendFilterString( result, "gamevariant='"$ModName$"'" );
+        result = AppendFilterString( result, "gamevariant='"$ShortModName$"'" );
     }
 	if ( GC.theServerFilters.bFilterMapName )
 	{
@@ -810,7 +813,7 @@ defaultproperties
     ConnectPasswordQueryString="Please enter the Password for the selected server:"
 
     VersionFormatString="Version: %1"
-    ModFormatString="Mod: %1"
+    NewModFormatString="Mod: %1 (%2)"
 
     CompatibleColorString="[c=00ff00]"
     InCompatibleColorString="[c=ff0000]"
