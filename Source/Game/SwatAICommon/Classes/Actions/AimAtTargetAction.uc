@@ -43,10 +43,6 @@ private function CheckAimingMode()
 	{
         ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AimAtTargetAction);
 	}
-	else if (ISwatAI(m_Pawn).CanPawnUseLowReady())
-	{
-        ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_LowReady, kUBABCI_AimAtTargetAction);
-	}
 	else
 	{
 		ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_FullBody, kUBABCI_AimAtTargetAction);

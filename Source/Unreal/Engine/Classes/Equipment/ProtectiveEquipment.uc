@@ -15,6 +15,9 @@ var() config localized   String  Description;
 var() config localized   String  FriendlyName;
 var() config localized   Material GUIImage;
 
+simulated function int GetProtectionLevel();
+simulated function int GetProtectionType();
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //

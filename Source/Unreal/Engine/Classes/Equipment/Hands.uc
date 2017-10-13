@@ -98,15 +98,15 @@ simulated function UpdateHandsForRendering()
     local vector Change;
     local float DeltaTime;
     local vector Velocity, Acceleration;
-    local float MaxInertiaOffset;
+	local float MaxInertiaOffset;
 	local SwatWeapon Weapon;
 
     OwnerPawn = Pawn(Owner);
     OwnerController = PlayerController(OwnerPawn.Controller);
     DeltaTime = OwnerController.LastDeltaTime;
     HandsPass.Length = HandAnimationPass.EnumCount;
-    
-    bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
+	
+	bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
 
     EquippedItem = OwnerPawn.GetActiveItem();
     if (EquippedItem != None)
@@ -144,13 +144,13 @@ simulated function UpdateHandsForRendering()
     	//NewRotation += EquippedItem.GetDefaultRotationOffset();
     	Offset = EquippedItem.GetDefaultLocationOffset();
     }
-    
-	//look-down-scope animation for marksman (scoped) weapons
-    Weapon = SwatWeapon(EquippedItem);
-    if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
-        EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
-		bHidden = (AnimationProgress >= 0.99);
-    }
+	
+	//look-down-scope animation for marksman (scoped) weapons    
+     Weapon = SwatWeapon(EquippedItem);
+     if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
+         EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
+		 		bHidden = (AnimationProgress >= 0.99);
+     }
 
     //scale animation position change based on framerate
     AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
