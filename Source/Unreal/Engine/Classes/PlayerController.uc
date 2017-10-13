@@ -299,7 +299,8 @@ replication
 		ClientLeaveVoiceChat,
 		ClientValidate,
         ClientSetViewTarget, ClientCapBandwidth,
-		ClientOpenMenu, ClientCloseMenu;
+		ClientOpenMenu, ClientCloseMenu,
+		ConsoleMessage;
 
 	reliable if ( (Role == ROLE_Authority) && (!bDemoRecording || (bClientDemoRecording && bClientDemoNetFunc)) )
 		ClientMessage, TeamMessage, ReceiveLocalizedMessage;

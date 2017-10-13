@@ -338,7 +338,7 @@ Caption=Be ready
 Caption=Don't wait!  Shoot!
 
 [JA_AnnouncedNonCompliant]
-Caption=No way you putas are taking me in!
+Caption=Ain't no fucking way you putas are taking me in!
 
 [JA_AnnouncedFlee]
 Caption=Get away from me man!
@@ -440,10 +440,10 @@ Caption=(In Bulgarian) Run away!
 Caption=Get the fuck back!
 
 [mb1_AnnouncedCompliant]
-Caption=All right all right! I give!
+Caption=All right all right! I give in!
 
 [mb1_AnnouncedRestrained]
-Caption=Goddam son of a bitch cop.
+Caption=Goddam son of a bitch.
 
 [mb1_CalledForHelp]
 Caption=(In Bulgarian repeated in English) Help! Over here!
@@ -827,7 +827,7 @@ Caption=Wait for them to come to you
 Caption=Take that!
 
 [Todor_AnnouncedNonCompliant]
-Caption=You won't take me in!
+Caption=Fuck you and your mother!
 
 [Todor_AnnouncedFlee]
 Caption=No! You wont beat me!
@@ -4124,7 +4124,7 @@ Caption=What's wrong with this door?
 Caption=That way!
 
 [mh2_ReactedBreach]
-Caption=Ah!
+Caption=Fuckin door!
 
 [mh2_ReactedHitByDoor]
 Caption=Who's back there?
@@ -4331,7 +4331,7 @@ Caption=Stay back or this sinner dies!
 Caption=Screw CASM I give up!
 
 [MS1_CalledforHelp_expm03]
-Caption=To me brothers!
+Caption=Brothers to me!
 
 [MS1_TalkedToHostage_expm03]
 Caption=If you're not with us you're against us.
@@ -4502,7 +4502,7 @@ Caption=I'm just here to play pinball!
 Caption=Take it easy! I'm not a dealer!
 
 [MH1_AnnouncedRestrained_expm01]
-Caption=How'd I end up in the middle of all this
+Caption=How the fuck did I end up in the middle of all this?
 
 [MH1_AnnouncedThreatened_expm01]
 Caption=No! This junkie's gonna kill me!
@@ -4544,7 +4544,7 @@ Caption=Narcs!
 Caption=Crazy mother's gonna shoot me!
 
 [MH1_AnnouncedEnemy_expm03]
-Caption=The bible bashers are here! Help!
+Caption=Yo the bible freaks are here man! Help!
 
 [MH1_TalkedToEnemy_expm03]
 Caption=I just snuck in to see the show!
@@ -4601,7 +4601,7 @@ Caption=I just wanted to play pinball!
 Caption=Jesus I don't even live around here
 
 [MH2_AnnouncedThreatened_expm01]
-Caption=This crackhead's gonna shoot me!
+Caption=This fuckin crackhead's gonna shoot me!
 
 [MH2_AnnouncedNonCompliant_expm02]
 Caption=Get out of my home!
@@ -4628,7 +4628,7 @@ Caption=I'm an innocent bystander!
 Caption=Don't shoot! I have a ticket!
 
 [MH2_AnnouncedRestrained_expm03]
-Caption=My Dad doesn't even know I'm here
+Caption=My Wife doesn't even know I'm here
 
 [MH2_AnnouncedSpottedOfficer_expm03]
 Caption=It's a raid!
@@ -5891,7 +5891,7 @@ Caption=Entry team to TOC. We've located Wilkins, he's alive but in bad shape.
 Caption=TOC to entry team, roger that. Paramedics are standing by for the all clear.
 
 [ConvSubway5_1]
-Caption=Hey Fields, I'm waiting for you to come out with some smart-alecky comment.
+Caption=Hey Fields, I'm waiting for you to come out with some smart-ass comment.
 
 [ConvSubway5_2]
 Caption=There's nothing funny about this.
@@ -6167,7 +6167,7 @@ Caption=Careful.  They're everywhere
 Caption=This is outrageous!
 
 [wr_AnnouncedNonCompliant]
-Caption=You can't order me around!
+Caption=You can't just order me around!
 
 [wr_AnnouncedFlee]
 Caption=No!
@@ -7856,7 +7856,7 @@ Caption=Oh, god, I can't believe this is happening ... It can't be....
 Caption=Goddamn cops... what's it take fer you to stay outta my hair?
 
 [fh1_AnnouncedRestrained_m13]
-Caption=No, no, I work here....
+Caption=No, no, wait I work here....
 
 [mh2_ReactedHostageDown_m11]
 Caption=Oh, no...

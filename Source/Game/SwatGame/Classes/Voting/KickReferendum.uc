@@ -1,4 +1,6 @@
-class KickReferendum extends Voting.Referendum;
+class KickReferendum extends Voting.Referendum dependsOn(SwatAdmin);
+
+import enum AdminPermissions from SwatAdmin;
 
 var() config localized string ReferendumDescriptionText;
 
@@ -27,7 +29,8 @@ function ReferendumDecided(bool YesVotesWin)
 
 function bool ReferendumCanBeCalledOnTarget(PlayerController Caller, PlayerController Target)
 {
-	if(Target == Level.GetLocalPlayerController() || Level.Game.IsA('SwatGameInfo') && SwatGameInfo(Level.Game).Admin.IsAdmin(Target))
+	if(Target == Level.GetLocalPlayerController() || Level.Game.IsA('SwatGameInfo') &&
+		SwatGameInfo(Level.Game).Admin.ActionAllowed(Target, AdminPermissions.Permission_Immunity))
 	{
 		Level.Game.Broadcast(None, "", 'ReferendumAgainstAdmin', Caller);
 		return false;

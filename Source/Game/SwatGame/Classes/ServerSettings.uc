@@ -1,8 +1,10 @@
 class ServerSettings extends Engine.ReplicationInfo
-    config(SwatGuiState);
+    config(SwatGuiState)
+	dependsOn(SwatAdmin);
 
 import enum EEntryType from SwatStartPointBase;
 import enum EMPMode from Engine.Repo;
+import enum AdminPermissions from SwatAdmin;
 
 const MAX_MAPS = 40;
 var(ServerSettings) config String         Maps[MAX_MAPS];
@@ -78,10 +80,12 @@ function SetAdminServerSettings( PlayerController PC,
                             bool newbLAN )
 {
 log( self$"::SetAdminServerSettings( "$PC$", ServerName="$newServerName$", Password="$newPassword$", bPassworded="$newbPassworded$", bLAN="$newbLAN$" )" );
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) ) {
-      log("Couldn't set admin settings: not an admin");
-      return;
-    }
+	if(Level.Game.IsA('SwatGameInfo') &&
+		!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+	{
+		log("Couldn't set admin settings: not an admin");
+        return;
+	}
 
     ServerName = newServerName;
     Password = newPassword;
@@ -112,8 +116,12 @@ function SetServerSettings( PlayerController PC,
 							bool newbEnableSnipers)
 {
 log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUnused="$newUnused$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUnused2="$newUnused2$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused4="$newUnused4$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newUnused3="$newUnused3$" )" );
-    if( Level.Game.IsA( 'SwatGameInfo' ) && PC != None && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+
+	if(Level.Game.IsA('SwatGameInfo') && PC != None &&
+		!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+	{
+		return;
+	}
 
     GameType = newGameType;
     MapIndex = newMapIndex;
@@ -154,8 +162,13 @@ log( self$"::SetServerSettings(...) ... saving config" );
 
 function AddMap( PlayerController PC, string MapName )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if(Level.Game.IsA('SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+		{
+			return;
+		}
+	}
 
     if( NumMaps >= MAX_MAPS )
         return;
@@ -169,8 +182,13 @@ function ClearMaps( PlayerController PC )
 {
     local int i;
 
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if(Level.Game.IsA('SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+		{
+			return;
+		}
+	}
 
     for( i = 0; i < MAX_MAPS; i++ )
     {
@@ -186,8 +204,13 @@ function ClearMaps( PlayerController PC )
 
 function SetDirty( PlayerController PC )
 {
-    if( Level.Game.IsA( 'SwatGameInfo' ) && !SwatGameInfo(Level.Game).Admin.IsAdmin( PC ) )
-        return;
+	if(Level.Game.IsA('SwatGameInfo'))
+	{
+		if(!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
+		{
+			return;
+		}
+	}
 
     bDirty = true;
 }

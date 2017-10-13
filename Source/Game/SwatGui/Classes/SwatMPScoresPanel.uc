@@ -8,6 +8,8 @@
 class SwatMPScoresPanel extends SwatGUIPanel
     Config(SwatGui);
 
+import enum AdminPermissions from SwatGame.SwatAdmin;
+
 var(SWATGui) EditInline Config SwatObjectivesPanel  MyObjectivesPanel;
 var(SWATGui) EditInline Config SwatLeadershipPanel	MyLeadershipPanel;
 var(SWATGui) EditInline Config SwatLeadershipPanel	MyDebriefingLeadershipPanel;
@@ -199,15 +201,35 @@ private function UpdateToggleVOIPIgnoreButton()
 
 private function UpdateAdminButton()
 {
-    if( SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo) != None
-		&& !SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).IsAdmin() )
-        MyAbortGameButton.SetCaption( AdminLoginString );
-    else if( GC.SwatGameState == GAMESTATE_PreGame )
-        MyAbortGameButton.SetCaption( StartGameString );
-    else if( GC.SwatGameState == GAMESTATE_MidGame )
-        MyAbortGameButton.SetCaption( AbortGameString );
-    else if( GC.SwatGameState == GAMESTATE_PostGame )
-        MyAbortGameButton.SetCaption( NextGameString );
+	local SwatPlayerReplicationInfo PRI;
+
+	MyAbortGameButton.SetVisibility(true);
+
+	PRI = SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
+
+	if(GC.SwatGameState == GAMESTATE_PreGame &&
+		PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+	{
+		MyAbortGameButton.SetCaption( StartGameString );
+	}
+	else if(GC.SwatGameState == GAMESTATE_MidGame &&
+		PRI.MyRights[AdminPermissions.Permission_EndGame] > 0)
+	{
+		MyAbortGameButton.SetCaption( AbortGameString );
+	}
+	else if(GC.SwatGameState == GAMESTATE_PostGame &&
+		PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+	{
+		MyAbortGameButton.SetCaption( NextGameString );
+	}
+	else if(!PRI.bIsAdmin)
+	{
+		MyAbortGameButton.SetCaption( AdminLoginString );
+	}
+	else
+	{
+		MyAbortGameButton.SetVisibility(false);
+	}
 }
 
 private function int ObjScore( NetScoreInfo a )
@@ -377,33 +399,46 @@ function ToggleVOIPIgnore()
 
 function InternalOnClick(GUIComponent Sender)
 {
+	local SwatPlayerReplicationInfo PRI;
+
+	PRI = SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
+
 	switch (Sender)
 	{
 		case MyCOOPChangeTeamButton:
 		case MyChangeTeamButton:
 		    //TODO: Change Teams here
 		    SwatGuiController(Controller).ChangeTeams();
-			PlayerIDSelected = SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).PlayerID;	// reselect local player
+			PlayerIDSelected = PRI.PlayerID;	// reselect local player
 		    break;
 		case MyToggleVOIPIgnoreButton:
 		case MyCOOPToggleVOIPIgnoreButton:
 			ToggleVOIPIgnore();
 			break;
 		case MyAbortGameButton:
-		    MyAbortGameButton.DisableComponent();
 
-		    if( !SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).IsAdmin() )
-		    {
-		        Controller.TopPage().OnPopupReturned=InternalOnPasswordPopupReturned;
-		        Controller.OpenMenu( "SwatGui.SwatPasswordPopup", "SwatPasswordPopup", AdminPasswordQueryString );
-		    }
-		    else if( GC.SwatGameState == GAMESTATE_MidGame )
-		    {
-    		    SwatPlayerController(PlayerOwner()).AbortGame();
+			if(GC.SwatGameState == GAMESTATE_PreGame &&
+				PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+			{
+				SwatPlayerController(PlayerOwner()).StartGame();
+			}
+			else if(GC.SwatGameState == GAMESTATE_MidGame &&
+				PRI.MyRights[AdminPermissions.Permission_EndGame] > 0)
+			{
+				SwatPlayerController(PlayerOwner()).AbortGame();
     		    Controller.CloseMenu();
-    		}
-            else
-    		    SwatPlayerController(PlayerOwner()).StartGame();
+			}
+			else if(GC.SwatGameState == GAMESTATE_PostGame &&
+				PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+			{
+				SwatPlayerController(PlayerOwner()).StartGame();
+			}
+			else if(!PRI.bIsAdmin)
+			{
+				Controller.TopPage().OnPopupReturned=InternalOnPasswordPopupReturned;
+		        Controller.OpenMenu( "SwatGui.SwatPasswordPopup", "SwatPasswordPopup", AdminPasswordQueryString );
+			}
+		    MyAbortGameButton.DisableComponent();
 		    break;
 	}
 }

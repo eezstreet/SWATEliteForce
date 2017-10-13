@@ -1084,6 +1084,8 @@ simulated function Tick(float dTime) {
 
 defaultproperties
 {
+	AnimRotationUrgency = kARU_VeryFast
+	
 	CollisionRadius             =  24.0
     CollisionHeight             =  68.0
 

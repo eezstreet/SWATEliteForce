@@ -52,8 +52,6 @@ var protected Pawn						Breacher;
 var private Pawn						ThirdOfficer;
 var private Pawn						FourthOfficer;
 
-var config float						InitialClearPauseTime;
-
 var config float						MaxWaitForFirstTwoOfficersTime;
 
 var config float						FormationMoveToThreshold;
@@ -1483,11 +1481,6 @@ latent function MoveStackedUpSquad()
 
 		// trigger the reached threshold speech
 		TriggerReportedThresholdClearSpeech(Leader);
-
-//		log("everyone is paused at time " $ resource.pawn().Level.TimeSeconds $ " continuing in " $ InitialClearPauseTime $ " seconds");
-
-		// ...briefly...
-		sleep(InitialClearPauseTime);
 
 //		log("everyone is continuing at time " $ resource.pawn().Level.TimeSeconds);
 
