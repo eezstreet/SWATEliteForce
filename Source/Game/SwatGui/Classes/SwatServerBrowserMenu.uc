@@ -62,6 +62,8 @@ var private config localized string ConnectPasswordQueryString;
 
 var string BuildVersion;
 var string ModName;
+var string ShortBuildVersion;
+var string ShortModName;
 
 var() private config string CompatibleColorString;
 var() private config string InCompatibleColorString;
@@ -100,8 +102,7 @@ function InitComponent(GUIComponent MyOwner)
 function InternalOnActivate()
 {
     //log( "...InternalOnActivate()." );
-	local string ShortModName;
-
+	ShortBuildVersion = PlayerOwner().Level.BuildVersion;
 	ShortModName = PlayerOwner().Level.ModName;
     BuildVersion = class'ModInfo'.default.ChangeNumber;
     ModName = class'ModInfo'.default.ModName;
@@ -625,12 +626,12 @@ private function OnReceivedPingInfoForUpdate(int ServerID, EPingCause PingCause,
 	if (Icon != None)
         MyServerListBox.AddNewRowElement( "Locked",Icon,,, bLocked );
 
-    if( s.ModName == ModName )
+    if( s.ModName == ShortModName )
         MyServerListBox.AddNewRowElement( "ModName",, CompatibleColorString$s.ModName );
     else
         MyServerListBox.AddNewRowElement( "ModName",, InCompatibleColorString$s.ModName );
 
-    if( s.GameVersion == BuildVersion )
+    if( s.GameVersion == ShortBuildVersion )
         MyServerListBox.AddNewRowElement( "Version",, CompatibleColorString$s.GameVersion );
     else
         MyServerListBox.AddNewRowElement( "Version",, InCompatibleColorString$s.GameVersion );
@@ -741,11 +742,11 @@ private function string GetGameSpyFilterString()
 
     if ( GC.theServerFilters.bHideIncompatibleVersions )
     {
-        result = AppendFilterString( result, "gamever='"$BuildVersion$"'" );
+        result = AppendFilterString( result, "gamever='"$ShortBuildVersion$"'" );
     }
     if ( GC.theServerFilters.bHideIncompatibleMods )
     {
-        result = AppendFilterString( result, "gamevariant='"$ModName$"'" );
+        result = AppendFilterString( result, "gamevariant='"$ShortModName$"'" );
     }
 	if ( GC.theServerFilters.bFilterMapName )
 	{
