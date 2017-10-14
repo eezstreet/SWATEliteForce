@@ -2029,10 +2029,10 @@ function NetTeam GetTeamFromID( int TeamID )
 
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
 //log( self$"::Broadcast( "$Msg$" "$Location$" )" );
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
 }
 
 //overridden from Engine.GameInfo
@@ -2044,6 +2044,11 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
         BroadcastObservers( Sender, Msg, Type );
 
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
+}
+
+function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional String Location)
+{
+	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
 }
 
 function BroadcastObservers( Controller Sender, coerce string Msg, optional name Type )

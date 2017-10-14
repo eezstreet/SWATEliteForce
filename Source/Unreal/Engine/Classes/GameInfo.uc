@@ -1638,9 +1638,9 @@ local class<MapList> MapListClass;
 // Message broadcasting functions (handled by the BroadCastHandler)
 
 #if IG_SWAT // dbeswick: broadcast send to Target only
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
 }
 #else
 event Broadcast( Actor Sender, coerce string Msg, optional name Type )
@@ -1648,6 +1648,11 @@ event Broadcast( Actor Sender, coerce string Msg, optional name Type )
 	BroadcastHandler.Broadcast(Sender,Msg,Type);
 }
 #endif
+
+function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location)
+{
+	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
+}
 
 function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type, optional string Location )
 {

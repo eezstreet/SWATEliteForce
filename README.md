@@ -760,8 +760,9 @@ Once you have selected your map settings and have started the server at least on
  - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
  - Fixed SEF bug: Breaching ammo would never breach the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
  - Fixed SEF bug: Some Sovereign Citizen lines did not play correctly
- - Fixed SEF bug: Magazine count display only showed 2 digits (so pepperball only displayed as "20")
+ - Fixed SEF bug: Magazine count display on equipment panels only showed 2 digits (so pepperball only displayed as "20")
  - Fixed SEF bug: A suspect or civilian who was cuffed and then reported, then incapacitated or killed, would count as "failed to report downed suspect" even though they were already reported.
+ - Fixed SEF bug: Using the "say" command in the dedicated server or WebAdmin panel would crash the server
  - Fixed TSS bug: Spoken lines by TOC on TSS missions would cut off if the player used the shout button
  - Fixed TSS bug: Some incorrect subtitles
  - Fixed TSS bug: Using the Bulgarian Drug Worker as a suspect in QMM will no longer cause sound bugs
