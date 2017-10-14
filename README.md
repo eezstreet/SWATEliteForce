@@ -780,6 +780,7 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
  - Suspects drop their weapons when cowering
  - Suspects are no longer a threat when cowering
  - Reduced the amount of sway on the sniper scope
+ - Added a little blurb of text on the Campaign menu to better explain what each career path does
  - Fixed P90 flashlight
  - Fixed M4Super90 iron sights position
  - Fixed ambient sounds and scripted conversations on Meat Barn Restaurant
