@@ -15,21 +15,21 @@ var(ServerSettings) config int            MapIndex "What map is currently being 
 var(ServerSettings) config int            NumRounds "How many rounds to play per map";
 var(ServerSettings) config int            MaxPlayers "Maximum number of players allowed on this server";
 var(ServerSettings) config int            RoundNumber "What is the current round number";
-var(ServerSettings) config int            Unused "Not used.";
+var(ServerSettings) config bool           bUseRoundStartTimer "Whether to have a round timer at the start of the level";
 var(ServerSettings) config int            PostGameTimeLimit "Time between the end of the round and server loading the next level";
-var(ServerSettings) config int            Unused2 "Not used.";
+var(ServerSettings) config bool           bUseRoundEndTimer "Whether to have a round timer at the end of the level";
 var(ServerSettings) config int            MPMissionReadyTime "Time (in seconds) for players to ready themselves in between rounds in a MP game";
 var(ServerSettings) config bool           bShowTeammateNames "If true, will display teammates names";
-var(ServerSettings) config bool           Unused3 "Not used.";
+var(ServerSettings) config bool           Unused "Not used.";
 var(ServerSettings) config bool           bAllowReferendums "If true, allow players to start referendums";
 var(ServerSettings) config bool           bNoRespawn "If true, the server will not respawn players";
 var(ServerSettings) config bool           bQuickRoundReset "If true, the server will perform a quick reset in between rounds on the same map; if false, the server will do a full SwitchLevel between rounds";
 var(ServerSettings) config float          FriendlyFireAmount "The damage modifier for friendly fire [0...1]";
-var(ServerSettings) config float          Unused4 "Not used.";
+var(ServerSettings) config float          Unused2 "Not used.";
 var(ServerSettings) config float          CampaignCOOP "Contains Campaign CO-OP settings (bitpacked)";
 var(ServerSettings) config int            AdditionalRespawnTime "Time (in seconds) added to the delay time between respawn waves.";
 var(ServerSettings) config bool           bNoLeaders "If true, new 'leader' functionality in SWAT 4 expansion is disabled.";
-var(ServerSettings) config bool           Unused5 "Not used.";
+var(ServerSettings) config bool           Unused3 "Not used.";
 var(ServerSettings) config bool           bEnableSnipers "Enable snipers?";
 
 var(ServerSettings) config String         ServerName "Name of the server for display purposes";
@@ -48,11 +48,11 @@ replication
 {
 	reliable if ( bNetDirty && (Role == ROLE_Authority) )
 		GameType, Maps, NumMaps, MapIndex, NumRounds,
-        MaxPlayers, RoundNumber, Unused, PostGameTimeLimit,
-        Unused2, MPMissionReadyTime, bShowTeammateNames, Unused3, bAllowReferendums, bNoRespawn,
-        bQuickRoundReset, FriendlyFireAmount, Unused4,
+        MaxPlayers, RoundNumber, bUseRoundStartTimer, PostGameTimeLimit,
+        bUseRoundEndTimer, MPMissionReadyTime, bShowTeammateNames, Unused, bAllowReferendums, bNoRespawn,
+        bQuickRoundReset, FriendlyFireAmount, Unused2,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
-		bNoLeaders, Unused5, bEnableSnipers;
+		bNoLeaders, Unused3, bEnableSnipers;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,24 +98,24 @@ function SetServerSettings( PlayerController PC,
                             int newMapIndex,
                             int newNumRounds,
                             int newMaxPlayers,
-                            int newUnused,
+                            bool newbUseRoundStartTimer,
                             int newPostGameTimeLimit,
-                            int newUnused2,
+                            bool newbUseRoundEndTimer,
                             int newMPMissionReadyTime,
                             bool newbShowTeammateNames,
-                            bool newUnused3,
+                            bool newUnused,
 							bool newbAllowReferendums,
                             bool newbNoRespawn,
                             bool newbQuickRoundReset,
                             float newFriendlyFireAmount,
-                            float newUnused4,
+                            float newUnused2,
 							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
-							bool newUnused5,
+							bool newUnused3,
 							bool newbEnableSnipers)
 {
-log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUnused="$newUnused$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUnused2="$newUnused2$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused4="$newUnused4$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newUnused3="$newUnused3$" )" );
+log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUseRoundStartTimer="$newbUseRoundStartTimer$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUseRoundEndTimer="$newbUseRoundEndTimer$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused="$newUnused$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newUnused2="$newUnused2$" )" );
 
 	if(Level.Game.IsA('SwatGameInfo') && PC != None &&
 		!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
@@ -127,21 +127,21 @@ log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameTyp
     MapIndex = newMapIndex;
     NumRounds = newNumRounds;
     MaxPlayers = newMaxPlayers;
-    Unused = newUnused;
+    bUseRoundStartTimer = newbUseRoundStartTimer;
     PostGameTimeLimit = newPostGameTimeLimit;
-    Unused2 = newUnused2;
+    bUseRoundEndTimer = newbUseRoundEndTimer;
     MPMissionReadyTime = newMPMissionReadyTime;
     bShowTeammateNames = newbShowTeammateNames;
-    Unused3 = newUnused3;
+    Unused = newUnused;
 	  bAllowReferendums = newbAllowReferendums;
     bNoRespawn = newbNoRespawn;
     bQuickRoundReset = newbQuickRoundReset;
     FriendlyFireAmount = newFriendlyFireAmount;
-    Unused4 = newUnused4;
+    Unused2 = newUnused2;
 	  CampaignCOOP = newCampaignCOOP;
 	  AdditionalRespawnTime = newAdditionalRespawnTime;
 	  bNoLeaders = newbNoLeaders;
-	  Unused5 = newUnused5;
+	  Unused3 = newUnused3;
 	  bEnableSnipers = newbEnableSnipers;
 
     RoundNumber=0;

@@ -762,6 +762,7 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
  - Bulk now affects your weapon switching and reloading speed. Having less bulk means that you will reload your weapons faster and switch between equipment faster.
  - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
  - Added a Map Filter combobox to the Host Game menu. You can filter maps in the list by their source (All Maps, Custom Maps or Stock Maps)
+ - When hosting a game, you can now enable/disable the timer at the beginning or end of a map.
  - Redid the lighting on Brewer County Courthouse
  - A LOT of cut speech was restored, including: "arrested" lines by the player and AI officers, lines when the player goes rogue, AI responses to commands, AI responses to dead suspects, civilian lines when shot at, and a lot of the FunTime drug dealer lines
  - Named speakers from the TSS missions will now be labeled as such in their subtitles. For example, Andrew Norman will appear as "Andrew Norman" instead of "Male Suspect" (*). Band Members from Sellers Street Auditorium are labeled as such, and aren't "Male Civilian"

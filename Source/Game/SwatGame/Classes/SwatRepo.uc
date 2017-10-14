@@ -218,11 +218,13 @@ event Tick( Float DeltaSeconds )
                 case GAMESTATE_PostGame:
                     CumulativeDelta += DeltaSeconds;
 
-					          if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
-					          {
-						                CumulativeDelta = 0;
-						                CheckAllPlayersReady();
-					          }
+					if ((GuiConfig.SwatGameState == GAMESTATE_PostGame && !ServerSettings(Level.CurrentServerSettings).bUseRoundEndTimer) ||
+						(GuiConfig.SwatGameState == GAMESTATE_PreGame && !ServerSettings(Level.CurrentServerSettings).bUseRoundStartTimer))
+					{
+						// The fallthrough from the above can really mess up this condition
+						CumulativeDelta = 0;
+						CheckAllPlayersReady();
+					}
 
                     else if( GetSGRI().ServerCountdownTime <= 0 )
                     {
@@ -960,21 +962,21 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.MapIndex,
 		CurrentSettings.NumRounds,
 		CurrentSettings.MaxPlayers,
-		CurrentSettings.Unused,
+		CurrentSettings.bUseRoundStartTimer,
 		CurrentSettings.PostGameTimeLimit,
-		CurrentSettings.Unused2,
+		CurrentSettings.bUseRoundEndTimer,
 		CurrentSettings.MPMissionReadyTime,
 		CurrentSettings.bShowTeammateNames,
-		CurrentSettings.Unused3,
+		CurrentSettings.Unused,
 		CurrentSettings.bAllowReferendums,
 		CurrentSettings.bNoRespawn,
 		CurrentSettings.bQuickRoundReset,
 		CurrentSettings.FriendlyFireAmount,
-		CurrentSettings.Unused4,
+		CurrentSettings.Unused2,
 		CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.Unused5,
+		CurrentSettings.Unused3,
 		CurrentSettings.bEnableSnipers
 	);
 	ServerSettings(Level.PendingServerSettings).RoundNumber = CurrentSettings.RoundNumber;

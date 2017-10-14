@@ -253,9 +253,9 @@ function SaveServerSettings()
                                 QuickSetupPanel.SelectedIndex,
                                 QuickSetupPanel.MyRoundsBox.Value,
                                 AdvancedSetupPanel.MyMaxPlayersBox.Value,
-                                0,  // Not used
+                                AdvancedSetupPanel.MyRoundStartTimerCheck.bChecked,
                                 AdvancedSetupPanel.MyPostGameTimeLimitBox.Value,
-                                0, // Not used
+                                AdvancedSetupPanel.MyRoundEndTimerCheck.bChecked,
                                 AdvancedSetupPanel.MyPreGameTimeLimitBox.Value,
                                 AdvancedSetupPanel.MyShowTeammatesButton.bChecked,
                                 false, // Not used
