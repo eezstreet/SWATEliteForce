@@ -64,6 +64,7 @@ function string GetPassword()
 
 defaultproperties
 {
+	bHidden=true
 	HashPassword=""
 	bAlwaysRelevant=true
 	RemoteRole=Role_DumbProxy
