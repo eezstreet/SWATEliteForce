@@ -13,11 +13,19 @@ enum AdminPermissions
 	Permission_Max,
 };
 
+struct AutoAction
+{
+	var int Delay;
+	var string ExecuteText;
+};
+
 var public SwatAdminPermissions GuestPermissions;			// Guest permissions are given to every player, even ones that aren't signed in
 var public array<SwatAdminPermissions> Permissions;			// These require someone to sign in
 var public config name GuestPermissionName;
 var public config array<name> PermissionNames;
 var public config class<SwatAdminPermissions> PermissionClass;
+var public config array<AutoAction> AutoActions;
+var private int AutoActionNum;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -25,14 +33,59 @@ function PostBeginPlay()
 {
 	local int i;
 
-	GuestPermissions = Spawn(PermissionClass, self, GuestPermissionName);
+	if(Level.NetMode == NM_Standalone)
+	{
+		return;
+	}
 
+	// Spawn the permission sets
+	GuestPermissions = Spawn(PermissionClass, self, GuestPermissionName);
 	for(i = 0; i < PermissionNames.Length; i++)
 	{
 		Permissions[i] = Spawn(PermissionClass, self, PermissionNames[i]);
 	}
+
+	// Set up autoactions - events set up to run on a timer by the server
+	AutoActionNum = 0;
+	if(AutoActions.Length > 0)
+	{
+		SetTimer(AutoActions[AutoActionNum].Delay, false);
+	}
 }
 
+// The timer is used to execute AutoActions which can be used to
+event Timer()
+{
+	if(AutoActions.Length == 0)
+	{
+		return;
+	}
+
+	PerformAutoAction(AutoActions[AutoActionNum].ExecuteText);
+
+	AutoActionNum++;
+	if(AutoActionNum >= AutoActions.Length)
+	{
+		AutoActionNum = 0;
+	}
+
+	SetTimer(AutoActions[AutoActionNum].Delay, false);
+}
+
+// Perform auto action text
+function PerformAutoAction(String Text)
+{
+	if(Left(Text, 6) ~= "print ")
+	{
+		Level.Game.Broadcast(None, Mid(Text, 6), 'Caption');
+	}
+	else if(Left(Text, 3) ~= "ac ")
+	{
+		ACCommand(Level.GetLocalPlayerController(), Mid(Text, 3));
+	}
+}
+
+// Attempt to log in
 function bool TryLogin( PlayerController PC, String Password )
 {
 	local SwatPlayerReplicationInfo PRI;
@@ -68,6 +121,7 @@ function bool TryLogin( PlayerController PC, String Password )
 	return false;
 }
 
+// Attempt a logout on the player controller
 function bool TryLogout(PlayerController PC)
 {
 	local SwatPlayerReplicationInfo PRI;
@@ -88,9 +142,15 @@ function bool TryLogout(PlayerController PC)
 	return true;
 }
 
+// Determine whether the specified action is allowed
 function bool ActionAllowed(PlayerController PC, AdminPermissions Permission)
 {
 	local SwatPlayerReplicationInfo PRI;
+
+	if(Level.NetMode == NM_Standalone)
+	{
+		return true;
+	}
 
 	if(PC == Level.GetLocalPlayerController())
 	{
@@ -107,6 +167,7 @@ function bool ActionAllowed(PlayerController PC, AdminPermissions Permission)
 	return PRI.MyRights[Permission] > 0;
 }
 
+// Admin command: Kick people
 function Kick( PlayerController PC, String PlayerName )
 {
 	if(!ActionAllowed(PC, AdminPermissions.Permission_Kick))
@@ -117,6 +178,7 @@ function Kick( PlayerController PC, String PlayerName )
     Level.Game.Kick( PC, PlayerName );
 }
 
+// Admin command: kick-ban people
 function KickBan( PlayerController PC, String PlayerName )
 {
 	if(!ActionAllowed(PC, AdminPermissions.Permission_KickBan))
@@ -127,6 +189,7 @@ function KickBan( PlayerController PC, String PlayerName )
     Level.Game.KickBan( PC, PlayerName );
 }
 
+// Admin command: switch maps
 function Switch( PlayerController PC, string URL )
 {
 	if(!ActionAllowed(PC, AdminPermissions.Permission_Switch))
@@ -137,6 +200,7 @@ function Switch( PlayerController PC, string URL )
 	Level.ServerTravel( URL, false );
 }
 
+// Admin command: start the game
 function StartGame( PlayerController PC )
 {
 	if(!ActionAllowed(PC, AdminPermissions.Permission_StartGame))
@@ -147,6 +211,7 @@ function StartGame( PlayerController PC )
 	SwatRepo(Level.GetRepo()).AllPlayersReady();
 }
 
+// Admin command: abort the game
 function AbortGame( PlayerController PC )
 {
 	if(!ActionAllowed(PC, AdminPermissions.Permission_EndGame))
@@ -155,6 +220,31 @@ function AbortGame( PlayerController PC )
 	}
 
 	SwatGameInfo(Level.Game).GameAbort();
+}
+
+// Execute an AC command based on the text
+function ACCommand( PlayerController PC, String S )
+{
+	if(Left(S, 5) ~= "kick ")
+	{
+		Kick(PC, Mid(S, 5));
+	}
+	else if(Left(S, 7) ~= "kickban ")
+	{
+		KickBan(PC, Mid(S, 7));
+	}
+	else if(Left(S, 7) ~= "switch ")
+	{
+		self.Switch(PC, Mid(S, 7));
+	}
+	else if(Left(S, 6) ~= "start ")
+	{
+		StartGame(PC);
+	}
+	else if(Left(S, 6) ~= "abort ")
+	{
+		AbortGame(PC);
+	}
 }
 
 defaultproperties
