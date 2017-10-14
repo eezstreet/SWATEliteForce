@@ -15,7 +15,7 @@ enum AdminPermissions
 
 struct AutoAction
 {
-	var int Delay;
+	var float Delay;
 	var string ExecuteText;
 };
 

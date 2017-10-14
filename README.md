@@ -727,11 +727,37 @@ If you aren't playing an Internet/Swat4Stats enabled game, you will need your ex
 Lastly, you need to determine what type of game you want to play. Regular CO-OP is handled through the Host Game menu ingame, but Campaign CO-OP is done through the Career menu - select a campaign and hit Career CO-OP. The "Equipment" panel will change to a "Settings" panel where you can configure a password, etc just like in Host Game.
 Once you have selected your map settings and have started the server at least once, you can quickly launch a server (without going ingame) by using the Dedicated Server.bat file. You can then join the server from the Join Server menu.
 
+## Admin System ##
+Server hosts should NOT use MarkMod, SES Mod, Gez Mod, or Snitch for admin features. Those mods can introduce glitches, bugs, or crashes or break some of the features of SWAT: Elite Force. Instead, SEF includes its own admin mod which aims to combine a lot of the best features of those mods. If you are pining for a particular feature of one of those, let me know and I will work on adding it!
+
+Administrator permissions are doled out through the use of "roles." Everyone by default is assigned to the Guest role; it is not recommended that you give the Guest role very many powers, if any at all. A player can only have one role at a time. Each role should have a unique password associated with it. To log in to a role, click on the "Admin Login" button and enter the password associated with the desired role.
+
+Admin Roles should be assigned through the Host Game menu, when setting up the server settings.
+
+Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/SwatAdmin.ini. In the section titled `[SwatGame.SwatAdmin]`, add your MOTD lines by the following:
+
+```
+AutoActions=(Delay=NumSeconds,ExecuteText="Command")
+```
+
+Replace NumSeconds with the number of seconds (decimal number) before the command will be executed, and "Command" with the command text. The command text can be "print " followed by a message to print a string to chat, or "ac " followed by an admin command to execute that command.
+
+As a trivial example, this will print three lines of text every 10 minutes:
+
+```
+AutoActions=(Delay=600.0,ExecuteText="[c=FFFFFF]Welcome to my server![\\c]")
+AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]I hope you have fun![\\c]]")
+AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
+```
+
+
 # VERSION HISTORY #
+
 
 #### v6.1
 
  - The accuracy system has been overhauled entirely. Weapons are easier to aim in general now.
+ - Added an admin system to the game, featuring customizable roles and an MOTD system. For more information, check out the "Admin System" section of "HOW TO PLAY IN MULTIPLAYER."
  - A new mechanic has been added: Empathy Modifiers. Whenever you stun a target with a less-lethal piece of equipment (taser, pepper spray, beanbags, stinger grenades, punching, ... but not CS gas, flashbangs or pepperball gun), there is a chance that nearby civilians will feel the same morale modification. This will make it much less tedious to pepper spray all civilians in a room on maps like Mt. Threshold Research Center or A-Bomb Nightclub, where there are many uncompliant civilians.
  - Bulk now affects your weapon switching and reloading speed. Having less bulk means that you will reload your weapons faster and switch between equipment faster.
  - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
