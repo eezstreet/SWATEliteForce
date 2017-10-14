@@ -23,6 +23,11 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
     if( !Pawn.IsA('SwatEnemy') )
         return;   //we only care about Suspects
 
+	if(IsInArray(Pawn, ReportedDownedSuspects))
+	{
+		return;
+	}
+
     AssertNotInArray( Pawn, UnevacuatedDownedSuspects, 'UnevacuatedDownedSuspects' );
     Add( Pawn, UnevacuatedDownedSuspects );
 }
@@ -46,24 +51,17 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
     if (!ReportedCharacter.IsA('SwatEnemy') )
         return;   //we only care about enemies
 
-    if(ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedDeadSuspect' &&
-        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedInjSuspectSecured') {
-        // We're reporting them, but not for the reason we SHOULD be reporting them.
-        return;
-    }
-
-    AssertWithDescription( IsInArray( SwatPawn(ReportedCharacter), UnevacuatedDownedSuspects ),
-        "[LEADERSHIP] "$class.name
-        $" Character "$ReportedCharacter.name
-        $" was reported to TOC but was not in the UnevacuatedDownedSuspects array" );
-
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name
             $" removed "$ReportedCharacter.name
             $" from the list of UnevacuatedDownedSuspects because ReportableReportedToTOC"
             $". UnevacuatedDownedSuspects.length="$UnevacuatedDownedSuspects.length);
 
-    Remove( SwatPawn(ReportedCharacter), UnevacuatedDownedSuspects );
+	if(IsInArray(Pawn(ReportedCharacter), UnevacuatedDownedSuspects))
+	{
+		Remove( SwatPawn(ReportedCharacter), UnevacuatedDownedSuspects );
+	}
+
     Add( SwatPawn(ReportedCharacter), ReportedDownedSuspects);
 }
 
