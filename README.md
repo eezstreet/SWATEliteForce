@@ -792,6 +792,9 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
  - Fixed SEF bug: A suspect or civilian who was cuffed and then reported, then incapacitated or killed, would count as "failed to report downed suspect" even though they were already reported.
  - Fixed SEF bug: Using the "say" command in the dedicated server or WebAdmin panel would crash the server
  - Fixed SEF bug: Deleting a campaign wouldn't wipe its stats or permadeath status, so creating another one of the same name would result in bugs
+ - Fixed SEF bug: M4A1 Suppressed in third person had a glowing silencer
+ - Fixed SEF bug: HK33 had wrong model in third person
+ - Fixed SEF bug: MP5SSD6 had fingers covering the iron sights
  - Fixed TSS bug: Spoken lines by TOC on TSS missions would cut off if the player used the shout button
  - Fixed TSS bug: Some incorrect subtitles
  - Fixed TSS bug: Using the Bulgarian Drug Worker as a suspect in QMM will no longer cause sound bugs
