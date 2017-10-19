@@ -790,11 +790,12 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
  - Fixed SEF bug: Some Sovereign Citizen lines did not play correctly
  - Fixed SEF bug: Magazine count display on equipment panels only showed 2 digits (so pepperball only displayed as "20")
  - Fixed SEF bug: A suspect or civilian who was cuffed and then reported, then incapacitated or killed, would count as "failed to report downed suspect" even though they were already reported.
- - Fixed SEF bug: Using the "say" command in the dedicated server or WebAdmin panel would crash the server
+ - Fixed SEF bug: Using the "say" command in the dedicated server or MarkMods WebAdmin panel would crash the server
  - Fixed SEF bug: Deleting a campaign wouldn't wipe its stats or permadeath status, so creating another one of the same name would result in bugs
  - Fixed SEF bug: M4A1 Suppressed in third person had a glowing silencer
  - Fixed SEF bug: HK33 had wrong model in third person
  - Fixed SEF bug: MP5SSD6 had fingers covering the iron sights
+ - Fixed SEF bug: Creating a QMM with no civilians lead to a maximum score of 90/100 due to a bug in the way All Civilians Unharmed score was calculated
  - Fixed TSS bug: Spoken lines by TOC on TSS missions would cut off if the player used the shout button
  - Fixed TSS bug: Some incorrect subtitles
  - Fixed TSS bug: Using the Bulgarian Drug Worker as a suspect in QMM will no longer cause sound bugs
