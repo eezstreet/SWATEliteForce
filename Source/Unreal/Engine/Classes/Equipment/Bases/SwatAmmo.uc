@@ -1,6 +1,67 @@
 class SwatAmmo extends Ammunition abstract;
 
 import enum EMaterialVisualType from Material;
+enum AmmoType
+{
+  AmmoType_9mmAP,            		 // 9mm round. Armor Piercing. Probably Level_3a
+  AmmoType_9mmFMJ,            		 // 9mm round. Full Metal Jacket. Probably Level_2 or Level_2a
+  AmmoType_9mmJSP,            		 // 9mm round. Jacketed Soft Point. Probably Level_2a
+  AmmoType_9mmJHP,            		 // 9mm round. Jacketed Hollow Point. Probably Level_1
+  AmmoType_45AP,            		 // .45 round. Armor Piercing. Probably Level_3a
+  AmmoType_45FMJ,            		 // .45 round. Full Metal Jacket. Probably Level_2 or Level_2a
+  AmmoType_45JSP,            		 // .45 round. Jacketed Soft Point. Probably Level_2a
+  AmmoType_45JHP,            		 // .45 round. Jacketed Hollow Point. Probably Level_1
+  AmmoType_357AP,            		 // .357 round. Armor Piercing. Probably Level_3a
+  AmmoType_357FMJ,            		 // .357 round. Full Metal Jacket. Probably Level_2
+  AmmoType_357JSP,            		 // .357 round. Jacketed Soft Point. Probably Level_2a
+  AmmoType_357JHP,            		 // .357 round. Jacketed Hollow Point. Probably Level_2a
+  AmmoType_57AP,            		 // 5.7x28 round. Armor Piercing. Probably Level_3
+  AmmoType_57FMJ,            		 // 5.7x28 round. Full Metal Jacket. Probably Level_3a
+  AmmoType_57JSP,            		 // 5.7x28 round. Jacketed Soft Point. Probably Level_2
+  AmmoType_57JHP,            		 // 5.7x28 round. Jacketed Hollow Point. Probably Level_2a
+  AmmoType_50AP,            		 // .50 round. Armor Piercing. Probably Level_3
+  AmmoType_50FMJ,            		 // .50 round. Full Metal Jacket. Probably Level_3a
+  AmmoType_50JSP,            		 // .50 round. Jacketed Soft Point. Probably Level_2
+  AmmoType_50JHP,            		 // .50 round. Jacketed Hollow Point. Probably Level_2
+  AmmoType_32AP,            		 // .32 round. Armor Piercing. Probably Level_3a
+  AmmoType_32FMJ,            		 // .32 round. Full Metal Jacket. Probably Level_2a
+  AmmoType_32JSP,            		 // .32 round. Jacketed Soft Point. Probably Level_1
+  AmmoType_32JHP,            		 // .32 round. Jacketed Hollow Point. Probably Level_1
+  AmmoType_223AP,            		 // .223 round. Armor Piercing. Probably Level_3X
+  AmmoType_223FMJ,            		 // .223 round. Full Metal Jacket. Probably Level_3
+  AmmoType_223JSP,            		 // .223 round. Jacketed Soft Point. Probably Level_3a
+  AmmoType_223JHP,            		 // .223 round. Jacketed Hollow Point. Probably Level_3a
+  AmmoType_762AP,            		 // 7.62 Russian round. Armor Piercing. Probably Level_3a
+  AmmoType_762FMJ,            		 // 7.62 Russian round. Full Metal Jacket. Probably Level_3a
+  AmmoType_762JSP,            		 // 7.62 Russian round. Jacketed Soft Point. Probably Level_3a
+  AmmoType_762JHP,            		 // 7.62 Russian round. Jacketed Hollow Point. Probably Level_3a
+  AmmoType_308AP,            		 // 7.62 NATO round. Armor Piercing. Probably Level_3
+  AmmoType_308FMJ,            		 // 7.62 NATO round. Full Metal Jacket. Probably Level_3a
+  AmmoType_308JSP,            		 // 7.62 NATO round. Jacketed Soft Point. Probably Level_3a
+  AmmoType_308JHP,            		 // 7.62 NATO round. Jacketed Hollow Point. Probably Level_3a
+  AmmoType_545AP,            		 // 5.45 round. Armor Piercing. Probably Level_3
+  AmmoType_545FMJ,            		 // 5.45 round. Full Metal Jacket. Probably Level_3a
+  AmmoType_545JSP,            		 // 5.45 round. Jacketed Soft Point. Probably Level_3a
+  AmmoType_545JHP,            		 // 5.45 round. Jacketed Hollow Point. Probably Level_3a
+  AmmoType_ArmorPiercing,            // Increased anti armor effectiveness at the cost of damage against unarmored targets
+  AmmoType_FullMetalJacket,          // All-rounded effectiveness, can go through armor, good effectiveness against unarmored
+  AmmoType_JacketedSoftPoint,        // Fair effectiveness against unarmored targets, probably won't go through armor
+  AmmoType_JacketedHollowPoint,      // Very effective against unarmored targets, ineffective against armor
+  AmmoType_Buckshot,                 // Very effective against unarmored targets, very ineffective against armor
+  AmmoType_Special                   // We are not a bullet/pellet/slug. Used for LTL stuff.
+};
+
+enum PenetrationLevel
+{
+  Level_0,            // Can't go through any armor
+  Level_1,            // Can go through Level I vests and helmets (AKA nothing)
+  Level_2a,           // Can go through Level IIa vests and helmets (AKA Still Nothing)
+  Level_2,            // Can go through Level II vests and helmets (AKA light armor, most helmets)
+  Level_3a,           // Can go through Level IIIa vests and helmet (AKA damaged heavy armor and protec helmet)
+  Level_3,            // Can go through Level III vests (AKA suspect heavy armor)
+  Level_3X,           // Can go through Level III+ vests (AKA SWAT heavy armor)
+  Level_4             // Can go through Level IV vests.......why you should use this is beyond me
+};
 
 // Ricochet occurs when a bullet hits a hard surface and bounces off.
 // It can only occur within a certain angle, and when the bullet bounces, it loses momentum.
@@ -15,6 +76,11 @@ var(Ricochet) config float RicochetMomentum "Momentum is multiplied by this when
 var(Ricochet) config float RicochetMinimumMomentum "Minimum momentum required to trigger a ricochet";
 
 // Advanced ballstics for Elite Force
+var(AdvancedBallistics) config AmmoType BulletClass "What ammo type I am?";
+var int BulletType "Internal measure to know the BulletClass";
+var(AdvancedBallistics) config PenetrationLevel ArmorPenetration "What level of armor can I go through?";
+var int PenetrationType "Internal measure to know the BulletClass";
+
 var(AdvancedBallistics) config float Drag "The amount of Momentum that is lost with each unit traveled.";
 var(AdvancedBallistics) config bool ShredsArmor "True if this ammo type can shred armor, false otherwise";
 var(AdvancedBallistics) config float MinimumMomentum "The minimum amount of momentum that this ammo type has, after drag";
@@ -64,7 +130,200 @@ simulated function float GetRicochetMomentumModifier() {
 simulated function float GetDrag() {
   return Drag;
 }
+simulated function int GetAmmoType() 
+ {
+   return BulletClass;
+ }
+ 
+simulated function int GetPenetrationLevel() 
+ {
+   return ArmorPenetration;
+ }
+ 
+simulated function int GetBulletType() 
+ {			
+ switch(BulletClass) 
+ {					
+ case AmmoType_9mmAP:
+ 	BulletType = 1;
+ 	break;
+ case AmmoType_9mmFMJ:
+ 	BulletType = 2;
+ 	break;
+ case AmmoType_9mmJSP:
+ 	BulletType = 3;
+ 	break;
+ case AmmoType_9mmJHP:
+ 	BulletType = 4;
+ 	break;				
+ case AmmoType_45AP:
+ 	BulletType = 5;
+ 	break;
+ case AmmoType_45FMJ:
+ 	BulletType = 6;
+ 	break;
+ case AmmoType_45JSP:
+ 	BulletType = 7;
+ 	break;
+ case AmmoType_45JHP:
+ 	BulletType = 8;
+ 	break;				
+ case AmmoType_357AP:
+ 	BulletType = 9;
+ 	break;
+ case AmmoType_357FMJ:
+ 	BulletType = 10;
+ 	break;
+ case AmmoType_357JSP:
+ 	BulletType = 11;
+ 	break;
+ case AmmoType_357JHP:
+ 	BulletType = 12;
+ 	break;				
+ case AmmoType_57AP:
+ 	BulletType = 13;
+ 	break;
+ case AmmoType_57FMJ:
+ 	BulletType = 14;
+ 	break;
+ case AmmoType_57JSP:
+ 	BulletType = 15;
+ 	break;
+ case AmmoType_57JHP:
+ 	BulletType = 16;
+ 	break;				
+ case AmmoType_50AP:
+ 	BulletType = 17;
+ 	break;
+ case AmmoType_50FMJ:
+ 	BulletType = 18;
+ 	break;
+ case AmmoType_50JSP:
+ 	BulletType = 19;
+ 	break;
+ case AmmoType_50JHP:
+ 	BulletType = 20;
+ 	break;			
+ case AmmoType_32AP:
+ 	BulletType = 21;
+ 	break;
+ case AmmoType_32FMJ:
+ 	BulletType = 22;
+ 	break;
+ case AmmoType_32JSP:
+ 	BulletType = 23;
+ 	break;
+ case AmmoType_32JHP:
+ 	BulletType = 24;
+ 	break;			
+ case AmmoType_223AP:
+ 	BulletType = 25;
+ 	break;
+ case AmmoType_223FMJ:
+ 	BulletType = 26;
+ 	break;
+ case AmmoType_223JSP:
+ 	BulletType = 27;
+ 	break;
+ case AmmoType_223JHP:
+ 	BulletType = 28;
+ 	break;			
+ case AmmoType_762AP:
+ 	BulletType = 29;
+ 	break;
+ case AmmoType_762FMJ:
+ 	BulletType = 30;
+ 	break;
+ case AmmoType_762JSP:
+ 	BulletType = 31;
+ 	break;
+ case AmmoType_762JHP:
+ 	BulletType = 32;
+ 	break;			
+ case AmmoType_308AP:
+ 	BulletType = 33;
+ 	break;
+ case AmmoType_308FMJ:
+ 	BulletType = 34;
+ 	break;
+ case AmmoType_308JSP:
+ 	BulletType = 35;
+ 	break;
+ case AmmoType_308JHP:
+ 	BulletType = 36;
+ 	break;			
+ case AmmoType_545AP:
+ 	BulletType = 37;
+ 	break;
+ case AmmoType_545FMJ:
+ 	BulletType = 38;
+ 	break;
+ case AmmoType_545JSP:
+ 	BulletType = 39;
+ 	break;
+ case AmmoType_545JHP:
+ 	BulletType = 40;
+ 	break;			
+ case AmmoType_ArmorPiercing:
+ 	BulletType = 41;
+ 	break;
+ case AmmoType_FullMetalJacket:
+ 	BulletType = 42;
+ 	break;
+ case AmmoType_JacketedSoftPoint:
+ 	BulletType = 43;
+ 	break;
+ case AmmoType_JacketedHollowPoint:
+ 	BulletType = 44;
+ 	break;
+ case AmmoType_Buckshot:
+ 	BulletType = 45;
+ 	break;
+ case AmmoType_Special:
+ 	BulletType = 46;
+ 	break;
+ default:
+ 	BulletType = 42;
+ }
+ 
+  return BulletType;
+ }
+ 
+simulated function int GetPenetrationType() 
+{			
+ switch(ArmorPenetration) 
+ {				
+ case Level_0:
+ 	PenetrationType = 1;
+ 	break;
+ case Level_1:
+ 	PenetrationType = 2;
+ 	break;
+ case Level_2a:
+ 	PenetrationType = 3;
+ 	break;
+ case Level_2:
+ 	PenetrationType = 4;
+ 	break;
+ case Level_3a:
+ 	PenetrationType = 5;
+ 	break;
+ case Level_3:
+ 	PenetrationType = 6;
+ 	break;
+ case Level_3X:
+ 	PenetrationType = 7;
+ 	break;
+ case Level_4:
+ 	PenetrationType = 8;
+ 	break;
+ default:
+ 	PenetrationType = 1;
+ }
 
+  return PenetrationType;
+}
+ 
 simulated function bool CanShredArmor() {
   return ShredsArmor;
 }
@@ -146,7 +405,8 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
 defaultproperties
 {
   Drag=0
-
+  
+  BulletClass=AmmoType_Special
   CanCauseRicochet=false
   RicochetChance=0.5
   MinRicochetAngle=20
