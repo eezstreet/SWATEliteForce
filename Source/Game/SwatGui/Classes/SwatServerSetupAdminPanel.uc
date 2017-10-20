@@ -161,6 +161,7 @@ function UpdateSelectedPermission(SwatAdminPermissions perm, optional string Rol
 	{
 		if(perm.GetPermission(AdminPermissions(i)))
 		{
+			log("Adding "$AdminPermissions(i)$" to "$perm$" because we have it");
 			SelectedRights.List.Add(PermissionNames[i], , , i);
 		}
 		else
@@ -239,6 +240,7 @@ function AddToRights()
 	AvailableRights.List.RemoveItem(SelectedRightName);
 
 	SelectedRights.List.Add(SelectedRightName, , , SelectedRight);
+	log("Adding permission "$AdminPermissions(SelectedRight));
 	SelectedPermission.SetPermission(AdminPermissions(SelectedRight), true);
 }
 
@@ -258,18 +260,22 @@ function RemFromRights()
 	SelectedRights.List.RemoveItem(SelectedRightName);
 
 	AvailableRights.List.Add(SelectedRightName, , , SelectedRight);
+	log("Removing permission "$AdminPermissions(SelectedRight));
 	SelectedPermission.SetPermission(AdminPermissions(SelectedRight), false);
 }
 
 // Called either when the combobox gets changed, or we switch from guest permissions to custom permissions
 function RoleSelectionChanged()
 {
+	log("RoleSelectionChanged()");
 	UpdateSelectedPermission(AdminData.Permissions[MyRoleListBox.GetIndex()]);
 }
 
 function LoadServerSettings( optional bool bReadOnly )
 {
 	local int i;
+
+	log("SwatServerSetupAdminPanel::LoadServerSettings");
 
 	if(bReadOnly)
 	{
@@ -283,6 +289,7 @@ function LoadServerSettings( optional bool bReadOnly )
 	}
 
 	AdminData = PlayerOwner().Spawn(class'SwatAdmin', None, 'AdminData');
+	log("Spawned "$AdminData);
 
 	for(i = 0; i < AdminData.Permissions.Length; i++)
 	{

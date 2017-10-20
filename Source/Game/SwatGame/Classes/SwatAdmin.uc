@@ -1,5 +1,5 @@
 class SwatAdmin extends Engine.Actor
-    config(SwatAdmin);
+    config(SwatGuiState);
 
 enum AdminPermissions
 {
@@ -29,20 +29,11 @@ var private int AutoActionNum;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function PostBeginPlay()
+function PreBeginPlay()
 {
-	local int i;
-
 	if(Level.NetMode == NM_Standalone)
 	{
 		return;
-	}
-
-	// Spawn the permission sets
-	GuestPermissions = Spawn(PermissionClass, self, GuestPermissionName);
-	for(i = 0; i < PermissionNames.Length; i++)
-	{
-		Permissions[i] = Spawn(PermissionClass, self, PermissionNames[i]);
 	}
 
 	// Set up autoactions - events set up to run on a timer by the server
@@ -50,6 +41,27 @@ function PostBeginPlay()
 	if(AutoActions.Length > 0)
 	{
 		SetTimer(AutoActions[AutoActionNum].Delay, false);
+	}
+}
+
+function PostBeginPlay()
+{
+	local int i;
+
+	// Spawn the permission sets
+	GuestPermissions = Spawn(PermissionClass, self, GuestPermissionName);
+	if(GuestPermissions == None)
+	{
+		log("Couldn't spawn GuestPermissions with name "$GuestPermissionName);
+	}
+	else
+	{
+		log("Spawned guest permissions "$GuestPermissions$" with name "$GuestPermissionName);
+	}
+
+	for(i = 0; i < PermissionNames.Length; i++)
+	{
+		Permissions[i] = Spawn(PermissionClass, self, PermissionNames[i]);
 	}
 }
 

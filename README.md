@@ -734,7 +734,7 @@ Administrator permissions are doled out through the use of "roles." Everyone by 
 
 Admin Roles should be assigned through the Host Game menu, when setting up the server settings.
 
-Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/SwatAdmin.ini. In the section titled `[SwatGame.SwatAdmin]`, add your MOTD lines by the following:
+Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/SwatGuiState.ini. In the section titled `[SwatGame.SwatAdmin]` (at the bottom), add your MOTD lines by the following:
 
 ```
 AutoActions=(Delay=NumSeconds,ExecuteText="Command")

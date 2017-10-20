@@ -1,5 +1,5 @@
 class SwatAdminPermissions extends Engine.Actor
-	config(SwatAdmin)
+	config(SwatGuiState)
 	perobjectconfig;
 
 import enum AdminPermissions from SwatAdmin;
