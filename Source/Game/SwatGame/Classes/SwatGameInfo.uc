@@ -1466,11 +1466,11 @@ event PlayerController Login(string Portal, string Options, out string Error)
     if( Level.GetLocalPlayerController() == NewPlayer )
         theSwatRepoPlayerItem.LastAdminPassword = SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword;
 
-    //attempt to log the new player in as an admin (based on their last entered password)
-    Admin.TryLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
-
     // Init player's replication info
     NewPlayer.GameReplicationInfo = GameReplicationInfo;
+
+	//attempt to log the new player in as an admin (based on their last entered password)
+    Admin.TryLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
 
     // Apply security to this controller
     MySecurityClass=class<Security>(DynamicLoadObject(SecurityClass,class'class'));
@@ -1515,6 +1515,15 @@ event PlayerController Login(string Portal, string Options, out string Error)
 		NewPlayer.VoiceReplicationInfo = VoiceReplicationInfo;
 		if ( Level.NetMode == NM_ListenServer && Level.GetLocalPlayerController() == NewPlayer )
 			NewPlayer.InitializeVoiceChat();
+	}
+
+	if(Level.GetLocalPlayerController() == NewPlayer)
+	{
+		SwatPlayerReplicationInfo(NewPlayer.PlayerReplicationInfo).bLocalClient = true;
+	}
+	else
+	{
+		SwatPlayerReplicationInfo(NewPlayer.PlayerReplicationInfo).bLocalClient = false;
 	}
 
     // If a multiplayer game, set playercontroller to limbo state
