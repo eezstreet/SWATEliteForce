@@ -51,7 +51,8 @@ simulated function InitializeAmmo(int StartingAmmoAmount) {
 	}
 
 	// Initialize clip amount
-	StartingClipCount = ClipCount = StartingAmmoAmount;
+	ClipCount = StartingAmmoAmount;
+	StartingClipCount = ClipCount;
 	log("ClipBasedAmmo::InitializeAmmo: "$ClipCount$" clips");
 
 	// Set ammo for each clip. On each clip set it to ClipSize but INVALID_CLIP on ones we don't have

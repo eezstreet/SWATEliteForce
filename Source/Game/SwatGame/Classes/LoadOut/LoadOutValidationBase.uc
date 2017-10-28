@@ -14,7 +14,7 @@ enum MaterialPocket
     MATERIAL_Vest,
     MATERIAL_HeavyPants,
     MATERIAL_HeavyVest,
-	  MATERIAL_NoArmourVest,
+	MATERIAL_NoArmourVest,
 };
 
 // the loadout specification
