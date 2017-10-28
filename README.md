@@ -760,6 +760,7 @@ This is a quick fix patch to address some bugs.
  - Fixed SEF bug: Crash in multiplayer when using certain loadouts
  - Fixed SEF bug: Weird leg movement speed in multiplayer when using certain loadouts
  - Fixed TSS bug: Can sometimes reload the same magazine back into the weapon, in certain conditions
+ - Fixed TSS bug: The password dialog box (on Admin Login) didn't support all characters
 
 
 #### v6.1

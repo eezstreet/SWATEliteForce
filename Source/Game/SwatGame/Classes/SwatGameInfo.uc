@@ -1095,7 +1095,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             else
                 LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerSuspectLoadOut' );
 
-            log( "...In AddDefaultInventory(): loadout's owner="$LoadOut.Owner );
+            mplog( "...In AddDefaultInventory(): loadout's owner="$LoadOut.Owner );
             assert(LoadOut != None);
 
             // First, set all the pocket items in the NetPlayer loadout spec, so
@@ -1121,6 +1121,8 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             // Alter it *ex post facto* to have the correct ammo counts
             LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
             LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
+
+			mplog("...Set ammo counts to "$RepoPlayerItem.GetPrimaryAmmoCount()$" and "$RepoPlayerItem.GetSecondaryAmmoCount());
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -1128,7 +1130,11 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     LoadOut.Initialize( LoadOutSpec, IsSuspect );
 
+	mplog("LoadOut.Initialize()");
+
     PlayerPawn.ReceiveLoadOut(LoadOut);
+
+	mplog("PlayerPawn.ReceiveLoadOut");
 
     // We have to do this after ReceiveLoadOut() because that's what sets the
     // Replicated Skins.
@@ -1137,6 +1143,8 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     //TMC TODO do this stuff in the PlayerPawn (legacy support)
 	SetPlayerDefaults(PlayerPawn);
+
+	mplog("PlayerPawn - SetPlayerDefaults");
 }
 
 exec function MissionStatus()

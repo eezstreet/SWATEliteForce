@@ -32,6 +32,8 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
  	if (Level.GetEngine().EnableDevTools)
 	    log(self.Name$" >>> Initialize( "$DynamicSpec$" )");
 
+	mplog(self.Name$" >>> Initialize("$DynamicSpec$")");
+
 //     if( DynamicSpec != None )
 //     {
 //         log(self.Name$" ... Dynamic Loadout spec:");
@@ -44,17 +46,19 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
     if( DynamicSpec != None )
     {
         MutateLoadOutSpec( DynamicSpec, IsSuspect );
-
+		mplog(self.name$"...MutateLoadOutSpec");
         //log(self.Name$" ... After mutation:");
         //PrintLoadOutSpecToMPLog();
     }
 
     ValidateLoadOutSpec(IsSuspect, DynamicSpec);
+	mplog(self.name$"...ValidateLoadOutSpec");
 
     //log(self.Name$" ... After validation:");
     //PrintLoadOutSpecToMPLog();
 
     SpawnEquipmentFromLoadOutSpec(DynamicSpec);
+	mplog(self.name$"...SpawnEquipmentFromLoadOutSpec");
 
     //log(self.Name$" ... Spawned equipment:");
     //PrintLoadOutToMPLog();
@@ -112,6 +116,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
     PrimaryAmmo = class<SwatAmmo>(LoadOutSpec[1]);
     SecondaryAmmo = class<SwatAmmo>(LoadOutSpec[3]);
 
+	mplog(self.name$"...ValidateLoadOutSpec...");
     if(DynamicSpec.GetPrimaryAmmoCount() < PrimaryAmmo.default.MinReloadsToCarry) {
       DynamicSpec.SetPrimaryAmmoCount(PrimaryAmmo.default.MinReloadsToCarry);
     }
@@ -119,6 +124,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
       DynamicSpec.SetSecondaryAmmoCount(SecondaryAmmo.default.MinReloadsToCarry);
     }
 
+	mplog(self.name$"...ValidateLoadOutSpec::SetPrimary/SecondaryAmmo counts");
     if(GetTotalWeight() > GetMaximumWeight() || GetTotalBulk() > GetMaximumBulk()) {
       // We are overweight. We need to completely respawn our gear from scratch.
       AssertWithDescription(false, "Loadout "$self$" exceeds maximum weight. It's getting reset to the default equipment.");
@@ -131,6 +137,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
       }
       return true;
     }
+	mplog(self.name$"...ValidateLoadOutSpec: checked max weight");
 
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
@@ -716,7 +723,7 @@ function float GetTotalWeight() {
 	local float minimum;
 
 	total = 0.0;
-	minimum = GetTotalWeight();
+	minimum = GetMinimumWeight();
 
 	for(i = 0; i < Pocket.EnumCount; i++) {
 	   	if(PocketEquipment[i] == None)
