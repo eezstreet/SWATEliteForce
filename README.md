@@ -753,6 +753,14 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
 
 # VERSION HISTORY #
 
+#### v6.2
+This is a quick fix patch to address some bugs.
+
+ - Slight optimizations and tweaks
+ - Fixed SEF bug: Crash in multiplayer when using certain loadouts
+ - Fixed SEF bug: Weird leg movement speed in multiplayer when using certain loadouts
+ - Fixed TSS bug: Can sometimes reload the same magazine back into the weapon, in certain conditions
+
 
 #### v6.1
 
