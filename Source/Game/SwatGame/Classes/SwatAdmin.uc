@@ -65,6 +65,13 @@ function PostBeginPlay()
 	}
 }
 
+// Clean up some stuff --eez
+event Destroyed()
+{
+	GuestPermissions = None;
+	Permissions.Length = 0;
+}
+
 // The timer is used to execute AutoActions which can be used to
 event Timer()
 {
