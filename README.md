@@ -753,6 +753,9 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
 
 # VERSION HISTORY #
 
+#### v6.3
+ - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
+
 #### v6.2
 This is a quick fix patch to address some bugs.
 

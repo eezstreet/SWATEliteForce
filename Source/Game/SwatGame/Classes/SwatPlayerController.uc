@@ -427,6 +427,11 @@ exec function Switch( string S )
     SwatGameInfo(Level.Game).Admin.Switch(Self, S);
 }
 
+exec function NM()
+{
+	SwatGameInfo(Level.Game).Admin.Switch(Self, SwatGameReplicationInfo(Level.GetGameReplicationInfo()).NextMap);
+}
+
 exec function StartGame()
 {
     SwatGameInfo(Level.Game).Admin.StartGame(Self);

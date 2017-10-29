@@ -209,7 +209,11 @@ private function UpdateAdminButton()
 	PRI = SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
 	bLocalClient = PRI.bLocalClient;
 
-	if(GC.SwatGameState == GAMESTATE_PreGame &&
+	if(GC.SwatGameState == GAMESTATE_ClientTravel)
+	{
+		MyAbortGameButton.SetVisibility(false);
+	}
+	else if(GC.SwatGameState == GAMESTATE_PreGame &&
 		(PRI.MyRights[AdminPermissions.Permission_StartGame] > 0 || bLocalClient))
 	{
 		MyAbortGameButton.SetCaption( StartGameString );
