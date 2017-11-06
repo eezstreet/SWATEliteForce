@@ -727,15 +727,54 @@ If you aren't playing an Internet/Swat4Stats enabled game, you will need your ex
 Lastly, you need to determine what type of game you want to play. Regular CO-OP is handled through the Host Game menu ingame, but Campaign CO-OP is done through the Career menu - select a campaign and hit Career CO-OP. The "Equipment" panel will change to a "Settings" panel where you can configure a password, etc just like in Host Game.
 Once you have selected your map settings and have started the server at least once, you can quickly launch a server (without going ingame) by using the Dedicated Server.bat file. You can then join the server from the Join Server menu.
 
+## Admin System ##
+Server hosts should NOT use MarkMod, SES Mod, Gez Mod, or Snitch for admin features. Those mods can introduce glitches, bugs, or crashes or break some of the features of SWAT: Elite Force. Instead, SEF includes its own admin mod which aims to combine a lot of the best features of those mods. If you are pining for a particular feature of one of those, let me know and I will work on adding it!
+
+Administrator permissions are doled out through the use of "roles." Everyone by default is assigned to the Guest role; it is not recommended that you give the Guest role very many powers, if any at all. A player can only have one role at a time. Each role should have a unique password associated with it. To log in to a role, click on the "Admin Login" button and enter the password associated with the desired role.
+
+Admin Roles should be assigned through the Host Game menu, when setting up the server settings.
+
+Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/SwatGuiState.ini. In the section titled `[SwatGame.SwatAdmin]` (at the bottom), add your MOTD lines by the following:
+
+```
+AutoActions=(Delay=NumSeconds,ExecuteText="Command")
+```
+
+Replace NumSeconds with the number of seconds (decimal number) before the command will be executed, and "Command" with the command text. The command text can be "print " followed by a message to print a string to chat, or "ac " followed by an admin command to execute that command.
+
+As a trivial example, this will print three lines of text every 10 minutes:
+
+```
+AutoActions=(Delay=600.0,ExecuteText="[c=FFFFFF]Welcome to my server![\\c]")
+AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]I hope you have fun![\\c]]")
+AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
+```
+
+
 # VERSION HISTORY #
+
+#### v6.3
+ - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
+
+#### v6.2
+This is a quick fix patch to address some bugs.
+
+ - Slight optimizations and tweaks
+ - Fixed SEF bug: Crash in multiplayer when using certain loadouts
+ - Fixed SEF bug: Weird leg movement speed in multiplayer when using certain loadouts
+ - Fixed TSS bug: Can sometimes reload the same magazine back into the weapon, in certain conditions
+ - Fixed TSS bug: The password dialog box (on Admin Login) didn't support all characters
+
 
 #### v6.1
 
  - The accuracy system has been overhauled entirely. Weapons are easier to aim in general now.
+ - Added an admin system to the game, featuring customizable roles and an MOTD system. For more information, check out the "Admin System" section of "HOW TO PLAY IN MULTIPLAYER."
  - A new mechanic has been added: Empathy Modifiers. Whenever you stun a target with a less-lethal piece of equipment (taser, pepper spray, beanbags, stinger grenades, punching, ... but not CS gas, flashbangs or pepperball gun), there is a chance that nearby civilians will feel the same morale modification. This will make it much less tedious to pepper spray all civilians in a room on maps like Mt. Threshold Research Center or A-Bomb Nightclub, where there are many uncompliant civilians.
  - Bulk now affects your weapon switching and reloading speed. Having less bulk means that you will reload your weapons faster and switch between equipment faster.
  - Added a new button, 'Pick Random Map', to the All Missions mission selection screen. Clicking the button will pick a random map to play. (You can click it over and over again until you find a map that you would like.)
  - Added a Map Filter combobox to the Host Game menu. You can filter maps in the list by their source (All Maps, Custom Maps or Stock Maps)
+ - When hosting a game, you can now enable/disable the timer at the beginning or end of a map.
  - Redid the lighting on Brewer County Courthouse
  - A LOT of cut speech was restored, including: "arrested" lines by the player and AI officers, lines when the player goes rogue, AI responses to commands, AI responses to dead suspects, civilian lines when shot at, and a lot of the FunTime drug dealer lines
  - Named speakers from the TSS missions will now be labeled as such in their subtitles. For example, Andrew Norman will appear as "Andrew Norman" instead of "Male Suspect" (*). Band Members from Sellers Street Auditorium are labeled as such, and aren't "Male Civilian"
@@ -753,6 +792,7 @@ Once you have selected your map settings and have started the server at least on
  - Suspects drop their weapons when cowering
  - Suspects are no longer a threat when cowering
  - Reduced the amount of sway on the sniper scope
+ - Added a little blurb of text on the Campaign menu to better explain what each career path does
  - Fixed P90 flashlight
  - Fixed M4Super90 iron sights position
  - Fixed ambient sounds and scripted conversations on Meat Barn Restaurant
@@ -760,7 +800,14 @@ Once you have selected your map settings and have started the server at least on
  - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
  - Fixed SEF bug: Breaching ammo would never breach the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
  - Fixed SEF bug: Some Sovereign Citizen lines did not play correctly
- - Fixed SEF bug: Magazine count display only showed 2 digits (so pepperball only displayed as "20")
+ - Fixed SEF bug: Magazine count display on equipment panels only showed 2 digits (so pepperball only displayed as "20")
+ - Fixed SEF bug: A suspect or civilian who was cuffed and then reported, then incapacitated or killed, would count as "failed to report downed suspect" even though they were already reported.
+ - Fixed SEF bug: Using the "say" command in the dedicated server or MarkMods WebAdmin panel would crash the server
+ - Fixed SEF bug: Deleting a campaign wouldn't wipe its stats or permadeath status, so creating another one of the same name would result in bugs
+ - Fixed SEF bug: M4A1 Suppressed in third person had a glowing silencer
+ - Fixed SEF bug: HK33 had wrong model in third person
+ - Fixed SEF bug: MP5SSD6 had fingers covering the iron sights
+ - Fixed SEF bug: Creating a QMM with no civilians lead to a maximum score of 90/100 due to a bug in the way All Civilians Unharmed score was calculated
  - Fixed TSS bug: Spoken lines by TOC on TSS missions would cut off if the player used the shout button
  - Fixed TSS bug: Some incorrect subtitles
  - Fixed TSS bug: Using the Bulgarian Drug Worker as a suspect in QMM will no longer cause sound bugs

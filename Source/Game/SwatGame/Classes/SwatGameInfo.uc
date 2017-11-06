@@ -1095,7 +1095,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             else
                 LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerSuspectLoadOut' );
 
-            log( "...In AddDefaultInventory(): loadout's owner="$LoadOut.Owner );
+            mplog( "...In AddDefaultInventory(): loadout's owner="$LoadOut.Owner );
             assert(LoadOut != None);
 
             // First, set all the pocket items in the NetPlayer loadout spec, so
@@ -1121,6 +1121,8 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             // Alter it *ex post facto* to have the correct ammo counts
             LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
             LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
+
+			mplog("...Set ammo counts to "$RepoPlayerItem.GetPrimaryAmmoCount()$" and "$RepoPlayerItem.GetSecondaryAmmoCount());
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -1128,7 +1130,11 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     LoadOut.Initialize( LoadOutSpec, IsSuspect );
 
+	mplog("LoadOut.Initialize()");
+
     PlayerPawn.ReceiveLoadOut(LoadOut);
+
+	mplog("PlayerPawn.ReceiveLoadOut");
 
     // We have to do this after ReceiveLoadOut() because that's what sets the
     // Replicated Skins.
@@ -1137,6 +1143,8 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     //TMC TODO do this stuff in the PlayerPawn (legacy support)
 	SetPlayerDefaults(PlayerPawn);
+
+	mplog("PlayerPawn - SetPlayerDefaults");
 }
 
 exec function MissionStatus()
@@ -1466,11 +1474,11 @@ event PlayerController Login(string Portal, string Options, out string Error)
     if( Level.GetLocalPlayerController() == NewPlayer )
         theSwatRepoPlayerItem.LastAdminPassword = SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword;
 
-    //attempt to log the new player in as an admin (based on their last entered password)
-    Admin.TryLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
-
     // Init player's replication info
     NewPlayer.GameReplicationInfo = GameReplicationInfo;
+
+	//attempt to log the new player in as an admin (based on their last entered password)
+    Admin.TryLogin( NewPlayer, theSwatRepoPlayerItem.LastAdminPassword );
 
     // Apply security to this controller
     MySecurityClass=class<Security>(DynamicLoadObject(SecurityClass,class'class'));
@@ -1515,6 +1523,15 @@ event PlayerController Login(string Portal, string Options, out string Error)
 		NewPlayer.VoiceReplicationInfo = VoiceReplicationInfo;
 		if ( Level.NetMode == NM_ListenServer && Level.GetLocalPlayerController() == NewPlayer )
 			NewPlayer.InitializeVoiceChat();
+	}
+
+	if(Level.GetLocalPlayerController() == NewPlayer)
+	{
+		SwatPlayerReplicationInfo(NewPlayer.PlayerReplicationInfo).bLocalClient = true;
+	}
+	else
+	{
+		SwatPlayerReplicationInfo(NewPlayer.PlayerReplicationInfo).bLocalClient = false;
 	}
 
     // If a multiplayer game, set playercontroller to limbo state
@@ -2029,10 +2046,10 @@ function NetTeam GetTeamFromID( int TeamID )
 
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
 //log( self$"::Broadcast( "$Msg$" "$Location$" )" );
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
 }
 
 //overridden from Engine.GameInfo
@@ -2044,6 +2061,11 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
         BroadcastObservers( Sender, Msg, Type );
 
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
+}
+
+function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional String Location)
+{
+	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
 }
 
 function BroadcastObservers( Controller Sender, coerce string Msg, optional name Type )

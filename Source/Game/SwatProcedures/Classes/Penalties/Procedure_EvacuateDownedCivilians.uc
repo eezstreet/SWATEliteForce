@@ -23,6 +23,9 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
     if( !Pawn.IsA('SwatHostage') )
         return;   //we only care about officers
 
+	if(IsInArray(Pawn, ReportedDownedHostages))
+		return;
+
     AssertNotInArray( Pawn, UnevacuatedDownedHostages, 'UnevacuatedDownedHostages' );
     Add( Pawn, UnevacuatedDownedHostages );
 }
@@ -44,14 +47,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Pawn Reporter)
 {
     if (!ReportedCharacter.IsA('SwatHostage') )
-        return;   //we only care about officers
-
-    if(ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedHostageKilled' &&
-        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedInjCivilianSecured' &&
-        ReportedCharacter.GetEffectEventForReportingToTOC() != 'ReportedDOA') {
-        // We're reporting them, but not for the reason we SHOULD be reporting them.
-        return;
-    }
+        return;   //we only care about hostages
 
     if (GetGame().DebugLeadership)
         log("[LEADERSHIP] "$class.name
@@ -59,7 +55,11 @@ function OnReportableReportedToTOC(IAmReportableCharacter ReportedCharacter, Paw
             $" from the list of UnevacuatedDownedHostages because ReportableReportedToTOC"
             $". UnevacuatedDownedHostages.length="$UnevacuatedDownedHostages.length);
 
-    Remove( SwatPawn(ReportedCharacter), UnevacuatedDownedHostages );
+	if(IsInArray(Pawn(ReportedCharacter), UnevacuatedDownedHostages))
+	{
+		Remove( SwatPawn(ReportedCharacter), UnevacuatedDownedHostages );
+	}
+
     Add(SwatPawn(ReportedCharacter), ReportedDownedHostages);
 }
 

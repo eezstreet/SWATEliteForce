@@ -4462,7 +4462,7 @@ exec function Say( string Msg )
     }
 
   if(Pawn != None)
-	  Level.Game.Broadcast(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+	  Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
   else
     Level.Game.Broadcast(self, Msg, 'Say');
 }
@@ -5732,8 +5732,6 @@ function HandleWalking()
     local bool WantsToWalk; //versus run
     local HandheldEquipment ActiveItem;
 
-    ActiveItem = Pawn.GetActiveItem();
-
     if ( IsLocationFrozen() )
     {
         //null-out any positional input
@@ -5749,6 +5747,7 @@ function HandleWalking()
 
 	if ( Pawn != None )
     {
+		ActiveItem = Pawn.GetActiveItem();
         //WantsToWalk = bool(bRun) == Repo.GuiConfig.bAlwaysRun; // MCJ: old version.
         WantsToWalk = (WantsZoom && ActiveItem.ShouldWalkInIronsights()) || bool(bRun) == bAlwaysRun;
 		Pawn.SetWalking( WantsToWalk && !Region.Zone.IsA('WarpZoneInfo') );

@@ -138,5 +138,25 @@ function PreDelete()
     MissionResultNames.Remove( 0, MissionResultNames.Length );
     availableIndex = 0;
     StringName = "";
+	CampaignPath = 0;
+	PlayerPermadeath = false;
+	PlayerDied = false;
+	OfficerPermadeath = false;
+	RedOneDead = false;
+	RedTwoDead = false;
+	BlueOneDead = false;
+	BlueTwoDead = false;
+	MissionsCompleted = 0;
+	TimesIncapacitated = 0;
+	TimesInjured = 0;
+	OfficersIncapacitated = 0;
+	PenaltiesIssued = 0;
+	SuspectsRemoved = 0;
+	SuspectsNeutralized = 0;
+	SuspectsIncapacitated = 0;
+	SuspectsArrested = 0;
+	CiviliansRestrained = 0;
+	TOCReports = 0;
+	EvidenceSecured = 0;
     SaveConfig();
 }

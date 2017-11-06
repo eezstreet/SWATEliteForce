@@ -1,0 +1,259 @@
+class SwatMPAdminPanel extends SwatGuiPanel
+	config(SwatGui);
+
+import enum AdminPermissions from SwatGame.SwatAdmin;
+
+enum AdminPlayerActions
+{
+	PlayerAction_Kick,
+	PlayerAction_Ban/*,
+	The following are what I intend to implement. Someday.
+	PlayerAction_MakeLeader,
+	PlayerAction_Mute,
+	PlayerAction_Respawn,
+	PlayerAction_ForceLessLethal,
+	PlayerAction_ForceSpectator,
+	PlayerAction_SwitchTeam,
+	PlayerAction_Freeze,
+	PlayerAction_Kill,
+	PlayerAction_ClearWarnings
+	*/
+};
+
+enum AdminMapActions
+{
+	MapAction_NextMap,
+	MapAction_StartGame,
+	MapAction_EndGame/*,
+	The following are what I intend to implement. Someday.
+	MapAction_PassVote,
+	MapAction_FailVote,
+	MapAction_Restart,
+	MapAction_ClearPenalties,
+	MapAction_ForceAllRed,
+	MapAction_ForceAllBlue,
+	MapAction_UnreadyAll,
+	MapAction_RespawnAll
+	*/
+};
+
+var(SWATGui) private EditInline Config GUIListBox Players;
+
+var(SWATGui) private EditInline Config GUIComboBox PlayerActions;
+var(SWATGui) private EditInline Config GUIButton PlayerActionButton;
+var localized config string PlayerActionNames[AdminPlayerActions.EnumCount];
+var config string PlayerConsoleCommands[AdminPlayerActions.EnumCount]; // These MUST match the ones in the PlayerController!!
+var private int NumberPlayerActionsAllowed;
+
+var(SWATGui) private EditInline Config GUIComboBox MapActions;
+var(SWATGui) private EditInline Config GUIButton MapActionButton;
+var localized config string MapActionNames[AdminMapActions.EnumCount];
+var config string MapConsoleCommands[AdminMapActions.EnumCount];	// These MUST match the ones in the PlayerController!!
+var private int NumberMapActionsAllowed;
+
+// Maps a player action to a permission
+private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions e)
+{
+	switch(e)
+	{
+		case PlayerAction_Kick:
+			return AdminPermissions.Permission_Kick;
+		case PlayerAction_Ban:
+			return AdminPermissions.Permission_KickBan;
+	}
+}
+
+// Maps a map action to a permission
+private function AdminPermissions MapMapActionToPermission(AdminMapActions e)
+{
+	switch(e)
+	{
+		case MapAction_NextMap:
+			return AdminPermissions.Permission_Switch;
+		case MapAction_StartGame:
+			return AdminPermissions.Permission_StartGame;
+		case MapAction_EndGame:
+			return AdminPermissions.Permission_EndGame;
+	}
+}
+
+// Populates the player actions list
+private function PopulatePlayerActions(SwatPlayerReplicationInfo PRI)
+{
+	local int i;
+
+	if(PRI == None)
+	{
+		return;
+	}
+
+	PlayerActions.Clear();
+	NumberPlayerActionsAllowed = 0;
+
+	// Iterate through the player actions, adding each one to the list
+	for(i = 0; i < AdminPlayerActions.EnumCount; i++)
+	{
+		if(PRI.MyRights[MapPlayerActionToPermission(AdminPlayerActions(i))] > 0 || PRI.bLocalClient)
+		{
+			PlayerActions.AddItem(PlayerActionNames[i], , , i);
+			NumberPlayerActionsAllowed++;
+		}
+	}
+
+	// Disable the button if we don't have any actions
+	PlayerActionButton.Show();
+	PlayerActionButton.OnClick = InternalPlayerActionButton;
+	if(NumberPlayerActionsAllowed > 0)
+	{
+		PlayerActionButton.EnableComponent();
+
+	}
+	else
+	{
+		PlayerActionButton.DisableComponent();
+	}
+}
+
+// Populates the map actions list
+private function PopulateMapActions(SwatPlayerReplicationInfo PRI)
+{
+	local int i;
+
+	if(PRI == None)
+	{
+		Log("SwatMPAdminPanel:PopulateMapActions: PRI was None ?");
+		return;
+	}
+
+	MapActions.Clear();
+	NumberMapActionsAllowed = 0;
+
+	// Iterate through the map actions, adding each one to the list.
+	for(i = 0; i < AdminMapActions.EnumCount; i++)
+	{
+		if(i == AdminMapActions.MapAction_StartGame && GC.SwatGameState != GAMESTATE_PreGame)
+		{
+			// Special case -- don't show the Start Game action unless we're in pregame
+			continue;
+		}
+		else if(i == AdminMapActions.MapAction_EndGame && GC.SwatGameState != GAMESTATE_MidGame)
+		{
+			// Special case -- don't show the End Game action unless we're actually in the game
+			continue;
+		}
+		else if(PRI.MyRights[MapMapActionToPermission(AdminMapActions(i))] > 0 || PRI.bLocalClient)
+		{
+			MapActions.List.Add(MapActionNames[i], , , i);
+			NumberMapActionsAllowed++;
+		}
+	}
+
+	// Disable the button if we don't have any actions
+	MapActionButton.OnClick = InternalMapActionButton;
+	MapActionButton.Show();
+	if(NumberMapActionsAllowed > 0)
+	{
+		MapActionButton.EnableComponent();
+	}
+	else
+	{
+		MapActionButton.DisableComponent();
+	}
+}
+
+// Populates the list of players
+private function PopulatePlayerNames(SwatGameReplicationInfo SGRI)
+{
+	local int i;
+	local SwatPlayerReplicationInfo PRI;
+
+	if(SGRI == None)
+	{
+		return;
+	}
+
+	Players.List.Clear();
+
+	for(i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
+	{
+		PRI = SGRI.PRIStaticArray[i];
+		if(PRI == None)
+		{
+			continue;
+		}
+
+		Players.List.Add(PRI.PlayerName, , , PRI.SwatPlayerID);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////
+//
+//	Delegates
+
+// Update the players every second
+event Timer()
+{
+	local SwatGameReplicationInfo SGRI;
+
+	SGRI = SwatGameReplicationInfo(PlayerOwner().GameReplicationInfo);
+
+	PopulatePlayerNames(SGRI);
+}
+
+// Happens when the player action button is clicked
+private function InternalPlayerActionButton(GUIComponent Sender)
+{
+	local int Action;
+	local int PlayerID;
+
+	Action = PlayerActions.List.GetExtraIntData();
+	PlayerID = Players.List.GetExtraIntData();
+
+	PlayerOwner().ConsoleCommand(PlayerConsoleCommands[Action] $ " " $ PlayerID);
+}
+
+// Happens when the map action button is clicked
+private function InternalMapActionButton(GUIComponent Sender)
+{
+	local int Action;
+
+	Action = MapActions.List.GetExtraIntData();
+
+	PlayerOwner().ConsoleCommand(MapConsoleCommands[Action]);
+}
+
+// Happens upon the menu becoming activated
+private function InternalOnActivate()
+{
+	local SwatPlayerReplicationInfo PRI;
+
+	SetTimer(1.0, true);
+
+	PRI = SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
+
+	PopulatePlayerActions(PRI);
+	PopulateMapActions(PRI);
+}
+
+private function InternalOnDeActivate()
+{
+    KillTimer();
+}
+
+// Default properties.
+defaultproperties
+{
+	OnActivate=InternalOnActivate
+	//OnDeActivate=InternalOnDeActivate
+
+	PlayerActionNames[0]="Kick"
+	PlayerActionNames[1]="Ban"
+	MapActionNames[0]="Next Map"
+	MapActionNames[1]="Start Game"
+	MapActionNames[2]="End Game"
+	PlayerConsoleCommands[0]="KID"
+	PlayerConsoleCommands[1]="KBID"
+	MapConsoleCommands[0]="NM"
+	MapConsoleCommands[1]="StartGame"
+	MapConsoleCommands[2]="AbortGame"
+}

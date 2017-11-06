@@ -28,11 +28,13 @@ var(SWATGui) private EditInline Config GUIButton MyBackButton;
 var(SWATGui) private EditInline Config GUIButton MyLoadoutButton;
 var(SWATGui) private EditInline Config GUIButton MyScoresButton;
 var(SWATGui) private EditInline Config GUIButton MyVotingButton;
+var(SWATGui) private EditInline Config GUIButton MyAdminButton;
 
 var(SWATGui) private EditInline Config SwatMPLoadoutPanel  MyMPLoadoutPanel;
 var(SWATGui) private EditInline Config SwatMPScoresPanel  MyMPScoresPanel;
 var(SWATGui) private EditInline Config SwatMPVotingPanel  MyMPVotingPanel;
 var(SWATGui) private EditInline Config SwatCampaignCoopMapPanel MyCampaignPanel;
+var(SWATGui) private EditInline Config SwatMPAdminPanel MyMPAdminPanel;
 
 var(SWATGui) private EditInline Config GUIButton		    MyGameSettingsButton;
 var(SWATGui) private EditInline Config GUIButton		    MyServerSettingsButton;
@@ -88,6 +90,7 @@ function InitComponent(GUIComponent MyOwner)
     MyLoadoutButton.OnClick=CommonOnClick;
     MyScoresButton.OnClick=CommonOnClick;
 	  MyVotingButton.OnClick=CommonOnClick;
+	MyAdminButton.OnClick=CommonOnClick;
 
     MyGameSettingsButton.OnClick=CommonOnClick;
     MyServerSettingsButton.OnClick=CommonOnClick;
@@ -459,6 +462,9 @@ function CommonOnClick(GUIComponent Sender)
 		case MyVotingButton:
             OpenVoting();
             break;
+		case MyAdminButton:
+			OpenAdmin();
+			break;
 		case MyGameSettingsButton:
 			      OpenGameSettings();
 			      break;
@@ -503,37 +509,63 @@ function ResumeGame()
 	Controller.CloseMenu();
 }
 
+private function OpenAdmin()
+{
+	MyCampaignPanel.Hide();
+	MyCampaignPanel.DeActivate();
+	MyMPVotingPanel.Hide();
+	MyMPVotingPanel.DeActivate();
+	MyMPAdminPanel.Show();
+	MyMPAdminPanel.Activate();
+	MyMPScoresPanel.Hide();
+	MyMPScoresPanel.DeActivate();
+	MyMPLoadoutPanel.Hide();
+	MyMPLoadoutPanel.DeActivate();
+
+	MyServerSettingsButton.EnableComponent();
+	MyScoresButton.EnableComponent();
+	MyLoadoutButton.EnableComponent();
+	MyVotingButton.EnableComponent();
+	MyAdminButton.Focus();
+}
+
 private function OpenCampaign()
 {
-  MyCampaignPanel.Show();
-  MyCampaignPanel.Activate();
-  MyMPVotingPanel.Hide();
-  MyMPVotingPanel.DeActivate();
-  MyMPScoresPanel.Hide();
-  MyMPScoresPanel.DeActivate();
-  MyMPLoadoutPanel.Hide();
-  MyMPLoadoutPanel.DeActivate();
+	MyCampaignPanel.Show();
+	MyCampaignPanel.Activate();
+	MyMPVotingPanel.Hide();
+	MyMPVotingPanel.DeActivate();
+	MyMPAdminPanel.Hide();
+	MyMPAdminPanel.DeActivate();
+	MyMPScoresPanel.Hide();
+	MyMPScoresPanel.DeActivate();
+	MyMPLoadoutPanel.Hide();
+	MyMPLoadoutPanel.DeActivate();
 
-  MyServerSettingsButton.Focus();
-  MyScoresButton.EnableComponent();
-  MyLoadoutButton.EnableComponent();
-  MyVotingButton.EnableComponent();
+	MyServerSettingsButton.Focus();
+	MyScoresButton.EnableComponent();
+	MyLoadoutButton.EnableComponent();
+	MyVotingButton.EnableComponent();
+	MyAdminButton.EnableComponent();
 }
 
 private function OpenVoting()
 {
 	MyMPVotingPanel.Show();
     MyMPVotingPanel.Activate();
+	MyMPAdminPanel.Hide();
+	MyMPAdminPanel.DeActivate();
 	MyMPScoresPanel.Hide();
     MyMPScoresPanel.DeActivate();
 	MyMPLoadoutPanel.Hide();
     MyMPLoadoutPanel.DeActivate();
-  MyCampaignPanel.Hide();
-  MyCampaignPanel.DeActivate();
+	MyCampaignPanel.Hide();
+	MyCampaignPanel.DeActivate();
 
 	MyVotingButton.Focus();
 	MyScoresButton.EnableComponent();
     MyLoadoutButton.EnableComponent();
+	MyAdminButton.EnableComponent();
 }
 
 private function OpenScores()
@@ -550,6 +582,8 @@ private function OpenScores()
 
 	MyMPVotingPanel.Hide();
     MyMPVotingPanel.DeActivate();
+	MyMPAdminPanel.Hide();
+	MyMPAdminPanel.DeActivate();
     MyMPScoresPanel.Show();
     MyMPScoresPanel.Activate();
     MyMPLoadoutPanel.Hide();
@@ -560,6 +594,7 @@ private function OpenScores()
 	MyVotingButton.EnableComponent();
     MyScoresButton.Focus();
     MyLoadoutButton.EnableComponent();
+	MyAdminButton.EnableComponent();
 }
 
 private function OpenLoadout()
@@ -572,6 +607,8 @@ private function OpenLoadout()
 
 	MyMPVotingPanel.Hide();
     MyMPVotingPanel.DeActivate();
+	MyMPAdminPanel.Hide();
+	MyMPAdminPanel.DeActivate();
     MyMPScoresPanel.Hide();
     MyMPScoresPanel.DeActivate();
     MyMPLoadoutPanel.Show();

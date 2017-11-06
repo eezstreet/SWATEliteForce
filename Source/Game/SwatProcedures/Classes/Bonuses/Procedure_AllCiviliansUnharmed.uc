@@ -35,6 +35,12 @@ function int GetCurrentValue()
     local int NumPlayers;
 
     NumPlayers = GetNumActors( class'SwatHostage' );
+	if(NumPlayers == 0)
+	{	// If no civilians spawn on the map, then it's impossible to secure the bonus based on the logic below.
+		// In this situation we should always award the bonus.
+		return Bonus;
+	}
+
     Modifier = float(NumPlayers-InjuredCivilians.length)/float(NumPlayers);
     total = int(float(Bonus)*Modifier);
 

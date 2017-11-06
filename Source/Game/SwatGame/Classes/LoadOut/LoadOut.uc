@@ -32,6 +32,8 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
  	if (Level.GetEngine().EnableDevTools)
 	    log(self.Name$" >>> Initialize( "$DynamicSpec$" )");
 
+	mplog(self.Name$" >>> Initialize("$DynamicSpec$")");
+
 //     if( DynamicSpec != None )
 //     {
 //         log(self.Name$" ... Dynamic Loadout spec:");
@@ -44,17 +46,19 @@ simulated function Initialize(DynamicLoadOutSpec DynamicSpec, bool IsSuspect)
     if( DynamicSpec != None )
     {
         MutateLoadOutSpec( DynamicSpec, IsSuspect );
-
+		mplog(self.name$"...MutateLoadOutSpec");
         //log(self.Name$" ... After mutation:");
         //PrintLoadOutSpecToMPLog();
     }
 
     ValidateLoadOutSpec(IsSuspect, DynamicSpec);
+	mplog(self.name$"...ValidateLoadOutSpec");
 
     //log(self.Name$" ... After validation:");
     //PrintLoadOutSpecToMPLog();
 
     SpawnEquipmentFromLoadOutSpec(DynamicSpec);
+	mplog(self.name$"...SpawnEquipmentFromLoadOutSpec");
 
     //log(self.Name$" ... Spawned equipment:");
     //PrintLoadOutToMPLog();
@@ -112,6 +116,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
     PrimaryAmmo = class<SwatAmmo>(LoadOutSpec[1]);
     SecondaryAmmo = class<SwatAmmo>(LoadOutSpec[3]);
 
+	mplog(self.name$"...ValidateLoadOutSpec...");
     if(DynamicSpec.GetPrimaryAmmoCount() < PrimaryAmmo.default.MinReloadsToCarry) {
       DynamicSpec.SetPrimaryAmmoCount(PrimaryAmmo.default.MinReloadsToCarry);
     }
@@ -119,6 +124,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
       DynamicSpec.SetSecondaryAmmoCount(SecondaryAmmo.default.MinReloadsToCarry);
     }
 
+	mplog(self.name$"...ValidateLoadOutSpec::SetPrimary/SecondaryAmmo counts");
     if(GetTotalWeight() > GetMaximumWeight() || GetTotalBulk() > GetMaximumBulk()) {
       // We are overweight. We need to completely respawn our gear from scratch.
       AssertWithDescription(false, "Loadout "$self$" exceeds maximum weight. It's getting reset to the default equipment.");
@@ -131,6 +137,7 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
       }
       return true;
     }
+	mplog(self.name$"...ValidateLoadOutSpec: checked max weight");
 
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
@@ -707,120 +714,139 @@ simulated event Destroyed()
 //
 // IHaveWeight implementation
 function float GetTotalWeight() {
-  local int i;
-  local Engine.IHaveWeight PocketItem;
-  local Engine.FiredWeapon FiredItem;
-  local Engine.HandHeldEquipment HHEItem;
-  local Engine.SwatAmmo FiredItemAmmo;
-  local float total;
+	local int i;
+	local Engine.IHaveWeight PocketItem;
+	local Engine.FiredWeapon FiredItem;
+	local Engine.HandHeldEquipment HHEItem;
+	local Engine.SwatAmmo FiredItemAmmo;
+	local float total;
+	local float minimum;
 
-  total = 0.0;
+	total = 0.0;
+	minimum = GetMinimumWeight();
 
-  for(i = 0; i < Pocket.EnumCount; i++) {
-    if(PocketEquipment[i] == None)
-    {
-      continue;
-    }
+	for(i = 0; i < Pocket.EnumCount; i++) {
+	   	if(PocketEquipment[i] == None)
+	    {
+	    	continue;
+	    }
 
-    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
-    HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
-    if(HHEItem == None) {
-      total += PocketItem.GetWeight();
-    } else if(HHEItem.IsAvailable()) {
-      total += PocketItem.GetWeight();
-    }
+	    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
+	    HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
+	    if(HHEItem == None)
+		{
+		    total += PocketItem.GetWeight();
+	    }
+		else if(HHEItem.IsAvailable())
+		{
+		    total += PocketItem.GetWeight();
+	    }
 
-    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
-      // A weapon
-      FiredItem = FiredWeapon(PocketItem);
-      FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
-      total += FiredItemAmmo.GetCurrentAmmoWeight();
-    }
-  }
+	    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
+		    // A weapon
+		    FiredItem = FiredWeapon(PocketItem);
+		    FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
+		    total += FiredItemAmmo.GetCurrentAmmoWeight();
+	    }
+	}
 
-  return total;
+	if(total < minimum)
+	{
+		total = minimum; // TODO: investigate why this happens
+	}
+
+	return total;
 }
 
 function float GetTotalBulk() {
-  local int i;
-  local Engine.IHaveWeight PocketItem;
-  local Engine.FiredWeapon FiredItem;
-  local Engine.SwatAmmo FiredItemAmmo;
-  local float total;
+	local int i;
+	local Engine.IHaveWeight PocketItem;
+	local Engine.FiredWeapon FiredItem;
+	local Engine.SwatAmmo FiredItemAmmo;
+	local float total;
+	local float minimum;
 
-  total = 0.0;
+	minimum = GetMinimumBulk();
+	total = 0.0;
 
-  for(i = 0; i < Pocket.EnumCount; i++) {
-    if(PocketEquipment[i] == None)
-    {
-      continue;
-    }
+	for(i = 0; i < Pocket.EnumCount; i++)
+	{
+	   	if(PocketEquipment[i] == None)
+	    {
+	    	continue;
+	    }
 
-    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
-    total += PocketItem.GetBulk();
+	    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
+	    total += PocketItem.GetBulk();
 
-    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
-      // Weapon
-      FiredItem = FiredWeapon(PocketItem);
-      FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
-      total += FiredItemAmmo.GetCurrentAmmoBulk();
-    }
-  }
-
-  return total;
-}
-
-function float GetWeightMovementModifier() {
-  local float totalWeight;
-  local float maxWeight, minWeight;
-  local float minMoveModifier, maxMoveModifier;
-
-  totalWeight = GetTotalWeight();
-  maxWeight = GetMaximumWeight();
-  minWeight = GetMinimumWeight();
-  minMoveModifier = GetMinimumMovementModifier();
-  maxMoveModifier = GetMaximumMovementModifier();
-
-  if(totalWeight < minWeight) {
-    // There are legitimate reasons that we don't meet the minimum weight - Training mission comes to mind
-    totalWeight = minWeight;
-  }
-
-  assertWithDescription(totalWeight <= maxWeight,
-    "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in code.");
-
-  totalWeight -= minWeight;
-  maxWeight -= minWeight;
-
-  return ((totalWeight / maxWeight) * (minMoveModifier - maxMoveModifier)) + maxMoveModifier;
-}
-
-function float GetBulkQualifyModifier() {
-	local float totalBulk;
-	local float maxBulk, minBulk;
-	local float minQualifyModifier, maxQualifyModifier;
-
-	totalBulk = GetTotalBulk();
-	minBulk = GetMinimumBulk();
-	maxBulk = GetMaximumBulk();
-	minQualifyModifier = GetMinimumQualifyModifer();
-	maxQualifyModifier = GetMaximumQualifyModifer();
-
-	if(totalBulk < minBulk) {
-	    // There are legitimate reasons that we don't meet the minimum bulk - Training mission comes to mind
-	    totalBulk = minBulk;
+	    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon)
+		{
+	    	// Weapon
+	    	FiredItem = FiredWeapon(PocketItem);
+	    	FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
+	    	total += FiredItemAmmo.GetCurrentAmmoBulk();
+	    }
 	}
 
-	assertWithDescription(totalBulk <= maxBulk,
-	    "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
+	if(total < minimum)
+	{
+		total = minimum; // TODO: investigate why this happens
+	}
 
-	totalBulk -= minBulk;
-	maxBulk -= minBulk;
-
-	return ((totalBulk / maxBulk) * (maxQualifyModifier - minQualifyModifier)) + minQualifyModifier;
+	return total;
 }
 
-function float GetBulkSpeedModifier() {
+simulated function float GetWeightMovementModifier() {
+	local float totalWeight;
+    local float maxWeight, minWeight;
+    local float minMoveModifier, maxMoveModifier;
+
+    totalWeight = GetTotalWeight();
+    maxWeight = GetMaximumWeight();
+    minWeight = GetMinimumWeight();
+    minMoveModifier = GetMinimumMovementModifier();
+    maxMoveModifier = GetMaximumMovementModifier();
+
+    if(totalWeight < minWeight) {
+      // There are legitimate reasons that we don't meet the minimum weight - Training mission comes to mind
+      totalWeight = minWeight;
+    }
+
+    assertWithDescription(totalWeight <= maxWeight,
+      "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in code.");
+
+    totalWeight -= minWeight;
+    maxWeight -= minWeight;
+
+    return ((totalWeight / maxWeight) * (minMoveModifier - maxMoveModifier)) + maxMoveModifier;
+}
+
+simulated function float GetBulkQualifyModifier() {
+	local float totalBulk;
+    local float maxBulk, minBulk;
+    local float minQualifyModifier, maxQualifyModifier;
+
+    totalBulk = GetTotalBulk();
+    minBulk = GetMinimumBulk();
+    maxBulk = GetMaximumBulk();
+    minQualifyModifier = GetMinimumQualifyModifer();
+    maxQualifyModifier = GetMaximumQualifyModifer();
+
+    if(totalBulk < minBulk) {
+  	  // There are legitimate reasons that we don't meet the minimum bulk - Training mission comes to mind
+  	  totalBulk = minBulk;
+    }
+
+    assertWithDescription(totalBulk <= maxBulk,
+  	  "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
+
+    totalBulk -= minBulk;
+    maxBulk -= minBulk;
+
+    return ((totalBulk / maxBulk) * (maxQualifyModifier - minQualifyModifier)) + minQualifyModifier;
+}
+
+simulated function float GetBulkSpeedModifier() {
 	local float totalBulk;
 	local float maxBulk, minBulk;
 	local float minSpeedModifier, maxSpeedModifier;

@@ -1,5 +1,5 @@
 class SwatAdminPermissions extends Engine.Actor
-	config(SwatAdmin)
+	config(SwatGuiState)
 	perobjectconfig;
 
 import enum AdminPermissions from SwatAdmin;
@@ -64,6 +64,7 @@ function string GetPassword()
 
 defaultproperties
 {
+	bHidden=true
 	HashPassword=""
 	bAlwaysRelevant=true
 	RemoteRole=Role_DumbProxy

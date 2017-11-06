@@ -33,6 +33,7 @@ var bool bIsDead;
 var int MyRights[AdminPermissions.Permission_Max];
 var private SwatAdminPermissions MyPermissions;
 var bool bIsAdmin;
+var bool bLocalClient;
 
 var COOPStatus COOPPlayerStatus;
 

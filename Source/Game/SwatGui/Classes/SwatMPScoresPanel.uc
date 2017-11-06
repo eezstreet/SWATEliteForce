@@ -202,27 +202,33 @@ private function UpdateToggleVOIPIgnoreButton()
 private function UpdateAdminButton()
 {
 	local SwatPlayerReplicationInfo PRI;
+	local bool bLocalClient;
 
 	MyAbortGameButton.SetVisibility(true);
 
 	PRI = SwatPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
+	bLocalClient = PRI.bLocalClient;
 
-	if(GC.SwatGameState == GAMESTATE_PreGame &&
-		PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+	if(GC.SwatGameState == GAMESTATE_ClientTravel)
+	{
+		MyAbortGameButton.SetVisibility(false);
+	}
+	else if(GC.SwatGameState == GAMESTATE_PreGame &&
+		(PRI.MyRights[AdminPermissions.Permission_StartGame] > 0 || bLocalClient))
 	{
 		MyAbortGameButton.SetCaption( StartGameString );
 	}
 	else if(GC.SwatGameState == GAMESTATE_MidGame &&
-		PRI.MyRights[AdminPermissions.Permission_EndGame] > 0)
+		(PRI.MyRights[AdminPermissions.Permission_EndGame] > 0 || bLocalClient))
 	{
 		MyAbortGameButton.SetCaption( AbortGameString );
 	}
 	else if(GC.SwatGameState == GAMESTATE_PostGame &&
-		PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+		(PRI.MyRights[AdminPermissions.Permission_StartGame] > 0 || bLocalClient))
 	{
 		MyAbortGameButton.SetCaption( NextGameString );
 	}
-	else if(!PRI.bIsAdmin)
+	else if(!PRI.bIsAdmin && !bLocalClient)
 	{
 		MyAbortGameButton.SetCaption( AdminLoginString );
 	}
@@ -418,22 +424,22 @@ function InternalOnClick(GUIComponent Sender)
 		case MyAbortGameButton:
 
 			if(GC.SwatGameState == GAMESTATE_PreGame &&
-				PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+				(PRI.MyRights[AdminPermissions.Permission_StartGame] > 0 || PRI.bLocalClient))
 			{
 				SwatPlayerController(PlayerOwner()).StartGame();
 			}
 			else if(GC.SwatGameState == GAMESTATE_MidGame &&
-				PRI.MyRights[AdminPermissions.Permission_EndGame] > 0)
+				(PRI.MyRights[AdminPermissions.Permission_EndGame] > 0 || PRI.bLocalClient))
 			{
 				SwatPlayerController(PlayerOwner()).AbortGame();
     		    Controller.CloseMenu();
 			}
 			else if(GC.SwatGameState == GAMESTATE_PostGame &&
-				PRI.MyRights[AdminPermissions.Permission_StartGame] > 0)
+				(PRI.MyRights[AdminPermissions.Permission_StartGame] > 0 || PRI.bLocalClient))
 			{
 				SwatPlayerController(PlayerOwner()).StartGame();
 			}
-			else if(!PRI.bIsAdmin)
+			else if(!PRI.bIsAdmin && !PRI.bLocalClient)
 			{
 				Controller.TopPage().OnPopupReturned=InternalOnPasswordPopupReturned;
 		        Controller.OpenMenu( "SwatGui.SwatPasswordPopup", "SwatPasswordPopup", AdminPasswordQueryString );

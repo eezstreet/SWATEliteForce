@@ -61,6 +61,7 @@ function Broadcast( Actor Sender, coerce string Msg, optional name Type )
 	local PlayerReplicationInfo PRI;
 
 	// see if allowed (limit to prevent spamming)
+
 	if ( !AllowsBroadcast(Sender, Len(Msg)) )
 	{
 		return;
