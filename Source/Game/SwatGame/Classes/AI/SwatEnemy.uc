@@ -684,16 +684,16 @@ function EnemySpeechManagerAction GetEnemySpeechManagerAction()
 simulated final function DropActiveWeapon(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude)
 {
 	local HandheldEquipment ActiveItem;
-	
+
 	mplog( self$"---SwatEnemy::DropActiveWeapon()." );
-	
+
 	if ( Level.IsCoopServer )
 		NotifyClientsToDropActiveWeapon();
 
 	ActiveItem = GetActiveItem();
-	
+
 	if (ActiveItem == None) return;
-	
+
 	if (ActiveItem == GetPrimaryWeapon() || ActiveItem == GetBackupWeapon())
 	{
 		DropWeapon(ActiveItem, WeaponSpaceDropDirection*DropImpulseMagnitude);
@@ -1231,27 +1231,6 @@ simulated function name GetEffectEventForReportResponseFromTOCWhenNotIncapacitat
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Misc
-
-
-// Override superclass method so that in single player games it gives the
-// proper name instead of "SwatEnemy12" or some other auto-generated name
-simulated function String GetHumanReadableName()
-{
-	if (Level.NetMode == NM_StandAlone)
-    {
-	    // ckline FIXME: right now we don't have to display a
-	    // human-readable name for enemies in single-player games.
-		// If it becomes necessary to do this, we should associated a localized
-		// human-readable name with each archetype, and then return
-		// the human-readable name associated with this pawn's archetype.
-		//
-		// But for now we're ignoring the problem, and just returning "Suspect".
-        return "Suspect";
-    }
-
-	// Superclass will deal non-standalone games, etc
-    return Super.GetHumanReadableName();
-}
 
 function OnUsingBegan()
 {

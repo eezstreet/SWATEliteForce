@@ -1,5 +1,8 @@
 class SwatAdmin extends Engine.Actor
-    config(SwatGuiState);
+    config(SwatGuiState)
+	dependsOn(SwatWebAdminListener);
+
+import enum WebAdminMessageType from SwatWebAdminListener;
 
 enum AdminPermissions
 {
@@ -26,6 +29,28 @@ var public config array<name> PermissionNames;
 var public config class<SwatAdminPermissions> PermissionClass;
 var public config array<AutoAction> AutoActions;
 var private int AutoActionNum;
+
+var public config bool UseWebAdmin;
+var public config int WebAdminPort;
+var public config class<SwatWebAdminListener> WebAdminClass;
+var private SwatWebAdminListener WebAdmin;
+
+var private localized config string PenaltyFormat;
+var private localized config string SayFormat;
+var private localized config string SwitchTeamsFormat;
+var private localized config string NameChangeFormat;
+var private localized config string YesVoteFormat;
+var private localized config string NoVoteFormat;
+var private localized config string SuicideFormat;
+var private localized config string KillFormat;
+var private localized config string TeamKillFormat;
+var private localized config string ArrestFormat;
+var private localized config string ConnectFormat;
+var private localized config string DisconnectFormat;
+var private localized config string PromotedFormat;
+var private localized config string KickFormat;
+var private localized config string KickBanFormat;
+var private localized config string IncapacitateFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -63,6 +88,12 @@ function PostBeginPlay()
 	{
 		Permissions[i] = Spawn(PermissionClass, self, PermissionNames[i]);
 	}
+
+	if(UseWebAdmin)
+	{
+		log("Spawning webadmin");
+		WebAdmin = Spawn(WebAdminClass, self);
+	}
 }
 
 // Clean up some stuff --eez
@@ -70,6 +101,12 @@ event Destroyed()
 {
 	GuestPermissions = None;
 	Permissions.Length = 0;
+
+	if(WebAdmin != None)
+	{
+		WebAdmin.Destroy();
+		WebAdmin = None;
+	}
 }
 
 // The timer is used to execute AutoActions which can be used to
@@ -102,6 +139,22 @@ function PerformAutoAction(String Text)
 	{
 		ACCommand(Level.GetLocalPlayerController(), Mid(Text, 3));
 	}
+}
+
+// Find a role with password
+function SwatAdminPermissions FindRole(String Password)
+{
+	local int i;
+
+	for(i = 0; i < Permissions.Length; i++)
+	{
+		if(Permissions[i].TryPassword(Password))
+		{
+			return Permissions[i];
+		}
+	}
+
+	return None;
 }
 
 // Attempt to log in
@@ -266,6 +319,135 @@ function ACCommand( PlayerController PC, String S )
 	}
 }
 
+// Broadcast something
+function Broadcast(Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location)
+{
+	local string StrA, StrB, StrC;
+
+	StrA = GetFirstField(Msg,"\t");
+    StrB = GetFirstField(Msg,"\t");
+    StrC = GetFirstField(Msg,"\t");
+
+	switch(Type)
+	{
+		case 'PenaltyIssuedChat':
+			mplog("Penalty given: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Penalty, FormatTextString(PenaltyFormat, StrA, StrB));
+			break;
+		case 'TeamSay':
+			mplog("TeamSay: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			break;
+		case 'Say':
+			mplog("Say: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			break;
+		case 'WebAdminChat':
+			mplog("WebAdminChat: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			break;
+		case 'SayLocalized':
+			mplog("SayLocalized: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			break;
+		case 'TeamSayLocalized':
+			mplog("TeamSayLocalized: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			break;
+		case 'SwitchTeams':
+			mplog("SwitchTeams: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(SwitchTeamsFormat, StrA));
+			break;
+		case 'NameChange':
+			mplog("NameChange: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_NameChange, FormatTextString(NameChangeFormat, StrA, StrB));
+			break;
+		case 'CommandGiven':
+			mplog("CommandGiven: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, Msg);
+			break;
+		case 'YesVote':
+			mplog("YesVote: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, FormatTextString(YesVoteFormat, StrA));
+			break;
+		case 'NoVote':
+			mplog("NoVote: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, FormatTextString(NoVoteFormat, StrA));
+			break;
+		case 'ReferendumStarted':
+			mplog("ReferendumStarted: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, Msg);
+			break;
+		case 'ReferendumSucceeded':
+			mplog("ReferendumSucceeded: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, "The vote succeeded.");
+			break;
+		case 'ReferendumFailed':
+			mplog("ReferendumFailed: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, "The vote failed.");
+			break;
+		case 'BlueSuicide':
+		case 'RedSuicide':
+			mplog("Suicide: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(SuicideFormat, StrA));
+			break;
+		case 'BlueKill':
+		case 'RedKill':
+			mplog("SwatKill: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(KillFormat, StrA, StrB, StrC));
+			break;
+		case 'BlueIncapacitate':
+		case 'RedIncapacitate':
+			mplog("Incapacitate: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(IncapacitateFormat, StrA, StrB, StrC));
+			break;
+		case 'TeamKill':
+			mplog("TeamKill: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_TeamKill, FormatTextString(TeamKillFormat, StrA, StrB, StrC));
+			break;
+		case 'BlueArrest':
+		case 'RedArrest':
+			mplog("Arrest: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Arrest, FormatTextString(ArrestFormat, StrA, StrB));
+			break;
+		case 'PlayerConnect':
+			mplog("PlayerConnect: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(ConnectFormat, StrA));
+			break;
+		case 'PlayerDisconnect':
+			mplog("PlayerDisconnect: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(DisconnectFormat, StrA));
+			break;
+		case 'RoundStarted':
+			mplog("RoundStarted");
+			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The round has started.");
+			break;
+		case 'RoundEnded':
+			mplog("RoundEnded");
+			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The round has ended.");
+			break;
+		case 'WebAdminLeft':
+			mplog("WebAdminLeft: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_AdminLeave, Msg$" has left WebAdmin.");
+			break;
+	}
+}
+
+// Broadcast something to a team
+function BroadcastTeam(Controller Sender, coerce string Msg, optional name Type, optional string Location)
+{
+	Broadcast(Controller(Sender.Owner), Msg, Type, , Location);
+}
+
+// Send a message to WebAdmin
+function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg)
+{
+	if(WebAdmin != None)
+	{
+		WebAdmin.SendWebAdminMessage(Type, Msg);
+	}
+}
+
 defaultproperties
 {
     bStatic=false
@@ -278,4 +460,22 @@ defaultproperties
 
 	PermissionClass=class'SwatAdminPermissions'
 	GuestPermissionName='DefaultGuestPermissions'
+
+	UseWebAdmin=true
+	WebAdminPort=6000
+	WebAdminClass=class'SwatWebAdminListener'
+
+	PenaltyFormat="%1 caused penalty: %2"
+	SayFormat="%1: %2"
+	SwitchTeamsFormat="%1 switched teams."
+	NameChangeFormat="%1 changed their name to %2"
+	YesVoteFormat="%1 voted yes."
+	NoVoteFormat="%1 voted no."
+	SuicideFormat="%1 committed suicide."
+	KillFormat="%1 killed %2 with %3"
+	TeamKillFormat="%1 TEAM-KILLED %2 with %3"
+	ConnectFormat="%1 connected to game server."
+	DisconnectFormat="%1 disconnected from game server."
+	ArrestFormat="%1 arrested %2"
+	IncapacitateFormat="%1 incapacitated %2 with %3"
 }

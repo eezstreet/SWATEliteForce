@@ -46,7 +46,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 
     AssertNotInArray( Pawn, IncapacitatedHostages, 'IncapacitatedHostages' );
     Add( Pawn, IncapacitatedHostages );
-    ChatMessageEvent('PenaltyIssued');
+	TriggerPenaltyMessage(Pawn(Incapacitator));
     GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)

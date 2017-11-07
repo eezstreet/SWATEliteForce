@@ -8,6 +8,7 @@ var config bool IsNeverHidden;
 var config bool IsShownInObjectivesPanel;
 var config bool IsABonus; //bonuses are treated differently than penalties
 var config localized string ChatMessage;
+var config localized string ChatMessageFormat;
 
 var private SwatGameInfo Game;
 
@@ -128,10 +129,10 @@ function int GetNumOfficers()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
-//  Chat messages!
+//  Penalty message!
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-function ChatMessageEvent(Name EventType)
+function TriggerPenaltyMessage(Pawn Inflictor)
 {
-  Game.SendGlobalMessage(ChatMessage, EventType);
+	Game.PenaltyTriggeredMessage(Inflictor, ChatMessage);
 }

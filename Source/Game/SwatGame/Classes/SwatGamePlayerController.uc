@@ -2982,6 +2982,10 @@ function WasKilledBy(Controller Other)
     if (SwatGameInfo(Level.Game) != None)
     {
         SwatGameInfo(Level.Game).GameEvents.PlayerDied.Triggered(Self, Other);
+		if(Level.NetMode != NM_StandAlone)
+		{
+			SwatGameInfo(Level.Game).Broadcast(self, SwatPawn(Pawn).GetHumanReadableName(), 'Fallen');
+		}
 	}
 }
 
@@ -4547,7 +4551,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
 
     if (myHUD != None)
     {
-        if (Type == 'Say' || Type == 'SayLocalized')
+        if (Type == 'Say' || Type == 'SayLocalized' || Type == 'WebAdminChat')
         {
             myHUD.AddTextMessage(s, class'ChatGlobalMessage', PRI);
         }

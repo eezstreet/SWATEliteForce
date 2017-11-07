@@ -318,6 +318,11 @@ function SetPatrolAnimMovementSet()
 	}
 }
 
+simulated function String GetHumanReadableName()
+{
+	return Instance.FriendlyName;
+}
+
 simulated function EAnimationSet GetEquipmentAimSet()
 {
     // We have special compliant upper body aimposes
@@ -1141,6 +1146,63 @@ simulated event FellOutOfWorld(eKillZType KillType)
     }
 
     Super.FellOutOfWorld(KillType);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// These bits handle the special MP messages --eez
+
+function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
+{
+	local NetPlayer Player;
+	local name MsgType;
+	local string Msg;
+	local string WeaponName;
+
+	Player = NetPlayer(Incapacitator);
+	if(Player != None)
+	{
+		if(Player.GetTeamNumber() == 0)
+		{
+			MsgType = 'BlueIncapacitate';
+		}
+		else
+		{
+			MsgType = 'RedIncapacitate';
+		}
+
+		WeaponName = string(damageType.Outer.name) $ "." $ string(damageType.name);
+
+		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
+
+		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
+	}
+}
+
+function OnKilled(Actor Killer, class<DamageType> damageType)
+{
+	local NetPlayer Player;
+	local name MsgType;
+	local string Msg;
+	local string WeaponName;
+
+	Player = NetPlayer(Killer);
+	if(Player != None)
+	{
+		if(Player.GetTeamNumber() == 0)
+		{
+			MsgType = 'BlueKill';
+		}
+		else
+		{
+			MsgType = 'RedKill';
+		}
+
+		WeaponName = string(damageType.Outer.name) $ "." $ string(damageType.name);
+
+		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
+
+		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

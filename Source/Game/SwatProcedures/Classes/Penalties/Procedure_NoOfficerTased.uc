@@ -22,7 +22,7 @@ function OnPawnTased(Pawn Pawn, Actor Taser)
 	if (!Taser.IsA('SwatPlayer')) return;
 
 	numInfractions++;
-	ChatMessageEvent('PenaltyIssued');
+	TriggerPenaltyMessage(Pawn(Taser));
 	GetGame().CampaignStats_TrackPenaltyIssued();
 }
 

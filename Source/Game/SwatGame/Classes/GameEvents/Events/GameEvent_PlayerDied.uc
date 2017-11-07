@@ -10,7 +10,7 @@ function Register(IInterested_GameEvent_PlayerDied inInterested)
 function UnRegister(IInterested_GameEvent_PlayerDied inInterested)
 {
     local int i;
-    
+
     for( i = 0; i < Interested.length; i++ )
     {
         if( Interested[i] == inInterested )

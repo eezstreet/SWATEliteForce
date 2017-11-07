@@ -32,17 +32,18 @@ var() private config localized string StatsBadProfileMessage;
 var() private config localized string COOPMessageLeaderSelected;
 var() private config localized string CoopQMMMessage;
 
-var() private config localized string SwatSuicideMessage;
-var() private config localized string SuspectsSuicideMessage;
+var() private config localized string BlueKillMessage;
+var() private config localized string RedKillMessage;
+var() private config localized string BlueIncapacitateMessage;
+var() private config localized string RedIncapacitateMessage;
+var() private config localized string BlueArrestMessage;
+var() private config localized string RedArrestMessage;
+var() private config localized string TeamKillMessage;
+var() private config localized string BlueSuicideMessage;
+var() private config localized string RedSuicideMessage;
+var() private config localized string FallenMessage;
 
-var() private config localized string SwatTeamKillMessage;
-var() private config localized string SuspectsTeamKillMessage;
-
-var() private config localized string SwatKillMessage;
-var() private config localized string SuspectsKillMessage;
-
-var() private config localized string SwatArrestMessage;
-var() private config localized string SuspectsArrestMessage;
+var() private config localized string PenaltyMessageChat;
 
 var() private config localized string YesVoteMessage;
 var() private config localized string NoVoteMessage;
@@ -189,6 +190,7 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
             MsgIsChat = true;
             break;
 
+		case 'WebAdminChat':
         case 'Say':
             MsgText = FormatTextString( GlobalChatMessage, StrA, StrB );
             MsgIsChat = true;
@@ -274,43 +276,53 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 		case 'ReferendumFailed':
 			MsgText = FormatTextString( ReferendumFailedMessage );
 			break;
-
-		case 'SwatSuicide':
-            MsgText = FormatTextString( SwatSuicideMessage, StrA );
+		case 'PenaltyIssuedChat':
+			MsgText = FormatTextString( PenaltyMessageChat, StrA, StrB);
+			break;
+		case 'BlueSuicide':
+            MsgText = FormatTextString( BlueSuicideMessage, StrA );
             break;
-        case 'SuspectsSuicide':
-            MsgText = FormatTextString( SuspectsSuicideMessage, StrA );
+        case 'RedSuicide':
+            MsgText = FormatTextString( RedSuicideMessage, StrA );
             break;
-        case 'SwatTeamKill':
+		case 'Fallen':
+			MsgText = FormatTextString( FallenMessage, StrA );
+			break;
+        case 'TeamKill':
             if( StrB == "" )
                 StrB = SomeoneString;
-            MsgText = FormatTextString( SwatTeamKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
+            MsgText = FormatTextString( TeamKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
             break;
-        case 'SuspectsTeamKill':
+        case 'BlueKill':
             if( StrB == "" )
                 StrB = SomeoneString;
-			MsgText = FormatTextString( SuspectsTeamKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
+            MsgText = FormatTextString( BlueKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
             break;
-        case 'SwatKill':
+        case 'RedKill':
             if( StrB == "" )
                 StrB = SomeoneString;
-            MsgText = FormatTextString( SwatKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
+            MsgText = FormatTextString( RedKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
             break;
-        case 'SuspectsKill':
+        case 'BlueArrest':
             if( StrB == "" )
                 StrB = SomeoneString;
-            MsgText = FormatTextString( SuspectsKillMessage, StrA, StrB, GetWeaponFriendlyName(StrC) );
+            MsgText = FormatTextString( BlueArrestMessage, StrA, StrB );
             break;
-        case 'SwatArrest':
+        case 'RedArrest':
             if( StrB == "" )
                 StrB = SomeoneString;
-            MsgText = FormatTextString( SwatArrestMessage, StrA, StrB );
+            MsgText = FormatTextString( RedArrestMessage, StrA, StrB );
             break;
-        case 'SuspectsArrest':
-            if( StrB == "" )
-                StrB = SomeoneString;
-            MsgText = FormatTextString( SuspectsArrestMessage, StrA, StrB );
-            break;
+		case 'BlueIncapacitate':
+			if( StrB == "")
+				StrB = SomeoneString;
+			MsgText = FormatTextString( BlueIncapacitateMessage, StrA, StrB, GetWeaponFriendlyName(StrC));
+			break;
+		case 'RedIncapacitate':
+			if( StrB == "")
+				StrB = SomeoneString;
+			MsgText = FormatTextString( RedIncapacitateMessage, StrA, StrB, GetWeaponFriendlyName(StrC));
+			break;
 
         case 'PlayerConnect':
             if( !bDisplayConnects )
@@ -533,6 +545,8 @@ function InternalOnEntryCompleted(GUIComponent Sender)
 {
     local string ChatText;
 
+	log("SwatChatPanel::InternalOnEntryCompleted()");
+
     ChatText = MyChatEntry.GetText();
 
     CloseChatEntry();
@@ -663,17 +677,22 @@ defaultproperties
     GlobalChatMessage="[c=00ff00][b]%1[\\b][c=00ff00]: %2"
     TeamChatMessageLocalized="[c=808080][b]%1 (%2)[\\b]: %3"
     GlobalChatMessageLocalized="[c=00ff00][b]%1 [\\c][c=ffffff](%2)[\\c][\\b][c=00ff00]: %3"
-    SwatSuicideMessage="[c=0000ff][b]%1[\\b] suicided!"
-    SuspectsSuicideMessage="[c=ff0000][b]%1[\\b] suicided!"
-    SwatTeamKillMessage="[c=0000ff][b]%1[\\b] betrayed [b]%2[\\b] with a %3!"
-    SuspectsTeamKillMessage="[c=ff0000][b]%1[\\b] double crossed [b]%2[\\b] with a %3!"
-    SwatKillMessage="[c=0000ff][b]%1[\\b] neutralized [b]%2[\\b] with a %3!"
-    SuspectsKillMessage="[c=ff0000][b]%1[\\b] killed [b]%2[\\b] with a %3!"
-    SwatArrestMessage="[c=0000ff][b]%1[\\b] arrested [b]%2[\\b]!"
-    SuspectsArrestMessage="[c=ff0000][b]%1[\\b] arrested [b]%2[\\b]!"
+
+	BlueKillMessage="[c=0000ff][b]%1[\\b] neutralized [b]%2[\\b] with a %3!"
+	RedKillMessage="[c=ff0000][b]%1[\\b] neutralized [b]%2[\\b] with a %3!"
+	BlueIncapacitateMessage="[c=0000ff][b]%1[\\b] incapacitated [b]%2[\\b] with a %3!"
+	RedIncapacitateMessage="[c=ff0000][b]%1[\\b] incapacitated [b]%2[\\b] with a %3!"
+	BlueArrestMessage="[c=0000ff][b]%1[\\b] arrested [b]%2[\\b]!"
+	RedArrestMessage="[c=ff0000][b]%1[\\b] arrested [b]%2[\\b]!"
+	TeamKillMessage="[c=ffff00][b]%1[\\b] committed friendly fire against [b]%2[\\b] with a %3!"
+	BlueSuicideMessage="[c=0000ff][b]%1[\\b] suicided!"
+	RedSuicideMessage="[c=ff0000][b]%1[\\b] suicided!"
+	FallenMessage="[c=EC832F][b]%1[\\b] has fallen!"
 
     ConnectedMessage="[c=ffff00][b]%1[\\b] connected to the server."
     DisconnectedMessage="[c=ffff00][b]%1[\\b] dropped from the server."
+
+	PenaltyMessageChat="[c=ffff00][b]%1[\\b] triggered penalty: %2"
 
     MissionFailedString="[c=ffffff]You have [c=ff0000]FAILED[c=ffffff] the mission!"
     MissionCompletedString="[c=ffffff]You have [c=00ff00]COMPLETED[c=ffffff] the mission!"

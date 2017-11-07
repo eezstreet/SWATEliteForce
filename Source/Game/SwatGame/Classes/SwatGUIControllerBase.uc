@@ -235,6 +235,7 @@ function bool OnMessageRecieved( String Msg, Name Type );
 
 final function AddChatMessage( String Msg, optional bool bIsGlobal )
 {
+	log("AddChatMessage: "$Msg);
     if( bIsGlobal )
         ViewportOwner.Actor.Say( Msg );
     else

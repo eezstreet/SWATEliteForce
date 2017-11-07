@@ -378,6 +378,18 @@ function SendGlobalMessage(string Message, name Type)
   }
 }
 
+function PenaltyTriggeredMessage(Pawn Inflictor, string PenaltyMessage)
+{
+	if(Level.NetMode != NM_Standalone)
+	{
+		Broadcast(Inflictor, SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage, 'PenaltyIssuedChat');
+	}
+	else
+	{
+		SendGlobalMessage(PenaltyMessage, 'PenaltyIssued');
+	}
+}
+
 final function OnMissionObjectiveCompleted(Objective Objective)
 {
     if (DebugObjectives)
@@ -385,9 +397,6 @@ final function OnMissionObjectiveCompleted(Objective Objective)
 
     //TODO/COOP: Broadcast message to all clients, have the clients internally dispatchMessage
     dispatchMessage(new class'MessageMissionObjectiveCompleted'(Objective.name));
-
-    log("Repo("$Repo$").GuiConfig("$Repo.GuiConfig$").CurrentMission("$Repo.GuiConfig.CurrentMission$").Objectives("$Repo.GuiConfig.CurrentMission.Objectives$")");
-    log("Repo("$Repo$").MissionObjectives("$Repo.MissionObjectives$")");
 
     if( Repo.GuiConfig.CurrentMission.IsMissionCompleted(Repo.MissionObjectives) )
     {
@@ -1088,14 +1097,11 @@ function AddDefaultInventory(Pawn inPlayerPawn)
         }
         else
         {
-            mplog( "...this player is NOT the VIP." );
-
             if ( NetPlayer(PlayerPawn).GetTeamNumber() == 0 )
                 LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerOfficerLoadOut' );
             else
                 LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerSuspectLoadOut' );
 
-            mplog( "...In AddDefaultInventory(): loadout's owner="$LoadOut.Owner );
             assert(LoadOut != None);
 
             // First, set all the pocket items in the NetPlayer loadout spec, so
@@ -1121,8 +1127,6 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             // Alter it *ex post facto* to have the correct ammo counts
             LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
             LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
-
-			mplog("...Set ammo counts to "$RepoPlayerItem.GetPrimaryAmmoCount()$" and "$RepoPlayerItem.GetSecondaryAmmoCount());
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -1130,11 +1134,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     LoadOut.Initialize( LoadOutSpec, IsSuspect );
 
-	mplog("LoadOut.Initialize()");
-
     PlayerPawn.ReceiveLoadOut(LoadOut);
-
-	mplog("PlayerPawn.ReceiveLoadOut");
 
     // We have to do this after ReceiveLoadOut() because that's what sets the
     // Replicated Skins.
@@ -1143,8 +1143,6 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     //TMC TODO do this stuff in the PlayerPawn (legacy support)
 	SetPlayerDefaults(PlayerPawn);
-
-	mplog("PlayerPawn - SetPlayerDefaults");
 }
 
 exec function MissionStatus()
@@ -1691,8 +1689,6 @@ function Logout( Controller Exiting )
 	local SwatPlayerController PC;
 	local Controller i;
 
-    mplog( "---SwatGameInfo::Logout(). ControllerLeaving="$Exiting );
-
     SGPC = SwatGamePlayerController( Exiting );
     if ( SGPC != None && SGPC.SwatPlayer != None )
     {
@@ -2048,8 +2044,12 @@ function NetTeam GetTeamFromID( int TeamID )
 //overridden from Engine.GameInfo
 event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
-//log( self$"::Broadcast( "$Msg$" "$Location$" )" );
+//mplog( self$"::Broadcast( "$Msg$", "$Type$" )" );
 	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
+	if(Admin != None)
+	{
+		Admin.Broadcast(Sender, Msg, Type, Target);
+	}
 }
 
 //overridden from Engine.GameInfo
@@ -2061,11 +2061,19 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
         BroadcastObservers( Sender, Msg, Type );
 
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
+	if(Admin != None)
+	{
+		Admin.BroadcastTeam(Sender, Msg, Type, Location);
+	}
 }
 
 function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional String Location)
 {
 	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
+	if(Admin != None)
+	{
+		Admin.Broadcast(Sender, Msg, Type, Target, Location);
+	}
 }
 
 function BroadcastObservers( Controller Sender, coerce string Msg, optional name Type )
@@ -2077,6 +2085,11 @@ function BroadcastObservers( Controller Sender, coerce string Msg, optional name
 	// see if allowed (limit to prevent spamming)
 	if ( !BroadcastHandler.AllowsBroadcast(Sender, Len(Msg)) )
 		return;
+
+	if(Admin != None)
+	{
+		Admin.BroadcastTeam(Sender, Msg, Type);
+	}
 
 	if ( Sender != None )
 	{
@@ -2101,6 +2114,8 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
     local SwatPlayer OtherPlayer;
 	local PlayerController KillerPC;
 	local PlayerController VictimPC;
+	local string Msg;
+	local name MsgType;
 
     //dont send death messages for generic deaths
     if( damageType == class'GenericDamageType' )
@@ -2120,6 +2135,8 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
     if ( OtherPlayer != None && !OtherPlayer.IsTheVIP() && OtherPlayer.IsArrested() )
         return;
 
+	Msg = KillerName$"\t"$VictimName$"\t"$WeaponName;
+
     // Note: VictimName might be None if Controller's Pawn is destroyed before this
     // this method is called. Hopefully that won't happen, but try to do something
     // semi-intelligent in this situation.
@@ -2129,17 +2146,18 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 	{
 	    if ( (Killer == Other) || (Killer == None) )
 	    {
-	        if( KillerTeam != 0 )
-    		    Broadcast(Other, VictimName, 'SuspectsSuicide');
-	        else
-    		    Broadcast(Other, VictimName, 'SwatSuicide');
+			if(KillerTeam == 0)
+			{
+				MsgType = 'BlueSuicide';
+			}
+			else
+			{
+				MsgType = 'RedSuicide';
+			}
 		}
-	    else if( KillerTeam == VictimTeam )
+	    else
 	    {
-	        if( KillerTeam != 0 )
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SuspectsTeamKill');
-	        else
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SwatTeamKill');
+			MsgType = 'TeamKill';
 
 			// dbeswick: stats
 			KillerPC = PlayerController(Killer);
@@ -2149,26 +2167,17 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 				KillerPC.Stats.TeamKilled(damageType.name, VictimPC);
 			}
 		}
-		else
-		{
-	        if( KillerTeam != 0 )
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SuspectsKill');
-	        else
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SwatKill');
-
-			// dbeswick: stats
-			KillerPC = PlayerController(Killer);
-			if (KillerPC != None)
-			{
-				VictimPC = PlayerController(Other);
-				KillerPC.Stats.Killed(damageType.name, VictimPC);
-			}
-		}
+	}
+	else if(Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None)
+	{
+		MsgType = 'Fallen';
 	}
 	else // someone killed a non-player (e.g., an AI was killed)
 	{
-		Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'AIDeath');	// TODO: should this be a 'PlayerDeath' Message Type?
+		MsgType = 'AIDeath';
 	}
+
+	Broadcast(Other, Msg, MsgType);
 }
 
 function BroadcastArrestedMessage(Controller Killer, Controller Other)
@@ -2178,19 +2187,25 @@ function BroadcastArrestedMessage(Controller Killer, Controller Other)
     local int VictimTeam;
 	local PlayerController KillerPC;
 	local PlayerController OtherPC;
+	local string Msg;
 
     KillerName = Killer.Pawn.GetHumanReadableName();
     VictimName = Other.Pawn.GetHumanReadableName();
     VictimTeam = NetPlayer(Other.Pawn).GetTeamNumber();
+	Msg = KillerName$"\t"$VictimName;
 
 	AssertWithDescription( Killer != Other, KillerName $ " somehow arrested himself.  That really shouldn't ever happen!" );
 	if( Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None &&
 	    Killer.IsA('PlayerController') && NetPlayer(Killer.Pawn) != None )
 	{
-	if( VictimTeam == 1 )
-    	Broadcast(Other, KillerName$"\t"$VictimName, 'SwatArrest');
-	else
-    	Broadcast(Other, KillerName$"\t"$VictimName, 'SuspectsArrest');
+		if(VictimTeam == 1)
+		{
+			Broadcast(Other, Msg, 'SwatArrest');
+		}
+		else
+		{
+			Broadcast(Other, Msg, 'SuspectsArrest');
+		}
 	}
 
 	// dbeswick: stats
@@ -2199,6 +2214,32 @@ function BroadcastArrestedMessage(Controller Killer, Controller Other)
 	{
 		OtherPC = PlayerController(Other);
 		KillerPC.Stats.Arrested(OtherPC);
+	}
+}
+
+function BroadcastArrested(Pawn Arrester, Pawn Arrestee)
+{
+	local string ArresterName;
+	local string ArresteeName;
+	local string Msg;
+	local name MsgType;
+
+	ArresteeName = Arrestee.GetHumanReadableName();
+	ArresterName = Arrester.GetHumanReadableName();
+
+	Msg = ArresterName$"\t"$ArresteeName;
+
+	if(NetPlayer(Arrester) != None)
+	{
+		if(NetPlayer(Arrester).GetTeamNumber() == 0)
+		{
+			MsgType = 'BlueArrest';
+		}
+		else
+		{
+			MsgType = 'RedArrest';
+		}
+		Broadcast(Arrester, Msg, MsgType);
 	}
 }
 

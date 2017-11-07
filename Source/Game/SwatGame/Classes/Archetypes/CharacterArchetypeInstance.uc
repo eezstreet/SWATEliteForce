@@ -40,6 +40,8 @@ var class<Equipment> SelectedEquipment2Class;
 var class<Equipment> SelectedEquipment3Class;
 var class<Equipment> SelectedEquipment4Class;
 
+var string FriendlyName;
+
 function DestroyEquipment()
 {
     local int i;
