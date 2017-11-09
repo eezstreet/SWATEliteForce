@@ -54,6 +54,8 @@ var private localized config string IncapacitateFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+
 function PreBeginPlay()
 {
 	if(Level.NetMode == NM_Standalone)
@@ -436,7 +438,7 @@ function Broadcast(Actor Sender, coerce string Msg, optional name Type, optional
 // Broadcast something to a team
 function BroadcastTeam(Controller Sender, coerce string Msg, optional name Type, optional string Location)
 {
-	Broadcast(Controller(Sender.Owner), Msg, Type, , Location);
+	Broadcast(Sender, Msg, Type, , Location);
 }
 
 // Send a message to WebAdmin
