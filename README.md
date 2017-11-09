@@ -750,10 +750,14 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]I hope you have fun![\\c]]")
 AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
 ```
 
+WebAdmin defaults to port 6000. You can access it in a web browser by going to: http://<external ip>:6000/
+
 
 # VERSION HISTORY #
 
 #### v6.3
+ - Added a new ingame Admin panel. From this panel, you can now kick, ban, go to the next map, etc. All players can use it, but only actions which can be carried out by their current role will be selectable.
+ - Added a new WebAdmin panel. The WebAdmin can currently only be used to chat with players and check the server status.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
 
 #### v6.2
