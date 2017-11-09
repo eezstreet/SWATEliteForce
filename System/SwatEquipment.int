@@ -294,6 +294,18 @@ MagazineSizeString=50
 TotalAmmoString=10 magazines
 RateOfFire=900 RPM
 
+[SilencedFNP90SMG]
+Description=The P90 was developed by the Belgian company FN in conjunction with their Five-Seven in response to NATO's requests for a replacement to 9x19mm firearms. It began production in 1990 (hence the name P90), and features a futuristic and ambidextrous design. It remains in service in over 40 countries worldwide. One of the unique features of the P90 is its top-loaded magazine. It can hold an abnormally large amount of ammunition due to its compact design. This particular model is equipped with a sound and flash suppressor for when stealth is paramount.
+FriendlyName=Suppressed P90
+Manufacturer=FN Herstal
+Caliber=5.7x28mm FN
+CountryOfOrigin=Belgium
+ProductionStart=1990
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=50
+TotalAmmoString=10 magazines
+RateOfFire=900 RPM
+
 [MP5SMG]
 Description=This 9mm submachine gun was designed by H&K, a world renowned German manufacturer.  It is preferred by many para-military groups throughout the world for urban tactical engagements.  Firing either full metal jacket or jacketed hollow point 9x19mm ammunition it is versatile, but lacks the stopping power of an assault rifle.  Its key advantage is its compact design, which allows superior maneuverability in indoor situations.  It is equipped with a fire mode selector allowing automatic, semi-automatic and three round burst firing modes.
 FriendlyName=MP5A4

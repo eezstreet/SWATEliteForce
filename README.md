@@ -758,11 +758,13 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
 ```
 
 WebAdmin defaults to port 6000. You can access it in a web browser by going to: http://<external ip>:6000/
+On the host machine, this can be reached from http://127.0.0.1:6000/
 
 
 # VERSION HISTORY #
 
 #### v6.3
+ - Added a new weapon: Suppressed P90
  - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
  - Added a new ingame Admin panel. From this panel, you can now kick, ban, go to the next map, etc. All players can use it, but only actions which can be carried out by their current role will be selectable.
  - Added a new WebAdmin panel. The WebAdmin can currently only be used to chat with players and check the server status.
