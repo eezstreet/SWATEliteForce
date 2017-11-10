@@ -1,7 +1,7 @@
 // The SwatWebAdmin serves as a single connection.
 // Ergo, there is one instance of SwatWebAdmin per active connection to the WebAdmin site.
 class SwatWebAdmin extends IPDrv.TCPLink
-	config(SwatGuiState)
+	config(Swat4XDedicatedServer)
 	dependsOn(SwatWebAdminListener);
 
 import enum WebAdminMessageType from SwatWebAdminListener;

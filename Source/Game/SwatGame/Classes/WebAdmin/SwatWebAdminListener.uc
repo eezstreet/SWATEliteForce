@@ -1,5 +1,5 @@
 class SwatWebAdminListener extends IPDrv.TCPLink
-	config(SwatGuiState);
+	config(Swat4XDedicatedServer);
 
 enum WebAdminMessageType
 {
