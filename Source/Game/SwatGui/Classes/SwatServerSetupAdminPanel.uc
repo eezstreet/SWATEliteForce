@@ -27,6 +27,10 @@ var(SWATGui) protected EditInline Config GUIListBox SelectedRights;
 var(SWATGui) protected EditInline Config GUIButton AddRights;
 var(SWATGui) protected EditInline Config GUIButton RemoveRights;
 
+// WebAdmin
+var(SWATGui) protected EditInline Config GUICheckBoxButton WebAdminEnabled;
+var(SWATGui) protected EditInline Config GUINumericEdit WebAdminPort;
+
 var private SwatAdminPermissions SelectedPermission;
 
 var SwatAdmin AdminData;
@@ -93,6 +97,9 @@ function InternalOnChange(GUIComponent Sender)
 		case MyRolePasswordBox:
 			SelectedPermission.HashPassword = MyRolePasswordBox.GetText();
 			break;
+		case WebAdminEnabled:
+			WebAdminPort.SetEnabled(WebAdminEnabled.bChecked);
+			break;
 	}
 }
 
@@ -133,6 +140,7 @@ function InitComponent(GUIComponent MyOwner)
 	AvailableRights.OnChange = InternalOnChange;
 	SelectedRights.OnChange = InternalOnChange;
 	MyRolePasswordBox.OnChange = InternalOnChange;
+	WebAdminEnabled.OnChange = InternalOnChange;
 	MyNewRoleButton.OnClick = InternalOnClick;
 	MyDeleteRoleButton.OnClick = InternalOnClick;
 	AddRights.OnClick = InternalOnClick;
@@ -297,12 +305,20 @@ function LoadServerSettings( optional bool bReadOnly )
 	}
 
 	SelectedPermission = AdminData.GuestPermissions;
+
+	WebAdminEnabled.SetChecked(class'SwatAdmin'.default.UseWebAdmin);
+	WebAdminPort.SetValue(class'SwatAdmin'.default.WebAdminPort);
 }
 
 // Called whenever the server settings need to be saved (obviously)
 function SaveServerSettings()
 {
 	local int i;
+
+	AdminData.default.UseWebAdmin = WebAdminEnabled.bChecked;
+	AdminData.default.WebAdminPort = WebAdminPort.Value;
+	AdminData.WebAdminPort = WebAdminPort.Value;
+	AdminData.UseWebAdmin = WebAdminEnabled.bChecked;
 
 	AdminData.PermissionNames.Length = AdminData.Permissions.Length;
 	for(i = 0; i < AdminData.Permissions.Length; i++)
