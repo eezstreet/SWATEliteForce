@@ -296,10 +296,51 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie)
 function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 {
 	local array<string> argv;
+	local WebAdminMessage msg;
+	local string Alias;
+	local string IngameName;
+	local int i;
+
+	i = User;
+	Alias = Users[i].Alias;
+	IngameName = Alias$"(WebAdmin)";
 
 	Split(Content, " ", argv);
+	argv[0] = Mid(argv[0], 1);
 
 	// perform command based on the first argument
+	if(argv[0] ~= "kick")
+	{
+		if(Level.Game.RemoteKick(IngameName, ConcatArgs(argv, 1)))
+		{
+			return;
+		}
+		else
+		{
+			msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
+	else if(argv[0] ~= "ban" || argv[0] ~= "kickban")
+	{
+		if(Level.Game.RemoteKickBan(IngameName, ConcatArgs(argv, 1)))
+		{
+			return;
+		}
+		else
+		{
+			msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
+	else
+	{
+		msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
+		msg.Message = "Unknown command '"$argv[0]$"'";
+		Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+	}
 }
 
 // We got sent some chat from a webadmin

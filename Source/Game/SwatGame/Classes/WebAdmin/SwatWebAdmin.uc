@@ -354,6 +354,10 @@ function ProcessGetRequest(HTTPMessage InMessage)
 		}
 		return;
 	}
+	else if(InMessage.URL ~= "/commandhelp")
+	{
+		HTML = HTML $ WebAdminPage_CommandHelp(InMessage);
+	}
 	else
 	{
 		HTML = HTML $ WebAdminPage_404(InMessage);
@@ -799,6 +803,9 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "<input type=\"button\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></tr>";
 	HTML = HTML $ "</table>";
 	HTML = HTML $ "</form>";
+	HTML = HTML $ "<span class=\"sty_tinytext\">";
+	HTML = HTML $ "<a href=\"javascript:void(0); window.open('/commandhelp', 'WebAdmin Command Help', 'width=300,height=150');return false;\">Command Help</a>";
+	HTML = HTML $ "</span>";
 
 	// nasty javascript here...
 	HTML = HTML $ "<script type=\"text/javascript\">";
@@ -883,6 +890,19 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "</script>";
 
 	return true;
+}
+
+function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
+{
+	local string HTML;
+
+	HTML = "<p class=\"sty_statictext\">The following commands can be used in WebAdmin. To use them, type in the message box and send.</p>";
+	HTML = HTML $ "<table><tr><th>Command</th><th>Description</th></tr>";
+	HTML = HTML $ "<tr><th>/kick -player name-</th><td>Kicks the specified player.</td></tr>";
+	HTML = HTML $ "<tr><th>/kickban -player name-<br>/ban -player name-</th><td>Kicks the specified player from the server and bans them.</td></tr>";
+	HTML = HTML $ "</table>";
+
+	return HTML;
 }
 
 defaultproperties

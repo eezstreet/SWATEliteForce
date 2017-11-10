@@ -432,6 +432,14 @@ function Broadcast(Actor Sender, coerce string Msg, optional name Type, optional
 			mplog("WebAdminLeft: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_AdminLeave, Msg$" has left WebAdmin.");
 			break;
+		case 'Kick':
+			mplog("Kick: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickFormat, StrA, StrB));
+			break;
+		case 'KickBan':
+			mplog("KickBan: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickBanFormat, StrA, StrB));
+			break;
 	}
 }
 
@@ -480,4 +488,6 @@ defaultproperties
 	DisconnectFormat="%1 disconnected from game server."
 	ArrestFormat="%1 arrested %2"
 	IncapacitateFormat="%1 incapacitated %2 with %3"
+	KickFormat="%1 was kicked by %2"
+	KickBanFormat="%1 was kick-banned by %2"
 }

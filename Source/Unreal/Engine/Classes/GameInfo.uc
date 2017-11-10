@@ -1428,6 +1428,26 @@ function KickBan( Controller Kicker, string Kickee )
 	    Broadcast( Kicker, Kicker.PlayerReplicationInfo.PlayerName$"\t"$Kickee, 'KickBan' );
 }
 
+function bool RemoteKick(string Kicker, string Kickee)
+{
+	if( AccessControl.Kick(Kickee))
+	{
+		Broadcast(None, Kicker$"\t"$Kickee, 'Kick');
+		return true;
+	}
+	return false;
+}
+
+function bool RemoteKickBan(string Kicker, string Kickee)
+{
+	if(AccessControl.KickBan(Kickee))
+	{
+		Broadcast(None, Kicker$"\t"$Kickee, 'KickBan');
+		return true;
+	}
+	return false;
+}
+
 function VotedToBeKicked(PlayerController Kickee)
 {
 	AccessControl.KickPlayer(Kickee);
