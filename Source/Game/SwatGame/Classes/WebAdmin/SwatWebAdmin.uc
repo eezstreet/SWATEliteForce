@@ -2,9 +2,9 @@
 // Ergo, there is one instance of SwatWebAdmin per active connection to the WebAdmin site.
 class SwatWebAdmin extends IPDrv.TCPLink
 	config(Swat4XDedicatedServer)
-	dependsOn(SwatWebAdminListener);
+	dependsOn(SwatAdmin);
 
-import enum WebAdminMessageType from SwatWebAdminListener;
+import enum WebAdminMessageType from SwatAdmin;
 
 struct PostData
 {

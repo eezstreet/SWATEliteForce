@@ -331,6 +331,7 @@ defaultproperties
 	PermissionNames[4]="End Level"
 	PermissionNames[5]="Change Settings"
 	PermissionNames[6]="Vote Immunity"
+	PermissionNames[7]="WebAdmin Chat"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -339,4 +340,5 @@ defaultproperties
 	PermissionDescription[4]="End the level before the mission is complete."
 	PermissionDescription[5]="Change the server's settings."
 	PermissionDescription[6]="Provides immunity to kick and kickban votes."
+	PermissionDescription[7]="Provides the ability to chat with players using WebAdmin."
 }

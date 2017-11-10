@@ -1,22 +1,9 @@
 class SwatWebAdminListener extends IPDrv.TCPLink
-	config(Swat4XDedicatedServer);
+	config(Swat4XDedicatedServer)
+	dependsOn(SwatAdmin);
 
-enum WebAdminMessageType
-{
-	MessageType_Chat,
-	MessageType_PlayerJoin,
-	MessageType_AdminJoin,
-	MessageType_AdminLeave,
-	MessageType_Penalty,
-	MessageType_SwitchTeams,
-	MessageType_NameChange,
-	MessageType_Voting,
-	MessageType_Kill,
-	MessageType_TeamKill,
-	MessageType_Arrest,
-	MessageType_Round,
-	MessageType_WebAdminError,
-};
+import enum AdminPermissions from SwatAdmin;
+import enum WebAdminMessageType from SwatAdmin;
 
 struct WebAdminMessage
 {
@@ -38,6 +25,8 @@ var globalconfig bool DebugWebAdmin;
 var globalconfig int KeepAliveTime;
 var globalconfig string PageHeader;
 var globalconfig string PageFooter;
+
+var localized config string NoPermissionString;
 
 var private int BoundPort;
 var private array<WebAdminUser> Users;
@@ -308,36 +297,37 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 	Split(Content, " ", argv);
 	argv[0] = Mid(argv[0], 1);
 
+	msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
+
 	// perform command based on the first argument
 	if(argv[0] ~= "kick")
 	{
-		if(Level.Game.RemoteKick(IngameName, ConcatArgs(argv, 1)))
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Kick))
 		{
-			return;
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
-		else
+		else if(!Level.Game.RemoteKick(IngameName, ConcatArgs(argv, 1)))
 		{
-			msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
 			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
 	}
 	else if(argv[0] ~= "ban" || argv[0] ~= "kickban")
 	{
-		if(Level.Game.RemoteKickBan(IngameName, ConcatArgs(argv, 1)))
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_KickBan))
 		{
-			return;
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
-		else
+		else if(!Level.Game.RemoteKickBan(IngameName, ConcatArgs(argv, 1)))
 		{
-			msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
 			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
 	}
 	else
 	{
-		msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
 		msg.Message = "Unknown command '"$argv[0]$"'";
 		Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 	}
@@ -351,12 +341,13 @@ function SentChat(SwatWebAdmin AdminClient, int User, string Content)
 
 	Alias = Users[User].Alias;
 
-	//{
-	//	Msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
-	//	Msg.Message = "You do not have permission to send chat through WebAdmin.";
-	//	Users[User].WaitingMessages[Users[User].WaitingMessages.Length].
-	//	return;
-	//}
+	if(!Users[User].PermissionSet.GetPermission(AdminPermissions.Permission_WebAdminChat))
+	{
+		Msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
+		Msg.Message = NoPermissionString;
+		Users[User].WaitingMessages[Users[User].WaitingMessages.Length] = Msg;
+		return;
+	}
 
 	// broadcast it?
 	SwatGameInfo(Level.Game).Broadcast(self, Alias$"(WebAdmin)\t"$Content, 'WebAdminChat');
@@ -412,4 +403,6 @@ defaultproperties
 
 	PageHeader="<html><head><title>SWAT: Elite Force WebAdmin</title></head><body><div id='webadmin-content-wrapper'>"
 	PageFooter="</div></body></html>"
+
+	NoPermissionString="You do not have permission to do that."
 }

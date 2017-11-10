@@ -1,8 +1,5 @@
 class SwatAdmin extends Engine.Actor
-    config(Swat4XDedicatedServer)
-	dependsOn(SwatWebAdminListener);
-
-import enum WebAdminMessageType from SwatWebAdminListener;
+    config(Swat4XDedicatedServer);
 
 enum AdminPermissions
 {
@@ -13,7 +10,25 @@ enum AdminPermissions
 	Permission_EndGame,			// Allowed to end game prematurely
 	Permission_ChangeSettings,	// Allowed to change server settings
 	Permission_Immunity,		// Immune to kick, ban, etc votes
+	Permission_WebAdminChat,	// Allowed to chat while in WebAdmin
 	Permission_Max,
+};
+
+enum WebAdminMessageType
+{
+	MessageType_Chat,
+	MessageType_PlayerJoin,
+	MessageType_AdminJoin,
+	MessageType_AdminLeave,
+	MessageType_Penalty,
+	MessageType_SwitchTeams,
+	MessageType_NameChange,
+	MessageType_Voting,
+	MessageType_Kill,
+	MessageType_TeamKill,
+	MessageType_Arrest,
+	MessageType_Round,
+	MessageType_WebAdminError,
 };
 
 struct AutoAction
