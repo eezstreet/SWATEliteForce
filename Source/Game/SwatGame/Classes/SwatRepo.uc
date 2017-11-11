@@ -970,7 +970,7 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.Unused3,
+		CurrentSettings.bNoKillMessages,
 		CurrentSettings.bEnableSnipers
 	);
 	ServerSettings(Level.PendingServerSettings).RoundNumber = CurrentSettings.RoundNumber;

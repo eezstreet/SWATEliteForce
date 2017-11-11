@@ -480,7 +480,7 @@ function ServerSetSettings( ServerSettings Settings,
 							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
-							bool unused3,
+							bool newbNoKillMessages,
 							bool newbDisableTeamSpecificWeapons)
 {
     Settings.SetServerSettings( self,
@@ -502,7 +502,7 @@ function ServerSetSettings( ServerSettings Settings,
 								newCampaignCOOP,
 								newAdditionalRespawnTime,
 								newbNoLeaders,
-								unused3,
+								newbNoKillMessages,
 								newbDisableTeamSpecificWeapons );
 }
 

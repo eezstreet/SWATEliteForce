@@ -2067,9 +2067,26 @@ function AdminLog(coerce string Msg, name Type)
 
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
+function bool IsBroadcastDisabled(name Type)
+{
+	if(ServerSettings(Level.CurrentServerSettings).bNoKillMessages)
+	{
+		if(Type == 'Fallen' || Type == 'BlueKill' || Type == 'BlueArrest' || Type == 'BlueIncapacitate' ||
+			Type == 'RedKill' || Type == 'RedArrest' || Type == 'RedIncapacitate')
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
 //mplog( self$"::Broadcast( "$Msg$", "$Type$" )" );
+	if(IsBroadcastDisabled(Type))
+	{
+		return;
+	}
 	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
 }
 
@@ -2081,11 +2098,20 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
         Sender.IsInState( 'Dead' ) )
         BroadcastObservers( Sender, Msg, Type );
 
+	if(IsBroadcastDisabled(Type))
+	{
+		return;
+	}
+
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
 }
 
 function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional String Location)
 {
+	if(IsBroadcastDisabled(Type))
+	{
+		return;
+	}
 	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
 }
 
