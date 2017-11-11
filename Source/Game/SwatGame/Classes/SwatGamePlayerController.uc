@@ -4469,6 +4469,8 @@ exec function Say( string Msg )
 	  Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
   else
     Level.Game.Broadcast(self, Msg, 'Say');
+
+	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'Say');
 }
 
 exec function TeamSay( string Msg )
@@ -4481,6 +4483,7 @@ exec function TeamSay( string Msg )
 	}
 
     Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'TeamSay');
 }
 
 event ClientMessage( coerce string S, optional Name Type )
@@ -4565,6 +4568,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
     		}
     }
 
+	SwatGameInfo(Level.Game).AdminLog(S, Type);
     Player.Console.Message(S, 6.0);
 }
 

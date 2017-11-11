@@ -1,4 +1,5 @@
 class SwatWebAdminListener extends IPDrv.TCPLink
+	transient
 	config(Swat4XDedicatedServer)
 	dependsOn(SwatAdmin);
 
@@ -15,7 +16,6 @@ struct WebAdminUser
 {
 	var string Alias;
 	var string Cookie;
-	var IpAddr IPAddress;
 	var int KeepAlive;
 	var SwatAdminPermissions PermissionSet;
 	var array<WebAdminMessage> WaitingMessages;
@@ -24,12 +24,15 @@ struct WebAdminUser
 var globalconfig bool DebugWebAdmin;
 var globalconfig int KeepAliveTime;
 var globalconfig string PageHeader;
+var globalconfig string PageStyle;
 var globalconfig string PageFooter;
+var globalconfig float ClientRefreshSeconds;
+var globalconfig float ServerRefreshSeconds;
 
 var localized config string NoPermissionString;
 
 var private int BoundPort;
-var private array<WebAdminUser> Users;
+var globalconfig array<WebAdminUser> Users;
 
 //////////////////////////////////////////////////////////////////
 //
@@ -66,14 +69,13 @@ function BeginPlay()
 	}
 
 	AcceptClass = class'SwatWebAdmin';
-	SetTimer(1.0, true);
+	SetTimer(ServerRefreshSeconds, true);
 }
 
 // The timer on this class is responsible for checking whether or not to keep the admins alive.
 event Timer()
 {
 	local int i;
-	local string IPString;
 
 	for(i = Users.Length - 1; i >= 0; i--)	// loop backwards so we don't die when removing a user
 	{
@@ -81,8 +83,7 @@ event Timer()
 		{
 			if(Users[i].Alias != "")
 			{
-				IPString = IpAddrToString(Users[i].IPAddress);
-				mplog("WebAdmin: Logged "$Users[i].Alias$" ("$IPString$") out due to timeout");
+				mplog("WebAdmin: Logged "$Users[i].Alias$" out due to timeout");
 			}
 			Users.Remove(i, 1);
 		}
@@ -156,12 +157,11 @@ function string GenerateGUID()
 
 // Tries to login the specified user, and returns the cookie back
 // Precondition: The alias is already assumed to not be in use
-function string LoginUser(string Alias, IpAddr IPAddress, SwatAdminPermissions Permissions)
+function string LoginUser(string Alias, SwatAdminPermissions Permissions)
 {
 	local WebAdminUser User;
 
 	User.Alias = Alias;
-	User.IPAddress = IPAddress;
 	User.KeepAlive = Level.TimeSeconds;
 	User.PermissionSet = Permissions;
 	User.Cookie = GenerateGUID();
@@ -220,13 +220,15 @@ function bool GetUserData(string Cookie, optional out string Alias, optional out
 }
 
 // We get polled every 5 seconds by each client
-function bool Polled(SwatWebAdmin AdminClient, string Cookie)
+function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, string NewPass, bool NewGuest)
 {
 	local int i;
 	local int j;
 	local string XML;
 	local SwatGameReplicationInfo SGRI;
 	local SwatPlayerReplicationInfo PRI;
+	local string NewCookie;
+	local SwatAdminPermissions Perms;
 
 	SGRI = SwatGameReplicationInfo(Level.Game.GameReplicationInfo);
 
@@ -278,6 +280,23 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie)
 		}
 	}
 
+	// The user wasn't found. Try to log us in with the previous credentials
+	if(NewGuest)
+	{
+		Perms = SwatGameInfo(Level.Game).Admin.GuestPermissions;
+	}
+	else
+	{
+		Perms = SwatGameInfo(Level.Game).Admin.FindRole(NewPass);
+		if(Perms == None)
+		{
+			return false;
+		}
+	}
+
+	NewCookie = LoginUser(NewUser, Perms);
+	AdminClient.SetCookie(NewCookie);
+
 	return false;
 }
 
@@ -295,7 +314,6 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 	IngameName = Alias$"(WebAdmin)";
 
 	Split(Content, " ", argv);
-	argv[0] = Mid(argv[0], 1);
 
 	msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
 
@@ -351,6 +369,7 @@ function SentChat(SwatWebAdmin AdminClient, int User, string Content)
 
 	// broadcast it?
 	SwatGameInfo(Level.Game).Broadcast(self, Alias$"(WebAdmin)\t"$Content, 'WebAdminChat');
+	Level.Game.AdminLog(Alias$"(WebAdmin)\t"$Content, 'WebAdminChat');
 }
 
 // We get sent data whenever a webadmin decides to
@@ -396,12 +415,35 @@ function SendWebAdminMessage(WebAdminMessageType type, optional string Message)
 	}
 }
 
+event Closed()
+{
+	mplog("WebAdmin closed");
+	SaveConfig();
+}
+
 defaultproperties
 {
 	KeepAliveTime=30
 	DebugWebAdmin=false
 
-	PageHeader="<html><head><title>SWAT: Elite Force WebAdmin</title></head><body><div id='webadmin-content-wrapper'>"
+	ClientRefreshSeconds=3.0
+	ServerRefreshSeconds=1.0
+
+	//
+	// Styles:
+	// - sty_statictext: Used for static blurbs of text
+	// - sty_title: Used for the big title at the top
+	// - sty_subtitle: Used for smaller titles
+	// - sty_error: Used for text that is displayed in error messages (should be red, etc)
+	// - sty_layouttable: Used for tables with invisible edges
+	// - sty_textarea: Used for the WebAdmin console
+	// - sty_userlist: Used for the WebAdmin user list
+	// - sty_userlisttitle: Used for the WebAdmin user list title (Players, WebAdmin Users)
+	// - sty_tinytext: Used for very small text
+	//
+
+	PageHeader="<html><head><title>SWAT: Elite Force WebAdmin</title>%1</head><body><div id='webadmin-content-wrapper'>"
+	PageStyle="<style>.sty_statictext { font-family:Helvetica, Calibri, Arial; font-size:12px; text-align:center; color:#EEEEEE;} .sty_title { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; color:#EEEEEE; font-size:24pt; text-align:center;} .sty_subtitle { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; font-size:18pt; line-height:24pt;} .sty_error {color:#FF4444;} .sty_layouttable {} .sty_textarea { background:#222222; color:#EEEEEE; height:400px; resize:none; border: none; width:100%;} .sty_userlist { font-family:Helvetica, Calibri, Arial; font-size:12px; vertical-align: top;} .sty_userlisttitle { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; font-size:16px;} .sty_tinytext { text-align:center; position:absolute; margin-left:auto; margin-right:auto; font-family:Helvetica, Calibri, Arial; font-size:8px;} #inputarea { background:#222222; border:2px solid #EEEEEE; font-family:Helvetica, Calibri, Arial; padding: 4px; margin-right:4px; color:#EEEEEE; width:100%;} #sendbutton { background:#EEEEEE; border:none; padding:8px; width:10%; font-family:Helvetica, Calibri, Arial; font-weight:bold; float:right;} #bottominput { display:flex; width:100%;} #webadmin-content-wrapper { position:float; margin:auto; width:70%; display:block; right:0px;} #webadmin-content-box { padding:10px; color:#EEEEEE; font-family:Helvetica, Calibri, Arial; line-height:18px; border:4px solid #EEEEEE; text-align:center; font-weight:bold; font-size:12px;} .sty_button { background:white; border:4px solid #222222; font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; padding: 8px 16px; line-height:20px; font-size:20px;} .sty_inputtext { background:black; border:1px solid #EEEEEE; line-height: 16px; color:#EEEEEE; padding:4px; margin-bottom:10px; margin-left: 8px;} table { font-family: inherit; color:#EEEEEE; margin-left:auto; margin-right:auto; width:100%;} th { border: 2px solid #EEEEEE; padding: 10px;} td { border: 2px solid #EEEEEE; padding: 10px; width:70%;} form { padding: 10px;} a { color:#FFFFBB} body { background:#222222; margin:100px; padding:0px;}</style>"
 	PageFooter="</div></body></html>"
 
 	NoPermissionString="You do not have permission to do that."

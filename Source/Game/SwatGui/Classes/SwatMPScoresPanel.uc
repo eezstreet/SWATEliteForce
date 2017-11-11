@@ -282,16 +282,6 @@ function DisplayScores()
     if( SGRI == None )
         return;
 
-    //set the headers and clear the team boxes
-    for( i = 0; i < 2; ++i)
-    {
-        MyTeamHeaders[i].SetCaption( FormatTextString( TeamScoreFormatString, SGRI.Teams[i].TeamName, NetTeam(SGRI.Teams[i]).NetScoreInfo.GetScore(), NetTeam(SGRI.Teams[i]).NetScoreInfo.GetRoundsWon() ) );
-
-        //lastTop[i]=MyTeamBoxes[i].MyActiveList.Top;
-        //lastSelected[i]=MyTeamBoxes[i].GetIndex();
-        MyTeamBoxes[i].Clear();
-    }
-
     //populate the players into their team boxes, sorted by score
     for (i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
     {

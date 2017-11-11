@@ -586,9 +586,6 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
                 else
                   GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).MPMissionReadyTime + PRECACHING_FUDGE;
                 //Level.Game.SetPause( true, PlayerController );
-
-                UpdateRoundsWon( 0 );
-                UpdateRoundsWon( 1 );
             }
             break;
         case GAMESTATE_MidGame:
@@ -816,7 +813,6 @@ function NetRestartRound()
   SwapServerSettings();
 
   ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
-  ClearRoundsWon();
   NetSwitchLevelsFromMapVote("?restart"); // Undocumented engine feature; restarts the current map
 }
 
@@ -844,14 +840,12 @@ function NetNextRound()
     if( ServerSettings(Level.CurrentServerSettings).bDirty )
     {
         ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
-        ClearRoundsWon();
 
         NetSwitchLevels();
     }
     else if( ServerSettings(Level.CurrentServerSettings).RoundNumber >= ServerSettings(Level.CurrentServerSettings).NumRounds )
     {
         ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
-        ClearRoundsWon();
 
         NetSwitchLevels( true ); //advance to the next map
     }
@@ -1415,29 +1409,6 @@ function SetObjectiveVisibility( name ObjectiveName, bool Visible )
         "[tcohen] ActionSetObjectiveVisibility::Execute() The Objective named "$ObjectiveName
         $" was not found to be a current Objective.");
 }
-
-function ClearRoundsWon()
-{
-    local int i;
-
-    for( i = 0; i < 2; i++ )
-    {
-        RoundsWon[i] = 0;
-        UpdateRoundsWon( i );
-    }
-}
-
-function IncrementRoundsWon( int teamID )
-{
-    RoundsWon[teamID]++;
-    UpdateRoundsWon( teamID );
-}
-
-function UpdateRoundsWon( int teamID )
-{
-    NetTeam(GetSGRI().Teams[teamID]).NetScoreInfo.SetRoundsWon( RoundsWon[teamID] );
-}
-
 
 function PreLevelChangeCleanup()
 {

@@ -1,19 +1,6 @@
 class SwatAdmin extends Engine.Actor
     config(Swat4XDedicatedServer);
 
-enum AdminPermissions
-{
-	Permission_Kick,			// Allowed to kick people?
-	Permission_KickBan,			// Allowed to kick-ban people?
-	Permission_Switch,			// Allowed to switch maps?
-	Permission_StartGame,		// Allowed to start game prematurely
-	Permission_EndGame,			// Allowed to end game prematurely
-	Permission_ChangeSettings,	// Allowed to change server settings
-	Permission_Immunity,		// Immune to kick, ban, etc votes
-	Permission_WebAdminChat,	// Allowed to chat while in WebAdmin
-	Permission_Max,
-};
-
 enum WebAdminMessageType
 {
 	MessageType_Chat,
@@ -29,6 +16,19 @@ enum WebAdminMessageType
 	MessageType_Arrest,
 	MessageType_Round,
 	MessageType_WebAdminError,
+};
+
+enum AdminPermissions
+{
+	Permission_Kick,			// Allowed to kick people?
+	Permission_KickBan,			// Allowed to kick-ban people?
+	Permission_Switch,			// Allowed to switch maps?
+	Permission_StartGame,		// Allowed to start game prematurely
+	Permission_EndGame,			// Allowed to end game prematurely
+	Permission_ChangeSettings,	// Allowed to change server settings
+	Permission_Immunity,		// Immune to kick, ban, etc votes
+	Permission_WebAdminChat,	// Allowed to chat while in WebAdmin
+	Permission_Max,
 };
 
 struct AutoAction
@@ -66,6 +66,7 @@ var private localized config string PromotedFormat;
 var private localized config string KickFormat;
 var private localized config string KickBanFormat;
 var private localized config string IncapacitateFormat;
+var private localized config string ObjectiveCompleteFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -337,7 +338,7 @@ function ACCommand( PlayerController PC, String S )
 }
 
 // Broadcast something
-function Broadcast(Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location)
+function Broadcast(coerce string Msg, optional name Type)
 {
 	local string StrA, StrB, StrC;
 
@@ -443,6 +444,18 @@ function Broadcast(Actor Sender, coerce string Msg, optional name Type, optional
 			mplog("RoundEnded");
 			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The round has ended.");
 			break;
+		case 'MissionEnded':
+			mplog("MissionEnded");
+			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The mission has ended.");
+			break;
+		case 'MissionFailed':
+			mplog("MissionFailed");
+			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The mission has been FAILED!");
+			break;
+		case 'MissionCompleted':
+			mplog("MissionCompleted");
+			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The mission has been COMPLETED!");
+			break;
 		case 'WebAdminLeft':
 			mplog("WebAdminLeft: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_AdminLeave, Msg$" has left WebAdmin.");
@@ -455,17 +468,15 @@ function Broadcast(Actor Sender, coerce string Msg, optional name Type, optional
 			mplog("KickBan: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickBanFormat, StrA, StrB));
 			break;
+		case 'ObjectiveComplete':
+			mplog("ObjectiveComplete: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Round, FormatTextString(ObjectiveCompleteFormat, StrA));
+			break;
 	}
 }
 
-// Broadcast something to a team
-function BroadcastTeam(Controller Sender, coerce string Msg, optional name Type, optional string Location)
-{
-	Broadcast(Sender, Msg, Type, , Location);
-}
-
 // Send a message to WebAdmin
-function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg)
+private function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg)
 {
 	if(WebAdmin != None)
 	{
@@ -505,4 +516,5 @@ defaultproperties
 	IncapacitateFormat="%1 incapacitated %2 with %3"
 	KickFormat="%1 was kicked by %2"
 	KickBanFormat="%1 was kick-banned by %2"
+	ObjectiveCompleteFormat="Objective Complete: %1"
 }

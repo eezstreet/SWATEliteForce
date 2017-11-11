@@ -158,7 +158,8 @@ function PreBeginPlay()
 
     Super.PreBeginPlay();
 
-    Admin = Spawn( class'SwatAdmin' );
+	// Carry over the webadmin users from the previous map --eez
+	Admin = Spawn(class'SwatAdmin');
 
     RegisterNotifyGameStarted();
 
@@ -380,9 +381,14 @@ function SendGlobalMessage(string Message, name Type)
 
 function PenaltyTriggeredMessage(Pawn Inflictor, string PenaltyMessage)
 {
+	local string Message;
+
+	Message = PenaltyMessage;
 	if(Level.NetMode != NM_Standalone)
 	{
-		Broadcast(Inflictor, SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage, 'PenaltyIssuedChat');
+		Message = SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage;
+		Broadcast(Inflictor, Message, 'PenaltyIssuedChat');
+		AdminLog(Message, 'PenaltyIssuedChat');
 	}
 	else
 	{
@@ -406,6 +412,7 @@ final function OnMissionObjectiveCompleted(Objective Objective)
     }
     else {
       SendGlobalMessage("Objective Complete!", 'ObjectiveCompleted');
+	  AdminLog(Objective.Description, 'ObjectiveComplete');
     }
 }
 
@@ -430,6 +437,7 @@ final function MissionCompleted()
     log("[dkaplan] >>> MissionCompleted" );
     bAlreadyCompleted=true;
     Broadcast( None, "", 'MissionCompleted' );
+	AdminLog("", 'MissionCompleted');
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);
@@ -442,6 +450,7 @@ final function MissionFailed()
     log("[dkaplan] >>> MissionFailed" );
     bAlreadyFailed=true;
     Broadcast( None, "", 'MissionFailed' );
+	AdminLog("", 'MissionFailed');
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);
@@ -482,6 +491,7 @@ final function MissionEnded()
 
     bAlreadyEnded=true;
     Broadcast( None, "", 'MissionEnded' );
+	AdminLog("", 'MissionEnded');
     GameEvents.MissionEnded.Triggered();
 }
 
@@ -851,6 +861,8 @@ function OnMissionStarted()
 
 	// send a message that the level has started
 	dispatchMessage(new class'Gameplay.MessageLevelStart'(GetCustomScenario() != None));
+
+	AdminLog("", 'RoundStarted');
 }
 
 function bool GameInfoShouldTick() { return bDebugFrames || Level.GetGameSpyManager().bTrackingStats; }
@@ -1663,7 +1675,11 @@ function PlayerLoggedIn(PlayerController NewPlayer)
 		if ( Level.NetMode != NM_Standalone )
 		{
 			if( !PC.IsAReconnectingClient())
+			{
 				Broadcast( NewPlayer, NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
+				AdminLog(NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
+			}
+
 		}
 
 		// Set player permissions
@@ -1694,6 +1710,7 @@ function Logout( Controller Exiting )
     {
         //broadcast this player's disconnection to all players
         Broadcast( SGPC, SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
+		AdminLog(SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
 
         //log the player out: remove their RepoItem
         Repo.Logout( SGPC );
@@ -2040,16 +2057,20 @@ function NetTeam GetTeamFromID( int TeamID )
     return NetTeam(GameReplicationInfo.Teams[TeamID]);
 }
 
+function AdminLog(coerce string Msg, name Type)
+{
+	if(Admin != None)
+	{
+		Admin.Broadcast(Msg, Type);
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
 event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
 //mplog( self$"::Broadcast( "$Msg$", "$Type$" )" );
 	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
-	if(Admin != None)
-	{
-		Admin.Broadcast(Sender, Msg, Type, Target);
-	}
 }
 
 //overridden from Engine.GameInfo
@@ -2061,19 +2082,11 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
         BroadcastObservers( Sender, Msg, Type );
 
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
-	if(Admin != None)
-	{
-		Admin.BroadcastTeam(Sender, Msg, Type, Location);
-	}
 }
 
 function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional String Location)
 {
 	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
-	if(Admin != None)
-	{
-		Admin.Broadcast(Sender, Msg, Type, Target, Location);
-	}
 }
 
 function BroadcastObservers( Controller Sender, coerce string Msg, optional name Type )
@@ -2085,11 +2098,6 @@ function BroadcastObservers( Controller Sender, coerce string Msg, optional name
 	// see if allowed (limit to prevent spamming)
 	if ( !BroadcastHandler.AllowsBroadcast(Sender, Len(Msg)) )
 		return;
-
-	if(Admin != None)
-	{
-		Admin.BroadcastTeam(Sender, Msg, Type);
-	}
 
 	if ( Sender != None )
 	{
@@ -2178,6 +2186,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 	}
 
 	Broadcast(Other, Msg, MsgType);
+	AdminLog(Msg, MsgType);
 }
 
 function BroadcastArrestedMessage(Controller Killer, Controller Other)
@@ -2240,6 +2249,7 @@ function BroadcastArrested(Pawn Arrester, Pawn Arrestee)
 			MsgType = 'RedArrest';
 		}
 		Broadcast(Arrester, Msg, MsgType);
+		AdminLog(Msg, MsgType);
 	}
 }
 
@@ -2405,7 +2415,11 @@ function ChangePlayerTeam( SwatGamePlayerController Player )
     SetPlayerTeam( Player, NewTeam );
 
     if( Repo.GuiConfig.SwatGameState == GAMESTATE_MidGame )
-        Broadcast( Player, Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+	{
+		Broadcast( Player, Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+		AdminLog(Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+	}
+
 }
 
 
@@ -2647,6 +2661,7 @@ function PreQuickRoundRestart()
 function OnServerSettingsUpdated( Controller Admin )
 {
     Broadcast(Admin, Admin.GetHumanReadableName(), 'SettingsUpdated');
+	AdminLog(Admin.GetHumanReadableName(), 'SettingsUpdated');
 }
 
 simulated event Destroyed()

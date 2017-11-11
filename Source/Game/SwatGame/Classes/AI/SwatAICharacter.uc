@@ -1175,6 +1175,7 @@ function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
 		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
 
 		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
+		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType);
 	}
 }
 
@@ -1202,6 +1203,7 @@ function OnKilled(Actor Killer, class<DamageType> damageType)
 		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
 
 		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
+		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType);
 	}
 }
 

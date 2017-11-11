@@ -1,6 +1,7 @@
 // The SwatWebAdmin serves as a single connection.
 // Ergo, there is one instance of SwatWebAdmin per active connection to the WebAdmin site.
 class SwatWebAdmin extends IPDrv.TCPLink
+	transient
 	config(Swat4XDedicatedServer)
 	dependsOn(SwatAdmin);
 
@@ -39,9 +40,14 @@ var globalconfig string Pragma;
 // propogated from the SwatWebAdminListener
 var private bool DebugWebAdmin;
 var private string PageHeader;
+var private string PageStyle;
 var private string PageFooter;
+var private float ClientRefreshSeconds;
 
 var private string Cookie;
+var private string PreviousAlias;
+var private string PreviousPassword;
+var private bool PreviouslyGuest;
 
 // Starts up the WebAdmin listener.
 function BeginPlay()
@@ -55,7 +61,9 @@ function BeginPlay()
 
 	DebugWebAdmin = Listener.DebugWebAdmin;
 	PageHeader = Listener.PageHeader;
+	PageStyle = Listener.PageStyle;
 	PageFooter = Listener.PageFooter;
+	ClientRefreshSeconds = Listener.ClientRefreshSeconds;
 
 	if(DebugWebAdmin)
 	{
@@ -281,7 +289,7 @@ function ProcessPostRequest(HTTPMessage InMessage)
 
 	ParsePostData(InMessage);
 
-	HTML = WebAdminTemplate_Header();
+	HTML = FormatTextString(PageHeader, PageStyle);
 	if(InMessage.URL ~= "/login_action")
 	{
 		if(!WebAdminPage_LoginAction(InMessage, HTML))
@@ -297,7 +305,7 @@ function ProcessPostRequest(HTTPMessage InMessage)
 		}
 		return;
 	}
-	HTML = HTML $ WebAdminTemplate_Footer();
+	HTML = HTML $ PageFooter;
 	SendHTML(HTML);
 }
 
@@ -308,7 +316,7 @@ function ProcessGetRequest(HTTPMessage InMessage)
 
 	ParseGetData(InMessage);
 
-	HTML = WebAdminTemplate_Header();
+	HTML = FormatTextString(PageHeader, PageStyle);
 	if(InMessage.URL ~= "/testconnect")
 	{
 		HTML = HTML $ WebAdminPage_TestConnect(InMessage);
@@ -362,7 +370,7 @@ function ProcessGetRequest(HTTPMessage InMessage)
 	{
 		HTML = HTML $ WebAdminPage_404(InMessage);
 	}
-	HTML = HTML $ WebAdminTemplate_Footer();
+	HTML = HTML $ PageFooter;
 	SendHTML(HTML);
 }
 
@@ -441,26 +449,19 @@ function Redirect(string Location)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//	Page templating
-
-function string WebAdminTemplate_Header()
-{
-	return PageHeader;
-}
-
-function string WebAdminTemplate_Footer()
-{
-	return PageFooter;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
 //	Metadata - AJAX requests
 
 // Polling sends awaiting messages to the client and updates the userlist
 function bool WebAdminMeta_Poll(HTTPMessage InMessage)
 {
-	return Listener.Polled(self, Cookie);
+	local string Alias;
+	local string Password;
+	local bool WasGuest;
+
+	Alias = GetPostDataKey(InMessage.Params, "u");
+	Password = GetPostDataKey(InMessage.Params, "p");
+	WasGuest = GetPostDataKey(InMessage.Params, "g") ~= "true";
+	return Listener.Polled(self, Cookie, Alias, Password, WasGuest);
 }
 
 // Sending sends some console command to the server
@@ -514,10 +515,13 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 			Redirect("/login?e=invalidpass");
 			return false;
 		}
+
+		PreviouslyGuest = false;
 	}
 	else
 	{
 		Perms = SwatGameInfo(Level.Game).Admin.GuestPermissions;
+		PreviouslyGuest = true;
 	}
 
 	//{
@@ -526,7 +530,7 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	//}
 
 	// add user to logged in admin list and set cookie
-	Cookie = Listener.LoginUser(Alias, RemoteAddr, Perms);
+	Cookie = Listener.LoginUser(Alias, Perms);
 
 	// tell the other webadmins that we logged in
 	if(Perms.PermissionSetName == "")
@@ -537,6 +541,9 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	{
 		Listener.SendWebAdminMessage(WebAdminMessageType.MessageType_AdminJoin, "" $ Alias $ " joined WebAdmin with role: " $ Perms.PermissionSetName);
 	}
+
+	PreviousAlias = Alias;
+	PreviousPassword = Password;
 
 	// redirect
 	HTML = HTML $ "<span class=\"sty_statictext\">You have logged in successfully and will enter the WebAdmin panel in 5 seconds.</span><br>";
@@ -597,8 +604,8 @@ function string WebAdminPage_Index(HTTPMessage InMessage)
 	S = S $ "<br><div id=\"webadmin-content-box\">";
 	S = S $ "<span class=\"sty_subtitle\">" $ ServerName $ "</span>";
 	S = S $ "<br><span class=\"sty_statictext\">" $ MapName $ " " $ PlayersString $ " </span>";
-	S = S $ "<br><form action=\"/login\" method=\"get\" style=\"display:inline;\"><input type=\"submit\" value=\"Login\"></form>";
-	S = S $ "<form action=\"/info\" method=\"get\" style=\"display:inline;\"><input type=\"submit\" value=\"Server Info\"></form>";
+	S = S $ "<br><form action=\"/login\" method=\"get\" style=\"display:inline;\"><input class=\"sty_button\" type=\"submit\" value=\"Login\"></form>";
+	S = S $ "<form action=\"/info\" method=\"get\" style=\"display:inline;\"><input type=\"submit\" class=\"sty_button\" value=\"Server Info\"></form>";
 
 	S = S $ "</div>";
 
@@ -661,14 +668,14 @@ function string WebAdminPage_Info(HTTPMessage InMessage)
 	S = S $ "<br><div id=\"webadmin-content-box\">";
 
 	S = S $ "<span class=\"sty_subtitle\">Server Info</span>";
-	S = S $ "<br><span class=\"sty_statictext\">Server Name: "$ServerName$"</span>";
+	S = S $ "<p><br><span class=\"sty_statictext\">Server Name: "$ServerName$"</span>";
 	S = S $ "<br><span class=\"sty_statictext\">Players: "$PlayersString$"</span>";
 	S = S $ "<br><span class=\"sty_statictext\">Current Map: "$MapName$"</span>";
 	S = S $ "<br><span class=\"sty_statictext\">Next Map: "$NextMapName$"</span>";
-	S = S $ "<br><span class=\"sty_statictext\">Round State: "$RoundState$"</span><br>";
+	S = S $ "<br><span class=\"sty_statictext\">Round State: "$RoundState$"</span><br></p>";
 
 	S = S $ "<span class=\"sty_subtitle\">Player Info</span>";
-	S = S $ "<table class=\"sty_simpletable\"><tr><th>Ping</th><th>Name</th><th>Team</th><th>Status</th></tr>";
+	S = S $ "<p><table><tr><th>Ping</th><th>Name</th><th>Team</th><th>Status</th></tr>";
 	for(i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
 	{
 		PRI = SGRI.PRIStaticArray[i];
@@ -711,8 +718,8 @@ function string WebAdminPage_Info(HTTPMessage InMessage)
 		S = S $ "<td>" $ PRI.Ping $ "</td><td>" $ PRI.PlayerName $ "</td><td>" $ TeamString $ "</td><td>" $ StatusString $ "</td>";
 		S = S $ "</tr>";
 	}
-	S = S $ "</table>";
-	S = S $ "<form action=\"/index\" method=\"get\" style=\"display-inline;\"><input type=\"submit\" value=\"Back\"></form>";
+	S = S $ "</table></p>";
+	S = S $ "<form action=\"/index\" method=\"get\" style=\"display-inline;\"><input type=\"submit\" class=\"sty_button\" value=\"Back\"></form>";
 	S = S $ "</div>";
 	return S;
 }
@@ -733,7 +740,7 @@ function bool WebAdminPage_Login(HTTPMessage InMessage, out string S)
 	mplog("Cookie got blanked because login");
 	Error = GetPostDataKey(InMessage.Params, "e");
 
-	S = "<span class=\"sty_title\">SWAT: Elite Force WebAdmin</span>";
+	S = S $ "<span class=\"sty_title\">SWAT: Elite Force WebAdmin</span>";
 	S = S $ "<br><div id=\"webadmin-content-box\">";
 	if(Error ~= "noalias")
 	{
@@ -757,12 +764,12 @@ function bool WebAdminPage_Login(HTTPMessage InMessage, out string S)
 	}
 	S = S $ "<span class=\"sty_subtitle\">Login</span>";
 	S = S $ "<form action=\"/login_action\" method=\"post\">";
-	S = S $ "<span class=\"sty_statictext\">Alias</span><input type=\"text\" name=\"alias\">";
-	S = S $ "<br><span class=\"sty_statictext\">Role Password</span><input type=\"password\" name=\"password\">";
-	S = S $ "<br><input type=\"submit\" name=\"logintype\" value=\"Login\">";
-	S = S $ "<input type=\"submit\" name=\"logintype\" value=\"Login as Guest\">";
+	S = S $ "<span class=\"sty_statictext\">Alias</span><input type=\"text\" name=\"alias\" class=\"sty_inputtext\">";
+	S = S $ "<br><span class=\"sty_statictext\">Role Password</span><input type=\"password\" class=\"sty_inputtext\" name=\"password\">";
+	S = S $ "<br><input type=\"submit\" class=\"sty_button\" name=\"logintype\" value=\"Login\">";
+	S = S $ "<input type=\"submit\" class=\"sty_button\" name=\"logintype\" value=\"Login as Guest\">";
 	S = S $ "</form>";
-	S = S $ "<form action=\"/index\" method=\"get\" style=\"display-inline;\"><input type=\"submit\" value=\"Back\"></form>";
+	S = S $ "<form action=\"/index\" method=\"get\" style=\"display-inline;\"><input type=\"submit\" class=\"sty_button\" value=\"Back\"></form>";
 	S = S $ "</div>";
 	return true;
 }
@@ -799,8 +806,8 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "- <a href=\"/logout\">Log Out</a></td></tr>";
 
 	HTML = HTML $ "<tr><td><textarea readonly id=\"buffer\" class=\"sty_textarea\"></textarea></td><td id=\"userlist\" class=\"sty_userlist\"></td></tr>";
-	HTML = HTML $ "<tr><td colspan=\"2\"><input type=\"text\" id=\"inputarea\" autocomplete=\"off\" style=\"display-inline;\" />";
-	HTML = HTML $ "<input type=\"button\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></tr>";
+	HTML = HTML $ "<tr><td colspan=\"2\"><div id=\"bottominput\"><input type=\"text\" id=\"inputarea\" autocomplete=\"off\" style=\"display-inline;\" />";
+	HTML = HTML $ "<input type=\"button\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></div></tr>";
 	HTML = HTML $ "</table>";
 	HTML = HTML $ "</form>";
 	HTML = HTML $ "<span class=\"sty_tinytext\">";
@@ -809,6 +816,20 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 
 	// nasty javascript here...
 	HTML = HTML $ "<script type=\"text/javascript\">";
+
+	// Some global junk here
+	HTML = HTML $ "var previousAlias = '"$PreviousAlias$"';";
+	HTML = HTML $ "var previousPassword = '"$PreviousPassword$"';";
+	if(PreviouslyGuest)
+	{
+		// This is moronic but required. The string representation for boolean in UnrealScript is "True" but JavaScript only understands "true"
+		// Adding to this, UnrealScript doesn't have a ternary operator so this just makes for a sad situation all around
+		HTML = HTML $ "var previousGuest = true;";
+	}
+	else
+	{
+		HTML = HTML $ "var previousGuest = false;";
+	}
 
 	// The sendButton() function gets called when we click on the "send" button
 	HTML = HTML $ "function sendButton() {";
@@ -835,9 +856,11 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		var msgs = xmldoc.getElementsByTagName(\"MSG\");";
 	HTML = HTML $ "		var buffer = document.getElementById(\"buffer\");";
 	HTML = HTML $ "		var userlist = document.getElementById(\"userlist\");";
+	HTML = HTML $ "		var ministring = '';";
 	HTML = HTML $ "		var i;";
 	// Iterate through admin list
 	HTML = HTML $ "		userlist.innerHTML = \"<span class='sty_userlisttitle'>WebAdmin Users</span>\";";
+	HTML = HTML $ "		ministring = '<p>';";
 	HTML = HTML $ "		for(i = 0; i < admins.length; i++) {";
 	HTML = HTML $ "			var admin = admins[i];";
 	HTML = HTML $ "			var adminname = admin.childNodes[0].childNodes[0].nodeValue;";
@@ -847,17 +870,22 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "			} else {";
 	HTML = HTML $ "				adminrole = admin.childNodes[1].childNodes[0].nodeValue;";
 	HTML = HTML $ "			}";
-	HTML = HTML $ "			userlist.innerHTML = userlist.innerHTML + '<br>' + adminname + '('+adminrole+')';";
+	HTML = HTML $ "			ministring += adminname + '('+adminrole+')' + '<br>';";
 	HTML = HTML $ "		}";
+	HTML = HTML $ "		ministring += '</p>';";
+	HTML = HTML $ "		userlist.innerHTML += ministring;";
+	HTML = HTML $ "		ministring = '<p>';";
 	// Iterate through user list
 	HTML = HTML $ "		if(users.length > 0) {";
-	HTML = HTML $ "			userlist.innerHTML += \"<br><span class='sty_userlisttitle'>Players</span>\";";
+	HTML = HTML $ "			userlist.innerHTML += \"<span class='sty_userlisttitle'>Players</span>\";";
 	HTML = HTML $ "		}";
 	HTML = HTML $ "		for(i = 0; i < users.length; i++) {";
 	HTML = HTML $ "			var user = users[i];";
 	HTML = HTML $ "			var username = user.childNodes[0].nodeValue;";
-	HTML = HTML $ "			userlist.innerHTML = userlist.innerHTML + '<br>' + username;";
+	HTML = HTML $ "			ministring += username + '<br>';";
 	HTML = HTML $ "		}";
+	HTML = HTML $ "		ministring += '</p>';";
+	HTML = HTML $ "		userlist.innerHTML += ministring;";
 	// Iterate through the list of new messages
 	HTML = HTML $ "		for(i = 0; i < msgs.length; i++) {";
 	HTML = HTML $ "			var msg = msgs[i];";
@@ -879,9 +907,9 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "function runFrame() {";
 	HTML = HTML $ "		var xhttpf = new XMLHttpRequest();";
 	HTML = HTML $ "		xhttpf.onreadystatechange = polledData;";
-	HTML = HTML $ "		xhttpf.open(\"GET\", \"/meta-poll\", true);";
+	HTML = HTML $ "		xhttpf.open(\"GET\", \"/meta-poll?u=\"+previousAlias+\"&p=\"+previousPassword+\"&g=\"+previousGuest, true);";
 	HTML = HTML $ "		xhttpf.send();";
-	HTML = HTML $ "		setTimeout(runFrame, 3000);";
+	HTML = HTML $ "		setTimeout(runFrame, "$int(ClientRefreshSeconds * 1000)$");";
 	HTML = HTML $ "}";
 
 	// run the frame function - it'll rerun itself every 5 seconds as needed
@@ -903,6 +931,11 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "</table>";
 
 	return HTML;
+}
+
+function SetCookie(string NewCookie)
+{
+	Cookie = NewCookie;
 }
 
 defaultproperties
