@@ -5,6 +5,15 @@ class GameMode extends Engine.Actor
     config(SwatGame)
     native;
 
+enum SwitchTeamErrorState
+{
+	TeamSwitch_OK,
+	TeamSwitch_TeamsLocked,		// Teams are locked by an admin
+	TeamSwitch_TeamsBalance,	// Switching teams would unbalance the teams
+	TeamSwitch_Max,				// The other team has too many people, because of a forced maximum
+	TeamSwitch_PlayerLocked,	// This player is not allowed to switch their teams
+};
+
 var SwatGameInfo SGI;
 
 //Force game over
@@ -17,7 +26,7 @@ function Initialize()
 {
     mplog( self$"---GameMode::Initialize()." );
     SGI = SwatGameInfo(Owner);
-    Assert( SGI != None ); 
+    Assert( SGI != None );
 
     if ( Level.NetMode != NM_Standalone )
     {
@@ -84,7 +93,7 @@ function RespawnAll()
 
 //called when a player joins a team
 // subclasses should implement
-function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, NetTeam CurrentTeam ) 
+function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, NetTeam CurrentTeam )
 {
     Assert( false );
 }
@@ -93,6 +102,11 @@ function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, Net
 function bool ShouldKillOnChangeTeam()
 {
 	return true;
+}
+
+function SwitchTeamErrorState CanSwitchTeams(TeamInfo NewTeam, SwatGamePlayerController Player)
+{
+	return SwitchTeamErrorState.TeamSwitch_OK;
 }
 
 // sets up teams for game modes

@@ -40,6 +40,11 @@ var(ServerSettings) config bool           bLAN "If true, the server is hosted on
 
 var(ServerSettings)        bool           bDirty;
 
+// Team settings
+var(ServerSettings) config bool				bForceTeamBalance "If true, the teams cannot be intentionally unbalanced.";
+var(ServerSettings) config bool				bForceTeamMax "If true, all teams have a forced maximum amount";
+var(ServerSettings) config int				TeamForcedMax "If bForceTeamMax, the maximum number of players that can be on a team.";
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@ import enum EEntryType from SwatGame.SwatStartPointBase;
 import enum Pocket from Engine.HandheldEquipment;
 import enum EOfficerStartType from SwatGame.SwatOfficerStart;
 import enum EMPMode from Engine.Repo;
+import enum SwitchTeamErrorState from SwatGame.GameMode;
 
 // Defines the multiplayer team
 enum EMPTeam
@@ -2294,6 +2295,7 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	//local SwatGameReplicationInfo SGRI;
 	local TeamInfo CurrentTeam;
 	local TeamInfo NewTeam;
+	local SwitchTeamErrorState TeamSwitchAllowed;
 
     // Set the preferred team to the team that was requested. However, if
     // we're in COOP, this will be overridden for the current round in the
@@ -2314,6 +2316,26 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
     // team, and restart the player
     if (NewTeam != None && CurrentTeam != NewTeam)
     {
+		TeamSwitchAllowed = GameMode.CanSwitchTeams(NewTeam, Player);
+		if(TeamSwitchAllowed != SwitchTeamErrorState.TeamSwitch_OK)
+		{
+			switch(TeamSwitchAllowed)
+			{
+				case SwitchTeamErrorState.TeamSwitch_Max:
+					Player.TeamMessage(None, "", 'TeamSwitchMax');
+					return;
+				case SwitchTeamErrorState.TeamSwitch_TeamsLocked:
+					Player.TeamMessage(None, "", 'TeamSwitchLocked');
+					return;
+				case SwitchTeamErrorState.TeamSwitch_PlayerLocked:
+					Player.TeamMessage(None, "", 'TeamSwitchPlayerLocked');
+					return;
+				case SwitchTeamErrorState.TeamSwitch_TeamsBalance:
+					Player.TeamMessage(None, "", 'TeamSwitchBalance');
+					return;
+			}
+		}
+
 		if (CurrentTeam != None)
         {
             CurrentTeam.RemoveFromTeam(Player);
@@ -2351,12 +2373,6 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 		if (NetPlayer(Player.Pawn) != None)
 			NetPlayer(Player.Pawn).OnTeamChanging(NewTeam);
 	}
-
-	// Stop a new team member from stating a referendum straight away
-  // ??? why --eez
-	//SGRI = SwatGameReplicationInfo(GameReplicationInfo);
-	//if (SGRI != None && SGRI.RefMgr != None)
-	//	SGRI.RefMgr.AddVoterToCooldownList(Player.PlayerReplicationInfo.PlayerId);
 
 	Player.PlayerReplicationInfo.Team = NewTeam;
 }

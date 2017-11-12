@@ -83,6 +83,11 @@ var() private Config localized string SmashAndGrabGotItemMessage;
 var() private Config localized string SmashAndGrabDroppedItemMessage;
 var() private Config localized string SmashAndGrabArrestTimeDeductionMessage;
 
+var() private config localized string TeamSwitchLockedMessage;
+var() private config localized string TeamSwitchPlayerLockedMessage;
+var() private config localized string TeamSwitchBalanceMessage;
+var() private config localized string TeamSwitchMaxMessage;
+
 
 struct ChatLine
 {
@@ -267,6 +272,22 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
 		case 'LeaderVoteTeamMismatch':
 			MsgText = FormatTextString( LeaderVoteTeamMismatchMessage );
+			break;
+
+		case 'TeamSwitchMax':
+			MsgText = TeamSwitchMaxMessage;
+			break;
+
+		case 'TeamSwitchBalance':
+			MsgText = TeamSwitchBalanceMessage;
+			break;
+
+		case 'TeamSwitchLocked':
+			MsgText = TeamSwitchLockedMessage;
+			break;
+
+		case 'TeamSwitchPlayerLocked':
+			MsgText = TeamSwitchPlayerLockedMessage;
 			break;
 
 		case 'ReferendumSucceeded':
@@ -672,6 +693,11 @@ defaultproperties
 
 	ReferendumSucceededMessage="[c=ff00ff]The vote succeeded"
 	ReferendumFailedMessage="[c=ff00ff]The vote failed"
+
+	TeamSwitchMaxMessage="[c=ff00ff]The other team has too many people on it."
+	TeamSwitchBalanceMessage="[c=ff00ff]You cannot unbalance the teams."
+	TeamSwitchLockedMessage="[c=ff00ff]An administrator has locked the teams."
+	TeamSwitchPlayerLockedMessage="[c=ff00ff]An administrator has locked your team."
 
     TeamChatMessage="[c=808080][b]%1[\\b]: %2"
     GlobalChatMessage="[c=00ff00][b]%1[\\b][c=00ff00]: %2"

@@ -28,6 +28,8 @@ enum AdminPermissions
 	Permission_ChangeSettings,	// Allowed to change server settings
 	Permission_Immunity,		// Immune to kick, ban, etc votes
 	Permission_WebAdminChat,	// Allowed to chat while in WebAdmin
+	Permission_LockTeams,		// Allowed to lock the teams
+	Permission_LockPlayerTeams,	// Allowed to lock a player's team
 	Permission_Max,
 };
 
@@ -462,11 +464,11 @@ function Broadcast(coerce string Msg, optional name Type)
 			break;
 		case 'Kick':
 			mplog("Kick: "$Msg);
-			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickFormat, StrA, StrB));
+			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickFormat, StrB, StrA));
 			break;
 		case 'KickBan':
 			mplog("KickBan: "$Msg);
-			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickBanFormat, StrA, StrB));
+			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickBanFormat, StrB, StrA));
 			break;
 		case 'ObjectiveComplete':
 			mplog("ObjectiveComplete: "$Msg);
