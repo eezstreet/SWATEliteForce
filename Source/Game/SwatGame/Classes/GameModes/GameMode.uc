@@ -109,6 +109,26 @@ function SwitchTeamErrorState CanSwitchTeams(TeamInfo NewTeam, SwatGamePlayerCon
 	return SwitchTeamErrorState.TeamSwitch_OK;
 }
 
+function bool AreTeamsLocked()
+{
+	return false;
+}
+
+function bool IsPlayerTeamLocked(SwatGamePlayerController Player)
+{
+	return false;
+}
+
+function bool ToggleTeamLock()
+{
+	return false;
+}
+
+function bool TogglePlayerTeamLock(SwatGamePlayerController P)
+{
+	return false;
+}
+
 // sets up teams for game modes
 function SetupTeams(GameReplicationInfo GRI)
 {

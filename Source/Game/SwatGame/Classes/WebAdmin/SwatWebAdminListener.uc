@@ -344,6 +344,81 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
 	}
+	else if(argv[0] ~= "lockteams" || argv[0] ~= "unlockteams" || argv[0] ~= "toggleteamlock")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_LockTeams))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else
+		{
+			SwatGameInfo(Level.Game).RemoteLockTeams(Users[i].Alias$"(WebAdmin)");
+		}
+	}
+	else if(argv[0] ~= "lockplayerteam" || argv[0] ~= "unlockplayerteam" || argv[0] ~= "toggleplayerteamlock")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_LockPlayerTeams))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else if(!SwatGameInfo(Level.Game).RemoteLockPlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1)))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
+	else if(argv[0] ~= "alltored" || argv[0] ~= "forceallred" || argv[0] ~= "forceredall")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForceAllTeams))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else
+		{
+			SwatGameInfo(Level.Game).RemoteForceAllToTeam(Users[i].Alias$"(WebAdmin)", 2);
+		}
+	}
+	else if(argv[0] ~= "alltoblue" || argv[0] ~= "forceallblue" || argv[0] ~= "forceblueall")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForceAllTeams))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else
+		{
+			SwatGameInfo(Level.Game).RemoteForceAllToTeam(Users[i].Alias$"(WebAdmin)", 0);
+		}
+	}
+	else if(argv[0] ~= "forcered")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForcePlayerTeam))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else if(!SwatGameInfo(Level.Game).RemoteForcePlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1), 2))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
+	else if(argv[0] ~= "forceblue")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForcePlayerTeam))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else if(!SwatGameInfo(Level.Game).RemoteForcePlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1), 0))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
 	else
 	{
 		msg.Message = "Unknown command '"$argv[0]$"'";

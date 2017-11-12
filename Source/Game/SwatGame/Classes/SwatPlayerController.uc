@@ -31,6 +31,7 @@ replication
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
 		Kick, KickBan, SAD, Switch, StartGame, AbortGame,
+		ForceAllToTeam, ForcePlayerToTeam, ToggleTeamLock, TogglePlayerTeamLock,
 		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
@@ -450,6 +451,26 @@ exec function ShowIDs()
 exec function ToggleIDs()
 {
     ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
+}
+
+exec function ForceAllToTeam(int TeamID)
+{
+	SwatGameInfo(Level.Game).Admin.ForceAllToTeam(Self, TeamID);
+}
+
+exec function ForcePlayerToTeam(int TeamID, string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ForcePlayerToTeam(Self, TeamID, PlayerName);
+}
+
+exec function ToggleTeamLock()
+{
+	SwatGameInfo(Level.Game).Admin.ToggleTeamLock(Self);
+}
+
+exec function TogglePlayerTeamLock(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.TogglePlayerTeamLock(Self, PlayerName);
 }
 
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)

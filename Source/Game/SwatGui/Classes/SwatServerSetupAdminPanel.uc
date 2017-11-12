@@ -348,6 +348,10 @@ defaultproperties
 	PermissionNames[5]="Change Settings"
 	PermissionNames[6]="Vote Immunity"
 	PermissionNames[7]="WebAdmin Chat"
+	PermissionNames[8]="Lock/Unlock Teams"
+	PermissionNames[9]="Lock/Unlock Player Team"
+	PermissionNames[10]="Force Everyone to Team"
+	PermissionNames[11]="Force Player to Team"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -357,4 +361,8 @@ defaultproperties
 	PermissionDescription[5]="Change the server's settings."
 	PermissionDescription[6]="Provides immunity to kick and kickban votes."
 	PermissionDescription[7]="Provides the ability to chat with players using WebAdmin."
+	PermissionDescription[8]="Lock/Unlock the teams, preventing/allowing players to switch teams."
+	PermissionDescription[9]="Lock/Unlock a player's team, preventing/allowing them to switch teams."
+	PermissionDescription[10]="Force everyone in the server to one team (red or blue)."
+	PermissionDescription[11]="Force a player to a team (red or blue)."
 }

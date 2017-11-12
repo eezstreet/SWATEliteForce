@@ -2310,12 +2310,13 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	if (NetTeam(NewTeam) != None && NetTeam(NewTeam).AIOnly)
 		NewTeam = GameReplicationInfo.Teams[GetAutoJoinTeamID()];
 
-    log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
+
 
     // If a new team, remove from current team, kill off pawn, add to new
     // team, and restart the player
     if (NewTeam != None && CurrentTeam != NewTeam)
     {
+		log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
 		TeamSwitchAllowed = GameMode.CanSwitchTeams(NewTeam, Player);
 		if(TeamSwitchAllowed != SwitchTeamErrorState.TeamSwitch_OK)
 		{
@@ -2375,6 +2376,189 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	}
 
 	Player.PlayerReplicationInfo.Team = NewTeam;
+}
+
+// ForcePlayerTeam
+// Forces a particular player to a particular team
+// Preconditions: The admin is allowed to do this, and the Player is valid
+function ForcePlayerTeam(SwatGamePlayerController Player, int TeamID, string Admin, optional bool ForceAll, optional bool Kill)
+{
+	local TeamInfo CurrentTeam;
+	local TeamInfo NewTeam;
+
+	// Set the preferred team to the team that was requested. However, if
+	// we're in COOP, this will be overridden for the current round in the
+	// following code.
+	Player.SwatRepoPlayerItem.SetPreferredTeamID( TeamID );
+
+	CurrentTeam = Player.PlayerReplicationInfo.Team;
+	NewTeam = GameReplicationInfo.Teams[TeamID];
+
+	// If the TeamID corresponds to an AI team join the next best team.
+	if (NetTeam(NewTeam) != None && NetTeam(NewTeam).AIOnly)
+		NewTeam = GameReplicationInfo.Teams[GetAutoJoinTeamID()];
+
+	// If a new team, remove from current team, kill off pawn, add to new
+	// team, and restart the player
+	if (NewTeam != None && CurrentTeam != NewTeam)
+	{
+		log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
+
+		if (CurrentTeam != None)
+        {
+            CurrentTeam.RemoveFromTeam(Player);
+        }
+
+		if (Kill)
+		{
+			if (Player.Pawn != None)
+			{
+				Player.Pawn.Died( None, class'GenericDamageType', Player.Pawn.Location, vect(0,0,0) );
+				//Player.Pawn.Destroy();
+			}
+		}
+
+		if (NetPlayer(Player.Pawn) != None)
+			NetPlayer(Player.Pawn).OnTeamChanging(NewTeam);
+
+        NewTeam.AddToTeam(Player);
+
+		Repo.GetRepoPlayerItem( Player.SwatPlayerID ).SetTeamID( TeamID );
+
+        //notify the game mode that a new player has joined the team
+        GetGameMode().PlayerJoinedTeam( Player, NetTeam(CurrentTeam), NetTeam(NewTeam) );
+
+		if (bStatsNewGameStarted)
+		{
+			Player.Stats.TeamChange(TeamID);
+		}
+
+		if(!ForceAll)
+		{
+			if(TeamID == 0)
+			{
+				// Blue
+				Broadcast(None, Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerBlue');
+				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerBlue');
+			}
+			else if(TeamID == 2)
+			{
+				// Red
+				Broadcast(None, Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerRed');
+				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerRed');
+			}
+		}
+	}
+	else
+	{
+		if (NetPlayer(Player.Pawn) != None)
+			NetPlayer(Player.Pawn).OnTeamChanging(NewTeam);
+	}
+
+	Player.PlayerReplicationInfo.Team = NewTeam;
+}
+
+// Forces all players to be on one team
+// Precondition: The admin who triggered this is allowed to do it, and the TeamID is valid
+function ForceAllToTeam(int TeamID, string Admin)
+{
+	local SwatGamePlayerController PC;
+
+	ForEach AllActors(class'SwatGamePlayerController', PC)
+	{
+		ForcePlayerTeam(PC, TeamID, Admin, true);
+	}
+
+	if(TeamID == 0)
+	{
+		// Blue
+		Broadcast(None, Admin, 'ForceTeamBlue');
+		AdminLog(Admin, 'ForceTeamBlue');
+	}
+	else if(TeamID == 2)
+	{
+		// Red
+		Broadcast(None, Admin, 'ForceTeamRed');
+		AdminLog(Admin, 'ForceTeamRed');
+	}
+
+}
+
+// RemoteLockTeams
+// FOR USE BY WEBADMIN ONLY!
+function RemoteLockTeams(string AdminName)
+{
+	local GameMode GameMode;
+
+	GameMode = GetGameMode();
+
+	if(GameMode.ToggleTeamLock())
+	{
+		Broadcast(None, AdminName, 'LockTeams');
+		AdminLog(AdminName, 'LockTeams');
+	}
+	else
+	{
+		Broadcast(None, AdminName, 'UnlockTeams');
+		AdminLog(AdminName, 'UnlockTeams');
+	}
+}
+
+// RemoteLockPlayerTeam
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteLockPlayerTeam(string AdminName, string PlayerName)
+{
+	local SwatGamePlayerController PC;
+	local GameMode GameMode;
+	local bool TeamLocked;
+
+	GameMode = GetGameMode();
+
+	ForEach AllActors(class'SwatGamePlayerController', PC)
+	{
+		if(PC.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			TeamLocked = GameMode.TogglePlayerTeamLock(PC);
+			if(TeamLocked)
+			{
+				Broadcast(None, AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+			}
+			else
+			{
+				Broadcast(None, AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// RemoteForceAllToTeam
+// FOR USE BY WEBADMIN ONLY!
+function RemoteForceAllToTeam(string AdminName, int TeamID)
+{
+	ForceAllToTeam(TeamID, AdminName);
+}
+
+// RemoteForcePlayerTeam
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int TeamID)
+{
+	local SwatGamePlayerController PC;
+
+	ForEach AllActors(class'SwatGamePlayerController', PC)
+	{
+		if(PC.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			ForcePlayerTeam(PC, TeamID, AdminName);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////

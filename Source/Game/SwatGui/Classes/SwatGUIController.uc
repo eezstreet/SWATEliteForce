@@ -442,6 +442,14 @@ function bool OnMessageRecieved( String Msg, Name Type )
 			case 'TeamSwitchLocked':
 			case 'TeamSwitchBalance':
 			case 'TeamSwitchPlayerLocked':
+			case 'ForceTeamRed':
+			case 'ForceTeamBlue':
+			case 'ForcePlayerBlue':
+			case 'ForcePlayerRed':
+			case 'LockTeams':
+			case 'UnlockTeams':
+			case 'LockPlayerTeam':
+			case 'UnlockPlayerTeam':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {

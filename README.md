@@ -774,6 +774,10 @@ Move your admin lines in SwatGuiState.ini to Swat4XDedicatedServer.ini *before* 
  - Penalty messages in multiplayer now show up as chat messages, and don't hide the chat when shown. (The penalty message in Singleplayer remains the same)
  - Added a new ingame Admin panel. From this panel, you can now kick, ban, go to the next map, etc. All players can use it, but only actions which can be carried out by their current role will be selectable.
  - Added a new WebAdmin panel. The WebAdmin can currently only be used to chat with players and check the server status.
+ - New Admin privilege: Lock/Unlock teams.
+ - New Admin privilege: Lock/Unlock a player's team.
+ - New Admin privilege: Force all players to red/blue
+ - New Admin privilege: Force a player to red/blue
  - Admin data is now saved in Swat4XDedicatedServer.ini instead of SwatGuiState.ini
  - Adjusted a lot of the training mission text to better integrate TSS and SEF features.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.

@@ -30,6 +30,8 @@ enum AdminPermissions
 	Permission_WebAdminChat,	// Allowed to chat while in WebAdmin
 	Permission_LockTeams,		// Allowed to lock the teams
 	Permission_LockPlayerTeams,	// Allowed to lock a player's team
+	Permission_ForceAllTeams,	// Allowed to force all players to one team
+	Permission_ForcePlayerTeam,	// Allowed to force a player to a particular team
 	Permission_Max,
 };
 
@@ -69,6 +71,14 @@ var private localized config string KickFormat;
 var private localized config string KickBanFormat;
 var private localized config string IncapacitateFormat;
 var private localized config string ObjectiveCompleteFormat;
+var private localized config string LockedTeamsFormat;
+var private localized config string UnlockedTeamsFormat;
+var private localized config string LockedPlayerTeamFormat;
+var private localized config string UnlockedPlayerTeamFormat;
+var private localized config string ForceAllRedFormat;
+var private localized config string ForceAllBlueFormat;
+var private localized config string ForcePlayerRedFormat;
+var private localized config string ForcePlayerBlueFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -314,6 +324,99 @@ function AbortGame( PlayerController PC )
 	SwatGameInfo(Level.Game).GameAbort();
 }
 
+// Force all players to one particular team
+function ForceAllToTeam(PlayerController PC, int TeamID)
+{
+	if(!ActionAllowed(PC, AdminPermissions.Permission_ForceAllTeams))
+	{
+		return;
+	}
+
+	SwatGameInfo(Level.Game).ForceAllToTeam(TeamID, PC.PlayerReplicationInfo.PlayerName);
+}
+
+// Force a particular player to a team
+function ForcePlayerToTeam(PlayerController PC, int TeamID, string PlayerName)
+{
+	local PlayerController P;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_ForcePlayerTeam))
+	{
+		return;
+	}
+
+	ForEach DynamicActors(class'PlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			SwatGameInfo(Level.Game).ForcePlayerTeam(SwatGamePlayerController(P), TeamID, PC.PlayerReplicationInfo.PlayerName);
+			return;
+		}
+	}
+}
+
+// Lock/unlock the teams.
+function ToggleTeamLock(PlayerController PC)
+{
+	local GameMode CurrentGameMode;
+	local bool LockedTheTeams;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_LockTeams))
+	{
+		return;
+	}
+
+	CurrentGameMode = SwatGameInfo(Level.Game).GetGameMode();
+	LockedTheTeams = CurrentGameMode.ToggleTeamLock();
+	if(!LockedTheTeams)
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'UnlockTeams');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'UnlockTeams');
+	}
+	else
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'LockTeams');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'LockTeams');
+	}
+}
+
+// Lock a player's team.
+function TogglePlayerTeamLock(PlayerController PC, string PlayerName)
+{
+	local PlayerController P;
+	local GameMode Mode;
+	local bool LockedTheTeam;
+	local SwatGameInfo GameInfo;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_LockPlayerTeams))
+	{
+		return;
+	}
+
+	GameInfo = SwatGameInfo(Level.Game);
+	Mode = GameInfo.GetGameMode();
+
+	ForEach DynamicActors(class'PlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			// Got 'em!
+			LockedTheTeam = Mode.TogglePlayerTeamLock(SwatGamePlayerController(P));
+			if(!LockedTheTeam)
+			{
+				GameInfo.Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+			}
+			else
+			{
+				GameInfo.Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+			}
+			return;
+		}
+	}
+}
+
 // Execute an AC command based on the text
 function ACCommand( PlayerController PC, String S )
 {
@@ -336,6 +439,34 @@ function ACCommand( PlayerController PC, String S )
 	else if(Left(S, 6) ~= "abort ")
 	{
 		AbortGame(PC);
+	}
+	else if(S ~= "forceallred" || S ~= "forceredall" || S ~= "alltored")
+	{
+		ForceAllToTeam(PC, 2);
+	}
+	else if(S ~= "forceallblue" || S ~= "forceblueall" || S ~= "alltoblue")
+	{
+		ForceAllToTeam(PC, 0);
+	}
+	else if(Left(S, 9)  ~= "forcered ")
+	{
+		ForcePlayerToTeam(PC, 2, Mid(S, 9));
+	}
+	else if(Left(S, 10) ~= "forceblue ")
+	{
+		ForcePlayerToTeam(PC, 0, Mid(S, 10));
+	}
+	else if(S ~= "lockteams" || S ~= "toggleteamlock")
+	{
+		ToggleTeamLock(PC);
+	}
+	else if(Left(S, 21) ~= "toggleplayerteamlock ")
+	{
+		TogglePlayerTeamLock(PC, Mid(S, 21));
+	}
+	else if(Left(S, 15) ~= "lockplayerteam ")
+	{
+		TogglePlayerTeamLock(PC, Mid(S, 15));
 	}
 }
 
@@ -474,6 +605,38 @@ function Broadcast(coerce string Msg, optional name Type)
 			mplog("ObjectiveComplete: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Round, FormatTextString(ObjectiveCompleteFormat, StrA));
 			break;
+		case 'ForceTeamRed':
+			mplog("ForceTeamRed: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForceAllRedFormat, StrA));
+			break;
+		case 'ForceTeamBlue':
+			mplog("ForceTeamBlue: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForceAllBlueFormat, StrA));
+			break;
+		case 'ForcePlayerRed':
+			mplog("ForcePlayerRed: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForcePlayerRedFormat, StrA, StrB));
+			break;
+		case 'ForcePlayerBlue':
+			mplog("ForcePlayerBlue: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForcePlayerBlueFormat, StrA, StrB));
+			break;
+		case 'LockTeams':
+			mplog("LockTeams: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(LockedTeamsFormat, StrA));
+			break;
+		case 'UnlockTeams':
+			mplog("UnlockTeams: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedTeamsFormat, StrA));
+			break;
+		case 'LockPlayerTeam':
+			mplog("LockPlayerTeam: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(LockedPlayerTeamFormat, StrA, StrB));
+			break;
+		case 'UnlockPlayerTeam':
+			mplog("UnlockPlayerTeam: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB));
+			break;
 	}
 }
 
@@ -519,4 +682,12 @@ defaultproperties
 	KickFormat="%1 was kicked by %2"
 	KickBanFormat="%1 was kick-banned by %2"
 	ObjectiveCompleteFormat="Objective Complete: %1"
+	LockedTeamsFormat="%1 locked the teams."
+	UnlockedTeamsFormat="%1 unlocked the teams."
+	LockedPlayerTeamFormat="%1 locked %2's team."
+	UnlockedPlayerTeamFormat="%1 unlocked %2's team."
+	ForceAllRedFormat="%1 forced all players to be on the red team."
+	ForceAllBlueFormat="%1 forced all players to be on the blue team."
+	ForcePlayerRedFormat="%1 forced %2 to be on the red team."
+	ForcePlayerBlueFormat="%1 forced %2 to be on the blue team."
 }

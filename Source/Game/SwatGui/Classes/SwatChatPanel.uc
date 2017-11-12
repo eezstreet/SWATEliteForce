@@ -87,6 +87,14 @@ var() private config localized string TeamSwitchLockedMessage;
 var() private config localized string TeamSwitchPlayerLockedMessage;
 var() private config localized string TeamSwitchBalanceMessage;
 var() private config localized string TeamSwitchMaxMessage;
+var() private config localized string ForceTeamRedMessage;
+var() private config localized string ForceTeamBlueMessage;
+var() private config localized string ForcePlayerRedMessage;
+var() private config localized string ForcePlayerBlueMessage;
+var() private config localized string LockTeamsMessage;
+var() private config localized string UnlockTeamsMessage;
+var() private config localized string LockPlayerTeamMessage;
+var() private config localized string UnlockPlayerTeamMessage;
 
 
 struct ChatLine
@@ -288,6 +296,38 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
 		case 'TeamSwitchPlayerLocked':
 			MsgText = TeamSwitchPlayerLockedMessage;
+			break;
+
+		case 'ForceTeamRed':
+			MsgText = FormatTextString(ForceTeamRedMessage, StrA);
+			break;
+
+		case 'ForceTeamBlue':
+			MsgText = FormatTextString(ForceTeamBlueMessage, StrA);
+			break;
+
+		case 'ForcePlayerRed':
+			MsgText = FormatTextString(ForcePlayerRedMessage, StrA, StrB);
+			break;
+
+		case 'ForcePlayerBlue':
+			MsgText = FormatTextString(ForcePlayerBlueMessage, StrA, StrB);
+			break;
+
+		case 'LockTeams':
+			MsgText = FormatTextString(LockTeamsMessage, StrA);
+			break;
+
+		case 'UnlockTeams':
+			MsgText = FormatTextString(UnlockTeamsMessage, StrA);
+			break;
+
+		case 'LockPlayerTeam':
+			MsgText = FormatTextString(LockPlayerTeamMessage, StrA, StrB);
+			break;
+
+		case 'UnlockPlayerTeam':
+			MsgText = FormatTextString(UnlockPlayerTeamMessage, StrA, StrB);
 			break;
 
 		case 'ReferendumSucceeded':
@@ -699,6 +739,14 @@ defaultproperties
 	TeamSwitchLockedMessage="[c=ff00ff]An administrator has locked the teams."
 	TeamSwitchPlayerLockedMessage="[c=ff00ff]An administrator has locked your team."
 
+	ForceTeamRedMessage="[c=ff00ff]%1 forced everyone to the red team."
+	ForceTeamBlueMessage="[c=ff00ff]%1 forced everyone to the blue team."
+	ForcePlayerRedMessage="[c=ff00ff]%1 forced %2 to the red team."
+	ForcePlayerBlueMessage="[c=ff00ff]%1 forced %2 to the blue team."
+	LockTeamsMessage="[c=ff00ff]%1 locked the teams."
+	UnlockTeamsMessage="[c=ff00ff]%1 unlocked the teams."
+	LockPlayerTeamMessage="[c=ff00ff]%1 locked %2's team."
+	UnlockPlayerTeamMessage="[c=ff00ff]%1 locked %2's team."
     TeamChatMessage="[c=808080][b]%1[\\b]: %2"
     GlobalChatMessage="[c=00ff00][b]%1[\\b][c=00ff00]: %2"
     TeamChatMessageLocalized="[c=808080][b]%1 (%2)[\\b]: %3"

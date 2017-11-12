@@ -338,6 +338,51 @@ function SwitchTeamErrorState CanSwitchTeams(TeamInfo NewTeam, SwatGamePlayerCon
 	return SwitchTeamErrorState.TeamSwitch_OK;
 }
 
+function bool AreTeamsLocked()
+{
+	return bTeamsLocked;
+}
+
+function bool IsPlayerTeamLocked(SwatGamePlayerController Player)
+{
+	local int i;
+
+	for(i = 0; i < PlayersTeamLocked.Length; i++)
+	{
+		if(PlayersTeamLocked[i] == Player)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function bool ToggleTeamLock()
+{
+	bTeamsLocked = !bTeamsLocked;
+	return bTeamsLocked;
+}
+
+function bool TogglePlayerTeamLock(SwatGamePlayerController P)
+{
+	local int i;
+
+	// Check to see if the player is already on our list of locked players
+	for(i = 0; i < PlayersTeamLocked.Length; i++)
+	{
+		if(PlayersTeamLocked[i] == P)
+		{
+			PlayersTeamLocked.Remove(i, 1);
+			return false;
+		}
+	}
+
+	// Go ahead and add it, then.
+	PlayersTeamLocked[PlayersTeamLocked.Length] = P;
+	return true;
+}
+
 // OnPlayerDied -- must reselect leader if leader dies
 function OnPlayerDied( PlayerController player, Controller killer )
 {

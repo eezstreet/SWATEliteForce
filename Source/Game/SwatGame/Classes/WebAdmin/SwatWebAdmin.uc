@@ -811,7 +811,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "</table>";
 	HTML = HTML $ "</form>";
 	HTML = HTML $ "<span class=\"sty_tinytext\">";
-	HTML = HTML $ "<a href=\"javascript:void(0); window.open('/commandhelp', 'WebAdmin Command Help', 'width=300,height=150');return false;\">Command Help</a>";
+	HTML = HTML $ "<a href=\"javascript:void(window.open('/commandhelp', 'WebAdmin Command Help', 'width=700,height=600'));\">Command Help</a>";
 	HTML = HTML $ "</span>";
 
 	// nasty javascript here...
@@ -925,9 +925,15 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	local string HTML;
 
 	HTML = "<p class=\"sty_statictext\">The following commands can be used in WebAdmin. To use them, type in the message box and send.</p>";
-	HTML = HTML $ "<table><tr><th>Command</th><th>Description</th></tr>";
+	HTML = HTML $ "<table class=\"sty_statictext\"><tr><th>Command</th><th>Description</th></tr>";
 	HTML = HTML $ "<tr><th>/kick -player name-</th><td>Kicks the specified player.</td></tr>";
 	HTML = HTML $ "<tr><th>/kickban -player name-<br>/ban -player name-</th><td>Kicks the specified player from the server and bans them.</td></tr>";
+	HTML = HTML $ "<tr><th>/lockteams</th><td>Locks/Unlocks the teams.</td></tr>";
+	HTML = HTML $ "<tr><th>/lockplayerteam -player name-</th><td>Locks/Unlocks the player's team.</td></tr>";
+	HTML = HTML $ "<tr><th>/alltored</th><td>Forces all players to the red team.</td></tr>";
+	HTML = HTML $ "<tr><th>/alltoblue</th><td>Forces all players to the blue team.</td></tr>";
+	HTML = HTML $ "<tr><th>/forcered -playername-</th><td>Forces a player to the red team.</td></tr>";
+	HTML = HTML $ "<tr><th>/forceblue -playername-</th><td>Forces a player to the blue team.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;
