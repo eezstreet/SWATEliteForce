@@ -775,6 +775,7 @@ Move your admin lines in SwatGuiState.ini to Swat4XDedicatedServer.ini *before* 
  - Added a new ingame Admin panel. From this panel, you can now kick, ban, go to the next map, etc. All players can use it, but only actions which can be carried out by their current role will be selectable.
  - Added a new WebAdmin panel. The WebAdmin can currently only be used to chat with players and check the server status.
  - Admin data is now saved in Swat4XDedicatedServer.ini instead of SwatGuiState.ini
+ - Updated the Training mission to mention a bit about the INITIATE command and held orders.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
 
 #### v6.2
