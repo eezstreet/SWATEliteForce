@@ -2484,9 +2484,69 @@ function ForceAllToTeam(int TeamID, string Admin)
 
 }
 
+// Checks to see if a player is muted
 function bool PlayerMuted(SwatGamePlayerController Player)
 {
 	return Admin.Muted(Player);
+}
+
+// Forces a player to die
+function bool ForcePlayerDeath(SwatGamePlayerController PC, string PlayerName, optional string AdminName)
+{
+	local SwatGamePlayerController P;
+
+	if(PC != None)
+	{
+		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		if(!Admin.CanKillPlayers(PC))
+		{
+			return false;
+		}
+	}
+
+	ForEach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			P.Pawn.Died(None, class'DamageType', P.Pawn.Location, vect(0.0, 0.0, 0.0));
+			Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminKill');
+			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminKill');
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Forces a player to be leader
+function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerName, optional string AdminName)
+{
+	local SwatGamePlayerController P;
+	local GameModeCOOP GameMode;
+
+	GameMode = GameModeCOOP(GetGameMode());
+
+	if(PC != None)
+	{
+		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		if(!Admin.CanPromoteLeader(PC))
+		{
+			return false;
+		}
+	}
+
+	ForEach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminLeader');
+			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminLeader');
+			GameMode.SetLeader(NetTeam(P.PlayerReplicationInfo.Team), P);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // RemoteLockTeams

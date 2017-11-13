@@ -32,6 +32,7 @@ replication
     reliable if( Role < ROLE_Authority )
 		Kick, KickBan, SAD, Switch, StartGame, AbortGame,
 		ForceAllToTeam, ForcePlayerToTeam, ToggleTeamLock, TogglePlayerTeamLock, ToggleMute,
+		AdminKillPlayer, AdminPromotePlayer,
 		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
@@ -476,6 +477,16 @@ exec function TogglePlayerTeamLock(string PlayerName)
 exec function ToggleMute(string PlayerName)
 {
 	SwatGameInfo(Level.Game).Admin.ToggleMute(Self, PlayerName);
+}
+
+exec function AdminKillPlayer(string PlayerName)
+{
+	SwatGameInfo(Level.Game).ForcePlayerDeath(SwatGamePlayerController(self), PlayerName);
+}
+
+exec function AdminPromotePlayer(string PlayerName)
+{
+	SwatGameInfo(Level.Game).ForcePlayerPromotion(SwatGamePlayerController(self), PlayerName);
 }
 
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)

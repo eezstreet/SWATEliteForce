@@ -353,6 +353,8 @@ defaultproperties
 	PermissionNames[10]="Force Everyone to Team"
 	PermissionNames[11]="Force Player to Team"
 	PermissionNames[12]="Mute Players"
+	PermissionNames[13]="Kill Players"
+	PermissionNames[14]="Promote Players"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -367,4 +369,6 @@ defaultproperties
 	PermissionDescription[10]="Force everyone in the server to one team (red or blue)."
 	PermissionDescription[11]="Force a player to a team (red or blue)."
 	PermissionDescription[12]="Mute/unmute a player. When a player is muted, they are unable to speak."
+	PermissionDescription[13]="Kill players."
+	PermissionDescription[14]="Promote players to leaders. This only works when the server has CO-OP leaders enabled."
 }

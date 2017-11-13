@@ -432,6 +432,32 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
 	}
+	else if(argv[0] ~= "kill")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_KillPlayers))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else if(!SwatGameInfo(Level.Game).ForcePlayerDeath(None, ConcatArgs(argv, 1), Users[i].Alias$"(WebAdmin)"))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
+	else if(argv[0] ~= "promote")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_PromoteLeader))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else if(!SwatGameInfo(Level.Game).ForcePlayerPromotion(None, ConcatArgs(argv, 1), Users[i].Alias$"(WebAdmin)"))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
 	else
 	{
 		msg.Message = "Unknown command '"$argv[0]$"'";

@@ -33,6 +33,8 @@ enum AdminPermissions
 	Permission_ForceAllTeams,	// Allowed to force all players to one team
 	Permission_ForcePlayerTeam,	// Allowed to force a player to a particular team
 	Permission_Mute,			// Allowed to mute players
+	Permission_KillPlayers,		// Allowed to kill players
+	Permission_PromoteLeader,	// Allowed to promote players to leader
 	Permission_Max,
 };
 
@@ -69,7 +71,6 @@ var private localized config string TeamKillFormat;
 var private localized config string ArrestFormat;
 var private localized config string ConnectFormat;
 var private localized config string DisconnectFormat;
-var private localized config string PromotedFormat;
 var private localized config string KickFormat;
 var private localized config string KickBanFormat;
 var private localized config string IncapacitateFormat;
@@ -84,6 +85,8 @@ var private localized config string ForcePlayerRedFormat;
 var private localized config string ForcePlayerBlueFormat;
 var private localized config string MuteFormat;
 var private localized config string UnmuteFormat;
+var private localized config string AdminKillFormat;
+var private localized config string AdminPromotedFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -429,8 +432,6 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 	local int i;
 	local string Msg;
 
-	log("ToggleMute()");
-
 	if(PC != None)
 	{
 		AdminName = PC.PlayerReplicationInfo.PlayerName;
@@ -464,8 +465,6 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 		}
 	}
 
-	log("ToggleMute couldn't find player "$PlayerName);
-
 	return false;
 }
 
@@ -483,6 +482,18 @@ public function bool Muted(SwatGamePlayerController PC)
 	}
 
 	return false;
+}
+
+// Returns true if we are allowed to force players to be leaders
+public function bool CanPromoteLeader(SwatGamePlayerController PC)
+{
+	return ActionAllowed(PC, AdminPermissions.Permission_PromoteLeader);
+}
+
+// Returns true if we are allowed to kill players with admin permissions
+public function bool CanKillPlayers(SwatGamePlayerController PC)
+{
+	return ActionAllowed(PC, AdminPermissions.Permission_KillPlayers);
 }
 
 // Execute an AC command based on the text
@@ -705,6 +716,22 @@ function Broadcast(coerce string Msg, optional name Type)
 			mplog("UnlockPlayerTeam: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB));
 			break;
+		case 'Mute':
+			mplog("Mute: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(MuteFormat, StrA, StrB));
+			break;
+		case 'Unmute':
+			mplog("Unmute: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(UnmuteFormat, StrA, StrB));
+			break;
+		case 'AdminKill':
+			mplog("AdminKill: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(AdminKillFormat, StrA, StrB));
+			break;
+		case 'AdminLeader':
+			mplog("AdminLeader: "$Msg);
+			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(AdminPromotedFormat, StrA, StrB));
+			break;
 	}
 }
 
@@ -760,4 +787,6 @@ defaultproperties
 	ForcePlayerBlueFormat="%1 forced %2 to be on the blue team."
 	MuteFormat="%1 muted %2."
 	UnmuteFormat="%1 un-muted %2."
+	AdminKillFormat="%1 killed %2."
+	AdminPromotedFormat="%1 promoted %2 to leader."
 }

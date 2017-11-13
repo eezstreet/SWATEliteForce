@@ -100,6 +100,9 @@ var() private config localized string YouAreMutedMessage;
 var() private config localized string MuteMessage;
 var() private config localized string UnmuteMessage;
 
+var() private config localized string AdminKillMessage;
+var() private config localized string AdminPromoteMessage;
+
 
 struct ChatLine
 {
@@ -344,6 +347,14 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
 		case 'Unmute':
 			MsgText = FormatTextString(UnmuteMessage, StrA, StrB);
+			break;
+
+		case 'AdminKill':
+			MsgText = FormatTextString(AdminKillMessage, StrA, StrB);
+			break;
+
+		case 'AdminLeader':
+			MsgText = FormatTextString(AdminPromoteMessage, StrA, StrB);
 			break;
 
 		case 'ReferendumSucceeded':
@@ -782,6 +793,9 @@ defaultproperties
 	YouAreMutedMessage="[c=EC832F][b]You are muted and cannot speak."
 	MuteMessage="[c=ff00ff]%1 muted %2"
 	UnmuteMessage="[c=ff00ff]%1 un-muted %2"
+
+	AdminKillMessage="[c=ff00ff]%1 killed %2!"
+	AdminPromoteMessage="[c=ff00ff]%1 promoted %2 to leader."
 
     ConnectedMessage="[c=ffff00][b]%1[\\b] connected to the server."
     DisconnectedMessage="[c=ffff00][b]%1[\\b] dropped from the server."

@@ -10,14 +10,14 @@ enum AdminPlayerActions
 	PlayerAction_LockTeam,
 	PlayerAction_ForceRed,
 	PlayerAction_ForceBlue,
-	PlayerAction_Mute/*,
-	The following are what I intend to implement. Someday.
+	PlayerAction_Mute,
 	PlayerAction_MakeLeader,
+	PlayerAction_Kill/*,
+	The following are what I intend to implement. Someday.
 	PlayerAction_Respawn,
 	PlayerAction_ForceLessLethal,
 	PlayerAction_ForceSpectator,
 	PlayerAction_Freeze,
-	PlayerAction_Kill,
 	PlayerAction_ClearWarnings
 	*/
 };
@@ -70,6 +70,10 @@ private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions
 			return AdminPermissions.Permission_ForcePlayerTeam;
 		case PlayerAction_Mute:
 			return AdminPermissions.Permission_Mute;
+		case PlayerAction_Kill:
+			return AdminPermissions.Permission_KillPlayers;
+		case PlayerAction_MakeLeader:
+			return AdminPermissions.Permission_PromoteLeader;
 	}
 }
 
@@ -267,6 +271,8 @@ defaultproperties
 	PlayerActionNames[3]="Send to Red"
 	PlayerActionNames[4]="Send to Blue"
 	PlayerActionNames[5]="Mute/Unmute"
+	PlayerActionNames[6]="Kill"
+	PlayerActionNames[7]="Promote to Leader"
 	MapActionNames[0]="Go to Next Map"
 	MapActionNames[1]="Start Game"
 	MapActionNames[2]="End Game"
@@ -279,6 +285,8 @@ defaultproperties
 	PlayerConsoleCommands[3]="ForcePlayerToTeam 2"
 	PlayerConsoleCommands[4]="ForcePlayerToTeam 0"
 	PlayerConsoleCommands[5]="ToggleMute"
+	PlayerConsoleCommands[6]="AdminKillPlayer"
+	PlayerConsoleCommands[7]="AdminPromotePlayer"
 	MapConsoleCommands[0]="NM"
 	MapConsoleCommands[1]="StartGame"
 	MapConsoleCommands[2]="AbortGame"

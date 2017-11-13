@@ -453,6 +453,8 @@ function bool OnMessageRecieved( String Msg, Name Type )
 			case 'YouAreMuted':
 			case 'Mute':
 			case 'Unmute':
+			case 'AdminKill':
+			case 'AdminLeader':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {

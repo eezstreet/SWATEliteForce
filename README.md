@@ -779,6 +779,8 @@ Move your admin lines in SwatGuiState.ini to Swat4XDedicatedServer.ini *before* 
  - New Admin privilege: Force all players to red/blue
  - New Admin privilege: Force a player to red/blue
  - New Admin privilege: Mute a player
+ - New Admin privilege: Promote a player to leader
+ - New Admin privilege: Kill a player
  - Admin data is now saved in Swat4XDedicatedServer.ini instead of SwatGuiState.ini
  - Adjusted a lot of the training mission text to better integrate TSS and SEF features.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
