@@ -32,6 +32,7 @@ enum AdminPermissions
 	Permission_LockPlayerTeams,	// Allowed to lock a player's team
 	Permission_ForceAllTeams,	// Allowed to force all players to one team
 	Permission_ForcePlayerTeam,	// Allowed to force a player to a particular team
+	Permission_Mute,			// Allowed to mute players
 	Permission_Max,
 };
 
@@ -53,6 +54,8 @@ var public config bool UseWebAdmin;
 var public config int WebAdminPort;
 var public config class<SwatWebAdminListener> WebAdminClass;
 var private SwatWebAdminListener WebAdmin;
+
+var private array<SwatGamePlayerController> MutedPlayers;
 
 var private localized config string PenaltyFormat;
 var private localized config string SayFormat;
@@ -79,6 +82,8 @@ var private localized config string ForceAllRedFormat;
 var private localized config string ForceAllBlueFormat;
 var private localized config string ForcePlayerRedFormat;
 var private localized config string ForcePlayerBlueFormat;
+var private localized config string MuteFormat;
+var private localized config string UnmuteFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -417,6 +422,69 @@ function TogglePlayerTeamLock(PlayerController PC, string PlayerName)
 	}
 }
 
+// Mute/Unmute a player
+public function bool ToggleMute(PlayerController PC, string PlayerName, optional string AdminName)
+{
+	local SwatGamePlayerController P;
+	local int i;
+	local string Msg;
+
+	log("ToggleMute()");
+
+	if(PC != None)
+	{
+		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		if(!ActionAllowed(PC, AdminPermissions.Permission_Mute))
+		{
+			return false;
+		}
+	}
+
+	ForEach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			// Got 'em. Find out now whether or not this person has already been muted or not.
+			Msg = AdminName$"\t"$P.PlayerReplicationInfo.PlayerName;
+			for(i = 0; i < MutedPlayers.Length; i++)
+			{
+				if(MutedPlayers[i] == P)
+				{
+					// Turn off their mute
+					SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Unmute');
+					Broadcast(Msg, 'Unmute');
+					MutedPlayers.Remove(i, 1);
+					return true;
+				}
+			}
+			SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Mute');
+			Broadcast(Msg, 'Mute');
+			MutedPlayers[MutedPlayers.Length] = P;
+			return true;
+		}
+	}
+
+	log("ToggleMute couldn't find player "$PlayerName);
+
+	return false;
+}
+
+// Check to see if a player is muted
+public function bool Muted(SwatGamePlayerController PC)
+{
+	local int i;
+
+	for(i = 0; i < MutedPlayers.Length; i++)
+	{
+		if(MutedPlayers[i] == PC)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Execute an AC command based on the text
 function ACCommand( PlayerController PC, String S )
 {
@@ -690,4 +758,6 @@ defaultproperties
 	ForceAllBlueFormat="%1 forced all players to be on the blue team."
 	ForcePlayerRedFormat="%1 forced %2 to be on the red team."
 	ForcePlayerBlueFormat="%1 forced %2 to be on the blue team."
+	MuteFormat="%1 muted %2."
+	UnmuteFormat="%1 un-muted %2."
 }

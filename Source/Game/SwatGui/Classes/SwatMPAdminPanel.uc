@@ -9,10 +9,10 @@ enum AdminPlayerActions
 	PlayerAction_Ban,
 	PlayerAction_LockTeam,
 	PlayerAction_ForceRed,
-	PlayerAction_ForceBlue/*,
+	PlayerAction_ForceBlue,
+	PlayerAction_Mute/*,
 	The following are what I intend to implement. Someday.
 	PlayerAction_MakeLeader,
-	PlayerAction_Mute,
 	PlayerAction_Respawn,
 	PlayerAction_ForceLessLethal,
 	PlayerAction_ForceSpectator,
@@ -68,6 +68,8 @@ private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions
 		case PlayerAction_ForceRed:
 		case PlayerAction_ForceBlue:
 			return AdminPermissions.Permission_ForcePlayerTeam;
+		case PlayerAction_Mute:
+			return AdminPermissions.Permission_Mute;
 	}
 }
 
@@ -114,8 +116,8 @@ private function PopulatePlayerActions(SwatPlayerReplicationInfo PRI)
 	}
 
 	// Disable the button if we don't have any actions
-	PlayerActionButton.Show();
 	PlayerActionButton.OnClick = InternalPlayerActionButton;
+	PlayerActionButton.Show();
 	if(NumberPlayerActionsAllowed > 0)
 	{
 		PlayerActionButton.EnableComponent();
@@ -195,7 +197,7 @@ private function PopulatePlayerNames(SwatGameReplicationInfo SGRI)
 			continue;
 		}
 
-		Players.List.Add(PRI.PlayerName, , , PRI.SwatPlayerID);
+		Players.List.Add(PRI.PlayerName);
 	}
 }
 
@@ -217,12 +219,12 @@ event Timer()
 private function InternalPlayerActionButton(GUIComponent Sender)
 {
 	local int Action;
-	local int PlayerID;
+	local string PlayerName;
 
 	Action = PlayerActions.List.GetExtraIntData();
-	PlayerID = Players.List.GetExtraIntData();
+	PlayerName = Players.List.Get();
 
-	PlayerOwner().ConsoleCommand(PlayerConsoleCommands[Action] $ " " $ PlayerID);
+	PlayerOwner().ConsoleCommand(PlayerConsoleCommands[Action] $ " " $ PlayerName);
 }
 
 // Happens when the map action button is clicked
@@ -264,17 +266,19 @@ defaultproperties
 	PlayerActionNames[2]="Lock Team"
 	PlayerActionNames[3]="Send to Red"
 	PlayerActionNames[4]="Send to Blue"
-	MapActionNames[0]="Next Map"
+	PlayerActionNames[5]="Mute/Unmute"
+	MapActionNames[0]="Go to Next Map"
 	MapActionNames[1]="Start Game"
 	MapActionNames[2]="End Game"
 	MapActionNames[3]="Send All to Red"
 	MapActionNames[4]="Send All to Blue"
 	MapActionNames[5]="Lock Teams"
-	PlayerConsoleCommands[0]="KID"
-	PlayerConsoleCommands[1]="KBID"
+	PlayerConsoleCommands[0]="Kick"
+	PlayerConsoleCommands[1]="KickBan"
 	PlayerConsoleCommands[2]="TogglePlayerTeamLock"
 	PlayerConsoleCommands[3]="ForcePlayerToTeam 2"
 	PlayerConsoleCommands[4]="ForcePlayerToTeam 0"
+	PlayerConsoleCommands[5]="ToggleMute"
 	MapConsoleCommands[0]="NM"
 	MapConsoleCommands[1]="StartGame"
 	MapConsoleCommands[2]="AbortGame"

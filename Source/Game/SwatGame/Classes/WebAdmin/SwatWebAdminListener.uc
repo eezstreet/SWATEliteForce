@@ -419,6 +419,19 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
 		}
 	}
+	else if(argv[0] ~= "mute" || argv[0] ~= "unmute" || argv[0] ~= "togglemute")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Mute))
+		{
+			msg.Message = NoPermissionString;
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+		else if(!SwatGameInfo(Level.Game).RemoteMute(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1)))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		}
+	}
 	else
 	{
 		msg.Message = "Unknown command '"$argv[0]$"'";

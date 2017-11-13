@@ -450,6 +450,9 @@ function bool OnMessageRecieved( String Msg, Name Type )
 			case 'UnlockTeams':
 			case 'LockPlayerTeam':
 			case 'UnlockPlayerTeam':
+			case 'YouAreMuted':
+			case 'Mute':
+			case 'Unmute':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {

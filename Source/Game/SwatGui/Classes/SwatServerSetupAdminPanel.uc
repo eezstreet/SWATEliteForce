@@ -352,6 +352,7 @@ defaultproperties
 	PermissionNames[9]="Lock/Unlock Player Team"
 	PermissionNames[10]="Force Everyone to Team"
 	PermissionNames[11]="Force Player to Team"
+	PermissionNames[12]="Mute Players"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -365,4 +366,5 @@ defaultproperties
 	PermissionDescription[9]="Lock/Unlock a player's team, preventing/allowing them to switch teams."
 	PermissionDescription[10]="Force everyone in the server to one team (red or blue)."
 	PermissionDescription[11]="Force a player to a team (red or blue)."
+	PermissionDescription[12]="Mute/unmute a player. When a player is muted, they are unable to speak."
 }

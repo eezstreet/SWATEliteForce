@@ -2484,6 +2484,11 @@ function ForceAllToTeam(int TeamID, string Admin)
 
 }
 
+function bool PlayerMuted(SwatGamePlayerController Player)
+{
+	return Admin.Muted(Player);
+}
+
 // RemoteLockTeams
 // FOR USE BY WEBADMIN ONLY!
 function RemoteLockTeams(string AdminName)
@@ -2559,6 +2564,13 @@ function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int Tea
 	}
 
 	return false;
+}
+
+// RemoteMute
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteMute(string AdminName, string PlayerName)
+{
+	return Admin.ToggleMute(None, PlayerName, AdminName);
 }
 
 ///////////////////////////////////////

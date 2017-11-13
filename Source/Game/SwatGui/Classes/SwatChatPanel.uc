@@ -96,6 +96,10 @@ var() private config localized string UnlockTeamsMessage;
 var() private config localized string LockPlayerTeamMessage;
 var() private config localized string UnlockPlayerTeamMessage;
 
+var() private config localized string YouAreMutedMessage;
+var() private config localized string MuteMessage;
+var() private config localized string UnmuteMessage;
+
 
 struct ChatLine
 {
@@ -328,6 +332,18 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
 		case 'UnlockPlayerTeam':
 			MsgText = FormatTextString(UnlockPlayerTeamMessage, StrA, StrB);
+			break;
+
+		case 'YouAreMuted':
+			MsgText = YouAreMutedMessage;
+			break;
+
+		case 'Mute':
+			MsgText = FormatTextString(MuteMessage, StrA, StrB);
+			break;
+
+		case 'Unmute':
+			MsgText = FormatTextString(UnmuteMessage, StrA, StrB);
 			break;
 
 		case 'ReferendumSucceeded':
@@ -762,6 +778,10 @@ defaultproperties
 	BlueSuicideMessage="[c=0000ff][b]%1[\\b] suicided!"
 	RedSuicideMessage="[c=ff0000][b]%1[\\b] suicided!"
 	FallenMessage="[c=EC832F][b]%1[\\b] has fallen!"
+
+	YouAreMutedMessage="[c=EC832F][b]You are muted and cannot speak."
+	MuteMessage="[c=ff00ff]%1 muted %2"
+	UnmuteMessage="[c=ff00ff]%1 un-muted %2"
 
     ConnectedMessage="[c=ffff00][b]%1[\\b] connected to the server."
     DisconnectedMessage="[c=ffff00][b]%1[\\b] dropped from the server."

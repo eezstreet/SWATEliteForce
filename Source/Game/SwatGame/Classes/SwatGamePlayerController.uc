@@ -3186,6 +3186,12 @@ state Dead
 
     exec function TeamSay( string Msg )
     {
+		if(SwatGameInfo(Level.Game).PlayerMuted(self))
+		{
+			ClientMessage("", 'YouAreMuted');
+			return;
+		}
+
 log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
@@ -3250,6 +3256,11 @@ state ObserveFromTeamOrLocation
 
     exec function TeamSay( string Msg )
     {
+		if(SwatGameInfo(Level.Game).PlayerMuted(self))
+		{
+			ClientMessage("", 'YouAreMuted');
+		}
+
         log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
@@ -4451,6 +4462,12 @@ function ClientRoundStarted()
 exec function Say( string Msg )
 {
 //  log(self$"::Say - "$Pawn.GetRoomName()$" - ("$Msg$")");
+	if(SwatGameInfo(Level.Game).PlayerMuted(self))
+	{
+		ClientMessage("", 'YouAreMuted');
+		return;
+	}
+
 	if (PlayerReplicationInfo.bAdmin && left(Msg,1) == "#" )
 	{
 		Level.Game.AdminSay(right(Msg,len(Msg)-1));
@@ -4476,6 +4493,12 @@ exec function Say( string Msg )
 exec function TeamSay( string Msg )
 {
 //  log(self$"::TeamSay("$msg$")");
+	if(SwatGameInfo(Level.Game).PlayerMuted(self))
+	{
+		ClientMessage("", 'YouAreMuted');
+		return;
+	}
+
 	if( !GameReplicationInfo.bTeamGame )
 	{
 		Say( Msg );

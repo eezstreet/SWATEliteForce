@@ -934,6 +934,7 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "<tr><th>/alltoblue</th><td>Forces all players to the blue team.</td></tr>";
 	HTML = HTML $ "<tr><th>/forcered -playername-</th><td>Forces a player to the red team.</td></tr>";
 	HTML = HTML $ "<tr><th>/forceblue -playername-</th><td>Forces a player to the blue team.</td></tr>";
+	HTML = HTML $ "<tr><th>/mute -playername-</th><td>Toggle mute on a player.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;
