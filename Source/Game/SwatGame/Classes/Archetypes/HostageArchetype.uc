@@ -41,4 +41,6 @@ defaultproperties
     InstanceClass=class'SwatGame.HostageArchetypeInstance'
 
 	CharacterType=HostageMaleDefault
+
+	FriendlyName="a Civilian"
 }

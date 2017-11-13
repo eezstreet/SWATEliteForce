@@ -29,7 +29,7 @@ var(ServerSettings) config float          Unused2 "Not used.";
 var(ServerSettings) config float          CampaignCOOP "Contains Campaign CO-OP settings (bitpacked)";
 var(ServerSettings) config int            AdditionalRespawnTime "Time (in seconds) added to the delay time between respawn waves.";
 var(ServerSettings) config bool           bNoLeaders "If true, new 'leader' functionality in SWAT 4 expansion is disabled.";
-var(ServerSettings) config bool           Unused3 "Not used.";
+var(ServerSettings) config bool           bNoKillMessages "If true, incapacitation/kill/death/arrest messages will not show in the chat.";
 var(ServerSettings) config bool           bEnableSnipers "Enable snipers?";
 
 var(ServerSettings) config String         ServerName "Name of the server for display purposes";
@@ -39,6 +39,11 @@ var(ServerSettings) config bool           bPassworded "If true, the server is pa
 var(ServerSettings) config bool           bLAN "If true, the server is hosted only over the LAN (not internet)";
 
 var(ServerSettings)        bool           bDirty;
+
+// Team settings
+var(ServerSettings) config bool				bForceTeamBalance "If true, the teams cannot be intentionally unbalanced.";
+var(ServerSettings) config bool				bForceTeamMax "If true, all teams have a forced maximum amount";
+var(ServerSettings) config int				TeamForcedMax "If bForceTeamMax, the maximum number of players that can be on a team.";
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,7 +57,7 @@ replication
         bUseRoundEndTimer, MPMissionReadyTime, bShowTeammateNames, Unused, bAllowReferendums, bNoRespawn,
         bQuickRoundReset, FriendlyFireAmount, Unused2,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
-		bNoLeaders, Unused3, bEnableSnipers;
+		bNoLeaders, bNoKillMessages, bEnableSnipers;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -112,7 +117,7 @@ function SetServerSettings( PlayerController PC,
 							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
-							bool newUnused3,
+							bool newbNoKillMessages,
 							bool newbEnableSnipers)
 {
 log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUseRoundStartTimer="$newbUseRoundStartTimer$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUseRoundEndTimer="$newbUseRoundEndTimer$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused="$newUnused$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newUnused2="$newUnused2$" )" );
@@ -141,7 +146,7 @@ log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameTyp
 	  CampaignCOOP = newCampaignCOOP;
 	  AdditionalRespawnTime = newAdditionalRespawnTime;
 	  bNoLeaders = newbNoLeaders;
-	  Unused3 = newUnused3;
+	  bNoKillMessages = newbNoKillMessages;
 	  bEnableSnipers = newbEnableSnipers;
 
     RoundNumber=0;

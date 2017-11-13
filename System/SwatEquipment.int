@@ -271,7 +271,7 @@ TotalAmmoString=10 magazines
 RateOfFire=300 RPM
 
 [TEC9HG]
-Description=This infamous machine pistol was developed by Intratec, a Miami offshoot of the Swedish company Interdynamic. The TEC-DC9 received noteriety after the Columbine and Cleveland school shootings. Criminals often modify this semi-automatic weapon for full automatic use, and it is banned in several US states by name.
+Description=This infamous machine pistol was developed by Intratec, a Miami offshoot of the Swedish company Interdynamic. While it has relatively poor stopping power compared to full-sized submachine guns, its highly concealable form factor and ease of converting to full-auto makes it the weapon of choice for drive-bys and gang shootings. The TEC-DC9 received considerable noteriety in American media after the Columbine and Cleveland school shootings. After these events, the weapon was banned in several states by name and Intratec went bankrupt. Despite being a criminal weapon, a flashlight has been added for better tactical use in dark areas.
 FriendlyName=TEC-DC9
 Manufacturer=Intratec
 Caliber=9x19mm Parabellum
@@ -285,6 +285,18 @@ RateOfFire=950 RPM
 [FNP90SMG]
 Description=The P90 was developed by the Belgian company FN in conjunction with their Five-Seven in response to NATO's requests for a replacement to 9x19mm firearms. It began production in 1990 (hence the name P90), and features a futuristic and ambidextrous design. It remains in service in over 40 countries worldwide.||One of the unique features of the P90 is its top-loaded magazine. It can hold an abnormally large amount of ammunition due to its compact design.
 FriendlyName=P90
+Manufacturer=FN Herstal
+Caliber=5.7x28mm FN
+CountryOfOrigin=Belgium
+ProductionStart=1990
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=50
+TotalAmmoString=10 magazines
+RateOfFire=900 RPM
+
+[SilencedFNP90SMG]
+Description=The P90 was developed by the Belgian company FN in conjunction with their Five-Seven in response to NATO's requests for a replacement to 9x19mm firearms. It began production in 1990 (hence the name P90), and features a futuristic and ambidextrous design. It remains in service in over 40 countries worldwide. One of the unique features of the P90 is its top-loaded magazine. It can hold an abnormally large amount of ammunition due to its compact design. This particular model is equipped with a sound and flash suppressor for when stealth is paramount.
+FriendlyName=Suppressed P90
 Manufacturer=FN Herstal
 Caliber=5.7x28mm FN
 CountryOfOrigin=Belgium
@@ -367,7 +379,7 @@ Description=The H&K G36K is a lightweight compact assault rifle originally devel
 FriendlyName=Suppressed G36K
 
 [UziSMG]
-Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice. Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
+Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel. It's a staple of many Hollywood gang movies.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice.
 FriendlyName=Suppressed Uzi
 Manufacturer=Israel Military Industries (IMI)
 Caliber=Subsonic 9x19mm
@@ -377,6 +389,9 @@ FireModes=Semi-Automatic, Full-Auto
 MagazineSizeString=25
 TotalAmmoString=10 magazines
 RateOfFire=600 RPM
+
+[UziTSMG]
+Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel. It's a staple of many Hollywood gang movies.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice. Despite not being a weapon used by SWAT, this weapon has been given a flashlight for more tactical use in dark environments.
 
 [SAWMG]
 Description=This light machine gun is intended only for military operations; however as with most weapons some are available on the black market. The weapon is designed to be fired accurately from the hip or shoulder, though it is more commonly fired from a deployed bipod. It uses a box magazine holding 200 rounds of disintegrating-link ammunition.
@@ -391,7 +406,7 @@ TotalAmmoString=10 belts
 RateOfFire=800 RPM
 
 [AK47MG]
-Description=The Kalashnikov AKM was designed in the Soviet Union in 1957 by Mikhail Kalashnikov. It was officially accepted by the Soviet army in 1959, but has since been replaced by the AK-74.  It has remained in service in many third world armies as well as terrorist organizations around the world due to its dependability and the ease at which it can be maintained.  It has a slower rate of fire and lower muzzle velocity than the Colt M4A1, but uses a higher caliber bullet which makes it comparable to its American counterpart at short ranges.  Since the weapon is not normally used by SWAT it is not equipped with a tactical flashlight.
+Description=The Kalashnikov AKM was designed in the Soviet Union in 1957 by Mikhail Kalashnikov. It was officially accepted by the Soviet army in 1959, but has since been replaced by the AK-74.  It has remained in service in many third world armies as well as terrorist organizations around the world due to its dependability and the ease at which it can be maintained.  It has a slower rate of fire and lower muzzle velocity than the Colt M4A1, but uses a higher caliber bullet which makes it comparable to its American counterpart at short ranges.
 FriendlyName=AKM
 Manufacturer=Kalashnikov
 Caliber=7.62x39mm
@@ -402,6 +417,8 @@ MagazineSizeString=30
 TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
+[AK47tMG]
+Description=The Kalashnikov AKM was designed in the Soviet Union in 1957 by Mikhail Kalashnikov. It was officially accepted by the Soviet army in 1959, but has since been replaced by the AK-74.  It has remained in service in many third world armies as well as terrorist organizations around the world due to its dependability and the ease at which it can be maintained.  It has a slower rate of fire and lower muzzle velocity than the Colt M4A1, but uses a higher caliber bullet which makes it comparable to its American counterpart at short ranges. A flashlight has been added to this weapon to make it more usable in tactical scenarios.
 
 [Taser]
 Description=Stun guns work on the principle of Electro-Muscular Disruption (EMD).  This projectile model fires small electrodes into the target and then sends a powerful electric charge down the thin wires.  The EMD effect causes involuntary contraction of the target's muscle tissue regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects.||EMD devices have three key drawbacks.  The first is that they have a relatively short range.  The second is that new electrodes must be loaded after each shot. Lastly, EMD poses numerous risks, including possible cardiac arrest in drug users, the elderly, or those with specific medical conditions.

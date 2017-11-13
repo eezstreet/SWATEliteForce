@@ -267,7 +267,7 @@ function SaveServerSettings()
 								                -1^0,
 								                AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
 								                !AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
-								                false,  // Not used
+								                !AdvancedSetupPanel.MyEnableKillMessagesCheck.bChecked,
 								                AdvancedSetupPanel.MyEnableSnipers.bChecked);
 
     GC.SaveConfig();

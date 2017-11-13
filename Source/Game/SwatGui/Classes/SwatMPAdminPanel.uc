@@ -6,16 +6,18 @@ import enum AdminPermissions from SwatGame.SwatAdmin;
 enum AdminPlayerActions
 {
 	PlayerAction_Kick,
-	PlayerAction_Ban/*,
-	The following are what I intend to implement. Someday.
-	PlayerAction_MakeLeader,
+	PlayerAction_Ban,
+	PlayerAction_LockTeam,
+	PlayerAction_ForceRed,
+	PlayerAction_ForceBlue,
 	PlayerAction_Mute,
+	PlayerAction_MakeLeader,
+	PlayerAction_Kill/*,
+	The following are what I intend to implement. Someday.
 	PlayerAction_Respawn,
 	PlayerAction_ForceLessLethal,
 	PlayerAction_ForceSpectator,
-	PlayerAction_SwitchTeam,
 	PlayerAction_Freeze,
-	PlayerAction_Kill,
 	PlayerAction_ClearWarnings
 	*/
 };
@@ -24,14 +26,15 @@ enum AdminMapActions
 {
 	MapAction_NextMap,
 	MapAction_StartGame,
-	MapAction_EndGame/*,
+	MapAction_EndGame,
+	MapAction_ForceAllRed,
+	MapAction_ForceAllBlue,
+	MapAction_LockTeams/*,
 	The following are what I intend to implement. Someday.
 	MapAction_PassVote,
 	MapAction_FailVote,
 	MapAction_Restart,
 	MapAction_ClearPenalties,
-	MapAction_ForceAllRed,
-	MapAction_ForceAllBlue,
 	MapAction_UnreadyAll,
 	MapAction_RespawnAll
 	*/
@@ -60,6 +63,17 @@ private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions
 			return AdminPermissions.Permission_Kick;
 		case PlayerAction_Ban:
 			return AdminPermissions.Permission_KickBan;
+		case PlayerAction_LockTeam:
+			return AdminPermissions.Permission_LockPlayerTeams;
+		case PlayerAction_ForceRed:
+		case PlayerAction_ForceBlue:
+			return AdminPermissions.Permission_ForcePlayerTeam;
+		case PlayerAction_Mute:
+			return AdminPermissions.Permission_Mute;
+		case PlayerAction_Kill:
+			return AdminPermissions.Permission_KillPlayers;
+		case PlayerAction_MakeLeader:
+			return AdminPermissions.Permission_PromoteLeader;
 	}
 }
 
@@ -74,6 +88,11 @@ private function AdminPermissions MapMapActionToPermission(AdminMapActions e)
 			return AdminPermissions.Permission_StartGame;
 		case MapAction_EndGame:
 			return AdminPermissions.Permission_EndGame;
+		case MapAction_LockTeams:
+			return AdminPermissions.Permission_LockTeams;
+		case MapAction_ForceAllRed:
+		case MapAction_ForceAllBlue:
+			return AdminPermissions.Permission_ForceAllTeams;
 	}
 }
 
@@ -101,8 +120,8 @@ private function PopulatePlayerActions(SwatPlayerReplicationInfo PRI)
 	}
 
 	// Disable the button if we don't have any actions
-	PlayerActionButton.Show();
 	PlayerActionButton.OnClick = InternalPlayerActionButton;
+	PlayerActionButton.Show();
 	if(NumberPlayerActionsAllowed > 0)
 	{
 		PlayerActionButton.EnableComponent();
@@ -182,7 +201,7 @@ private function PopulatePlayerNames(SwatGameReplicationInfo SGRI)
 			continue;
 		}
 
-		Players.List.Add(PRI.PlayerName, , , PRI.SwatPlayerID);
+		Players.List.Add(PRI.PlayerName);
 	}
 }
 
@@ -204,12 +223,12 @@ event Timer()
 private function InternalPlayerActionButton(GUIComponent Sender)
 {
 	local int Action;
-	local int PlayerID;
+	local string PlayerName;
 
 	Action = PlayerActions.List.GetExtraIntData();
-	PlayerID = Players.List.GetExtraIntData();
+	PlayerName = Players.List.Get();
 
-	PlayerOwner().ConsoleCommand(PlayerConsoleCommands[Action] $ " " $ PlayerID);
+	PlayerOwner().ConsoleCommand(PlayerConsoleCommands[Action] $ " " $ PlayerName);
 }
 
 // Happens when the map action button is clicked
@@ -248,12 +267,30 @@ defaultproperties
 
 	PlayerActionNames[0]="Kick"
 	PlayerActionNames[1]="Ban"
-	MapActionNames[0]="Next Map"
+	PlayerActionNames[2]="Lock Team"
+	PlayerActionNames[3]="Send to Red"
+	PlayerActionNames[4]="Send to Blue"
+	PlayerActionNames[5]="Mute/Unmute"
+	PlayerActionNames[6]="Kill"
+	PlayerActionNames[7]="Promote to Leader"
+	MapActionNames[0]="Go to Next Map"
 	MapActionNames[1]="Start Game"
 	MapActionNames[2]="End Game"
-	PlayerConsoleCommands[0]="KID"
-	PlayerConsoleCommands[1]="KBID"
+	MapActionNames[3]="Send All to Red"
+	MapActionNames[4]="Send All to Blue"
+	MapActionNames[5]="Lock Teams"
+	PlayerConsoleCommands[0]="Kick"
+	PlayerConsoleCommands[1]="KickBan"
+	PlayerConsoleCommands[2]="TogglePlayerTeamLock"
+	PlayerConsoleCommands[3]="ForcePlayerToTeam 2"
+	PlayerConsoleCommands[4]="ForcePlayerToTeam 0"
+	PlayerConsoleCommands[5]="ToggleMute"
+	PlayerConsoleCommands[6]="AdminKillPlayer"
+	PlayerConsoleCommands[7]="AdminPromotePlayer"
 	MapConsoleCommands[0]="NM"
 	MapConsoleCommands[1]="StartGame"
 	MapConsoleCommands[2]="AbortGame"
+	MapConsoleCommands[3]="ForceAllToTeam 2"
+	MapConsoleCommands[4]="ForceAllToTeam 0"
+	MapConsoleCommands[5]="ToggleTeamLock"
 }

@@ -402,15 +402,19 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'TeamSay':
         case 'SayLocalized':
         case 'TeamSayLocalized':
+		case 'WebAdminChat':
         case 'CommandGiven':
-        case 'SwatKill':
-        case 'SuspectsKill':
-        case 'SwatSuicide':
-        case 'SuspectsSuicide':
-        case 'SwatTeamKill':
-        case 'SuspectsTeamKill':
-        case 'SwatArrest':
-        case 'SuspectsArrest':
+        case 'BlueKill':
+        case 'RedKill':
+        case 'BlueSuicide':
+        case 'RedSuicide':
+		case 'PenaltyIssuedChat':
+        case 'TeamKill':
+        case 'BlueArrest':
+        case 'RedArrest':
+		case 'BlueIncapacitate':
+		case 'RedIncapacitate':
+		case 'Fallen':
         case 'PlayerConnect':
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
@@ -434,6 +438,23 @@ function bool OnMessageRecieved( String Msg, Name Type )
 		    case 'CoopMessage':
 		    case 'StatsValidatedMessage':
 		    case 'StatsBadProfileMessage':
+			case 'TeamSwitchMax':
+			case 'TeamSwitchLocked':
+			case 'TeamSwitchBalance':
+			case 'TeamSwitchPlayerLocked':
+			case 'ForceTeamRed':
+			case 'ForceTeamBlue':
+			case 'ForcePlayerBlue':
+			case 'ForcePlayerRed':
+			case 'LockTeams':
+			case 'UnlockTeams':
+			case 'LockPlayerTeam':
+			case 'UnlockPlayerTeam':
+			case 'YouAreMuted':
+			case 'Mute':
+			case 'Unmute':
+			case 'AdminKill':
+			case 'AdminLeader':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {

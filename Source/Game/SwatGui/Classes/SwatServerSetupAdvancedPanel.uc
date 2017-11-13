@@ -18,6 +18,7 @@ var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableLeadersCheck;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableSnipers;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyRoundStartTimerCheck;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyRoundEndTimerCheck;
+var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableKillMessagesCheck;
 
 var private config int COOPMaxPlayers;
 var private bool bIsCoop;
@@ -37,6 +38,7 @@ function SetSubComponentsEnabled( bool bSetEnabled )
 	MyEnableSnipers.SetEnabled( bSetEnabled );
 	MyRoundStartTimerCheck.SetEnabled( bSetEnabled );
 	MyRoundEndTimerCheck.SetEnabled( bSetEnabled );
+	MyEnableKillMessagesCheck.SetEnabled(bSetEnabled);
 }
 
 function DoResetDefaultsForGameMode( EMPMode NewMode )
@@ -107,9 +109,10 @@ function LoadServerSettings( optional bool ReadOnly )
 	MyAllowReferendumsButton.SetChecked( Settings.bAllowReferendums );
     MyFriendlyFireSlider.SetValue( Settings.FriendlyFireAmount );
 	MyAdditionalRespawnTimeBox.SetValue( Settings.AdditionalRespawnTime );
-	MyEnableSnipers.SetChecked( !Settings.bEnableSnipers );
+	MyEnableSnipers.SetChecked( Settings.bEnableSnipers );
 	MyRoundStartTimerCheck.SetChecked (Settings.bUseRoundStartTimer);
 	MyRoundEndTimerCheck.SetChecked(Settings.bUseRoundEndTimer);
+	MyEnableKillMessagesCheck.SetChecked(!Settings.bNoKillMessages);
 
 	MyEnableLeadersCheck.SetChecked( !Settings.bNoLeaders );
 }

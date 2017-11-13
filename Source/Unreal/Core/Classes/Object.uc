@@ -471,6 +471,24 @@ native(400) static final function int    Split  ( coerce string Src, string Divi
 native(236) static final function string Chr    ( int i );
 native(237) static final function int    Asc    ( string S );
 
+static function string ConcatArgs(array<string> Args, optional int Start, optional int End)
+{
+	local string outStr;
+	local int i;
+
+	if(End == 0)
+	{
+		End = Args.Length - 1;
+	}
+
+	outStr = Args[Start];
+	for(i = Start + 1; i <= End; i++)
+	{
+		outStr = outStr $ " " $ Args[i];
+	}
+	return outStr;
+}
+
 static function String FormatTextString( string Format, optional coerce string Param1, optional coerce string Param2, optional coerce string Param3)
 {
     Format = ReplaceExpression( Format, "%1", Param1 );

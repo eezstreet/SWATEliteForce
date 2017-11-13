@@ -2982,6 +2982,10 @@ function WasKilledBy(Controller Other)
     if (SwatGameInfo(Level.Game) != None)
     {
         SwatGameInfo(Level.Game).GameEvents.PlayerDied.Triggered(Self, Other);
+		if(Level.NetMode != NM_StandAlone)
+		{
+			SwatGameInfo(Level.Game).Broadcast(self, SwatPawn(Pawn).GetHumanReadableName(), 'Fallen');
+		}
 	}
 }
 
@@ -3182,6 +3186,12 @@ state Dead
 
     exec function TeamSay( string Msg )
     {
+		if(SwatGameInfo(Level.Game).PlayerMuted(self))
+		{
+			ClientMessage("", 'YouAreMuted');
+			return;
+		}
+
 log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
@@ -3246,6 +3256,11 @@ state ObserveFromTeamOrLocation
 
     exec function TeamSay( string Msg )
     {
+		if(SwatGameInfo(Level.Game).PlayerMuted(self))
+		{
+			ClientMessage("", 'YouAreMuted');
+		}
+
         log( self$"::TeamSay( "$Msg$" )" );
         SwatGameInfo(Level.Game).BroadcastObservers( self, Msg, 'TeamSay');
     }
@@ -4447,6 +4462,12 @@ function ClientRoundStarted()
 exec function Say( string Msg )
 {
 //  log(self$"::Say - "$Pawn.GetRoomName()$" - ("$Msg$")");
+	if(SwatGameInfo(Level.Game).PlayerMuted(self))
+	{
+		ClientMessage("", 'YouAreMuted');
+		return;
+	}
+
 	if (PlayerReplicationInfo.bAdmin && left(Msg,1) == "#" )
 	{
 		Level.Game.AdminSay(right(Msg,len(Msg)-1));
@@ -4465,11 +4486,19 @@ exec function Say( string Msg )
 	  Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
   else
     Level.Game.Broadcast(self, Msg, 'Say');
+
+	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'Say');
 }
 
 exec function TeamSay( string Msg )
 {
 //  log(self$"::TeamSay("$msg$")");
+	if(SwatGameInfo(Level.Game).PlayerMuted(self))
+	{
+		ClientMessage("", 'YouAreMuted');
+		return;
+	}
+
 	if( !GameReplicationInfo.bTeamGame )
 	{
 		Say( Msg );
@@ -4477,6 +4506,7 @@ exec function TeamSay( string Msg )
 	}
 
     Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'TeamSay');
 }
 
 event ClientMessage( coerce string S, optional Name Type )
@@ -4547,7 +4577,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
 
     if (myHUD != None)
     {
-        if (Type == 'Say' || Type == 'SayLocalized')
+        if (Type == 'Say' || Type == 'SayLocalized' || Type == 'WebAdminChat')
         {
             myHUD.AddTextMessage(s, class'ChatGlobalMessage', PRI);
         }
@@ -4561,6 +4591,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
     		}
     }
 
+	SwatGameInfo(Level.Game).AdminLog(S, Type);
     Player.Console.Message(S, 6.0);
 }
 

@@ -1416,6 +1416,10 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 // %w = Owner's Weapon ItemName
 static native function string ParseKillMessage( string KillerName, string VictimName, string DeathMessage );
 
+function AdminLog(coerce string Message, name Type)
+{
+}
+
 function Kick( Controller Kicker, string Kickee )
 {
 	if( AccessControl.Kick(Kickee) )
@@ -1426,6 +1430,28 @@ function KickBan( Controller Kicker, string Kickee )
 {
 	if( AccessControl.KickBan(Kickee) )
 	    Broadcast( Kicker, Kicker.PlayerReplicationInfo.PlayerName$"\t"$Kickee, 'KickBan' );
+}
+
+function bool RemoteKick(string Kicker, string Kickee)
+{
+	if( AccessControl.Kick(Kickee))
+	{
+		Broadcast(None, Kicker$"\t"$Kickee, 'Kick');
+		AdminLog(Kicker$"\t"$Kickee, 'Kick');
+		return true;
+	}
+	return false;
+}
+
+function bool RemoteKickBan(string Kicker, string Kickee)
+{
+	if(AccessControl.KickBan(Kickee))
+	{
+		Broadcast(None, Kicker$"\t"$Kickee, 'KickBan');
+		AdminLog(Kicker$"\t"$Kickee, 'KickBan');
+		return true;
+	}
+	return false;
 }
 
 function VotedToBeKicked(PlayerController Kickee)

@@ -27,7 +27,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 //
 //        return; //the deadly force was authorized
 //    }
-	
+
     if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat())
     {
         if (GetGame().DebugLeadership)
@@ -50,7 +50,7 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
 
     AssertNotInArray( Pawn, KilledEnemies, 'KilledEnemies' );
     Add( Pawn, KilledEnemies );
-    ChatMessageEvent('PenaltyIssued');
+	TriggerPenaltyMessage(Pawn(Killer));
     GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)

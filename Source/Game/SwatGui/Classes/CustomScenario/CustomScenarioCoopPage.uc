@@ -177,7 +177,7 @@ function PlayScenario( string ScenarioName, string PackName )
 				CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.Unused3,
+		CurrentSettings.bNoKillMessages,
 		CurrentSettings.bEnableSnipers );
 
 	// Set the server settings to dirty

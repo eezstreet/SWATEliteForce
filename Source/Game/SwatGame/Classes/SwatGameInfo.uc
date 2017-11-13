@@ -12,6 +12,7 @@ import enum EEntryType from SwatGame.SwatStartPointBase;
 import enum Pocket from Engine.HandheldEquipment;
 import enum EOfficerStartType from SwatGame.SwatOfficerStart;
 import enum EMPMode from Engine.Repo;
+import enum SwitchTeamErrorState from SwatGame.GameMode;
 
 // Defines the multiplayer team
 enum EMPTeam
@@ -158,7 +159,8 @@ function PreBeginPlay()
 
     Super.PreBeginPlay();
 
-    Admin = Spawn( class'SwatAdmin' );
+	// Carry over the webadmin users from the previous map --eez
+	Admin = Spawn(class'SwatAdmin');
 
     RegisterNotifyGameStarted();
 
@@ -378,6 +380,23 @@ function SendGlobalMessage(string Message, name Type)
   }
 }
 
+function PenaltyTriggeredMessage(Pawn Inflictor, string PenaltyMessage)
+{
+	local string Message;
+
+	Message = PenaltyMessage;
+	if(Level.NetMode != NM_Standalone)
+	{
+		Message = SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage;
+		Broadcast(Inflictor, Message, 'PenaltyIssuedChat');
+		AdminLog(Message, 'PenaltyIssuedChat');
+	}
+	else
+	{
+		SendGlobalMessage(PenaltyMessage, 'PenaltyIssued');
+	}
+}
+
 final function OnMissionObjectiveCompleted(Objective Objective)
 {
     if (DebugObjectives)
@@ -385,9 +404,6 @@ final function OnMissionObjectiveCompleted(Objective Objective)
 
     //TODO/COOP: Broadcast message to all clients, have the clients internally dispatchMessage
     dispatchMessage(new class'MessageMissionObjectiveCompleted'(Objective.name));
-
-    log("Repo("$Repo$").GuiConfig("$Repo.GuiConfig$").CurrentMission("$Repo.GuiConfig.CurrentMission$").Objectives("$Repo.GuiConfig.CurrentMission.Objectives$")");
-    log("Repo("$Repo$").MissionObjectives("$Repo.MissionObjectives$")");
 
     if( Repo.GuiConfig.CurrentMission.IsMissionCompleted(Repo.MissionObjectives) )
     {
@@ -397,6 +413,7 @@ final function OnMissionObjectiveCompleted(Objective Objective)
     }
     else {
       SendGlobalMessage("Objective Complete!", 'ObjectiveCompleted');
+	  AdminLog(Objective.Description, 'ObjectiveComplete');
     }
 }
 
@@ -421,6 +438,7 @@ final function MissionCompleted()
     log("[dkaplan] >>> MissionCompleted" );
     bAlreadyCompleted=true;
     Broadcast( None, "", 'MissionCompleted' );
+	AdminLog("", 'MissionCompleted');
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);
@@ -433,6 +451,7 @@ final function MissionFailed()
     log("[dkaplan] >>> MissionFailed" );
     bAlreadyFailed=true;
     Broadcast( None, "", 'MissionFailed' );
+	AdminLog("", 'MissionFailed');
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);
@@ -473,6 +492,7 @@ final function MissionEnded()
 
     bAlreadyEnded=true;
     Broadcast( None, "", 'MissionEnded' );
+	AdminLog("", 'MissionEnded');
     GameEvents.MissionEnded.Triggered();
 }
 
@@ -842,6 +862,8 @@ function OnMissionStarted()
 
 	// send a message that the level has started
 	dispatchMessage(new class'Gameplay.MessageLevelStart'(GetCustomScenario() != None));
+
+	AdminLog("", 'RoundStarted');
 }
 
 function bool GameInfoShouldTick() { return bDebugFrames || Level.GetGameSpyManager().bTrackingStats; }
@@ -1088,14 +1110,11 @@ function AddDefaultInventory(Pawn inPlayerPawn)
         }
         else
         {
-            mplog( "...this player is NOT the VIP." );
-
             if ( NetPlayer(PlayerPawn).GetTeamNumber() == 0 )
                 LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerOfficerLoadOut' );
             else
                 LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerSuspectLoadOut' );
 
-            mplog( "...In AddDefaultInventory(): loadout's owner="$LoadOut.Owner );
             assert(LoadOut != None);
 
             // First, set all the pocket items in the NetPlayer loadout spec, so
@@ -1121,8 +1140,6 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             // Alter it *ex post facto* to have the correct ammo counts
             LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
             LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
-
-			mplog("...Set ammo counts to "$RepoPlayerItem.GetPrimaryAmmoCount()$" and "$RepoPlayerItem.GetSecondaryAmmoCount());
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -1130,11 +1147,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     LoadOut.Initialize( LoadOutSpec, IsSuspect );
 
-	mplog("LoadOut.Initialize()");
-
     PlayerPawn.ReceiveLoadOut(LoadOut);
-
-	mplog("PlayerPawn.ReceiveLoadOut");
 
     // We have to do this after ReceiveLoadOut() because that's what sets the
     // Replicated Skins.
@@ -1143,8 +1156,6 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 
     //TMC TODO do this stuff in the PlayerPawn (legacy support)
 	SetPlayerDefaults(PlayerPawn);
-
-	mplog("PlayerPawn - SetPlayerDefaults");
 }
 
 exec function MissionStatus()
@@ -1665,7 +1676,11 @@ function PlayerLoggedIn(PlayerController NewPlayer)
 		if ( Level.NetMode != NM_Standalone )
 		{
 			if( !PC.IsAReconnectingClient())
+			{
 				Broadcast( NewPlayer, NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
+				AdminLog(NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
+			}
+
 		}
 
 		// Set player permissions
@@ -1691,13 +1706,12 @@ function Logout( Controller Exiting )
 	local SwatPlayerController PC;
 	local Controller i;
 
-    mplog( "---SwatGameInfo::Logout(). ControllerLeaving="$Exiting );
-
     SGPC = SwatGamePlayerController( Exiting );
     if ( SGPC != None && SGPC.SwatPlayer != None )
     {
         //broadcast this player's disconnection to all players
         Broadcast( SGPC, SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
+		AdminLog(SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
 
         //log the player out: remove their RepoItem
         Repo.Logout( SGPC );
@@ -2044,11 +2058,36 @@ function NetTeam GetTeamFromID( int TeamID )
     return NetTeam(GameReplicationInfo.Teams[TeamID]);
 }
 
+function AdminLog(coerce string Msg, name Type)
+{
+	if(Admin != None)
+	{
+		Admin.Broadcast(Msg, Type);
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
+function bool IsBroadcastDisabled(name Type)
+{
+	if(ServerSettings(Level.CurrentServerSettings).bNoKillMessages)
+	{
+		if(Type == 'Fallen' || Type == 'BlueKill' || Type == 'BlueArrest' || Type == 'BlueIncapacitate' ||
+			Type == 'RedKill' || Type == 'RedArrest' || Type == 'RedIncapacitate')
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
-//log( self$"::Broadcast( "$Msg$" "$Location$" )" );
+//mplog( self$"::Broadcast( "$Msg$", "$Type$" )" );
+	if(IsBroadcastDisabled(Type))
+	{
+		return;
+	}
 	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
 }
 
@@ -2060,11 +2099,20 @@ function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type
         Sender.IsInState( 'Dead' ) )
         BroadcastObservers( Sender, Msg, Type );
 
+	if(IsBroadcastDisabled(Type))
+	{
+		return;
+	}
+
 	BroadcastHandler.BroadcastTeam(Sender,Msg,Type,Location);
 }
 
 function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional String Location)
 {
+	if(IsBroadcastDisabled(Type))
+	{
+		return;
+	}
 	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
 }
 
@@ -2101,6 +2149,8 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
     local SwatPlayer OtherPlayer;
 	local PlayerController KillerPC;
 	local PlayerController VictimPC;
+	local string Msg;
+	local name MsgType;
 
     //dont send death messages for generic deaths
     if( damageType == class'GenericDamageType' )
@@ -2120,6 +2170,8 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
     if ( OtherPlayer != None && !OtherPlayer.IsTheVIP() && OtherPlayer.IsArrested() )
         return;
 
+	Msg = KillerName$"\t"$VictimName$"\t"$WeaponName;
+
     // Note: VictimName might be None if Controller's Pawn is destroyed before this
     // this method is called. Hopefully that won't happen, but try to do something
     // semi-intelligent in this situation.
@@ -2129,17 +2181,18 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 	{
 	    if ( (Killer == Other) || (Killer == None) )
 	    {
-	        if( KillerTeam != 0 )
-    		    Broadcast(Other, VictimName, 'SuspectsSuicide');
-	        else
-    		    Broadcast(Other, VictimName, 'SwatSuicide');
+			if(KillerTeam == 0)
+			{
+				MsgType = 'BlueSuicide';
+			}
+			else
+			{
+				MsgType = 'RedSuicide';
+			}
 		}
-	    else if( KillerTeam == VictimTeam )
+	    else
 	    {
-	        if( KillerTeam != 0 )
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SuspectsTeamKill');
-	        else
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SwatTeamKill');
+			MsgType = 'TeamKill';
 
 			// dbeswick: stats
 			KillerPC = PlayerController(Killer);
@@ -2149,26 +2202,18 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 				KillerPC.Stats.TeamKilled(damageType.name, VictimPC);
 			}
 		}
-		else
-		{
-	        if( KillerTeam != 0 )
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SuspectsKill');
-	        else
-    		    Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'SwatKill');
-
-			// dbeswick: stats
-			KillerPC = PlayerController(Killer);
-			if (KillerPC != None)
-			{
-				VictimPC = PlayerController(Other);
-				KillerPC.Stats.Killed(damageType.name, VictimPC);
-			}
-		}
+	}
+	else if(Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None)
+	{
+		MsgType = 'Fallen';
 	}
 	else // someone killed a non-player (e.g., an AI was killed)
 	{
-		Broadcast(Other, KillerName$"\t"$VictimName$"\t"$WeaponName, 'AIDeath');	// TODO: should this be a 'PlayerDeath' Message Type?
+		MsgType = 'AIDeath';
 	}
+
+	Broadcast(Other, Msg, MsgType);
+	AdminLog(Msg, MsgType);
 }
 
 function BroadcastArrestedMessage(Controller Killer, Controller Other)
@@ -2178,19 +2223,25 @@ function BroadcastArrestedMessage(Controller Killer, Controller Other)
     local int VictimTeam;
 	local PlayerController KillerPC;
 	local PlayerController OtherPC;
+	local string Msg;
 
     KillerName = Killer.Pawn.GetHumanReadableName();
     VictimName = Other.Pawn.GetHumanReadableName();
     VictimTeam = NetPlayer(Other.Pawn).GetTeamNumber();
+	Msg = KillerName$"\t"$VictimName;
 
 	AssertWithDescription( Killer != Other, KillerName $ " somehow arrested himself.  That really shouldn't ever happen!" );
 	if( Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None &&
 	    Killer.IsA('PlayerController') && NetPlayer(Killer.Pawn) != None )
 	{
-	if( VictimTeam == 1 )
-    	Broadcast(Other, KillerName$"\t"$VictimName, 'SwatArrest');
-	else
-    	Broadcast(Other, KillerName$"\t"$VictimName, 'SuspectsArrest');
+		if(VictimTeam == 1)
+		{
+			Broadcast(Other, Msg, 'SwatArrest');
+		}
+		else
+		{
+			Broadcast(Other, Msg, 'SuspectsArrest');
+		}
 	}
 
 	// dbeswick: stats
@@ -2199,6 +2250,33 @@ function BroadcastArrestedMessage(Controller Killer, Controller Other)
 	{
 		OtherPC = PlayerController(Other);
 		KillerPC.Stats.Arrested(OtherPC);
+	}
+}
+
+function BroadcastArrested(Pawn Arrester, Pawn Arrestee)
+{
+	local string ArresterName;
+	local string ArresteeName;
+	local string Msg;
+	local name MsgType;
+
+	ArresteeName = Arrestee.GetHumanReadableName();
+	ArresterName = Arrester.GetHumanReadableName();
+
+	Msg = ArresterName$"\t"$ArresteeName;
+
+	if(NetPlayer(Arrester) != None)
+	{
+		if(NetPlayer(Arrester).GetTeamNumber() == 0)
+		{
+			MsgType = 'BlueArrest';
+		}
+		else
+		{
+			MsgType = 'RedArrest';
+		}
+		Broadcast(Arrester, Msg, MsgType);
+		AdminLog(Msg, MsgType);
 	}
 }
 
@@ -2217,6 +2295,7 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	//local SwatGameReplicationInfo SGRI;
 	local TeamInfo CurrentTeam;
 	local TeamInfo NewTeam;
+	local SwitchTeamErrorState TeamSwitchAllowed;
 
     // Set the preferred team to the team that was requested. However, if
     // we're in COOP, this will be overridden for the current round in the
@@ -2231,12 +2310,33 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 	if (NetTeam(NewTeam) != None && NetTeam(NewTeam).AIOnly)
 		NewTeam = GameReplicationInfo.Teams[GetAutoJoinTeamID()];
 
-    log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
+
 
     // If a new team, remove from current team, kill off pawn, add to new
     // team, and restart the player
     if (NewTeam != None && CurrentTeam != NewTeam)
     {
+		log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
+		TeamSwitchAllowed = GameMode.CanSwitchTeams(NewTeam, Player);
+		if(TeamSwitchAllowed != SwitchTeamErrorState.TeamSwitch_OK)
+		{
+			switch(TeamSwitchAllowed)
+			{
+				case SwitchTeamErrorState.TeamSwitch_Max:
+					Player.TeamMessage(None, "", 'TeamSwitchMax');
+					return;
+				case SwitchTeamErrorState.TeamSwitch_TeamsLocked:
+					Player.TeamMessage(None, "", 'TeamSwitchLocked');
+					return;
+				case SwitchTeamErrorState.TeamSwitch_PlayerLocked:
+					Player.TeamMessage(None, "", 'TeamSwitchPlayerLocked');
+					return;
+				case SwitchTeamErrorState.TeamSwitch_TeamsBalance:
+					Player.TeamMessage(None, "", 'TeamSwitchBalance');
+					return;
+			}
+		}
+
 		if (CurrentTeam != None)
         {
             CurrentTeam.RemoveFromTeam(Player);
@@ -2275,13 +2375,262 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 			NetPlayer(Player.Pawn).OnTeamChanging(NewTeam);
 	}
 
-	// Stop a new team member from stating a referendum straight away
-  // ??? why --eez
-	//SGRI = SwatGameReplicationInfo(GameReplicationInfo);
-	//if (SGRI != None && SGRI.RefMgr != None)
-	//	SGRI.RefMgr.AddVoterToCooldownList(Player.PlayerReplicationInfo.PlayerId);
+	Player.PlayerReplicationInfo.Team = NewTeam;
+}
+
+// ForcePlayerTeam
+// Forces a particular player to a particular team
+// Preconditions: The admin is allowed to do this, and the Player is valid
+function ForcePlayerTeam(SwatGamePlayerController Player, int TeamID, string Admin, optional bool ForceAll, optional bool Kill)
+{
+	local TeamInfo CurrentTeam;
+	local TeamInfo NewTeam;
+
+	// Set the preferred team to the team that was requested. However, if
+	// we're in COOP, this will be overridden for the current round in the
+	// following code.
+	Player.SwatRepoPlayerItem.SetPreferredTeamID( TeamID );
+
+	CurrentTeam = Player.PlayerReplicationInfo.Team;
+	NewTeam = GameReplicationInfo.Teams[TeamID];
+
+	// If the TeamID corresponds to an AI team join the next best team.
+	if (NetTeam(NewTeam) != None && NetTeam(NewTeam).AIOnly)
+		NewTeam = GameReplicationInfo.Teams[GetAutoJoinTeamID()];
+
+	// If a new team, remove from current team, kill off pawn, add to new
+	// team, and restart the player
+	if (NewTeam != None && CurrentTeam != NewTeam)
+	{
+		log( self$"::SetPlayerTeam( "$Player$", "$TeamID$" ) ... CurrentTeam = "$CurrentTeam$", NewTeam = "$NewTeam );
+
+		if (CurrentTeam != None)
+        {
+            CurrentTeam.RemoveFromTeam(Player);
+        }
+
+		if (Kill)
+		{
+			if (Player.Pawn != None)
+			{
+				Player.Pawn.Died( None, class'GenericDamageType', Player.Pawn.Location, vect(0,0,0) );
+				//Player.Pawn.Destroy();
+			}
+		}
+
+		if (NetPlayer(Player.Pawn) != None)
+			NetPlayer(Player.Pawn).OnTeamChanging(NewTeam);
+
+        NewTeam.AddToTeam(Player);
+
+		Repo.GetRepoPlayerItem( Player.SwatPlayerID ).SetTeamID( TeamID );
+
+        //notify the game mode that a new player has joined the team
+        GetGameMode().PlayerJoinedTeam( Player, NetTeam(CurrentTeam), NetTeam(NewTeam) );
+
+		if (bStatsNewGameStarted)
+		{
+			Player.Stats.TeamChange(TeamID);
+		}
+
+		if(!ForceAll)
+		{
+			if(TeamID == 0)
+			{
+				// Blue
+				Broadcast(None, Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerBlue');
+				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerBlue');
+			}
+			else if(TeamID == 2)
+			{
+				// Red
+				Broadcast(None, Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerRed');
+				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerRed');
+			}
+		}
+	}
+	else
+	{
+		if (NetPlayer(Player.Pawn) != None)
+			NetPlayer(Player.Pawn).OnTeamChanging(NewTeam);
+	}
 
 	Player.PlayerReplicationInfo.Team = NewTeam;
+}
+
+// Forces all players to be on one team
+// Precondition: The admin who triggered this is allowed to do it, and the TeamID is valid
+function ForceAllToTeam(int TeamID, string Admin)
+{
+	local SwatGamePlayerController PC;
+
+	ForEach AllActors(class'SwatGamePlayerController', PC)
+	{
+		ForcePlayerTeam(PC, TeamID, Admin, true);
+	}
+
+	if(TeamID == 0)
+	{
+		// Blue
+		Broadcast(None, Admin, 'ForceTeamBlue');
+		AdminLog(Admin, 'ForceTeamBlue');
+	}
+	else if(TeamID == 2)
+	{
+		// Red
+		Broadcast(None, Admin, 'ForceTeamRed');
+		AdminLog(Admin, 'ForceTeamRed');
+	}
+
+}
+
+// Checks to see if a player is muted
+function bool PlayerMuted(SwatGamePlayerController Player)
+{
+	return Admin.Muted(Player);
+}
+
+// Forces a player to die
+function bool ForcePlayerDeath(SwatGamePlayerController PC, string PlayerName, optional string AdminName)
+{
+	local SwatGamePlayerController P;
+
+	if(PC != None)
+	{
+		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		if(!Admin.CanKillPlayers(PC))
+		{
+			return false;
+		}
+	}
+
+	ForEach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			P.Pawn.Died(None, class'DamageType', P.Pawn.Location, vect(0.0, 0.0, 0.0));
+			Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminKill');
+			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminKill');
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Forces a player to be leader
+function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerName, optional string AdminName)
+{
+	local SwatGamePlayerController P;
+	local GameModeCOOP GameMode;
+
+	GameMode = GameModeCOOP(GetGameMode());
+
+	if(PC != None)
+	{
+		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		if(!Admin.CanPromoteLeader(PC))
+		{
+			return false;
+		}
+	}
+
+	ForEach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminLeader');
+			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminLeader');
+			GameMode.SetLeader(NetTeam(P.PlayerReplicationInfo.Team), P);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// RemoteLockTeams
+// FOR USE BY WEBADMIN ONLY!
+function RemoteLockTeams(string AdminName)
+{
+	local GameMode GameMode;
+
+	GameMode = GetGameMode();
+
+	if(GameMode.ToggleTeamLock())
+	{
+		Broadcast(None, AdminName, 'LockTeams');
+		AdminLog(AdminName, 'LockTeams');
+	}
+	else
+	{
+		Broadcast(None, AdminName, 'UnlockTeams');
+		AdminLog(AdminName, 'UnlockTeams');
+	}
+}
+
+// RemoteLockPlayerTeam
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteLockPlayerTeam(string AdminName, string PlayerName)
+{
+	local SwatGamePlayerController PC;
+	local GameMode GameMode;
+	local bool TeamLocked;
+
+	GameMode = GetGameMode();
+
+	ForEach AllActors(class'SwatGamePlayerController', PC)
+	{
+		if(PC.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			TeamLocked = GameMode.TogglePlayerTeamLock(PC);
+			if(TeamLocked)
+			{
+				Broadcast(None, AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+			}
+			else
+			{
+				Broadcast(None, AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// RemoteForceAllToTeam
+// FOR USE BY WEBADMIN ONLY!
+function RemoteForceAllToTeam(string AdminName, int TeamID)
+{
+	ForceAllToTeam(TeamID, AdminName);
+}
+
+// RemoteForcePlayerTeam
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int TeamID)
+{
+	local SwatGamePlayerController PC;
+
+	ForEach AllActors(class'SwatGamePlayerController', PC)
+	{
+		if(PC.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			ForcePlayerTeam(PC, TeamID, AdminName);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// RemoteMute
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteMute(string AdminName, string PlayerName)
+{
+	return Admin.ToggleMute(None, PlayerName, AdminName);
 }
 
 ///////////////////////////////////////
@@ -2364,7 +2713,11 @@ function ChangePlayerTeam( SwatGamePlayerController Player )
     SetPlayerTeam( Player, NewTeam );
 
     if( Repo.GuiConfig.SwatGameState == GAMESTATE_MidGame )
-        Broadcast( Player, Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+	{
+		Broadcast( Player, Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+		AdminLog(Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+	}
+
 }
 
 
@@ -2606,6 +2959,7 @@ function PreQuickRoundRestart()
 function OnServerSettingsUpdated( Controller Admin )
 {
     Broadcast(Admin, Admin.GetHumanReadableName(), 'SettingsUpdated');
+	AdminLog(Admin.GetHumanReadableName(), 'SettingsUpdated');
 }
 
 simulated event Destroyed()

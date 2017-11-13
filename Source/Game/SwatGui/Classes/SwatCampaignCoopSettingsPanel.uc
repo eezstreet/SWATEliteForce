@@ -21,6 +21,7 @@ var(SWATGui) EditInline Config GUILabel MyMapNameLabel;
 var(SWATGui) EditInline Config GUILabel MyDifficultyNameLabel;
 var(SWATGui) EditInline Config GUIListBox MyUnlockedEquipmentBox;
 var(SWATGui) EditInline Config GUICheckBoxButton MyVotingEnabledBox;
+var(SWATGui) EditInline Config GUICheckBoxButton MyEnableKillsBox;
 
 var protected localized config string PrimaryEntranceLabel;
 var protected localized config string SecondaryEntranceLabel;

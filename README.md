@@ -295,6 +295,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * Colt Accurized Rifle and Grenade Launcher had no animations for the AI-controlled officers when they were holding them.
  * P90 was using wrong animations when held by AI-controlled officers
  * TEC-9 did not have any reload sound effects
+ * TEC-9 did not use a flashlight despite the model having one
  * Night vision goggles no longer alert AI to your presence
  * Explosion effects from gas cans DO alert AI to your presence now
  * Office workers on Department of Agriculture and terrorists from Mt. Threshold Research Center had stupidly high max morale, this has been changed.
@@ -360,29 +361,33 @@ All weapons have been changed to have correct muzzle velocities.
 	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
 * Colt M4A1 Carbine:
 	- New ammo types: AP, JSP
+	- Now has a silenced counterpart
 * AK47 Machinegun:
+	- Now has a flashlight
 	- New ammo types: AP, JSP
 	- Fixed inaccurate description
 	- Fixed name (AKM)
 	- Only available in Multiplayer and All Missions
 * GB36s:
+	- Given real world name (is now G36K)
 	- New ammo types: AP, JSP
-	- Corrected wrong name (is now G36C)
 	- Updated description
+	- Now has a silenced counterpart
 * 5.56mm Light Machine Gun
+	- Given real world name (is now M249 SAW)
 	- New ammo type: JSP
-	- Corrected wrong name (is now M249 SAW)
 	- Burst fire removed
 	- Corrected wrong looking first person
 	- Only available in Multiplayer and All Missions
 * 5.7x28mm Submachine Gun
-	- New ammo types: AP, JSP
-	- Corrected wrong name (is now P90)
+	- Given real world name (is now P90)
 	- Completely redid the description
+	- New ammo types: AP, JSP
 	- Burst fire removed
 	- Corrected wrong looking first person
-	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
+	- Unlockable weapon
 * Gal Sub-machinegun
+	- Now has a flashlight
 	- New ammo types: AP, JSP
 	- Corrected wrong name (is now Silenced Uzi)
 	- Updated description
@@ -395,27 +400,29 @@ All weapons have been changed to have correct muzzle velocities.
 	- Updated description
 	- Fixed incorrect magazine size for FMJ (holds 30 rounds, not 25)
 * .45 SMG
-	- New ammo types: AP, JSP
 	- Given real world name (UMP)
+	- New ammo types: AP, JSP
 	- Updated description
 	- 2-round burst mode added
 	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
+	- Now has a silenced counterpart
 * M1911 Handgun
 	- New ammo types: AP, JSP
 	- May now be equipped as a Primary Weapon
 * 9mm Handgun
+	- Given real world name (Glock 17)
 	- New ammo types: AP, JSP
-	- Corrected wrong name (Glock 17)
 	- May now be equipped as a Primary Weapon
 * Mark 19 Semi-Automatic Pistol
-	- New ammo type: JSP
-	- Corrected wrong name (Desert Eagle)
+	- Given real world name (Desert Eagle)
 	- Fixed typo in description
+	- New ammo type: JSP
 	- May now be equipped as a Primary Weapon
 	- Only available in Multiplayer and All Missions
 * 9mm Machine Pistol
-	- Corrected wrong name (TEC-DC9)
+	- Given real world name (TEC-DC9)
 	- Completely redid the description
+	- Now has a flashlight
 	- May now be equipped as a Primary Weapon
 	- Fixed broken reload sound
 	- Only available in Multiplayer and All Missions
@@ -734,7 +741,7 @@ Administrator permissions are doled out through the use of "roles." Everyone by 
 
 Admin Roles should be assigned through the Host Game menu, when setting up the server settings.
 
-Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/SwatGuiState.ini. In the section titled `[SwatGame.SwatAdmin]` (at the bottom), add your MOTD lines by the following:
+Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/Swat4XDedicatedServer.ini. In the section titled `[SwatGame.SwatAdmin]` (at the bottom), add your MOTD lines by the following:
 
 ```
 AutoActions=(Delay=NumSeconds,ExecuteText="Command")
@@ -750,10 +757,32 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]I hope you have fun![\\c]]")
 AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
 ```
 
+WebAdmin defaults to port 6000. You can access it in a web browser by going to: http://<external ip>:6000/
+On the host machine, this can be reached from http://127.0.0.1:6000/
+
 
 # VERSION HISTORY #
 
 #### v6.3
+
+ATTENTION to server admins: Your permissions are now handled in Swat4XDedicatedServer.ini !!
+Move your admin lines in SwatGuiState.ini to Swat4XDedicatedServer.ini *before* patching your game, otherwise your role information will be lost!
+
+ - Added a new weapon: Suppressed P90
+ - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
+ - Added a new option in multiplayer: Show kill messages. When this checkbox is ticked, arrests, kills, incapacitations, and player deaths are shown.
+ - Penalty messages in multiplayer now show up as chat messages, and don't hide the chat when shown. (The penalty message in Singleplayer remains the same)
+ - Added a new ingame Admin panel. From this panel, you can now kick, ban, go to the next map, etc. All players can use it, but only actions which can be carried out by their current role will be selectable.
+ - Added a new WebAdmin panel. The WebAdmin can currently only be used to chat with players and check the server status.
+ - New Admin privilege: Lock/Unlock teams.
+ - New Admin privilege: Lock/Unlock a player's team.
+ - New Admin privilege: Force all players to red/blue
+ - New Admin privilege: Force a player to red/blue
+ - New Admin privilege: Mute a player
+ - New Admin privilege: Promote a player to leader
+ - New Admin privilege: Kill a player
+ - Admin data is now saved in Swat4XDedicatedServer.ini instead of SwatGuiState.ini
+ - Adjusted a lot of the training mission text to better integrate TSS and SEF features.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
 
 #### v6.2
