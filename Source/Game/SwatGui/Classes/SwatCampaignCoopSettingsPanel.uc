@@ -150,7 +150,7 @@ function PopulateCampaignUnlocks()
 
     for(i = 0; i < theCampaign.GetAvailableIndex() + 1; i++)
     {
-        Item = class<ICanBeSelectedInTheGUI>(GC.MissionEquipment[i]);
+        Item = class<ICanBeSelectedInTheGUI>(class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment[i]);
         if(Item == None)
         {
             continue;
@@ -158,9 +158,11 @@ function PopulateCampaignUnlocks()
         MyUnlockedEquipmentBox.List.Add(Item.static.GetFriendlyName());
     }
 
-    for(i = GC.MissionName.Length; i < GC.MissionName.Length + theCampaign.GetAvailableIndex() + 1; i++)
+    for(i = class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length;
+	 	i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length + theCampaign.GetAvailableIndex() + 1;
+		i++)
     {
-        Item = class<ICanBeSelectedInTheGUI>(GC.MissionEquipment[i]);
+        Item = class<ICanBeSelectedInTheGUI>(class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment[i]);
         if(Item == None)
         {
           continue;

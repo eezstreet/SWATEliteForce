@@ -2982,10 +2982,6 @@ function WasKilledBy(Controller Other)
     if (SwatGameInfo(Level.Game) != None)
     {
         SwatGameInfo(Level.Game).GameEvents.PlayerDied.Triggered(Self, Other);
-		if(Level.NetMode != NM_StandAlone)
-		{
-			SwatGameInfo(Level.Game).Broadcast(self, SwatPawn(Pawn).GetHumanReadableName(), 'Fallen');
-		}
 	}
 }
 

@@ -1,5 +1,5 @@
 class SwatAdmin extends Engine.Actor
-    config(Swat4XDedicatedServer);
+    config(SwatGuiState);
 
 enum WebAdminMessageType
 {

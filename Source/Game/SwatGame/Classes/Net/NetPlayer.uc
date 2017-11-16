@@ -975,7 +975,6 @@ function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
 
 function OnKilled(Actor Killer, class<DamageType> damageType)
 {
-	SwatGameInfo(Level.Game).Broadcast(self, GetHumanReadableName(), 'Fallen');
 }
 
 simulated protected function bool CheckDesiredItemAndEquipIfNeeded()

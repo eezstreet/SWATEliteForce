@@ -1,6 +1,6 @@
 class SwatWebAdminListener extends IPDrv.TCPLink
 	transient
-	config(Swat4XDedicatedServer)
+	config(SwatGuiState)
 	dependsOn(SwatAdmin);
 
 import enum AdminPermissions from SwatAdmin;

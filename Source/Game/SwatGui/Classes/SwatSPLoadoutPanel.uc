@@ -346,18 +346,20 @@ function bool CheckCampaignValid( class EquipmentClass )
 	// Any equipment above the MissionIndex is currently unavailable
 	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     // Check first set of equipment
-		for (i = MissionIndex + 1; i < GC.MissionName.Length; ++i)
+		for (i = MissionIndex + 1; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; ++i)
         {
-            if (GC.MissionEquipment[i] == EquipmentClass) {
+            if (class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment[i] == EquipmentClass) {
                 log("CheckCampaignValid failed on "$EquipmentClass);
 				return false;
             }
         }
 
         // Check second set of equipment
-        for(i = GC.MissionName.Length + MissionIndex + 1; i < GC.MissionEquipment.Length; ++i)
+		for(i = class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length + MissionIndex + 1;
+			i < class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment.Length;
+			++i)
         {
-            if(GC.MissionEquipment[i] == EquipmentClass)
+            if(class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment[i] == EquipmentClass)
             {
                 log("CheckCampaignValid failed on "$EquipmentClass);
                 return false;

@@ -41,12 +41,12 @@ function bool GetPermission(AdminPermissions per)
 
 function bool TryPassword(String Password)
 {
+	// Yes. We store passwords as plaintext. Allow me to justify this for a sec.
+	// SHA1 and MD5 aren't programmed in Unreal Engine. Yet.
+	// Since we can override this class (and therefore this function) later, it makes more sense to have a base class
+	// that handles plaintext and then make a derived version that's more secure and handles stuff in SHA1 or whatever.
 	if(Password == HashPassword)
 	{
-		// Yes. We store passwords as plaintext. Allow me to justify this for a sec.
-		// SHA1 and MD5 aren't programmed in Unreal Engine. Yet.
-		// Since we can override this class (and therefore this function) later, it makes more sense to have a base class
-		// that handles plaintext and then make a derived version that's more secure and handles stuff in SHA1 or whatever.
 		return true;
 	}
 

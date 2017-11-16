@@ -764,10 +764,6 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
 # VERSION HISTORY #
 
 #### v6.3
-
-ATTENTION to server admins: Your permissions are now handled in Swat4XDedicatedServer.ini !!
-Move your admin lines in SwatGuiState.ini to Swat4XDedicatedServer.ini *before* patching your game, otherwise your role information will be lost!
-
  - Added a new weapon: Suppressed P90
  - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
  - Added a new option in multiplayer: Show kill messages. When this checkbox is ticked, arrests, kills, incapacitations, and player deaths are shown.
@@ -781,7 +777,7 @@ Move your admin lines in SwatGuiState.ini to Swat4XDedicatedServer.ini *before* 
  - New Admin privilege: Mute a player
  - New Admin privilege: Promote a player to leader
  - New Admin privilege: Kill a player
- - Admin data is now saved in Swat4XDedicatedServer.ini instead of SwatGuiState.ini
+ - Campaign unlocks are now handled in SwatCareerPath.ini instead of SwatGuiState.ini so patches will not destroy server admin information
  - Adjusted a lot of the training mission text to better integrate TSS and SEF features.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
 

@@ -51,8 +51,6 @@ var config localized string             NumberOfHostagesString; //The localized 
 var config localized string             NumberOfEnemiesString;  //The localized words "Number of enemies"
 var config localized string             CommaIncludingString;   //The localized string ", including"
 var config localized string             CampaignObjectivesString;   //The localized localized words "Campaign Objectives" for the end of a sentence
-var config array<name>                ExtraMissions;
-
 var config float                        DefaultTimeLimit;
 
 var private SwatGUIConfig               GC;
@@ -84,15 +82,15 @@ function Init(SwatGUIConfig inGC)
     GC = inGC;
     assert(GC != None);
 
-    for (i=0; i<GC.CompleteMissionList.length; ++i)
+	for (i = 0; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; i++)
     {
-        MissionData[i] = new (None, string(GC.CompleteMissionList[i])) class'CustomScenarioCreatorMissionSpecificData';
+        MissionData[i] = new (None, string(class'SwatGame.SwatVanillaCareerPath'.default.Missions[i])) class'CustomScenarioCreatorMissionSpecificData';
         assert(MissionData[i] != None);
     }
 
     ExtraMissionsStart = MissionData.Length;
-    for(i = 0; i < ExtraMissions.Length; i++) {
-      MissionData[ExtraMissionsStart + i] = new(None, string(ExtraMissions[i])) class'CustomScenarioCreatorMissionSpecificData';
+    for(i = 0; i < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; i++) {
+      MissionData[ExtraMissionsStart + i] = new(None, string(class'SwatGame.SwatSEFCareerPath'.default.Missions[i])) class'CustomScenarioCreatorMissionSpecificData';
     }
 }
 
@@ -101,21 +99,22 @@ function CustomScenarioCreatorMissionSpecificData GetMissionData_Slow(name inMis
 {
     local int i;
 
-    for (i=0; i<GC.CompleteMissionList.length; ++i)
-    {
-        if (GC.CompleteMissionList[i] == inMission)
-        {
-            assert(MissionData.length > i);     //it should have been initialized in construct()
-            return MissionData[i];
-        }
-    }
+	for(i = 0; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; i++)
+	{
+		if(class'SwatGame.SwatVanillaCareerPath'.default.Missions[i] == inMission)
+		{
+			assert(MissionData.Length > 1);
+			return MissionData[i];
+		}
+	}
 
-    // Extra Missions
-    for(i = 0; i < ExtraMissions.Length; i++) {
-      if(ExtraMissions[i] == inMission) {
-        return MissionData[ExtraMissionsStart + i];
-      }
-    }
+	for(i = 0; i < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; i++)
+	{
+		if(class'SwatGame.SwatSEFCareerPath'.default.Missions[i] == inMission)
+		{
+			return MissionData[ExtraMissionsStart + i];
+		}
+	}
 
     assertWithDescription(false,
         "[tcohen] CustomScenarioCreatorData::GetMissionData_Slow() the specified Mission named "$inMission

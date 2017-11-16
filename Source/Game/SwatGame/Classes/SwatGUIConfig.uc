@@ -25,15 +25,21 @@ var(Difficulty) Config eDifficultyLevel CurrentDifficulty;
 //////////////////////////////////////////////////////////////////////////////////////
 // Campaigns & SP Missions
 //////////////////////////////////////////////////////////////////////////////////////
-var(Missions) Config			array<Name>		CompleteMissionList			"The list of all available missions";
-var(Missions) config localized  array<string>   CompleteFriendlyNameList    "Friendly name to display in the gui";
+
+var() config array<Name> NotUsed1 "Not used.";
+var() config array<string> NotUsed2 "Not used.";
+//var(Missions) Config			array<Name>		CompleteMissionList			"The list of all available missions";
+//var(Missions) config localized  array<string>   CompleteFriendlyNameList    "Friendly name to display in the gui";
 
 var(Missions) EditConst EditInline SwatMission	CurrentMission	"The current mission selected for Single Player";
 
-//these specify the campaign
-var(Missions) config            array<Name>     MissionName			"Name used for this mission";
-var(Missions) config /*localized*/  array<string>   FriendlyName		"Friendly name to display in the gui";
-var(Missions) config			array<class>	MissionEquipment	"The piece of equipment unlocked at this mission";
+// The data here is not used. It got moved to SwatCareerPath and its children
+//var(Missions) config            array<Name>     MissionName			"Name used for this mission";
+//var(Missions) config /*localized*/  array<string>   FriendlyName		"Friendly name to display in the gui";
+//var(Missions) config			array<class>	MissionEquipment	"The piece of equipment unlocked at this mission";
+var() config array<Name> NotUsed3 "Not used.";
+var() config array<string> NotUsed4 "Not used.";
+var() config array<class> NotUsed5 "Not used.";
 
 var(Missions) private Config    Name            LastMissionPlayedName           "The Name of the last mission that was played in Single Player";
 var(Missions) private Config    String          LastMissionPlayedFriendlyName   "The friendly name of the last mission that was played in Single Player";
@@ -302,9 +308,6 @@ overloaded function Construct()
     local int i;
 	local SwatSkinEquipmentSpec SSES;
 
-    AssertWithDescription( MissionName.Length == FriendlyName.Length, "The number of campaign MissionNames specified in SwatGUIState.ini does not match the number of FriendlyNames" );
-    AssertWithDescription( MissionName.Length > 0, "There must be at least one valid campaign MissionNames specified in SwatGUIState.ini" );
-
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
 		if (i != Pocket.Pocket_CustomSkin)
@@ -434,7 +437,7 @@ function LoadLastMissionPlayed()
 	if( LastMissionPlayedName != '' && LastMissionPlayedName != 'SP-Training' )
 	    SetCurrentMission( LastMissionPlayedName, LastMissionPlayedFriendlyName, LastMissionPlayedCustomScenario );
 	else
-        SetCurrentMission( MissionName[0], FriendlyName[0] );
+        SetCurrentMission( 'SP-Training', "Riverside Training Facility" );
 
     AssertWithDescription( CurrentMission != None, "Failed to load a CurrentMission on GuiConfig LoadLastMissionPlayed().  The InstantAction option may not be available." );
 }
