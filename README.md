@@ -766,6 +766,7 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
 #### v6.3
  - Added a new weapon: Suppressed P90
  - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
+ - Tweaked the position of the P90 flashlight
  - Added a new option in multiplayer: Show kill messages. When this checkbox is ticked, arrests, kills, incapacitations, and player deaths are shown.
  - Penalty messages in multiplayer now show up as chat messages, and don't hide the chat when shown. (The penalty message in Singleplayer remains the same)
  - Added a new ingame Admin panel. From this panel, you can now kick, ban, go to the next map, etc. All players can use it, but only actions which can be carried out by their current role will be selectable.
