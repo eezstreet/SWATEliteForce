@@ -89,7 +89,7 @@ function InitComponent(GUIComponent MyOwner)
 
     MyLoadoutButton.OnClick=CommonOnClick;
     MyScoresButton.OnClick=CommonOnClick;
-	  MyVotingButton.OnClick=CommonOnClick;
+	MyVotingButton.OnClick=CommonOnClick;
 	MyAdminButton.OnClick=CommonOnClick;
 
     MyGameSettingsButton.OnClick=CommonOnClick;
@@ -189,6 +189,8 @@ private function SetupPopup()
 
 		MyVotingButton.Hide();
         MyVotingButton.DeActivate();
+		MyAdminButton.Hide();
+		MyAdminButton.DeActivate();
         MyScoresButton.Hide();
         MyScoresButton.DeActivate();
         MyLoadoutButton.Hide();
@@ -284,6 +286,8 @@ private function SetupPopup()
 
 		MyVotingButton.Hide();
         MyVotingButton.DeActivate();
+		MyAdminButton.Hide();
+		MyAdminButton.DeActivate();
         MyScoresButton.Hide();
         MyScoresButton.DeActivate();
         MyLoadoutButton.Hide();
@@ -591,6 +595,7 @@ private function OpenScores()
     MyCampaignPanel.Hide();
     MyCampaignPanel.DeActivate();
 
+	MyAdminButton.EnableComponent();
 	MyVotingButton.EnableComponent();
     MyScoresButton.Focus();
     MyLoadoutButton.EnableComponent();
@@ -616,6 +621,7 @@ private function OpenLoadout()
     MyCampaignPanel.Hide();
     MyCampaignPanel.DeActivate();
 
+	MyAdminButton.EnableComponent();
 	MyVotingButton.EnableComponent();
     MyScoresButton.EnableComponent();
     MyLoadoutButton.Focus();
