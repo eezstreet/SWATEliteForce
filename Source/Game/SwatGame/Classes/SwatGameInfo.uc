@@ -2206,6 +2206,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 	else if(Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None)
 	{
 		MsgType = 'Fallen';
+		Msg = VictimName;
 	}
 	else // someone killed a non-player (e.g., an AI was killed)
 	{

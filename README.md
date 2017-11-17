@@ -763,6 +763,9 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
 
 # VERSION HISTORY #
 
+#### v6.4
+ - Fixed SEF bug: When a player dies, it lists the killer instead of the person who died as "fallen"
+
 #### v6.3
  - Added a new weapon: Suppressed P90
  - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
