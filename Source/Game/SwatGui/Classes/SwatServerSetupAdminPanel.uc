@@ -31,6 +31,10 @@ var(SWATGui) protected EditInline Config GUIButton RemoveRights;
 var(SWATGui) protected EditInline Config GUICheckBoxButton WebAdminEnabled;
 var(SWATGui) protected EditInline Config GUINumericEdit WebAdminPort;
 
+// Logging
+var(SWATGui) protected EditInline Config GUICheckBoxButton ChatLoggingEnabled;
+var(SWATGui) protected EditInline Config GUICheckBoxButton AdminLoggingEnabled;
+
 var private SwatAdminPermissions SelectedPermission;
 
 var SwatAdmin AdminData;
@@ -308,6 +312,9 @@ function LoadServerSettings( optional bool bReadOnly )
 
 	WebAdminEnabled.SetChecked(class'SwatAdmin'.default.UseWebAdmin);
 	WebAdminPort.SetValue(class'SwatAdmin'.default.WebAdminPort);
+
+	ChatLoggingEnabled.SetChecked(class'SwatAdmin'.default.UseChatLog);
+	AdminLoggingEnabled.SetChecked(class'SwatAdmin'.default.UseAdminLog);
 }
 
 // Called whenever the server settings need to be saved (obviously)
@@ -317,6 +324,8 @@ function SaveServerSettings()
 
 	AdminData.default.UseWebAdmin = WebAdminEnabled.bChecked;
 	AdminData.default.WebAdminPort = WebAdminPort.Value;
+	AdminData.default.UseChatLog = ChatLoggingEnabled.bChecked;
+	AdminData.default.UseAdminLog = AdminLoggingEnabled.bChecked;
 	AdminData.WebAdminPort = WebAdminPort.Value;
 	AdminData.UseWebAdmin = WebAdminEnabled.bChecked;
 

@@ -57,6 +57,12 @@ var public config int WebAdminPort;
 var public config class<SwatWebAdminListener> WebAdminClass;
 var private SwatWebAdminListener WebAdmin;
 
+var public config bool UseChatLog;
+var private FileLog ChatLog;
+
+var public config bool UseAdminLog;
+var private FileLog AdminLog;
+
 var private array<SwatGamePlayerController> MutedPlayers;
 
 var private localized config string PenaltyFormat;
@@ -107,6 +113,21 @@ function PreBeginPlay()
 	}
 }
 
+function BeginPlay()
+{
+	if(UseChatLog)
+	{
+		ChatLog = Spawn(class'FileLog');
+	}
+
+	if(UseAdminLog)
+	{
+		AdminLog = Spawn(class'FileLog');
+	}
+
+	Super.BeginPlay();
+}
+
 function PostBeginPlay()
 {
 	local int i;
@@ -145,6 +166,18 @@ event Destroyed()
 		WebAdmin.Destroy();
 		WebAdmin = None;
 	}
+
+	if(ChatLog != None)
+	{
+		ChatLog.Destroy();
+		ChatLog = None;
+	}
+
+	if(AdminLog != None)
+	{
+		AdminLog.Destroy();
+		AdminLog = None;
+	}
 }
 
 // The timer is used to execute AutoActions which can be used to
@@ -164,6 +197,28 @@ event Timer()
 	}
 
 	SetTimer(AutoActions[AutoActionNum].Delay, false);
+}
+
+// Log something to the chatlog
+function LogChat(string Message)
+{
+	if(UseChatLog)
+	{
+		ChatLog.OpenLog("chatlog_"$Level.Year$"_"$Level.Month$"_"$Level.Day);
+		ChatLog.Logf("["$Level.Day$"/"$Level.Month$"/"$Level.Year$" "$Level.Hour$":"$Level.Minute$":"$Level.Second$"] "$Message);
+		ChatLog.CloseLog();
+	}
+}
+
+// Log an action to the administrator log
+function LogAdmin(string Message)
+{
+	if(UseChatLog)
+	{
+		AdminLog.OpenLog("adminlog_"$Level.Year$"_"$Level.Month$"_"$Level.Day);
+		AdminLog.Logf("["$Level.Day$"/"$Level.Month$"/"$Level.Year$" "$Level.Hour$":"$Level.Minute$":"$Level.Second$"] "$Message);
+		AdminLog.CloseLog();
+	}
 }
 
 // Perform auto action text
@@ -567,22 +622,27 @@ function Broadcast(coerce string Msg, optional name Type)
 		case 'TeamSay':
 			mplog("TeamSay: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			LogChat(FormatTextString(SayFormat, StrA, StrB));
 			break;
 		case 'Say':
 			mplog("Say: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			LogChat(FormatTextString(SayFormat, StrA, StrB));
 			break;
 		case 'WebAdminChat':
 			mplog("WebAdminChat: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			LogChat(FormatTextString(SayFormat, StrA, StrB));
 			break;
 		case 'SayLocalized':
 			mplog("SayLocalized: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			LogChat(FormatTextString(SayFormat, StrA, StrB));
 			break;
 		case 'TeamSayLocalized':
 			mplog("TeamSayLocalized: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
+			LogChat(FormatTextString(SayFormat, StrA, StrB));
 			break;
 		case 'SwitchTeams':
 			mplog("SwitchTeams: "$Msg);
@@ -675,10 +735,12 @@ function Broadcast(coerce string Msg, optional name Type)
 		case 'Kick':
 			mplog("Kick: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickFormat, StrB, StrA));
+			LogAdmin(FormatTextString(KickFormat, StrB, StrA));
 			break;
 		case 'KickBan':
 			mplog("KickBan: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickBanFormat, StrB, StrA));
+			LogAdmin(FormatTextString(KickBanFormat, StrB, StrA));
 			break;
 		case 'ObjectiveComplete':
 			mplog("ObjectiveComplete: "$Msg);
@@ -687,50 +749,62 @@ function Broadcast(coerce string Msg, optional name Type)
 		case 'ForceTeamRed':
 			mplog("ForceTeamRed: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForceAllRedFormat, StrA));
+			LogAdmin(FormatTextString(ForceAllRedFormat, StrA));
 			break;
 		case 'ForceTeamBlue':
 			mplog("ForceTeamBlue: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForceAllBlueFormat, StrA));
+			LogAdmin(FormatTextString(ForceAllBlueFormat, StrA));
 			break;
 		case 'ForcePlayerRed':
 			mplog("ForcePlayerRed: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForcePlayerRedFormat, StrA, StrB));
+			LogAdmin(FormatTextString(ForcePlayerRedFormat, StrA, StrB));
 			break;
 		case 'ForcePlayerBlue':
 			mplog("ForcePlayerBlue: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForcePlayerBlueFormat, StrA, StrB));
+			LogAdmin(FormatTextString(ForcePlayerBlueFormat, StrA, StrB));
 			break;
 		case 'LockTeams':
 			mplog("LockTeams: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(LockedTeamsFormat, StrA));
+			LogAdmin(FormatTextString(LockedTeamsFormat, StrA));
 			break;
 		case 'UnlockTeams':
 			mplog("UnlockTeams: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedTeamsFormat, StrA));
+			LogAdmin(FormatTextString(UnlockedTeamsFormat, StrA));
 			break;
 		case 'LockPlayerTeam':
 			mplog("LockPlayerTeam: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(LockedPlayerTeamFormat, StrA, StrB));
+			LogAdmin(FormatTextString(LockedPlayerTeamFormat, StrA, StrB));
 			break;
 		case 'UnlockPlayerTeam':
 			mplog("UnlockPlayerTeam: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB));
+			LogAdmin(FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB));
 			break;
 		case 'Mute':
 			mplog("Mute: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(MuteFormat, StrA, StrB));
+			LogAdmin(FormatTextString(MuteFormat, StrA, StrB));
 			break;
 		case 'Unmute':
 			mplog("Unmute: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(UnmuteFormat, StrA, StrB));
+			LogAdmin(FormatTextString(UnmuteFormat, StrA, StrB));
 			break;
 		case 'AdminKill':
 			mplog("AdminKill: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(AdminKillFormat, StrA, StrB));
+			LogAdmin(FormatTextString(AdminKillFormat, StrA, StrB));
 			break;
 		case 'AdminLeader':
 			mplog("AdminLeader: "$Msg);
 			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(AdminPromotedFormat, StrA, StrB));
+			LogAdmin(FormatTextString(AdminPromotedFormat, StrA, StrB));
 			break;
 	}
 }
@@ -760,6 +834,9 @@ defaultproperties
 	UseWebAdmin=true
 	WebAdminPort=6000
 	WebAdminClass=class'SwatWebAdminListener'
+
+	UseChatLog=true
+	UseAdminLog=true
 
 	PenaltyFormat="%1 caused penalty: %2"
 	SayFormat="%1: %2"

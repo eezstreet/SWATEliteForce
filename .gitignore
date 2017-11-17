@@ -3,6 +3,8 @@ System/Packages.md5
 System/Packages.txt
 System/Promotional/*
 System/Running.ini
+System/adminlog_*.txt
+System/chatlog_*.txt
 *.bmp
 *.jpg
 *.png

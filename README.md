@@ -763,6 +763,10 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
 
 # VERSION HISTORY #
 
+#### v6.4
+ - Added a new Chat Log feature. When enabled (in Admin section of Host Game menu), all of the chat will be saved to a file: SEF/System/chatlog_YYYY_MM_DD.txt, where YYYY is the year, MM is the month, and DD is the day.
+ - Added a new Admin Log feature. When enabled, all administrator actions will be saved to a file named SEF/System/adminlog_YYYY_MM_DD.txt.
+
 #### v6.3
  - Added a new weapon: Suppressed P90
  - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
