@@ -773,7 +773,7 @@ defaultproperties
 	LockTeamsMessage="[c=ff00ff]%1 locked the teams."
 	UnlockTeamsMessage="[c=ff00ff]%1 unlocked the teams."
 	LockPlayerTeamMessage="[c=ff00ff]%1 locked %2's team."
-	UnlockPlayerTeamMessage="[c=ff00ff]%1 locked %2's team."
+	UnlockPlayerTeamMessage="[c=ff00ff]%1 unlocked %2's team."
     TeamChatMessage="[c=808080][b]%1[\\b]: %2"
     GlobalChatMessage="[c=00ff00][b]%1[\\b][c=00ff00]: %2"
     TeamChatMessageLocalized="[c=808080][b]%1 (%2)[\\b]: %3"
