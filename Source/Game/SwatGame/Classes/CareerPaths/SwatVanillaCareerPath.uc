@@ -1,1 +1,1 @@
-class SwatVanillaCareerPath extends SwatCareerPath config(SwatCareerPath);
+class SwatVanillaCareerPath extends SwatCareerPath config(SwatMissions);

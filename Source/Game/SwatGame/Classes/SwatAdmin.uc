@@ -123,6 +123,7 @@ function BeginPlay()
 	if(UseAdminLog)
 	{
 		AdminLog = Spawn(class'FileLog');
+
 	}
 
 	Super.BeginPlay();
