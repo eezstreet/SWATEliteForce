@@ -1,4 +1,11 @@
-﻿
+﻿[NoWeapon]
+Description=Choose this option to pack no weapon in your gear. This option is good for when you need to reduce your weight and/or bulk.
+FriendlyName=No Weapon
+
+[NoEquipment]
+Description=Choose this option to pack no equipment in this slot. This option is good for when you need to reduce your weight and/or bulk.
+FriendlyName=None
+
 [Arwen37GL]
 Description=The ARWEN 37 (ARWEN being short for "Anti-Riot Weapon ENfield") was designed by request of the British Military for a capable riot control weapon. It certainly meets that criteria - boasting a five-round rotary drum and tactical flashlight, the ARWEN 37 is a solid choice in delivering ordinance. The weapon is heavier than the HK69 however, and is only designed to be used by a grenadier's role.
 FriendlyName=ARWEN 37

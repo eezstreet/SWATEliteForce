@@ -338,6 +338,10 @@ function UpdateWeights() {
 
   bulkDisplay = MyCurrentLoadOut.GetBulkPercentage();
   bulkDisplay *= 100.0;
+  if(bulkDisplay < 0.0)
+  {
+	  bulkDisplay = 0.0;
+  }
 
   MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
   MyEquipmentBulkLabel.Caption =""$bulkDisplay$"%";
