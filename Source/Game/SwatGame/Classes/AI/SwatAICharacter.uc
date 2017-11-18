@@ -690,14 +690,13 @@ private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation,
 	GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
 }
 
-private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration)
+private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
 {
 	if ( CantBeDazed() )
         return;
 
 	if (Damage > 0.0) {
-		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0),
-				   class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')));
+		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), DamageType);
   }
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
@@ -716,7 +715,8 @@ function ReactToLessLeathalShotgun(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
     if ( CantBeDazed() )
         return;
@@ -728,8 +728,7 @@ function ReactToLessLeathalShotgun(
                         Instigator,                           // Pawn EventInstigator
                         Location,							  // vector HitLocation
                         MomentumVector,                          // vector Momentum
-                                  // class<DamageType> DamageType
-                        class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+                        DamageType );
         }
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
@@ -744,9 +743,10 @@ function ReactToGLTripleBaton(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
-    DirectHitByGrenade(Instigator, Damage, AIStingDuration);
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
 }
 
 // React to a direct hit from a grenade launched from the grenade launcher
@@ -756,9 +756,10 @@ function ReactToGLDirectGrenadeHit(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
-    DirectHitByGrenade(Instigator, Damage, AIStingDuration);
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
 }
 
 function ReactToMeleeAttack(

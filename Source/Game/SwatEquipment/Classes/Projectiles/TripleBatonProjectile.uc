@@ -1,4 +1,5 @@
 class TripleBatonProjectile extends Engine.SwatProjectile
+	implements DamageType
 	Config(SwatEquipment);
 
 //projectile splitting
@@ -21,6 +22,24 @@ var config float PlayerStingDuration;
 var config float HeavilyArmoredPlayerStingDuration;
 var config float NonArmoredPlayerStingDuration;
 var config float AIStingDuration;
+
+// stuff for the damage type
+var localized config string DamageTypeString;
+var config float RagdollMomentumMultiplier;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//	DamageType interface
+
+static function string GetFriendlyName()
+{
+	return default.DamageTypeString;
+}
+
+static function float GetRagdollDeathImpactMomentumMultiplier()
+{
+	return default.RagdollMomentumMultiplier;
+}
 
 private function SpawnSplitProjectile(vector normal, float angle)
 {
@@ -110,7 +129,8 @@ simulated singular function Touch(Actor Other)
 			PlayerStingDuration,
 			HeavilyArmoredPlayerStingDuration,
 			NonArmoredPlayerStingDuration,
-			AIStingDuration);
+			AIStingDuration,
+			class);
 
 	if (Pawn(Other) != None)
 	{
@@ -131,4 +151,6 @@ defaultproperties
     CollisionRadius=5
     CollisionHeight=5
     bCollideWorld=true
+	RagdollMomentumMultiplier=1.0
+	DamageTypeString="Triple-Baton Round"
  }

@@ -30,10 +30,11 @@ var private config float DirectImpactHeavilyArmoredPlayerStingDuration;	// Sting
 var private config float DirectImpactNonArmoredPlayerStingDuration;		// Sting duration if the projectile directly hits an non-armoured target when fired from a grenade launcher
 var private config float DirectImpactAIStingDuration;					// Sting duration if the projectile directly hits an AI target when fired from a grenade launcher
 var bool bWasFired;														// True if this projectile was fired from a grenade launcher instead of being thrown
+var public FiredWeapon Launcher;
 
 //
 // Engine Events
-// 
+//
 
 event PostBeginPlay()
 {
@@ -45,13 +46,13 @@ event PostBeginPlay()
 
     Label = 'Grenade';
     TimeThrown = Level.TimeSeconds;
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     bRenderDebugInfo = class'SwatGrenadeProjectile'.Default.bRenderDebugInfo;
 #endif
     NotifyAIsGrenadeThrown();
 }
 
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
 simulated function DrawTrajectory()
 {
     //log(Name$" DrawTrajectory loc="$Location$" lastDebugLoc="$DebugLastLocation);
@@ -68,7 +69,7 @@ event Tick(float dTime)
     local Rotator NewRotation;
 
     //log(Name$" is Ticking at "$Level.TimeSeconds$" debuggingOn="$bRenderDebugInfo);
-#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games 
+#if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     if (bRenderDebugInfo)
     {
         DrawTrajectory();
@@ -192,7 +193,7 @@ simulated event HitWall(vector normal, actor wall)
     if (BounceCount > 0)
 	{
 		mirror = MirrorVectorByNormal(Velocity, normal);
-		Velocity = mirror * BounceDampening;	
+		Velocity = mirror * BounceDampening;
         BounceCount--;
 	}
     else // no more bouncing
@@ -217,11 +218,12 @@ simulated singular function Touch(Actor Other)
 	{
 		// Being hit directly by a fired grenade causes a mild disorientation and deals some damage
 		IReactToDazingWeapon(Other).ReactToGLDirectGrenadeHit(Pawn(Owner),
-															  DirectImpactDamage, 
+															  DirectImpactDamage,
 															  DirectImpactPlayerStingDuration,
 															  DirectImpactHeavilyArmoredPlayerStingDuration,
 															  DirectImpactNonArmoredPlayerStingDuration,
-															  DirectImpactAIStingDuration);
+															  DirectImpactAIStingDuration,
+															  Launcher.GetDamageType());
 	}
 
     HitWall(Location - Other.Location, Other);
@@ -233,13 +235,13 @@ Begin:
     Sleep(FuseTime);
 
     TriggerEffectEvent(
-		'Detonated',    
+		'Detonated',
 		,					// use default Other
 		,					// use default TargetMaterial
 		self.Location,		// location of projectile
 		Rotator(vect(0,0,1)) // scorch should always orient downward to avoid weird clipping with the floor
 	);
-	
+
 	NotifyRegistrantsGrenadeDetonated();
 
     Detonated();

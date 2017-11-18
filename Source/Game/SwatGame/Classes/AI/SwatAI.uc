@@ -2332,7 +2332,7 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 
 	if (ShouldBecomeIncapacitated())
 	{
-		BecomeIncapacitated(,Killer.Pawn);
+		BecomeIncapacitated(,Killer.Pawn, damageType);
 	}
 	else
 	{
