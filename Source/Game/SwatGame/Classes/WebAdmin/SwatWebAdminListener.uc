@@ -29,6 +29,8 @@ var globalconfig string PageFooter;
 var globalconfig float ClientRefreshSeconds;
 var globalconfig float ServerRefreshSeconds;
 
+var globalconfig bool FormatHTML;
+
 var localized config string NoPermissionString;
 
 var private int BoundPort;
@@ -229,6 +231,7 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 	local SwatPlayerReplicationInfo PRI;
 	local string NewCookie;
 	local SwatAdminPermissions Perms;
+	local string Name;
 
 	SGRI = SwatGameReplicationInfo(Level.Game.GameReplicationInfo);
 
@@ -249,15 +252,26 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 					continue;
 				}
 
-				XML = XML $ "<USER>" $ PRI.PlayerName $ "</USER>";
+				Name = PRI.PlayerName;
+				FixHTMLBolding(Name);
+				FixHTMLItalics(Name);
+				FixHTMLUnderline(Name);
+				FixHTMLColor(Name);
+				XML = XML $ "<USER><![CDATA[" $ Name $ "]]></USER>";
 			}
 			XML = XML $ "</USERS>";
 
 			XML = XML $ "<ADMINS>";
 			for(j = 0; j < Users.Length; j++)
 			{
+				Name = Users[i].Alias;
+				FixHTMLBolding(Name);
+				FixHTMLItalics(Name);
+				FixHTMLUnderline(Name);
+				FixHTMLColor(Name);
+
 				XML = XML $ "<ADMIN>";
-				XML = XML $ "<ALIAS>" $ Users[i].Alias $ "</ALIAS>";
+				XML = XML $ "<ALIAS><![CDATA[" $ Name $ "]]></ALIAS>";
 				XML = XML $ "<ROLE>" $ Users[i].PermissionSet.PermissionSetName $ "</ROLE>";
 				XML = XML $ "</ADMIN>";
 			}
@@ -268,7 +282,9 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 			{
 				XML = XML $ "<MSG>";
 				XML = XML $ "<MSGTYPE>" $ Users[i].WaitingMessages[j].MessageType $ "</MSGTYPE>";
-				XML = XML $ "<MSGTEXT>" $ Users[i].WaitingMessages[j].Message $ "</MSGTEXT>";
+
+				// Use CDATA for messages because we can expect some HTML in them
+				XML = XML $ "<MSGTEXT><![CDATA[" $ Users[i].WaitingMessages[j].Message $ "]]></MSGTEXT>";
 				XML = XML $ "</MSG>";
 			}
 			Users[i].WaitingMessages.Length = 0;
@@ -300,6 +316,107 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 	return false;
 }
 
+// Fix bold tags on a string
+function FixHTMLBolding(out string Text)
+{
+	if(!FormatHTML)
+	{
+		return;
+	}
+
+	ReplaceText(Text, "[B]", "[b]");
+	ReplaceText(Text, "[b]", "</b><b>");
+	ReplaceText(Text, "[\\B]", "[\\b]");
+	ReplaceText(Text, "[\\b]", "</b>");
+	Text = Text $ "</b>";
+}
+
+// Fix italic tags on a string
+function FixHTMLItalics(out string Text)
+{
+	if(!FormatHTML)
+	{
+		return;
+	}
+
+	ReplaceText(Text, "[I]", "[i]");
+	ReplaceText(Text, "[i]", "</i><i>");
+	ReplaceText(Text, "[\\I]", "[\\i]");
+	ReplaceText(Text, "[\\i]", "</i>");
+	Text = Text $ "</i>";
+}
+
+// Fix underline tags on a string
+function FixHTMLUnderline(out string Text)
+{
+	if(!FormatHTML)
+	{
+		return;
+	}
+
+	ReplaceText(Text, "[U]", "[u]");
+	ReplaceText(Text, "[u]", "</u><u>");
+	ReplaceText(Text, "[\\U]", "[\\u]");
+	ReplaceText(Text, "[\\u]", "</u>");
+	Text = Text $ "</u>";
+}
+
+// Fix coloring tags on a string
+function FixHTMLColor(out string Text)
+{
+	local int i, j;
+
+	if(!FormatHTML)
+	{
+		return;
+	}
+
+	ReplaceText(Text, "[C=", "[c=");
+	ReplaceText(Text, "[\\C]", "[\\c]");
+	ReplaceText(Text, "[\\c]", "</font>");
+
+	do
+	{
+		i = InStr(Text, "[c=");
+		if(i != -1)
+		{
+			j = InStrAfter(Text, "]", i);
+			if(j != -1)
+			{
+				Text = Left(Text, i) $ "</font><font color=" $ Mid(Text, i + 3, 6) $ ">" $ Mid(Text, j + 1);
+			}
+		}
+	} until(i == -1);
+
+	Text = Text $ "</font>";
+}
+
+// Send a message to a specific user
+function SendMessageToUser(int User, WebAdminMessage Message)
+{
+	// Cleanse the message
+	// Remove < and > because this can cause HTML injection
+	ReplaceText(Message.Message, "<", "&lt;");
+	ReplaceText(Message.Message, ">", "&gt;");
+
+	// Wrap any text that's in [B] or [b] in <b> tags
+	FixHTMLBolding(Message.Message);
+
+	// Wrap any text that's in [I] or [i] in <i> tags
+	FixHTMLItalics(Message.Message);
+
+	// Wrap any text that's in [U] or [u] in <u> tags
+	FixHTMLUnderline(Message.Message);
+
+	// Wrap any text that's in [C=COLOUR] in <font color=colour> tag
+	FixHTMLColor(Message.Message);
+
+	log("SendMessageToUser: User is "$User$", Message.Message is "$Message.Message);
+
+	// Send it
+	Users[User].WaitingMessages[Users[User].WaitingMessages.Length] = Message;
+}
+
 // We got sent some command from a webadmin
 function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 {
@@ -323,12 +440,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Kick))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!Level.Game.RemoteKick(IngameName, ConcatArgs(argv, 1)))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "ban" || argv[0] ~= "kickban")
@@ -336,12 +453,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_KickBan))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!Level.Game.RemoteKickBan(IngameName, ConcatArgs(argv, 1)))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "lockteams" || argv[0] ~= "unlockteams" || argv[0] ~= "toggleteamlock")
@@ -349,7 +466,7 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_LockTeams))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else
 		{
@@ -361,12 +478,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_LockPlayerTeams))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).RemoteLockPlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1)))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "alltored" || argv[0] ~= "forceallred" || argv[0] ~= "forceredall")
@@ -374,7 +491,7 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForceAllTeams))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else
 		{
@@ -386,7 +503,7 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForceAllTeams))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else
 		{
@@ -398,12 +515,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForcePlayerTeam))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).RemoteForcePlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1), 2))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "forceblue")
@@ -411,12 +528,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForcePlayerTeam))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).RemoteForcePlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1), 0))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "mute" || argv[0] ~= "unmute" || argv[0] ~= "togglemute")
@@ -424,12 +541,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Mute))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).RemoteMute(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1)))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "kill")
@@ -437,12 +554,12 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_KillPlayers))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).ForcePlayerDeath(None, ConcatArgs(argv, 1), Users[i].Alias$"(WebAdmin)"))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else if(argv[0] ~= "promote")
@@ -450,18 +567,18 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_PromoteLeader))
 		{
 			msg.Message = NoPermissionString;
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).ForcePlayerPromotion(None, ConcatArgs(argv, 1), Users[i].Alias$"(WebAdmin)"))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
-			Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+			SendMessageToUser(i, msg);
 		}
 	}
 	else
 	{
 		msg.Message = "Unknown command '"$argv[0]$"'";
-		Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		SendMessageToUser(i, msg);
 	}
 }
 
@@ -477,7 +594,7 @@ function SentChat(SwatWebAdmin AdminClient, int User, string Content)
 	{
 		Msg.MessageType = WebAdminMessageType.MessageType_WebAdminError;
 		Msg.Message = NoPermissionString;
-		Users[User].WaitingMessages[Users[User].WaitingMessages.Length] = Msg;
+		SendMessageToUser(User, Msg);
 		return;
 	}
 
@@ -525,7 +642,7 @@ function SendWebAdminMessage(WebAdminMessageType type, optional string Message)
 
 	for(i = 0; i < Users.Length; i++)
 	{
-		Users[i].WaitingMessages[Users[i].WaitingMessages.Length] = msg;
+		SendMessageToUser(i, msg);
 	}
 }
 
@@ -543,6 +660,8 @@ defaultproperties
 	ClientRefreshSeconds=3.0
 	ServerRefreshSeconds=1.0
 
+	FormatHTML = true
+
 	//
 	// Styles:
 	// - sty_statictext: Used for static blurbs of text
@@ -557,7 +676,7 @@ defaultproperties
 	//
 
 	PageHeader="<html><head><title>SWAT: Elite Force WebAdmin</title>%1</head><body><div id='webadmin-content-wrapper'>"
-	PageStyle="<style>.sty_statictext { font-family:Helvetica, Calibri, Arial; font-size:12px; text-align:center; color:#EEEEEE;} .sty_title { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; color:#EEEEEE; font-size:24pt; text-align:center;} .sty_subtitle { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; font-size:18pt; line-height:24pt;} .sty_error {color:#FF4444;} .sty_layouttable {} .sty_textarea { background:#222222; color:#EEEEEE; height:400px; resize:none; border: none; width:100%;} .sty_userlist { font-family:Helvetica, Calibri, Arial; font-size:12px; vertical-align: top;} .sty_userlisttitle { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; font-size:16px;} .sty_tinytext { text-align:center; position:absolute; margin-left:auto; margin-right:auto; font-family:Helvetica, Calibri, Arial; font-size:8px;} #inputarea { background:#222222; border:2px solid #EEEEEE; font-family:Helvetica, Calibri, Arial; padding: 4px; margin-right:4px; color:#EEEEEE; width:100%;} #sendbutton { background:#EEEEEE; border:none; padding:8px; width:10%; font-family:Helvetica, Calibri, Arial; font-weight:bold; float:right;} #bottominput { display:flex; width:100%;} #webadmin-content-wrapper { position:float; margin:auto; width:70%; display:block; right:0px;} #webadmin-content-box { padding:10px; color:#EEEEEE; font-family:Helvetica, Calibri, Arial; line-height:18px; border:4px solid #EEEEEE; text-align:center; font-weight:bold; font-size:12px;} .sty_button { background:white; border:4px solid #222222; font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; padding: 8px 16px; line-height:20px; font-size:20px;} .sty_inputtext { background:black; border:1px solid #EEEEEE; line-height: 16px; color:#EEEEEE; padding:4px; margin-bottom:10px; margin-left: 8px;} table { font-family: inherit; color:#EEEEEE; margin-left:auto; margin-right:auto; width:100%;} th { border: 2px solid #EEEEEE; padding: 10px;} td { border: 2px solid #EEEEEE; padding: 10px; width:70%;} form { padding: 10px;} a { color:#FFFFBB} body { background:#222222; margin:100px; padding:0px;}</style>"
+	PageStyle="<style>.sty_statictext { font-family:Helvetica, Calibri, Arial; font-size:12px; text-align:center; color:#EEEEEE;} .sty_title { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; color:#EEEEEE; font-size:24pt; text-align:center;} .sty_subtitle { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial; font-size:18pt; line-height:24pt;} .sty_error {color:#FF4444;} .sty_layouttable {} .sty_textarea { background:#222222; color:#EEEEEE; height:400px; resize:none; border: none; width:100%; overflow:scroll; overflow-x:auto; overflow-y:auto; font-family:Courier New, Courier, Consolas, monospace;} .sty_userlist { font-family:Helvetica, Calibri, Arial; font-size:12px; vertical-align: top;} .sty_userlisttitle { font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial, sans-serif; font-size:16px;} .sty_tinytext { text-align:center; position:absolute; margin-left:auto; margin-right:auto; font-family:Helvetica, Calibri, Arial; font-size:8px;} #inputarea { background:#222222; border:2px solid #EEEEEE; font-family:Helvetica, Calibri, Arial, sans-serif; padding: 4px; margin-right:4px; color:#EEEEEE; width:100%;} #sendbutton { background:#EEEEEE; border:none; padding:8px; width:10%; font-family:Helvetica, Calibri, Arial, sans-serif; font-weight:bold; float:right;} #bottominput { display:flex; width:100%;} #webadmin-content-wrapper { position:float; margin:auto; width:70%; display:block; right:0px;} #webadmin-content-box { padding:10px; color:#EEEEEE; font-family:Helvetica, Calibri, Arial; line-height:18px; border:4px solid #EEEEEE; text-align:center; font-weight:bold; font-size:12px;} .sty_button { background:white; border:4px solid #222222; font-family:BankGothic, BankGothic Md, BankGothic Md Bt, Helvetica, Calibri, Arial, sans-serif; padding: 8px 16px; line-height:20px; font-size:20px;} .sty_inputtext { background:black; border:1px solid #EEEEEE; line-height: 16px; color:#EEEEEE; padding:4px; margin-bottom:10px; margin-left: 8px;} table { font-family: inherit; color:#EEEEEE; margin-left:auto; margin-right:auto; width:100%;} th { border: 2px solid #EEEEEE; padding: 10px;} td { border: 2px solid #EEEEEE; padding: 10px; width:70%;} form { padding: 10px;} a { color:#FFFFBB} body { background:#222222; margin:100px; padding:0px;}</style>"
 	PageFooter="</div></body></html>"
 
 	NoPermissionString="You do not have permission to do that."

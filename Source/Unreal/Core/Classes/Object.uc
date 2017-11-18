@@ -471,6 +471,23 @@ native(400) static final function int    Split  ( coerce string Src, string Divi
 native(236) static final function string Chr    ( int i );
 native(237) static final function int    Asc    ( string S );
 
+// Custom string functions --eez
+
+// Finds the next occurrence of a string that comes after a specified string
+static function int InStrAfter(string Text, string Match, int Pos)
+{
+	local int i;
+
+	i = InStr(Mid(Text, Pos), Match);
+	if(i != -1)
+	{
+		return i + pos;
+	}
+
+	return -1;
+}
+
+// Concatenates all strings in an array into one big string, separated by spaces
 static function string ConcatArgs(array<string> Args, optional int Start, optional int End)
 {
 	local string outStr;

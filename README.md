@@ -766,6 +766,8 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)
  - Nerfed flashbang damage and damage radius (stun properties unaffected)
+ - The WebAdmin now shows colored/bold/italic/underlined chat and player names.
+ - The log now removes colored/bold/italic/underline tags, for better readability.
  - Fixed SEF bug: When a player dies, it lists the killer instead of the person who died as "fallen"
  - Fixed SEF bug: When a target is incapacitated with a taser or a C2 explosion, it states "None.None" as the damage type.
  - Fixed SEF bug: When a target is incapacitated or killed with beanbags, direct grenade impacts, or triple baton rounds, the damage type was blank.

@@ -805,7 +805,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 
 	HTML = HTML $ "- <a href=\"/logout\">Log Out</a></td></tr>";
 
-	HTML = HTML $ "<tr><td><textarea readonly id=\"buffer\" class=\"sty_textarea\"></textarea></td><td id=\"userlist\" class=\"sty_userlist\"></td></tr>";
+	HTML = HTML $ "<tr><td><div id=\"buffer\" class=\"sty_textarea\"></div></td><td id=\"userlist\" class=\"sty_userlist\"></td></tr>";
 	HTML = HTML $ "<tr><td colspan=\"2\"><div id=\"bottominput\"><input type=\"text\" id=\"inputarea\" autocomplete=\"off\" style=\"display-inline;\" />";
 	HTML = HTML $ "<input type=\"button\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></div></tr>";
 	HTML = HTML $ "</table>";
@@ -891,7 +891,11 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "			var msg = msgs[i];";
 	HTML = HTML $ "			var msgtype = msg.childNodes[0].childNodes[0].nodeValue;";
 	HTML = HTML $ "			var msgtext = msg.childNodes[1].childNodes[0].nodeValue;";
-	HTML = HTML $ "			buffer.value = buffer.value + msgtext + '\\n';";
+	HTML = HTML $ "			buffer.innerHTML = buffer.innerHTML + msgtext + '</br>';";
+	HTML = HTML $ "		}";
+	// Scroll the buffer to the bottom
+	HTML = HTML $ "		if(msgs.length > 0) {";
+	HTML = HTML $ "			buffer.scrollTop = buffer.scrollHeight;";
 	HTML = HTML $ "		}";
 	HTML = HTML $ "}";
 
