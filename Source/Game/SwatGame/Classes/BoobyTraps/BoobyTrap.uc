@@ -102,9 +102,9 @@ function ReactToTriggered(Actor Other)
     }
 }
 
-function OnTriggeredByDoor()
+function OnTriggeredByDoor(Actor Opener)
 {
-    ReactToTriggered(BoobyTrapDoor);
+    ReactToTriggered(Opener);
 }
 
 // Make these final, as we want to control flow directly from here

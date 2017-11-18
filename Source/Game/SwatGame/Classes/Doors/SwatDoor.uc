@@ -1354,7 +1354,7 @@ simulated state Opening extends Moving
         if ( IsBoobyTrapped() && !GetLastInteractor().IsA('SwatEnemy') && !GetLastInteractor().IsA('SwatHostage') )
         {
             assert(BoobyTrap != None);
-            BoobyTrap.OnTriggeredByDoor();
+            BoobyTrap.OnTriggeredByDoor(GetLastInteractor());
         }
 
         if (PendingPosition == DoorPosition_OpenLeft)
@@ -1487,7 +1487,7 @@ simulated state BeingBreached extends Moving
 		if ( IsBoobyTrapped() )
 		{
 			assert(BoobyTrap != None);
-		    BoobyTrap.OnTriggeredByDoor();
+		    BoobyTrap.OnTriggeredByDoor(GetLastInteractor());
 		}
     }
 }
