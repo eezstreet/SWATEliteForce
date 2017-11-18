@@ -771,6 +771,7 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
  - Fixed SEF bug: When a target is incapacitated or killed with beanbags, direct grenade impacts, or triple baton rounds, the damage type was blank.
  - Fixed SEF bug: When a player triggers a trap, the penalty message does not show their name.
  - Fixed SEF bug: Bulk amount could go negative on the display
+ - Fixed SEF bug: The admin panel player list would reset which player was selected constantly
 
 #### v6.3
  - Added a new weapon: Suppressed P90

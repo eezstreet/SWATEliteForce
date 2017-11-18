@@ -41,6 +41,7 @@ enum AdminMapActions
 };
 
 var(SWATGui) private EditInline Config GUIListBox Players;
+var private array<string> OldPlayerNames;
 
 var(SWATGui) private EditInline Config GUIComboBox PlayerActions;
 var(SWATGui) private EditInline Config GUIButton PlayerActionButton;
@@ -185,24 +186,56 @@ private function PopulatePlayerNames(SwatGameReplicationInfo SGRI)
 {
 	local int i;
 	local SwatPlayerReplicationInfo PRI;
+	local array<string> NewPlayerNames;
+	local bool TheyAreTheSame;
 
 	if(SGRI == None)
 	{
 		return;
 	}
 
-	Players.List.Clear();
-
+	// Populate the list of new player names
 	for(i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
 	{
 		PRI = SGRI.PRIStaticArray[i];
-		if(PRI == None)
+		if(PRI == none)
 		{
 			continue;
 		}
-
-		Players.List.Add(PRI.PlayerName);
+		NewPlayerNames[i] = PRI.PlayerName;
 	}
+
+	// Compare the new player list to the old player list.
+	// If there is no difference, then we don't need to do anything.
+	TheyAreTheSame = true;
+	if(NewPlayerNames.Length == OldPlayerNames.Length)
+	{
+		for(i = 0; i < NewPlayerNames.Length; i++)
+		{
+			if(!(NewPlayerNames[i] ~= OldPlayerNames[i]))
+			{
+				TheyAreTheSame = false;
+			}
+		}
+	}
+	else
+	{
+		TheyAreTheSame = false;
+	}
+
+	if(TheyAreTheSame)
+	{
+		return;
+	}
+
+	Players.List.Clear();
+
+	for(i = 0; i < NewPlayerNames.Length; i++)
+	{
+		Players.List.Add(NewPlayerNames[i]);
+	}
+
+	OldPlayerNames = NewPlayerNames;
 }
 
 ///////////////////////////////////////////////////////////////////////////
