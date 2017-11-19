@@ -60,28 +60,36 @@ var private SwatWebAdminListener WebAdmin;
 var public config bool UseChatLog;
 var private FileLog ChatLog;
 var public config bool SanitizeChatLog;
-
-var public config bool UseAdminLog;
-var private FileLog AdminLog;
-var public config bool SanitizeAdminLog;
+var public config bool UseNewChatLogPerDay;
+var public config string ChatLogMultiFormat;
+var public config string ChatLogName;
 
 var private array<SwatGamePlayerController> MutedPlayers;
 
 var private localized config string PenaltyFormat;
 var private localized config string SayFormat;
+var private localized config string TeamSayFormat;
 var private localized config string SwitchTeamsFormat;
 var private localized config string NameChangeFormat;
+var private localized config string VoteStartedFormat;
 var private localized config string YesVoteFormat;
 var private localized config string NoVoteFormat;
-var private localized config string SuicideFormat;
-var private localized config string KillFormat;
+var private localized config string VoteSuccessfulFormat;
+var private localized config string VoteFailedFormat;
+var private localized config string RedSuicideFormat;
+var private localized config string BlueSuicideFormat;
+var private localized config string RedKillFormat;
+var private localized config string BlueKillFormat;
 var private localized config string TeamKillFormat;
-var private localized config string ArrestFormat;
+var private localized config string RedArrestFormat;
+var private localized config string BlueArrestFormat;
+var private localized config string RedIncapacitateFormat;
+var private localized config string BlueIncapacitateFormat;
+var private localized config string FallenFormat;
 var private localized config string ConnectFormat;
 var private localized config string DisconnectFormat;
 var private localized config string KickFormat;
 var private localized config string KickBanFormat;
-var private localized config string IncapacitateFormat;
 var private localized config string ObjectiveCompleteFormat;
 var private localized config string LockedTeamsFormat;
 var private localized config string UnlockedTeamsFormat;
@@ -95,6 +103,12 @@ var private localized config string MuteFormat;
 var private localized config string UnmuteFormat;
 var private localized config string AdminKillFormat;
 var private localized config string AdminPromotedFormat;
+var private localized config string RoundStartedFormat;
+var private localized config string RoundEndedFormat;
+var private localized config string MissionEndedFormat;
+var private localized config string MissionCompletedFormat;
+var private localized config string MissionFailedFormat;
+var private localized config string LeftWebAdminFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -120,12 +134,6 @@ function BeginPlay()
 	if(UseChatLog)
 	{
 		ChatLog = Spawn(class'FileLog');
-	}
-
-	if(UseAdminLog)
-	{
-		AdminLog = Spawn(class'FileLog');
-
 	}
 
 	Super.BeginPlay();
@@ -174,12 +182,6 @@ event Destroyed()
 	{
 		ChatLog.Destroy();
 		ChatLog = None;
-	}
-
-	if(AdminLog != None)
-	{
-		AdminLog.Destroy();
-		AdminLog = None;
 	}
 }
 
@@ -235,7 +237,8 @@ function SanitizeLogMessage(out string Message)
 				Message = Left(Message, i) $ Mid(Message, i + 3, 6) $ Mid(Message, j + 1);
 			}
 		}
-	} until(i != -1);
+		mplog("Message is now: " $Message);
+	} until(i == -1);
 }
 
 // Log something to the chatlog
@@ -247,24 +250,17 @@ function LogChat(string Message)
 		{
 			SanitizeLogMessage(Message);
 		}
-		ChatLog.OpenLog("chatlog_"$Level.Year$"_"$Level.Month$"_"$Level.Day);
+
+		if(UseNewChatLogPerDay)
+		{
+			ChatLog.OpenLog(FormatTextString(ChatLogMultiFormat, Level.Year, Level.Month, Level.Day));
+		}
+		else
+		{
+			ChatLog.OpenLog(ChatLogName);
+		}
 		ChatLog.Logf("["$Level.Day$"/"$Level.Month$"/"$Level.Year$" "$Level.Hour$":"$Level.Minute$":"$Level.Second$"] "$Message);
 		ChatLog.CloseLog();
-	}
-}
-
-// Log an action to the administrator log
-function LogAdmin(string Message)
-{
-	if(UseAdminLog)
-	{
-		if(SanitizeAdminLog)
-		{
-			SanitizeLogMessage(Message);
-		}
-		AdminLog.OpenLog("adminlog_"$Level.Year$"_"$Level.Month$"_"$Level.Day);
-		AdminLog.Logf("["$Level.Day$"/"$Level.Month$"/"$Level.Year$" "$Level.Hour$":"$Level.Minute$":"$Level.Second$"] "$Message);
-		AdminLog.CloseLog();
 	}
 }
 
@@ -655,6 +651,8 @@ function ACCommand( PlayerController PC, String S )
 function Broadcast(coerce string Msg, optional name Type)
 {
 	local string StrA, StrB, StrC;
+	local string MsgOut;
+	local WebAdminMessageType TypeOut;
 
 	StrA = GetFirstField(Msg,"\t");
     StrB = GetFirstField(Msg,"\t");
@@ -663,155 +661,184 @@ function Broadcast(coerce string Msg, optional name Type)
 	switch(Type)
 	{
 		case 'PenaltyIssuedChat':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Penalty, FormatTextString(PenaltyFormat, StrA, StrB));
-			break;
-		case 'TeamSay':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
-			LogChat(FormatTextString(SayFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Penalty;
+			MsgOut = FormatTextString(PenaltyFormat, StrA, StrB);
 			break;
 		case 'Say':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
-			LogChat(FormatTextString(SayFormat, StrA, StrB));
-			break;
 		case 'WebAdminChat':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
-			LogChat(FormatTextString(SayFormat, StrA, StrB));
-			break;
 		case 'SayLocalized':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
-			LogChat(FormatTextString(SayFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(SayFormat, StrA, StrB);
 			break;
+		case 'TeamSay':
 		case 'TeamSayLocalized':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(SayFormat, StrA, StrB));
-			LogChat(FormatTextString(SayFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(TeamSayFormat, StrA, StrB);
 			break;
 		case 'SwitchTeams':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(SwitchTeamsFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(SwitchTeamsFormat, StrA);
 			break;
 		case 'NameChange':
-			SendToWebAdmin(WebAdminMessageType.MessageType_NameChange, FormatTextString(NameChangeFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_NameChange;
+			MsgOut = FormatTextString(NameChangeFormat, StrA, StrB);
 			break;
 		case 'CommandGiven':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, Msg);
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = Msg;
 			break;
 		case 'YesVote':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, FormatTextString(YesVoteFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_Voting;
+			MsgOut = FormatTextString(YesVoteFormat, StrA);
 			break;
 		case 'NoVote':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, FormatTextString(NoVoteFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_Voting;
+			MsgOut = FormatTextString(NoVoteFormat, StrA);
 			break;
 		case 'ReferendumStarted':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, Msg);
+			TypeOut = WebAdminMessageType.MessageType_Voting;
+			MsgOut = FormatTextString(VoteStartedFormat, Msg);
 			break;
 		case 'ReferendumSucceeded':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, "The vote succeeded.");
+			TypeOut = WebAdminMessageType.MessageType_Voting;
+			MsgOut = VoteSuccessfulFormat;
 			break;
 		case 'ReferendumFailed':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Voting, "The vote failed.");
+			TypeOut = WebAdminMessageType.MessageType_Voting;
+			MsgOut = VoteFailedFormat;
 			break;
 		case 'BlueSuicide':
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(BlueSuicideFormat, StrA);
+			break;
 		case 'RedSuicide':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(SuicideFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(RedSuicideFormat, StrA);
 			break;
 		case 'BlueKill':
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(BlueKillFormat, StrA, StrB, StrC);
+			break;
 		case 'RedKill':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(KillFormat, StrA, StrB, StrC));
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(RedKillFormat, StrA, StrB, StrC);
 			break;
 		case 'BlueIncapacitate':
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(BlueIncapacitateFormat, StrA, StrB, StrC);
+			break;
 		case 'RedIncapacitate':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(IncapacitateFormat, StrA, StrB, StrC));
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(RedIncapacitateFormat, StrA, StrB, StrC);
 			break;
 		case 'TeamKill':
-			SendToWebAdmin(WebAdminMessageType.MessageType_TeamKill, FormatTextString(TeamKillFormat, StrA, StrB, StrC));
+			TypeOut = WebAdminMessageType.MessageType_TeamKill;
+			MsgOut = FormatTextString(TeamKillFormat, StrA, StrB, StrC);
 			break;
 		case 'BlueArrest':
+			TypeOut = WebAdminMessageType.MessageType_Arrest;
+			MsgOut = FormatTextString(BlueArrestFormat, StrA, StrB);
+			break;
 		case 'RedArrest':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Arrest, FormatTextString(ArrestFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Arrest;
+			MsgOut = FormatTextString(RedArrestFormat, StrA, StrB);
 			break;
 		case 'PlayerConnect':
-			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(ConnectFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
+			MsgOut = FormatTextString(ConnectFormat, StrA);
 			break;
 		case 'PlayerDisconnect':
-			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(DisconnectFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
+			MsgOut = FormatTextString(DisconnectFormat, StrA);
 			break;
 		case 'RoundStarted':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The round has started.");
+			TypeOut = WebAdminMessageType.MessageType_Round;
+			MsgOut = RoundStartedFormat;
 			break;
 		case 'RoundEnded':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The round has ended.");
+			TypeOut = WebAdminMessageType.MessageType_Round;
+			MsgOut = RoundEndedFormat;
 			break;
 		case 'MissionEnded':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The mission has ended.");
+			TypeOut = WebAdminMessageType.MessageType_Round;
+			MsgOut = MissionEndedFormat;
 			break;
 		case 'MissionFailed':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The mission has been FAILED!");
+			TypeOut = WebAdminMessageType.MessageType_Round;
+			MsgOut = MissionFailedFormat;
 			break;
 		case 'MissionCompleted':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Round, "The mission has been COMPLETED!");
+			TypeOut = WebAdminMessageType.MessageType_Round;
+			MsgOut = MissionCompletedFormat;
 			break;
 		case 'WebAdminLeft':
-			SendToWebAdmin(WebAdminMessageType.MessageType_AdminLeave, Msg$" has left WebAdmin.");
+			TypeOut = WebAdminMessageType.MessageType_AdminLeave;
+			MsgOut = FormatTextString(LeftWebAdminFormat, Msg);
 			break;
 		case 'Kick':
-			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickFormat, StrB, StrA));
-			LogAdmin(FormatTextString(KickFormat, StrB, StrA));
+			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
+			MsgOut = FormatTextString(KickFormat, StrB, StrA);
 			break;
 		case 'KickBan':
-			SendToWebAdmin(WebAdminMessageType.MessageType_PlayerJoin, FormatTextString(KickBanFormat, StrB, StrA));
-			LogAdmin(FormatTextString(KickBanFormat, StrB, StrA));
+			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
+			MsgOut = FormatTextString(KickBanFormat, StrB, StrA);
 			break;
 		case 'ObjectiveComplete':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Round, FormatTextString(ObjectiveCompleteFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_Round;
+			MsgOut = FormatTextString(ObjectiveCompleteFormat, StrA);
 			break;
 		case 'ForceTeamRed':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForceAllRedFormat, StrA));
-			LogAdmin(FormatTextString(ForceAllRedFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForceAllRedFormat, StrA);
 			break;
 		case 'ForceTeamBlue':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForceAllBlueFormat, StrA));
-			LogAdmin(FormatTextString(ForceAllBlueFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForceAllBlueFormat, StrA);
 			break;
 		case 'ForcePlayerRed':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForcePlayerRedFormat, StrA, StrB));
-			LogAdmin(FormatTextString(ForcePlayerRedFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForcePlayerRedFormat, StrA, StrB);
 			break;
 		case 'ForcePlayerBlue':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(ForcePlayerBlueFormat, StrA, StrB));
-			LogAdmin(FormatTextString(ForcePlayerBlueFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForcePlayerBlueFormat, StrA, StrB);
 			break;
 		case 'LockTeams':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(LockedTeamsFormat, StrA));
-			LogAdmin(FormatTextString(LockedTeamsFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(LockedTeamsFormat, StrA);
 			break;
 		case 'UnlockTeams':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedTeamsFormat, StrA));
-			LogAdmin(FormatTextString(UnlockedTeamsFormat, StrA));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnlockedTeamsFormat, StrA);
 			break;
 		case 'LockPlayerTeam':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(LockedPlayerTeamFormat, StrA, StrB));
-			LogAdmin(FormatTextString(LockedPlayerTeamFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(LockedPlayerTeamFormat, StrA, StrB);
 			break;
 		case 'UnlockPlayerTeam':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB));
-			LogAdmin(FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB);
 			break;
 		case 'Mute':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(MuteFormat, StrA, StrB));
-			LogAdmin(FormatTextString(MuteFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(MuteFormat, StrA, StrB);
 			break;
 		case 'Unmute':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Chat, FormatTextString(UnmuteFormat, StrA, StrB));
-			LogAdmin(FormatTextString(UnmuteFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(UnmuteFormat, StrA, StrB);
 			break;
 		case 'AdminKill':
-			SendToWebAdmin(WebAdminMessageType.MessageType_Kill, FormatTextString(AdminKillFormat, StrA, StrB));
-			LogAdmin(FormatTextString(AdminKillFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(AdminKillFormat, StrA, StrB);
 			break;
 		case 'AdminLeader':
-			SendToWebAdmin(WebAdminMessageType.MessageType_SwitchTeams, FormatTextString(AdminPromotedFormat, StrA, StrB));
-			LogAdmin(FormatTextString(AdminPromotedFormat, StrA, StrB));
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(AdminPromotedFormat, StrA, StrB);
 			break;
 	}
+
+	SendToWebAdmin(TypeOut, MsgOut);
+	LogChat(MsgOut);
 }
 
 // Send a message to WebAdmin
@@ -841,36 +868,53 @@ defaultproperties
 	WebAdminClass=class'SwatWebAdminListener'
 
 	UseChatLog=true
-	UseAdminLog=true
 	SanitizeChatLog=true
-	SanitizeAdminLog=true
+	UseNewChatLogPerDay=true
 
-	PenaltyFormat="%1 caused penalty: %2"
-	SayFormat="%1: %2"
-	SwitchTeamsFormat="%1 switched teams."
-	NameChangeFormat="%1 changed their name to %2"
-	YesVoteFormat="%1 voted yes."
-	NoVoteFormat="%1 voted no."
-	SuicideFormat="%1 committed suicide."
-	KillFormat="%1 killed %2 with %3"
-	TeamKillFormat="%1 TEAM-KILLED %2 with %3"
-	ConnectFormat="%1 connected to game server."
-	DisconnectFormat="%1 disconnected from game server."
-	ArrestFormat="%1 arrested %2"
-	IncapacitateFormat="%1 incapacitated %2 with %3"
-	KickFormat="%1 was kicked by %2"
-	KickBanFormat="%1 was kick-banned by %2"
+	PenaltyFormat="[c=FFFF00]%1 caused penalty: %2"
+	SayFormat="[c=00FF00][b]%1:[\\b] %2"
+	TeamSayFormat="[c=777777][b]%1:[\\b] %2"
+	SwitchTeamsFormat="[c=00FFFF][b]%1[\\b] switched teams."
+	NameChangeFormat="[c=FF00FF][b]%1[\\b] changed their name to [b]%2[\\b]"
+	VoteStartedFormat="[c=FF00FF]%1"
+	YesVoteFormat="[c=FF00FF]%1 voted yes."
+	NoVoteFormat="[c=FF00FF]%1 voted no."
+	VoteSuccessfulFormat="[c=FF00FF]The vote was successful."
+	VoteFailedFormat="[c=FF00FF]The vote failed."
+	RedSuicideFormat="[c=FF0000][b]%1[\\b] committed suicide."
+	BlueSuicideFormat="[c=3333FF][b]%1[\\b] committed suicide."
+	RedKillFormat="[c=FF0000][b]%1[\\b] killed [b]%2[\\b] with %3"
+	BlueKillFormat="[c=3333FF][b]%1[\\b] killed [b]%2[\\b] with %3"
+	TeamKillFormat="[c=EC832F][b]%1[\\b] TEAM-KILLED [b]%2[\\b] with %3"
+	FallenFormat="[c=EC832F][b]%1[\\b] has fallen"
+	ConnectFormat="[c=00FFFF][b]%1[\\b] connected to game server."
+	DisconnectFormat="[c=00FFFF][b]%1[\\b] disconnected from game server."
+	RedArrestFormat="[c=FF0000][b]%1[\\b] arrested [b]%2[\\b]"
+	BlueArrestFormat="[c=3333FF][b]%1[\\b] arrested [b]%2[\\b]"
+	RedIncapacitateFormat="[c=FF0000][b]%1[\\b] incapacitated [b]%2[\\b] with %3"
+	BlueIncapacitateFormat="[c=3333FF][b]%1[\\b] incapacitated [b]%2[\\b] with %3"
+	KickFormat="[c=FF00FF][b]%1[\\b] was kicked by [b]%2[\\b]"
+	KickBanFormat="[c=FF00FF][b]%1[\\b] was banned by [b]%2[\\b]"
 	ObjectiveCompleteFormat="Objective Complete: %1"
-	LockedTeamsFormat="%1 locked the teams."
-	UnlockedTeamsFormat="%1 unlocked the teams."
-	LockedPlayerTeamFormat="%1 locked %2's team."
-	UnlockedPlayerTeamFormat="%1 unlocked %2's team."
-	ForceAllRedFormat="%1 forced all players to be on the red team."
-	ForceAllBlueFormat="%1 forced all players to be on the blue team."
-	ForcePlayerRedFormat="%1 forced %2 to be on the red team."
-	ForcePlayerBlueFormat="%1 forced %2 to be on the blue team."
-	MuteFormat="%1 muted %2."
-	UnmuteFormat="%1 un-muted %2."
-	AdminKillFormat="%1 killed %2."
-	AdminPromotedFormat="%1 promoted %2 to leader."
+	LockedTeamsFormat="[c=FF00FF][b]%1[\\b] locked the teams."
+	UnlockedTeamsFormat="[c=FF00FF][b]%1[\\b] unlocked the teams."
+	LockedPlayerTeamFormat="[c=FF00FF][b]%1[\\b] locked [b]%2's[\\b] team."
+	UnlockedPlayerTeamFormat="[c=FF00FF][b]%1[\\b] unlocked [b]%2's[\\b] team."
+	ForceAllRedFormat="[c=FF00FF][b]%1[\\b] forced all players to be on the red team."
+	ForceAllBlueFormat="[c=FF00FF][b]%1[\\b] forced all players to be on the blue team."
+	ForcePlayerRedFormat="[c=FF00FF][b]%1[\\b] forced [b]%2[\\b] to be on the red team."
+	ForcePlayerBlueFormat="[c=FF00FF][b]%1[\\b] forced [b]%2[\\b] to be on the blue team."
+	MuteFormat="[c=FF00FF][b]%1[\\b] muted [b]%2[\\b]."
+	UnmuteFormat="[c=FF00FF][b]%1[\\b] un-muted [b]%2[\\b]."
+	AdminKillFormat="[c=FF00FF][b]%1[\\b] killed [b]%2[\\b]."
+	AdminPromotedFormat="[c=FF00FF][b]%1[\\b] promoted [b]%2[\\b] to leader."
+	RoundStartedFormat="[c=FFFF00]The round has started.[\\b]"
+	RoundEndedFormat="[c=FFFF00]The round has ended.[\\b]"
+	MissionEndedFormat="[c=FFFF00]The mission has ended.[\\b]"
+	MissionCompletedFormat="The mission has been [c=00FF00][b]COMPLETED!"
+	MissionFailedFormat="The mission has been [c=FF0000][b]FAILED!"
+	LeftWebAdminFormat="[c=00FFFF][b]%1[\\b] has left WebAdmin."
+
+	ChatLogName="chatlog"
+	ChatLogMultiFormat="chatlog_%1_%2_%3"
 }
