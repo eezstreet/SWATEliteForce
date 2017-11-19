@@ -375,6 +375,18 @@ function bool ActionAllowed(PlayerController PC, AdminPermissions Permission)
 	return PRI.MyRights[Permission] > 0;
 }
 
+// Get a weapon's friendly name
+function string GetWeaponFriendlyName(string ClassName)
+{
+	local class<DamageType> C;
+
+	C = class<DamageType>(DynamicLoadObject(ClassName, class'Class'));
+	if (C != None)
+		return C.static.GetFriendlyName();   //this actually calls polymorphically into the DamageType subclass!
+	else
+		return ClassName;
+}
+
 // Admin command: Kick people
 function Kick( PlayerController PC, String PlayerName )
 {
@@ -717,23 +729,23 @@ function Broadcast(coerce string Msg, optional name Type)
 			break;
 		case 'BlueKill':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
-			MsgOut = FormatTextString(BlueKillFormat, StrA, StrB, StrC);
+			MsgOut = FormatTextString(BlueKillFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'RedKill':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
-			MsgOut = FormatTextString(RedKillFormat, StrA, StrB, StrC);
+			MsgOut = FormatTextString(RedKillFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'BlueIncapacitate':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
-			MsgOut = FormatTextString(BlueIncapacitateFormat, StrA, StrB, StrC);
+			MsgOut = FormatTextString(BlueIncapacitateFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'RedIncapacitate':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
-			MsgOut = FormatTextString(RedIncapacitateFormat, StrA, StrB, StrC);
+			MsgOut = FormatTextString(RedIncapacitateFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'TeamKill':
 			TypeOut = WebAdminMessageType.MessageType_TeamKill;
-			MsgOut = FormatTextString(TeamKillFormat, StrA, StrB, StrC);
+			MsgOut = FormatTextString(TeamKillFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'BlueArrest':
 			TypeOut = WebAdminMessageType.MessageType_Arrest;

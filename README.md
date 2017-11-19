@@ -772,6 +772,7 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
  - The log now removes colored/bold/italic/underline tags, for better readability.
+ - WebAdmin now shows the friendly name of the weapon that killed/incapacitated someone, instead of the class name (ie, "HK33" instead of "SwatEquipment.HK33MG")
  - Fixed SEF bug: When a player dies, it lists the killer instead of the person who died as "fallen"
  - Fixed SEF bug: When a target is incapacitated with a taser or a C2 explosion, it states "None.None" as the damage type.
  - Fixed SEF bug: When a target is incapacitated or killed with beanbags, direct grenade impacts, or triple baton rounds, the damage type was blank.
