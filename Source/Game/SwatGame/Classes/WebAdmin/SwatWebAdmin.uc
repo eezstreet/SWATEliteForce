@@ -794,7 +794,6 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	}
 
 	HTML = HTML $ "<span class=\"sty_title\">SWAT: Elite Force WebAdmin</span><br>";
-	HTML = HTML $ "<form onkeypress=\"return keyPressed(event.keyCode);\">";
 	HTML = HTML $ "<table class=\"sty_layouttable\">";
 	HTML = HTML $ "<tr><td class=\"sty_statictext\" colspan=\"2\">Logged in as "$Alias;
 
@@ -803,16 +802,49 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 		HTML = HTML $ " ("$Permissions.PermissionSetName$") ";
 	}
 
-	HTML = HTML $ "- <a href=\"/logout\">Log Out</a></td></tr>";
+	HTML = HTML $ " - <a href=\"/logout\">Log Out</a> - ";
+	HTML = HTML $ "<a href=\"javascript:void(window.open('/commandhelp', 'WebAdmin Command Help', 'width=700,height=600'));\">Command Help</a>";
 
+	HTML = HTML $ "</td></tr>";
+
+	// draw the userlist
 	HTML = HTML $ "<tr><td><div id=\"buffer\" class=\"sty_textarea\"></div></td><td id=\"userlist\" class=\"sty_userlist\"></td></tr>";
+
+
+	HTML = HTML $ "<tr>";
+
+	// draw the actions comboboxes and buttons
+	HTML = HTML $ "<td colspan=\"2\" class=\"sty_statictext\"><form style=\"display-inline;\">";
+	HTML = HTML $ "<div style=\"float:left;\">";
+	HTML = HTML $ "<select id=\"mapaction\" name=\"mapaction\">";
+	HTML = HTML $ " <option value=\"lockteams\">Lock/Unlock Teams</option>";
+	HTML = HTML $ " <option value=\"alltoblue\">Send all to Blue</option>";
+	HTML = HTML $ " <option value=\"alltored\">Send all to Red</option>";
+	HTML = HTML $ "</select> ";
+	HTML = HTML $ "<input class=\"sty_smolbutton\" type=\"button\" id=\"currentmapbutton\" onclick=\"mapButton()\" value=\"execute\"/>";
+	HTML = HTML $ "</div><div style=\"float:right;\">";
+	HTML = HTML $ "<select id=\"playerselection\" name=\"playerselection\"></select>";
+	HTML = HTML $ "<select id=\"playeraction\" name=\"playeraction\">";
+	HTML = HTML $ " <option value=\"forceblue \">Force to Blue Team</option>";
+	HTML = HTML $ " <option value=\"forcered \">Force to Red Team</option>";
+	HTML = HTML $ " <option value=\"kick \">Kick</option>";
+	HTML = HTML $ " <option value=\"kickban \">Kick-Ban</option>";
+	HTML = HTML $ " <option value=\"kill \">Kill</option>";
+	HTML = HTML $ " <option value=\"lockplayerteam \">Lock/Unlock Player Team</option>";
+	HTML = HTML $ " <option value=\"mute \">Mute/Unmute</option>";
+	HTML = HTML $ " <option value=\"promote \">Promote to Leader</option>";
+	HTML = HTML $ "</select> ";
+	HTML = HTML $ "<input class=\"sty_smolbutton\" type=\"button\" id=\"currentplayerbutton\" onclick=\"playerButton()\" value=\"execute\"/></div></form></td>";
+
+	HTML = HTML $ "</tr>";
+
+	// draw the text entry
+	HTML = HTML $ "<form onkeypress=\"return keyPressed(event.keyCode);\" style=\"display-inline;\">";
 	HTML = HTML $ "<tr><td colspan=\"2\"><div id=\"bottominput\"><input type=\"text\" id=\"inputarea\" autocomplete=\"off\" style=\"display-inline;\" />";
-	HTML = HTML $ "<input type=\"button\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></div></tr>";
+	HTML = HTML $ "<input type=\"button\" class=\"sty_smolbutton\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></div></tr>";
+	HTML = HTML $ "</form>";
 	HTML = HTML $ "</table>";
 	HTML = HTML $ "</form>";
-	HTML = HTML $ "<span class=\"sty_tinytext\">";
-	HTML = HTML $ "<a href=\"javascript:void(window.open('/commandhelp', 'WebAdmin Command Help', 'width=700,height=600'));\">Command Help</a>";
-	HTML = HTML $ "</span>";
 
 	// nasty javascript here...
 	HTML = HTML $ "<script type=\"text/javascript\">";
@@ -839,6 +871,22 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		document.getElementById(\"inputarea\").value = \"\";";
 	HTML = HTML $ "}";
 
+	// The mapButton() function gets called when we click on the "execute" button for the map selection
+	HTML = HTML $ "function mapButton() {";
+	HTML = HTML $ "		var sendString = '/' + document.getElementById(\"mapaction\").value;";
+	HTML = HTML $ "		var xhttp = new XMLHttpRequest();";
+	HTML = HTML $ "		xhttp.open(\"POST\", \"/meta-send\", true);";
+	HTML = HTML $ "		xhttp.send(sendString);";
+	HTML = HTML $ "}";
+
+	// The playerButton() function gets called when we click on the "execute" button for the player selection
+	HTML = HTML $ "function playerButton() {";
+	HTML = HTML $ "		var sendString = '/' + document.getElementById(\"playeraction\").value + document.getElementById(\"playerselection\").value;";
+	HTML = HTML $ "		var xhttp = new XMLHttpRequest();";
+	HTML = HTML $ "		xhttp.open(\"POST\", \"/meta-send\", true);";
+	HTML = HTML $ "		xhttp.send(sendString);";
+	HTML = HTML $ "}";
+
 	// The keypress() function gets called every time we press a button on the keyboard
 	HTML = HTML $ "function keyPressed(key) {";
 	HTML = HTML $ "		if(key == 13) {";
@@ -857,6 +905,8 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		var buffer = document.getElementById(\"buffer\");";
 	HTML = HTML $ "		var userlist = document.getElementById(\"userlist\");";
 	HTML = HTML $ "		var ministring = '';";
+	HTML = HTML $ "		var playerSelect = document.getElementById(\"playerselection\");";
+	HTML = HTML $ "		var previousPlayer = playerSelect.value;";
 	HTML = HTML $ "		var i;";
 	// Iterate through admin list
 	HTML = HTML $ "		userlist.innerHTML = \"<span class='sty_userlisttitle'>WebAdmin Users</span>\";";
@@ -875,6 +925,10 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		ministring += '</p>';";
 	HTML = HTML $ "		userlist.innerHTML += ministring;";
 	HTML = HTML $ "		ministring = '<p>';";
+	// Clear the previous user list
+	HTML = HTML $ "		for(i = playerSelect.options.length - 1; i >= 0; i--) {";
+	HTML = HTML $ "			playerSelect.remove(i);";
+	HTML = HTML $ "		}";
 	// Iterate through user list
 	HTML = HTML $ "		if(users.length > 0) {";
 	HTML = HTML $ "			userlist.innerHTML += \"<span class='sty_userlisttitle'>Players</span>\";";
@@ -882,8 +936,16 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		for(i = 0; i < users.length; i++) {";
 	HTML = HTML $ "			var user = users[i];";
 	HTML = HTML $ "			var username = user.childNodes[0].nodeValue;";
+	HTML = HTML $ "			var option = document.createElement(\"option\");";
+	HTML = HTML $ "			var minidiv = document.createElement(\"div\");";
+	HTML = HTML $ "			minidiv.innerHTML = username;";
 	HTML = HTML $ "			ministring += username + '<br>';";
+	HTML = HTML $ "			username = minidiv.textContent || minidiv.innerText || '';";
+	HTML = HTML $ "			option.text = username;";
+	HTML = HTML $ "			option.value = username;";
+	HTML = HTML $ "			playerSelect.add(option);";
 	HTML = HTML $ "		}";
+	HTML = HTML $ "		playerSelect.value = previousPlayer;";
 	HTML = HTML $ "		ministring += '</p>';";
 	HTML = HTML $ "		userlist.innerHTML += ministring;";
 	// Iterate through the list of new messages
