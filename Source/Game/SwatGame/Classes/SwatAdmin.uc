@@ -691,7 +691,7 @@ public function bool ForceSpec(string PlayerName, optional SwatPlayerController 
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 

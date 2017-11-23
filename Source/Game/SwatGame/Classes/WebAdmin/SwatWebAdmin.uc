@@ -817,9 +817,12 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "<td colspan=\"2\" class=\"sty_statictext\"><form style=\"display-inline;\">";
 	HTML = HTML $ "<div style=\"float:left;\">";
 	HTML = HTML $ "<select id=\"mapaction\" name=\"mapaction\">";
+	HTML = HTML $ " <option value=\"abortgame\">Abort Round</option>";
+	HTML = HTML $ " <option value=\"nextmap\">Go to Next Map</option>";
 	HTML = HTML $ " <option value=\"lockteams\">Lock/Unlock Teams</option>";
 	HTML = HTML $ " <option value=\"alltoblue\">Send all to Blue</option>";
 	HTML = HTML $ " <option value=\"alltored\">Send all to Red</option>";
+	HTML = HTML $ " <option value=\"startgame\">Start Round</option>";
 	HTML = HTML $ "</select> ";
 	HTML = HTML $ "<input class=\"sty_smolbutton\" type=\"button\" id=\"currentmapbutton\" onclick=\"mapButton()\" value=\"execute\"/>";
 	HTML = HTML $ "</div><div style=\"float:right;\">";
@@ -1005,6 +1008,10 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "<tr><th>/kill -playername-</th><td>Kills a player.</td></tr>";
 	HTML = HTML $ "<tr><th>/promote -playername-</th><td>Promotes a player to leader.</td></tr>";
 	HTML = HTML $ "<tr><th>/forcespec -playername-</th><td>Forces a player to spectate.</td></tr>";
+	HTML = HTML $ "<tr><th>/switch -map name, including .s4m-</th><td>Go to the specified map.</td></tr>";
+	HTML = HTML $ "<tr><th>/nextmap</th><td>Go to the next map.</td></tr>";
+	HTML = HTML $ "<tr><th>/startgame</th><td>Starts the current round.</td></tr>";
+	HTML = HTML $ "<tr><th>/abortgame</th><td>Aborts the current round.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;

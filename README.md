@@ -776,6 +776,8 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
  - WebAdmin: Now displays tags ([b], etc) correctly.
  - WebAdmin: Now has messages colored in a similar way to how they are ingame.
  - WebAdmin: Now shows the friendly name of the weapon that killed/incapacitated someone, instead of the class name (ie, "HK33" instead of "SwatEquipment.HK33MG")
+ - WebAdmin: When entering a command wrong, it lists the usage of the command instead of silently failing.
+ - WebAdmin: Added commands /forcespec, /switch, /nextmap, /startgame, and /abortgame.
  - WebAdmin: Minor look/feel changes
  - Fixed SEF bug: When a player dies, it lists the killer instead of the person who died as "fallen"
  - Fixed SEF bug: When a target is incapacitated with a taser or a C2 explosion, it states "None.None" as the damage type.

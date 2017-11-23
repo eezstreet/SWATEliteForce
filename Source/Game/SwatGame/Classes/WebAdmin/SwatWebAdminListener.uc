@@ -32,6 +32,7 @@ var globalconfig float ServerRefreshSeconds;
 var globalconfig bool FormatHTML;
 
 var localized config string NoPermissionString;
+var localized config string NotEnoughArgsString;
 
 var private int BoundPort;
 var globalconfig array<WebAdminUser> Users;
@@ -442,6 +443,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			msg.Message = NoPermissionString;
 			SendMessageToUser(i, msg);
 		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /kick <player name>";
+			SendMessageToUser(i, msg);
+		}
 		else if(!Level.Game.RemoteKick(IngameName, ConcatArgs(argv, 1)))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
@@ -453,6 +461,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_KickBan))
 		{
 			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /"$argv[0]$" <player name>";
 			SendMessageToUser(i, msg);
 		}
 		else if(!Level.Game.RemoteKickBan(IngameName, ConcatArgs(argv, 1)))
@@ -478,6 +493,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_LockPlayerTeams))
 		{
 			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /"$argv[0]$" <player name>";
 			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).RemoteLockPlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1)))
@@ -517,6 +539,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			msg.Message = NoPermissionString;
 			SendMessageToUser(i, msg);
 		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /forcered <player name>";
+			SendMessageToUser(i, msg);
+		}
 		else if(!SwatGameInfo(Level.Game).RemoteForcePlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1), 2))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
@@ -528,6 +557,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForcePlayerTeam))
 		{
 			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /forceblue <player name>";
 			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).RemoteForcePlayerTeam(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1), 0))
@@ -543,6 +579,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			msg.Message = NoPermissionString;
 			SendMessageToUser(i, msg);
 		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /"$argv[0]$" <player name>";
+			SendMessageToUser(i, msg);
+		}
 		else if(!SwatGameInfo(Level.Game).RemoteMute(Users[i].Alias$"(WebAdmin)", ConcatArgs(argv, 1)))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
@@ -554,6 +597,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_KillPlayers))
 		{
 			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /kill <player name>";
 			SendMessageToUser(i, msg);
 		}
 		else if(!SwatGameInfo(Level.Game).ForcePlayerDeath(None, ConcatArgs(argv, 1), Users[i].Alias$"(WebAdmin)"))
@@ -569,6 +619,13 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			msg.Message = NoPermissionString;
 			SendMessageToUser(i, msg);
 		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /promote <player name>";
+			SendMessageToUser(i, msg);
+		}
 		else if(!SwatGameInfo(Level.Game).ForcePlayerPromotion(None, ConcatArgs(argv, 1), Users[i].Alias$"(WebAdmin)"))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
@@ -582,10 +639,72 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			msg.Message = NoPermissionString;
 			SendMessageToUser(i, msg);
 		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /forcespec <player name>";
+			SendMessageToUser(i, msg);
+		}
 		else if(!SwatGameInfo(Level.Game).Admin.ForceSpec(ConcatArgs(argv, 1), None, Users[i].Alias$"(WebAdmin)"))
 		{
 			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
 			SendMessageToUser(i, msg);
+		}
+	}
+	else if(argv[0] ~= "switch")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Switch))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /switch <map name>";
+			SendMessageToUser(i, msg);
+		}
+		else
+		{
+			Level.ServerTravel( argv[1], false );
+		}
+	}
+	else if(argv[0] ~= "nextmap")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Switch))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else
+		{
+			SwatRepo(Level.GetRepo()).NetSwitchLevels(true);
+		}
+	}
+	else if(argv[0] ~= "startgame")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_StartGame))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else
+		{
+			SwatRepo(Level.GetRepo()).AllPlayersReady();
+		}
+	}
+	else if(argv[0] ~= "abortgame")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_EndGame))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else
+		{
+			SwatGameInfo(Level.Game).GameAbort();
 		}
 	}
 	else
@@ -693,4 +812,5 @@ defaultproperties
 	PageFooter="</div></body></html>"
 
 	NoPermissionString="You do not have permission to do that."
+	NotEnoughArgsString="Not enough arguments for command."
 }
