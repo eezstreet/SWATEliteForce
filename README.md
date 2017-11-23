@@ -766,6 +766,7 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)
  - Nerfed flashbang damage and damage radius (stun properties unaffected)
+ - Included the custom Irrational Games skins "Woodland" and "Urban"
  - The chat log and admin logs have been merged together.
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
