@@ -12,11 +12,11 @@ enum AdminPlayerActions
 	PlayerAction_ForceBlue,
 	PlayerAction_Mute,
 	PlayerAction_MakeLeader,
-	PlayerAction_Kill/*,
+	PlayerAction_Kill,
+	PlayerAction_ForceSpectator/*,
 	The following are what I intend to implement. Someday.
 	PlayerAction_Respawn,
 	PlayerAction_ForceLessLethal,
-	PlayerAction_ForceSpectator,
 	PlayerAction_Freeze,
 	PlayerAction_ClearWarnings
 	*/
@@ -29,7 +29,8 @@ enum AdminMapActions
 	MapAction_EndGame,
 	MapAction_ForceAllRed,
 	MapAction_ForceAllBlue,
-	MapAction_LockTeams/*,
+	MapAction_LockTeams,
+	MapAction_GoToSpectator/*,
 	The following are what I intend to implement. Someday.
 	MapAction_PassVote,
 	MapAction_FailVote,
@@ -75,6 +76,8 @@ private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions
 			return AdminPermissions.Permission_KillPlayers;
 		case PlayerAction_MakeLeader:
 			return AdminPermissions.Permission_PromoteLeader;
+		case PlayerAction_ForceSpectator:
+			return AdminPermissions.Permission_ForceSpectator;
 	}
 }
 
@@ -94,6 +97,8 @@ private function AdminPermissions MapMapActionToPermission(AdminMapActions e)
 		case MapAction_ForceAllRed:
 		case MapAction_ForceAllBlue:
 			return AdminPermissions.Permission_ForceAllTeams;
+		case MapAction_GoToSpectator:
+			return AdminPermissions.Permission_GoToSpec;
 	}
 }
 
@@ -306,12 +311,14 @@ defaultproperties
 	PlayerActionNames[5]="Mute/Unmute"
 	PlayerActionNames[6]="Kill"
 	PlayerActionNames[7]="Promote to Leader"
+	PlayerActionNames[8]="Send to Spectator"
 	MapActionNames[0]="Go to Next Map"
 	MapActionNames[1]="Start Game"
 	MapActionNames[2]="End Game"
 	MapActionNames[3]="Send All to Red"
 	MapActionNames[4]="Send All to Blue"
 	MapActionNames[5]="Lock Teams"
+	MapActionNames[6]="Go to Spectator"
 	PlayerConsoleCommands[0]="Kick"
 	PlayerConsoleCommands[1]="KickBan"
 	PlayerConsoleCommands[2]="TogglePlayerTeamLock"
@@ -320,10 +327,12 @@ defaultproperties
 	PlayerConsoleCommands[5]="ToggleMute"
 	PlayerConsoleCommands[6]="AdminKillPlayer"
 	PlayerConsoleCommands[7]="AdminPromotePlayer"
+	PlayerConsoleCommands[8]="ForceSpec"
 	MapConsoleCommands[0]="NM"
 	MapConsoleCommands[1]="StartGame"
 	MapConsoleCommands[2]="AbortGame"
 	MapConsoleCommands[3]="ForceAllToTeam 2"
 	MapConsoleCommands[4]="ForceAllToTeam 0"
 	MapConsoleCommands[5]="ToggleTeamLock"
+	MapConsoleCommands[6]="GoToSpec"
 }

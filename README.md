@@ -770,6 +770,8 @@ On the host machine, this can be reached from http://127.0.0.1:6000/
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
  - The log now removes colored/bold/italic/underline tags, for better readability.
+ - New admin permission: Force player to Spectator
+ - New admin permission: Go to Spectator
  - WebAdmin: Now has an option to select players or map actions, in addition to performing them via command.
  - WebAdmin: Now displays tags ([b], etc) correctly.
  - WebAdmin: Now has messages colored in a similar way to how they are ingame.

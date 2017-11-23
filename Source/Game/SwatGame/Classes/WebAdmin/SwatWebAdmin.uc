@@ -827,6 +827,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "<select id=\"playeraction\" name=\"playeraction\">";
 	HTML = HTML $ " <option value=\"forceblue \">Force to Blue Team</option>";
 	HTML = HTML $ " <option value=\"forcered \">Force to Red Team</option>";
+	HTML = HTML $ " <option value=\"forcespec \">Force to Spectate</option>";
 	HTML = HTML $ " <option value=\"kick \">Kick</option>";
 	HTML = HTML $ " <option value=\"kickban \">Kick-Ban</option>";
 	HTML = HTML $ " <option value=\"kill \">Kill</option>";
@@ -1003,6 +1004,7 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "<tr><th>/mute -playername-</th><td>Toggle mute on a player.</td></tr>";
 	HTML = HTML $ "<tr><th>/kill -playername-</th><td>Kills a player.</td></tr>";
 	HTML = HTML $ "<tr><th>/promote -playername-</th><td>Promotes a player to leader.</td></tr>";
+	HTML = HTML $ "<tr><th>/forcespec -playername-</th><td>Forces a player to spectate.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;

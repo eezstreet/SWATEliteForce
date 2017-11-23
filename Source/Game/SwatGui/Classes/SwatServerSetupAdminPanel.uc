@@ -364,6 +364,8 @@ defaultproperties
 	PermissionNames[12]="Mute Players"
 	PermissionNames[13]="Kill Players"
 	PermissionNames[14]="Promote Players"
+	PermissionNames[15]="Go to Spectator"
+	PermissionNames[16]="Force Player to Spectate"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -380,4 +382,6 @@ defaultproperties
 	PermissionDescription[12]="Mute/unmute a player. When a player is muted, they are unable to speak."
 	PermissionDescription[13]="Kill players."
 	PermissionDescription[14]="Promote players to leaders. This only works when the server has CO-OP leaders enabled."
+	PermissionDescription[15]="Allows a player to go to spectator, a viewing mode where players can fly through walls and other obstacles"
+	PermissionDescription[16]="Kill a player and force them to spectator, a viewing mode where players can fly through walls and other obstacles."
 }

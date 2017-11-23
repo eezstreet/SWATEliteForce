@@ -575,6 +575,19 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			SendMessageToUser(i, msg);
 		}
 	}
+	else if(argv[0] ~= "forcespec")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForceSpectator))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(!SwatGameInfo(Level.Game).Admin.ForceSpec(ConcatArgs(argv, 1), None, Users[i].Alias$"(WebAdmin)"))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			SendMessageToUser(i, msg);
+		}
+	}
 	else
 	{
 		msg.Message = "Unknown command '"$argv[0]$"'";

@@ -489,6 +489,16 @@ exec function AdminPromotePlayer(string PlayerName)
 	SwatGameInfo(Level.Game).ForcePlayerPromotion(SwatGamePlayerController(self), PlayerName);
 }
 
+exec function GoToSpec()
+{
+	SwatGameInfo(Level.Game).Admin.GoToSpectator(SwatGamePlayerController(self));
+}
+
+exec function ForceSpec(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ForceSpec(PlayerName, SwatGamePlayerController(self));
+}
+
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
 {
   Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);

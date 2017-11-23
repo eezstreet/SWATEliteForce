@@ -35,6 +35,8 @@ enum AdminPermissions
 	Permission_Mute,			// Allowed to mute players
 	Permission_KillPlayers,		// Allowed to kill players
 	Permission_PromoteLeader,	// Allowed to promote players to leader
+	Permission_GoToSpec,		// Allowed to go to spectator
+	Permission_ForceSpectator,	// Allowed to force other players to go to spectator
 	Permission_Max,
 };
 
@@ -109,6 +111,8 @@ var private localized config string MissionEndedFormat;
 var private localized config string MissionCompletedFormat;
 var private localized config string MissionFailedFormat;
 var private localized config string LeftWebAdminFormat;
+var private localized config string SpectateFormat;
+var private localized config string ForceSpectateFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -606,6 +610,91 @@ public function bool CanKillPlayers(SwatGamePlayerController PC)
 	return ActionAllowed(PC, AdminPermissions.Permission_KillPlayers);
 }
 
+// Send a player controller to spectator.
+// This makes no assumption of the state of the player controller, so that will need to be checked first.
+private function SendControllerToSpectator(SwatGamePlayerController PC)
+{
+	if(PC.Pawn != None)
+	{
+		PC.Pawn.Died(None, class'DamageType', PC.Pawn.Location, vect(0.0, 0.0, 0.0));
+	}
+	PC.SwatRepoPlayerItem.bHasEnteredFirstRound = false;
+
+	if(!PC.IsInState('BaseSpectating'))
+	{
+		PC.Reset();
+		if(PC.Pawn != None)
+		{
+			PC.SetLocation(PC.Pawn.Location);
+			PC.UnPossess();
+		}
+		PC.GoToState('BaseSpectating');
+		PC.ClientGoToState('BaseSpectating', 'Begin');
+		PC.ServerSpectateSpeed(350.0);
+	}
+	PC.ServerViewSelf();
+}
+
+// Have a player send themselves to spectator
+public function bool GoToSpectator(SwatGamePlayerController PC)
+{
+	if(!ActionAllowed(PC, AdminPermissions.Permission_GoToSpec))
+	{
+		// lacking permission to do this
+		return false;
+	}
+
+	if(PC.IsInState('GameEnded'))
+	{
+		// not allowed to do this while in the game end state
+		return false;
+	}
+
+	SendControllerToSpectator(PC);
+	SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'Spectate');
+	Broadcast(PC.PlayerReplicationInfo.PlayerName, 'Spectate');
+
+	return true;
+}
+
+// Force another player to go into spectator mode
+public function bool ForceSpec(string PlayerName, optional SwatPlayerController PC, optional string Alias)
+{
+	local SwatGamePlayerController P;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_ForceSpectator))
+	{
+		// Lacking permission to do this
+		return false;
+	}
+
+	if(PC != None)
+	{
+		// if the player controller is valid, then use their name as the alias
+		Alias = PC.PlayerReplicationInfo.PlayerName;
+	}
+
+	// find the player
+	foreach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			// make sure that we can send him to spec. we might not be able to.
+			if(P.IsInState('GameEnded'))
+			{
+				return false;
+			}
+
+			SendControllerToSpectator(P);
+			SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceSpectate');
+			Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceSpectate');
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 // Execute an AC command based on the text
 function ACCommand( PlayerController PC, String S )
 {
@@ -847,6 +936,14 @@ function Broadcast(coerce string Msg, optional name Type)
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(AdminPromotedFormat, StrA, StrB);
 			break;
+		case 'Spectate':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(SpectateFormat, StrA);
+			break;
+		case 'ForceSpectate':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForceSpectateFormat, StrA, StrB);
+			break;
 	}
 
 	SendToWebAdmin(TypeOut, MsgOut);
@@ -926,6 +1023,9 @@ defaultproperties
 	MissionCompletedFormat="The mission has been [c=00FF00][b]COMPLETED!"
 	MissionFailedFormat="The mission has been [c=FF0000][b]FAILED!"
 	LeftWebAdminFormat="[c=00FFFF][b]%1[\\b] has left WebAdmin."
+
+	SpectateFormat="[c=FF00FF]%1 switched to spectator mode."
+	ForceSpectateFormat="[c=FF00FF]%1 forced %2 to spectate."
 
 	ChatLogName="chatlog"
 	ChatLogMultiFormat="chatlog_%1_%2_%3"
