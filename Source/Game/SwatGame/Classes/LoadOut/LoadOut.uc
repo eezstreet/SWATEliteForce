@@ -168,32 +168,10 @@ simulated function bool ValidateLoadOutSpec(bool IsSuspect, DynamicLoadoutSpec D
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 simulated protected function ValidatePocketCustomSkin(bool IsSuspect)
 {
-	local int i;
-	local int NumEquipment;
-
 	AssertWithDescription(LoadOutSpec[Pocket.Pocket_CustomSkin] == None, "The custom skin entry in LoadOutSpec must be None, but is currently "$LoadOutSpec[Pocket.Pocket_CustomSkin]$". Setting to None");
 
 	LoadOutSpec[Pocket.Pocket_CustomSkin] = None;
-
-	if (CustomSkinSpec != "")
-	{
-		// Check the skin is valid for the current team. If invalid replace with default.
-
-		NumEquipment = GC.AvailableEquipmentPockets[Pocket.Pocket_CustomSkin].EquipmentClassName.Length;
-
-		for( i = 0; i < NumEquipment; i++ )
-		{
-			if( GC.AvailableEquipmentPockets[Pocket.Pocket_CustomSkin].EquipmentClassName[i] == CustomSkinSpec )
-			{
-				if( !CheckTeamValidity( GC.AvailableEquipmentPockets[Pocket.Pocket_CustomSkin].TeamValidity[i], IsSuspect ) )
-				{
-					CustomSkinSpec = "SwatGame.DefaultCustomSkin";
-					break;
-				}
-			}
-		}
-	}
-	else
+	if(CustomSkinSpec == "")
 	{
 		CustomSkinSpec = "SwatGame.DefaultCustomSkin";
 	}
@@ -270,25 +248,6 @@ simulated protected function bool CheckValidity( eNetworkValidity type )  //may 
     return ( ( type == NETVALID_MPOnly ) ==
              ( GC.SwatGameRole == GAMEROLE_MP_Host ||
                GC.SwatGameRole == GAMEROLE_MP_Client ) );
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Utility: Check the validity given the current team
-//      Returns true iff IsSuspect matches the input team validity
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-simulated protected function bool CheckTeamValidity( eTeamValidity type, bool IsSuspect )  //may be further subclassed
-{
-    if(type == TEAMVALID_All)
-        return true;
-
-	// Team restrictions only checked in MP
-    if (GC.SwatGameRole == GAMEROLE_MP_Host || GC.SwatGameRole == GAMEROLE_MP_Client)
-	{
-		return (type == TEAMVALID_SuspectsOnly && IsSuspect) || (type == TEAMVALID_SWATOnly && !IsSuspect);
-	}
-
-	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

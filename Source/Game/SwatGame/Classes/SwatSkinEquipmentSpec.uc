@@ -30,7 +30,7 @@ simulated function Initialise()
 
 			EquipmentClassName[SkinIndex] = SkinClassPath;
 			Validity[SkinIndex] = NETVALID_MPOnly;
-			TeamValidity[SkinIndex] = SkinClass.default.SkinTeam;
+			TeamValidity[SkinIndex] = TEAMVALID_All;
 			bSelectable[SkinIndex] = 1;
 		}
 	}
