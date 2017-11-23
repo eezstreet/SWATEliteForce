@@ -238,10 +238,9 @@ function SanitizeLogMessage(out string Message)
 			j = InStrAfter(Message, "]", i);
 			if(j != -1)
 			{
-				Message = Left(Message, i) $ Mid(Message, i + 3, 6) $ Mid(Message, j + 1);
+				Message = Left(Message, i) $ Mid(Message, j + 1);
 			}
 		}
-		mplog("Message is now: " $Message);
 	} until(i == -1);
 }
 
