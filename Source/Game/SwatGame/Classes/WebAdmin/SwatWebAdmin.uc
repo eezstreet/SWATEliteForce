@@ -814,7 +814,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "<tr>";
 
 	// draw the actions comboboxes and buttons
-	HTML = HTML $ "<td colspan=\"2\" class=\"sty_statictext\"><form style=\"display-inline;\">";
+	HTML = HTML $ "<td colspan=\"2\" class=\"sty_statictext\"><form style=\"display-inline;\" onkeypress=\"return keyPressed(event.keyCode);\">";
 	HTML = HTML $ "<div style=\"float:left;\">";
 	HTML = HTML $ "<select id=\"mapaction\" name=\"mapaction\">";
 	HTML = HTML $ " <option value=\"abortgame\">Abort Round</option>";
@@ -843,10 +843,12 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "</tr>";
 
 	// draw the text entry
-	HTML = HTML $ "<form onkeypress=\"return keyPressed(event.keyCode);\" style=\"display-inline;\">";
-	HTML = HTML $ "<tr><td colspan=\"2\"><div id=\"bottominput\"><input type=\"text\" id=\"inputarea\" autocomplete=\"off\" style=\"display-inline;\" />";
-	HTML = HTML $ "<input type=\"button\" class=\"sty_smolbutton\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" /></td></div></tr>";
+	HTML = HTML $ "<tr><td colspan=\"2\"><div id=\"bottominput\">";
+	HTML = HTML $ "<form onkeypress=\"return keyPressed(event.keyCode);\" style=\"display:flex; width:100%; margin-bottom:0px;\">";
+	HTML = HTML $ "<input type=\"text\" id=\"inputarea\" autocomplete=\"off\" style=\"display-inline;\" />";
+	HTML = HTML $ "<input type=\"button\" class=\"sty_smolbutton\" value=\"send\" id=\"sendbutton\" onclick=\"sendButton()\" />";
 	HTML = HTML $ "</form>";
+	HTML = HTML $ "</td></div></tr>";
 	HTML = HTML $ "</table>";
 	HTML = HTML $ "</form>";
 
