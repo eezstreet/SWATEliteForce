@@ -111,6 +111,7 @@ var private int     FailedToValidate;
 var private bool    SwitchedTabs;
 var private bool    SwitchedWeapons;
 var private bool    PopulatingAmmoInformation;
+var private bool	PopulatingWeaponInformation;
 
 ///////////////////////////
 // Initialization & Page Delegates
@@ -618,7 +619,7 @@ function UpdateIndex( Pocket thePocket )
 
 function SaveCurrentLoadout()
 {
-  assert(false); // needs to be implemented by children
+	assert(false); // needs to be implemented by children
 }
 
 ///////////////////////////
@@ -694,6 +695,11 @@ private function InternalComboBoxOnSelection(GUIComponent Sender)
             break;
 
         case MyWeaponBox:
+			if(PopulatingWeaponInformation)
+			{
+				break;
+			}
+
             SwitchedWeapons = true;
 
             if(ActiveTab == 0)
@@ -903,21 +909,29 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
 // We have selected a new weapon category, reset the weapon list
 protected function RepopulateWeaponInformationForNewCategory(WeaponEquipClass NewClass)
 {
-  local int i;
-  local class<SwatWeapon> Weapon;
+	local int i;
+	local class<SwatWeapon> Weapon;
 
-  MyWeaponBox.Clear();
+	PopulatingWeaponInformation = true;
 
-  for(i = 0; i < CandidateWeapons.Length; i++) {
-    Weapon = CandidateWeapons[i];
-    if(Weapon.default.WeaponCategory != NewClass) {
-      continue;
-    }
+	MyWeaponBox.Clear();
 
-    MyWeaponBox.AddItem(Weapon.static.GetFriendlyName(), Weapon);
-  }
+	for(i = 0; i < CandidateWeapons.Length; i++)
+	{
+	    Weapon = CandidateWeapons[i];
+	    if(Weapon.default.WeaponCategory != NewClass)
+		{
+	    	continue;
+	    }
 
-  MyWeaponBox.List.Sort();
+	    MyWeaponBox.AddItem(Weapon.static.GetFriendlyName(), Weapon);
+	}
+
+	MyWeaponBox.List.Sort();
+
+	PopulatingWeaponInformation = false;
+
+	MyWeaponBox.SetIndex(0);
 }
 
 // We have selected a new weapon, reset the ammo list

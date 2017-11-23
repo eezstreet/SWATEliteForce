@@ -5,6 +5,7 @@
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
  - The log now removes colored/bold/italic/underline tags, for better readability.
+ - Greatly improved the speed (and in multiplayer, reduced the bandwidth) of opening the equipment page and switching tabs.
  - New admin permission: Force player to Spectator
  - New admin permission: Go to Spectator
  - WebAdmin: Now has an option to select players or map actions, in addition to performing them via command.
@@ -20,6 +21,7 @@
  - Fixed SEF bug: When a player triggers a trap, the penalty message does not show their name.
  - Fixed SEF bug: Bulk amount could go negative on the display
  - Fixed SEF bug: The admin panel player list would reset which player was selected constantly
+ - Fixed SEF bug: Sometimes your equipment would change back to being an AKM/Browning Hi-Power in Multiplayer.
  - Fixed TSS bug: In CO-OP, suspect skins were visible but not usable (now, all skins can be used in co-op)
 
 #### v6.3
