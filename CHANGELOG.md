@@ -1,6 +1,7 @@
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)
  - Nerfed flashbang damage and damage radius (stun properties unaffected)
+ - DuPlessi's civilians now bleed out on a 15-25 minute timer, instead of a 10-15 minute timer.
  - The chat log and admin logs have been merged together.
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
