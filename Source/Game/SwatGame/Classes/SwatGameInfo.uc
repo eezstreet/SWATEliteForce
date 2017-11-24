@@ -2721,6 +2721,30 @@ function ChangePlayerTeam( SwatGamePlayerController Player )
 
 }
 
+// Returns true if localized chat is disabled on the server.
+function bool LocalizedChatIsDisabled()
+{
+	local int i;
+	local string StrippedMapName;
+
+	StrippedMapName = Left(string(Level), InStr(string(Level), "."));
+
+	if(Admin.GlobalDisableLocalizedChat)
+	{
+		// if the admin settings dictate that localized chat is disabled, no need to waste time doing the below stuff
+		return true;
+	}
+
+	for(i = 0; i < Admin.MapDisabledLocalizedChat.Length; i++)
+	{
+		if(StrippedMapName ~= Admin.MapDisabledLocalizedChat[i])
+		{	// this map is on the list of maps that have it disabled
+			return true;
+		}
+	}
+
+	return false;
+}
 
 function SetPlayerReady( SwatGamePlayerController Player )
 {

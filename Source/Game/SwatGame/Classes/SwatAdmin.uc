@@ -66,6 +66,9 @@ var public config bool UseNewChatLogPerDay;
 var public config string ChatLogMultiFormat;
 var public config string ChatLogName;
 
+var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
+var public config bool GlobalDisableLocalizedChat;
+
 var private array<SwatGamePlayerController> MutedPlayers;
 
 var private localized config string PenaltyFormat;

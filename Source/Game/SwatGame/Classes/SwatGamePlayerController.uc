@@ -4478,10 +4478,14 @@ exec function Say( string Msg )
         mplog( "ChatMessage( "$Msg$", Say )" );
     }
 
-  if(Pawn != None)
-	  Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
-  else
-    Level.Game.Broadcast(self, Msg, 'Say');
+	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled() && Pawn != None)
+	{
+		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+	}
+	else
+	{
+		Level.Game.Broadcast(self, Msg, 'Say');
+	}
 
 	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'Say');
 }
@@ -4501,7 +4505,15 @@ exec function TeamSay( string Msg )
 		return;
 	}
 
-    Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled())
+	{
+		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+	}
+	else
+	{
+		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator, self, Msg), 'TeamSay', "");
+	}
+
 	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'TeamSay');
 }
 

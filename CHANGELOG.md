@@ -7,6 +7,7 @@
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
  - The log now removes colored/bold/italic/underline tags, for better readability.
  - Greatly improved the speed (and in multiplayer, reduced the bandwidth) of opening the equipment page and switching tabs.
+ - Location data in the chat can now be turned off (for the server) in SwatGuiState.ini
  - New admin permission: Force player to Spectator
  - New admin permission: Go to Spectator
  - WebAdmin: Now has an option to select players or map actions, in addition to performing them via command.
