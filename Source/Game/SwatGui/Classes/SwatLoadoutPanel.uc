@@ -885,15 +885,16 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   MyWeaponCategoryBox.List.Sort();
 
   //log("Update the list of weapons for the current category...");
-  RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
-
   log("Set the selected weapon: CurrentWeaponEquipClass="$CurrentWeaponEquipClass$", CurrentWeapon="$CurrentWeapon);
   CategoryNum = MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
+
+  RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
+
   WeaponNum = MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
 
   if(CategoryNum == -1 || WeaponNum == -1) {
     // The equipment failed to validate. Try again.
-    log("!! Equipment could not be found, resetting to default !!");
+    log("!! Equipment could not be found (categorynum is "$CategoryNum$", weaponnum is "$WeaponNum$"), resetting to default !!");
     WeaponNum = 0;
     if(bPrimaryWeapon) {
       CurrentWeaponEquipClass = DefaultPrimaryClass;

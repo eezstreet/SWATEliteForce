@@ -112,7 +112,7 @@ function bool CheckCampaignValid( class EquipmentClass )
 	CampaignPath = Settings.CampaignCOOP & 65535;
 
 	// Any equipment above the MissionIndex is currently unavailable
-	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
+	if(Settings.IsCampaignCOOP() && CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     	// Check first set of equipment
 		for (i = MissionIndex + 1; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; ++i)
 			if (class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment[i] == EquipmentClass)
