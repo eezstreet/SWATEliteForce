@@ -23,6 +23,7 @@
  - Fixed SEF bug: The admin panel player list would reset which player was selected constantly
  - Fixed SEF bug: Sometimes your equipment would change back to being an AKM/Browning Hi-Power in Multiplayer.
  - Fixed SEF bug: Wedges weighed less than they were supposed to.
+ - Fixed SEF bug: Heavies would not show their skin properly in multiplayer games.
  - Fixed TSS bug: In CO-OP, suspect skins were visible but not usable (now, all skins can be used in co-op)
 
 #### v6.3

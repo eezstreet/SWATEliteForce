@@ -87,10 +87,14 @@ replication
 {
     reliable if ( Role == ROLE_Authority )
         bCanBeArrested,
-        CharacterType, VoiceType, ReplicatedSkins, ReplicatedMesh, bReplicatedIsFemale,
+        CharacterType, VoiceType, /*ReplicatedSkins,*/ ReplicatedMesh, bReplicatedIsFemale,
         ReplicatedEquipment1Class, ReplicatedEquipment2Class,
         ReplicatedEquipment3Class, ReplicatedEquipment4Class, DesiredAIEquipment,
         ReplicatedShouldUsePatrolAnims;
+
+	reliable if ( Role == ROLE_Authority && Mesh != class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		ReplicatedSkins;
+
 }
 
 
@@ -112,8 +116,29 @@ simulated event PostBeginPlay()
     // * SERVER ONLY
     if ( Level.NetMode != NM_Client )
     {
-    CreateAwareness();
+    	CreateAwareness();
+	}
 }
+
+simulated event PostNetBeginPlay()
+{
+	local int i;
+
+	Super.PostNetBeginPlay();
+
+	// SUPER MEGA ULTRA BAD HACK
+	// Replicated skin 0 and 3 -do not replicate correctly- because of an engine bug.
+	// So as a result we need to override this from the archetype.
+	if(Level.NetMode != NM_Standalone)
+	{
+		if(Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		{
+			for(i = 0; i <= 3; i++)
+			{
+				ReplicatedSkins[i] = class'SwatGame.SwatAICharacterConfig'.default.OfficerHeavyDefaultMaterial[0];
+			}
+		}
+	}
 }
 
 simulated event ReplicatedMeshInfoOnChanged()

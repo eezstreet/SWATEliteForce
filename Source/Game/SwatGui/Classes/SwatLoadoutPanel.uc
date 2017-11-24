@@ -832,6 +832,7 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   for(i = 0; i < UnlockedWeapons.Length; i++) {
     CandidateWeapons[CandidateWeapons.Length] = UnlockedWeapons[i];
   }
+  log("CandidateWeapons length is "$CandidateWeapons.Length);
 
   if(!bPrimaryWeapon) {
     //log("Prune the candidate weapons so that primary weapons are not included in the secondary weapons list...");
