@@ -60,10 +60,11 @@ New campaign options! Now you will have a good reason to create more than one ca
  * PERMADEATH. There are two Permadeath options, for the extra challenge. AI Permadeath makes slain SWAT officers never come back, and Player Permadeath ends your campaign once you die.
  * CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath) campaign in multiplayer. Help your friends complete their campaigns!
 
-Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority.
+Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority. Civilians behave more realistically. 
  * Suspects will also try to shoot at you as they're fleeing.
  * Suspects may now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
  * Suspects have new equipment and may equip heavy armor.
+ * Civilians may give up easier if they spot a suspect or a civilian being pepper sprayed, hit with beanbags, etc.
 
 Smarter Officer AI!
  * Upon restraining a target, SWAT officers will now report it to TOC automatically!
