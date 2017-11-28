@@ -87,7 +87,7 @@ simulated function PostNetBeginPlay()
 
 simulated function PostBeginPlay()
 {
-    Super.PostBeginPlay();
+	Super.PostBeginPlay();
 
     // The repo needs to know what the game replication info is.
     SwatRepo(Level.GetRepo()).SetSGRI( self );

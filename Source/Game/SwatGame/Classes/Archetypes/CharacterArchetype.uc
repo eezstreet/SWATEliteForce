@@ -57,6 +57,8 @@ var config float EmpathyShotAmount;
 var config float EmpathyPepperBallAmount;
 var config float EmpathyStungAmount;	// applies to all blunt damage
 
+var localized config string FriendlyName;
+
 var Mesh OfficerMesh;
 var Mesh OfficerHeavyMesh;
 var Mesh OfficerNoArmorMesh;
@@ -246,6 +248,9 @@ function InitializeInstance(ArchetypeInstance inInstance)
 		}
 	}
 
+	// Multiplayer data
+	Instance.FriendlyName = FriendlyName;
+
     Instance.UpdateInstancePrecachables();
 
     //TMC TODO select values from CharacterArchetype
@@ -321,4 +326,6 @@ defaultproperties
 	EmpathyTaserAmount = 1.0
 	EmpathyPepperBallAmount = 1.0
 	EmpathyPepperSprayAmount = 1.0
+
+	FriendlyName="a Character"
 }

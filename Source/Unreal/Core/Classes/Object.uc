@@ -471,6 +471,41 @@ native(400) static final function int    Split  ( coerce string Src, string Divi
 native(236) static final function string Chr    ( int i );
 native(237) static final function int    Asc    ( string S );
 
+// Custom string functions --eez
+
+// Finds the next occurrence of a string that comes after a specified string
+static function int InStrAfter(string Text, string Match, int Pos)
+{
+	local int i;
+
+	i = InStr(Mid(Text, Pos), Match);
+	if(i != -1)
+	{
+		return i + pos;
+	}
+
+	return -1;
+}
+
+// Concatenates all strings in an array into one big string, separated by spaces
+static function string ConcatArgs(array<string> Args, optional int Start, optional int End)
+{
+	local string outStr;
+	local int i;
+
+	if(End == 0)
+	{
+		End = Args.Length - 1;
+	}
+
+	outStr = Args[Start];
+	for(i = Start + 1; i <= End; i++)
+	{
+		outStr = outStr $ " " $ Args[i];
+	}
+	return outStr;
+}
+
 static function String FormatTextString( string Format, optional coerce string Param1, optional coerce string Param2, optional coerce string Param3)
 {
     Format = ReplaceExpression( Format, "%1", Param1 );

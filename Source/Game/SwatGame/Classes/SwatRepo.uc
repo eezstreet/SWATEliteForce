@@ -218,11 +218,13 @@ event Tick( Float DeltaSeconds )
                 case GAMESTATE_PostGame:
                     CumulativeDelta += DeltaSeconds;
 
-					          if (ServerSettings(Level.CurrentServerSettings).isCampaignCoop())
-					          {
-						                CumulativeDelta = 0;
-						                CheckAllPlayersReady();
-					          }
+					if ((GuiConfig.SwatGameState == GAMESTATE_PostGame && !ServerSettings(Level.CurrentServerSettings).bUseRoundEndTimer) ||
+						(GuiConfig.SwatGameState == GAMESTATE_PreGame && !ServerSettings(Level.CurrentServerSettings).bUseRoundStartTimer))
+					{
+						// The fallthrough from the above can really mess up this condition
+						CumulativeDelta = 0;
+						CheckAllPlayersReady();
+					}
 
                     else if( GetSGRI().ServerCountdownTime <= 0 )
                     {
@@ -584,9 +586,6 @@ log("[dkaplan] >>> StateChange of "$self$", newState == "$GetEnum(eSwatGameState
                 else
                   GetSGRI().ServerCountdownTime=ServerSettings(Level.CurrentServerSettings).MPMissionReadyTime + PRECACHING_FUDGE;
                 //Level.Game.SetPause( true, PlayerController );
-
-                UpdateRoundsWon( 0 );
-                UpdateRoundsWon( 1 );
             }
             break;
         case GAMESTATE_MidGame:
@@ -814,7 +813,6 @@ function NetRestartRound()
   SwapServerSettings();
 
   ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
-  ClearRoundsWon();
   NetSwitchLevelsFromMapVote("?restart"); // Undocumented engine feature; restarts the current map
 }
 
@@ -842,14 +840,12 @@ function NetNextRound()
     if( ServerSettings(Level.CurrentServerSettings).bDirty )
     {
         ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
-        ClearRoundsWon();
 
         NetSwitchLevels();
     }
     else if( ServerSettings(Level.CurrentServerSettings).RoundNumber >= ServerSettings(Level.CurrentServerSettings).NumRounds )
     {
         ServerSettings(Level.CurrentServerSettings).RoundNumber = 0;
-        ClearRoundsWon();
 
         NetSwitchLevels( true ); //advance to the next map
     }
@@ -960,21 +956,21 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.MapIndex,
 		CurrentSettings.NumRounds,
 		CurrentSettings.MaxPlayers,
-		CurrentSettings.Unused,
+		CurrentSettings.bUseRoundStartTimer,
 		CurrentSettings.PostGameTimeLimit,
-		CurrentSettings.Unused2,
+		CurrentSettings.bUseRoundEndTimer,
 		CurrentSettings.MPMissionReadyTime,
 		CurrentSettings.bShowTeammateNames,
-		CurrentSettings.Unused3,
+		CurrentSettings.Unused,
 		CurrentSettings.bAllowReferendums,
 		CurrentSettings.bNoRespawn,
 		CurrentSettings.bQuickRoundReset,
 		CurrentSettings.FriendlyFireAmount,
-		CurrentSettings.Unused4,
+		CurrentSettings.Unused2,
 		CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,
-		CurrentSettings.Unused5,
+		CurrentSettings.bNoKillMessages,
 		CurrentSettings.bEnableSnipers
 	);
 	ServerSettings(Level.PendingServerSettings).RoundNumber = CurrentSettings.RoundNumber;
@@ -1413,29 +1409,6 @@ function SetObjectiveVisibility( name ObjectiveName, bool Visible )
         "[tcohen] ActionSetObjectiveVisibility::Execute() The Objective named "$ObjectiveName
         $" was not found to be a current Objective.");
 }
-
-function ClearRoundsWon()
-{
-    local int i;
-
-    for( i = 0; i < 2; i++ )
-    {
-        RoundsWon[i] = 0;
-        UpdateRoundsWon( i );
-    }
-}
-
-function IncrementRoundsWon( int teamID )
-{
-    RoundsWon[teamID]++;
-    UpdateRoundsWon( teamID );
-}
-
-function UpdateRoundsWon( int teamID )
-{
-    NetTeam(GetSGRI().Teams[teamID]).NetScoreInfo.SetRoundsWon( RoundsWon[teamID] );
-}
-
 
 function PreLevelChangeCleanup()
 {

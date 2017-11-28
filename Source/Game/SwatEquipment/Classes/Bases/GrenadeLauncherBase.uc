@@ -28,7 +28,10 @@ function BallisticFire(vector StartTrace, vector EndTrace)
     assert(Grenade != None);
 
 	if (Grenade.IsA('SwatGrenadeProjectile'))
+	{
+		SwatGrenadeProjectile(Grenade).Launcher = self;
 		SwatGrenadeProjectile(Grenade).bWasFired = true;
+	}
 
     Grenade.Velocity = ShotVector * MuzzleVelocity;
 }

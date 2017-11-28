@@ -20,7 +20,7 @@ class SwatPlayer extends SwatRagdollPawn
 import enum EquipmentSlot from Engine.HandheldEquipment;
 import enum ESkeletalRegion from Engine.Actor;
 
-var private OfficerLoadOut LoadOut;
+var protected OfficerLoadOut LoadOut;
 
 //the pitch above the camera rotation to throw
 var config int ThrownProjectilePitch;
@@ -178,16 +178,74 @@ simulated function float GetTotalBulk() {
 }
 
 simulated function float GetWeightMovementModifier() {
-  return LoadOut.GetWeightMovementModifier();
+	local float totalWeight;
+    local float maxWeight, minWeight;
+    local float minMoveModifier, maxMoveModifier;
+
+    totalWeight = GetTotalWeight();
+    maxWeight = Loadout.GetMaximumWeight();
+    minWeight = Loadout.GetMinimumWeight();
+    minMoveModifier = Loadout.GetMinimumMovementModifier();
+    maxMoveModifier = Loadout.GetMaximumMovementModifier();
+
+    if(totalWeight < minWeight) {
+      // There are legitimate reasons that we don't meet the minimum weight - Training mission comes to mind
+      totalWeight = minWeight;
+    }
+
+    assertWithDescription(totalWeight <= maxWeight,
+      "Loadout "$self$" exceeds maximum weight ("$totalWeight$" > "$maxWeight$"). Adjust the value in code.");
+
+    totalWeight -= minWeight;
+    maxWeight -= minWeight;
+
+    return ((totalWeight / maxWeight) * (minMoveModifier - maxMoveModifier)) + maxMoveModifier;
 }
 
 simulated function float GetBulkQualifyModifier() {
-  return LoadOut.GetBulkQualifyModifier();
+	local float totalBulk;
+    local float maxBulk, minBulk;
+    local float minQualifyModifier, maxQualifyModifier;
+
+    totalBulk = GetTotalBulk();
+    minBulk = Loadout.GetMinimumBulk();
+    maxBulk = Loadout.GetMaximumBulk();
+    minQualifyModifier = Loadout.GetMinimumQualifyModifer();
+    maxQualifyModifier = Loadout.GetMaximumQualifyModifer();
+
+    if(totalBulk < minBulk) {
+  	  // There are legitimate reasons that we don't meet the minimum bulk - Training mission comes to mind
+  	  totalBulk = minBulk;
+    }
+
+    assertWithDescription(totalBulk <= maxBulk,
+  	  "Loadout "$self$" exceeds maximum bulk ("$totalBulk$" > "$maxBulk$"). Adjust the value in code.");
+
+    totalBulk -= minBulk;
+    maxBulk -= minBulk;
+
+    return ((totalBulk / maxBulk) * (maxQualifyModifier - minQualifyModifier)) + minQualifyModifier;
 }
 
 simulated function float GetBulkSpeedModifier() {
-	log("GetBulkSpeedModifier: modifier is "$LoadOut.GetBulkSpeedModifier());
-	return LoadOut.GetBulkSpeedModifier();
+	local float totalBulk;
+	local float maxBulk, minBulk;
+	local float minSpeedModifier, maxSpeedModifier;
+
+	totalBulk = GetTotalBulk();
+	minBulk = Loadout.GetMinimumBulk();
+	maxBulk = Loadout.GetMaximumBulk();
+	minSpeedModifier = Loadout.GetMinimumSpeedModifier();
+	maxSpeedModifier = Loadout.GetMaximumSpeedModifier();
+
+	if(totalBulk < minBulk) {
+		totalBulk = minBulk;
+	}
+
+	totalBulk -= minBulk;
+	maxBulk -= minBulk;
+
+	return ((1.0 - (totalBulk / maxBulk)) * (maxSpeedModifier - minSpeedModifier)) + minSpeedModifier;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2614,7 +2672,8 @@ private function DirectHitByGrenade(
     float Damage,
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
-	float NonArmoredPlayerStingDuration)
+	float NonArmoredPlayerStingDuration,
+	class<DamageType> DamageType)
 {
 	if ( CantBeDazed() )
 		return;
@@ -2632,8 +2691,8 @@ private function DirectHitByGrenade(
                     Instigator,                           // Pawn EventInstigator
                     Location,							  // vector HitLocation
                     vect(0,0,0),                          // vector Momentum
-														  // class<DamageType> DamageType
-                    class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')) );
+					DamageType							  // class<DamageType> DamageType
+                     );
     }
 }
 
@@ -2648,7 +2707,8 @@ function ReactToLessLeathalShotgun(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
 	if ( CantBeDazed() )
 		return;
@@ -2666,8 +2726,8 @@ function ReactToLessLeathalShotgun(
                   Instigator,                           // Pawn EventInstigator
                   Location,							  // vector HitLocation
                   MomentumVector,                          // vector Momentum
-                            // class<DamageType> DamageType
-                  class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+                  DamageType          // class<DamageType> DamageType
+                   );
   }
 }
 
@@ -2677,9 +2737,10 @@ function ReactToGLTripleBaton(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
-	DirectHitByGrenade(Instigator, TripleBatonRound, Damage, PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration);
+	DirectHitByGrenade(Instigator, TripleBatonRound, Damage, PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration, DamageType);
 }
 
 // React to a direct hit from a grenade from the grenade launcher
@@ -2689,9 +2750,10 @@ function ReactToGLDirectGrenadeHit(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
-	DirectHitByGrenade(Instigator, DirectGrenadeHit, Damage, PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration);
+	DirectHitByGrenade(Instigator, DirectGrenadeHit, Damage, PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration, DamageType);
 }
 
 function ReactToMeleeAttack(

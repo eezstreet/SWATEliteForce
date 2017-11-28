@@ -2332,7 +2332,7 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 
 	if (ShouldBecomeIncapacitated())
 	{
-		BecomeIncapacitated(,Killer.Pawn);
+		BecomeIncapacitated(,Killer.Pawn, damageType);
 	}
 	else
 	{
@@ -2349,20 +2349,20 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 	}
 }
 
-simulated protected function TriggerPawnDied(Controller Killer)
+simulated protected function TriggerPawnDied(Controller Killer, class<DamageType> damageType)
 {
 	// if we're not incapacitated, trigger the pawn died trigger
 	// we have already triggered the incapacitated trigger by this point
 	if (! IsIncapacitated())
 	{
 		if (Killer != None)
-			SwatGameInfo(Level.Game).GameEvents.PawnDied.Triggered(self, Killer.Pawn, IsAThreat() && !IsCompliant() && !IsArrested());
+			SwatGameInfo(Level.Game).GameEvents.PawnDied.Triggered(self, Killer.Pawn, IsAThreat() && !IsCompliant() && !IsArrested(), damageType);
 		else
-			SwatGameInfo(Level.Game).GameEvents.PawnDied.Triggered(self, None, IsAThreat() && !IsCompliant() && !IsArrested());
+			SwatGameInfo(Level.Game).GameEvents.PawnDied.Triggered(self, None, IsAThreat() && !IsCompliant() && !IsArrested(), damageType);
 	}
 }
 
-function BecomeIncapacitated(optional name IncapaciatedIdleCategoryOverride, optional Pawn Incapacitator)
+function BecomeIncapacitated(optional name IncapaciatedIdleCategoryOverride, optional Pawn Incapacitator, optional class<DamageType> damageType)
 {
 	// set our health to 1 if it's lower than 1 (barely alive)
 	Health = Max(1, Health);
@@ -2384,7 +2384,7 @@ function BecomeIncapacitated(optional name IncapaciatedIdleCategoryOverride, opt
 		NotifyBecameIncapacitated(Incapacitator);
 
 		// notify the game events system that we are incapacitated
-		SwatGameInfo(Level.Game).GameEvents.PawnIncapacitated.Triggered(self, Incapacitator, IsAThreat() && !IsCompliant() && !IsArrested());
+		SwatGameInfo(Level.Game).GameEvents.PawnIncapacitated.Triggered(self, Incapacitator, IsAThreat() && !IsCompliant() && !IsArrested(), damageType);
 	}
 }
 
@@ -2404,7 +2404,7 @@ simulated function PostTakeDamage(int Damage, Pawn instigatedBy, Vector hitlocat
 	// become incapacitated if we should
 	if (ShouldBecomeIncapacitated())
 	{
-		BecomeIncapacitated(,instigatedBy);
+		BecomeIncapacitated(,instigatedBy,damageType);
 	}
 }
 

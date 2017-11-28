@@ -295,13 +295,6 @@ function bool CanExecuteCommand()
 	if (SwatAIRepo.GetHive().HasTurnedOnPlayer())
 		return false;
 
-	// return false if the officers are engaging somebody
-	if (AreOfficersBusyEngaging())
-	{
-		TriggerBusyEngagingSpeech();
-		return false;
-	}
-
 	// we can execute the command
 	return true;
 }

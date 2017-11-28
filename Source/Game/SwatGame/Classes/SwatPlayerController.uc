@@ -31,6 +31,8 @@ replication
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
 		Kick, KickBan, SAD, Switch, StartGame, AbortGame,
+		ForceAllToTeam, ForcePlayerToTeam, ToggleTeamLock, TogglePlayerTeamLock, ToggleMute,
+		AdminKillPlayer, AdminPromotePlayer,
 		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
@@ -427,6 +429,11 @@ exec function Switch( string S )
     SwatGameInfo(Level.Game).Admin.Switch(Self, S);
 }
 
+exec function NM()
+{
+	SwatGameInfo(Level.Game).Admin.Switch(Self, SwatGameReplicationInfo(Level.GetGameReplicationInfo()).NextMap);
+}
+
 exec function StartGame()
 {
     SwatGameInfo(Level.Game).Admin.StartGame(Self);
@@ -447,6 +454,51 @@ exec function ToggleIDs()
     ShouldDisplayPRIIds = !ShouldDisplayPRIIds;
 }
 
+exec function ForceAllToTeam(int TeamID)
+{
+	SwatGameInfo(Level.Game).Admin.ForceAllToTeam(Self, TeamID);
+}
+
+exec function ForcePlayerToTeam(int TeamID, string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ForcePlayerToTeam(Self, TeamID, PlayerName);
+}
+
+exec function ToggleTeamLock()
+{
+	SwatGameInfo(Level.Game).Admin.ToggleTeamLock(Self);
+}
+
+exec function TogglePlayerTeamLock(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.TogglePlayerTeamLock(Self, PlayerName);
+}
+
+exec function ToggleMute(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ToggleMute(Self, PlayerName);
+}
+
+exec function AdminKillPlayer(string PlayerName)
+{
+	SwatGameInfo(Level.Game).ForcePlayerDeath(SwatGamePlayerController(self), PlayerName);
+}
+
+exec function AdminPromotePlayer(string PlayerName)
+{
+	SwatGameInfo(Level.Game).ForcePlayerPromotion(SwatGamePlayerController(self), PlayerName);
+}
+
+exec function GoToSpec()
+{
+	SwatGameInfo(Level.Game).Admin.GoToSpectator(SwatGamePlayerController(self));
+}
+
+exec function ForceSpec(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ForceSpec(PlayerName, SwatGamePlayerController(self));
+}
+
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
 {
   Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
@@ -461,21 +513,21 @@ function ServerSetSettings( ServerSettings Settings,
                             int newMapIndex,
                             int newNumRounds,
                             int newMaxPlayers,
-                            int unused,
+                            bool newUseRoundStartTimer,
                             int newPostGameTimeLimit,
-                            int unused2,
+                            bool newUseRoundEndTimer,
                             int newMPMissionReadyTime,
                             bool newbShowTeammateNames,
-                            bool unused3,
+                            bool unused,
 							bool newbAllowReferendums,
                             bool newbNoRespawn,
                             bool newbQuickRoundReset,
                             float newFriendlyFireAmount,
-                            float unused4,
+                            float unused2,
 							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
-							bool unused5,
+							bool newbNoKillMessages,
 							bool newbDisableTeamSpecificWeapons)
 {
     Settings.SetServerSettings( self,
@@ -483,21 +535,21 @@ function ServerSetSettings( ServerSettings Settings,
                                 newMapIndex,
                                 newNumRounds,
                                 newMaxPlayers,
-                                unused,
+                                newUseRoundStartTimer,
                                 newPostGameTimeLimit,
-                                unused2,
+                                newUseRoundEndTimer,
                                 newMPMissionReadyTime,
                                 newbShowTeammateNames,
-                                unused3,
+                                unused,
 								newbAllowReferendums,
                                 newbNoRespawn,
                                 newbQuickRoundReset,
                                 newFriendlyFireAmount,
-                                unused4,
+                                unused2,
 								newCampaignCOOP,
 								newAdditionalRespawnTime,
 								newbNoLeaders,
-								unused5,
+								newbNoKillMessages,
 								newbDisableTeamSpecificWeapons );
 }
 

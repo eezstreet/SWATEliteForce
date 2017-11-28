@@ -87,10 +87,14 @@ replication
 {
     reliable if ( Role == ROLE_Authority )
         bCanBeArrested,
-        CharacterType, VoiceType, ReplicatedSkins, ReplicatedMesh, bReplicatedIsFemale,
+        CharacterType, VoiceType, /*ReplicatedSkins,*/ ReplicatedMesh, bReplicatedIsFemale,
         ReplicatedEquipment1Class, ReplicatedEquipment2Class,
         ReplicatedEquipment3Class, ReplicatedEquipment4Class, DesiredAIEquipment,
         ReplicatedShouldUsePatrolAnims;
+
+	reliable if ( Role == ROLE_Authority && Mesh != class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		ReplicatedSkins;
+
 }
 
 
@@ -112,8 +116,29 @@ simulated event PostBeginPlay()
     // * SERVER ONLY
     if ( Level.NetMode != NM_Client )
     {
-    CreateAwareness();
+    	CreateAwareness();
+	}
 }
+
+simulated event PostNetBeginPlay()
+{
+	local int i;
+
+	Super.PostNetBeginPlay();
+
+	// SUPER MEGA ULTRA BAD HACK
+	// Replicated skin 0 and 3 -do not replicate correctly- because of an engine bug.
+	// So as a result we need to override this from the archetype.
+	if(Level.NetMode != NM_Standalone)
+	{
+		if(Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		{
+			for(i = 0; i <= 3; i++)
+			{
+				ReplicatedSkins[i] = class'SwatGame.SwatAICharacterConfig'.default.OfficerHeavyDefaultMaterial[0];
+			}
+		}
+	}
 }
 
 simulated event ReplicatedMeshInfoOnChanged()
@@ -316,6 +341,11 @@ function SetPatrolAnimMovementSet()
 		// if we have nothing equipped, use the civilian patrol anim set
 		AnimSwapInSet(kAnimationSetCivilianWalk);
 	}
+}
+
+simulated function String GetHumanReadableName()
+{
+	return Instance.FriendlyName;
 }
 
 simulated function EAnimationSet GetEquipmentAimSet()
@@ -685,14 +715,13 @@ private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation,
 	GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
 }
 
-private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration)
+private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
 {
 	if ( CantBeDazed() )
         return;
 
 	if (Damage > 0.0) {
-		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0),
-				   class<DamageType>(DynamicLoadObject("SwatEquipment.GrenadeLauncherBase", class'Class')));
+		TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), DamageType);
   }
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
@@ -711,7 +740,8 @@ function ReactToLessLeathalShotgun(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
     if ( CantBeDazed() )
         return;
@@ -723,8 +753,7 @@ function ReactToLessLeathalShotgun(
                         Instigator,                           // Pawn EventInstigator
                         Location,							  // vector HitLocation
                         MomentumVector,                          // vector Momentum
-                                  // class<DamageType> DamageType
-                        class<DamageType>(DynamicLoadObject("SwatEquipment.BeanbagShotgunBase", class'Class')) );
+                        DamageType );
         }
 
   // Don't apply the dazed effect if the previous strike killed us and we were a threat
@@ -739,9 +768,10 @@ function ReactToGLTripleBaton(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
-    DirectHitByGrenade(Instigator, Damage, AIStingDuration);
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
 }
 
 // React to a direct hit from a grenade launched from the grenade launcher
@@ -751,9 +781,10 @@ function ReactToGLDirectGrenadeHit(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration)
+    float AIStingDuration,
+	class<DamageType> DamageType)
 {
-    DirectHitByGrenade(Instigator, Damage, AIStingDuration);
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
 }
 
 function ReactToMeleeAttack(
@@ -1141,6 +1172,65 @@ simulated event FellOutOfWorld(eKillZType KillType)
     }
 
     Super.FellOutOfWorld(KillType);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// These bits handle the special MP messages --eez
+
+function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
+{
+	local NetPlayer Player;
+	local name MsgType;
+	local string Msg;
+	local string WeaponName;
+
+	Player = NetPlayer(Incapacitator);
+	if(Player != None)
+	{
+		if(Player.GetTeamNumber() == 0)
+		{
+			MsgType = 'BlueIncapacitate';
+		}
+		else
+		{
+			MsgType = 'RedIncapacitate';
+		}
+
+		WeaponName = string(damageType.Outer.name) $ "." $ string(damageType.name);
+
+		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
+
+		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
+		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType);
+	}
+}
+
+function OnKilled(Actor Killer, class<DamageType> damageType)
+{
+	local NetPlayer Player;
+	local name MsgType;
+	local string Msg;
+	local string WeaponName;
+
+	Player = NetPlayer(Killer);
+	if(Player != None)
+	{
+		if(Player.GetTeamNumber() == 0)
+		{
+			MsgType = 'BlueKill';
+		}
+		else
+		{
+			MsgType = 'RedKill';
+		}
+
+		WeaponName = string(damageType.Outer.name) $ "." $ string(damageType.name);
+
+		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
+
+		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
+		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

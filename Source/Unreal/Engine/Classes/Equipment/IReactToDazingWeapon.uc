@@ -7,7 +7,8 @@ function ReactToLessLeathalShotgun(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration);
+    float AIStingDuration,
+	class<DamageType> DamageType);
 
 // Triple baton rounds are launched from the grenade launcher but are handle differently than a direct hit from a launched grenade
 function ReactToGLTripleBaton(
@@ -16,7 +17,8 @@ function ReactToGLTripleBaton(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration);
+    float AIStingDuration,
+	class<DamageType> DamageType);
 
 // React to a direct hit from a grenade launched from the grenade launcher
 function ReactToGLDirectGrenadeHit(
@@ -25,7 +27,8 @@ function ReactToGLDirectGrenadeHit(
     float PlayerStingDuration,
     float HeavilyArmoredPlayerStingDuration,
 	float NonArmoredPlayerStingDuration,
-    float AIStingDuration);
+    float AIStingDuration,
+	class<DamageType> DamageType);
 
 function ReactToMeleeAttack(
 	class<DamageType> MeleeDamageType,

@@ -54,6 +54,14 @@ const kMoveTowardMaxTime = 2.0;
 //
 // Selection Heuristic
 
+private function bool ShouldMoveToCover() {
+	local SwatAIRepository SwatAIRepo;
+	SwatAIRepo = SwatAIRepository(Level.AIRepo);
+
+	// test to see if we're moving and clearing
+	return (!SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
+}
+
 private function bool CanTakeCoverAndAttack()
 {
 	local Hive HiveMind;
@@ -63,8 +71,9 @@ private function bool CanTakeCoverAndAttack()
 	assert(m_Pawn != None);
 
 	// if we have a weapon, cover is available, the distance is greater than the minimum required
-	// between us and the officers, and we can find cover to attack from
+	// between us and the suspects, we can find cover to attack from and we are not currently moving and clearing
 	return (ISwatAI(m_Pawn).HasUsableWeapon() && AICoverFinder.IsCoverAvailable() &&
+		ShouldMoveToCover() &&
 		FindBestCoverToAttackFrom() &&
 		!CoverIsInBadPosition());
 }
@@ -607,7 +616,7 @@ state Running
  Begin:
 	waitForResourcesAvailable(achievingGoal.priority, achievingGoal.priority);
 
-	// create a sensor so we fail if we get to close to the officers
+	// create a sensor so we fail if we get to close to the suspects
 	DistanceSensor = DistanceSensor(class'AI_Sensor'.static.activateSensor( self, class'DistanceSensor', characterResource(), 0, 1000000 ));
 	assert(DistanceSensor != None);
 	DistanceSensor.SetParameters(MinDistanceToSuspectsWhileTakingCover, GetEnemy(), false);

@@ -20,9 +20,6 @@ var() private string CurrentMap;
 var() private eDifficultyLevel CurrentDifficulty;
 var() private eEntryType CurrentEntry;
 
-var config array<Name> ExtraMissionName "Name used for this mission (extra missions)";
-var config array<String> ExtraFriendlyName "Friendly name used for this mission (extra missions)";
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -145,21 +142,22 @@ private function BuildCampaignMissionList()
 
   if(CampaignPath == 0)
   {
-    for(i = 0; i < GC.MissionName.Length; i++)
+    for(i = 0; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; i++)
     {
       if( i <= CampaignAvailableIndex ) {
-        MyMapsList.List.Add(string(GC.MissionName[i]),,GC.FriendlyName[i],i,,true);
+        MyMapsList.List.Add(string(class'SwatGame.SwatVanillaCareerPath'.default.Missions[i]),,
+			class'SwatGame.SwatVanillaCareerPath'.default.MissionFriendlyNames[i],i,,true);
       }
     }
   }
   else if(CampaignPath == 1)
   {
-    for(i = 0; i < ExtraMissionName.Length; i++)
+    for(i = 0; i < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; i++)
     {
       if( i <= CampaignAvailableIndex ) {
         MyMapsList.List.Add(
-          string(ExtraMissionName[i]),,
-          ExtraFriendlyName[i],
+			string(class'SwatGame.SwatSEFCareerPath'.default.Missions[i]),,
+			class'SwatGame.SwatSEFCareerPath'.default.MissionFriendlyNames[i],
           i,,
           true);
       }

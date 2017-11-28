@@ -111,6 +111,7 @@ var private int     FailedToValidate;
 var private bool    SwitchedTabs;
 var private bool    SwitchedWeapons;
 var private bool    PopulatingAmmoInformation;
+var private bool	PopulatingWeaponInformation;
 
 ///////////////////////////
 // Initialization & Page Delegates
@@ -338,6 +339,10 @@ function UpdateWeights() {
 
   bulkDisplay = MyCurrentLoadOut.GetBulkPercentage();
   bulkDisplay *= 100.0;
+  if(bulkDisplay < 0.0)
+  {
+	  bulkDisplay = 0.0;
+  }
 
   MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
   MyEquipmentBulkLabel.Caption =""$bulkDisplay$"%";
@@ -614,7 +619,7 @@ function UpdateIndex( Pocket thePocket )
 
 function SaveCurrentLoadout()
 {
-  assert(false); // needs to be implemented by children
+	assert(false); // needs to be implemented by children
 }
 
 ///////////////////////////
@@ -690,6 +695,11 @@ private function InternalComboBoxOnSelection(GUIComponent Sender)
             break;
 
         case MyWeaponBox:
+			if(PopulatingWeaponInformation)
+			{
+				break;
+			}
+
             SwitchedWeapons = true;
 
             if(ActiveTab == 0)
@@ -822,6 +832,7 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   for(i = 0; i < UnlockedWeapons.Length; i++) {
     CandidateWeapons[CandidateWeapons.Length] = UnlockedWeapons[i];
   }
+  log("CandidateWeapons length is "$CandidateWeapons.Length);
 
   if(!bPrimaryWeapon) {
     //log("Prune the candidate weapons so that primary weapons are not included in the secondary weapons list...");
@@ -874,15 +885,16 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   MyWeaponCategoryBox.List.Sort();
 
   //log("Update the list of weapons for the current category...");
-  RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
-
   log("Set the selected weapon: CurrentWeaponEquipClass="$CurrentWeaponEquipClass$", CurrentWeapon="$CurrentWeapon);
   CategoryNum = MyWeaponCategoryBox.List.FindExtraIntData(CurrentWeaponEquipClass, false, true);
+
+  RepopulateWeaponInformationForNewCategory(CurrentWeaponEquipClass);
+
   WeaponNum = MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
 
   if(CategoryNum == -1 || WeaponNum == -1) {
     // The equipment failed to validate. Try again.
-    log("!! Equipment could not be found, resetting to default !!");
+    log("!! Equipment could not be found (categorynum is "$CategoryNum$", weaponnum is "$WeaponNum$"), resetting to default !!");
     WeaponNum = 0;
     if(bPrimaryWeapon) {
       CurrentWeaponEquipClass = DefaultPrimaryClass;
@@ -899,21 +911,29 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
 // We have selected a new weapon category, reset the weapon list
 protected function RepopulateWeaponInformationForNewCategory(WeaponEquipClass NewClass)
 {
-  local int i;
-  local class<SwatWeapon> Weapon;
+	local int i;
+	local class<SwatWeapon> Weapon;
 
-  MyWeaponBox.Clear();
+	PopulatingWeaponInformation = true;
 
-  for(i = 0; i < CandidateWeapons.Length; i++) {
-    Weapon = CandidateWeapons[i];
-    if(Weapon.default.WeaponCategory != NewClass) {
-      continue;
-    }
+	MyWeaponBox.Clear();
 
-    MyWeaponBox.AddItem(Weapon.static.GetFriendlyName(), Weapon);
-  }
+	for(i = 0; i < CandidateWeapons.Length; i++)
+	{
+	    Weapon = CandidateWeapons[i];
+	    if(Weapon.default.WeaponCategory != NewClass)
+		{
+	    	continue;
+	    }
 
-  MyWeaponBox.List.Sort();
+	    MyWeaponBox.AddItem(Weapon.static.GetFriendlyName(), Weapon);
+	}
+
+	MyWeaponBox.List.Sort();
+
+	PopulatingWeaponInformation = false;
+
+	MyWeaponBox.SetIndex(0);
 }
 
 // We have selected a new weapon, reset the ammo list

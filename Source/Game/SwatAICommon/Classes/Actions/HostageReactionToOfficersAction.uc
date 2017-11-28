@@ -156,14 +156,21 @@ latent function PlayInitialReaction()
 
 private function TriggerReactionSpeech()
 {
-	if (bWasInDanger)
-	{
-		ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerSpottedOfficerScaredSpeech();
-	}
-	else
-	{
-		ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerSpottedOfficerNormalSpeech();
-	}
+    if (bWasInDanger)
+    {
+        ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerSpottedOfficerScaredSpeech();
+    }
+    else
+    {
+        if (FRand() < 0.5)
+        {
+            ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerSpottedOfficerNormalSpeech();
+        }
+        else
+        {
+            ISwatHostage(m_Pawn).GetHostageSpeechManagerAction().TriggerSpottedOfficerSurprisedSpeech();
+        }
+    }
 }
 
 state Running

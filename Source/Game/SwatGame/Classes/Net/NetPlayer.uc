@@ -968,6 +968,15 @@ function OnTeamChanging(TeamInfo NewTeam)
 {
 }
 
+function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
+{
+	SwatGameInfo(Level.Game).Broadcast(self, GetHumanReadableName(), 'Fallen');
+}
+
+function OnKilled(Actor Killer, class<DamageType> damageType)
+{
+}
+
 simulated protected function bool CheckDesiredItemAndEquipIfNeeded()
 {
 	// We can't equip anything except a secondary weapon if we have the smash and grab case

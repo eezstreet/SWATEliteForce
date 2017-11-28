@@ -1416,6 +1416,10 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 // %w = Owner's Weapon ItemName
 static native function string ParseKillMessage( string KillerName, string VictimName, string DeathMessage );
 
+function AdminLog(coerce string Message, name Type)
+{
+}
+
 function Kick( Controller Kicker, string Kickee )
 {
 	if( AccessControl.Kick(Kickee) )
@@ -1426,6 +1430,28 @@ function KickBan( Controller Kicker, string Kickee )
 {
 	if( AccessControl.KickBan(Kickee) )
 	    Broadcast( Kicker, Kicker.PlayerReplicationInfo.PlayerName$"\t"$Kickee, 'KickBan' );
+}
+
+function bool RemoteKick(string Kicker, string Kickee)
+{
+	if( AccessControl.Kick(Kickee))
+	{
+		Broadcast(None, Kicker$"\t"$Kickee, 'Kick');
+		AdminLog(Kicker$"\t"$Kickee, 'Kick');
+		return true;
+	}
+	return false;
+}
+
+function bool RemoteKickBan(string Kicker, string Kickee)
+{
+	if(AccessControl.KickBan(Kickee))
+	{
+		Broadcast(None, Kicker$"\t"$Kickee, 'KickBan');
+		AdminLog(Kicker$"\t"$Kickee, 'KickBan');
+		return true;
+	}
+	return false;
 }
 
 function VotedToBeKicked(PlayerController Kickee)
@@ -1638,9 +1664,9 @@ local class<MapList> MapListClass;
 // Message broadcasting functions (handled by the BroadCastHandler)
 
 #if IG_SWAT // dbeswick: broadcast send to Target only
-event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location )
+event Broadcast( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target )
 {
-	BroadcastHandler.Broadcast(Sender,Msg,Type,Target,Location);
+	BroadcastHandler.Broadcast(Sender,Msg,Type,Target);
 }
 #else
 event Broadcast( Actor Sender, coerce string Msg, optional name Type )
@@ -1648,6 +1674,11 @@ event Broadcast( Actor Sender, coerce string Msg, optional name Type )
 	BroadcastHandler.Broadcast(Sender,Msg,Type);
 }
 #endif
+
+function BroadcastLocation( Actor Sender, coerce string Msg, optional name Type, optional PlayerController Target, optional string Location)
+{
+	BroadcastHandler.Broadcast(Sender, Msg, Type, Target, Location);
+}
 
 function BroadcastTeam( Controller Sender, coerce string Msg, optional name Type, optional string Location )
 {

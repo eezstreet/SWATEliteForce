@@ -46,6 +46,7 @@ var config float				MinBarricadeDelayTime;
 var config float				MaxBarricadeDelayTime;
 
 var config float				ReactionSpeechChance;
+var config float				OtherReactionSpeechChance;
 var config float				CrouchAtFleePointChance;
 var config float				AimAtClosestDoorTime;
 
@@ -400,8 +401,11 @@ latent function LockDoor(Door TargetDoor)
 		CurrentMoveToDoorGoal.SetWalkThreshold(0.0);
 
 		CurrentMoveToDoorGoal.postGoal(self);
-		// do some speech
-		ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerBarricadeSpeech();
+		// trigger the other (unused) barricade speech based on a die roll
+		if (FRand() < OtherReactionSpeechChance)
+		{
+			ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerBarricadeSpeech();
+		}
 		WaitForGoal(CurrentMoveToDoorGoal);
 		CurrentMoveToDoorGoal.unPostGoal(self);
 

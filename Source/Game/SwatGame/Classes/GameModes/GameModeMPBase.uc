@@ -52,10 +52,10 @@ function Initialize()
 {
     local int i;
     local SwatMPStartCluster ClusterPoint;
- 
+
  	if (Level.GetEngine().EnableDevTools)
 		mplog( "Initialize() in GameModeMPBase." );
-		
+
     Super.Initialize();
 
 	SGI.gameEvents.playerDied.Register(self);
@@ -79,7 +79,7 @@ function Initialize()
             respawnSecondsRemaining[i] = DefaultRespawnSecondsRemaining;
         }
     }
-    
+
 	if (RequiresStartClustersCache())
 	{
 		// Cache the start clusters.
@@ -89,7 +89,7 @@ function Initialize()
 			{
 				//ensure all clusters are enabled at the start of the round
 				ClusterPoint.IsEnabled = true;
-	        
+
 				if ( ClusterPoint.ClusterTeam == MPT_Swat )
 				{
 					Team0StartClusters[Team0StartClusters.Length] = ClusterPoint;
@@ -148,7 +148,7 @@ function AssignPlayerRoles()
 
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---GameModeMPBase::AssignPlayerRoles()." );
-    
+
     for (Controller = Level.ControllerList; Controller != none; Controller = Controller.NextController)
     {
         PlayerController = SwatGamePlayerController(Controller);
@@ -188,7 +188,7 @@ function SetStartClustersForRoundStart()
         {
 		 	if (Level.GetEngine().EnableDevTools)
 				mplog( "...Examining cluster: "$ClusterPoint );
-				
+
             if ( (ClusterPoint.ClusterTeam == MPT_Swat && i == 0)
                  || (ClusterPoint.ClusterTeam == MPT_Suspects && i == 1) )
             {
@@ -196,7 +196,7 @@ function SetStartClustersForRoundStart()
                 {
  					if (Level.GetEngine().EnableDevTools)
 						log( "......setting CurrentStartCluster to "$ClusterPoint );
-	                
+
 					CurrentStartCluster[i] = ClusterPoint;
 					break;
 				}
@@ -224,7 +224,7 @@ function SetSpawnClusterEnabled( name ClusterName, bool SetEnabled )
 private function SetSpawnClusterEnabledForArray( array<SwatMPStartCluster> TeamStartClusters, name ClusterName, bool SetEnabled )
 {
     local int i;
-    
+
     for( i = 0; i < TeamStartClusters.Length; i++ )
     {
         if( TeamStartClusters[i].Label == ClusterName )
@@ -273,7 +273,7 @@ private function CalculateBestRespawnCluster(out SwatMPStartCluster outCluster,
     {
         if( !TeamStartClusters[i].IsEnabled )
             continue;
-            
+
         ThisClusterDistanceFromEnemy = CalculateClusterDistanceFromEnemyPawns(TeamStartClusters[i], EnemyTeamID);
         // The farther the better..
         if (!bFoundFirstDistance ||
@@ -284,7 +284,7 @@ private function CalculateBestRespawnCluster(out SwatMPStartCluster outCluster,
             BestClusterDistanceFromEnemy = ThisClusterDistanceFromEnemy;
         }
     }
-    
+
     AssertWithDescription( outCluster != None, "There are no valid spawn clusters enabled for the current mode.  At least one spawn cluster must be made available for spawning!" );
 }
 
@@ -301,7 +301,7 @@ private function float CalculateClusterDistanceFromEnemyPawns(SwatMPStartCluster
 
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---GameModeMPBase::CalculateClusterDistanceFromEnemyPawns()." );
-    
+
     for (Controller = Level.ControllerList; Controller != none; Controller = Controller.NextController)
     {
         PlayerController = SwatGamePlayerController(Controller);
@@ -353,7 +353,7 @@ function SwatMPStartPoint FindNetPlayerStart( Controller Player )
 	{TeamID = SwatRepo(Level.GetRepo()).GuiConfig.GetDesiredEntryPoint() * 2;}
 	else
 	{TeamID = thePlayerController.SwatRepoPlayerItem.TeamID;}
-	
+
     TheNetTeam = SGI.GetTeamFromID( TeamID );
 
     TheStartCluster = CurrentStartCluster[TeamID];
@@ -367,7 +367,7 @@ function SwatMPStartPoint FindNetPlayerStart( Controller Player )
     {
 	 	if (Level.GetEngine().EnableDevTools)
 			log( "   testing point: "$i );
-			
+
         thePoint = TheStartCluster.StartPoints[ i ];
         assert( thePoint != None );
 
@@ -376,7 +376,7 @@ function SwatMPStartPoint FindNetPlayerStart( Controller Player )
             // Use this start point
 		 	if (Level.GetEngine().EnableDevTools)
 				mplog( "  using point: "$i );
-				
+
             HighestPointUsed[TeamID] = i;
             break;
         }
@@ -391,7 +391,7 @@ function SwatMPStartPoint FindNetPlayerStart( Controller Player )
     {
 	 	if (Level.GetEngine().EnableDevTools)
 			mplog( " returning thePoint. thePoint="$thePoint );
-			
+
         return thePoint;
     }
 }
@@ -404,7 +404,7 @@ private function bool SpawnPointCanBeUsed( Actor thePoint )
     {
 	 	if (Level.GetEngine().EnableDevTools)
 			mplog( ".......Touching["$j$"]="$thePoint.Touching[j] );
-			
+
         if ( thePoint.Touching[j].bBlockActors )
         {
 		 	if (Level.GetEngine().EnableDevTools)
@@ -471,9 +471,9 @@ function RespawnReinforcements( int TeamID )
         //mplog( "...IsCuffed()="$SGPC.IsCuffed() );
         //mplog( "...IsTheVIP()="$TheNetPlayer.IsTheVIP() );
 
-        if( SGPC != none 
+        if( SGPC != none
             && SGPC.HasEnteredFirstRoundOfNetworkGame()                             //only spawn if the player has clicked ready
-            && SGPC.SwatRepoPlayerItem.TeamID == TeamID 
+            && SGPC.SwatRepoPlayerItem.TeamID == TeamID
             && ( SGPC.IsDead() || (SGPC.IsCuffed() && !TheNetPlayer.IsTheVIP()) ))
         {
             //mplog( "......restarting player!" );
@@ -484,7 +484,7 @@ function RespawnReinforcements( int TeamID )
         {
             //mplog( "......NOT restarting player." );
         }
-        
+
         //ensure somebody is always available as last killer
         if( SGPC != None && InterestingViewTarget == None )
             InterestingViewTarget = SGPC.Pawn;
@@ -508,18 +508,18 @@ function NetRoundTimeRemaining( int TimeRemaining )
 {
     //broadcast the time remaining in the round
     SwatGameReplicationInfo(SGI.GameReplicationInfo).RoundTime = TimeRemaining;
-    
+
     if( SwatRepo(Level.GetRepo()).GuiConfig.SwatGameState != GAMESTATE_MidGame )
         return;
-        
+
     if( TimeRemaining <= 0 )
         return;
-        
+
     if ( TimeRemaining <= 60 && !NotifiedOneMinuteWarning )
     {
         NotifiedOneMinuteWarning = true;
 
-        //dkaplan: this can be done as a broadcast to all players  
+        //dkaplan: this can be done as a broadcast to all players
         SGI.Broadcast( None, "", 'OneMinWarning' );
     }
 
@@ -527,7 +527,7 @@ function NetRoundTimeRemaining( int TimeRemaining )
     {
         NotifiedTenSecondsWarning = true;
 
-        //dkaplan: this can be done as a broadcast to all players  
+        //dkaplan: this can be done as a broadcast to all players
         SGI.Broadcast( None, "", 'TenSecWarning' );
     }
 }
@@ -546,7 +546,7 @@ function OnPawnArrested( Pawn player, Pawn Arrester )
 	    mplog( self$"---GameModeMPBase::OnPawnArrested(). player="$player$", Arrester="$Arrester );
 
     swatVictim = SwatGamePlayerController(player.Controller);
-    
+
     // In Coop, we don't want to do any of this stuff. In Coop, swatVictim
     // will be None because the arrestee is an AI.
     if ( swatVictim != None )
@@ -572,10 +572,10 @@ function OnPawnArrested( Pawn player, Pawn Arrester )
         swatArresterInfo.netScoreInfo.IncrementArrests();
         swatArresterTeam.netScoreInfo.IncrementArrests();
     }
-    
+
     SGI.BroadcastArrestedMessage( swatArrester, swatVictim );
     }
-    
+
     InterestingViewTarget = Arrester;
 }
 
@@ -647,7 +647,7 @@ function OnPawnDied( Pawn Pawn, Actor Killer, bool WasAThreat )
 
 //called when a player joins a team
 // subclasses should implement if mode-specific functionality is needed.
-function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, NetTeam CurrentTeam ) 
+function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, NetTeam CurrentTeam )
 {
 }
 
@@ -704,7 +704,7 @@ protected function DecrementRespawnTimer( int team )
             OnRespawnTimerAtZero( team );
         }
     }
-    
+
     UpdatePlayerDeathFlags( team );
 }
 
@@ -737,7 +737,7 @@ protected function OnRespawnTimerAtZero(int team)
 	// dbeswick: set respawn wave time
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( "...setting respawn timer for team "$team$" to: "$DefaultRespawnSecondsRemaining + ServerSettings(Level.CurrentServerSettings).AdditionalRespawnTime);
-	    
+
     respawnSecondsRemaining[team] = DefaultRespawnSecondsRemaining + ServerSettings(Level.CurrentServerSettings).AdditionalRespawnTime;
 }
 
@@ -767,28 +767,10 @@ protected function DisplayRespawnTimer( int team )
 
 protected final function NetRoundFinished( ESwatRoundOutcome RoundOutcome )
 {
-    switch( RoundOutcome )
-    {
-        case SRO_SwatVictoriousNormal:
-        case SRO_SwatVictoriousRapidDeployment:
-        case SRO_SwatVictoriousVIPEscaped:
-        case SRO_SwatVictoriousSuspectsKilledVIPInvalid:
-		case SRO_SwatVictoriousSmashAndGrab:
-            SwatRepo(Level.GetRepo()).IncrementRoundsWon( 0 );
-            break;
-        case SRO_SuspectsVictoriousNormal:
-        case SRO_SuspectsVictoriousRapidDeployment:
-        case SRO_SuspectsVictoriousKilledVIPValid:
-        case SRO_SuspectsVictoriousSwatKilledVIP:
-		case SRO_SuspectsVictoriousSmashAndGrab:
-            SwatRepo(Level.GetRepo()).IncrementRoundsWon( 1 );
-            break;
-    }
-    
     OnMissionEnded();
     SetAllPawnsRelevent();
     StartEndRoundSequence();
-    
+
     EndRoundSequenceTimer = Spawn(class'Timer');
     assert(EndRoundSequenceTimer != None);
     EndRoundSequenceTimer.timerDelegate = SetEndRoundTarget;
@@ -807,7 +789,7 @@ protected function SetAllPawnsRelevent()
 
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---GameModeMPBase::SetAllPawnsRelevent()." );
-    
+
     for (Controller = Level.ControllerList; Controller != none; Controller = Controller.NextController)
     {
         PlayerController = SwatGamePlayerController(Controller);
@@ -827,7 +809,7 @@ protected function StartEndRoundSequence()
 
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---GameModeMPBase::StartEndRoundSequence()." );
-    
+
     for (Controller = Level.ControllerList; Controller != none; Controller = Controller.NextController)
     {
         PlayerController = SwatGamePlayerController(Controller);
@@ -854,10 +836,10 @@ protected function SetEndRoundTarget()
         TargetName = InterestingViewTarget.GetHumanReadableName();
         TargetOnSWAT = NetPlayer(InterestingViewTarget).GetTeamNumber() == 0;
     }
-        
+
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---GameModeMPBase::SetEndRoundTarget(). InterestingViewTarget = "$InterestingViewTarget );
-    
+
     for (Controller = Level.ControllerList; Controller != none; Controller = Controller.NextController)
     {
         PlayerController = SwatGamePlayerController(Controller);
@@ -870,39 +852,39 @@ protected function SetEndRoundTarget()
 }
 
 ////////////////////////////////////////////////////////////////////
-// When destroyed, the GameMode should reset all of the applicable 
+// When destroyed, the GameMode should reset all of the applicable
 //   game state data - required for Quick Restart
 ////////////////////////////////////////////////////////////////////
 simulated event Destroyed()
 {
     local int i;
     local TriggerVolume TV;
-    
+
     SGI.gameEvents.playerDied.UnRegister(self);
     SGI.gameEvents.pawnDied.UnRegister(self);
     SGI.gameEvents.pawnArrested.UnRegister(self);
-    
+
     //get rid of all the pawns on all the clients
     DestroyAllPawns();
 
     //reset spawning
     Level.SpawningManager.ResetForMPQuickRestart(Level);
-    
+
     //clear team scores
     for( i = 0; i < 2; i++ )
     {
         Teams[i].NetScoreInfo.ResetForMPQuickRestart();
     }
-    
+
     //clear the player scores
     SwatGameReplicationInfo(Level.Game.GameReplicationInfo).ResetPlayerScoresForMPQuickRestart();
-    
+
     //reset all trigger volumes to initial states
     foreach AllActors( class'TriggerVolume', TV )
     {
         TV.ResetForMPQuickRestart();
     }
-    
+
     if (EndRoundSequenceTimer != None)
     {
         EndRoundSequenceTimer.Destroy();
@@ -923,7 +905,7 @@ protected final function DestroyAllPawns()
 
  	if (Level.GetEngine().EnableDevTools)
 	    mplog( self$"---GameModeMPBase::DestroyAllPawns()." );
-    
+
     for (Controller = Level.ControllerList; Controller != none; Controller = Controller.NextController)
     {
         PlayerController = SwatGamePlayerController(Controller);
@@ -933,7 +915,7 @@ protected final function DestroyAllPawns()
             PlayerController.ClientDestroyAllPawns();
         }
     }
-    
+
     foreach AllActors( class'Pawn', P )
     {
         P.Destroy();

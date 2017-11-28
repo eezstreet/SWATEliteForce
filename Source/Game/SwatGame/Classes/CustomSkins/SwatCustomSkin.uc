@@ -4,7 +4,6 @@ class SwatCustomSkin extends Engine.Equipment
 
 import enum eTeamValidity from SwatGUIConfig;
 
-var(CustomSkin) Config eTeamValidity SkinTeam;
 var(CustomSkin) Config localized String SkinFriendlyName;
 var(CustomSkin) Config localized String SkinDescription;
 var(CustomSkin) Config Material GUISkinImage;

@@ -27,6 +27,14 @@ var(SWATGui) protected EditInline Config GUIListBox SelectedRights;
 var(SWATGui) protected EditInline Config GUIButton AddRights;
 var(SWATGui) protected EditInline Config GUIButton RemoveRights;
 
+// WebAdmin
+var(SWATGui) protected EditInline Config GUICheckBoxButton WebAdminEnabled;
+var(SWATGui) protected EditInline Config GUINumericEdit WebAdminPort;
+
+// Logging
+var(SWATGui) protected EditInline Config GUICheckBoxButton ChatLoggingEnabled;
+var(SWATGui) protected EditInline Config GUICheckBoxButton MultipleChatLogs;
+
 var private SwatAdminPermissions SelectedPermission;
 
 var SwatAdmin AdminData;
@@ -93,6 +101,9 @@ function InternalOnChange(GUIComponent Sender)
 		case MyRolePasswordBox:
 			SelectedPermission.HashPassword = MyRolePasswordBox.GetText();
 			break;
+		case WebAdminEnabled:
+			WebAdminPort.SetEnabled(WebAdminEnabled.bChecked);
+			break;
 	}
 }
 
@@ -133,6 +144,7 @@ function InitComponent(GUIComponent MyOwner)
 	AvailableRights.OnChange = InternalOnChange;
 	SelectedRights.OnChange = InternalOnChange;
 	MyRolePasswordBox.OnChange = InternalOnChange;
+	WebAdminEnabled.OnChange = InternalOnChange;
 	MyNewRoleButton.OnClick = InternalOnClick;
 	MyDeleteRoleButton.OnClick = InternalOnClick;
 	AddRights.OnClick = InternalOnClick;
@@ -161,6 +173,7 @@ function UpdateSelectedPermission(SwatAdminPermissions perm, optional string Rol
 	{
 		if(perm.GetPermission(AdminPermissions(i)))
 		{
+			log("Adding "$AdminPermissions(i)$" to "$perm$" because we have it");
 			SelectedRights.List.Add(PermissionNames[i], , , i);
 		}
 		else
@@ -239,6 +252,7 @@ function AddToRights()
 	AvailableRights.List.RemoveItem(SelectedRightName);
 
 	SelectedRights.List.Add(SelectedRightName, , , SelectedRight);
+	log("Adding permission "$AdminPermissions(SelectedRight));
 	SelectedPermission.SetPermission(AdminPermissions(SelectedRight), true);
 }
 
@@ -258,18 +272,22 @@ function RemFromRights()
 	SelectedRights.List.RemoveItem(SelectedRightName);
 
 	AvailableRights.List.Add(SelectedRightName, , , SelectedRight);
+	log("Removing permission "$AdminPermissions(SelectedRight));
 	SelectedPermission.SetPermission(AdminPermissions(SelectedRight), false);
 }
 
 // Called either when the combobox gets changed, or we switch from guest permissions to custom permissions
 function RoleSelectionChanged()
 {
+	log("RoleSelectionChanged()");
 	UpdateSelectedPermission(AdminData.Permissions[MyRoleListBox.GetIndex()]);
 }
 
 function LoadServerSettings( optional bool bReadOnly )
 {
 	local int i;
+
+	log("SwatServerSetupAdminPanel::LoadServerSettings");
 
 	if(bReadOnly)
 	{
@@ -283,6 +301,7 @@ function LoadServerSettings( optional bool bReadOnly )
 	}
 
 	AdminData = PlayerOwner().Spawn(class'SwatAdmin', None, 'AdminData');
+	log("Spawned "$AdminData);
 
 	for(i = 0; i < AdminData.Permissions.Length; i++)
 	{
@@ -290,12 +309,25 @@ function LoadServerSettings( optional bool bReadOnly )
 	}
 
 	SelectedPermission = AdminData.GuestPermissions;
+
+	WebAdminEnabled.SetChecked(class'SwatAdmin'.default.UseWebAdmin);
+	WebAdminPort.SetValue(class'SwatAdmin'.default.WebAdminPort);
+
+	ChatLoggingEnabled.SetChecked(class'SwatAdmin'.default.UseChatLog);
+	MultipleChatLogs.SetChecked(class'SwatAdmin'.default.UseNewChatLogPerDay);
 }
 
 // Called whenever the server settings need to be saved (obviously)
 function SaveServerSettings()
 {
 	local int i;
+
+	AdminData.default.UseWebAdmin = WebAdminEnabled.bChecked;
+	AdminData.default.WebAdminPort = WebAdminPort.Value;
+	AdminData.default.UseChatLog = ChatLoggingEnabled.bChecked;
+	AdminData.default.UseNewChatLogPerDay = MultipleChatLogs.bChecked;
+	AdminData.WebAdminPort = WebAdminPort.Value;
+	AdminData.UseWebAdmin = WebAdminEnabled.bChecked;
 
 	AdminData.PermissionNames.Length = AdminData.Permissions.Length;
 	for(i = 0; i < AdminData.Permissions.Length; i++)
@@ -324,6 +356,16 @@ defaultproperties
 	PermissionNames[4]="End Level"
 	PermissionNames[5]="Change Settings"
 	PermissionNames[6]="Vote Immunity"
+	PermissionNames[7]="WebAdmin Chat"
+	PermissionNames[8]="Lock/Unlock Teams"
+	PermissionNames[9]="Lock/Unlock Player Team"
+	PermissionNames[10]="Force Everyone to Team"
+	PermissionNames[11]="Force Player to Team"
+	PermissionNames[12]="Mute Players"
+	PermissionNames[13]="Kill Players"
+	PermissionNames[14]="Promote Players"
+	PermissionNames[15]="Go to Spectator"
+	PermissionNames[16]="Force Player to Spectate"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -332,4 +374,14 @@ defaultproperties
 	PermissionDescription[4]="End the level before the mission is complete."
 	PermissionDescription[5]="Change the server's settings."
 	PermissionDescription[6]="Provides immunity to kick and kickban votes."
+	PermissionDescription[7]="Provides the ability to chat with players using WebAdmin."
+	PermissionDescription[8]="Lock/Unlock the teams, preventing/allowing players to switch teams."
+	PermissionDescription[9]="Lock/Unlock a player's team, preventing/allowing them to switch teams."
+	PermissionDescription[10]="Force everyone in the server to one team (red or blue)."
+	PermissionDescription[11]="Force a player to a team (red or blue)."
+	PermissionDescription[12]="Mute/unmute a player. When a player is muted, they are unable to speak."
+	PermissionDescription[13]="Kill players."
+	PermissionDescription[14]="Promote players to leaders. This only works when the server has CO-OP leaders enabled."
+	PermissionDescription[15]="Allows a player to go to spectator, a viewing mode where players can fly through walls and other obstacles"
+	PermissionDescription[16]="Kill a player and force them to spectator, a viewing mode where players can fly through walls and other obstacles."
 }

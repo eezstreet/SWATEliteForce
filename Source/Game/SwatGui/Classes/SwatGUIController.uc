@@ -402,15 +402,19 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'TeamSay':
         case 'SayLocalized':
         case 'TeamSayLocalized':
+		case 'WebAdminChat':
         case 'CommandGiven':
-        case 'SwatKill':
-        case 'SuspectsKill':
-        case 'SwatSuicide':
-        case 'SuspectsSuicide':
-        case 'SwatTeamKill':
-        case 'SuspectsTeamKill':
-        case 'SwatArrest':
-        case 'SuspectsArrest':
+        case 'BlueKill':
+        case 'RedKill':
+        case 'BlueSuicide':
+        case 'RedSuicide':
+		case 'PenaltyIssuedChat':
+        case 'TeamKill':
+        case 'BlueArrest':
+        case 'RedArrest':
+		case 'BlueIncapacitate':
+		case 'RedIncapacitate':
+		case 'Fallen':
         case 'PlayerConnect':
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
@@ -434,6 +438,23 @@ function bool OnMessageRecieved( String Msg, Name Type )
 		    case 'CoopMessage':
 		    case 'StatsValidatedMessage':
 		    case 'StatsBadProfileMessage':
+			case 'TeamSwitchMax':
+			case 'TeamSwitchLocked':
+			case 'TeamSwitchBalance':
+			case 'TeamSwitchPlayerLocked':
+			case 'ForceTeamRed':
+			case 'ForceTeamBlue':
+			case 'ForcePlayerBlue':
+			case 'ForcePlayerRed':
+			case 'LockTeams':
+			case 'UnlockTeams':
+			case 'LockPlayerTeam':
+			case 'UnlockPlayerTeam':
+			case 'YouAreMuted':
+			case 'Mute':
+			case 'Unmute':
+			case 'AdminKill':
+			case 'AdminLeader':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {
@@ -582,13 +603,24 @@ function UpdateTimers()
 {
     local SwatGameReplicationInfo SGRI;
     local SwatPlayerReplicationInfo SPRI;
+	local ServerSettings Settings;
+
+	Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
 
     SGRI = SwatGameReplicationInfo(SwatGamePlayerController(ViewportOwner.Actor).GameReplicationInfo);
     SPRI = SwatPlayerReplicationInfo(SwatGamePlayerController(ViewportOwner.Actor).PlayerReplicationInfo);
 
     SetTimer( TIMER_Special, SGRI.SpecialTime );
     UpdateSpecialTimerLabel();
-    SetTimer( TIMER_Mission, SGRI.RoundTime );
+	if((Repo.GuiConfig.SwatGameState == GAMESTATE_PreGame && Settings.bUseRoundStartTimer) ||
+		(Repo.GuiConfig.SwatGameState == GAMESTATE_PostGame && Settings.bUseRoundEndTimer))
+	{
+		SetTimer( TIMER_Mission, SGRI.RoundTime );
+	}
+	else
+	{
+		SetTimer( TIMER_Mission, 0 );
+	}
     UpdateMissionTimerLabel();
     SetTimer( TIMER_Respawn, SPRI.RespawnTime );
 	SetTimer( TIMER_Referendum, SGRI.RefMgr.GetTimeRemaining() );
@@ -734,19 +766,37 @@ final private function UpdateSpecialTimerLabel()
 
 final private function UpdateMissionTimerLabel()
 {
+	local ServerSettings Settings;
+
+	Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
+
     if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
         GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
     {
         switch( GuiConfig.SwatGameState )
         {
             case GAMESTATE_PreGame:
-                TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.SetCaption( PreGameText );
+				if(!Settings.bUseRoundStartTimer)
+				{
+					TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.Hide();
+				}
+				else
+				{
+					TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.SetCaption( PreGameText );
+				}
                 break;
             case GAMESTATE_MidGame:
                 TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.SetCaption( MidGameText );
                 break;
             case GAMESTATE_PostGame:
-                TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.SetCaption( PostGameText );
+				if(!Settings.bUseRoundEndTimer)
+				{
+					TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.Hide();
+				}
+				else
+				{
+					TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.SetCaption( PostGameText );
+				}
                 break;
             default:
                 TimeDisplays[eTimeType.TIMER_Mission].TimerLabel.Hide();

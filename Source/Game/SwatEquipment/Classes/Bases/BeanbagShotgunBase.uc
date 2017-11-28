@@ -13,7 +13,7 @@ simulated function DealDamage(Actor Victim, int Damage, Pawn Instigator, Vector 
     // Don't deal damage for pawns, instead make them effected by the sting grenade
     if ( Victim.IsA( 'Pawn' ) )
     {
-      IReactToDazingWeapon(Victim).ReactToLessLeathalShotgun(Pawn(Owner), Damage, MomentumVector, PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration, AIStingDuration);
+      IReactToDazingWeapon(Victim).ReactToLessLeathalShotgun(Pawn(Owner), Damage, MomentumVector, PlayerStingDuration, HeavilyArmoredPlayerStingDuration, NonArmoredPlayerStingDuration, AIStingDuration, DamageType);
 
       log("Called ReactToLessLeathalShotgun on: "$Victim$", Damage="$Damage$"" );
 

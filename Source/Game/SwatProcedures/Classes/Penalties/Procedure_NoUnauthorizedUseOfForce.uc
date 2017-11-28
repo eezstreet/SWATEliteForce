@@ -44,7 +44,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 //
 //       return; //the force was authorized
 //    }
-	
+
     if (Pawn.IsA('SwatEnemy') && ISwatEnemy(Pawn).IAmThreat())
     {
         if (GetGame().DebugLeadership)
@@ -67,7 +67,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
 
     AssertNotInArray( Pawn, IncapacitatedEnemies, 'IncapacitatedEnemies' );
     Add( Pawn, IncapacitatedEnemies );
-    ChatMessageEvent('PenaltyIssued');
+	TriggerPenaltyMessage(Pawn(Incapacitator));
     GetGame().CampaignStats_TrackPenaltyIssued();
 
     if (GetGame().DebugLeadership)

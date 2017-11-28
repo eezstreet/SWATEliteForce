@@ -287,7 +287,7 @@ simulated event PostBeginPlay()
 {
     local int ShadowDetail;
 	local string ShadowDetailString;
-    
+
     log( self$"---SwatPawn::PostBeginPlay()." );
 
     Super.PostBeginPlay();
@@ -295,15 +295,15 @@ simulated event PostBeginPlay()
     //New for the "High" shadow quality setting. -K.F.
     ShadowDetailString = Level.GetLocalPlayerController().ConsoleCommand( "SHADOWDETAIL GET" );
     ShadowDetail = int(ShadowDetailString);
-	// bAcceptsShadowProjectors cannot be set using any kind of conditional logic. 
+	// bAcceptsShadowProjectors cannot be set using any kind of conditional logic.
 	// You can't do "if (ShadowDetail >= 3) bAcceptsShadowProjectors = true;"
 	// You can't do "if (ShadowDetailString == "3") bAcceptsShadowProjectors = true;"
 	// You can't do "bAcceptsShadowProjectors = (ShadowDetail > 3)"
-	// Any such approach will set the value, but the value will not be *applied*. 
-	// Don't believe me? Try it. Anyway, it is safe to always set this to true, since 
-	// it will only have an effect when ShadowProjector's bProjectActor property is true 
+	// Any such approach will set the value, but the value will not be *applied*.
+	// Don't believe me? Try it. Anyway, it is safe to always set this to true, since
+	// it will only have an effect when ShadowProjector's bProjectActor property is true
 	//   -K.F.
-	bAcceptsShadowProjectors = true; 
+	bAcceptsShadowProjectors = true;
 
     if (bActorShadows && Level.NetMode != NM_DedicatedServer)
     {
@@ -318,14 +318,14 @@ simulated event PostBeginPlay()
         Shadow.CullDistance = ShadowCullDistance;
         Shadow.Resolution = 256;
         Shadow.InitShadow();
-        
+
         if (ShadowDetail >= 3) //3 = "High"
         {
             Shadow.Resolution = 512;
             //Level.GetLocalPlayerController().ConsoleMessage("High quality shadows enabled!");
         }
     }
-    
+
     // Initialize the perlin noise object for mouth movement
     InitAnimationForCurrentMesh();
     InitMouthMovementPerlinNoise();
@@ -1411,7 +1411,7 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
     //log( "........ in SwatPawn::Died()." );
     Super.Died(Killer, damageType, HitLocation, HitMomentum);
 
-	TriggerPawnDied(Killer);
+	TriggerPawnDied(Killer, damageType);
 
 	// update the size of the predicted rendering box (so we don't disappear at certain angles)
 	SetRenderBoundingBoxExpansionSize(kDeathRenderBoundingBoxExpansionSize);
@@ -1425,11 +1425,11 @@ simulated function Died(Controller Killer, class<DamageType> damageType, vector 
 		dispatchMessage(new class'MessagePawnNeutralized'('', Label));
 }
 
-simulated protected function TriggerPawnDied(Controller Killer)
+simulated protected function TriggerPawnDied(Controller Killer, class<DamageType> damageType)
 {
     if ( Level.NetMode != NM_Client )
     {
-        SwatGameInfo(Level.Game).GameEvents.PawnDied.Triggered(self, Killer.Pawn, false);
+        SwatGameInfo(Level.Game).GameEvents.PawnDied.Triggered(self, Killer.Pawn, false, damageType);
     }
 }
 
@@ -1900,6 +1900,11 @@ simulated function OnArrested(Pawn Arrester)
 	    dispatchMessage(new class'MessagePawnNeutralized'(Arrester.Label, Label));
 
 	    OnArrestedSwatPawn(Arrester);
+
+		if(Level.NetMode == NM_DedicatedServer || Level.NetMode == NM_ListenServer)
+		{
+			SwatGameInfo(Level.Game).BroadcastArrested(Arrester, self);
+		}
 	}
 }
 
@@ -2048,6 +2053,18 @@ simulated event StopAllSounds()
 simulated function Name GetPlayerTag()
 {
     return '';
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
+{
+	return;
+}
+
+function OnKilled(Actor Killer, class<DamageType> damageType)
+{
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

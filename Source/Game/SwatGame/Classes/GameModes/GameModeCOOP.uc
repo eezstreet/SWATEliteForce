@@ -1,6 +1,8 @@
 class GameModeCOOP extends GameModeMPBase implements IInterested_GameEvent_MissionCompleted, IInterested_GameEvent_MissionFailed;
 
 var private bool bMissionCompleted;
+var private bool bTeamsLocked;
+var private array<SwatGamePlayerController> PlayersTeamLocked;
 
 function OnMissionEnded()
 {
@@ -64,19 +66,19 @@ function AssignPlayerRoles()
 	}
 }
 
-// return a start point from the selected entry spawn cluster 
+// return a start point from the selected entry spawn cluster
 function SwatMPStartPoint FindNetPlayerStart( Controller Player )
 {
     return Super.FindNetPlayerStart( Player );
 }
 
 // not used in COOP
-function NetRoundTimeRemaining( int TimeRemaining ) 
+function NetRoundTimeRemaining( int TimeRemaining )
 {
     //coop mid-game is untimed
     if( SwatRepo(Level.GetRepo()).GuiConfig.SwatGameState == GAMESTATE_MidGame )
         TimeRemaining = 0;
-        
+
     Super.NetRoundTimeRemaining( TimeRemaining );
 }
 
@@ -91,7 +93,7 @@ function RespawnAll() {}
 
 //called when a player joins a team
 // not used in COOP
-function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, NetTeam CurrentTeam ) 
+function PlayerJoinedTeam( SwatGamePlayerController Player, NetTeam OldTeam, NetTeam CurrentTeam )
 {
 	Super.PlayerJoinedTeam(Player, OldTeam, CurrentTeam);
 
@@ -145,7 +147,7 @@ function SwatGamePlayerController GetRandomLeader(NetTeam Team)
         SwatController = SwatGamePlayerController(Controller);
         if (SwatController != None)
         {
-            if (SwatController.PlayerReplicationInfo.Team == Team && 
+            if (SwatController.PlayerReplicationInfo.Team == Team &&
 				!SwatPlayerReplicationInfo(SwatController.PlayerReplicationInfo).IsLeader)
 			{
 				// only allow leader set midgame if player is not dead or spectating
@@ -189,7 +191,7 @@ function SwatGamePlayerController ClearLeader(NetTeam Team)
 			{
 				if (SwatPlayerReplicationInfo(SwatController.PlayerReplicationInfo).IsLeader)
 				{
-					OldLeader = SwatController; 
+					OldLeader = SwatController;
 					SwatPlayerReplicationInfo(SwatController.PlayerReplicationInfo).IsLeader = false;
 				}
 			}
@@ -268,7 +270,7 @@ function SetStartClustersForRoundStart()
         {
 		 	if (Level.GetEngine().EnableDevTools)
 				mplog( "...Examining cluster: "$ClusterPoint );
-				
+
             if ( (ClusterPoint.IsPrimaryEntryPoint && i == 0)
                  || (ClusterPoint.IsSecondaryEntryPoint && i == 1) )
             {
@@ -276,7 +278,7 @@ function SetStartClustersForRoundStart()
                 {
  					if (Level.GetEngine().EnableDevTools)
 						log( "......setting CurrentStartCluster to "$ClusterPoint );
-	                
+
 					CurrentStartCluster[i] = ClusterPoint;
 					break;
 				}
@@ -298,7 +300,89 @@ function SetupTeams(GameReplicationInfo GRI)
     GRI.Teams[1] = Spawn(class'NetTeamCoopSuspects');
 	GRI.Teams[2] = Spawn(class'NetTeamCoopRed');
 }
- 
+
+function SwitchTeamErrorState CanSwitchTeams(TeamInfo NewTeam, SwatGamePlayerController Player)
+{
+	local ServerSettings Settings;
+	local int i;
+
+	Settings = ServerSettings(Level.CurrentServerSettings);
+	if(bTeamsLocked)
+	{
+		return SwitchTeamErrorState.TeamSwitch_TeamsLocked;
+	}
+
+	if(Settings.bForceTeamMax)
+	{
+		if(NewTeam.Size >= Settings.TeamForcedMax)
+		{
+			return SwitchTeamErrorState.TeamSwitch_Max;
+		}
+	}
+	if(Settings.bForceTeamBalance)
+	{
+		if(Player.PlayerReplicationInfo.Team.Size < NewTeam.Size)
+		{
+			return SwitchTeamErrorState.TeamSwitch_TeamsBalance;
+		}
+	}
+
+	for(i = 0; i < PlayersTeamLocked.Length; i++)
+	{
+		if(PlayersTeamLocked[i] == Player)
+		{
+			return SwitchTeamErrorState.TeamSwitch_PlayerLocked;
+		}
+	}
+
+	return SwitchTeamErrorState.TeamSwitch_OK;
+}
+
+function bool AreTeamsLocked()
+{
+	return bTeamsLocked;
+}
+
+function bool IsPlayerTeamLocked(SwatGamePlayerController Player)
+{
+	local int i;
+
+	for(i = 0; i < PlayersTeamLocked.Length; i++)
+	{
+		if(PlayersTeamLocked[i] == Player)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function bool ToggleTeamLock()
+{
+	bTeamsLocked = !bTeamsLocked;
+	return bTeamsLocked;
+}
+
+function bool TogglePlayerTeamLock(SwatGamePlayerController P)
+{
+	local int i;
+
+	// Check to see if the player is already on our list of locked players
+	for(i = 0; i < PlayersTeamLocked.Length; i++)
+	{
+		if(PlayersTeamLocked[i] == P)
+		{
+			PlayersTeamLocked.Remove(i, 1);
+			return false;
+		}
+	}
+
+	// Go ahead and add it, then.
+	PlayersTeamLocked[PlayersTeamLocked.Length] = P;
+	return true;
+}
+
 // OnPlayerDied -- must reselect leader if leader dies
 function OnPlayerDied( PlayerController player, Controller killer )
 {

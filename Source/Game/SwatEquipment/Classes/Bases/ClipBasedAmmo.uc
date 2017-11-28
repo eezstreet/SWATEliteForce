@@ -1,9 +1,7 @@
 class ClipBasedAmmo extends Engine.SwatAmmo;
 
-var(Ammo) config int ClipSize;
-var(Ammo) config int DefaultEnemyClipCount;
-var(Ammo) config int DefaultOfficerClipCount;
-var(Ammo) config int DefaultBandolierClipCount;
+var(Ammo) config int ClipSize "The number of bullets in a clip";
+var(Ammo) config int DefaultEnemyClipCount "The number of clips of this ammunition that a suspect will carry (by default)";
 
 // Dynamic arrays don't replicate, so I'm converting this to a static array.
 //var array<int> ClipRoundsRemaining;
@@ -22,7 +20,7 @@ replication
 					&& (((RemoteRole == ROLE_AutonomousProxy) && bNetInitial)
 						|| ((RemoteRole == ROLE_SimulatedProxy) && (bNetInitial || bUpdateSimulatedPosition) && ((Base == None) || Base.bWorldGeometry))
 						|| ((RemoteRole == ROLE_DumbProxy) && ((Base == None) || Base.bWorldGeometry))) )
-		CurrentClip, ClipRoundsRemaining;
+		CurrentClip, ClipRoundsRemaining, StartingClipCount;
 
     // MCJ: Which is more appropriate, the above or this?
 	//reliable if( bNetOwner && bNetDirty && (Role==ROLE_Authority) )
@@ -35,30 +33,40 @@ simulated function InitializeAmmo(int StartingAmmoAmount) {
 	local FiredWeapon Weapon;
 	local int i;
 
-	if(StartingAmmoAmount <= 0) {
-		StartingAmmoAmount = 5;
-	}
-
-	for(i=0; i < MAX_CLIPS; i++) {
-		ClipRoundsRemaining[i] = INVALID_CLIP;
-	}
-
 	Weapon = FiredWeapon(Owner);
 	Pawn = ICarryGuns(Weapon.Owner);
 
-	if(!Pawn.IsA('SwatEnemy')) {
-		ClipCount = StartingAmmoAmount;
-	} else {
-		ClipCount = DefaultEnemyClipCount;
+	// Validate clip count
+	if(Pawn.IsA('SwatEnemy'))
+	{
+		StartingAmmoAmount = DefaultEnemyClipCount;
+	}
+	else if(StartingAmmoAmount <= 0)
+	{
+		StartingAmmoAmount = 5;
+	}
+	else if(StartingAmmoAmount > 10)
+	{
+		StartingAmmoAmount = 10;
 	}
 
+	// Initialize clip amount
+	ClipCount = StartingAmmoAmount;
+	StartingClipCount = ClipCount;
 	log("ClipBasedAmmo::InitializeAmmo: "$ClipCount$" clips");
 
-	for(i=0; i < ClipCount; i++) {
-		ClipRoundsRemaining[i] = ClipSize;
+	// Set ammo for each clip. On each clip set it to ClipSize but INVALID_CLIP on ones we don't have
+	for(i=0; i < MAX_CLIPS; i++)
+	{
+		if(i >= StartingClipCount)
+		{
+			ClipRoundsRemaining[i] = INVALID_CLIP;
+		}
+		else
+		{
+			ClipRoundsRemaining[i] = ClipSize;
+		}
 	}
-
-	StartingClipCount = ClipCount;
 }
 
 simulated function float GetCurrentAmmoWeight() {
@@ -66,12 +74,17 @@ simulated function float GetCurrentAmmoWeight() {
 	local float weight;
 	local float amountThisClipAdded;
 
-	for(i=0; i < StartingClipCount; i++) {
-		if(ClipRoundsRemaining[i] == ClipSize) {
+	for(i=0; i < StartingClipCount; i++)
+	{
+		if(ClipRoundsRemaining[i] == ClipSize)
+		{
 			weight += WeightPerReloadLoaded;	// Add the weight of a full magazine
-		} else {
+		}
+		else
+		{
 			weight += WeightPerReloadUnloaded;	// Add the weight of an empty magazine
-			if(ClipRoundsRemaining[i] > 0) {
+			if(ClipRoundsRemaining[i] > 0)
+			{
 				// Add the weight of the bullets in the magazine
 				amountThisClipAdded = ((WeightPerReloadLoaded - WeightPerReloadUnloaded) / ClipSize) * ClipRoundsRemaining[i];
 				weight += amountThisClipAdded;
@@ -104,7 +117,12 @@ simulated function bool IsLastRound()
 
 simulated function bool CanReload()
 {
-    return (FullestClip() > -1);
+	local int DesiredClip;
+
+	DesiredClip = FullestClip();
+
+	// SEF: don't allow reloading if we would be reloading back into our current clip
+	return (DesiredClip > -1 && DesiredClip != CurrentClip);
 }
 
 //returns -1 if no clip has any rounds remaining
@@ -234,12 +252,7 @@ function TrainingRefill()
 {
     local int i;
 
-    for (i=0; i<DefaultOfficerClipCount; ++i)
+    for (i=0; i<MAX_CLIPS; ++i)
         if (i != CurrentClip)
             ClipRoundsRemaining[i] = ClipSize;
-}
-
-defaultproperties
-{
-	DefaultBandolierClipCount=2
 }

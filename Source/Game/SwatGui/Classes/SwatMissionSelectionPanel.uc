@@ -393,33 +393,37 @@ private function PopulateCampaignMissionList()
     MyMissionSelectionBox.List.Clear();
   	if(theCampaign.CampaignPath == 0)
     {
-  		for(index = 0;index < GC.MissionName.length;index++)
+		for(index = 0; index < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; index++)
   		{
   			if( index <= theCampaign.GetAvailableIndex() )
             {
-  				MyMissionSelectionBox.List.Add(string(GC.MissionName[index]),,GC.FriendlyName[index],index,,true);
+				MyMissionSelectionBox.List.Add(string(class'SwatGame.SwatVanillaCareerPath'.default.Missions[index]),,
+					class'SwatGame.SwatVanillaCareerPath'.default.MissionFriendlyNames[index],
+					index,, true);
             }
   	     }
   	}
     else if(theCampaign.CampaignPath == 1)
     {
-  		for(index = 0; index < ExtraMissionName.length; index++)
-        {
-  			if(index <= theCampaign.GetAvailableIndex() )
-            {
-  				MyMissionSelectionBox.List.Add(string(ExtraMissionName[index]),,ExtraFriendlyName[index],index,,true);
-  			}
-  		}
+		for(index = 0; index < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; index++)
+		{
+			if(index <= theCampaign.GetAvailableIndex())
+			{
+				MyMissionSelectionBox.List.Add(string(class'SwatGame.SwatSEFCareerPath'.default.Missions[index]),,
+					class'SwatGame.SwatSEFCareerPath'.default.MissionFriendlyNames[index],
+					index,, true);
+			}
+		}
   	}
 
 
     if(theCampaign.CampaignPath == 2)
     {
-      MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
+    	MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
     }
     else
     {
-      MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+    	MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
     }
     MyMissionSelectionBox.List.UpdateSortFunction();
 	MyMissionSelectionBox.List.bSortForward=true;

@@ -86,11 +86,48 @@ protected function float GetEmpathyModifierForCharacter(ISwatAICharacter target)
 	return 0.0;
 }
 
+// Drives the empathy morale modifiers --eez
+private function DistributeEmpathyMoraleModifications(float MoraleModification)
+{
+	local Pawn A;
+	local ISwatAICharacter Character;
+
+	// This is stupidly slow but is probably okay because it gets run pretty rarely
+	foreach m_Pawn.Level.DynamicActors(class 'Pawn', A)
+	{
+		Character = ISwatAICharacter(A);
+		if(Character == None)
+		{	// not an AI character
+			continue;
+		}
+
+		if(!Character.IsA('SwatEnemy') && !Character.IsA('SwatHostage'))
+		{	// not a suspect or civilian, just keep moving along
+			continue;
+		}
+
+		if(A == m_Pawn)
+		{	// cannot apply it to ourselves
+			continue;
+		}
+
+		if(!m_Pawn.LineOfSightTo(A))
+		{	// we don't have line of sight on the target
+			continue;
+		}
+
+		if(Character.HasEmpathy())
+		{
+			ISwatAI(A).GetCommanderAction().ChangeMorale(MoraleModification * GetEmpathyModifierForCharacter(Character),
+				"Empathy from "$self$" on "$m_Pawn,
+				false);
+		}
+	}
+}
+
 private function AffectMorale()
 {
 	local float MoraleModification;
-	local Actor A;
-	local Pawn Character;
 
 	MoraleModification = GetMoraleModificationAmount();
 
@@ -98,37 +135,8 @@ private function AffectMorale()
 	MoraleModification *= -1;
 	ISwatAI(m_Pawn).GetCommanderAction().ChangeMorale(MoraleModification, achievingGoal.GoalName);
 
-	// Apply this morale modification to all targets in the same room (empathy modifier)
-	foreach m_Pawn.Level.AllActors(class 'Actor', A)
-	{
-		Character = Pawn(A);
-		if(Character == None)
-		{
-			continue;
-		}
-
-		if(!A.IsA('SwatEnemy') && !A.IsA('SwatHostage'))
-		{	// not a suspect or civilian, just keep moving along
-			continue;
-		}
-
-		if(!Character.IsInRoom(m_Pawn.GetRoomName()))
-		{	// not in the same room
-			continue;
-		}
-
-		if(Character == m_Pawn)
-		{	// cannot apply it to ourselves
-			continue;
-		}
-
-		if(ISwatAICharacter(Character).HasEmpathy())
-		{
-			ISwatAI(Character).GetCommanderAction().ChangeMorale(MoraleModification * GetEmpathyModifierForCharacter(ISwatAICharacter(Character)),
-				"Empathy from "$self$" on "$m_Pawn,
-				false);
-		}
-	}
+	// do empathy modifiers
+	DistributeEmpathyMoraleModifications(MoraleModification);
 }
 
 private function ReturnMorale()

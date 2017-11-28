@@ -121,7 +121,7 @@ event SetText(string NewText, optional bool bForceUpdate)
 {
     if( NewText == TextStr && !bForceUpdate )
         return;
-        
+
 	TextStr = NewText;
 	if( MaxWidth > 0 )
     	TextStr = Left( TextStr, MaxWidth );
@@ -145,9 +145,9 @@ function Change()
     HighlightStart = CaretPos;
 
     SetVisibleText();
-    
+
     SetDirty();
-    
+
     OnChange(self);
 }
 
@@ -179,7 +179,7 @@ function DeleteChar()
         CaretPos = HighlightStart;
         TextStr = left(TextStr,HighlightStart)$Mid(TextStr,HighlightEnd);
         HighlightEnd=CaretPos;
-    } 
+    }
 	else if (CaretPos<len(TextStr))
     {
 		TextStr = left(TextStr,CaretPos)$Mid(TextStr,CaretPos+1);
@@ -198,7 +198,7 @@ function bool InternalOnKeyType(out byte Key, optional string Unicode)
 
 	if(Key < 32)
 	{
-		if( Controller.CtrlPressed && 
+		if( Controller.CtrlPressed &&
 			(  key == 3      // ctrl-c, copy to console
 			|| key == 24 ) ) // ctrl-x, clear and copy
 		{
@@ -210,8 +210,8 @@ function bool InternalOnKeyType(out byte Key, optional string Unicode)
 			}
 			return true;
 		}
-	 
-		if( Controller.CtrlPressed && 
+
+		if( Controller.CtrlPressed &&
 			key == 22 ) // ctrl-v, paste at position
 		{
 			//remove highlighted before typing/ new text
@@ -268,7 +268,7 @@ function bool InternalOnKeyType(out byte Key, optional string Unicode)
 
     if( PrevText != TextStr )
         Change();
-        
+
 	return true;
 }
 
@@ -281,7 +281,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
 	if( (key==EInputKey.IK_Enter) && (State==EInputAction.IST_Press) )	// ENTER Pressed
 	{
 	    //dont use this button if in edit mode
-	    if( !Controller.bDesignMode ) 
+	    if( !Controller.bDesignMode )
 		    OnEntryCompleted(self);
 		return true;
 	}
@@ -289,7 +289,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
 	if( (key==EInputKey.IK_Escape) && (State==EInputAction.IST_Press) )	// ESCAPE Pressed
 	{
 	    //dont use this button if in edit mode
-	    if( !Controller.bDesignMode ) 
+	    if( !Controller.bDesignMode )
 		    OnEntryCancelled(self);
 		return true;
 	}
@@ -320,7 +320,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
     		CaretPos--;
         else if( Controller.ShiftPressed )
             return true;
-    
+
         if( Controller.ShiftPressed )
         {
             if( HighlightStart > CaretPos )
@@ -330,7 +330,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
         }
         else
         {
-            if( HighlightEnd - HighlightStart > 0 && 
+            if( HighlightEnd - HighlightStart > 0 &&
                 CaretPos > HighlightStart )
                 CaretPos = HighlightStart;
 
@@ -348,7 +348,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
     		CaretPos++;
         else if( Controller.ShiftPressed )
             return true;
-    
+
         if( Controller.ShiftPressed )
         {
             if( HighlightEnd < CaretPos )
@@ -358,7 +358,7 @@ function bool InternalOnKeyEvent(out byte Key, out byte State, float delta)
         }
         else
         {
-            if( HighlightEnd - HighlightStart > 0 && 
+            if( HighlightEnd - HighlightStart > 0 &&
                 CaretPos < HighlightEnd )
                 CaretPos = HighlightEnd;
 

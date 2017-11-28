@@ -57,12 +57,17 @@ function InitComponent(GUIComponent MyOwner)
 	opt_secondary.OnChange = opt_secondary_OnChange;
 
 	//fill mission combo list
-	for (i=0; i<GC.CompleteMissionList.length; ++i)
-		cbo_mission.AddItem(string(GC.CompleteMissionList[i]),, GC.FriendlyName[i]);
+	for(i = 0; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; i++)
+	{
+		cbo_mission.AddItem(string(class'SwatGame.SwatVanillaCareerPath'.default.Missions[i]),,
+			class'SwatGame.SwatVanillaCareerPath'.default.MissionFriendlyNames[i]);
+	}
 
-	// Add extra missions
-	cbo_mission.AddItem("SP-Meatbarn",, "Meat Barn Restaurant");
-	cbo_mission.AddItem("SP-Courthouse",, "Brewer County Courthouse");
+	for(i = 0; i < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; i++)
+	{
+		cbo_mission.AddItem(string(class'SwatGame.SwatSEFCareerPath'.default.Missions[i]),,
+			class'SwatGame.SwatSEFCareerPath'.default.MissionFriendlyNames[i]);
+	}
 
 	//fill difficulties
 	cbo_difficulty.AddItem("Any",, Data.AnyString);

@@ -26,6 +26,7 @@ var(SWATGui) private EditInline Config GUIButton		    MyCreateCampaignButton;
 var(SWATGui) private EditInline Config GUIComboBox			MyCampaignPathBox;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignPlayerPermadeathButton;
 var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignOfficerPermadeathButton;
+var(SWATGui) private EditInline Config GUIScrollTextBox		MyCampaignPathBlurbLabel;
 
 //load campaign panel
 var(SWATGui) private EditInline Config GUIComboBox          MyCampaignSelectionBox;
@@ -78,6 +79,8 @@ var() private config localized string PlayerPermadeathNotification;
 var() private config localized string KIAString;
 var() private config localized string NoPermadeathAllowed;
 var() private config localized string NoAllMissionsAllowed;
+
+var() private config localized string CampaignPathBlurb[3];
 
 var Campaign currentCampaign;
 
@@ -170,6 +173,9 @@ private function InternalOnChange(GUIComponent Sender)
 		case MyNameEntry:
             MyCreateCampaignButton.SetEnabled( IsCampaignNameValid( MyNameEntry.GetText() ) );
             break;
+		case MyCampaignPathBox:
+			MyCampaignPathBlurbLabel.SetContent(CampaignPathBlurb[MyCampaignPathBox.GetInt()]);
+			break;
 	}
 }
 
@@ -362,18 +368,18 @@ defaultproperties
     OnFocused=InternalOnFocused
 	OnActivate=InternalOnActivate
 
-  StatStringA="Missions Completed: "
-  StatStringB="Times Incapacitated: "
-  StatStringC="Times Injured: "
-  StatStringD="Officers Down: "
-  StatStringE="Penalties Issued: "
-  StatStringF="Threats Removed: "
-  StatStringG="Suspects Neutralized: "
-  StatStringH="Suspects Incapacitated: "
-  StatStringI="Suspects Arrested: "
-  StatStringJ="Civilians Restrained: "
-  StatStringK="Reports to TOC: "
-  StatStringL="Evidence Secured: "
+	StatStringA="Missions Completed: "
+	StatStringB="Times Incapacitated: "
+	StatStringC="Times Injured: "
+	StatStringD="Officers Down: "
+	StatStringE="Penalties Issued: "
+	StatStringF="Threats Removed: "
+	StatStringG="Suspects Neutralized: "
+	StatStringH="Suspects Incapacitated: "
+	StatStringI="Suspects Arrested: "
+	StatStringJ="Civilians Restrained: "
+	StatStringK="Reports to TOC: "
+	StatStringL="Evidence Secured: "
 
 	StringA=" is not a valid campaign name."
 	StringB="Campaign: "
@@ -384,11 +390,15 @@ defaultproperties
 	StringL="Mission Set:"
 	StringM="SWAT 4 + Expansion"
 	StringN="Extra Missions"
-  StringO="All Missions"
+	StringO="All Missions"
 
-  DeadCampaignNotification="This campaign was killed in action (KIA). You will still be able to view its stats, but you cannot play with it."
-  PlayerPermadeathNotification="You are about to start a campaign with Player Permadeath enabled. Once you die, you cannot play with this campaign again. Are you sure you want to do this?"
-  KIAString=" (KIA)"
-  NoPermadeathAllowed="You cannot play this campaign in Career CO-OP because it has a permadeath setting enabled. Try again with a different campaign."
-  NoAllMissionsAllowed="You cannot play an All Missions campaign in Career CO-OP. Try again with a different campaign."
+	DeadCampaignNotification="This campaign was killed in action (KIA). You will still be able to view its stats, but you cannot play with it."
+	PlayerPermadeathNotification="You are about to start a campaign with Player Permadeath enabled. Once you die, you cannot play with this campaign again. Are you sure you want to do this?"
+	KIAString=" (KIA)"
+	NoPermadeathAllowed="You cannot play this campaign in Career CO-OP because it has a permadeath setting enabled. Try again with a different campaign."
+	NoAllMissionsAllowed="You cannot play an All Missions campaign in Career CO-OP. Try again with a different campaign."
+
+	CampaignPathBlurb[0]="A combined campaign of the original SWAT 4 and The Stetchkov Syndicate missions. [b]Some equipment may need to be unlocked.[\\b]"
+	CampaignPathBlurb[1]="A campaign containing Extra Missions added by SWAT: Elite Force."
+	CampaignPathBlurb[2]="A campaign containing all missions on your hard drive, including customs. [b]All missions and equipment are unlocked at the start.[\\b] Some additional equipment is available."
 }

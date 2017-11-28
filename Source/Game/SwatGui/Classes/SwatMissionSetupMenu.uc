@@ -133,9 +133,9 @@ function InternalOnClick(GUIComponent Sender)
 						0, // Map index
 						1, // Number of rounds
 						ServerPanel.MyMaxPlayersSpinner.Value, // Max players
-						0,	// Not used
+						false,	// Preround start timer
 						60, // Post-Round time (Not necessary in campaign CO-OP)
-						1, // Unused
+						false, // Postround timer
 						10, // Mission ready time (Not necessary in campaign CO-OP)
 						true, // Show teammate names
 						true, // Not used
@@ -147,7 +147,7 @@ function InternalOnClick(GUIComponent Sender)
 						CampaignInfo, // Campaign CO-OP data
 						0, // Time between respawns
 						false, // No Leaders
-						false, // Not used
+						!ServerPanel.MyEnableKillsBox.bChecked,
 						true // Add snipers
 					);
 					GC.SaveConfig();

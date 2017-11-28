@@ -801,7 +801,7 @@ simulated function Tick(float dTime)
 				ptCharacter = SwatAICharacter(probes[i].Victim);
 				if(ptCharacter.TaserKillsMe() && !probes[i].DidDamageAlready) {
 					// Do damage to them.
-					probes[i].Victim.TakeDamage(50, Pawn(owner), probes[i].ProbeOriginLocation, diff, None);
+					DealDamage(probes[i].Victim, 50, Pawn(Owner), probes[i].ProbeOriginLocation, diff, class);
 					probes[i].DidDamageAlready = true;
 				}
 			}

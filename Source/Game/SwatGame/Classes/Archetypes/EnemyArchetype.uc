@@ -29,7 +29,7 @@ var config bool InvestigatorOverride;
 var config class<Actor> ActorClass;
 
 function Initialize(Actor inOwner)
-{    
+{
 	local CustomScenario CustomScenario;
 
     CustomScenario = SwatGameInfo(inOwner.Level.Game).GetCustomScenario();
@@ -58,7 +58,7 @@ final private function InitializeEquipment(
     {
         if (Weapons[i].Weapon != "")
         {
-            WeaponClasses[i] = 
+            WeaponClasses[i] =
                 class<FiredWeapon>(DynamicLoadObject(Weapons[i].Weapon, class'Class'));
 
             AssertWithDescription(WeaponClasses[i] != None,
@@ -84,7 +84,7 @@ protected function Validate()
 
     ValidateCondition(Skill.length>0,
         "AI's Skill is not set (Crombie says: Designers should set the skill for this archetype as soon as possible, or they will all be amateur criminals)");
-    
+
     //enemies must always start with some weapon
     if (PrimaryWeapon.length == 0)
         PrimaryWeaponCanBeNone = true;
@@ -128,7 +128,7 @@ private function InitializeSkill(EnemyArchetypeInstance inInstance)
     local int i, TotalChance, RandChance, AccumulatedChance;
 
     assert(Skill.length > 0);   //this should have already been caught by Validate() above
-    
+
     //calculate the sum of chances of the options
     for (i=0; i<Skill.length; ++i)
         TotalChance += Skill[i].Chance;
@@ -139,7 +139,7 @@ private function InitializeSkill(EnemyArchetypeInstance inInstance)
     for (i=0; i<Skill.length; ++i)
     {
         AccumulatedChance += Skill[i].Chance;
-        
+
         if (AccumulatedChance >= RandChance)
         {
             inInstance.Skill = Skill[i].Skill;
@@ -172,7 +172,7 @@ private function InitializeWeapon(
     for (i=0; i<Options.length; ++i)
     {
         AccumulatedChance += Options[i].Chance;
-        
+
         if (AccumulatedChance >= RandChance)
         {
             WeaponClass = OptionClasses[i];
@@ -209,4 +209,6 @@ defaultproperties
 	CharacterType=EnemyMaleDefault
 
     ActorClass=class'SwatEnemy'
+
+	FriendlyName="a Suspect"
 }

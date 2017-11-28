@@ -26,6 +26,16 @@ function TriggerDownedHostageSpeech()
 	TriggerSpeech('ReactedHostageDown');
 }
 
+function TriggerDownedOfficerSpeech()
+{
+	TriggerSpeech('ReactedOfficerDown');
+}
+
+function TriggerFleeSpeech()
+{
+	TriggerSpeech('AnnouncedFlee');
+}
+
 function TriggerDoorBlockedSpeech()
 {
 	TriggerSpeech('DoorBlocked', true);
@@ -44,6 +54,11 @@ function TriggerSpottedOfficerNormalSpeech()
 function TriggerSpottedOfficerScaredSpeech()
 {
 	TriggerSpeech('AnnouncedSpottedOfficerScared');
+}
+
+function TriggerSpottedOfficerSurprisedSpeech()
+{
+	TriggerSpeech('AnnouncedSpottedOfficerSurprised');
 }
 
 ///////////////////////////////////////////////////////////////////////////////

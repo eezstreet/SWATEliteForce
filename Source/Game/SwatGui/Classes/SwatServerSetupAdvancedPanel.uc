@@ -16,6 +16,9 @@ var(SWATGui) EditInline Config GUILabel            MyDedicatedServerLabel;
 var(SWATGui) EditInline Config GUINumericEdit      MyAdditionalRespawnTimeBox;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableLeadersCheck;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableSnipers;
+var(SWATGui) EditInline Config GUICheckBoxButton   MyRoundStartTimerCheck;
+var(SWATGui) EditInline Config GUICheckBoxButton   MyRoundEndTimerCheck;
+var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableKillMessagesCheck;
 
 var private config int COOPMaxPlayers;
 var private bool bIsCoop;
@@ -33,6 +36,9 @@ function SetSubComponentsEnabled( bool bSetEnabled )
 	MyAdditionalRespawnTimeBox.SetEnabled( bSetEnabled );
 	MyEnableLeadersCheck.SetEnabled( bSetEnabled );
 	MyEnableSnipers.SetEnabled( bSetEnabled );
+	MyRoundStartTimerCheck.SetEnabled( bSetEnabled );
+	MyRoundEndTimerCheck.SetEnabled( bSetEnabled );
+	MyEnableKillMessagesCheck.SetEnabled(bSetEnabled);
 }
 
 function DoResetDefaultsForGameMode( EMPMode NewMode )
@@ -47,22 +53,21 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
         MyMaxPlayersBox.SetMaxValue( Clamp( COOPMaxPlayers, 0, 16 ) );
         MyMaxPlayersBox.SetValue( 10 );
 
-		    if( NewMode == EMPMode.MPM_COOPQMM )
-			     MyDedicatedServerCheck.DisableComponent();
+		if( NewMode == EMPMode.MPM_COOPQMM )
+			MyDedicatedServerCheck.DisableComponent();
 
         //default to 480 second pre-game time for coop
-		    MyPreGameTimeLimitBox.SetValue( 480 );
+		MyPreGameTimeLimitBox.SetValue( 480 );
 
         //default to 120 second post-game time for coop
         MyPostGameTimeLimitBox.SetValue( 120 );
 
-		    // default always show friendly names in coop
-	      MyShowTeammatesButton.SetChecked( true );
+		// default always show friendly names in coop
+	    MyShowTeammatesButton.SetChecked( true );
 
-		    MyEnableLeadersCheck.SetChecked( true );
-		    MyEnableLeadersCheck.SetEnabled( SwatServerSetupMenu.bIsAdmin );
+		MyEnableLeadersCheck.SetChecked( true );
 
-		    bIsCoop = true;
+		bIsCoop = true;
     }
     else
     {
@@ -104,14 +109,17 @@ function LoadServerSettings( optional bool ReadOnly )
 	MyAllowReferendumsButton.SetChecked( Settings.bAllowReferendums );
     MyFriendlyFireSlider.SetValue( Settings.FriendlyFireAmount );
 	MyAdditionalRespawnTimeBox.SetValue( Settings.AdditionalRespawnTime );
-	MyEnableSnipers.SetChecked( !Settings.bEnableSnipers );
+	MyEnableSnipers.SetChecked( Settings.bEnableSnipers );
+	MyRoundStartTimerCheck.SetChecked (Settings.bUseRoundStartTimer);
+	MyRoundEndTimerCheck.SetChecked(Settings.bUseRoundEndTimer);
+	MyEnableKillMessagesCheck.SetChecked(!Settings.bNoKillMessages);
 
 	MyEnableLeadersCheck.SetChecked( !Settings.bNoLeaders );
 }
 
 function SaveServerSettings()
 {
-	
+
 }
 
 event HandleParameters(string Param1, string Param2, optional int param3)
