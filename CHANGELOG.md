@@ -3,6 +3,7 @@
  - Nerfed flashbang damage and damage radius (stun properties unaffected)
  - DuPlessi's civilians now bleed out on a 15-25 minute timer, instead of a 10-15 minute timer.
  - Empathy morale modifiers are now based on line of sight and don't affect everyone in the same room at once.
+ - AI-controlled officers no longer stare at/watch restrained targets.
  - The chat log and admin logs have been merged together.
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
