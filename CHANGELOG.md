@@ -12,6 +12,7 @@
  - Greatly improved the speed (and in multiplayer, reduced the bandwidth) of opening the equipment page and switching tabs.
  - Location data in the chat can now be turned off (for the server) in SwatGuiState.ini
  - Voting settings are now stored in SwatGuiState.ini (instead of Swat4x/Swat4xDedicatedServer.ini)
+ - Added a new type of voting: Start Map
  - New admin permission: Force player to Spectator
  - New admin permission: Go to Spectator
  - WebAdmin: Now has an option to select players or map actions, in addition to performing them via command.

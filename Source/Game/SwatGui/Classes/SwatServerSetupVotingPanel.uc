@@ -198,6 +198,7 @@ defaultproperties
 	ConsideredReferendums[4]=class'SwatGame.MapChangeReferendum'
 	ConsideredReferendums[5]=class'SwatGame.NextMapReferendum'
 	ConsideredReferendums[6]=class'SwatGame.RestartLevelReferendum'
+	ConsideredReferendums[7]=class'SwatGame.StartMapReferendum'
 	ReferendumNames[0]="Ban"
 	ReferendumNames[1]="End Current Map"
 	ReferendumNames[2]="Kick"
@@ -205,4 +206,5 @@ defaultproperties
 	ReferendumNames[4]="Change Map"
 	ReferendumNames[5]="Go to Next Map"
 	ReferendumNames[6]="Restart Level"
+	ReferendumNames[7]="Start Level"
 }
