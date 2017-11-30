@@ -119,6 +119,9 @@ function InternalOnClick(GUIComponent Sender)
 					MissionIndex = GUIController.GetCampaign().GetAvailableIndex() << 16;
 					CampaignInfo = MissionIndex | CampaignPath;
 
+					// Hack to clear the list of disabled referendums
+					class'Voting.ReferendumManager'.default.DisabledReferendums.Length = 0;
+
 					PlayerController.ServerSetDirty(Settings);
 					PlayerController.ServerSetAdminSettings(
 						Settings,

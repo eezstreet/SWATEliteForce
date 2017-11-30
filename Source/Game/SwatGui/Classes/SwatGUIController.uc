@@ -455,6 +455,7 @@ function bool OnMessageRecieved( String Msg, Name Type )
 			case 'Unmute':
 			case 'AdminKill':
 			case 'AdminLeader':
+			case 'ReferendumTypeNotAllowed':
             if( GuiConfig.SwatGameRole == GAMEROLE_MP_Host ||
                 GuiConfig.SwatGameRole == GAMEROLE_MP_Client )
             {

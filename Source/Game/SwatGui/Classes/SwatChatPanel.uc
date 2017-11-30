@@ -56,6 +56,7 @@ var() private config localized string PlayerImmuneFromReferendumMessage;
 var() private config localized string ReferendumAgainstAdminMessage;
 var() private config localized string ReferendumsDisabledMessage;
 var() private config localized string LeaderVoteTeamMismatchMessage;
+var() private config localized string ReferendumTypeNotAllowedMessage;
 
 var() private config localized string ReferendumSucceededMessage;
 var() private config localized string ReferendumFailedMessage;
@@ -364,6 +365,11 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 		case 'ReferendumFailed':
 			MsgText = FormatTextString( ReferendumFailedMessage );
 			break;
+
+		case 'ReferendumTypeNotAllowed':
+			MsgText = FormatTextString( ReferendumTypeNotAllowedMessage );
+			break;
+			
 		case 'PenaltyIssuedChat':
 			MsgText = FormatTextString( PenaltyMessageChat, StrA, StrB);
 			break;
@@ -757,6 +763,7 @@ defaultproperties
 	ReferendumAgainstAdminMessage="[c=ff00ff]You may not start a vote against an admin"
 	ReferendumsDisabledMessage="[c=ff00ff]Voting has been disabled on this server"
 	LeaderVoteTeamMismatchMessage="[c=ff00ff]You may not start leadership votes for players on the other team"
+	ReferendumTypeNotAllowedMessage="[c=ff00ff]The server has disabled this kind of voting"
 
 	ReferendumSucceededMessage="[c=ff00ff]The vote succeeded"
 	ReferendumFailedMessage="[c=ff00ff]The vote failed"
