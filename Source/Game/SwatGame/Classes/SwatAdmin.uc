@@ -69,8 +69,6 @@ var public config string ChatLogName;
 var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
 var public config bool GlobalDisableLocalizedChat;
 
-var private array<SwatGamePlayerController> MutedPlayers;
-
 var private localized config string PenaltyFormat;
 var private localized config string SayFormat;
 var private localized config string TeamSayFormat;
@@ -326,6 +324,7 @@ function bool TryLogin( PlayerController PC, String Password )
 			PC.ConsoleMessage("Logged in with role "$Permissions[i].PermissionSetName);
 			PRI.SetPermissions(Permissions[i]);
 			PRI.bIsAdmin = true;
+			SwatGamePlayerController(PC).SwatRepoPlayerItem.LastAdminPassword = Password;
 			return true;
 		}
 	}
@@ -563,20 +562,18 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 		{
 			// Got 'em. Find out now whether or not this person has already been muted or not.
 			Msg = AdminName$"\t"$P.PlayerReplicationInfo.PlayerName;
-			for(i = 0; i < MutedPlayers.Length; i++)
+			if(P.SwatRepoPlayerItem.bMuted)
 			{
-				if(MutedPlayers[i] == P)
-				{
-					// Turn off their mute
-					SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Unmute');
-					Broadcast(Msg, 'Unmute');
-					MutedPlayers.Remove(i, 1);
-					return true;
-				}
+				P.SwatRepoPlayerItem.bMuted = false;
+				SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Unmute');
+				Broadcast(Msg, 'Unmute');
 			}
-			SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Mute');
-			Broadcast(Msg, 'Mute');
-			MutedPlayers[MutedPlayers.Length] = P;
+			else
+			{
+				P.SwatRepoPlayerItem.bMuted = true;
+				SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Mute');
+				Broadcast(Msg, 'Mute');
+			}
 			return true;
 		}
 	}
@@ -587,17 +584,7 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 // Check to see if a player is muted
 public function bool Muted(SwatGamePlayerController PC)
 {
-	local int i;
-
-	for(i = 0; i < MutedPlayers.Length; i++)
-	{
-		if(MutedPlayers[i] == PC)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return PC.SwatRepoPlayerItem.bMuted;
 }
 
 // Returns true if we are allowed to force players to be leaders

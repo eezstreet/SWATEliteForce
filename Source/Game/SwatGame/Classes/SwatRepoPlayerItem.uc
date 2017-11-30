@@ -36,6 +36,9 @@ var bool bIsAReconnectingClient;
 // rounds and the player has disconnected and trying to reconnect.
 var bool bConnected;
 
+// true if the player is muted
+var bool bMuted;
+
 var class<actor> RepoLoadOutSpec[Pocket.EnumCount];
 var int RepoLoadOutPrimaryWeaponAmmo;
 var int RepoLoadOutSecondaryWeaponAmmo;
