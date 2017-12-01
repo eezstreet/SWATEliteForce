@@ -544,7 +544,6 @@ function TogglePlayerTeamLock(PlayerController PC, string PlayerName)
 public function bool ToggleMute(PlayerController PC, string PlayerName, optional string AdminName)
 {
 	local SwatGamePlayerController P;
-	local int i;
 	local string Msg;
 
 	if(PC != None)
@@ -908,6 +907,10 @@ function Broadcast(coerce string Msg, optional name Type)
 		case 'UnlockPlayerTeam':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB);
+			break;
+		case 'Fallen':
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(FallenFormat, StrA);
 			break;
 		case 'Mute':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
