@@ -130,8 +130,9 @@ Important QOL (quality-of-life) and playability features that are essential to p
  * You can now assign loadout tabs (or whole loadouts) to one officer, a team, or the whole element.
 
 Multiplayer improvements!
+ * Includes a fully-functional admin mod, with WebAdmin capabilities.
  * Snipers are now available in multiplayer.
- * New kinds of voting: Next Map and End Current Map
+ * New kinds of voting: Next Map, Start Map, and End Current Map. You can now choose to disable certain kinds of votes, instead of disabling all voting. There are other special options added regarding voting.
  * The chat now reports which room a person is when they send a chat message
  * You can enable or disable friendly fire in CO-OP.
  * You can now un-ready yourself in the pre-game lobby.

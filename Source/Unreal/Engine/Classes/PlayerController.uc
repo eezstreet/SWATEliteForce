@@ -300,6 +300,7 @@ replication
 		ClientValidate,
         ClientSetViewTarget, ClientCapBandwidth,
 		ClientOpenMenu, ClientCloseMenu,
+		ClientNotifyArmorTakeDamage,
 		ConsoleMessage;
 
 	reliable if ( (Role == ROLE_Authority) && (!bDemoRecording || (bClientDemoRecording && bClientDemoNetFunc)) )
@@ -5458,6 +5459,29 @@ simulated function ClientSetActiveRoom(int ChannelIndex)
 }*/
 
 simulated event bool VOIPIsIgnored(int PlayerID);
+
+function ClientNotifyArmorTakeDamage(float NewMTP)
+{
+	local BodyArmor Armor;
+
+	log("ClientNotifyArmorTakeDamage()");
+
+	if(Pawn == None)
+	{
+		log("....Pawn was None");
+		return;
+	}
+
+	Armor = BodyArmor(Pawn.GetSkeletalRegionProtection(REGION_Torso));
+	if(Armor == None)
+	{
+		// How does this even happen?
+		log("....Armor was None");
+		return;
+	}
+
+	Armor.ClientNotifiedOfHit(NewMTP);
+}
 
 defaultproperties
 {

@@ -35,6 +35,7 @@
  - Fixed SEF bug: Heavies would not show their skin properly in multiplayer games.
  - Fixed SEF bug: Server crash on GetRoomName
  - Fixed SEF bug: Typo in the X2 Stun Gun description
+ - Fixed SEF bug: Heavy Armor health amount was stuck at 100% in multiplayer
  - Fixed TSS bug: In CO-OP, suspect skins were visible but not usable (now, all skins can be used in co-op)
 
 #### v6.3
