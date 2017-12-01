@@ -1479,11 +1479,7 @@ event PlayerController Login(string Portal, string Options, out string Error)
 
     SwatGamePlayerController(NewPlayer).SwatPlayerID = NewSwatPlayerID;
     if ( Level.NetMode != NM_Standalone )
-    SwatGamePlayerController(NewPlayer).SwatRepoPlayerItem = theSwatRepoPlayerItem;
-
-    //auto set the local PC's admin PW to be correct
-    if( Level.GetLocalPlayerController() == NewPlayer )
-        theSwatRepoPlayerItem.LastAdminPassword = SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword;
+    	SwatGamePlayerController(NewPlayer).SwatRepoPlayerItem = theSwatRepoPlayerItem;
 
     // Init player's replication info
     NewPlayer.GameReplicationInfo = GameReplicationInfo;
@@ -1681,13 +1677,6 @@ function PlayerLoggedIn(PlayerController NewPlayer)
 				AdminLog(NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
 			}
 
-		}
-
-		// Set player permissions
-		PRI = SwatPlayerReplicationInfo(PC.PlayerReplicationInfo);
-		if(PRI != None)
-		{
-			PRI.SetPermissions(Admin.GuestPermissions);
 		}
     }
 

@@ -62,6 +62,9 @@ function LoadServerSettings(optional bool bReadOnly)
 
 	ReferendumSelected.Length = ConsideredReferendums.Length;
 
+	AvailableReferendums.List.Clear();
+	SelectedReferendums.List.Clear();
+
 	for(i = 0; i < ConsideredReferendums.Length; i++)
 	{
 		if(class'Voting.ReferendumManager'.static.ReferendumTypeAllowed(ConsideredReferendums[i]))

@@ -329,8 +329,12 @@ function bool TryLogin( PlayerController PC, String Password )
 		}
 	}
 
-	// If we got here, none of the admin passwords worked
+	// If we got here, none of the admin passwords worked.
+	// If we got to this point, it's entirely likely that we got here because we just joined the server and
+	// the server tried to log us in automatically with our previously entered password (which is blank)
+	// So in this case, set the guest permissions here
 	PC.ConsoleMessage("Couldn't login, invalid password");
+	PRI.SetPermissions(GuestPermissions);
 	return false;
 }
 
