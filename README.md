@@ -322,7 +322,6 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * In CO-OP, suspect skins were visible despite only SWAT skins being available for use. All skins are available for use now.
  * You could reload the same magazine back into the weapon, if it was the highest-containing, but not full magazine.
  * Spoken lines by TOC on the expansion missions would cut off if the player used the shout button
- * Lightsticks would drop at the world origin if the player is wearing heavy armor
  * Wedges did not appear on the player model.
  * If a suspect unlocked a door, it is still "known" as a locked door.
  * The enemy "CallForHelp" speech was rarely/if at all triggering.
@@ -487,6 +486,11 @@ All weapons have been changed to have correct muzzle velocities.
 	- Renamed to Respirator
 	- View obstruction effect removed
 	- In the SWAT 4 + TSS campaign, this item must be unlocked.
+* Lightstick:
+	- Is colored based on team
+	- Doubled in quantity
+	- Can be thrown like grenades now
+	- Can fade out (cut feature from TSS)
 * C2:
 	- Now available as a Tactical item
 	- Increased the damage radius, stun angle and stun radius. It is riskier to use C2.
