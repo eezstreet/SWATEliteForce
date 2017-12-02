@@ -668,7 +668,7 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 		}
 		else if(!SwatGameInfo(Level.Game).Admin.ForceLL(ConcatArgs(argv, 1), None, Users[i].Alias$"(WebAdmin)"))
 		{
-			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)"'";
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
 			SendMessageToUser(i, msg);
 		}
 	}

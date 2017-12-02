@@ -3,6 +3,7 @@
  - Nerfed flashbang damage and damage radius (stun properties unaffected)
  - DuPlessi's civilians now bleed out on a 15-25 minute timer, instead of a 10-15 minute timer.
  - Empathy morale modifiers are now based on line of sight and don't affect everyone in the same room at once.
+ - Lightsticks are now colored based on team. (Lead in Singleplayer uses green lightsticks)
  - AI-controlled officers no longer stare at/watch restrained targets.
  - Added a new tab to the Host Game menu: Voting. From this tab, you can enable/disable voting, as well as enable/disable specific kinds of voting, such as Ban and Map votes. There are also other settings, like how long a vote takes, etc.
  - Added a new tab to the Host Game menu: Equipment. From this tab, you can disable specific equipment and pick a designated "less lethal" loadout. Disabled equipment will not show in the Loadout menu.
@@ -13,6 +14,8 @@
  - Greatly improved the speed (and in multiplayer, reduced the bandwidth) of opening the equipment page and switching tabs.
  - Location data in the chat can now be turned off (for the server) in SwatGuiState.ini
  - Voting settings are now stored in SwatGuiState.ini (instead of Swat4x/Swat4xDedicatedServer.ini)
+ - Tweaked the collision of lightsticks a little bit
+ - Restored a cut TSS feature where lightsticks would lose their glow and become "faded" in appearance.
  - Ingame admin logins now persist across level changes
  - Player mute status now persists across level changes
  - Added a new type of voting: Start Map

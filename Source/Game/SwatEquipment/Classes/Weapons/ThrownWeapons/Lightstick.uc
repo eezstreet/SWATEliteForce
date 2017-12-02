@@ -4,6 +4,9 @@ class Lightstick extends Engine.SwatGrenade
 var config string BaseThirdPersonThrowAnim;
 var bool Used;
 
+var config class<LightstickProjectile> RedLightstickClass;
+var config class<LightstickProjectile> BlueLightstickClass;
+
 ////////////////////////////////////////////////////////////////////
 //
 // New stuff for HUD --eez
@@ -91,9 +94,42 @@ simulated function bool ValidateUse( optional bool Prevalidate )
 		return Super.ValidateUse(Prevalidate);
 }
 
+// Lightsticks can mutate their projectile class based on the person who is throwing them --eez
+function class<actor> MutateProjectile()
+{
+	//if(!UseTeamBasedLightsticks) { return ProjectileClass; }
+
+	if(Owner.IsA('OfficerBlueOne') || Owner.IsA('OfficerBlueTwo'))
+	{
+		// AI uses the blue lightstick --eez
+		return BlueLightstickClass;
+	}
+	else if(Owner.IsA('OfficerRedOne') || Owner.IsA('OfficerRedTwo'))
+	{
+		// AI uses the red lightstick --eez
+		return RedLightstickClass;
+	}
+	else if(Owner.IsA('NetPlayer'))
+	{
+		// make it based on team
+		if(NetPlayer(Owner).GetTeamNumber() == 0)
+		{
+			return BlueLightstickClass;
+		}
+		else
+		{
+			return RedLightstickClass;
+		}
+	}
+	return ProjectileClass;
+}
+
 defaultproperties
 {
     Slot=Slot_Lightstick
-	  ProjectileClass=class'SwatEquipment.LightstickProjectile'
-		BaseThirdPersonThrowAnim="LightStickDrop_"
+	ProjectileClass=class'SwatEquipment.LightstickProjectile'
+	BaseThirdPersonThrowAnim="LightStickDrop_"
+
+	RedLightstickClass=class'SwatEquipment.RedLightstickProjectile'
+	BlueLightstickClass=class'SwatEquipment.BlueLightstickProjectile'
 }
