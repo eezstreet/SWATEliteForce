@@ -1,6 +1,8 @@
 class SwatAdmin extends Engine.Actor
     config(SwatGuiState);
 
+import enum Pocket from Engine.HandheldEquipment;
+
 enum WebAdminMessageType
 {
 	MessageType_Chat,
@@ -37,6 +39,7 @@ enum AdminPermissions
 	Permission_PromoteLeader,	// Allowed to promote players to leader
 	Permission_GoToSpec,		// Allowed to go to spectator
 	Permission_ForceSpectator,	// Allowed to force other players to go to spectator
+	Permission_ForceLessLethal,	// Allowed to force other players to use a less lethal loadout
 	Permission_Max,
 };
 
@@ -68,6 +71,8 @@ var public config string ChatLogName;
 
 var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
 var public config bool GlobalDisableLocalizedChat;
+
+var public config string LessLethalLoadoutName;	// When forcing a player to a less lethal loadout, this is the name of the loadout
 
 var private localized config string PenaltyFormat;
 var private localized config string SayFormat;
@@ -114,6 +119,8 @@ var private localized config string MissionFailedFormat;
 var private localized config string LeftWebAdminFormat;
 var private localized config string SpectateFormat;
 var private localized config string ForceSpectateFormat;
+var private localized config string ForceLessLethalFormat;
+var private localized config string UnforceLessLethalFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -687,6 +694,100 @@ public function bool ForceSpec(string PlayerName, optional SwatPlayerController 
 	return false;
 }
 
+public function bool ForceLL(string PlayerName, optional SwatPlayerController PC, optional string Alias)
+{
+	local SwatGamePlayerController P;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_ForceLessLethal))
+	{
+		// lacking permissions to do this
+		return false;
+	}
+
+	if(PC != None)
+	{
+		Alias = PC.PlayerReplicationInfo.PlayerName;
+	}
+
+	foreach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			if(ForceLessLethalOnPlayer(P))
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal');
+				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal');
+			}
+			else
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal');
+				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal');
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Forces (or unenforces) a player to use a less lethal loadout that is designated by the server.
+// Returns true if the loadout was enforced, returns false if the loadout was unenforced.
+public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
+{
+	local DynamicLoadoutSpec NewSpec;
+	local SwatRepoPlayerItem RepoItem;
+	local int i;
+	local NetPlayer Player;
+	local OfficerLoadout NewLoadout;
+
+	RepoItem = PC.SwatRepoPlayerItem;
+
+	if(RepoItem.bForcedLessLethal)
+	{
+		RepoItem.bForcedLessLethal = false;
+		return false;
+	}
+
+	Player = NetPlayer(PC.Pawn);
+
+	NewSpec = GetLessLethalSpec();
+	if(NewSpec == None)
+	{
+		SwatGameInfo(Level.Game).Broadcast(None, "Could not find the Less Lethal loadout.", 'DebugMessage');
+		mplog("Could not find the Less Lethal Loadout!");
+		return false;
+	}
+
+	for(i = 0; i < Pocket.EnumCount; i++)
+	{
+		if(Player != None)
+		{
+			Player.SetPocketItemClass(Pocket(i), NewSpec.LoadOutSpec[i]);
+		}
+
+		RepoItem.SetPocketItemClass(Pocket(i), NewSpec.LoadOutSpec[i]);
+	}
+
+	PC.SetMPLoadOut(NewSpec);
+	if(Player != None)
+	{
+		NewLoadout = Spawn(class'OfficerLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
+		NewLoadout.Initialize(NewSpec, false);
+		Player.ReceiveLoadOut(NewLoadout);
+		Player.InitializeReplicatedCounts();
+		SwatGameInfo(Level.Game).SetPlayerDefaults(Player);
+		PC.EquipNextSlot();
+	}
+
+	RepoItem.bForcedLessLethal = true;
+	return true;
+}
+
+public function DynamicLoadOutSpec GetLessLethalSpec()
+{
+	return Spawn(class'DynamicLoadOutSpec', None, name(LessLethalLoadoutName));
+}
+
 // Execute an AC command based on the text
 function ACCommand( PlayerController PC, String S )
 {
@@ -940,6 +1041,14 @@ function Broadcast(coerce string Msg, optional name Type)
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForceSpectateFormat, StrA, StrB);
 			break;
+		case 'ForceLessLethal':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForceLessLethalFormat, StrA, StrB);
+			break;
+		case 'UnforceLessLethal':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnforceLessLethalFormat, StrA, StrB);
+			break;
 	}
 
 	SendToWebAdmin(TypeOut, MsgOut);
@@ -1023,6 +1132,11 @@ defaultproperties
 	SpectateFormat="[c=FF00FF]%1 switched to spectator mode."
 	ForceSpectateFormat="[c=FF00FF]%1 forced %2 to spectate."
 
+	ForceLessLethalFormat="[c=FF00FF]%1 forced %2 to use less lethal equipment."
+	UnforceLessLethalFormat="[c=FF00FF]%1 allowed %2 to use normal equipment."
+
 	ChatLogName="chatlog"
 	ChatLogMultiFormat="chatlog_%1_%2_%3"
+
+	LessLethalLoadoutName="Pacifier"
 }

@@ -6,6 +6,11 @@ implements IHaveWeight
 
 //TMC note: no attach socket(s) here! That goes in subclasses.
 
+static function bool IsUsableByPlayer()
+{
+	return false;
+}
+
 // The following covers nearly all of the edge cases (IAmCuffed, pouches, ...)
 simulated function float GetWeight() {
   return 0.0;
@@ -16,6 +21,8 @@ simulated function float GetBulk() {
 }
 
 function OnGivenToOwner();
+
+static function string GetFriendlyName(){ return ""; }
 
 defaultproperties
 {

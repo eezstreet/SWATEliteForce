@@ -6,6 +6,7 @@ class QualifiedTacticalAid extends HandheldEquipment;
 var() public config float Weight;
 var() public config float Bulk;
 var() public config int StartCount;
+var() public config bool PlayerUsable;
 
 static function float GetInitialWeight()
 {
@@ -28,6 +29,11 @@ simulated function float GetItemBulk() {
 simulated function int GetDefaultAvailableCount()
 {
   return StartCount;
+}
+
+static function bool IsUsableByPlayer()
+{
+	return default.PlayerUsable;
 }
 
 defaultproperties

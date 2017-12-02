@@ -137,7 +137,7 @@ function InitComponent(GUIComponent MyOwner)
 	for( i = 0; i < Pocket.EnumCount; i++ )
 	{
 	    //ensure this category is supposed to be displayed
-	    if( !CheckValidity( GC.AvailableEquipmentPockets[i].DisplayValidity ) ||
+	    if( !CheckValidity( None, GC.AvailableEquipmentPockets[i].DisplayValidity ) ||
 	        GC.AvailableEquipmentPockets[i].EquipmentClassName.Length <= 0 )
 	        Continue;
 
@@ -152,13 +152,13 @@ function InitComponent(GUIComponent MyOwner)
 
         for( j = 0; j < GC.AvailableEquipmentPockets[i].EquipmentClassName.Length; j++ )
         {
+			EquipmentClass = class<Object>(DynamicLoadObject( GC.AvailableEquipmentPockets[i].EquipmentClassName[j], class'Class'));
+
             if( GC.AvailableEquipmentPockets[i].bSelectable[j] == 0 ||
-                !CheckValidity( GC.AvailableEquipmentPockets[i].Validity[j] ) )
+                !CheckValidity( EquipmentClass, GC.AvailableEquipmentPockets[i].Validity[j] ) )
                 Continue;
 
-            EquipmentClass = class<Object>(DynamicLoadObject( GC.AvailableEquipmentPockets[i].EquipmentClassName[j], class'Class'));
-
-			      EquipmentList[i].Add( string(EquipmentClass.Name), EquipmentClass );
+			EquipmentList[i].Add( string(EquipmentClass.Name), EquipmentClass );
         }
 	}
 
@@ -240,7 +240,7 @@ function PopulateUnlockedEquipment()
   UnlockedWeapons.Length = 0;
   for(i = 0; i < AllWeapons.Length; i++) {
     Weapon = AllWeapons[i];
-    if(CheckCampaignValid(Weapon) && CheckValidity( GC.AvailableEquipmentPockets[0].Validity[i] ))
+    if(CheckCampaignValid(Weapon) && CheckValidity( Weapon, GC.AvailableEquipmentPockets[0].Validity[i] ))
       UnlockedWeapons[UnlockedWeapons.Length] = Weapon;
   }
 }
@@ -251,14 +251,14 @@ function InitialDisplay()
 
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
-	    if( !CheckValidity( GC.AvailableEquipmentPockets[i].DisplayValidity ) )
+	    if( !CheckValidity(None, GC.AvailableEquipmentPockets[i].DisplayValidity ) )
 	    {
-        continue;
-      }
+        	continue;
+      	}
 
-      UpdateIndex( Pocket(i) );
+      	UpdateIndex( Pocket(i) );
 
-      DisplayEquipment( Pocket(i) );
+      	DisplayEquipment( Pocket(i) );
 
     }
 
@@ -374,7 +374,7 @@ function SaveLoadOut( String loadOutName )
     MyCurrentLoadOut.SaveConfig( loadOutName );
 }
 
-function bool CheckValidity( eNetworkValidity type )  //should be further subclassed
+function bool CheckValidity( class EquipmentClass, eNetworkValidity type )  //should be further subclassed
 {
     return (type == NETVALID_All);
 }
@@ -572,6 +572,7 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
 
     //if the item that would be selected is invalid given other items in the loadout and the players team, select the next item
     if( !MyCurrentLoadOut.ValidForLoadoutSpec( class<actor>(EquipmentList[thePocket].GetObject()), thePocket ) ||
+		!CheckValidity(class<actor>(EquipmentList[thePocket].GetObject()), NETVALID_All) || 
 		!CheckCampaignValid( class<actor>(EquipmentList[thePocket].GetObject()) ) )
     {
         if( FailedToValidate >= 0 )

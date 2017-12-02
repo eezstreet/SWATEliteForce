@@ -101,6 +101,9 @@ var() private config localized string YouAreMutedMessage;
 var() private config localized string MuteMessage;
 var() private config localized string UnmuteMessage;
 
+var() private config localized string ForceLessLethalMessage;
+var() private config localized string UnforceLessLethalMessage;
+
 var() private config localized string AdminKillMessage;
 var() private config localized string AdminPromoteMessage;
 
@@ -369,7 +372,7 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 		case 'ReferendumTypeNotAllowed':
 			MsgText = FormatTextString( ReferendumTypeNotAllowedMessage );
 			break;
-			
+
 		case 'PenaltyIssuedChat':
 			MsgText = FormatTextString( PenaltyMessageChat, StrA, StrB);
 			break;
@@ -447,6 +450,14 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
 		case 'SmashAndGrabArrestTimeDeduction':
 			MsgText = FormatTextString( SmashAndGrabArrestTimeDeductionMessage, StrA );
+			break;
+
+		case 'ForceLessLethal':
+			MsgText = FormatTextString( ForceLessLethalMessage, StrA, StrB);
+			break;
+
+		case 'UnforceLessLethal':
+			MsgText = FormatTextString( UnforceLessLethalMessage, StrA, StrB);
 			break;
 
         case 'DebugMessage':
@@ -817,6 +828,9 @@ defaultproperties
     DebugMessageString="[c=ffffff]DEBUG_MSG: %1"
 
     ReferendumStartedMessage="[c=ff00ff]%1[\\c]"
+
+	ForceLessLethalMessage="[c=ff00ff]%1 forced %2 to use less lethal equipment."
+	UnforceLessLethalMessage="[c=ff00ff]%1 allowed %2 to use normal equipment."
 
     PromptToDebriefMessage="[c=ffffff]Press '[k=GUICloseMenu]' to proceed to Debrief."
     SomeoneString="someone"

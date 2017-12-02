@@ -1443,6 +1443,8 @@ event PlayerController Login(string Portal, string Options, out string Error)
 				InTeam = GetAutoJoinTeamID();
 				theSwatRepoPlayerItem.SetTeamID( InTeam );
 			}
+
+			mplog("Already had a repo item, bMuted was "$theSwatRepoPlayerItem.bMuted$", bForcedLessLethal was "$theSwatRepoPlayerItem.bForcedLessLethal);
         }
         theSwatRepoPlayerItem.bConnected = true;
     }

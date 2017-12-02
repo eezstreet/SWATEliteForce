@@ -10,6 +10,7 @@ var(GUI) public localized config string ArmorRating "The rating level, as shown 
 var(GUI) public localized config string ExtraProtection "Extra protection effects, as shown in the GUI (ie, 'Protects against Flashbangs')";
 var private float CurrentMomentumToPenetrate;
 var private float CurrentBulletMtP;
+var() public config bool PlayerUsable;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -118,6 +119,11 @@ function bool IsArmorShreddable() {
 
 simulated function float GetArmorHealthPercent() {
   return (CurrentMomentumToPenetrate - MinMomentumToPenetrate) / (MaxMomentumToPenetrate - MinMomentumToPenetrate);
+}
+
+static function bool IsUsableByPlayer()
+{
+	return default.PlayerUsable;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -966,7 +966,7 @@ log("[dkaplan] >>> NetStartNextRound()" );
 		CurrentSettings.bNoRespawn,
 		CurrentSettings.bQuickRoundReset,
 		CurrentSettings.FriendlyFireAmount,
-		CurrentSettings.Unused2,
+		CurrentSettings.DisabledEquipment,
 		CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,

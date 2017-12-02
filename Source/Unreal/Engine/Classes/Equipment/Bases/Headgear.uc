@@ -3,6 +3,7 @@ class Headgear extends ProtectiveEquipment;
 
 var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI (ie, 'Type II')";
 var(GUI) public localized config string ExtraProtection "Extra protection effects, as shown in the GUI (ie, 'Protects against Flashbangs')";
+var() public config bool PlayerUsable;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -29,4 +30,9 @@ static function String GetProtectionRating()
 static function String GetSpecialProtection()
 {
   return default.ExtraProtection;
+}
+
+static function bool IsUsableByPlayer()
+{
+	return default.PlayerUsable;
 }

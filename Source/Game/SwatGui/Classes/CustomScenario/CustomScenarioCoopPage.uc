@@ -173,7 +173,7 @@ function PlayScenario( string ScenarioName, string PackName )
         CurrentSettings.bNoRespawn,
         CurrentSettings.bQuickRoundReset,
         CurrentSettings.FriendlyFireAmount,
-        CurrentSettings.Unused2,
+        CurrentSettings.DisabledEquipment,
 				CurrentSettings.CampaignCOOP,
 		CurrentSettings.AdditionalRespawnTime,
 		CurrentSettings.bNoLeaders,

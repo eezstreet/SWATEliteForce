@@ -13,10 +13,10 @@ enum AdminPlayerActions
 	PlayerAction_Mute,
 	PlayerAction_MakeLeader,
 	PlayerAction_Kill,
-	PlayerAction_ForceSpectator/*,
+	PlayerAction_ForceSpectator,
+	PlayerAction_ForceLessLethal/*,
 	The following are what I intend to implement. Someday.
 	PlayerAction_Respawn,
-	PlayerAction_ForceLessLethal,
 	PlayerAction_Freeze,
 	PlayerAction_ClearWarnings
 	*/
@@ -78,6 +78,8 @@ private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions
 			return AdminPermissions.Permission_PromoteLeader;
 		case PlayerAction_ForceSpectator:
 			return AdminPermissions.Permission_ForceSpectator;
+		case PlayerAction_ForceLessLethal:
+			return AdminPermissions.Permission_ForceLessLethal;
 	}
 }
 
@@ -312,6 +314,7 @@ defaultproperties
 	PlayerActionNames[6]="Kill"
 	PlayerActionNames[7]="Promote to Leader"
 	PlayerActionNames[8]="Send to Spectator"
+	PlayerActionnames[9]="Force Less Lethal"
 	MapActionNames[0]="Go to Next Map"
 	MapActionNames[1]="Start Game"
 	MapActionNames[2]="End Game"
@@ -328,6 +331,7 @@ defaultproperties
 	PlayerConsoleCommands[6]="AdminKillPlayer"
 	PlayerConsoleCommands[7]="AdminPromotePlayer"
 	PlayerConsoleCommands[8]="ForceSpec"
+	PlayerConsoleCommands[9]="ForceLL"
 	MapConsoleCommands[0]="NM"
 	MapConsoleCommands[1]="StartGame"
 	MapConsoleCommands[2]="AbortGame"

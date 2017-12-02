@@ -23,6 +23,18 @@ var(SWATGui) protected EditInline Config GUIListBox SelectedReferendums;
 var(SWATGui) protected EditInline Config GUIButton AddReferendum;
 var(SWATGui) protected EditInline Config GUIButton RemoveReferendum;
 
+function SetSubComponentsEnabled(bool bSetEnabled)
+{
+	MyVotingEnabledBox.SetEnabled(bSetEnabled);
+	MyVotingTimeSlider.SetEnabled(bSetEnabled);
+	MyCallCastVoteBox.SetEnabled(bSetEnabled);
+	MyAbstainNoVoteBox.SetEnabled(bSetEnabled);
+	AvailableReferendums.SetEnabled(bSetEnabled);
+	SelectedReferendums.SetEnabled(bSetEnabled);
+	AddReferendum.SetEnabled(bSetEnabled);
+	RemoveReferendum.SetEnabled(bSetEnabled);
+}
+
 function InternalOnClick(GUIComponent Sender)
 {
 	switch(Sender)
@@ -88,6 +100,8 @@ function LoadServerSettings(optional bool bReadOnly)
 event HandleParameters(string Param1, string Param2, optional int Param3)
 {
 	LoadServerSettings( !SwatServerSetupMenu.bIsAdmin );
+
+	SetSubComponentsEnabled( SwatServerSetupMenu.bIsAdmin );
 }
 
 // Called whenever the voting checkbox has been altered

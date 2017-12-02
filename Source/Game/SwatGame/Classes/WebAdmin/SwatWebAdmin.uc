@@ -828,6 +828,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "</div><div style=\"float:right;\">";
 	HTML = HTML $ "<select id=\"playerselection\" name=\"playerselection\"></select>";
 	HTML = HTML $ "<select id=\"playeraction\" name=\"playeraction\">";
+	HTML = HTML $ " <option value=\"forcell \">Force Less Lethal</option>";
 	HTML = HTML $ " <option value=\"forceblue \">Force to Blue Team</option>";
 	HTML = HTML $ " <option value=\"forcered \">Force to Red Team</option>";
 	HTML = HTML $ " <option value=\"forcespec \">Force to Spectate</option>";
@@ -1014,6 +1015,7 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "<tr><th>/nextmap</th><td>Go to the next map.</td></tr>";
 	HTML = HTML $ "<tr><th>/startgame</th><td>Starts the current round.</td></tr>";
 	HTML = HTML $ "<tr><th>/abortgame</th><td>Aborts the current round.</td></tr>";
+	HTML = HTML $ "<tr><th>/forcell -playername-</th><td>Forces a player to use the less lethal loadout.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;

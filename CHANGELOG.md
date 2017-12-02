@@ -5,6 +5,7 @@
  - Empathy morale modifiers are now based on line of sight and don't affect everyone in the same room at once.
  - AI-controlled officers no longer stare at/watch restrained targets.
  - Added a new tab to the Host Game menu: Voting. From this tab, you can enable/disable voting, as well as enable/disable specific kinds of voting, such as Ban and Map votes. There are also other settings, like how long a vote takes, etc.
+ - Added a new tab to the Host Game menu: Equipment. From this tab, you can disable specific equipment and pick a designated "less lethal" loadout. Disabled equipment will not show in the Loadout menu.
  - The chat log and admin logs have been merged together.
  - Added the option to have either multiple logs per day, or one large chatlog.
  - Added the option to configure the chatlog name (in SwatGuiState.ini)
@@ -17,12 +18,13 @@
  - Added a new type of voting: Start Map
  - New admin permission: Force player to Spectator
  - New admin permission: Go to Spectator
+ - New admin permission: Force Less Lethal loadout
  - WebAdmin: Now has an option to select players or map actions, in addition to performing them via command.
  - WebAdmin: Now displays tags ([b], etc) correctly.
  - WebAdmin: Now has messages colored in a similar way to how they are ingame.
  - WebAdmin: Now shows the friendly name of the weapon that killed/incapacitated someone, instead of the class name (ie, "HK33" instead of "SwatEquipment.HK33MG")
  - WebAdmin: When entering a command wrong, it lists the usage of the command instead of silently failing.
- - WebAdmin: Added commands /forcespec, /switch, /nextmap, /startgame, and /abortgame.
+ - WebAdmin: Added commands /forcespec, /switch, /nextmap, /startgame, and /abortgame, /forcell.
  - WebAdmin: Minor look/feel changes
  - Fixed SEF bug: When a player dies, it lists the killer instead of the person who died as "fallen"
  - Fixed SEF bug: When a target is incapacitated with a taser or a C2 explosion, it states "None.None" as the damage type.
@@ -36,6 +38,7 @@
  - Fixed SEF bug: Server crash on GetRoomName
  - Fixed SEF bug: Typo in the X2 Stun Gun description
  - Fixed SEF bug: Heavy Armor health amount was stuck at 100% in multiplayer
+ - Fixed SEF bug: Some stuff was not greyed out in the Admin panel when a player viewed the "Server Setup" tab like it should have been
  - Fixed TSS bug: In CO-OP, suspect skins were visible but not usable (now, all skins can be used in co-op)
 
 #### v6.3

@@ -106,7 +106,7 @@ function InitializeReplicatedCounts()
     LoadOutSpecCount = 0;
     for ( i = 0; i < Pocket.EnumCount; ++i )
     {
-		assert(i != Pocket.Pocket_CustomSkin || ReplicatedLoadOutSpec[i] == None);
+		//assert(i != Pocket.Pocket_CustomSkin || ReplicatedLoadOutSpec[i] == None);
         if ( ReplicatedLoadOutSpec[i] != None )
             ++LoadOutSpecCount;
     }
@@ -630,6 +630,10 @@ simulated function PrintLoadOutSpecToMPLog()
 simulated function SetPocketItemClass( Pocket Pocket, class<actor> Item )
 {
     //mplog( self$"---NetPlayer::SetPocketItemClass(). Pocket="$Pocket$", Item="$Item );
+	if(SwatGamePlayerController(Controller) != None && SwatGamePlayerController(Controller).SwatRepoPlayerItem.bForcedLessLethal)
+	{
+		return;
+	}
     GetLoadoutSpec().LoadOutSpec[ Pocket ] = Item;
     ReplicatedLoadOutSpec[ Pocket ] = Item;
 }
@@ -647,6 +651,10 @@ simulated function SetPocketItemClassName( Pocket Pocket, string ItemClassName )
     local class<actor> ItemClass;
 
     //mplog( self$"---NetPlayer::SetPocketItemClassName(). Pocket="$Pocket$", ItemClassName="$ItemClassName );
+	if(SwatGamePlayerController(Controller) != None && SwatGamePlayerController(Controller).SwatRepoPlayerItem.bForcedLessLethal)
+	{
+		return;
+	}
 
     if ( ItemClassName != "" )
     {
@@ -791,6 +799,11 @@ simulated function OnDoorUnlocked( SwatDoor TheDoor )
 simulated function DynamicLoadOutSpec GetLoadoutSpec()
 {
     //mplog( self$"---NetPlayer::GetLoadoutSpec()." );
+	if(SwatGamePlayerController(Controller) != None && SwatGamePlayerController(Controller).SwatRepoPlayerItem.bForcedLessLethal)
+	{
+		return SwatGameInfo(Level.Game).Admin.GetLessLethalSpec();
+	}
+
     if( DynamicLoadOutSpec == None )
     {
         if ( IsTheVIP() )

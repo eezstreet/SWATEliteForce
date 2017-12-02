@@ -146,7 +146,7 @@ function InternalOnClick(GUIComponent Sender)
 						true, // No respawning
 						true, // Quick round reset
 						1, // Friendly fire amount (FIXME: Make this configurable)
-						1, // Not used
+						"", // Disabled equipment 
 						CampaignInfo, // Campaign CO-OP data
 						0, // Time between respawns
 						false, // No Leaders
