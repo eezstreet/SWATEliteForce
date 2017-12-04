@@ -1760,6 +1760,8 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 	SwatCharacterResource(TargetPawn.characterAI).CommonSensorAction.GetComplySensor().NotifyComply(self);
 }
 
+function RefundLightstick() {}
+
 // returns true if we should issue a taunt to the subject
 // returns false otherwise
 // out bool says if it's a suspect

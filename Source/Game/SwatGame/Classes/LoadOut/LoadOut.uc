@@ -835,6 +835,15 @@ simulated function float GetBulkSpeedModifier() {
 	return ((1.0 - (totalBulk / maxBulk)) * (maxSpeedModifier - minSpeedModifier)) + minSpeedModifier;
 }
 
+function AddLightstick(optional int Quantity)
+{
+	if(Quantity <= 0)
+	{
+		Quantity = 1;
+	}
+	HandheldEquipment(PocketEquipment[Pocket.Pocket_Lightstick]).AddAvailableCount(Quantity);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // cpptext
 /////////////////////////////////////////////////////////////////////////////////////////////////////

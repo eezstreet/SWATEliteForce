@@ -3787,6 +3787,12 @@ simulated event ApplyOneFrameNudgeRotationOffset(out Vector Acceleration)
     }
 }
 
+// Refund a lightstick if it fell out of the world
+function RefundLightstick()
+{
+	Loadout.AddLightstick();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Sound effect event manager for reporting to TOC
