@@ -1135,11 +1135,22 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 			else
 				theNetPlayer.SetCustomSkinClassName( "SwatGame.DefaultCustomSkin" );
 
-            LoadOutSpec = theNetPlayer.GetLoadoutSpec();
+			if(RepoPlayerItem.bForcedLessLethal)
+			{
+				LoadOutSpec = Admin.GetLessLethalSpec();
+				for(i = 0; i < Pocket.EnumCount; i++)
+				{
+					theNetPlayer.ReplicatedLoadOutSpec[i] = LoadOutSpec.LoadOutSpec[i];
+				}
+			}
+			else
+			{
+				LoadOutSpec = theNetPlayer.GetLoadoutSpec();
 
-            // Alter it *ex post facto* to have the correct ammo counts
-            LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
-            LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
+				// Alter it *ex post facto* to have the correct ammo counts
+	            LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
+	            LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
+			}
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;

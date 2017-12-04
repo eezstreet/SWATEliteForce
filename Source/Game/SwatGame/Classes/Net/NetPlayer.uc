@@ -107,6 +107,7 @@ function InitializeReplicatedCounts()
     for ( i = 0; i < Pocket.EnumCount; ++i )
     {
 		//assert(i != Pocket.Pocket_CustomSkin || ReplicatedLoadOutSpec[i] == None);
+		mplog("---NetPlayer::InitializeReplicatedCounts("$i$") = "$ReplicatedLoadoutSpec[i]);
         if ( ReplicatedLoadOutSpec[i] != None )
             ++LoadOutSpecCount;
     }
@@ -244,6 +245,25 @@ simulated event PostReplication()
 	    mplog( self$" has name: "$GetHumanReadableName() );
 }
 
+event PostNetReceive()
+{
+	local OfficerLoadout NewLoadout;
+
+	if(ReplicatedLoadoutSpec[0] != DynamicLoadoutSpec.LoadOutSpec[0])
+	{
+		// Our loadout got forced to something else by the server. Adjust. Adapt. Overcome.
+		NewLoadOut = Spawn(class'OfficerLoadOut', self, 'EmptyMultiplayerOfficerLoadOut' );
+
+		CopyReplicatedSpecToDynamicSpec();
+
+		NewLoadout.Initialize(DynamicLoadoutSpec, false);
+		ReceiveLoadout(NewLoadout);
+
+		CheckDesiredItemAndEquipIfNeeded();
+
+		SwatGamePlayerController(Controller).EquipNextSlot();
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -799,11 +819,6 @@ simulated function OnDoorUnlocked( SwatDoor TheDoor )
 simulated function DynamicLoadOutSpec GetLoadoutSpec()
 {
     //mplog( self$"---NetPlayer::GetLoadoutSpec()." );
-	if(SwatGamePlayerController(Controller) != None && SwatGamePlayerController(Controller).SwatRepoPlayerItem.bForcedLessLethal)
-	{
-		return SwatGameInfo(Level.Game).Admin.GetLessLethalSpec();
-	}
-
     if( DynamicLoadOutSpec == None )
     {
         if ( IsTheVIP() )
@@ -1008,6 +1023,8 @@ defaultproperties
     IdealCuffingDistanceBetweenPawns=50.0
 
     TeamNumber=-1
+
+	bNetNotify=true
 
     bLoadOutInitialized=false
     LoadOutSpecCount=0

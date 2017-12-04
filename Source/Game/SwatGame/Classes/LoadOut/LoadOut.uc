@@ -292,6 +292,8 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
 
     PocketEquipment[i] = Owner.Spawn(EquipmentClass, Owner);
 
+	mplog(" ...SpawnEquipmentForPocket("$i$", "$EquipmentClass$") --> "$PocketEquipment[i]);
+
     assertWithDescription(PocketEquipment[i] != None,
         "LoadOut "$name$" failed to spawn PocketEquipment item in pocket "$GetEnum(Pocket,i)$" of class "$EquipmentClass$".");
 

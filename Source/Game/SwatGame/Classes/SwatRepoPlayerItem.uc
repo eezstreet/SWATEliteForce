@@ -66,11 +66,6 @@ function SetSecondaryAmmoCount(int amount) {
 function SetPocketItemClass( Pocket Pocket, class<actor> ItemClass )
 {
     //log( self$" in SwatRepoPlayerItem::SetPocketItemClass(). Pocket="$Pocket$", Item="$ItemClass );
-	if(bForcedLessLethal)
-	{
-		return;
-	}
-
 	RepoLoadOutSpec[ Pocket ] = ItemClass;
 }
 
@@ -86,11 +81,6 @@ function SetPocketItemClassName( Pocket Pocket, string ItemClassName )
         ItemClass = class<HandheldEquipment>(DynamicLoadObject(ItemClassName, class'Class'));
     }
 
-	if(bForcedLessLethal)
-	{
-		return;
-	}
-	
     SetPocketItemClass( Pocket, ItemClass );
 }
 

@@ -308,7 +308,7 @@ replication
         ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
-		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
+		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
         ServerHandleViewportFire, ServerHandleViewportReload;
 }
@@ -6102,7 +6102,6 @@ function ClientSetObjectiveVisibility( string ObjectiveName, bool Visible )
 {
     Repo.SetObjectiveVisibility( name(ObjectiveName), Visible );
 }
-
 
 simulated function ClientReportableReportedToTOC( IAmReportableCharacter ReportableCharacter, string inUniqueID, string PlayerTag, string PlayerName )
 {

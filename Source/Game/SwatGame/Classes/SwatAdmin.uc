@@ -739,6 +739,7 @@ public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
 	local int i;
 	local NetPlayer Player;
 	local OfficerLoadout NewLoadout;
+	local DynamicLoadoutSpec OldSpec;
 
 	RepoItem = PC.SwatRepoPlayerItem;
 
@@ -758,25 +759,28 @@ public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
 		return false;
 	}
 
+	NewLoadout = Spawn(class'OfficerLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
+
 	for(i = 0; i < Pocket.EnumCount; i++)
 	{
-		if(Player != None)
-		{
-			Player.SetPocketItemClass(Pocket(i), NewSpec.LoadOutSpec[i]);
-		}
-
-		RepoItem.SetPocketItemClass(Pocket(i), NewSpec.LoadOutSpec[i]);
+		RepoItem.RepoLoadOutSpec[i] = NewSpec.LoadOutSpec[i];
 	}
 
 	PC.SetMPLoadOut(NewSpec);
+
 	if(Player != None)
 	{
-		NewLoadout = Spawn(class'OfficerLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
+		OldSpec = Player.GetLoadoutSpec();
+		for(i = 0; i < Pocket.EnumCount; i++)
+		{
+			Player.SetPocketItemClass(Pocket(i), RepoItem.RepoLoadOutSpec[i]);
+			OldSpec.LoadOutSpec[i] = RepoItem.RepoLoadOutSpec[i];
+		}
+
 		NewLoadout.Initialize(NewSpec, false);
 		Player.ReceiveLoadOut(NewLoadout);
 		Player.InitializeReplicatedCounts();
 		SwatGameInfo(Level.Game).SetPlayerDefaults(Player);
-		PC.EquipNextSlot();
 	}
 
 	RepoItem.bForcedLessLethal = true;
