@@ -1507,6 +1507,12 @@ latent function DecideToStayCompliant()
 	local bool bFoundNearbyWeapon;
 	local float fGainedMorale;
 
+	if(m_Pawn.IsA('SwatGuard') || m_Pawn.IsA('SwatUndercover'))
+	{
+		// Don't let guards or Jennings become uncompliant again, this is just dumb
+		return;
+	}
+
 	while (class'Pawn'.static.checkConscious(m_Pawn))
 	{
 		if(FoundWeaponModel != None)
