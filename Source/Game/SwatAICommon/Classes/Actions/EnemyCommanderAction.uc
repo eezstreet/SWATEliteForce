@@ -774,7 +774,8 @@ function OnHeardNoise()
 
 private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bOnlyBarricade)
 {
-	local bool bIsAnInvestigator;
+	local bool bInvestigate;
+	local bool bBarricade;
 
 	if (ISwatEnemy(m_Pawn).GetCurrentState() < EnemyState_Suspicious)
 	{
@@ -785,15 +786,16 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bO
 	// if we're not actively engaging, investigate or barricade
 	if (! isRunning())
 	{
-		bIsAnInvestigator = ISwatEnemy(m_Pawn).IsAnInvestigator();
+		bInvestigate = ISwatEnemy(m_Pawn).RollInvestigate();
+		bBarricade = ISwatEnemy(m_Pawn).RollBarricade();
 
 		// if we're not investigating or barricading, do that
 		// if we're already invesgigating or barricading, and can fast trace to the point specified, look at the point
-		if (bIsAnInvestigator && !bOnlyBarricade && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
+		if (bInvestigate && !bOnlyBarricade && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
 		{
 			CreateInvestigateGoal(SuspiciousEventOrigin);
 		}
-		else if ((bOnlyBarricade || ! bIsAnInvestigator) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()))
+		else if ((bOnlyBarricade || bBarricade) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()))
 		{
 			CreateBarricadeGoal(SuspiciousEventOrigin, true, true);
 		}
@@ -1665,18 +1667,6 @@ state Running
 //
 // Debug
 
-private function string GetStimuliResponseTypeName()
-{
-    if (ISwatEnemy(m_Pawn).IsAnInvestigator())
-    {
-        return "Investigator";
-    }
-    else
-    {
-        return "Barricader";
-    }
-}
-
 private function string GetEnemyStateName()
 {
     local EnemyState CurrentEnemyState;
@@ -1724,7 +1714,6 @@ function SetSpecificDebugInfo()
 {
     m_Pawn.AddDebugMessage(" ");
 
-    m_Pawn.AddDebugMessage("Enemy Responds As a:"@GetStimuliResponseTypeName(), class'Canvas'.Static.MakeColor(255,255,128));
 	m_Pawn.AddDebugMessage("Is A Threat:        "@ISwatEnemy(m_Pawn).IsAThreat(), class'Canvas'.Static.MakeColor(255,255,128));
     m_Pawn.AddDebugMessage("Enemy State:        "@GetEnemyStateName(), class'Canvas'.Static.MakeColor(255,255,128));
     m_Pawn.AddDebugMessage("Enemy Skill:        "@GetEnemySkillName(), class'Canvas'.Static.MakeColor(255,255,128));

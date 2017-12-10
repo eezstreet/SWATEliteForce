@@ -30,7 +30,8 @@ enum EnemyState
 //
 // State Data
 
-function bool		IsAnInvestigator();
+function bool		RollInvestigate();
+function bool		RollBarricade();
 function EnemyState GetCurrentState();
 function			SetCurrentState(EnemyState NewState);
 function EnemySkill GetEnemySkill();
@@ -64,7 +65,7 @@ function FiredWeapon GetBackupWeapon();
 function PickUpWeaponModel(HandHeldEquipmentModel HHEModel);
 
 // Tell the enemy to drop his active weapon, and give the
-// falling weapon the specified impulse (in weapon-local space). 
+// falling weapon the specified impulse (in weapon-local space).
 function DropActiveWeapon(optional vector WeaponSpaceDropDirection, optional float DropImpulseMagnitude);
 // Tell the enemy to drop all of his weapons, if it is being shown, and give the
 // falling weapon the specified impulse (in weapon-local space).

@@ -8,10 +8,12 @@
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
 - New AI behavior!
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
+ - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
 
 #### ALL CHANGES ####
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
  - Suspects will attempt to escape when compliant and not being watched. 
+ - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
  - Implemented new Desert Eagle model
  - Lightsticks will now attempt to un-fall through the geometry, if that occurs. (They don't fall through the floor nearly as often)
  - Added a first person viewmodel FOV slider to Video Settings

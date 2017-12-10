@@ -24,9 +24,10 @@ var config array<WeaponClipcountChanceSet> BackupWeapon;
 var array< class<FiredWeapon> > PrimaryWeaponClass;
 var array< class<FiredWeapon> > BackupWeaponClass;
 
-var config bool InvestigatorOverride;
-
 var config class<Actor> ActorClass;
+
+var config float InvestigateChance; // First roll: Investigate a disturbing sound
+var config float BarricadeChance; // Second roll: Barricade when hearing a disturbing sound. If this roll fails, the AI does nothing
 
 function Initialize(Actor inOwner)
 {
@@ -115,8 +116,8 @@ function InitializeInstance(ArchetypeInstance inInstance)
     // initialize the skill value
     InitializeSkill(Instance);
 
-    // initialize the InvestigatorOverride bool
-    Instance.InvestigatorOverride = InvestigatorOverride;
+	Instance.InvestigateChance = InvestigateChance;
+	Instance.BarricadeChance = BarricadeChance;
 
     //initialize weapons
     InitializeWeapon(PrimaryWeapon, PrimaryWeaponClass, Instance.SelectedPrimaryWeaponClass, Instance.SelectedPrimaryWeaponAmmoClass, Instance.PrimaryWeapon, Instance);
@@ -211,4 +212,7 @@ defaultproperties
     ActorClass=class'SwatEnemy'
 
 	FriendlyName="a Suspect"
+
+	InvestigateChance=0.0000
+	BarricadeChance=100.0000
 }
