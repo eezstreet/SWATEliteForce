@@ -62,6 +62,7 @@ New campaign options! Now you will have a good reason to create more than one ca
 
 Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority. Civilians behave more realistically. 
  * Suspects will also try to shoot at you as they're fleeing.
+ * Suspects will try to escape, if they are compliant and the player is not watching.
  * Suspects may now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
  * Suspects have new equipment and may equip heavy armor.
  * Civilians may give up easier if they spot a suspect or a civilian being pepper sprayed, hit with beanbags, etc.
@@ -395,6 +396,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- Given real world name (is now G36K)
 	- New ammo types: AP, JSP
 	- Updated description
+	- Retextured
 	- Now has a silenced counterpart
 * 5.56mm Light Machine Gun
 	- Given real world name (is now M249 SAW)
@@ -408,6 +410,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- New ammo types: AP, JSP
 	- Burst fire removed
 	- Corrected wrong looking first person
+	- Has a suppressed counterpart
 	- Unlockable weapon
 * Gal Sub-machinegun
 	- Now has a flashlight
@@ -421,12 +424,14 @@ All weapons have been changed to have correct muzzle velocities.
 	- Corrected wrong names (MP5A4 and Silenced MP5A4)
 	- Added automatic firing mode
 	- Updated description
+	- Retextured
 	- Fixed incorrect magazine size for FMJ (holds 30 rounds, not 25)
 * .45 SMG
 	- Given real world name (UMP)
 	- New ammo types: AP, JSP
 	- Updated description
 	- 2-round burst mode added
+	- Retextured
 	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
 	- Now has a silenced counterpart
 * M1911 Handgun
@@ -438,6 +443,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- May now be equipped as a Primary Weapon
 * Mark 19 Semi-Automatic Pistol
 	- Given real world name (Desert Eagle)
+	- Remodeled entirely, with correctly functioning animations
 	- Fixed typo in description
 	- New ammo type: JSP
 	- May now be equipped as a Primary Weapon
@@ -522,17 +528,23 @@ All weapons have been changed to have correct muzzle velocities.
 * Added new weapons from the SAS mod, most have a suppressed version as well:
 	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine. (no silenced version)
 	- SG552 Commando: Versatile assault rifle
-	- HK33: Heavy-duty assault rifle (does not include a silenced version, but has a marksman version)
+	- HK33: Heavy-duty assault rifle. Includes a scoped version.
 	- M16: The original assault rifle. Only available in Multiplayer and All Missions campaigns
 	- MP5SSD6: A silenced-only version of the MP5 with a better suppressor.
 	- MP5K: A more tactical machine pistol
 	- Browning Hi-Power: Higher-powered 9mm pistol
 	- P226: A well-rounded 9mm pistol
 	- Remington M870 Shotgun: Shortened shotgun that can be equipped as primary or secondary weapon (no silenced version)
+* Added new equipment from the SWAT4 1.2 mod:
+	- SCAR-H: Heavy assault rifle. Includes an Aimpoint, Suppressed Aimpoint, and Suppressed variants.
+	- AKs-74u: Lightweight AK carbine.
+	- MP5K PDW: Tiny submachine gun.
 * Added new weapons (exclusive to this mod):
 	- Less Lethal M870: Beanbag shotgun available as a secondary.
 	- M870 Breaching: Technically the breaching shotgun from the original game, now as an actual weapon.
-	- M1Super90 Shotgun: Cut weapon from the original game.
+	- M1Super90 Shotgun: Cut shotgun from the original game.
+	- Glock 18: Spitfire machine pistol, available as a secondary.
+	- Glock 19: Ultra lightweight 9mm pistol.
 * Added 3-Packs (tactical) of the following. They are equivalent weight and bulk of five items:
 	- Grenades
 	- Wedges
@@ -797,6 +809,8 @@ Ryo Ohki for a tip about P90 and SAW animations
 Dc247 for typo corrections in this document
 MulleDK19 for help with the Speech Recognition feature
 Yasuntei for spotting a typo
+FrancisSwat for being gracious in giving us the SAS mod assets.
+Hellfire Entertainment for being gracious in giving us the SWAT4 1.2 mod assets.
 
 Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
 Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
@@ -813,6 +827,7 @@ Jordan Harrison
 PUBLICITY
 GOG.com (Ran a very nice overview of our mod, you should check it out!)
 PC Power Play (Also ran a nice overview of the mod)
+GamingPastime did an excellent review of v5.3.
 StrawberryClock (Streamer)
 
 WE ARE: ELITE SQUAD
