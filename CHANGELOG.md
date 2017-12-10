@@ -12,11 +12,14 @@
 
 #### ALL CHANGES ####
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
+ - Implemented new Desert Eagle model
  - Suspects will attempt to escape when compliant and not being watched. 
  - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
- - Implemented new Desert Eagle model
+ - Suspects will remain in a barricaded state, even after firing upon a door.
+ - Suspects will close doors after firing upon them while in a barricaded state. The time it takes to do this is random.
  - Lightsticks will now attempt to un-fall through the geometry, if that occurs. (They don't fall through the floor nearly as often)
  - Added a first person viewmodel FOV slider to Video Settings
+ - Old Granite Hotel now has more suspects spawn on the first floor, and in different spawning areas so it's more random. It's possible for an extra civilian to spawn on the first floor.
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
 
 #### v6.4

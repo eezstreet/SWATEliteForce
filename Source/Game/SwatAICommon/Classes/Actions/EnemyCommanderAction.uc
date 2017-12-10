@@ -797,6 +797,7 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bO
 		}
 		else if ((bOnlyBarricade || bBarricade) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()))
 		{
+			ISwatEnemy(m_Pawn).StopInvestigating();	// don't investigate after we've already concluded that SWAT is here
 			CreateBarricadeGoal(SuspiciousEventOrigin, true, true);
 		}
 		else if (m_Pawn.FastTrace(SuspiciousEventOrigin, m_Pawn.Location))
@@ -1110,6 +1111,7 @@ function EncounterEnemy(Pawn NewEnemy)
 
 		// we are now aware
         ISwatEnemy(m_Pawn).SetCurrentState(EnemyState_Aware);
+		ISwatEnemy(m_Pawn).StopInvestigating(); // Don't investigate sounds after we've encountered an enemy
 
 		// update knowledge about our current enemy
 		ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(CurrentEnemy);

@@ -19,7 +19,7 @@ const maxWeaponDistance = 200.0f;		// max distance a for a dropped weapon to be 
 
 // State Variables
 var private EnemySkill					Skill;
-var private bool                        Unused;
+var private bool                        bDontInvestigate;
 var private EnemyState					CurrentState;
 var private bool						bThreat;
 var private bool						bIsSprinting;
@@ -1258,9 +1258,24 @@ function NotifyClientsToDestroyDroppedWeapon( string theUniqueID )
     }
 }
 
+function StartInvestigating()
+{
+	bDontInvestigate = false;
+}
+
+function StopInvestigating()
+{
+	bDontInvestigate = true;
+}
+
 function bool RollInvestigate()
 {
 	local EnemyArchetypeInstance Instance;
+
+	if(bDontInvestigate)
+	{	// not allowed to investigate sounds anymore
+		return false;
+	}
 
 	Instance = EnemyArchetypeInstance(ArchetypeInstance);
 	assert(Instance != None);

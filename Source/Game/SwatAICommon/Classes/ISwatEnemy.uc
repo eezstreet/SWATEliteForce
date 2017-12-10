@@ -30,6 +30,8 @@ enum EnemyState
 //
 // State Data
 
+function			StartInvestigating();
+function 			StopInvestigating();
 function bool		RollInvestigate();
 function bool		RollBarricade();
 function EnemyState GetCurrentState();

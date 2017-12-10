@@ -50,6 +50,9 @@ var config float				OtherReactionSpeechChance;
 var config float				CrouchAtFleePointChance;
 var config float				AimAtClosestDoorTime;
 
+var config float				MinTimeBeforeClosingDoor;
+var config float				MaxTimeBeforeClosingDoor;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Cleanup
@@ -163,7 +166,7 @@ private function FindBarricadePoint()
 	// find our anchor, and check if it's a flee point
 	m_Pawn.FindAnchor(true);
 
-	if ((m_Pawn.Anchor != None) && m_Pawn.Anchor.IsA('FleePoint') && 
+	if ((m_Pawn.Anchor != None) && m_Pawn.Anchor.IsA('FleePoint') &&
 		((FleePoint(m_Pawn.Anchor).GetFleePointUser() == None) || (FleePoint(m_Pawn.Anchor).GetFleePointUser() == m_Pawn)))
 	{
 		BarricadePoint = Pawn.Anchor;
@@ -259,10 +262,10 @@ private function PopulateDoorsInRoom()
 		assert(IterDoor != None);
 		IterSwatDoor = ISwatDoor(IterDoor);
 		assert(IterSwatDoor != None);
-		
+
 		DoorsInRoom[DoorsInRoom.Length] = IterDoor;
 
-		// if there's a door that isn't broken, isn't locked, and isn't opening, 
+		// if there's a door that isn't broken, isn't locked, and isn't opening,
 		// we consider the door usable
 		if (!IterDoor.IsEmptyDoorWay() && !IterSwatDoor.IsBroken() && !IterDoor.IsOpening() && !IterDoor.IsClosing() && !IterSwatDoor.IsLocked())
 		{
@@ -339,7 +342,7 @@ latent function AimAtClosestDoor()
 	local Door ClosestDoor;
 
 	ClosestDoor = GetClosestDoorToStimuliOrigin();
-	
+
 //	log("ClosestDoor is: " $ ClosestDoor $ " Can hit ClosestDoor: " $ m_Pawn.CanHit(ClosestDoor));
 
 	if ((ClosestDoor != None) && m_Pawn.CanHit(ClosestDoor))
@@ -499,6 +502,8 @@ latent function ShootAtOpeningDoor()
 	AttackDoorGoal.unPostGoal(self);
 	AttackDoorGoal.Release();
 	AttackDoorGoal = None;
+
+	ISwatEnemy(m_Pawn).UnbecomeAThreat();
 }
 
 private latent function AimAtOpeningDoor()
@@ -521,6 +526,12 @@ private latent function AimAtOpeningDoor()
 	CurrentAimAtTargetGoal = None;
 }
 
+private latent function CloseOpenedDoor()
+{
+	CloseDoor(DoorOpening);
+	LockDoor(DoorOpening);
+}
+
 state Running
 {
 Begin:
@@ -539,7 +550,7 @@ Begin:
 	{
 		sleep(RandRange(MinBarricadeDelayTime, MaxBarricadeDelayTime));
 	}
-	
+
 	CheckWeaponStatus();
 
 	// clear the dummy  movement goal so we can move to close and lock doors,
@@ -553,6 +564,7 @@ Begin:
 		CloseAndLockDoorsInRoom();
 	}
 
+GetInPosition:
     MoveToBarricadePoint();
 
 	useResources(class'AI_Resource'.const.RU_LEGS);
@@ -589,8 +601,13 @@ Begin:
 			AimAtOpeningDoor();
 		}
 
-		// aim around again
-		AimAround();
+		// clear the dummy  movement goal so we can move to close and lock doors,
+		// as well as to move to the flee point in the room
+		ClearDummyMovementGoal();
+
+		CloseOpenedDoor();
+
+		goto 'GetInPosition';
 	}
 }
 
