@@ -14,6 +14,7 @@
  - Suspects will attempt to escape when compliant and not being watched. 
  - Implemented new Desert Eagle model
  - Lightsticks will now attempt to un-fall through the geometry, if that occurs. (They don't fall through the floor nearly as often)
+ - Added a first person viewmodel FOV slider to Video Settings
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
 
 #### v6.4

@@ -401,7 +401,7 @@ var transient CompressedPosition PawnPosition;
 // Equipment variables
 //
 
-var config float FirstPersonFOV;
+var config float FirstPersonFOV; // NOT USED ... real value is in PlayerController.FirstPersonFOV
 var protected Hands Hands;
 var bool bRenderHands; // if false, the first person Hands (and hence weapon) will not be rendered
 
@@ -885,15 +885,20 @@ simulated function vector CalcDrawOffset()
 	local vector DrawOffset;
 	local PlayerController OwnerController;
     local HandheldEquipment EquippedItem;
+	local float FirstPersonFOV;
 
     AssertWithDescription(Hands != None,
         "[tcohen] The Pawn named "$name$" was called to CalcDrawOffset().  But it has no Hands.");
 
 	if ( Controller == None )
 		return (Hands.PlayerViewOffset >> Rotation) + BaseEyeHeight * vect(0,0,1);
-	
+
+	FirstPersonFOV = class'FOVSettings'.default.FPFOV - 85.0000;
+	FirstPersonFOV *= (PlayerController(Controller).ZoomAlpha - 1.0);
+	FirstPersonFOV += 85.0000;
+
 	DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
-	
+
 	if ( !IsLocallyControlled() )
 		DrawOffset.Z += BaseEyeHeight;
 	else
@@ -1540,10 +1545,10 @@ simulated function vector GetEyeLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bone01Eye');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 
@@ -1551,10 +1556,10 @@ simulated function vector GetChestLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bip01_Spine2');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 
@@ -1562,10 +1567,10 @@ simulated function vector GetHeadLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bone01Eye');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 

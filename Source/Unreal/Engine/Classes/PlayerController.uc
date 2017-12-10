@@ -231,7 +231,7 @@ var(ForceFeedback) globalconfig bool bEnableDamageForceFeedback;
 var(ForceFeedback) globalconfig bool bEnableGUIForceFeedback;
 var(ForceFeedback) bool bForceFeedbackSupported;  // true if a device is detected
 
-var float FOVBias;
+var globalconfig float FOVBias;
 
 #if IG_SWAT //tcohen: maintain the last delta time
 var float LastDeltaTime;
@@ -1245,6 +1245,24 @@ exec function FOV(float F)
 		fFOV = FClamp(F, 70, 120);
 		BaseFOV = fFOV;
 	}
+}
+
+exec function FPFOV(float F)
+{
+	local float fFOV;
+
+	if( (F >= 70.0) )
+	{
+		fFOV = FClamp(F, 70, 120);
+		class'FOVSettings'.default.FPFOV = fFOV;
+	}
+}
+
+exec function SetFOVBias(float F)
+{
+	local float fFOV;
+
+	FOVBias = F;
 }
 
 exec function SetFOVTemporary(float F)

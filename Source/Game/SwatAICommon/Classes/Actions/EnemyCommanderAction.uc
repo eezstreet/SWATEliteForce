@@ -1502,7 +1502,7 @@ function FinishedMovingEngageBehavior()
 latent function DecideToStayCompliant()
 {
 	local HandHeldEquipmentModel FoundWeaponModel;
-	local bool bHadNearbyWeapon;
+	local bool bFoundNearbyWeapon;
 	local float fGainedMorale;
 
 	while (class'Pawn'.static.checkConscious(m_Pawn))
