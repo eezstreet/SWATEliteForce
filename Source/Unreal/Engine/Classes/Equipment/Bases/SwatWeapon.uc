@@ -112,6 +112,9 @@ var(Firing) config EComplianceWeaponAnimation ComplianceAnimation;
 var(Firing) protected config bool ShowCrosshairInIronsights "Whether to show the crosshair in ironsights";
 var(Firing) protected config bool WalkInIronsights "Whether to walk while in ironsights";
 
+// Flashlight data
+var(Flashlight) config int FlashlightTextureIndex;
+
 // Manufacturer Information
 var(AdvancedDescription) protected localized config string Manufacturer         "The Manufacturer in the Advanced Information panel (localized)";
 var(AdvancedDescription) protected localized config string CountryOfOrigin      "The Country of Origin in the Advanced Information panel (localized)";
@@ -374,6 +377,11 @@ simulated function float GetBaseAimError()
 	return BaseAimError;
 }
 
+function int GetFlashlightTextureIndex()
+{
+	return FlashlightTextureIndex;
+}
+
 // Sticky selection: if this item is equipped, then we switch to a grenade, then use a grenade, it switches to this item
 simulated function bool HasStickySelection()
 {
@@ -425,4 +433,5 @@ defaultproperties
   ZoomedAimErrorModifier = 0.75
   ComplianceAnimation=Compliance_Handgun
   WalkInIronsights=true
+  FlashlightTextureIndex=1
 }

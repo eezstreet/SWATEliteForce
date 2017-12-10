@@ -1925,6 +1925,12 @@ simulated final function bool HasFlashlight()
 // Is the flashlight on?
 native final function bool IsFlashlightOn();
 
+// Get the flashlight texture index
+function int GetFlashlightTextureIndex()
+{
+	return FLASHLIGHT_TEXTURE_INDEX;
+}
+
 // This is called when the holder of the weapon changes its desired flashlight
 // state.
 simulated function OnHolderDesiredFlashlightStateChanged()
@@ -1933,6 +1939,9 @@ simulated function OnHolderDesiredFlashlightStateChanged()
 	local Name EventName;
 	local String FlashlightTextureName;
 	local Material FlashlightMaterial;
+	local int Index;
+
+	Index = GetFlashlightTextureIndex();
 
     if (HasAttachedFlashlight)
     {
@@ -1969,12 +1978,12 @@ simulated function OnHolderDesiredFlashlightStateChanged()
 			{
 				// hack.. force the skin to None so that GetCurrentMaterial will pull from
 				// the default materials array instead of the skin
-				ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = None;
+				ThirdPersonModel.Skins[Index] = None;
 
-				FlashlightMaterial = ThirdPersonModel.GetCurrentMaterial(FLASHLIGHT_TEXTURE_INDEX);
+				FlashlightMaterial = ThirdPersonModel.GetCurrentMaterial(Index);
 			}
 
-			ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = FlashlightMaterial;
+			ThirdPersonModel.Skins[Index] = FlashlightMaterial;
 	    }
 
 	    UpdateFlashlightState();
