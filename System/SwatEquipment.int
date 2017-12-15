@@ -18,6 +18,18 @@ MagazineSizeString=5
 TotalAmmoString=25 shells
 RateOfFire=Unknown
 
+[XDMHG]
+Description=Manufactured by the Croatian HS Produkt and licensed for use in the United States by Springfield Armory, the XDM (short for X-treme Duty, Match Grade barrel) features an impressively modern design with synthetic polymer furnishings. This firearm and its predecessor, the HS2000, were awarded the title of Handgun of the Year from American Rifleman and The Shooting Academy of Excellence in 2009 and 2006, respectively. This particular model is chambered in .45 ACP and boasts an impressive 13-round box magazine.
+FriendlyName=XDM
+Manufacturer=Springfield Armory
+Caliber=.45
+CountryOfOrigin=Croatia/United States
+ProductionStart=2006
+FireModes=Semi-Automatic
+MagazineSizeString=13
+TotalAmmoString=10 magazines
+RateOfFire=400 RPM
+
 [BrowningHPHG]
 Description=The Browning Hi-Power is one of the most widely used pistols in history, having seen service in World War II, the Korean War, and more than a dozen other conflicts. The Browning Hi-Power started design by John Browning in 1914, but didn't see production until 1935, when it was finished by FN Herstal. The name alludes to its impressive 13-round magazine, which at the time, was double the standard pistol magazine-size. This variant in particular is chambered in 9x19mm Parabellum.
 FriendlyName=Browning Hi-Power
