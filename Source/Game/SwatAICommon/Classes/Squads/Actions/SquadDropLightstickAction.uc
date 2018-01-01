@@ -35,15 +35,16 @@ latent function DropLightstick()
 	local Pawn Officer;
 
 	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_Lightstick, 'Lightstick');
-  if(Officer == None) {
-    Officer = GetFirstOfficer();
-    if(Officer != None) {
-      ISwatOfficer(Officer).GetOfficerSpeechManagerAction().TriggerCantDeployLightstickSpeech();
-    }
-    return;
-  }
+	if(Officer == None) {
+	    Officer = GetFirstOfficer();
+	    if(Officer != None && SquadDropLightstickGoal(achievingGoal).GetPlaySpeech()) {
+	      ISwatOfficer(Officer).GetOfficerSpeechManagerAction().TriggerCantDeployLightstickSpeech();
+	    }
+	    return;
+	}
 
 	CurrentDropLightstickGoal = new class'DropLightstickGoal'(AI_Resource(Officer.characterAI), Officer.Location);
+	CurrentDropLightStickGoal.SetPlaySpeech(SquadDropLightstickGoal(achievingGoal).GetPlaySpeech());
 	assert(CurrentDropLightstickGoal != None);
 	CurrentDropLightstickGoal.AddRef();
 
