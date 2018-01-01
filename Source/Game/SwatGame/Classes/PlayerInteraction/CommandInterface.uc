@@ -521,6 +521,17 @@ simulated protected event PostDoorRelatedContextMatched(PlayerInterfaceDoorRelat
     for (i=0; i<Context.Command.length; ++i)
         SetCommandStatus(Commands[int(Context.Command[i])]);
 
+	// shitty thing...we need to NOT consider the default command in one special case --eez
+	if(inContext.IsA('CommandInterfaceDoorRelatedContext_SP') &&
+		CommandInterfaceDoorRelatedContext_SP(inContext).DoorUnlockedMustBeKnown)
+	{
+		if(!SwatPawn(Level.GetLocalPlayerController().Pawn).GetDoorBelief(CurrentDoorFocus))
+		{
+			// we don't know what the door is
+			return;
+		}
+	}
+
     if (Context.DefaultCommand != Command_None)
         ConsiderDefaultCommand(Commands[int(Context.DefaultCommand)], Context.DefaultCommandPriority);
 }

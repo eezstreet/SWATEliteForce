@@ -578,6 +578,10 @@ simulated function Interact(Pawn Other, optional bool Force)
 			if (Level.GetEngine().EnableDevTools)
 				mplog("Saving locked door knowledge for pawn: "$NetPlayerPawn$", team number: "$NetPlayerPawn.GetTeamNumber());
         }
+		else
+		{
+			LockedKnowledge[0] = 1;
+		}
     }
     else
     {
@@ -672,6 +676,10 @@ simulated function OnUnlocked()
             }
         }
     }
+	else
+	{
+		LockedKnowledge[0] = 0;
+	}
 }
 
 simulated function bool TryDoorLock(SwatGamePlayerController Caller)
@@ -733,6 +741,11 @@ simulated function bool KnowsDoorIsLocked( int TeamNumber )
     assert( Level.NetMode != NM_Standalone );
     assert( TeamNumber < 3 ); // dbeswick: used to be 2, now there are potentially 3 teams in coop
     return LockedKnowledge[TeamNumber] == 1;
+}
+
+simulated function bool KnowsDoorIsUnlocked(int TeamNumber)
+{
+	return LockedKnowledge[TeamNumber] == 0 && !bIsLocked;
 }
 
 //

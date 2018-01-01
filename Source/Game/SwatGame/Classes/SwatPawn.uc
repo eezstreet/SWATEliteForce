@@ -1508,6 +1508,14 @@ function SetDoorLockedBelief(Door inDoor, bool bBelievesDoorLocked)
 	GetDoorKnowledge(inDoor).SetBelievesDoorLocked(bBelievesDoorLocked);
 }
 
+function bool GetDoorBelief(Door inDoor)
+{
+	local PawnDoorKnowledge Knowledge;
+
+	Knowledge = GetDoorKnowledge(inDoor);
+	return Knowledge.BeliefKnown();
+}
+
 function SetDoorWedgedBelief(Door inDoor, bool bBelievesDoorWedged)
 {
 	assert(inDoor != None);
