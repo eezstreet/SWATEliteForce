@@ -14,6 +14,7 @@ import enum eDifficultyLevel from SwatGUIConfig;
 
 var (Swat) editinline array<Roster> Rosters;
 var (Swat) editinline array<MPRoster> MPRosters;
+var (Swat) editinline array<DoorRoster> DoorRosters;
 
 var private LevelInfo Level;
 
@@ -55,6 +56,12 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
     // DoSpawning() should only be called in standalone games.
     assert( Level.NetMode == NM_Standalone || Level.IsCOOPServer );
+
+	// Do door rosters
+	for(i = 0; i < DoorRosters.Length; i++)
+	{
+		DoorRosters[i].DoDoorRoster();
+	}
 
     //we only expect to do this once per run
     assert(!HasSpawned || bTesting);

@@ -410,6 +410,41 @@ function Tick( float dTime )
     }
 }
 
+// A door roster locked this door
+simulated function RosterLock()
+{
+	InitialPosition = DoorPosition_Closed;
+	CurrentPosition = DoorPosition_Closed;
+	SetPositionForMove(GetInitialPosition(), MR_Interacted);
+	bIsLocked = true;
+	bWasInitiallyLocked = true;
+	Moved(true);
+	log("RosterLock() on "$self);
+}
+
+// A door roster opened this door to the left
+simulated function RosterOpenLeft()
+{
+	bIsLocked = false;
+	bWasInitiallyLocked = false;
+	bWasInitiallyOpen = true;
+	InitialPosition = DoorPosition_OpenLeft;
+	CurrentPosition = DoorPosition_Closed;    // set the door position to closed in case it was left open when a designer was viewing paths to the left or the right
+    SetPositionForMove( GetInitialPosition(), MR_Interacted );
+    Moved(true); //instantly to initial position
+}
+
+// A door roster opened this door to the right
+simulated function RosterOpenRight()
+{
+	bIsLocked = false;
+	bWasInitiallyLocked = false;
+	bWasInitiallyOpen = true;
+	InitialPosition = DoorPosition_OpenRight;
+	CurrentPosition = DoorPosition_Closed;    // set the door position to closed in case it was left open when a designer was viewing paths to the left or the right
+    SetPositionForMove( GetInitialPosition(), MR_Interacted );
+    Moved(true); //instantly to initial position
+}
 
 simulated function DoorPosition GetInitialPosition()
 {

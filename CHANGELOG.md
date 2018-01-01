@@ -21,9 +21,36 @@
  - After checking a lock, the default command context option will be "Open and Clear"
  - Added a first person viewmodel FOV slider to Video Settings
  - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
- - Old Granite Hotel now has more suspects spawn on the first floor, and in different spawning areas so it's more random. It's possible for an extra civilian to spawn on the first floor.
+ - Maps have the ability to randomly open or lock doors which were ordinarily closed.
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
+
+##### Map-Specific Changes #####
+
+ - Fairfax Residence
+  - The front door/garage door may be randomly locked or unlocked.
+  - Various doors around the house can be randomly locked/unlocked/open.
+ - Food Wall Restaurant
+  - Fixed the suspect spawn point in the closet (it was not configured correctly)
+  - The back door may be randomly locked or open.
+  - The bathrooms and kitchen area door may be randomly locked or open.
+ - Red Library Offices
+  - Fixed TSS visual glitch where sometimes enemies would wear sunglasses and a gas mask at the same time
+  - Suspects can wear hats
+ - Northside Vending and Amusements
+  - More enemies spawn on Hard and Elite difficulties.
+  - Some doors may be randomly locked or opened.
+ - Sellers St. Auditorium
+  - Fixed bag of drugs that was spawning through the couch.
+ - DuPlessis Diamonds
+  - Fixed double doors that were able to be locked
+ - Old Granite Hotel
+  - More suspects and civilians spawn on the first floor.
+  - Spawning areas are split up.
+ - Brewer County Courthouse
+  - More enemy spawn points (so as to be less predictable)
+  - More enemies spawn on Hard and Elite difficulties.
+  - Suspects are more likely to wear heavy armor on Hard and Elite difficulties.
 
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)
