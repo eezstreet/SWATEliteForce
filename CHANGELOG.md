@@ -22,6 +22,7 @@
  - Added a first person viewmodel FOV slider to Video Settings
  - Old Granite Hotel now has more suspects spawn on the first floor, and in different spawning areas so it's more random. It's possible for an extra civilian to spawn on the first floor.
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
+ - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
 
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)

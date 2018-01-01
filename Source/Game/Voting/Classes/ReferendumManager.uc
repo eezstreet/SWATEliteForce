@@ -147,8 +147,12 @@ static function bool ReferendumTypeAllowed(class<Referendum> ReferendumType)
 }
 
 // Returns false if the referendum could not be started
-protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType, optional bool bDontUseTeam)
+protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType)
 {
+	local bool bUseTeam;
+
+	bUseTeam = ReferendumType.bUseTeam;
+
 	// Only one referendum can be active at any one time
 	if (ReferendumActive())
 	{
@@ -174,10 +178,10 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 		return false;
 	}
 
-	if (bDontUseTeam)
-		ReferendumTeam = None;
-	else
+	if (bUseTeam)
 		ReferendumTeam = PRI.Team;
+	else
+		ReferendumTeam = None;
 
 	// No one has voted yet
 	Voters.Length = 0;
@@ -219,7 +223,7 @@ function bool StartNewReferendum(PlayerController PC, class<Referendum> Referend
 		return false; // Do whatever logic in the referendum to determine whether it can be called on the target
 	}
 
-	if(StartReferendum(PC.PlayerReplicationInfo, Referendum, ReferendumClass.default.bUseTeam))
+	if(StartReferendum(PC.PlayerReplicationInfo, Referendum))
 	{
 		if(Target != None && !ReferendumClass.default.bNoImmunity)
 		{
