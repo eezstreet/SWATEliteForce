@@ -592,11 +592,11 @@ private function ReceiveLoadOut()
     Skins[2] = LoadOut.GetNameMaterial();
     Skins[3] = LoadOut.GetVestMaterial();
 
-    if ( LoadOut.GetPrimaryWeapon() != None && !LoadOut.GetPrimaryWeapon().OfficerWontEquipAsPrimary )
+    if ( LoadOut.GetPrimaryWeapon() != None && !LoadOut.GetPrimaryWeapon().IsA('NoWeapon') && !LoadOut.GetPrimaryWeapon().OfficerWontEquipAsPrimary )
     {
         LoadOut.GetPrimaryWeapon().Equip();
     }
-    else if (LoadOut.GetBackupWeapon() != None)
+    else if (LoadOut.GetBackupWeapon() != None && !LoadOut.GetBackupWeapon().IsA('NoWeapon'))
     {
         LoadOut.GetBackupWeapon().Equip();
     }

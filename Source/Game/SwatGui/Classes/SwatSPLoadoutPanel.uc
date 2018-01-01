@@ -841,6 +841,12 @@ function TooMuchBulkModal()
     Super.TooMuchBulkModal();
 }
 
+function NoWeaponModal()
+{
+	Controller.TopPage().OnDlgReturned=None;
+    Super.NoWeaponModal();
+}
+
 function bool CheckWeightBulkValidity()
 {
     local int i;
@@ -857,6 +863,12 @@ function bool CheckWeightBulkValidity()
             TooMuchBulkModal();
             return false;
         }
+		else if(MyCurrentLoadOuts[i].LoadoutSpec[0] == class'SwatEquipment.NoWeapon' &&
+			MyCurrentLoadOuts[i].LoadoutSpec[2] == class'SwatEquipment.NoWeapon')
+		{
+			NoWeaponModal();
+			return false;
+		}
     }
     return true;
 }
@@ -958,6 +970,7 @@ defaultproperties
 
     EquipmentOverWeightString="One of your officers is equipped with too much weight. You need to change their gear before you may continue."
     EquipmentOverBulkString="One of your officers is equipped with too much bulk. You need to change their gear before you may continue."
+	NoWeaponString="One of your officers lacks both a primary and secondary weapon. You need to fix this before you may continue."
 
     MultiApplyStr[0] = "Element"
     MultiApplyStr[1] = "Red Team"

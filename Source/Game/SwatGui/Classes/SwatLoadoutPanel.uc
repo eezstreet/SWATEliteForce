@@ -57,6 +57,7 @@ var(SWATGui) protected EditInline Config GUILabel          MyEquipmentBulkName;
 
 var(SWATGui) Config Localized String EquipmentOverWeightString;
 var(SWATGui) Config Localized String EquipmentOverBulkString;
+var(SWATGui) Config Localized String NoWeaponString;
 var(SWATGui) Config Localized array<String> EquipmentCategoryNames;
 
 
@@ -280,6 +281,10 @@ function TooMuchBulkModal() {
   Controller.TopPage().OpenDlg( EquipmentOverBulkString, QBTN_Ok, "TooMuchBulk" );
 }
 
+function NoWeaponModal() {
+	Controller.TopPage().OpenDlg( NoWeaponString, QBTN_Ok, "NoWeapon");
+}
+
 function bool CheckWeightBulkValidity() {
   assertWithDescription(false, "CheckWeightBulkValidity got called in SwatLoadoutPanel. Use a child class member instead.");
 
@@ -467,8 +472,8 @@ function DisplayEquipment( Pocket thePocket )
 
 
     //dont update anything on the panel if this is not on the active panel
-    if( !IsPocketDisplayedInActiveTab( thePocket ) )
-        return;
+    //if( !IsPocketDisplayedInActiveTab( thePocket ) )
+    //    return;
 
     //handle displaying the info for this pocket in the panel
     switch(thePocket)
@@ -572,7 +577,7 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
 
     //if the item that would be selected is invalid given other items in the loadout and the players team, select the next item
     if( !MyCurrentLoadOut.ValidForLoadoutSpec( class<actor>(EquipmentList[thePocket].GetObject()), thePocket ) ||
-		!CheckValidity(class<actor>(EquipmentList[thePocket].GetObject()), NETVALID_All) || 
+		!CheckValidity(class<actor>(EquipmentList[thePocket].GetObject()), NETVALID_All) ||
 		!CheckCampaignValid( class<actor>(EquipmentList[thePocket].GetObject()) ) )
     {
         if( FailedToValidate >= 0 )

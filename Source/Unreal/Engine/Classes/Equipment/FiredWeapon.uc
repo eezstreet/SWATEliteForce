@@ -157,10 +157,6 @@ simulated function PreBeginPlay()
 {
     Super.PreBeginPlay();
 
-    AssertWithDescription(MuzzleVelocity > 0,
-        "[tcohen] MuzzleVelocity for the FiredWeapon "$class.name
-        $" is not set.  Please set it in Content/System/SwatEquipment.ini.");
-
     if (AvailableFireMode.length > 0)
     {
         FireModeIndex = 0;
@@ -668,7 +664,7 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         }
 
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
-        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) 
+        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0))
 		{
           // the bullet ricocheted
           DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, KillEnergy, BulletType, 0);
@@ -732,8 +728,8 @@ simulated function bool HandleBallisticImpact(
     local IHaveSkeletalRegions SkelVictim;
     local Pawn  PawnVictim;
 	local PlayerController OwnerPC;
-	
-    BulletType = Ammo.GetBulletType();	
+
+    BulletType = Ammo.GetBulletType();
     ArmorLevel = Protection.GetProtectionType();
     BulletLevel = Ammo.GetPenetrationType();
 
@@ -1054,7 +1050,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float MomentumLostToProtection;
     local Object.Range DamageModifierRange;
     local float DamageModifier, ExternalDamageModifier;
-	
+
     ArmorLevel = Protection.GetProtectionType();
     BulletLevel = Ammo.GetPenetrationType();
 
@@ -1610,7 +1606,7 @@ simulated latent private function Fire()
     }
 
     PawnOwner = Pawn(Owner);
-	
+
     PlayerController = PlayerController(PawnOwner.Controller);
     if(PlayerController != None && PlayerController.WantsZoom)
     {   // Reduce accuracy loss from firing by 50% while we are zoomed.
@@ -1844,23 +1840,23 @@ simulated function AddAimError(AimPenaltyType Penalty, optional float Modifier)
          case AimPenalty_Equip:
             PendingAimErrorPenalty += EquippedAimErrorPenalty * Modifier;
              break;
- 
+
          case AimPenalty_StandToWalk:
             PendingAimErrorPenalty += StandToWalkAimErrorPenalty * Modifier;
              break;
- 
+
          case AimPenalty_WalkToRun:
             PendingAimErrorPenalty += WalkToRunAimErrorPenalty * Modifier;
              break;
- 
+
          case AimPenalty_TakeDamage:
             PendingAimErrorPenalty += DamagedAimErrorPenalty * Modifier;
              break;
- 
+
          case AimPenalty_Fire:
             PendingAimErrorPenalty += FiredAimErrorPenalty * Modifier;
              break;
- 
+
          default:
             assert(false);  //unexpected AimPenaltyType
     }

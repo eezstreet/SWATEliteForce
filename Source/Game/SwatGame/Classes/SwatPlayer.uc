@@ -574,7 +574,7 @@ simulated function DoDefaultEquip()
 
     if  (                                                                   //However,
             Level.IsTraining                                                //  - in Training, or
-        ||  PrimaryWeapon == None                                           //  - if the player has no primary, or
+        ||  PrimaryWeapon == None || PrimaryWeapon.IsA('NoWeapon')          //  - if the player has no primary, or
         ||  (PrimaryWeapon.Ammo.IsEmpty() && !BackupWeapon.Ammo.IsEmpty())  //  - the primary is empty, but the backup is not (VUG bug 219)
         )                                                                   //
         WeaponToEquip = BackupWeapon;                                       //  we prefer the backup weapon.

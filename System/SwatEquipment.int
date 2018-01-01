@@ -1,6 +1,10 @@
 ﻿[NoWeapon]
-Description=Choose this option to pack no weapon in this slot. This option is good for when you need to reduce your weight and/or bulk.
+Description=Pack no equipment in this slot. This will reduce your weight and bulk.
 FriendlyName=No Weapon
+
+[NoAmmo]
+Description=This weapon does not use ammo.
+FriendlyName=No Ammo
 
 [NoEquipment]
 Description=Choose this option to pack no equipment in this slot. This option is good for when you need to reduce your weight and/or bulk.

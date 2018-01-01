@@ -163,26 +163,37 @@ function bool CheckCampaignValid( class EquipmentClass )
 	return true;
 }
 
-function bool CheckWeightBulkValidity() {
-  local float Weight;
-  local float Bulk;
+function bool CheckWeightBulkValidity()
+{
+	local float Weight;
+	local float Bulk;
 
-  Weight = MyCurrentLoadOut.GetTotalWeight();
-  Bulk = MyCurrentLoadOut.GetTotalBulk();
+	Weight = MyCurrentLoadOut.GetTotalWeight();
+	Bulk = MyCurrentLoadOut.GetTotalBulk();
 
-  if(Weight > MyCurrentLoadOut.GetMaximumWeight()) {
-    TooMuchWeightModal();
-    return false;
-  } else if(Bulk > MyCurrentLoadOut.GetMaximumBulk()) {
-    TooMuchBulkModal();
-    return false;
-  }
+	if(Weight > MyCurrentLoadOut.GetMaximumWeight())
+	{
+	    TooMuchWeightModal();
+	    return false;
+	}
+	else if(Bulk > MyCurrentLoadOut.GetMaximumBulk())
+	{
+	    TooMuchBulkModal();
+	    return false;
+	}
+	else if(MyCurrentLoadout.LoadOutSpec[0] == class'SwatEquipment.NoWeapon' &&
+	  			MyCurrentLoadOut.LoadOutSpec[2] == class'SwatEquipment.NoWeapon')
+	{
+		NoWeaponModal();
+		return false;
+	}
 
-  return true;
+	return true;
 }
 
 defaultproperties
 {
   EquipmentOverWeightString="You are equipped with too much weight. Your loadout will be changed to the default if you don't adjust it."
   EquipmentOverBulkString="You are equipped with too much bulk. Your loadout will be changed to the default if you don't adjust it."
+  NoWeaponString="You do not have a weapon. Your loadout will be changed to the default if you don't adjust it."
 }
