@@ -383,13 +383,18 @@ function SendGlobalMessage(string Message, name Type)
 function PenaltyTriggeredMessage(Pawn Inflictor, string PenaltyMessage)
 {
 	local string Message;
+	local string IP;
 
 	Message = PenaltyMessage;
 	if(Level.NetMode != NM_Standalone)
 	{
 		Message = SwatPawn(Inflictor).GetHumanReadableName()$"\t"$PenaltyMessage;
 		Broadcast(Inflictor, Message, 'PenaltyIssuedChat');
-		AdminLog(Message, 'PenaltyIssuedChat');
+		if(Inflictor.IsA('NetPlayer'))
+		{
+			IP = PlayerController(Inflictor.Controller).GetPlayerNetworkAddress();
+		}
+		AdminLog(Message, 'PenaltyIssuedChat', IP);
 	}
 	else
 	{
@@ -1687,7 +1692,7 @@ function PlayerLoggedIn(PlayerController NewPlayer)
 			if( !PC.IsAReconnectingClient())
 			{
 				Broadcast( NewPlayer, NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
-				AdminLog(NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
+				AdminLog(NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect', PC.GetPlayerNetworkAddress());
 			}
 
 		}
@@ -1713,7 +1718,7 @@ function Logout( Controller Exiting )
     {
         //broadcast this player's disconnection to all players
         Broadcast( SGPC, SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
-		AdminLog(SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect');
+		AdminLog(SGPC.PlayerReplicationInfo.PlayerName, 'PlayerDisconnect', SGPC.GetPlayerNetworkAddress());
 
         //log the player out: remove their RepoItem
         Repo.Logout( SGPC );
@@ -2060,11 +2065,11 @@ function NetTeam GetTeamFromID( int TeamID )
     return NetTeam(GameReplicationInfo.Teams[TeamID]);
 }
 
-function AdminLog(coerce string Msg, name Type)
+function AdminLog(coerce string Msg, name Type, optional string PlayerIP, optional string AdminIP)
 {
 	if(Admin != None)
 	{
-		Admin.Broadcast(Msg, Type);
+		Admin.Broadcast(Msg, Type, PlayerIP, AdminIP);
 	}
 }
 
@@ -2152,6 +2157,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 	local PlayerController KillerPC;
 	local PlayerController VictimPC;
 	local string Msg;
+	local string IP;
 	local name MsgType;
 
     //dont send death messages for generic deaths
@@ -2191,6 +2197,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 			{
 				MsgType = 'RedSuicide';
 			}
+			IP = PlayerController(Other).GetPlayerNetworkAddress();
 		}
 	    else
 	    {
@@ -2203,12 +2210,14 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 				VictimPC = PlayerController(Other);
 				KillerPC.Stats.TeamKilled(damageType.name, VictimPC);
 			}
+			IP = KillerPC.GetPlayerNetworkAddress();
 		}
 	}
 	else if(Other.IsA('PlayerController') && NetPlayer(Other.Pawn) != None)
 	{
 		MsgType = 'Fallen';
 		Msg = VictimName;
+		IP = PlayerController(Other).GetPlayerNetworkAddress();
 	}
 	else // someone killed a non-player (e.g., an AI was killed)
 	{
@@ -2216,7 +2225,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 	}
 
 	Broadcast(Other, Msg, MsgType);
-	AdminLog(Msg, MsgType);
+	AdminLog(Msg, MsgType, IP);
 }
 
 function BroadcastArrestedMessage(Controller Killer, Controller Other)
@@ -2262,6 +2271,7 @@ function BroadcastArrested(Pawn Arrester, Pawn Arrestee)
 	local string ArresteeName;
 	local string Msg;
 	local name MsgType;
+	local string PlayerIP;
 
 	ArresteeName = Arrestee.GetHumanReadableName();
 	ArresterName = Arrester.GetHumanReadableName();
@@ -2278,8 +2288,9 @@ function BroadcastArrested(Pawn Arrester, Pawn Arrestee)
 		{
 			MsgType = 'RedArrest';
 		}
+		PlayerIP = PlayerController(Arrester.Controller).GetPlayerNetworkAddress();
 		Broadcast(Arrester, Msg, MsgType);
-		AdminLog(Msg, MsgType);
+		AdminLog(Msg, MsgType, PlayerIP);
 	}
 }
 
@@ -2384,7 +2395,7 @@ function SetPlayerTeam(SwatGamePlayerController Player, int TeamID, optional boo
 // ForcePlayerTeam
 // Forces a particular player to a particular team
 // Preconditions: The admin is allowed to do this, and the Player is valid
-function ForcePlayerTeam(SwatGamePlayerController Player, int TeamID, string Admin, optional bool ForceAll, optional bool Kill)
+function ForcePlayerTeam(SwatGamePlayerController Player, int TeamID, string Admin, string AdminIP, optional bool ForceAll, optional bool Kill)
 {
 	local TeamInfo CurrentTeam;
 	local TeamInfo NewTeam;
@@ -2442,13 +2453,15 @@ function ForcePlayerTeam(SwatGamePlayerController Player, int TeamID, string Adm
 			{
 				// Blue
 				Broadcast(None, Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerBlue');
-				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerBlue');
+				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName,
+					'ForcePlayerBlue', Player.GetPlayerNetworkAddress(), AdminIP);
 			}
 			else if(TeamID == 2)
 			{
 				// Red
 				Broadcast(None, Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerRed');
-				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName, 'ForcePlayerRed');
+				AdminLog(Admin$"\t"$Player.PlayerReplicationInfo.PlayerName,
+					'ForcePlayerRed', Player.GetPlayerNetworkAddress(), AdminIP);
 			}
 		}
 	}
@@ -2463,26 +2476,26 @@ function ForcePlayerTeam(SwatGamePlayerController Player, int TeamID, string Adm
 
 // Forces all players to be on one team
 // Precondition: The admin who triggered this is allowed to do it, and the TeamID is valid
-function ForceAllToTeam(int TeamID, string Admin)
+function ForceAllToTeam(int TeamID, string Admin, string AdminIP)
 {
 	local SwatGamePlayerController PC;
 
 	ForEach AllActors(class'SwatGamePlayerController', PC)
 	{
-		ForcePlayerTeam(PC, TeamID, Admin, true);
+		ForcePlayerTeam(PC, TeamID, Admin, AdminIP, true);
 	}
 
 	if(TeamID == 0)
 	{
 		// Blue
 		Broadcast(None, Admin, 'ForceTeamBlue');
-		AdminLog(Admin, 'ForceTeamBlue');
+		AdminLog(Admin, 'ForceTeamBlue', , AdminIP);
 	}
 	else if(TeamID == 2)
 	{
 		// Red
 		Broadcast(None, Admin, 'ForceTeamRed');
-		AdminLog(Admin, 'ForceTeamRed');
+		AdminLog(Admin, 'ForceTeamRed', , AdminIP);
 	}
 
 }
@@ -2494,13 +2507,14 @@ function bool PlayerMuted(SwatGamePlayerController Player)
 }
 
 // Forces a player to die
-function bool ForcePlayerDeath(SwatGamePlayerController PC, string PlayerName, optional string AdminName)
+function bool ForcePlayerDeath(SwatGamePlayerController PC, string PlayerName, optional string AdminName, optional string AdminIP)
 {
 	local SwatGamePlayerController P;
 
 	if(PC != None)
 	{
 		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		AdminIP = PC.GetPlayerNetworkAddress();
 		if(!Admin.CanKillPlayers(PC))
 		{
 			return false;
@@ -2513,7 +2527,8 @@ function bool ForcePlayerDeath(SwatGamePlayerController PC, string PlayerName, o
 		{
 			P.Pawn.Died(None, class'DamageType', P.Pawn.Location, vect(0.0, 0.0, 0.0));
 			Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminKill');
-			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminKill');
+			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName,
+				'AdminKill', P.GetPlayerNetworkAddress(), AdminIP);
 			return true;
 		}
 	}
@@ -2522,7 +2537,7 @@ function bool ForcePlayerDeath(SwatGamePlayerController PC, string PlayerName, o
 }
 
 // Forces a player to be leader
-function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerName, optional string AdminName)
+function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerName, optional string AdminName, optional string AdminIP)
 {
 	local SwatGamePlayerController P;
 	local GameModeCOOP GameMode;
@@ -2532,6 +2547,7 @@ function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerNam
 	if(PC != None)
 	{
 		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		AdminIP = PC.GetPlayerNetworkAddress();
 		if(!Admin.CanPromoteLeader(PC))
 		{
 			return false;
@@ -2543,7 +2559,8 @@ function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerNam
 		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
 		{
 			Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminLeader');
-			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'AdminLeader');
+			AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName,
+				'AdminLeader', P.GetPlayerNetworkAddress(), AdminIP);
 			GameMode.SetLeader(NetTeam(P.PlayerReplicationInfo.Team), P);
 			return true;
 		}
@@ -2554,7 +2571,7 @@ function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerNam
 
 // RemoteLockTeams
 // FOR USE BY WEBADMIN ONLY!
-function RemoteLockTeams(string AdminName)
+function RemoteLockTeams(string AdminName, string AdminIP)
 {
 	local GameMode GameMode;
 
@@ -2563,18 +2580,18 @@ function RemoteLockTeams(string AdminName)
 	if(GameMode.ToggleTeamLock())
 	{
 		Broadcast(None, AdminName, 'LockTeams');
-		AdminLog(AdminName, 'LockTeams');
+		AdminLog(AdminName, 'LockTeams', , AdminIP);
 	}
 	else
 	{
 		Broadcast(None, AdminName, 'UnlockTeams');
-		AdminLog(AdminName, 'UnlockTeams');
+		AdminLog(AdminName, 'UnlockTeams', , AdminIP);
 	}
 }
 
 // RemoteLockPlayerTeam
 // FOR USE BY WEBADMIN ONLY!
-function bool RemoteLockPlayerTeam(string AdminName, string PlayerName)
+function bool RemoteLockPlayerTeam(string AdminName, string PlayerName, string AdminIP)
 {
 	local SwatGamePlayerController PC;
 	local GameMode GameMode;
@@ -2590,12 +2607,14 @@ function bool RemoteLockPlayerTeam(string AdminName, string PlayerName)
 			if(TeamLocked)
 			{
 				Broadcast(None, AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
-				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName,
+					'LockPlayerTeam', PC.GetPlayerNetworkAddress(), AdminIP);
 			}
 			else
 			{
 				Broadcast(None, AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
-				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+				AdminLog(AdminName$"\t"$PC.PlayerReplicationInfo.PlayerName,
+					'UnlockPlayerTeam', PC.GetPlayerNetworkAddress(), AdminIP);
 			}
 			return true;
 		}
@@ -2606,14 +2625,14 @@ function bool RemoteLockPlayerTeam(string AdminName, string PlayerName)
 
 // RemoteForceAllToTeam
 // FOR USE BY WEBADMIN ONLY!
-function RemoteForceAllToTeam(string AdminName, int TeamID)
+function RemoteForceAllToTeam(string AdminName, int TeamID, string AdminIP)
 {
-	ForceAllToTeam(TeamID, AdminName);
+	ForceAllToTeam(TeamID, AdminName, AdminIP);
 }
 
 // RemoteForcePlayerTeam
 // FOR USE BY WEBADMIN ONLY!
-function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int TeamID)
+function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int TeamID, string AdminIP)
 {
 	local SwatGamePlayerController PC;
 
@@ -2621,7 +2640,7 @@ function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int Tea
 	{
 		if(PC.PlayerReplicationInfo.PlayerName ~= PlayerName)
 		{
-			ForcePlayerTeam(PC, TeamID, AdminName);
+			ForcePlayerTeam(PC, TeamID, AdminName, AdminIP);
 			return true;
 		}
 	}
@@ -2631,9 +2650,9 @@ function bool RemoteForcePlayerTeam(string AdminName, string PlayerName, int Tea
 
 // RemoteMute
 // FOR USE BY WEBADMIN ONLY!
-function bool RemoteMute(string AdminName, string PlayerName)
+function bool RemoteMute(string AdminName, string PlayerName, string AdminIP)
 {
-	return Admin.ToggleMute(None, PlayerName, AdminName);
+	return Admin.ToggleMute(None, PlayerName, AdminName, AdminIP);
 }
 
 ///////////////////////////////////////
@@ -2718,7 +2737,7 @@ function ChangePlayerTeam( SwatGamePlayerController Player )
     if( Repo.GuiConfig.SwatGameState == GAMESTATE_MidGame )
 	{
 		Broadcast( Player, Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
-		AdminLog(Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams');
+		AdminLog(Player.PlayerReplicationInfo.PlayerName, 'SwitchTeams', Player.GetPlayerNetworkAddress());
 	}
 
 }
@@ -2986,7 +3005,7 @@ function PreQuickRoundRestart()
 function OnServerSettingsUpdated( Controller Admin )
 {
     Broadcast(Admin, Admin.GetHumanReadableName(), 'SettingsUpdated');
-	AdminLog(Admin.GetHumanReadableName(), 'SettingsUpdated');
+	AdminLog(Admin.GetHumanReadableName(), 'SettingsUpdated', , PlayerController(Admin).GetPlayerNetworkAddress());
 }
 
 simulated event Destroyed()

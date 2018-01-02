@@ -506,11 +506,19 @@ static function string ConcatArgs(array<string> Args, optional int Start, option
 	return outStr;
 }
 
-static function String FormatTextString( string Format, optional coerce string Param1, optional coerce string Param2, optional coerce string Param3)
+// Extended this function to take more arguments --eezstreet
+static function String FormatTextString( string Format, optional coerce string Param1,
+	optional coerce string Param2, optional coerce string Param3,
+	optional coerce string Param4, optional coerce string Param5,
+	optional coerce string Param6, optional coerce string Param7)
 {
     Format = ReplaceExpression( Format, "%1", Param1 );
     Format = ReplaceExpression( Format, "%2", Param2 );
     Format = ReplaceExpression( Format, "%3", Param3 );
+	Format = ReplaceExpression( Format, "%4", Param4 );
+	Format = ReplaceExpression( Format, "%5", Param5 );
+	Format = ReplaceExpression( Format, "%6", Param6 );
+	Format = ReplaceExpression( Format, "%7", Param7 );
 
     return Format;
 }

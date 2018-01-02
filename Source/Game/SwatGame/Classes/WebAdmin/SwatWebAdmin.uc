@@ -461,7 +461,7 @@ function bool WebAdminMeta_Poll(HTTPMessage InMessage)
 	Alias = GetPostDataKey(InMessage.Params, "u");
 	Password = GetPostDataKey(InMessage.Params, "p");
 	WasGuest = GetPostDataKey(InMessage.Params, "g") ~= "true";
-	return Listener.Polled(self, Cookie, Alias, Password, WasGuest);
+	return Listener.Polled(self, Cookie, Alias, Password, WasGuest, RemoteAddr);
 }
 
 // Sending sends some console command to the server
@@ -530,7 +530,7 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	//}
 
 	// add user to logged in admin list and set cookie
-	Cookie = Listener.LoginUser(Alias, Perms);
+	Cookie = Listener.LoginUser(Alias, Perms, RemoteAddr);
 
 	// tell the other webadmins that we logged in
 	if(Perms.PermissionSetName == "")

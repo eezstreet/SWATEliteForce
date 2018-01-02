@@ -390,6 +390,7 @@ defaultproperties
 	PermissionNames[15]="Go to Spectator"
 	PermissionNames[16]="Force Player to Spectate"
 	PermissionNames[17]="Force Less Lethal"
+	PermissionNames[18]="View IPs in WebAdmin"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -409,4 +410,5 @@ defaultproperties
 	PermissionDescription[15]="Allows a player to go to spectator, a viewing mode where players can fly through walls and other obstacles"
 	PermissionDescription[16]="Kill a player and force them to spectator, a viewing mode where players can fly through walls and other obstacles."
 	PermissionDescription[17]="Force a player to use a less lethal loadout. The loadout can be picked in the Equipment tab."
+	PermissionDescription[18]="Allows WebAdmins with this role to see the IPs of both players and admins"
 }
