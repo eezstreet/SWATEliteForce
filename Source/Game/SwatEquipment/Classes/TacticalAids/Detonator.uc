@@ -20,6 +20,12 @@ simulated function bool HandleMultiplayerUse()
     return false;
 }
 
+simulated function bool AllowedToPassItem()
+{
+	// we are not allowed to pass Cuffs, Detonator, or the Toolkit
+	return false;
+}
+
 simulated function EquippedHook()
 {
   Super.EquippedHook();

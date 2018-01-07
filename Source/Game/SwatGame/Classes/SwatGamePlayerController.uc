@@ -96,6 +96,7 @@ var private float RecoilForeDuration;
 var private float RecoilMagnitude;
 var private float LastRecoilFunctionValue;
 var bool DebugShouldRecoil;
+var bool SpecialInteractionsDisabled;
 
 //
 //interaction
@@ -283,7 +284,7 @@ replication
 {
     // Things the server should send to the client
     reliable if ( bNetOwner && bNetDirty && (Role == ROLE_Authority) )
-        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked;
+        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked, SpecialInteractionsNotification;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -310,7 +311,8 @@ replication
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
 		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
-        ServerHandleViewportFire, ServerHandleViewportReload;
+        ServerHandleViewportFire, ServerHandleViewportReload,
+		ServerDisableSpecialInteractions;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1595,6 +1597,31 @@ simulated function ServerHandleViewportReload()
   ActiveViewport.HandleReload();
 }
 
+// special interactions thingie
+simulated function ServerDisableSpecialInteractions()
+{
+	SpecialInteractionsDisabled = !SpecialInteractionsDisabled;
+	SpecialInteractionsNotification(SpecialInteractionsDisabled);
+}
+
+exec function ToggleSpecialInteractions()
+{
+	ServerDisableSpecialInteractions();
+}
+
+simulated function SpecialInteractionsNotification(bool NewInteractions)
+{
+	// all this does is print a message to the chat
+	if(NewInteractions)
+	{
+		ClientMessage("[c=FFFFFF]Special melee interactions are now disabled.", 'SpeechManagerNotification');
+	}
+	else
+	{
+		ClientMessage("[c=FFFFFF]Special melee interactions are now enabled.", 'SpeechManagerNotification');
+	}
+}
+
 // State ControllingViewport takes the player's control away from the playerpawn and onto the active
 // viewport.  The actual implementation the instances of IControllableViewport handle all implementation
 // details.
@@ -2372,43 +2399,50 @@ simulated function InternalMelee()
         return;
 
 	Item = Pawn.GetActiveItem();
-  PendingItem = SwatPlayer.GetPendingItem();
+	PendingItem = SwatPlayer.GetPendingItem();
 
-  // TSS bugfix: don't allow us to melee while changing weapons --eez
-  if(PendingItem != None && PendingItem != Item)
-  {
-    return;
-  }
+	// TSS bugfix: don't allow us to melee while changing weapons --eez
+	if(PendingItem != None && PendingItem != Item)
+	{
+	    return;
+	}
 
-  // Determine if we are trying to check the lock or if we are trying to punch someone
-  CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
-  TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
-  foreach TraceActors(
-    class'Actor',
-    Candidate,
-    HitLocation,
-    HitNormal,
-    HitMaterial,
-    TraceEnd,
-    CameraLocation
-    )
-  {
-    if(Candidate.IsA('SwatPawn'))
-    {
-      break; // We intend to melee.
-    }
-    else if(Candidate.IsA('SwatDoor'))
-    {
-      if(CheckDoorLock(SwatDoor(Candidate)))
-        return;
-    }
-  }
+	if(WantsZoom)
+	    return; // Not allowed while zooming
+
+	// Determine if we are trying to check the lock or if we are trying to punch someone
+	CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
+	TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
+	foreach TraceActors(
+	    class'Actor',
+	    Candidate,
+	    HitLocation,
+	    HitNormal,
+	    HitMaterial,
+	    TraceEnd,
+	    CameraLocation
+	    )
+	{
+		if(!SpecialInteractionsDisabled && (Candidate.IsA('SwatPlayer') || Candidate.IsA('SwatOfficer')))
+		{
+			if(TryGiveItem(SwatPawn(Candidate)))
+			{
+				return;
+			}
+		}
+	    else if(Candidate.IsA('SwatPawn'))
+	    {
+	    	break; // We intend to melee.
+	    }
+	    else if(!SpecialInteractionsDisabled && Candidate.IsA('SwatDoor'))
+	    {
+	      if(CheckDoorLock(SwatDoor(Candidate)))
+	        return;
+	    }
+	}
 
 	if (!Item.bAbleToMelee)
 		return;
-
-  if(WantsZoom)
-    return; // Not allowed while zooming
 
 	if ( SwatPlayer.ValidateMelee() )
 	{
@@ -2417,6 +2451,85 @@ simulated function InternalMelee()
 
 		SwatPlayer.ServerRequestMelee( SwatPlayer.GetActiveItem().GetSlot() );
 	}
+}
+
+// Tries to give the currently equipped item to a SwatOfficer/SwatPlayer.
+// Returns true if we should halt the melee trace
+simulated function bool TryGiveItem(SwatPawn Other)
+{
+	local HandheldEquipment ActiveItem;
+	local HandheldEquipment NewItem;
+	local float AddedWeight;
+	local float AddedBulk;
+
+	ActiveItem = SwatPlayer.GetActiveItem();
+
+	// If we aren't allowed to pass the item, continue with the trace
+	if(!ActiveItem.AllowedToPassItem())
+	{
+		return false;
+	}
+
+	// If the target is unconscious, continue with the trace
+	if(!class'Pawn'.static.checkConscious(Other))
+	{
+		return false;
+	}
+	// From this point on, we will --always-- block the trace
+
+	AddedWeight = ActiveItem.GetWeight();
+	AddedBulk = ActiveItem.GetBulk();
+	if(AddedWeight + Other.GetTotalWeight() > Other.GetMaximumWeight())
+	{
+		// this item adds too much weight, tell the client but still block the trace
+		ClientMessage(Other.GetHumanReadableName()$"\t"$ActiveItem.GetFriendlyName(), 'CantGiveTooMuchWeight');
+		return true;
+	}
+	else if(AddedBulk + Other.GetTotalBulk() > Other.GetMaximumBulk())
+	{
+		// this item adds too much bulk, tell the client but still block the trace
+		ClientMessage(Other.GetHumanReadableName()$"\t"$ActiveItem.GetFriendlyName(), 'CantGiveTooMuchBulk');
+		return true;
+	}
+
+	/////////////////////////////////////////////////////////////////
+	//
+	//	Give the other person the equipment
+	//	When we give the other person equipment, it does not get assigned to a pocket.
+	//	This is because it is only temporarily in our inventory.
+
+	// Don't give the other person an optiwand if they already have one
+	if(ActiveItem.IsA('Optiwand') && Other.HasEquipment('Optiwand'))
+	{
+		if(Other.HasEquipment('Optiwand'))
+		{
+			// the other player has an optiwand already, don't give it to them
+			ClientMessage("", 'CantGiveAlreadyHasOptiwand');
+			return true;
+		}
+
+	}
+
+	// Spawn in the actual equipment and give it to the other player
+	NewItem = Spawn(ActiveItem.class, Other);
+	NewItem.AddAvailableCount(1);
+	NewItem.OnGivenToOwner();
+
+	/////////////////////////////////////////////////////////////////
+	//
+	//	Remove the equipment from our inventory
+	//	All we need to do is reduce the available count by 1
+
+	////////////////////////////////////////////////////////////////
+	//
+	//	Tell the client we gave our equipment away
+	ClientMessage(Other.GetHumanReadableName()$"\t1\t"$ActiveItem.GetFriendlyName(), 'GaveEquipment');
+	if(Other.IsA('SwatPlayer'))
+	{
+		SwatGamePlayerController(Other.Controller).ClientMessage(
+			SwatPlayer.GetHumanReadableName()$"\t1\t"$ActiveItem.GetFriendlyName(), 'GaveYouEquipment');
+	}
+	return true;
 }
 
 // Overridden from PlayerController::Reload().

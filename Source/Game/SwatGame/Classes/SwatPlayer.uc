@@ -177,6 +177,14 @@ simulated function float GetTotalBulk() {
   return LoadOut.GetTotalBulk();
 }
 
+simulated function float GetMaximumWeight() {
+	return LoadOut.GetMaximumWeight();
+}
+
+simulated function float GetMaximumBulk() {
+	return LoadOut.GetMaximumBulk();
+}
+
 simulated function float GetWeightMovementModifier() {
 	local float totalWeight;
     local float maxWeight, minWeight;
@@ -553,6 +561,11 @@ simulated function bool HasAWeaponOfType(name WeaponType) {
   BackupWeapon = LoadOut.GetBackupWeapon();
 
   return PrimaryWeapon.IsA(WeaponType) || BackupWeapon.IsA(WeaponType);
+}
+
+simulated function bool HasEquipment(name Class)
+{
+	return LoadOut.ContainsEquipment(Class);
 }
 
 simulated function DoDefaultEquip()

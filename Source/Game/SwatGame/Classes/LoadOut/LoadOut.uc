@@ -12,7 +12,10 @@ import enum eNetworkValidity from SwatGame.SwatGUIConfig;
 import enum eTeamValidity from SwatGame.SwatGUIConfig;
 
 // The Actual Equipment
-var(DEBUG) protected Actor PocketEquipment[Pocket.EnumCount];
+var(DEBUG) protected /*array<*/Actor/*>*/ PocketEquipment[Pocket.EnumCount];
+//var(DEBUG) protected array<Actor> GivenEquipment;
+
+//var int unused[21];
 
 // Cached reference to the GuiConfig
 var(DEBUG) SwatGUIConfig GC;
@@ -842,6 +845,21 @@ function AddLightstick(optional int Quantity)
 		Quantity = 1;
 	}
 	HandheldEquipment(PocketEquipment[Pocket.Pocket_Lightstick]).AddAvailableCount(Quantity);
+}
+
+simulated function bool ContainsEquipment(name Class)
+{
+	local int i;
+
+	for(i = 0; i < Pocket.EnumCount; i++)
+	{
+		if(PocketEquipment[i].IsA(Class))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

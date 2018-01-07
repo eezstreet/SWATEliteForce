@@ -1130,6 +1130,42 @@ simulated event bool PointIsOnExternalSide(vector Point)
 	}
 }
 
+simulated event bool PlayerIsOnExternalSide()
+{
+	if(ExternalFacingSide == ES_NeitherSide)
+	{
+		return false;
+	}
+	else if(ExternalFacingSide == ES_LeftSide)
+	{
+		return LocalPlayerIsToMyLeft();
+	}
+	else
+	{	// ES_RightSide
+		return !LocalPlayerIsToMyLeft();
+	}
+}
+
+simulated function bool PlayerCanIssueCommandsFromTheirSide()
+{
+	if(AcceptsCommandsFrom == CD_BothSides)
+	{
+		return true;
+	}
+	else if(AcceptsCommandsFrom == CD_NeitherSide)
+	{
+		return false;
+	}
+	else if(AcceptsCommandsFrom == CD_LeftSide)
+	{
+		return LocalPlayerIsToMyLeft();
+	}
+	else
+	{
+		return !LocalPlayerIsToMyLeft();
+	}
+}
+
 //returns true if there is a Pawn blocking the path of the door to or from TestPosition
 simulated function bool PositionIsBlocked(DoorPosition TestPosition)  //TMC TODO test this function
 {
@@ -2391,6 +2427,11 @@ simulated function float GetAdditionalGrenadeThrowDistance(vector Origin)
 simulated function bool CanBeLocked()
 {
 	return (bCanBeLocked && IsClosed() && !IsOpening() && !IsBroken() && !IsEmptyDoorway());
+}
+
+simulated function bool IsMissionExit()
+{
+	return bIsMissionExit;
 }
 
 simulated function Lock()

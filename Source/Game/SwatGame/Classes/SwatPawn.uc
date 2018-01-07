@@ -2097,6 +2097,14 @@ event bool HavokCharacterCollision(HavokCharacterObjectInteractionEvent data, ou
 	return true;
 }
 
+/////////////////
+// Meant to be defined by subclasses
+simulated function float GetTotalWeight() { return 0.0; }
+simulated function float GetTotalBulk() { return 0.0; }
+simulated function float GetMaximumWeight() { return 0.0; }
+simulated function float GetMaximumBulk() { return 0.0; }
+simulated function bool HasEquipment(name Class) { return false; }
+
 ///////////////////////////////////////////////////////////////////////////////
 
 defaultproperties

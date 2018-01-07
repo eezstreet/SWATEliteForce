@@ -83,7 +83,7 @@ simulated function PostBeginPlay()
     }
 }
 
-//used to test if Contexts meets special conditions for this type of PlayerFocusInterface 
+//used to test if Contexts meets special conditions for this type of PlayerFocusInterface
 simulated function SetFocusInterfaceType()
 {
     FocusInterfaceType = class.name;
@@ -131,11 +131,11 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
 //TMC TODO OPTIMIZATION this function is called fairly often.  It might be worth moving native.
 simulated static final function bool StaticRejectFocus(
         SwatGamePlayerController Player,
-        Actor CandidateActor, 
-        vector CandidateLocation, 
-        vector CandidateNormal, 
-        Material CandidateMaterial, 
-        ESkeletalRegion CandidateSkeletalRegion, 
+        Actor CandidateActor,
+        vector CandidateLocation,
+        vector CandidateNormal,
+        Material CandidateMaterial,
+        ESkeletalRegion CandidateSkeletalRegion,
         float Distance,
         bool Transparent,
         bool bAuditFocus)
@@ -185,34 +185,372 @@ simulated static final function bool StaticRejectFocus(
         if (CandidateActor == Player.Pawn)
         return true;
     }
-    
+
     return false;
 }
 
 native function bool RejectFocus(
         PlayerController Player,
-        Actor CandidateActor, 
-        vector CandidateLocation, 
-        vector CandidateNormal, 
-        Material CandidateMaterial, 
-        ESkeletalRegion CandidateSkeletalRegion, 
-        float Distance, 
+        Actor CandidateActor,
+        vector CandidateLocation,
+        vector CandidateNormal,
+        Material CandidateMaterial,
+        ESkeletalRegion CandidateSkeletalRegion,
+        float Distance,
         bool Transparent);
 
-native function ConsiderNewFocus(
-        SwatPlayer Player, 
-        Actor CandidateActor, 
-        float Distance, 
-        vector CandidateLocation, 
-        vector CandidateNormal, 
-        Material CandidateMaterial, 
+/*native function ConsiderNewFocus(
+        SwatPlayer Player,
+        Actor CandidateActor,
+        float Distance,
+        vector CandidateLocation,
+        vector CandidateNormal,
+        Material CandidateMaterial,
         ESkeletalRegion CandidateSkeletalRegion,
-        bool Transparent);
+        bool Transparent);*/
+
+// Meant to be subclassed.
+simulated function bool SpecialCondition_Zulu() { return false; }
+simulated function bool SpecialCondition_CanBeArrested(Actor Target) { return false; }
+
+
+// This function also got rewritten from native code
+function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
+	float Distance, bool Transparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+{
+	local int i;
+	local HandheldEquipment ActiveItem;
+
+	if(Context.SkeletalRegion != REGION_None && Context.SkeletalRegion != CandidateSkeletalRegion)
+	{
+		// Not touching the right part of the door
+		return false;
+	}
+
+	if(Context.DoorPart != DoorPart.DoorPart_Any && Context.DoorPart != CandidateDoorPart)
+	{
+		// Not touching the right part of the door
+		return false;
+	}
+
+	if(Distance >= Context.Range)
+	{
+		// Not in range
+		return false;
+	}
+
+	ActiveItem = Player.GetActiveItem();
+	if(Context.ActiveItem != '' && !ActiveItem.IsA(Context.ActiveItem))
+	{
+		// The context demands that we have a certain item active and we don't have said item active
+		return false;
+	}
+
+	for(i = 0; i < Context.ExceptActiveItem.Length; i++)
+	{
+		if(Context.ExceptActiveItem[i] != '' && ActiveItem.IsA(Context.ExceptActiveItem[i]))
+		{
+			// The context does not allow us to have a certain item active
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutTransparent)
+	{
+		// If we care about transparency, Context.IsTransparent should match Transparent
+		if(Context.IsTransparent ^^ Transparent)
+		{
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutOpen)
+	{
+		// If we care about whether the door is open, Context.IsOpen should match Door.IsOpen
+		if(Context.IsOpen ^^ Door.IsOpen())
+		{
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutLocked)
+	{
+		// If we care about whether the door is locked, Context.IsLocked should match Door.IsLocked
+		if(Context.IsLocked ^^ Door.IsLocked())
+		{
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutPlayerBelief)
+	{
+		// FIXME: we should probably deviate from the base behavior somehow here?
+		// If we care about whether the player knows the door is locked, Context.PlayerBelievesLocked should match Door.PawnBelievesDoorLocked
+		if(Context.PlayerBelievesLocked ^^ Door.PawnBelievesDoorLocked(Player))
+		{
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutWedged)
+	{
+		// If we care about whether the door is wedged, Context.IsWedged should match Door.IsWedged
+		if(Context.IsWedged ^^ Door.IsWedged())
+		{
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutBroken)
+	{
+		// If we care about whether the door is broken, Context.IsBroken should match Door.IsBroken
+		if(Context.IsBroken ^^ Door.IsBroken())
+		{
+			return false;
+		}
+	}
+
+	if(Context.CaresAboutMissionExit)
+	{
+		// If we care about whether the door is a mission exit, Context.IsMissionExit should match Door.IsMissionExit
+		if(Context.IsMissionExit ^^ Door.IsMissionExit())
+		{
+			return false;
+		}
+	}
+
+	if(Context.HasA != '' && !Player.HasA(Context.HasA))
+	{
+		return false;
+	}
+
+	if(Context.DoesntHaveA != '' && Player.HasA(Context.DoesntHaveA))
+	{
+		return false;
+	}
+
+	// This context is acceptable
+	return true;
+}
+
+// This function also got rewritten from native code
+function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceContext Context, float Distance, bool Transparent)
+{
+	local int i;
+
+	if(Distance >= Context.Range)
+	{
+		// Not in range
+		return false;
+	}
+
+	if(Context.Type != '' && !Target.IsA(Context.Type))
+	{
+		// Not the right type of actor
+		return false;
+	}
+
+	for(i = 0; i < Context.Except.Length; i++)
+	{
+		if(Target.IsA(Context.Except[i]))
+		{
+			// It's the right type, but we excluded this type specifically
+			return false;
+		}
+	}
+
+	if(Context.HasA != '' && !Player.HasA(Context.HasA))
+	{
+		// The context requires something that we don't have
+		return false;
+	}
+
+	if(Context.DoesntHaveA != '' && Player.HasA(Context.DoesntHaveA))
+	{
+		// The context requires us to not have something which we have
+		return false;
+	}
+
+	if(Context.CaresAboutTransparent)
+	{
+		if(Context.IsTransparent ^^ Transparent)
+		{
+			return false;
+		}
+	}
+
+	if(Context.ActiveItem != '' && !Player.GetActiveItem().IsA(Context.ActiveItem))
+	{
+		// The context requires us to be holding something which we aren't holding
+		return false;
+	}
+
+	if(Context.HasA != '' && !Player.HasA(Context.HasA))
+	{
+		// The context requires us to have something which we don't have
+		return false;
+	}
+
+	if(Context.DoesntHaveA != '' && Player.HasA(Context.DoesntHaveA))
+	{
+		// The context requires us to not have something, and we have it
+		return false;
+	}
+
+	if(Context.HasSpecialConditions)
+	{
+		// There are some special conditions related to this context which are hardcoded for the context.
+		switch(Context.Name)
+		{
+			case 'Zulu':
+				// False if we don't have a held command
+				if(!SpecialCondition_Zulu())
+				{
+					return false;
+				}
+				break;
+			case 'CanBeArrested':
+				if(!SpecialCondition_CanBeArrested(Target))
+				{
+					return false;
+				}
+				break;
+			case 'MirrorPoint':
+				return true; // I'm not sure what the special condition is supposed to be.
+				break;
+			case 'ToolkitOnBomb':
+				return true; // PvP FIXME
+				break;
+			case 'CuffsOnVIP':
+				return false; // PvP FIXME
+				break;
+			case 'CuffsOnPlayer':
+				return false; // PvP FIXME
+				break;
+			case 'ToolkitOnArrestedVIP':
+				return false; // PvP FIXME
+				break;
+			case 'ArrestablePlayer':
+				return false; // PvP FIXME
+				break;
+		}
+	}
+
+	// This context is acceptable
+	return true;
+}
+
+// This function got rewritten from native code, so we can do more with it.
+// HasA() crashes with our new LoadOut changes so we need to rewrite the only function which uses it (this one)
+function ConsiderNewFocus(SwatPlayer Player, Actor CandidateActor, float Distance, vector CandidateLocation, vector CandidateNormal,
+	Material CandidateMaterial, ESkeletalRegion CandidateSkeletalRegion, bool Transparent)
+{
+	local bool bDoorRelated;
+	local int i;
+	local SwatDoor Door;
+	local DoorPart DoorPart;
+
+	if(CandidateActor.IsA('SwatDoor') || CandidateActor.IsA('DoorModel') || CandidateActor.IsA('DoorWay'))
+	{
+		bDoorRelated = true;
+
+		if(CandidateActor.IsA('SwatDoor'))
+		{
+			Door = SwatDoor(CandidateActor);
+			DoorPart = DoorPart_Animation;
+		}
+		else if(CandidateActor.IsA('DoorModel'))
+		{
+			Door = DoorModel(CandidateActor).Door;
+			DoorPart = DoorPart_Model;
+		}
+		else
+		{
+			Door = DoorWay(CandidateActor).GetDoor();
+			DoorPart = DoorPart_Way;
+		}
+	}
+
+	if(bDoorRelated)
+	{
+		for(i = 0; i < DoorRelatedContexts.Length; i++)
+		{
+			// Detect if the context matches
+			if(DoorRelatedContextMatches(Player, Door, DoorRelatedContexts[i], Distance, Transparent, DoorPart, CandidateSkeletalRegion))
+			{
+				PostDoorRelatedContextMatched(DoorRelatedContexts[i], Door);
+
+				if(DoorRelatedContexts[i].BlockTraceIfOpaque && !Transparent)
+				{
+					FocusIsBlocked = true;
+				}
+				else if(DoorRelatedContexts[i].BlockTrace)
+				{
+					FocusIsBlocked = true;
+				}
+
+				if(DoorRelatedContexts[i].AddFocus)
+				{
+					if(DoorRelatedContexts[i].IsA('UseInterfaceDoorRelatedContext'))
+					{
+						// HACK here to replicate Irrational behavior...
+						// With UseInterface, we use the thing itself instead of the door it's attached to
+						AddFocus(DoorRelatedContexts[i].Name, CandidateActor, CandidateLocation,
+							CandidateNormal, CandidateMaterial, CandidateSkeletalRegion);
+					}
+					else
+					{
+						AddFocus(DoorRelatedContexts[i].Name, Door, CandidateLocation,
+							CandidateNormal, CandidateMaterial, CandidateSkeletalRegion);
+					}
+					PostDoorRelatedFocusAdded(DoorRelatedContexts[i], CandidateActor, CandidateSkeletalRegion);
+				}
+
+				if(DoorRelatedContexts[i].BreakIfMatch)
+				{
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		for(i = 0; i < Contexts.Length; i++)
+		{
+			// Detect if the context matches
+			if(ContextMatches(Player, CandidateActor, Contexts[i], Distance, Transparent))
+			{
+				PostContextMatched(Contexts[i], CandidateActor);
+
+				if(Contexts[i].BlockTraceIfOpaque && !Transparent)
+				{
+					FocusIsBlocked = true;
+				}
+				else if(Contexts[i].BlockTrace)
+				{
+					FocusIsBlocked = true;
+				}
+
+				if(Contexts[i].AddFocus)
+				{
+					AddFocus(Contexts[i].Name, CandidateActor, CandidateLocation,
+						CandidateNormal, CandidateMaterial, CandidateSkeletalRegion);
+					PostFocusAdded(Contexts[i], CandidateActor, CandidateSkeletalRegion);
+				}
+
+				if(Contexts[i].BreakIfMatch)
+				{
+					break;
+				}
+			}
+		}
+	}
+}
 
 simulated protected event PostContextMatched(PlayerInterfaceContext Context, Actor Target);
 simulated protected event PostDoorRelatedContextMatched(PlayerInterfaceDoorRelatedContext Context, Actor Target);
 
-simulated final event AddFocus(name Context, Actor Actor, vector Location, vector Normal, Material Material, optional ESkeletalRegion Region)
+simulated event AddFocus(name Context, Actor Actor, vector Location, vector Normal, Material Material, optional ESkeletalRegion Region)
 {
     assertWithDescription(Actor != None,
         "[tcohen] "$class.name$" attempted to AddFocus() with Actor=None");

@@ -86,6 +86,14 @@ simulated function float GetTotalWeight() {
   return LoadOut.GetTotalWeight();
 }
 
+simulated function float GetMaximumWeight() {
+	return LoadOut.GetMaximumWeight();
+}
+
+simulated function float GetMaximumBulk() {
+	return LoadOut.GetMaximumBulk();
+}
+
 simulated function float GetWeightMovementModifier() {
   return LoadOut.GetWeightMovementModifier();
 }
@@ -96,6 +104,11 @@ simulated function float GetBulkQualifyModifier() {
 
 simulated function float GetBulkSpeedModifier() {
 	return LoadOut.GetBulkSpeedModifier();
+}
+
+simulated function bool HasEquipment(name Class)
+{
+	return LoadOut.ContainsEquipment(Class);
 }
 
 // Refund lightsticks

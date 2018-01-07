@@ -102,13 +102,13 @@ simulated function Interact()
     local ICanBeUsed Target;
     local SwatGamePlayerController PC;
 
-    mplog( "---UseInterface::Interact()." );
+    log( "---UseInterface::Interact()." );
 
     if (FociLength > 0)
     {
         Target = ICanBeUsed(Foci[0].Actor);
 
-        mplog( "...Target="$Target );
+        log( "...Target="$Target );
 
         //there are occasions that a Focus of the UseInterface is not an ICanBeUsed,
         //  for example, another player in MP is a UseInterface Focus (so that we can
@@ -119,13 +119,96 @@ simulated function Interact()
         PC = SwatGamePlayerController(Level.GetLocalPlayerController());
         if (Target.CanBeUsedNow())
         {
-            mplog( "...UniqueID="$Target.UniqueID() );
+            log( "...UniqueID="$Target.UniqueID() );
             PC.ServerRequestInteract( Target, Target.UniqueID() );
         }
     }
 //  else
 //      TMC TODO need feedback "nothing to use here"
 
+}
+
+// Use interface has a few extra considerations with regards to context
+function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceContext Context, float Distance, bool Transparent)
+{
+	local UseInterfaceContext UseContext;
+	local ICanBeUsed UsedItem;
+	local SwatPawn SwatPawn;
+
+	UseContext = UseInterfaceContext(Context);
+	UsedItem = ICanBeUsed(Target);
+	SwatPawn = SwatPawn(Target);
+	if(UsedItem == None)
+	{
+		return false; // this thing can't be used (?)
+	}
+
+	if(UseContext.CaresAboutCanBeUsedNow)
+	{
+		if(UsedItem.CanBeUsedNow() ^^ UseContext.CanBeUsedNow)
+		{
+			return false; // this thing can't be used now
+		}
+	}
+
+	if(UseContext.CaresAboutRestrained)
+	{
+		if(SwatPawn == None || SwatPawn.IsArrested() ^^ UseContext.IsRestrained)
+		{
+			return false;
+		}
+	}
+
+	if(UseContext.CaresAboutIncapacitated)
+	{
+		if(SwatPawn == None || SwatPawn.IsIncapacitated() ^^ UseContext.IsIncapacitated)
+		{
+			return false;
+		}
+	}
+
+	if(UseContext.CaresAboutCanBeArrestedNow)
+	{
+		if(SwatPawn == None || SwatPawn.CanBeArrestedNow() ^^ UseContext.CanBeArrestedNow)
+		{
+			return false;
+		}
+	}
+
+	if(UseContext.CaresAboutDead)
+	{
+		if(SwatPawn == None || SwatPawn.IsDead() ^^ UseContext.IsDead)
+		{
+			return false;
+		}
+	}
+
+	if(UseContext.CaresAboutLookingThruGlass)
+	{
+		if(UseContext.IsLookingThruGlass ^^ Transparent)
+		{
+			return false;
+		}
+	}
+
+	return Super.ContextMatches(Player, Target, Context, Distance, Transparent);
+}
+
+function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
+	float Distance, bool Transparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+{
+	local UseInterfaceDoorRelatedContext UseContext;
+	UseContext = UseInterfaceDoorRelatedContext(Context);
+
+	if(UseContext.CaresAboutLookingThruGlass)
+	{
+		if(UseContext.IsLookingThruGlass ^^ Transparent)
+		{
+			return false;
+		}
+	}
+
+	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, CandidateDoorPart, CandidateSkeletalRegion);
 }
 
 cpptext

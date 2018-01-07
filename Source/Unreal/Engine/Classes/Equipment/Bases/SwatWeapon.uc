@@ -144,6 +144,7 @@ var() public config float Weight;
 var() public config float Bulk;
 
 var() public config bool PlayerUsable;
+var() public config bool PassableItem;
 
 var config vector DefaultLocationOffset;
 var config Rotator DefaultRotationOffset;
@@ -293,7 +294,7 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
     Momentum = MuzzleVelocity * Ammo.Mass;
     BulletType = Ammo.GetBulletType();
     Distance = (VSize(HitLocation - StartTrace)) / 50.4725;
-    Velocity = ((GetVc0()) + ((GetVc1()) * Distance)+((GetVc2()) * (Distance * Distance)));	
+    Velocity = ((GetVc0()) + ((GetVc1()) * Distance)+((GetVc2()) * (Distance * Distance)));
     KillEnergy = ((GetDc1()) * Velocity)+((GetDc2()) * (Velocity * Velocity));
 
     Ammo.BallisticsLog("BallisticFire(): Weapon "$name
@@ -386,8 +387,8 @@ simulated function bool HandleBallisticImpact(
     local IHaveSkeletalRegions SkelVictim;
     local Pawn  PawnVictim;
 	local PlayerController OwnerPC;
-	
-	BulletType = Ammo.GetBulletType();	
+
+	BulletType = Ammo.GetBulletType();
     ArmorLevel = Protection.GetProtectionType();
     BulletLevel = Ammo.GetPenetrationType();
 
@@ -405,7 +406,7 @@ simulated function bool HandleBallisticImpact(
     {															//We also still wanna draw the decals
 		return HandleDoorImpact(Victim, HitLocation, HitNormal, HitMaterial, ExitLocation, ExitNormal, ExitMaterial);
 	}
-	
+
 	// officers don't hit other officers, or the player (unless we're attacking them)
 	if (Owner.IsA('SwatOfficer') &&
 		(Victim.IsA('SwatOfficer') || (Victim.IsA('SwatPlayer') && !Pawn(Owner).IsAttackingPlayer())))
@@ -437,7 +438,7 @@ simulated function bool HandleBallisticImpact(
     {
         HitMaterial = Victim.GetCurrentMaterial(0); // get skin at first index
         ExitMaterial = HitMaterial;
-		
+
         //if the Victim has skeletal regions, do some more work
         if (HitRegion != REGION_None && Victim.IsA('IHaveSkeletalRegions'))
         {
@@ -507,27 +508,27 @@ simulated function bool HandleBallisticImpact(
 
 	// damage pawns
     PawnVictim = Pawn(Victim);
-    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)    
+    if (Damage <= 0 && SkeletalRegionInformation != None && PawnVictim != None)
 	{
 		Damage = 0;
     }
     if(SkeletalRegionInformation != None && PawnVictim != None && bUsesBullets)
     {
-		
+
 		// dbeswick: stats
 		OwnerPC = PlayerController(Pawn(Owner).Controller);
 		if (OwnerPC != None)
 		{
 			OwnerPC.Stats.Hit(class.Name, PlayerController(PawnVictim.Controller));
 		}
-		
+
         // Give chances based on the part hit
         if (HitRegion == REGION_Head)
         WoundChance = 1;
-		
+
         if (HitRegion == REGION_Torso)
 			{
-			switch(BulletType) 
+			switch(BulletType)
 				{
 				case 1:
 					WoundChance = 180;
@@ -661,43 +662,43 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 100;
 				}
 			}
-			
+
         if ((HitRegion == REGION_LeftArm || HitRegion == REGION_RightArm))
         WoundChance = 750;
         if ((HitRegion == REGION_LeftLeg || HitRegion == REGION_RightLeg))
         WoundChance = 400;
-		
+
 		//Reset damage First
-		Damage = 0;	
-		
+		Damage = 0;
+
 		OriginalKillEnergy = KillEnergy;
-		
+
 		log( "Initiating damage system" );
 		do
-		{	
+		{
 			KillChance = 1 - (WoundChance / KillEnergy);
 			RandomChance = 1.0 - FRand();
 			log( "The KillEnergy is " $ KillEnergy );
 			log( "The KillChance is " $ KillChance );
 			log( "The RandomChance is " $ RandomChance );
-			if (KillChance <= 0.10)    
+			if (KillChance <= 0.10)
 			{
 					KillChance = 0.10;
 			}
-			if (RandomChance < KillChance)    
+			if (RandomChance < KillChance)
 			{
 					Damage += 15;
 					log( "Victim is wounded. Adding 15 damage points. Actual Damage points are " $ Damage );
-			}			
-			else    
+			}
+			else
 			{
 					Damage += 5;
 					log( "Victim is not wounded. Adding 5 damage point. Actual Damage points are " $ Damage );
 			}
 			KillEnergy = KillEnergy - WoundChance;
-		}		 
+		}
 			until( KillEnergy <= 0 || RandomChance > KillChance);
-			log( "Stopping, RandomChance is higher than kill chance");	
+			log( "Stopping, RandomChance is higher than kill chance");
 			log( "We need to restore the kill energy");
 			log("IMPACT: KillEnergy before calculating penetration: "$OriginalKillEnergy);
 			ActualVelocity = Momentum / Ammo.Mass;
@@ -705,8 +706,8 @@ simulated function bool HandleBallisticImpact(
 			OriginalKillEnergy *= VelocityRatio;
 			KillEnergy = OriginalKillEnergy;
 			log("IMPACT: KillEnergy before calculating penetration: "$KillEnergy);
-			log( "KillEnergy now is " $ KillEnergy );		
-			log( "Final damage is " $ Damage );		
+			log( "KillEnergy now is " $ KillEnergy );
+			log( "Final damage is " $ Damage );
     }
     if( Damage > 0 && SkeletalRegionInformation != None && PawnVictim != None)
     {
@@ -859,7 +860,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float MomentumLostToProtection;
     local Object.Range DamageModifierRange;
     local float DamageModifier, ExternalDamageModifier;
-	
+
     ArmorLevel = Protection.GetProtectionType();
     BulletLevel = Ammo.GetPenetrationType();
 
@@ -875,10 +876,10 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
         DamageModifierRange = Protection.BlockedDamageFactor;
 
     //calculate damage imparted to victim
-	
-    MomentumLostToProtection = FMin(Momentum, Protection.GetMtP());		
-    Damage = MomentumLostToProtection * Level.GetRepo().MomentumToDamageConversionFactor;  
-	
+
+    MomentumLostToProtection = FMin(Momentum, Protection.GetMtP());
+    Damage = MomentumLostToProtection * Level.GetRepo().MomentumToDamageConversionFactor;
+
 	if(Damage > 0 && bUsesBullets)
 		{
 		if (HitRegion == REGION_Head)
@@ -892,7 +893,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			{
 			if (BulletLevel >= ArmorLevel)
 			{
-			switch(BulletType) 
+			switch(BulletType)
 				{
 				case 1:
 					WoundChance = 215;
@@ -1031,14 +1032,14 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 					WoundChance = 1750;
 				}
 				else
-				{				
+				{
 					WoundChance = 1200;
 				}
 			}
 		//Reset damage First
-		Damage = 0;	
+		Damage = 0;
 		OriginalKillEnergy = KillEnergy;
-			
+
 		log( "Initiating damage system" );
 		do
 		{
@@ -1047,33 +1048,33 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			log( "The KillEnergy is " $ KillEnergy );
 			log( "The KillChance is " $ KillChance );
 			log( "The RandomChance is " $ RandomChance );
-			if (KillChance <= 0.10)    
+			if (KillChance <= 0.10)
 			{
 					KillChance = 0.10;
 			}
-			if (RandomChance < KillChance)    
+			if (RandomChance < KillChance)
 			{
 					Damage += 10;
 					log( "Victim is wounded. Adding 10 damage points. Actual Damage points are " $ Damage );
-			}			
-			else    
+			}
+			else
 			{
-				if (ArmorLevel >= 7)  
+				if (ArmorLevel >= 7)
 				{
 					Damage += 3;
 					log( "Victim is not wounded and has 3+ Armor. Adding 3 damage point. Actual Damage points are " $ Damage );
 				}
-				else  
+				else
 				{
 					Damage += 5;
 					log( "Victim is not wounded. Adding 5 damage point. Actual Damage points are " $ Damage );
 				}
 			}
 			KillEnergy = KillEnergy - WoundChance;
-		}		 
+		}
 			until( KillEnergy <= 0 || RandomChance > KillChance);
 
-			log( "Stopping, RandomChance is higher than kill chance");	
+			log( "Stopping, RandomChance is higher than kill chance");
 			log( "We need to restore the kill energy");
 			log("IMPACT: KillEnergy before calculating penetration: "$OriginalKillEnergy);
 			ActualVelocity = Momentum / Ammo.Mass;
@@ -1081,14 +1082,14 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			OriginalKillEnergy *= VelocityRatio;
 			KillEnergy = OriginalKillEnergy;
 			log("IMPACT: KillEnergy before calculating penetration: "$KillEnergy);
-			log( "KillEnergy now is " $ KillEnergy );		
-			log( "Final damage is " $ Damage );					
+			log( "KillEnergy now is " $ KillEnergy );
+			log( "Final damage is " $ Damage );
 	}
 
 	if(!bUsesBullets)
 		{
 			DamageModifier = RandRange(DamageModifierRange.Min, DamageModifierRange.Max);
-			Damage *= DamageModifier;				
+			Damage *= DamageModifier;
 		}
 
     //apply any external damage modifiers (maintained by the Repo)
@@ -1135,7 +1136,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     return PenetratesProtection;
 }
 
- 
+
 simulated function bool HandleDoorImpact(
     Actor Victim,
     vector HitLocation,
@@ -1304,6 +1305,11 @@ simulated function EquippedHook()
     }
   }
 
+}
+
+simulated function bool AllowedToPassItem()
+{
+	return PassableItem;
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?

@@ -1468,6 +1468,11 @@ simulated function float GetItemBulk()
   return 0.0f;
 }
 
+simulated function bool AllowedToPassItem()
+{
+	return true; // for most handheldequipment, we are allowed to pass it.
+}
+
 defaultproperties
 {
     Slot=Slot_Invalid

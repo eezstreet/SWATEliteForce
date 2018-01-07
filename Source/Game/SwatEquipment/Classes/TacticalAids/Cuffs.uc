@@ -18,6 +18,12 @@ simulated function bool CanUseOnOtherNow(Actor Other)
     return true;
 }
 
+simulated function bool AllowedToPassItem()
+{
+	// we are not allowed to pass Cuffs, Detonator, or the Toolkit
+	return false;
+}
+
 simulated latent protected function OnUsingBegan()
 {
     mplog( self$"---Cuffs::OnUsingBegan(). Other="$Other$", Owner="$Owner );

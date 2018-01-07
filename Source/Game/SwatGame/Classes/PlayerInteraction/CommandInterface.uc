@@ -495,6 +495,80 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
     LastFocusUpdateOrigin = SwatGamePlayerController(Level.GetLocalPlayerController()).LastFocusUpdateOrigin;
 }
 
+simulated protected function UncompliantDefaultCommand(Actor Target, CommandInterfaceContext Context)
+{
+	local Pawn TargetPawn;
+
+	TargetPawn = Pawn(Target);
+	if(TargetPawn == None)
+	{
+		ConsiderDefaultCommand(Commands[int(Context.DefaultCommand)], Context.DefaultCommandPriority);
+		return;
+	}
+
+	// If the target has a gas mask, we should NOT consider anything that uses gas, like pepperball or pepper spray.
+	if(!TargetPawn.HasProtection('IProtectFromCSGas'))
+	{
+		if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_PrimaryWeapon, 'CSBallLauncher') ||
+			CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_SecondaryWeapon, 'CSBallLauncher'))
+		{
+			// pepperball is a good option to start with
+			ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_CSBallLauncher], Context.DefaultCommandPriority);
+			return;
+		}
+		else if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_PepperSpray, 'PepperSpray'))
+		{
+			// we could also use the pepper spray here and that's fine
+			ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_PepperSpray], Context.DefaultCommandPriority);
+			return;
+		}
+	}
+
+	if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_PrimaryWeapon, 'Taser') ||
+		CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_SecondaryWeapon, 'Taser'))
+	{
+		// taser is less than ideal when dealing with druggies but it's okay here
+		ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_Taser], Context.DefaultCommandPriority);
+		return;
+	}
+
+	if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_PrimaryWeapon, 'BeanbagShotgunBase') ||
+		CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_SecondaryWeapon, 'BeanbagShotgunBase'))
+	{
+		ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_LessLethalShotgun], Context.DefaultCommandPriority);
+		return;
+	}
+
+	if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_PrimaryWeapon, 'GrenadeLauncherBase') ||
+		CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_SecondaryWeapon, 'GrenadeLauncherBase'))
+	{
+		ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_GrenadeLauncher], Context.DefaultCommandPriority);
+		return;
+	}
+
+	// Try grenades now I guess
+	if(!TargetPawn.HasProtection('IProtectFromCSGas'))
+	{
+		if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_CSGasGrenade, 'CSGasGrenade'))
+		{
+			ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_CSGas], Context.DefaultCommandPriority);
+			return;
+		}
+	}
+
+	if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_Flashbang, 'FlashbangGrenade'))
+	{
+		ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_Flashbang], Context.DefaultCommandPriority);
+		return;
+	}
+
+	if(CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(EquipmentSlot.Slot_StingGrenade, 'StingGrenade'))
+	{
+		ConsiderDefaultCommand(Commands[ECommand.Command_Deploy_StingGrenade], Context.DefaultCommandPriority);
+		return;
+	}
+}
+
 simulated protected event PostContextMatched(PlayerInterfaceContext inContext, Actor Target)
 {
     local CommandInterfaceContext Context;
@@ -506,7 +580,19 @@ simulated protected event PostContextMatched(PlayerInterfaceContext inContext, A
         SetCommandStatus(Commands[int(Context.Command[i])]);
 
     if (Context.DefaultCommand != Command_None)
-        ConsiderDefaultCommand(Commands[int(Context.DefaultCommand)], Context.DefaultCommandPriority);
+	{
+		if(Context.Name == 'Uncompliant')
+		{
+			// Uncompliant suspects/civilians get special logic dictating which command should be considered as default
+			UncompliantDefaultCommand(Target, Context);
+		}
+		else
+		{
+			ConsiderDefaultCommand(Commands[int(Context.DefaultCommand)], Context.DefaultCommandPriority);
+		}
+
+	}
+
 }
 
 simulated protected event PostDoorRelatedContextMatched(PlayerInterfaceDoorRelatedContext inContext, Actor Target)
@@ -2790,6 +2876,125 @@ simulated function UpdateDefaultCommandControl(string Text)
 function bool CommandTriggersBack(ECommand Command)
 {
   return false;
+}
+
+// Command interface has a few things to keep in mind when determining if a context matches
+function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceContext Context, float Distance, bool Transparent)
+{
+	local CommandInterfaceContext CommandContext;
+	local SwatPawn SwatPawn;
+	local ICanBeUsed UsableItem;
+	local IAmReportableCharacter ReportableCharacter;
+	local ICanBeDisabled DisableItem;
+
+	CommandContext = CommandInterfaceContext(Context);
+	SwatPawn = SwatPawn(Target);
+	UsableItem = ICanBeUsed(Target);
+	ReportableCharacter = IAmReportableCharacter(Target);
+	DisableItem = ICanBeDisabled(Target);
+
+	if(CommandContext.CaresAboutIsActive)
+	{
+		if(DisableItem == None || DisableItem.IsActive() ^^ CommandContext.IsActive)
+		{
+			return false;
+		}
+	}
+
+	if(CommandContext.CaresAboutCanBeArrestedNow)
+	{
+		if(SwatPawn == None || SwatPawn.CanBeArrestedNow() ^^ CommandContext.CanBeArrestedNow)
+		{
+			return false;
+		}
+	}
+
+	if(CommandContext.CaresAboutCanBeUsedNow)
+	{
+		if(UsableItem == None || UsableItem.CanBeUsedNow() ^^ CommandContext.CanBeUsedNow)
+		{
+			return false;
+		}
+	}
+
+	if(CommandContext.CaresAboutCanBeReportedNow)
+	{
+		if(ReportableCharacter == None || ReportableCharacter.CanBeUsedNow() ^^ CommandContext.CanBeReportedNow)
+		{
+			return false;
+		}
+	}
+
+	return Super.ContextMatches(Player, Target, Context, Distance, Transparent);
+}
+
+function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
+	float Distance, bool Transparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+{
+	local CommandInterfaceDoorRelatedContext CommandContext;
+	CommandContext = CommandInterfaceDoorRelatedContext(Context);
+
+	CurrentDoorFocus = Door;
+
+	if(CommandContext.CaresAboutPlayerOnExternalSide)
+	{
+		if(CommandContext.PlayerIsOnExternalSide ^^ Door.PlayerIsOnExternalSide())
+		{
+			return false;
+		}
+	}
+
+	if(CommandContext.CaresAboutCanIssueCommandsFromMySide)
+	{
+		if(CommandContext.CanIssueCommandsFromMySide ^^ Door.PlayerCanIssueCommandsFromTheirSide())
+		{
+			return false;
+		}
+	}
+
+	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, CandidateDoorPart, CandidateSkeletalRegion);
+}
+
+/*
+ * Our new special context system, special conditions.
+ */
+simulated function bool SpecialCondition_Zulu()
+{
+ 	if(CurrentCommandTeam == Element && ElementHeldCommand != None)
+ 	{
+ 		return true;
+ 	}
+ 	else if(CurrentCommandTeam == RedTeam && RedHeldCommand != None)
+ 	{
+ 		return true;
+ 	}
+ 	else if(CurrentCommandTeam == BlueTeam && BlueHeldCommand != None)
+ 	{
+ 		return true;
+ 	}
+ 	// We do not have a held command for the current command team
+ 	return false;
+}
+
+simulated function bool SpecialCondition_CanBeArrested(Actor Target)
+{
+ 	local SwatPawn SwatPawn;
+
+ 	if(!Target.IsA('SwatEnemy') && !Target.IsA('SwatHostage'))
+ 	{
+ 		return false; // not something we can arrest
+ 	}
+
+ 	SwatPawn = SwatPawn(Target);
+ 	if(!class'Pawn'.static.checkConscious(SwatPawn))
+ 	{
+ 		return false; // not conscious, can't arrest them
+ 	}
+ 	else if(SwatPawn.IsArrested() || SwatPawn.IsBeingArrestedNow())
+ 	{
+ 		return false; // is either arrested or in the process of being arrested
+ 	}
+ 	return SwatPawn.CanBeArrestedNow();
 }
 
 cpptext
