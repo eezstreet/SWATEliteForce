@@ -19,6 +19,7 @@
  - Suspects will close doors after firing upon them while in a barricaded state. The time it takes to do this is random.
  - Lightsticks will now correct their position when they fall through the geometry. 99% of the time, they won't fall through the floor.
  - After checking a lock, the default command context option will be "Open and Clear"
+ - When aiming at an uncompliant civilian or suspect, the default command will change to a DEPLOY command which suits the situation.
  - Added a first person viewmodel FOV slider to Video Settings
  - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
  - Maps have the ability to randomly open or lock doors which were ordinarily closed.
