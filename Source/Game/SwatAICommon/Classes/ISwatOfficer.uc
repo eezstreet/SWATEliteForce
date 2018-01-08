@@ -27,7 +27,7 @@ function ThrownWeapon		GetThrownWeapon(EquipmentSlot Slot);
 function HandheldEquipment	GetItemAtSlot(EquipmentSlot Slot);
 function FiredWeapon		GetPrimaryWeapon();
 function FiredWeapon		GetBackupWeapon();
-function bool PocketSlotContains(Pocket Slot, Name Equipment);
+function bool HasA(name EquipmentClass);
 
 function ReEquipFiredWeapon();
 function InstantReEquipFiredWeapon();

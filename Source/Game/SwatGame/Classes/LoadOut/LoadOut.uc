@@ -12,10 +12,10 @@ import enum eNetworkValidity from SwatGame.SwatGUIConfig;
 import enum eTeamValidity from SwatGame.SwatGUIConfig;
 
 // The Actual Equipment
-var(DEBUG) protected /*array<*/Actor/*>*/ PocketEquipment[Pocket.EnumCount];
-//var(DEBUG) protected array<Actor> GivenEquipment;
+var(DEBUG) protected array<Actor> PocketEquipment/*[Pocket.EnumCount]*/;
+var(DEBUG) protected array<Actor> GivenEquipment;
 
-//var int unused[21];
+var int unused[21];
 
 // Cached reference to the GuiConfig
 var(DEBUG) SwatGUIConfig GC;
@@ -409,7 +409,7 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
     if( Slot == SLOT_Breaching && ICanUseC2Charge(Owner).GetDeployedC2Charge() != None )
         return GetItemAtSlot( Slot_Detonator );
 
-    for( i = 0; i < Pocket.EnumCount; i++ )
+    for( i = 0; i < PocketEquipment.Length; i++ )
     {
         Item = HandheldEquipment(PocketEquipment[i]);
         if  (
@@ -431,6 +431,24 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
         }
     }
 
+	if(Candidate == None/* || Candidate == SwatPawn(Owner).GetActiveItem()*/)
+	{
+		// Couldn't find one in our normal pocket equipment, let's search through the given equipment
+		for(i = 0; i < GivenEquipment.Length; i++)
+		{
+			Item = HandheldEquipment(GivenEquipment[i]);
+			if(Item != None && Item.GetSlot() == Slot && Item.IsAvailable())
+			{
+				Candidate = Item;
+
+				if(!Candidate.IsA('FiredWeapon') || !FiredWeapon(Candidate).Ammo.IsEmpty())
+				{	// see above, this fixes pepper spray
+					return Item;
+				}
+			}
+		}
+	}
+
     if (Level.NetMode != NM_Standalone ) // ckline: this was bogging down SP performance
     {
 	 	if (Level.GetEngine().EnableDevTools)
@@ -445,7 +463,8 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
     return Candidate;
 }
 
-// Returns the contents of the given pocket
+// Returns the contents of the given pocket.
+// Only should be used for very specific circumstances (ie, IAmCuffed)
 simulated function Actor GetItemAtPocket( Pocket ThePocket )
 {
     assert(ThePocket != Pocket_Invalid);
@@ -633,7 +652,70 @@ simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
     }
   }
 
+  for(i = 0; i < GivenEquipment.Length; i++)
+  {
+	  Equipment = HandheldEquipment(GivenEquipment[i]);
+	  if(Slot == SLOT_Detonator)
+	  {
+		  if(Equipment != None && Equipment.IsA('C2Charge'))
+		  {
+			  Count += Equipment.GetAvailableCount();
+		  }
+	  }
+	  else if(Equipment != None && Equipment.GetSlot() == Slot && Equipment.IsAvailable())
+	  {
+		  if(Equipment.IsA('PepperSpray'))
+		  {
+			  Weapon = FiredWeapon(Equipment);
+			  if(Weapon.Ammo.IsEmpty())
+			  {
+				  continue;
+			  }
+		  }
+		  Count += Equipment.GetAvailableCount();
+	  }
+  }
+
   return Count;
+}
+
+// We were given some kind of equipment from the player. Add it.
+simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
+{
+	local int i, j;
+	local array<Name> EquipmentNames;
+
+	EquipmentNames[0] = 'CSGasGrenade';
+	EquipmentNames[1] = 'FlashbangGrenade';
+	EquipmentNames[2] = 'Lightstick';
+	EquipmentNames[3] = 'StingGrenade';
+	EquipmentNames[4] = 'C2Charge';
+	EquipmentNames[5] = 'Wedge';
+
+	// With pepperspray and optiwands, we just shove it into a GivenEquipment slot
+	if(Equipment.IsA('Optiwand') || Equipment.IsA('FiredWeapon'))
+	{
+		// Just store it in our given equipment I guess
+		GivenEquipment[GivenEquipment.Length] = Equipment;
+		return;
+	}
+
+	// With grenades, wedges, and C2, we need to squash it into any existing slots
+	for(i = 0; i < EquipmentNames.Length; i++)
+	{
+		if(Equipment.IsA(EquipmentNames[i]))
+		{
+			for(j = 0; j < Pocket.EnumCount; j++)
+			{
+				if(PocketEquipment[j].IsA(EquipmentNames[i]))
+				{
+					log("...Added 1 piece of equipment to "$PocketEquipment[j]);
+					HandheldEquipment(PocketEquipment[j]).AddAvailableCount(1);
+					return;
+				}
+			}
+		}
+	}
 }
 
 //returns the item, if any, that was replaced
@@ -847,13 +929,21 @@ function AddLightstick(optional int Quantity)
 	HandheldEquipment(PocketEquipment[Pocket.Pocket_Lightstick]).AddAvailableCount(Quantity);
 }
 
-simulated function bool ContainsEquipment(name Class)
+simulated function bool HasA(Name EquipmentName)
 {
 	local int i;
 
-	for(i = 0; i < Pocket.EnumCount; i++)
+	for(i = 0; i < PocketEquipment.Length; i++)
 	{
-		if(PocketEquipment[i].IsA(Class))
+		if(PocketEquipment[i] != None && PocketEquipment[i].IsA(EquipmentName))
+		{
+			return true;
+		}
+	}
+
+	for(i = 0; i < GivenEquipment.Length; i++)
+	{
+		if(GivenEquipment[i] != None && GivenEquipment[i].IsA(EquipmentName))
 		{
 			return true;
 		}
@@ -861,6 +951,7 @@ simulated function bool ContainsEquipment(name Class)
 
 	return false;
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // cpptext

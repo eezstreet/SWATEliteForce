@@ -42,6 +42,11 @@ static function bool IsUsableByPlayer()
 	return default.PlayerUsable;
 }
 
+simulated function bool AllowedToPassItem()
+{
+	return true; // we are allowed to pass all grenades
+}
+
 defaultproperties
 {
   PlayerViewOffset = (X=-22,Y=7,Z=-12)

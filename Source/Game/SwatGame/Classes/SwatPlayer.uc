@@ -520,9 +520,6 @@ simulated function ReceiveLoadOut(OfficerLoadOut inLoadOut)
     DoDefaultEquip(); // Does nothing if NM_Client.
 }
 
-//returns true iff the SwatPlayer has any of the specified HandheldEquipment
-native function bool HasA(name HandheldEquipmentName);
-
 simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
 {
     //mplog( self$"---SwatPlayer::SetPlayerSkins()." );
@@ -563,9 +560,9 @@ simulated function bool HasAWeaponOfType(name WeaponType) {
   return PrimaryWeapon.IsA(WeaponType) || BackupWeapon.IsA(WeaponType);
 }
 
-simulated function bool HasEquipment(name Class)
+simulated function bool HasA(name Class)
 {
-	return LoadOut.ContainsEquipment(Class);
+	return LoadOut.HasA(Class);
 }
 
 simulated function DoDefaultEquip()
@@ -3990,6 +3987,11 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
   } else {
     return LoadOut.GetSecondaryAmmoCount();
   }
+}
+
+simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
+{
+	Loadout.GivenEquipmentFromPawn(Equipment);
 }
 
 defaultproperties

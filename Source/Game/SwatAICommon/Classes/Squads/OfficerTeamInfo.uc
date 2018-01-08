@@ -383,7 +383,7 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 }
 
 // Returns true if all officers have this piece of protective equipment
-function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
+function bool DoAllOfficersHave(Name EquipmentClassName)
 {
 	local int i;
 	local Pawn Officer;
@@ -392,7 +392,7 @@ function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
 	{
 		Officer = pawns[i];
 
-		if(!ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		if(!ISwatOfficer(Officer).HasA(EquipmentClassName))
 		{
 			return false;
 		}
@@ -401,7 +401,7 @@ function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
 }
 
 // Returns true if an officer has this piece of equipment
-function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
+function bool DoesAnOfficerHave(Name EquipmentClassName)
 {
 	local int i;
 	local Pawn Officer;
@@ -410,7 +410,7 @@ function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
 	{
 		Officer = pawns[i];
 
-		if(ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		if(ISwatOfficer(Officer).HasA(EquipmentClassName))
 		{
 			return true;
 		}

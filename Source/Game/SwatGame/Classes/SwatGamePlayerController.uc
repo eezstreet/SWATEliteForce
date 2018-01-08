@@ -2467,6 +2467,7 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	// If we aren't allowed to pass the item, continue with the trace
 	if(!ActiveItem.AllowedToPassItem())
 	{
+		log("Tried to give "$ActiveItem$" to "$Other$" but failed because NotAllowedToPassItem");
 		return false;
 	}
 
@@ -2499,9 +2500,9 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	//	This is because it is only temporarily in our inventory.
 
 	// Don't give the other person an optiwand if they already have one
-	if(ActiveItem.IsA('Optiwand') && Other.HasEquipment('Optiwand'))
+	if(ActiveItem.IsA('Optiwand') && Other.HasA('Optiwand'))
 	{
-		if(Other.HasEquipment('Optiwand'))
+		if(Other.HasA('Optiwand'))
 		{
 			// the other player has an optiwand already, don't give it to them
 			ClientMessage("", 'CantGiveAlreadyHasOptiwand');
@@ -2512,22 +2513,30 @@ simulated function bool TryGiveItem(SwatPawn Other)
 
 	// Spawn in the actual equipment and give it to the other player
 	NewItem = Spawn(ActiveItem.class, Other);
-	NewItem.AddAvailableCount(1);
+	NewItem.SetAvailableCount(1);
 	NewItem.OnGivenToOwner();
+	Other.GivenEquipmentFromPawn(NewItem);
 
 	/////////////////////////////////////////////////////////////////
 	//
 	//	Remove the equipment from our inventory
 	//	All we need to do is reduce the available count by 1
+	ActiveItem.DecrementAvailableCount();
+	if(!ActiveItem.IsAvailable())
+	{
+		// Switch to another weapon
+		EquipNextSlot();
+		ActiveItem.UnequippedHook();
+	}
 
 	////////////////////////////////////////////////////////////////
 	//
 	//	Tell the client we gave our equipment away
-	ClientMessage(Other.GetHumanReadableName()$"\t1\t"$ActiveItem.GetFriendlyName(), 'GaveEquipment');
+	ClientMessage(ActiveItem.GetFriendlyName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
 	if(Other.IsA('SwatPlayer'))
 	{
 		SwatGamePlayerController(Other.Controller).ClientMessage(
-			SwatPlayer.GetHumanReadableName()$"\t1\t"$ActiveItem.GetFriendlyName(), 'GaveYouEquipment');
+			ActiveItem.GetFriendlyName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
 	}
 	return true;
 }

@@ -106,9 +106,9 @@ simulated function float GetBulkSpeedModifier() {
 	return LoadOut.GetBulkSpeedModifier();
 }
 
-simulated function bool HasEquipment(name Class)
+simulated function bool HasA(name Class)
 {
-	return LoadOut.ContainsEquipment(Class);
+	return LoadOut.HasA(Class);
 }
 
 // Refund lightsticks
@@ -757,10 +757,6 @@ function FiredWeapon GetBackupWeapon()
     return LoadOut.GetBackupWeapon();
 }
 
-function bool PocketSlotContains(Pocket Slot, Name Equipment) {
-  return LoadOut.GetItemAtPocket(Slot).IsA(Equipment);
-}
-
 function bool HasUsableWeapon()
 {
 	return (((GetPrimaryWeapon() != None) && !GetPrimaryWeapon().IsEmpty()) ||
@@ -852,15 +848,7 @@ function InstantReEquipFiredWeapon()
 
 function bool HasTaser()
 {
-    local HandheldEquipment Equipment;
-
-    Equipment = GetItemAtSlot(Slot_SecondaryWeapon);
-    if (Equipment != None)
-    {
-        return Equipment.IsA('Taser');
-    }
-
-    return false;
+	return HasA('Taser');
 }
 
 function SetDoorToBlowC2On(Door TargetDoor)
@@ -1099,6 +1087,11 @@ simulated function AdjustOfficerMovementSpeed() {
 
 simulated function Tick(float dTime) {
   AdjustOfficerMovementSpeed();
+}
+
+simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
+{
+	Loadout.GivenEquipmentFromPawn(Equipment);
 }
 
 defaultproperties

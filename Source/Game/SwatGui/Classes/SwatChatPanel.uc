@@ -107,6 +107,12 @@ var() private config localized string UnforceLessLethalMessage;
 var() private config localized string AdminKillMessage;
 var() private config localized string AdminPromoteMessage;
 
+var() private config localized string CantGiveAlreadyHasOptiwandMessage;
+var() private config localized string CantGiveTooMuchWeightMessage;
+var() private config localized string CantGiveTooMuchBulkMessage;
+var() private config localized string GaveEquipmentMessage;
+var() private config localized string GaveYouEquipmentMessage;
+
 
 struct ChatLine
 {
@@ -458,6 +464,26 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 
 		case 'UnforceLessLethal':
 			MsgText = FormatTextString( UnforceLessLethalMessage, StrA, StrB);
+			break;
+
+		case 'CantGiveAlreadyHasOptiwand':
+			MsgText = CantGiveAlreadyHasOptiwandMessage;
+			break;
+
+		case 'CantGiveTooMuchWeight':
+			MsgText = CantGiveTooMuchWeightMessage;
+			break;
+
+		case 'CantGiveTooMuchBulk':
+			MsgText = CantGiveTooMuchBulkMessage;
+			break;
+
+		case 'GaveEquipment':
+			MsgText = FormatTextString( GaveEquipmentMessage, StrA, StrB, StrC );
+			break;
+
+		case 'GaveYouEquipment':
+			MsgText = FormatTextString( GaveYouEquipmentMessage, StrA, StrB, StrC );
 			break;
 
         case 'DebugMessage':
@@ -834,6 +860,12 @@ defaultproperties
 
     PromptToDebriefMessage="[c=ffffff]Press '[k=GUICloseMenu]' to proceed to Debrief."
     SomeoneString="someone"
+
+	CantGiveAlreadyHasOptiwandMessage="[c=ffffff]That person already has an Optiwand."
+	CantGiveTooMuchWeightMessage="[c=ffffff]That person has too much weight."
+	CantGiveTooMuchBulkMessage="[c=ffffff]That person has too much bulk."
+	GaveEquipmentMessage="[c=ffffff]You gave %1 (x%2) to %3."
+	GaveYouEquipmentMessage="[c=ffffff]Received %1 (x%2) from %3."
 
     SlotNames(0)="Invalid"
     SlotNames(1)="Primary Weapon"

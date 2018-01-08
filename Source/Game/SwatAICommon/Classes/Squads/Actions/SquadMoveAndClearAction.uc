@@ -750,11 +750,11 @@ latent function FinishUpThrowBehavior()
 		PostGrenadeThrowDelayTime = 0;
 
 		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			if(DoAllOfficersHave(Pocket_HeadArmor, 'gasMask'))
+			if(DoAllOfficersHave('gasMask'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
 			}
-			else if(DoAllOfficersHave(Pocket_HeadArmor, 'RiotHelmet'))
+			else if(DoAllOfficersHave('RiotHelmet'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeRiotHelmet;
 			}

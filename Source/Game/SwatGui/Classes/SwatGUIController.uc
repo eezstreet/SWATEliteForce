@@ -497,6 +497,14 @@ function bool OnMessageRecieved( String Msg, Name Type )
             SendMessageToChat( Msg, Type );
             break;
 
+		case 'CantGiveAlreadyHasOptiwand':
+		case 'CantGiveTooMuchWeight':
+		case 'CantGiveTooMuchBulk':
+		case 'GaveEquipment':
+		case 'GaveYouEquipment':
+			SendMessageToChat( Msg, Type );
+			break;
+
         case 'SpeechManagerNotification':
             SendMessageToChat( Msg, Type );
             break;

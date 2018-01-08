@@ -57,18 +57,18 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 	return OfficerTeamInfo(squad()).DoesAnOfficerHaveUsableEquipment(Slot, EquipmentClassName);
 }
 
-function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
+function bool DoAllOfficersHave(Name EquipmentClassName)
 {
 	assert(squad().IsA('OfficerTeamInfo'));
 
-	return OfficerTeamInfo(squad()).DoAllOfficersHave(Slot, EquipmentClassName);
+	return OfficerTeamInfo(squad()).DoAllOfficersHave(EquipmentClassName);
 }
 
-function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
+function bool DoesAnOfficerHave(Name EquipmentClassName)
 {
 	assert(squad().IsA('OfficerTeamInfo'));
 
-	return OfficerTeamInfo(squad()).DoesAnOfficerHave(Slot, EquipmentClassName);
+	return OfficerTeamInfo(squad()).DoesAnOfficerHave(EquipmentClassName);
 }
 
 function Pawn GetFirstOfficer()

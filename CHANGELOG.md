@@ -6,6 +6,7 @@
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18 and Glock 19.
  - Added the ability to take no weapon!
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
+ - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
 - New AI behavior!
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.

@@ -2816,7 +2816,7 @@ simulated function OnUseKeyFrame()
 
         if (!Level.IsTraining)
         {
-            LocalActiveItem.DecrementAvailableCount();
+            LocalActiveItem.UpdateAvailability();
         }
         else
         {

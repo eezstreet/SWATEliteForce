@@ -870,7 +870,8 @@ simulated function UpdateAvailability()
 
 simulated function DecrementAvailableCount()
 {
-  UpdateAvailability();
+	AvailableCount--;
+	UpdateAvailability();
 }
 
 simulated final protected function OnUsingFinished()
