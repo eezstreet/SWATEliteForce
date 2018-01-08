@@ -103,6 +103,8 @@ enum EComplianceWeaponAnimation
   Compliance_Handgun
 };
 
+var() localized config string ShortName;
+
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
 var(Firing) config WeaponAimAnimationType AimAnimation;
@@ -161,6 +163,8 @@ var float IronSightAnimationProgress;	//denotes position of weapon, in linear ra
 var array<vector> AnimationSplinePoints;
 
 var bool bPenetratesDoors;
+
+static function string GetShortName() { return default.ShortName; }
 
 simulated function float GetWeight() {
   return Weight;

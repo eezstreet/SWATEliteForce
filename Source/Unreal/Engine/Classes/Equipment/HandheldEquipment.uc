@@ -1273,6 +1273,11 @@ static function String GetFriendlyName()
     return default.FriendlyName;
 }
 
+static function string GetShortName()
+{
+	return default.FriendlyName;
+}
+
 static function float GetRagdollDeathImpactMomentumMultiplier()
 {
     return Default.RagdollDeathImpactMomentumMultiplier;

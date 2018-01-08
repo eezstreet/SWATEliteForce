@@ -24,6 +24,7 @@
  - Added a first person viewmodel FOV slider to Video Settings
  - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
  - Maps have the ability to randomly open or lock doors which were ordinarily closed.
+ - Tweaked the look of the equipment menu, so equipment names aren't cut off as much.
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
 

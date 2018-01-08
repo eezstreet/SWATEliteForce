@@ -23,6 +23,7 @@ simulated function float GetBulk() {
 function OnGivenToOwner();
 
 static function string GetFriendlyName(){ return ""; }
+static function string GetShortName() { return ""; }
 
 defaultproperties
 {

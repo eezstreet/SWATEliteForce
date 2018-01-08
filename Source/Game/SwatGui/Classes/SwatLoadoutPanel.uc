@@ -468,7 +468,7 @@ function DisplayEquipment( Pocket thePocket )
     EquipmentLabel[thePocket].SetCaption( Equipment.static.GetFriendlyName() );
 
     if( EquipmentSelectionButton[thePocket] != None )
-        EquipmentSelectionButton[thePocket].SetCaption( Equipment.static.GetFriendlyName() );
+        EquipmentSelectionButton[thePocket].SetCaption( Equipment.static.GetShortName() );
 
 
     //dont update anything on the panel if this is not on the active panel
@@ -932,7 +932,7 @@ protected function RepopulateWeaponInformationForNewCategory(WeaponEquipClass Ne
 	    	continue;
 	    }
 
-	    MyWeaponBox.AddItem(Weapon.static.GetFriendlyName(), Weapon);
+	    MyWeaponBox.AddItem(Weapon.static.GetShortName(), Weapon);
 	}
 
 	MyWeaponBox.List.Sort();
