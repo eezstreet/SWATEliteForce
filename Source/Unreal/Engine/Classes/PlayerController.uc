@@ -1364,12 +1364,27 @@ exec function Melee()
 	InternalMelee();
 }
 
+exec function MeleeDedicated()
+{
+	InternalMelee(true);
+}
+
+exec function GiveItemDedicated()
+{
+	InternalMelee(, , true);
+}
+
+exec function CheckLockDedicated()
+{
+	InternalMelee(, true);
+}
+
 exec function Reload()
 {
     InternalReload();
 }
 
-simulated private function InternalMelee();
+simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCheckLockOnly, optional bool UseGiveItemOnly);
 
 // Overridden for Swat players in SwatGamePlayerController.
 simulated private function InternalReload()

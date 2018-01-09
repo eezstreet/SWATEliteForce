@@ -97,12 +97,19 @@ enum eCommandCategory
     COMCAT_Movement,
     COMCAT_Interactions,
     COMCAT_Chat,
+	COMCAT_Multiplayer,
     COMCAT_Reserved,
 };
 
+// These got moved to SwatKeyControlSettingsPanel.
+/*
 var(KeyConfigSettings) config           array<string>   CommandString "The string corresponding to the command this Input Function struct is representing";
 var(KeyConfigSettings) config localized array<string>   LocalizedCommandString "The localized string corresponding to the command this Input Function struct is representing";
 var(KeyConfigSettings) config array<eCommandCategory>   CommandCategory "The category of this command";
+*/
+var() config array<string>				NotUsed6 "Not used.";
+var() config array<string>				NotUsed7 "Not used.";
+var() config array<eCommandCategory>	NotUsed8 "Not used.";
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Audio Settings

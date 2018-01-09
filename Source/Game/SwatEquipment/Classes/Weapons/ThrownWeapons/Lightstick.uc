@@ -3,6 +3,10 @@ class Lightstick extends Engine.SwatGrenade
 
 var config string BaseThirdPersonThrowAnim;
 var bool Used;
+var bool ThrowingFast;
+var config name BaseThirdPersonThrowAnimNet;
+var config name FastPreThrowAnimation;
+var config name FastThrowAnimation;
 
 var config class<LightstickProjectile> RedLightstickClass;
 var config class<LightstickProjectile> BlueLightstickClass;
@@ -13,41 +17,67 @@ var config class<LightstickProjectile> BlueLightstickClass;
 
 simulated function EquippedHook()
 {
-  Super.EquippedHook();
-  UpdateHUD();
+	if(!ThrowingFast)
+	{
+		Super.EquippedHook();
+		UpdateHUD();
+	}
+}
+
+simulated function OnPostEquipped()
+{
+	if(ThrowingFast)
+	{
+		SwatPlayer(Owner).GotoState('Throwing');
+	}
 }
 
 simulated function UsedHook()
 {
-  Super.UsedHook();
-  UpdateHUD();
+	if(Used)
+	{
+		return;
+	}
+	Used = true;
 
-	log(self$"Lightstick UsedHook");
+	Super.UsedHook();
+	UpdateHUD();
 }
 
 simulated latent protected function PreUsed()
 {
 	Super.PreUsed();
 
-	if(Owner.IsA('SwatAI'))
+	if(Owner.IsA('SwatAI') || ThrowingFast)
 	{
 		Used = false;
 
 		if (ThirdPersonModel != None)
 	        ThirdPersonModel.PlayUse(0);
+
+		if(!Owner.IsA('SwatPlayer'))
+		{
+			PreEquip();
+		}
 	}
 }
 
 simulated function OnUsingFinishedHook()
 {
-	if(Owner.IsA('SwatAI'))
+	if(ThrowingFast || Owner.IsA('SwatAI'))
 	{
-		if (!Used)
+		if(!Used)
+		{
 			UsedHook();
+		}
+		Used = false;
 
-			Used = false;
+		if(Owner.IsA('SwatPlayer'))
+		{
+			SwatPlayer(Owner).DoDefaultEquip();
+		}
 	}
-
+	ThrowingFast = false;
 }
 
 function UpdateHUD()
@@ -80,6 +110,10 @@ function name GetThirdPersonThrowAnimation()
 
 		if(FiredWeapon != None)
 			return name(BaseThirdPersonThrowAnim $ FiredWeapon.LightstickThrowAnimPostfix);
+	}
+	else if(ThrowingFast)
+	{
+		return BaseThirdPersonThrowAnimNet;
 	}
 
 	return Super.GetThirdPersonThrowAnimation();
@@ -124,11 +158,43 @@ function class<actor> MutateProjectile()
 	return ProjectileClass;
 }
 
+simulated function FlagForFastUse()
+{
+	SetThrowSpeed(0.0);
+	ThrowingFast = true;
+}
+
+function Name GetHandsPreThrowAnimation()
+{
+	if(ThrowingFast)
+	{
+		return FastPreThrowAnimation;
+	}
+	return Super.GetHandsPreThrowAnimation();
+}
+
+function name GetHandsThrowAnimation(Hands Hands)
+{
+	if(ThrowingFast)
+	{
+		return FastThrowAnimation;
+	}
+	return Super.GetHandsThrowAnimation(Hands);
+}
+
+function bool IsInFastUse()
+{
+	return ThrowingFast;
+}
+
 defaultproperties
 {
     Slot=Slot_Lightstick
 	ProjectileClass=class'SwatEquipment.LightstickProjectile'
 	BaseThirdPersonThrowAnim="LightStickDrop_"
+	BaseThirdPersonThrowAnimNet="LightStickDrop_MP"
+	FastPreThrowAnimation="GlowPreThrow"
+	FastThrowAnimation="GlowThrow"
 
 	RedLightstickClass=class'SwatEquipment.RedLightstickProjectile'
 	BlueLightstickClass=class'SwatEquipment.BlueLightstickProjectile'

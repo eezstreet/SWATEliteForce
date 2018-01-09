@@ -52,6 +52,16 @@ simulated function bool AllowedToPassItem()
 	return true; // we are allowed to pass all grenades
 }
 
+simulated function FlagForFastUse()
+{
+	// only used for lightsticks
+}
+
+function bool IsInFastUse()
+{
+	return false;
+}
+
 defaultproperties
 {
   PlayerViewOffset = (X=-22,Y=7,Z=-12)

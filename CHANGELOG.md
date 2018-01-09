@@ -24,7 +24,14 @@
  - Added a first person viewmodel FOV slider to Video Settings
  - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
  - Maps have the ability to randomly open or lock doors which were ordinarily closed.
- - Tweaked the look of the equipment menu, so equipment names aren't cut off as much.
+ - Added a new Controls category, "Multiplayer"
+ - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
+ - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".
+ - Added new keybind, "Melee" (only does melee, won't check locks or give items)
+ - Added new keybind, "Check Lock"
+ - Added new keybind, "Give Item"
+ - Added new keybind, "Drop Lightstick". Added by popular request, it lets you drop lightsticks like the original game did (instead of throwing)
+ - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
 
@@ -39,7 +46,7 @@
   - The bathrooms and kitchen area door may be randomly locked or open.
  - Red Library Offices
   - Fixed TSS visual glitch where sometimes enemies would wear sunglasses and a gas mask at the same time
-  - Suspects can wear hats
+  - Suspects can wear hats like the loading screen suggests they're able to
  - Northside Vending and Amusements
   - More enemies spawn on Hard and Elite difficulties.
   - Some doors may be randomly locked or opened.

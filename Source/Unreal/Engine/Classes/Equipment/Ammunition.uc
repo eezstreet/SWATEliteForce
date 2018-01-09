@@ -74,6 +74,11 @@ static function String GetFriendlyName()
     return default.FriendlyName;
 }
 
+static function string GetShortName()
+{
+	return GetFriendlyName();
+}
+
 static function Material GetGUIImage()
 {
     return default.GUIImage;

@@ -195,7 +195,7 @@ function UnRegisterInterestedGrenadeThrowing(IInterestedGrenadeThrowing Client)
 }
 
 // Animations
-simulated function name GetHandsPreThrowAnimation()
+function name GetHandsPreThrowAnimation()
 {
 	if (HandsPreThrowAnimation != '')
 		return HandsPreThrowAnimation;
@@ -203,7 +203,15 @@ simulated function name GetHandsPreThrowAnimation()
 		return Pawn(Owner).GetHands().GetPreThrowAnimation();
 }
 
-simulated function name GetFirstPersonPreThrowAnimation()
+function name GetHandsThrowAnimation(Hands Hands)
+{
+	if (HandsThrowAnimation != '')
+		return HandsThrowAnimation;
+	else if (Hands != None)
+		return Hands.GetThrowAnimation(ThrowSpeed);
+}
+
+function name GetFirstPersonPreThrowAnimation()
 {
 	return FirstPersonPreThrowAnimation;
 }
@@ -214,14 +222,6 @@ simulated function name GetThirdPersonPreThrowAnimation()
 		return ThirdPersonPreThrowAnimation;
 	else
 		return ICanThrowWeapons(Owner).GetPreThrowAnimation();
-}
-
-simulated function name GetHandsThrowAnimation(Hands Hands)
-{
-	if (HandsThrowAnimation != '')
-		return HandsThrowAnimation;
-	else if (Hands != None)
-		return Hands.GetThrowAnimation(ThrowSpeed);
 }
 
 simulated function name GetThirdPersonThrowAnimation()

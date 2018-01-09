@@ -1622,6 +1622,24 @@ simulated function SpecialInteractionsNotification(bool NewInteractions)
 	}
 }
 
+exec function ThrowLightstick()
+{
+	local HandheldEquipment ActiveItem;
+
+	ActiveItem = SwatPlayer.GetActiveItem();
+	if(ActiveItem.IsA('Lightstick'))
+	{
+		// Don't allow us to drop a lightstick while we have it equipped
+		return;
+	}
+
+	// Flag the lightstick as being in a "fast use" state.
+	SwatPlayer.FlagLightstickFastUse();
+
+	// Equip slot 14, which will drop the lightstick instantly just like vanilla TSS
+	EquipSlot(14);
+}
+
 // State ControllingViewport takes the player's control away from the playerpawn and onto the active
 // viewport.  The actual implementation the instances of IControllableViewport handle all implementation
 // details.
@@ -2376,7 +2394,7 @@ simulated function bool CheckDoorLock(SwatDoor Door)
   return Door.TryDoorLock(self);
 }
 
-simulated function InternalMelee()
+simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCheckLockOnly, optional bool UseGiveItemOnly)
 {
 	local HandheldEquipment Item;
   local HandheldEquipment PendingItem;
@@ -2423,23 +2441,29 @@ simulated function InternalMelee()
 	    CameraLocation
 	    )
 	{
-		if(!SpecialInteractionsDisabled && (Candidate.IsA('SwatPlayer') || Candidate.IsA('SwatOfficer')))
+		if(((!UseMeleeOnly && !UseCheckLockOnly) || !SpecialInteractionsDisabled) &&
+			(Candidate.IsA('SwatPlayer') || Candidate.IsA('SwatOfficer')))
 		{
 			if(TryGiveItem(SwatPawn(Candidate)))
 			{
 				return;
 			}
 		}
-	    else if(Candidate.IsA('SwatPawn'))
+	    else if(((!UseMeleeOnly && !UseGiveItemOnly) || !SpecialInteractionsDisabled) &&
+			Candidate.IsA('SwatPawn'))
 	    {
 	    	break; // We intend to melee.
 	    }
-	    else if(!SpecialInteractionsDisabled && Candidate.IsA('SwatDoor'))
+	    else if(!SpecialInteractionsDisabled &&
+			Candidate.IsA('DoorModel'))
 	    {
-	      if(CheckDoorLock(SwatDoor(Candidate)))
+	      if(CheckDoorLock(DoorModel(Candidate).Door))
 	        return;
 	    }
 	}
+
+	if(UseCheckLockOnly || UseGiveItemOnly)
+		return; // we were actually using the Check Lock or Give Item dedicated commands
 
 	if (!Item.bAbleToMelee)
 		return;

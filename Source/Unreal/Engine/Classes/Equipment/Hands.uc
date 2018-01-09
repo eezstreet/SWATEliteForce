@@ -105,7 +105,7 @@ simulated function UpdateHandsForRendering()
     OwnerController = PlayerController(OwnerPawn.Controller);
     DeltaTime = OwnerController.LastDeltaTime;
     HandsPass.Length = HandAnimationPass.EnumCount;
-	
+
 	bOwnerNoSee = !OwnerPawn.bRenderHands || OwnerController.GetViewmodelDisabled();
 
     EquippedItem = OwnerPawn.GetActiveItem();
@@ -144,8 +144,8 @@ simulated function UpdateHandsForRendering()
     	//NewRotation += EquippedItem.GetDefaultRotationOffset();
     	Offset = EquippedItem.GetDefaultLocationOffset();
     }
-	
-	//look-down-scope animation for marksman (scoped) weapons    
+
+	//look-down-scope animation for marksman (scoped) weapons
      Weapon = SwatWeapon(EquippedItem);
      if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
          EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
@@ -299,6 +299,10 @@ simulated function IdleHoldingEquipment()
         else
             PlayNewAnim(Model.HolderLowReadyIdleAnimation, 0.0, 0.2);
     }
+	else if(TheActiveItem.IsA('SwatGrenade') && SwatGrenade(TheActiveItem).IsInFastUse())
+	{
+		PlayNewAnim('GlowIdle', 0.0, 0.2);
+	}
     else
     {
         if (Model.HolderIdleAnimations.length == 0)

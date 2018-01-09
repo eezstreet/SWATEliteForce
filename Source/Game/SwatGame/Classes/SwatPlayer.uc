@@ -1990,7 +1990,6 @@ simulated state Throwing
     }
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 ///
 ///
@@ -3992,6 +3991,19 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
 simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
 {
 	Loadout.GivenEquipmentFromPawn(Equipment);
+}
+
+simulated function FlagLightstickFastUse()
+{
+	local SwatGrenade PlayerLightstick;
+
+	PlayerLightstick = SwatGrenade(Loadout.GetItemAtSlot(Slot_Lightstick));
+	if(PlayerLightstick == None)
+	{
+		return;
+	}
+
+	PlayerLightstick.FlagForFastUse();
 }
 
 defaultproperties
