@@ -24,6 +24,8 @@
  - Added a first person viewmodel FOV slider to Video Settings
  - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
  - Maps have the ability to randomly open or lock doors which were ordinarily closed.
+ - Added new admin permission, "View IPs". When a role has this permission, it can see player IPs in the chatlog and in the WebAdmin interface.
+ - When a person logs in as a guest on WebAdmin, their name shows up as "Name (WebGuest)" instead of "Name (WebAdmin)" to better differentiate between admins and guests.
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
  - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".

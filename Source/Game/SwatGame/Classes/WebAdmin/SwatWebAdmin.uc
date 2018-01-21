@@ -530,7 +530,7 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	//}
 
 	// add user to logged in admin list and set cookie
-	Cookie = Listener.LoginUser(Alias, Perms, RemoteAddr);
+	Cookie = Listener.LoginUser(Alias, Perms, RemoteAddr, PreviouslyGuest);
 
 	// tell the other webadmins that we logged in
 	if(Perms.PermissionSetName == "")
