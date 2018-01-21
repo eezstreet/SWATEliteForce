@@ -795,7 +795,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 
 	HTML = HTML $ "<span class=\"sty_title\">SWAT: Elite Force WebAdmin</span><br>";
 	HTML = HTML $ "<table class=\"sty_layouttable\">";
-	HTML = HTML $ "<tr><td class=\"sty_statictext\" colspan=\"2\">Logged in as "$Alias;
+	HTML = HTML $ "<tr><td class=\"sty_statictext\" colspan=\"2\"><span id=\"serverinfo\">Unknown</span> - Logged in as "$Alias;
 
 	if(Permissions.PermissionSetName != "")
 	{
@@ -854,7 +854,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "</form>";
 
 	// nasty javascript here...
-	HTML = HTML $ "<script type=\"text/javascript\">";
+	HTML = HTML $ "<script type=\"text/javascript\">\n";
 
 	// Some global junk here
 	HTML = HTML $ "var previousAlias = '"$PreviousAlias$"';";
@@ -907,6 +907,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		var parser = new DOMParser();";
 	HTML = HTML $ "		var xmldoc = parser.parseFromString(textdata, \"text/xml\");";
 	HTML = HTML $ "		var users = xmldoc.getElementsByTagName(\"USER\");";
+	HTML = HTML $ "		var serverdata = xmldoc.getElementsByTagName(\"SERVER\");";
 	HTML = HTML $ "		var admins = xmldoc.getElementsByTagName(\"ADMIN\");";
 	HTML = HTML $ "		var msgs = xmldoc.getElementsByTagName(\"MSG\");";
 	HTML = HTML $ "		var buffer = document.getElementById(\"buffer\");";
@@ -914,7 +915,12 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		var ministring = '';";
 	HTML = HTML $ "		var playerSelect = document.getElementById(\"playerselection\");";
 	HTML = HTML $ "		var previousPlayer = playerSelect.value;";
+	HTML = HTML $ "		var serverstatus = document.getElementById(\"serverinfo\");";
+	HTML = HTML $ "		var servername = serverdata[0].childNodes[0].childNodes[0].nodeValue;";
+	HTML = HTML $ "		var map = serverdata[0].childNodes[1].childNodes[0].nodeValue;";
 	HTML = HTML $ "		var i;";
+	// Update the server data
+	HTML = HTML $ "		serverstatus.innerHTML = servername + \"(\" + map + \")\";";
 	// Iterate through admin list
 	HTML = HTML $ "		userlist.innerHTML = \"<span class='sty_userlisttitle'>WebAdmin Users</span>\";";
 	HTML = HTML $ "		ministring = '<p>';";
@@ -942,11 +948,20 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		}";
 	HTML = HTML $ "		for(i = 0; i < users.length; i++) {";
 	HTML = HTML $ "			var user = users[i];";
-	HTML = HTML $ "			var username = user.childNodes[0].nodeValue;";
+	HTML = HTML $ "			var username = user.childNodes[0].childNodes[0].nodeValue;";
 	HTML = HTML $ "			var option = document.createElement(\"option\");";
 	HTML = HTML $ "			var minidiv = document.createElement(\"div\");";
-	HTML = HTML $ "			minidiv.innerHTML = username;";
+	HTML = HTML $ "			var team = user.childNodes[1].childNodes[0].nodeValue;";
+	HTML = HTML $ "			var status = user.childNodes[2].childNodes[0].nodeValue;";
+	HTML = HTML $ "			username = username + \" (\" + status + \")\";";
+	HTML = HTML $ "			if(team == \"0\") {";
+	HTML = HTML $ "				username = \"<font color='#3333FF'>\" + username + \"</font>\";";
+	HTML = HTML $ "			} else {";
+	HTML = HTML $ "				username = \"<font color='#FF0000'>\" + username + \"</font>\";";
+	HTML = HTML $ "			}";
 	HTML = HTML $ "			ministring += username + '<br>';";
+	HTML = HTML $ "			username = user.childNodes[0].childNodes[0].innerText || user.childNodes[0].childNodes[0].textContent;";
+	HTML = HTML $ "			minidiv.innerHTML = username;";
 	HTML = HTML $ "			username = minidiv.textContent || minidiv.innerText || '';";
 	HTML = HTML $ "			option.text = username;";
 	HTML = HTML $ "			option.value = username;";

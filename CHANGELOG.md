@@ -25,8 +25,11 @@
  - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
  - Maps have the ability to randomly open or lock doors which were ordinarily closed.
  - In multiplayer, you can modify the amount of suspects and hostages that spawn (check the Advanced tab on Host Game)
- - Added new admin permission, "View IPs". When a role has this permission, it can see player IPs in the chatlog and in the WebAdmin interface.
+ - Added new admin permission, "View IPs". When a role has this permission, it can see player IPs in the WebAdmin interface.
  - When a person logs in as a guest on WebAdmin, their name shows up as "Name (WebGuest)" instead of "Name (WebAdmin)" to better differentiate between admins and guests.
+ - Player names show up according to the color of their team in WebAdmin
+ - WebAdmin now shows player status (Ready/Not Ready/Not Available/Injured/Healthy/Incapacitated) and shows who is the leader.
+ - WebAdmin now shows the current map and server name on the main interface.
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
  - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".

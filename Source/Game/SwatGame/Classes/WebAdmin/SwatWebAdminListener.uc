@@ -5,6 +5,7 @@ class SwatWebAdminListener extends IPDrv.TCPLink
 
 import enum AdminPermissions from SwatAdmin;
 import enum WebAdminMessageType from SwatAdmin;
+import enum COOPStatus from SwatGame.SwatPlayerReplicationInfo;
 
 struct WebAdminMessage
 {
@@ -38,6 +39,14 @@ var localized config string NotEnoughArgsString;
 
 var private int BoundPort;
 var globalconfig array<WebAdminUser> Users;
+
+var globalconfig localized string NotReadyString;
+var globalconfig localized string ReadyString;
+var globalconfig localized string HealthyString;
+var globalconfig localized string InjuredString;
+var globalconfig localized string IncapacitatedString;
+var globalconfig localized string LeaderString;
+var globalconfig localized string NotAvailableString;
 
 //////////////////////////////////////////////////////////////////
 //
@@ -75,6 +84,34 @@ function BeginPlay()
 
 	AcceptClass = class'SwatWebAdmin';
 	SetTimer(ServerRefreshSeconds, true);
+}
+
+private function string GetStatusString( COOPStatus status )
+{
+	local SwatGuiConfig GC;
+
+	GC = SwatRepo(Level.GetRepo()).GuiConfig;
+    switch(status)
+    {
+        case STATUS_NotReady:
+            if( GC.SwatGameState != GAMESTATE_MidGame )
+                return NotReadyString;
+            else
+                return NotAvailableString;
+        case STATUS_Ready:
+            if( GC.SwatGameState != GAMESTATE_MidGame )
+                return ReadyString;
+            else
+                return NotAvailableString;
+        case STATUS_Healthy:
+            return HealthyString;
+        case STATUS_Injured:
+            return InjuredString;
+        case STATUS_Incapacitated:
+            return IncapacitatedString;
+    }
+
+    return "";
 }
 
 // The timer on this class is responsible for checking whether or not to keep the admins alive.
@@ -237,7 +274,10 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 	local string NewCookie;
 	local SwatAdminPermissions Perms;
 	local string Name;
+	local string StatusText;
+	local ServerSettings Settings;
 
+	Settings = ServerSettings(Level.CurrentServerSettings);
 	SGRI = SwatGameReplicationInfo(Level.Game.GameReplicationInfo);
 
 	for(i = 0; i < Users.Length; i++)
@@ -247,6 +287,13 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 			Users[i].KeepAlive = Level.TimeSeconds + KeepAliveTime;
 
 			XML = "<POLLDATA>";
+
+			log("Poll - Server name is "$Settings.ServerName$" and map is "$Settings.Maps[Settings.MapIndex]);
+
+			XML = XML $ "<SERVER>";
+			XML = XML $ "<NAME>" $ Settings.ServerName $ "</NAME>";
+			XML = XML $ "<MAP>" $ Settings.Maps[Settings.MapIndex] $ "</MAP>";
+			XML = XML $ "</SERVER>";
 
 			XML = XML $ "<USERS>";
 			for(j = 0; j < ArrayCount(SGRI.PRIStaticArray); j++)
@@ -262,7 +309,25 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 				FixHTMLItalics(Name);
 				FixHTMLUnderline(Name);
 				FixHTMLColor(Name);
-				XML = XML $ "<USER><![CDATA[" $ Name $ "]]></USER>";
+
+				XML = XML $ "<USER>";
+				XML = XML $ "<NAME><![CDATA[" $ Name $ "]]></NAME>";
+				XML = XML $ "<TEAM>"$NetTeam(PRI.Team).GetTeamNumber()$"</TEAM>";
+
+				StatusText = GetStatusString(PRI.COOPPlayerStatus);
+				if ( PRI.COOPPlayerStatus != STATUS_Incapacitated && PRI.IsLeader )
+				{
+					StatusText = StatusText $ LeaderString;
+				}
+
+				FixHTMLBolding(StatusText);
+				FixHTMLItalics(StatusText);
+				FixHTMLUnderline(StatusText);
+				FixHTMLColor(StatusText);
+				XML = XML $ "<STATUS><![CDATA["$StatusText$"]]></STATUS>";
+
+				XML = XML $ "</USER>";
+
 			}
 			XML = XML $ "</USERS>";
 
@@ -867,4 +932,12 @@ defaultproperties
 
 	NoPermissionString="You do not have permission to do that."
 	NotEnoughArgsString="Not enough arguments for command."
+
+	NotReadyString="[c=777777]Not Ready"
+	ReadyString="[c=00FF00]Ready"
+	NotAvailableString="[c=FF00FF]Not Available"
+	HealthyString="[c=00FF00]Healthy"
+	InjuredString="[c=FFFF00]Injured"
+	IncapacitatedString="[c=FF0000]Incapacitated"
+	LeaderString="[c=FFFF00]/Leader"
 }
