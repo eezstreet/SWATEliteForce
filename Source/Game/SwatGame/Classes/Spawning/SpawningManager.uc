@@ -242,6 +242,10 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
         //how many will we spawn from this roster?
         Count = Rand(CurrentRoster.Count.Max - CurrentRoster.Count.Min + 1) + CurrentRoster.Count.Min;
+		if(Level.NetMode != NM_Standalone)
+		{
+			Count = CurrentRoster.MutateSpawnCount(Count, SwatRepo(Level.GetRepo()).GuiConfig);
+		}
 
         if (Game.DebugSpawning)
             log("[SPAWNING] ... decided to spawn "$Count

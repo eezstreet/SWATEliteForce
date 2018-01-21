@@ -1,4 +1,5 @@
-class InanimateRoster extends Roster;
+class InanimateRoster extends Roster
+	dependsOn(SwatGuiConfig);
 
 defaultproperties
 {

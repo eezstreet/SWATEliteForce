@@ -14,6 +14,12 @@ var (Roster) editinline array<Archetype.ChanceArchetypePair> Archetypes;    //na
 var (Roster) name SpawnerGroup;
 var (Roster) editinline array<eDifficultyLevel> DisallowedDifficulties "A list of difficulties which won't spawn this roster";
 
+function int MutateSpawnCount(int SpawnCount, SwatGUIConfig GC)
+{
+	// Meant to be overridden in child classes
+	return SpawnCount;
+}
+
 function name PickArchetype()
 {
     return class'Archetype'.static.PickArchetype(Archetypes);
