@@ -269,7 +269,7 @@ function bool Polled(SwatWebAdmin AdminClient, string Cookie, string NewUser, st
 			XML = XML $ "<ADMINS>";
 			for(j = 0; j < Users.Length; j++)
 			{
-				Name = Users[i].Alias;
+				Name = Users[j].Alias;
 				FixHTMLBolding(Name);
 				FixHTMLItalics(Name);
 				FixHTMLUnderline(Name);

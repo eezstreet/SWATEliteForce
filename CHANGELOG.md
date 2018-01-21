@@ -37,6 +37,7 @@
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
+ - Fixed SEF bug: In WebAdmin, all admins had the same name (it now shows the correct alias)
 
 ##### Map-Specific Changes #####
 
