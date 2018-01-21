@@ -78,9 +78,13 @@ var public config string LessLethalLoadoutName;	// When forcing a player to a le
 var private localized config string PenaltyFormat;
 var private localized config string PenaltyIPFormat;
 var private localized config string SayFormat;
+var private localized config string SayLocalizedFormat;
 var private localized config string TeamSayFormat;
+var private localized config string TeamSayLocalizedFormat;
 var private localized config string SayIPFormat;
+var private localized config string SayLocalizedIPFormat;
 var private localized config string TeamSayIPFormat;
+var private localized config string TeamSayLocalizedIPFormat;
 var private localized config string SwitchTeamsFormat;
 var private localized config string NameChangeFormat;
 var private localized config string SwitchTeamsIPFormat;
@@ -911,16 +915,24 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
 			break;
 		case 'Say':
 		case 'WebAdminChat':
-		case 'SayLocalized':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(SayFormat, StrA, StrB);
 			MsgWithIPOut = FormatTextString(SayIPFormat, StrA, PlayerIP, StrB);
 			break;
+		case 'SayLocalized':
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(SayLocalizedFormat, StrA, StrB, StrC);
+			MsgWithIPOut = FormatTextString(SayLocalizedIPFormat, StrA, StrB, PlayerIP, StrC);
+			break;
 		case 'TeamSay':
-		case 'TeamSayLocalized':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(TeamSayFormat, StrA, StrB);
 			MsgWithIPOut = FormatTextString(TeamSayIPFormat, StrA, PlayerIP, StrB);
+			break;
+		case 'TeamSayLocalized':
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(TeamSayLocalizedFormat, StrA, StrB, StrC);
+			MsgWithIPOut = FormatTextString(TeamSayLocalizedIPFormat, StrA, StrB, PlayerIP, StrC);
 			break;
 		case 'SwitchTeams':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
@@ -1188,8 +1200,12 @@ defaultproperties
 
 	SayFormat="[c=00FF00][b]%1:[\\b] %2"
 	TeamSayFormat="[c=777777][b]%1:[\\b] %2"
+	SayLocalizedFormat="[c=00FF00][b]%1 (%2):[\\b] %3"
+	TeamSayLocalizedFormat="[c=777777][b]%1 (%2):[\\b] %3"
 	SayIPFormat="[c=00FF00][b]%1 (%2):[\\b] %3"
 	TeamSayIPFormat="[c=777777][b]%1 (%2):[\\b] %3"
+	SayLocalizedIPFormat="[c=00FF00][b]%1 (%2, %3):[\\b] %4"
+	TeamSayLocalizedIPFormat="[c=777777][b]%1 (%2, %3):[\\b] %4"
 
 	SwitchTeamsFormat="[c=00FFFF][b]%1[\\b] switched teams."
 	NameChangeFormat="[c=FF00FF][b]%1[\\b] changed their name to [b]%2[\\b]"

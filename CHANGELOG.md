@@ -38,6 +38,7 @@
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
  - Fixed SEF bug: In WebAdmin, all admins had the same name (it now shows the correct alias)
+ - Fixed SEF bug: In WebAdmin, when room names are turned on, the chat color turned white
 
 ##### Map-Specific Changes #####
 
