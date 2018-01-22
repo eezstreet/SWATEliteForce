@@ -906,6 +906,11 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
     StrB = GetFirstField(Msg,"\t");
     StrC = GetFirstField(Msg,"\t");
 
+	if(Level.NetMode == NM_Standalone)
+	{
+		return; // Don't log anything in the chatlog in singleplayer 
+	}
+
 	switch(Type)
 	{
 		case 'PenaltyIssuedChat':
