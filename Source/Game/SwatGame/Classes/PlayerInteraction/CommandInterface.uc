@@ -500,7 +500,7 @@ simulated protected function UncompliantDefaultCommand(Actor Target, CommandInte
 	local Pawn TargetPawn;
 
 	TargetPawn = Pawn(Target);
-	if(TargetPawn == None)
+	if(TargetPawn == None || !class'Pawn'.static.checkConscious(TargetPawn))
 	{
 		ConsiderDefaultCommand(Commands[int(Context.DefaultCommand)], Context.DefaultCommandPriority);
 		return;
@@ -2960,7 +2960,7 @@ function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, Player
  */
 simulated function bool SpecialCondition_Zulu()
 {
- 	if(CurrentCommandTeam == Element && ElementHeldCommand != None)
+ 	if(CurrentCommandTeam == Element && (ElementHeldCommand != None || (RedHeldCommand != None && BlueHeldCommand != None)))
  	{
  		return true;
  	}
