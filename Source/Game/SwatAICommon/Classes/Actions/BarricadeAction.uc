@@ -163,6 +163,16 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 
 private function FindBarricadePoint()
 {
+	local name RoomName;
+
+	RoomName = m_Pawn.GetRoomName();
+
+	if(RoomName == '')
+	{
+		// This can cause errors!
+		return;
+	}
+
 	// find our anchor, and check if it's a flee point
 	m_Pawn.FindAnchor(true);
 
@@ -173,16 +183,16 @@ private function FindBarricadePoint()
 	}
 	else
 	{
-		BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindUnclaimedFleePointInRoom(m_Pawn.GetRoomName());
+		BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindUnclaimedFleePointInRoom(RoomName);
 
 		// if we didn't find an unclaimed flee point, just use a random PathNode in the room
 		if (BarricadePoint == None)
 		{
-			BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindRandomPointInRoom(m_Pawn.GetRoomName(), 'PathNode');
+			BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindRandomPointInRoom(RoomName, 'PathNode');
 		}
 	}
 
-    AssertWithDescription((BarricadePoint != None), "AI:"@m_Pawn@" has no FleePoints in the room he is in (\""$m_Pawn.GetRoomName()$"\") to barricade himself!  Add Flee Points to this room!");
+    AssertWithDescription((BarricadePoint != None), "AI:"@m_Pawn@" has no FleePoints in the room he is in (\""$RoomName$"\") to barricade himself!  Add Flee Points to this room!");
 
 	// take this point over so nobody else tries to use it
 	if (BarricadePoint.IsA('FleePoint'))
@@ -251,10 +261,18 @@ private function PopulateDoorsInRoom()
 	local int i;
 	local Door IterDoor;
 	local ISwatDoor IterSwatDoor;
+	local Name RoomName;
+
+	RoomName = BarricadePoint.GetRoomName(m_Pawn);
+
+	if(RoomName == '')
+	{
+		return;	// no room ... don't crash!
+	}
 
 	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
 
-	DoorPointsInRoom = SwatAIRepo.GetRoomNavigationPointsOfType(BarricadePoint.GetRoomName(m_Pawn), 'Door');
+	DoorPointsInRoom = SwatAIRepo.GetRoomNavigationPointsOfType(RoomName, 'Door');
 
 	for(i=0; i<DoorPointsInRoom.GetSize(); ++i)
 	{
