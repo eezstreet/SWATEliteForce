@@ -158,6 +158,14 @@ function class<actor> MutateProjectile()
 	return ProjectileClass;
 }
 
+function MutateThrowingSpeed()
+{
+	if(ThrowingFast)
+	{
+		SetThrowSpeed(0.0);
+	}
+}
+
 simulated function FlagForFastUse()
 {
 	SetThrowSpeed(0.0);
@@ -184,6 +192,11 @@ function name GetHandsThrowAnimation(Hands Hands)
 
 function bool IsInFastUse()
 {
+	if(Owner.IsA('SwatAI'))
+	{
+		return true;
+	}
+
 	return ThrowingFast;
 }
 

@@ -2,7 +2,7 @@ class ThrownWeapon extends Weapon
     abstract;
 
 
-var private float ThrowSpeed;                   //set this with SetThrowSpeed() before calling Use()
+var protected float ThrowSpeed;                   //set this with SetThrowSpeed() before calling Use()
 
 var config class<Actor> ProjectileClass;
 
@@ -80,6 +80,7 @@ simulated function UsedHook()
 
     if ( IsAvailable() && Level.NetMode != NM_Client )
     {
+		MutateThrowingSpeed();
         Holder = ICanThrowWeapons(Owner);
         assertWithDescription(Holder != None,
                               "[tcohen] "$class.name$" was notified OnThrown(), but its Owner ("$Owner
@@ -100,6 +101,7 @@ simulated function UsedHook()
 
 // Allow us to mutate the projectile based on some level specific criteria --eezstreet
 function class<actor> MutateProjectile() { return ProjectileClass; }
+function MutateThrowingSpeed() { }
 
 function Actor SpawnProjectile(vector inLocation, vector inVelocity)
 {
