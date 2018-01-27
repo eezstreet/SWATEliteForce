@@ -55,10 +55,10 @@ simulated latent protected function PreUsed()
 		if (ThirdPersonModel != None)
 	        ThirdPersonModel.PlayUse(0);
 
-		if(!Owner.IsA('SwatPlayer'))
+		/*if(!Owner.IsA('SwatPlayer'))
 		{
 			PreEquip();
-		}
+		}*/
 	}
 }
 
@@ -194,7 +194,7 @@ function bool IsInFastUse()
 {
 	if(Owner.IsA('SwatAI'))
 	{
-		return true;
+		return false;
 	}
 
 	return ThrowingFast;
