@@ -497,10 +497,11 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
 
 simulated protected function UncompliantDefaultCommand(Actor Target, CommandInterfaceContext Context)
 {
-	local Pawn TargetPawn;
+	local SwatPawn TargetPawn;
 
-	TargetPawn = Pawn(Target);
-	if(TargetPawn == None || !class'Pawn'.static.checkConscious(TargetPawn))
+	TargetPawn = SwatPawn(Target);
+	if(TargetPawn == None || !class'Pawn'.static.checkConscious(TargetPawn)
+		|| TargetPawn.IsArrested() || TargetPawn.IsBeingArrestedNow())
 	{
 		ConsiderDefaultCommand(Commands[int(Context.DefaultCommand)], Context.DefaultCommandPriority);
 		return;
@@ -2886,6 +2887,17 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 	local ICanBeUsed UsableItem;
 	local IAmReportableCharacter ReportableCharacter;
 	local ICanBeDisabled DisableItem;
+	local SwatPawn Pawn;
+
+	// Somewhat of a hack here, so that arrested characters can't have less lethal stuff on them
+	Pawn = SwatPawn(Target);
+	if(Pawn != None && Context.Name == 'AICharacter')
+	{
+		if(Pawn.IsArrested() || Pawn.IsBeingArrestedNow())
+		{
+			return false;
+		}
+	}
 
 	CommandContext = CommandInterfaceContext(Context);
 	SwatPawn = SwatPawn(Target);
