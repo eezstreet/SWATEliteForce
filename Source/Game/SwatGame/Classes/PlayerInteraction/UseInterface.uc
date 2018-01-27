@@ -195,20 +195,23 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 }
 
 function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
-	float Distance, bool Transparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+	float Distance, bool Transparent, bool HitTransparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
 {
 	local UseInterfaceDoorRelatedContext UseContext;
 	UseContext = UseInterfaceDoorRelatedContext(Context);
 
 	if(UseContext.CaresAboutLookingThruGlass)
 	{
-		if(UseContext.IsLookingThruGlass ^^ Transparent)
+		// HOL UP
+		// If the door we are hitting is itself the transparency (ie, St. Micheal's Medical Center doors)
+		// then we should *absolutely* allow this context to go through
+		if(UseContext.IsLookingThruGlass ^^ HitTransparent)
 		{
 			return false;
 		}
 	}
 
-	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, CandidateDoorPart, CandidateSkeletalRegion);
+	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, HitTransparent, CandidateDoorPart, CandidateSkeletalRegion);
 }
 
 cpptext

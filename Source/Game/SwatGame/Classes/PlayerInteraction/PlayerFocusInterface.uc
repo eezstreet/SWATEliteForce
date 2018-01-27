@@ -216,7 +216,7 @@ simulated function bool SpecialCondition_CanBeArrested(Actor Target) { return fa
 
 // This function also got rewritten from native code
 function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
-	float Distance, bool Transparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+	float Distance, bool Transparent, bool HitTransparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
 {
 	local int i;
 	local HandheldEquipment ActiveItem;
@@ -443,7 +443,7 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 // This function got rewritten from native code, so we can do more with it.
 // HasA() crashes with our new LoadOut changes so we need to rewrite the only function which uses it (this one)
 function ConsiderNewFocus(SwatPlayer Player, Actor CandidateActor, float Distance, vector CandidateLocation, vector CandidateNormal,
-	Material CandidateMaterial, ESkeletalRegion CandidateSkeletalRegion, bool Transparent)
+	Material CandidateMaterial, ESkeletalRegion CandidateSkeletalRegion, bool Transparent, bool HitTransparent)
 {
 	local bool bDoorRelated;
 	local int i;
@@ -476,7 +476,7 @@ function ConsiderNewFocus(SwatPlayer Player, Actor CandidateActor, float Distanc
 		for(i = 0; i < DoorRelatedContexts.Length; i++)
 		{
 			// Detect if the context matches
-			if(DoorRelatedContextMatches(Player, Door, DoorRelatedContexts[i], Distance, Transparent, DoorPart, CandidateSkeletalRegion))
+			if(DoorRelatedContextMatches(Player, Door, DoorRelatedContexts[i], Distance, Transparent, HitTransparent, DoorPart, CandidateSkeletalRegion))
 			{
 				PostDoorRelatedContextMatched(DoorRelatedContexts[i], Door);
 

@@ -732,6 +732,9 @@ simulated function UpdateFocus()
     local HandheldEquipment ActiveItem;
     local array<byte> FocusInterfaceWantsUpdate;    //used as an array<bool>, but that doesn't work
     local int ct;
+	local bool HitTransparent;
+
+	HitTransparent = false;
 
     // MCJ: I'm putting this here for now. In an MP game, while sitting at the
     // Debriefing screen, we don't yet have a Pawn. I'll talk to Dan about not
@@ -869,8 +872,17 @@ simulated function UpdateFocus()
                     HitNormal,
                     HitMaterial,
                     SkeletalRegionHit,
-                    Transparent );
+                    Transparent,
+					HitTransparent );
         }
+
+		// HitTransparent will be true *after* hitting something which is transparent.
+		// That way, we can differentiate between looking through glass and focusing on glass
+		if(Transparent)
+		{
+			HitTransparent = true;
+		}
+
     }
 
     for ( ct = 0; ct < FocusInterfaces.Length; ct++ )

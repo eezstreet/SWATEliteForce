@@ -202,7 +202,7 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 }
 
 function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
-	float Distance, bool Transparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+	float Distance, bool Transparent, bool HitTransparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
 {
 	local FireInterfaceDoorRelatedContext FireContext;
 	FireContext = FireInterfaceDoorRelatedContext(Context);
@@ -215,7 +215,7 @@ function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, Player
 		}
 	}
 
-	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, CandidateDoorPart, CandidateSkeletalRegion);
+	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, HitTransparent, CandidateDoorPart, CandidateSkeletalRegion);
 }
 
 cpptext
