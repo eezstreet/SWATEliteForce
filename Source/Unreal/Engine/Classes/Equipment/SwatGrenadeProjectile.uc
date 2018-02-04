@@ -17,6 +17,8 @@ var array<IInterestedGrenadeThrowing> InterestedGrenadeRegistrants;
 
 var protected float TimeThrown;
 
+var private vector LocationThrown;
+
 //debug
 var private vector DebugLastLocation;
 var bool bRenderDebugInfo;
@@ -29,6 +31,8 @@ var private config float DirectImpactPlayerStingDuration;				// Sting duration i
 var private config float DirectImpactHeavilyArmoredPlayerStingDuration;	// Sting duration if the projectile directly hits an heavily armoured target when fired from a grenade launcher
 var private config float DirectImpactNonArmoredPlayerStingDuration;		// Sting duration if the projectile directly hits an non-armoured target when fired from a grenade launcher
 var private config float DirectImpactAIStingDuration;					// Sting duration if the projectile directly hits an AI target when fired from a grenade launcher
+var private config float DirectImpactDamageScale;						// After X map units, the direct impact damage doesn't apply
+var private config float DirectImpactDamageMinimum;						// Need X damage in order to cause a direct impact stun
 var bool bWasFired;														// True if this projectile was fired from a grenade launcher instead of being thrown
 var public FiredWeapon Launcher;
 
@@ -46,6 +50,7 @@ event PostBeginPlay()
 
     Label = 'Grenade';
     TimeThrown = Level.TimeSeconds;
+	LocationThrown = Location;
 #if !IG_SWAT_DISABLE_VISUAL_DEBUGGING // ckline: prevent cheating in network games
     bRenderDebugInfo = class'SwatGrenadeProjectile'.Default.bRenderDebugInfo;
 #endif
@@ -211,19 +216,25 @@ simulated event HitWall(vector normal, actor wall)
 
 simulated singular function Touch(Actor Other)
 {
+	local float DamageReal;
+
     if (Other.bHidden || Other.DrawType == DT_None || Other == Owner || Other.IsA('SwatDoor'))
         return;
 
-	if (bWasFired && BounceCount == default.BounceCount && Other.IsA('IReactToDazingWeapon'))
+	if (bWasFired && BounceCount == default.BounceCount && Other.IsA('IReactToDazingWeapon') && !Owner.IsA('SwatAI'))
 	{
 		// Being hit directly by a fired grenade causes a mild disorientation and deals some damage
-		IReactToDazingWeapon(Other).ReactToGLDirectGrenadeHit(Pawn(Owner),
-															  DirectImpactDamage,
-															  DirectImpactPlayerStingDuration,
-															  DirectImpactHeavilyArmoredPlayerStingDuration,
-															  DirectImpactNonArmoredPlayerStingDuration,
-															  DirectImpactAIStingDuration,
-															  Launcher.GetDamageType());
+		DamageReal = DirectImpactDamage * (1.0 - (VSize(Location - LocationThrown) / DirectImpactDamageScale));
+		if(DamageReal >= DirectImpactDamageMinimum)
+		{
+			IReactToDazingWeapon(Other).ReactToGLDirectGrenadeHit(Pawn(Owner),
+																  DirectImpactDamage,
+																  DirectImpactPlayerStingDuration,
+																  DirectImpactHeavilyArmoredPlayerStingDuration,
+																  DirectImpactNonArmoredPlayerStingDuration,
+																  DirectImpactAIStingDuration,
+																  Launcher.GetDamageType());
+		}
 	}
 
     HitWall(Location - Other.Location, Other);

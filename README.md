@@ -414,7 +414,9 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
 All weapons have been changed to have correct muzzle velocities.
 * Grenade Launcher:
 	- Given real world name (HK69)
-	- Greatly increased damage dealt from direct impact
+	- The AI can now use it correctly when ordered a command which uses gas/flashbang/stinger.
+	- Greatly increased damage dealt from direct impact. But now it scales linearly over distance; so a point blank shot does much more damage. After some distance, grenades stop doing damage.
+	- Damage is now required to trigger the direct impact stun effect.
 	- May now be equipped as a secondary weapon
 	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
 * Colt M4A1 Carbine:
@@ -561,7 +563,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
 	- S10 Helmet: Offers protection from CS gas and pepper spray, as well as ballistic protection. However, it is bulky and restricts the field of view.
 * Added new weapons from the SAS mod, most have a suppressed version as well:
-	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine. (no silenced version)
+	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine.
 	- SG552 Commando: Versatile assault rifle
 	- HK33: Heavy-duty assault rifle. Includes a scoped version.
 	- M16: The original assault rifle. Only available in Multiplayer and All Missions campaigns
@@ -569,15 +571,15 @@ All weapons have been changed to have correct muzzle velocities.
 	- MP5K: A more tactical machine pistol
 	- Browning Hi-Power: Higher-powered 9mm pistol
 	- P226: A well-rounded 9mm pistol
-	- Remington M870 Shotgun: Shortened shotgun that can be equipped as primary or secondary weapon (no silenced version)
+	- Remington M870 Shotgun: Shortened shotgun that can be equipped as primary or secondary weapon
 * Added new equipment from the SWAT4 1.2 mod:
 	- SCAR-H: Heavy assault rifle. Includes an Aimpoint, Suppressed Aimpoint, and Suppressed variants.
-	- AKs-74u: Lightweight AK carbine.
-	- MP5K PDW: Tiny submachine gun.
+	- AKs-74u: Lightweight AK carbine. Only available in Multiplayer and All Missions campaigns
+	- MP5K PDW: Tiny submachine gun. Includes a suppressed variant.
 * Added new weapons (exclusive to this mod):
 	- Less Lethal M870: Beanbag shotgun available as a secondary.
 	- M870 Breaching: Technically the breaching shotgun from the original game, now as an actual weapon.
-	- M1Super90 Shotgun: Cut shotgun from the original game.
+	- M1Super90 Shotgun: Cut shotgun from the original game. Lower magazine size than the M4Super90 but faster firing rate and more manageable recoil.
 	- Glock 18: Spitfire machine pistol, available as a secondary.
 	- Glock 19: Ultra lightweight 9mm pistol.
 * Added 3-Packs (tactical) of the following. They are equivalent weight and bulk of five items:
@@ -593,10 +595,10 @@ Morale has been modified across the board.
 If an equipment is not listed as unlocked by a mission, it is unlocked by default.
 
 * Training Mission (Riverside Training Facility)
+	- The training mission is now usable again in the main menu, and is good for testing weapons as well as learning the game.
 	- All of the onscreen instructions have been updated to reflect the changes in the mod, and in The Stetchkov Syndicate expansion.
 	- Removed weapon pickups at the beginning.
 	- Made the cabinets at the beginning interactable. You can now use them to swap for a new weapon. 
-	- The training mission is now usable again in the main menu, and is good for testing weapons as well as learning the game.
 
 * Fairfax Residence
 	- CAUTION! May contain traps! (Evidence shows that they were cut from the original game on this mission)

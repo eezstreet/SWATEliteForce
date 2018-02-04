@@ -18,7 +18,8 @@
  - Implemented new Desert Eagle model
  - Implemented Brettzie's M4A1.
  - Added two new M4A1 variants: M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint.
- - SWAT AI now uses the grenade launcher correctly.
+ - SWAT AI now uses grenade launchers correctly.
+ - SWAT AI can no longer do direct impact damage with grenade launchers.
  - Suspects will attempt to escape when compliant and not being watched. 
  - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
  - Suspects will remain in a barricaded state, even after firing upon a door.
@@ -50,6 +51,8 @@
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
  - Fixed SEF bug: In WebAdmin, all admins had the same name (it now shows the correct alias)
  - Fixed SEF bug: In WebAdmin, when room names are turned on, the chat color turned white
+ - Fixed SEF bug: Flashbang grenade launcher rounds did less direct damage than other round types
+ - Fixed TSS bug: Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
 
 ##### Map-Specific Changes #####
 
