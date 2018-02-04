@@ -41,6 +41,7 @@
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
  - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".
+ - Added ability for actors to be hidden based on system time/date. Currently only used in one place (there is a Jack-o-Lantern in the Training mission that shows up on Halloween)
  - Added console command: "swapweapon" which opens the weapon cabinet screen
  - Added new keybind, "Melee" (only does melee, won't check locks or give items)
  - Added new keybind, "Check Lock"
