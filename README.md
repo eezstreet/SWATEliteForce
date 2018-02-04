@@ -557,6 +557,12 @@ Missions are listed in order that they occur
 Morale has been modified across the board.
 If an equipment is not listed as unlocked by a mission, it is unlocked by default.
 
+* Training Mission (Riverside Training Facility)
+	- All of the onscreen instructions have been updated to reflect the changes in the mod, and in The Stetchkov Syndicate expansion.
+	- Removed weapon pickups at the beginning.
+	- Made the cabinets at the beginning interactable. You can now use them to swap for a new weapon. 
+	- The training mission is now usable again in the main menu, and is good for testing weapons as well as learning the game.
+
 * Fairfax Residence
 	- CAUTION! May contain traps! (Evidence shows that they were cut from the original game on this mission)
 	- ELITE Difficulty: Always spawns a trap and the accomplice.

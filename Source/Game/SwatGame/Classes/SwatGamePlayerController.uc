@@ -6077,6 +6077,15 @@ simulated function SwatPlayer GetSwatPlayer()
     return Player;
 }
 
+simulated function bool HasAWeaponEquipped()
+{
+	local HandheldEquipment Equipment;
+
+	Equipment = Pawn.GetActiveItem();
+
+	return Equipment.IsA('FiredWeapon') && !Equipment.IsA('PepperSpray');
+}
+
 simulated function bool IsLocationFrozen()
 {
     local SwatPlayer thePlayer;
@@ -6296,6 +6305,15 @@ exec function GUICloseMenu()
     SwatGUIControllerBase(Repo.GUIController).ShowGamePopup( true );
 }
 
+// open the swap weapon page
+exec function SwapWeapon()
+{
+	if(Level.NetMode == NM_Standalone)
+	{
+		SwatGUIControllerBase(Repo.GUIController).ShowWeaponCabinet();
+	}
+}
+
 exec function OpenHudChat(bool bGlobal)
 {
     SwatGUIControllerBase(Repo.GUIController).OpenChat( bGlobal );
@@ -6334,6 +6352,25 @@ exec function ScrollChatToEnd()
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+function GivenEquipmentFromMenu(class<SwatWeapon> Weapon, class<SwatAmmo> Ammo)
+{
+	local HandheldEquipment ActiveItem;
+	local HandheldEquipment NewItem;
+	local SwatWeapon WeaponItem;
+
+	ActiveItem = SwatPlayer.GetActiveItem();
+
+	NewItem = Spawn(Weapon, SwatPlayer);
+	WeaponItem = SwatWeapon(NewItem);
+	WeaponItem.AmmoClass = Ammo;
+	NewItem.SetAvailable(true);
+	WeaponItem.OnGivenToOwner();
+	NewItem.Pickup = None;
+	NewItem.Equip();
+
+	SwatPlayer.OnPickedUp(NewItem);
+}
 
 simulated function ClientAddPrecacheableMaterial( string MaterialName )
 {

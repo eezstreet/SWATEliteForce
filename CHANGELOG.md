@@ -18,6 +18,8 @@
  - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
  - Suspects will remain in a barricaded state, even after firing upon a door.
  - Suspects will close doors after firing upon them while in a barricaded state. The time it takes to do this is random.
+ - Removed the weapon pickups at the beginning of the Training mission
+ - Added two new Weapon Cabinet objects to the beginning of the Training mission. When you use them, you can exchange your weapon for something else. Good for testing all of the weapons easily!
  - Lightsticks will now correct their position when they fall through the geometry. 99% of the time, they won't fall through the floor.
  - After checking a lock, the default command context option will be "Open and Clear"
  - When aiming at an uncompliant civilian or suspect, the default command will change to a DEPLOY command which suits the situation.
@@ -33,6 +35,7 @@
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
  - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".
+ - Added console command: "swapweapon" which opens the weapon cabinet screen
  - Added new keybind, "Melee" (only does melee, won't check locks or give items)
  - Added new keybind, "Check Lock"
  - Added new keybind, "Give Item"

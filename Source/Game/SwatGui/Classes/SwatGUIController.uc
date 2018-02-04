@@ -37,6 +37,7 @@ var(SwatGUIController) private Editinline EditConst CustomScenarioCoopPage      
 var(DEBUG) editconst editinline CustomScenarioCoopPage CoopQMMPopupMenu;
 var(DEBUG) editconst editinline SwatMPPage MPPopupMenu;
 var(DEBUG) editconst editinline SwatObjectivesPopupMenu SPPopupMenu;
+var(DEBUG) editconst editinline SwatWeaponCabinetMenu WeaponCabinetMenu;
 var(DEBUG) editconst editinline SwatMissionLoadingMenu MissionLoadingMenu;
 var(DEBUG) editconst editinline SwatServerSetupMenu ServerSetupMenu;
 
@@ -946,6 +947,21 @@ function ShowGamePopup( bool bSticky )
         InternalOpenMenu( PopupPage, "Popup" );
 }
 
+function ShowWeaponCabinet()
+{
+	local SwatWeaponCabinetMenu Page;
+
+	//dont do anything if not in-game, or the hud is not on top
+    if( ( Repo.GuiConfig.SwatGameState != GAMESTATE_PreGame &&
+          Repo.GuiConfig.SwatGameState != GAMESTATE_MidGame ) ||
+        GetHudPage() != TopPage() )
+        return;
+
+	Page = GetWeaponCabinetMenu();
+
+	InternalOpenMenu(Page);
+}
+
 function SwatPopupMenuBase GetCurrentPopupMenu()
 {
     //popup page we're interested in dependent on game role
@@ -967,6 +983,19 @@ function CustomScenarioCoopPage GetCoopQMMPopupMenu()
     }
     Assert( CoopQMMPopupMenu != None );
     return CoopQMMPopupMenu;
+}
+
+function SwatWeaponCabinetMenu GetWeaponCabinetMenu()
+{
+	if(WeaponCabinetMenu == None)
+	{
+		WeaponCabinetMenu = SwatWeaponCabinetMenu(CreateComponent("SwatGui.SwatWeaponCabinetMenu", "SwatWeaponCabinetMenu"));
+		if(!WeaponCabinetMenu.bInited)
+		{
+			WeaponCabinetMenu.InitComponent(None);
+		}
+	}
+	return WeaponCabinetMenu;
 }
 
 function SwatMPPage GetMPPopupMenu()

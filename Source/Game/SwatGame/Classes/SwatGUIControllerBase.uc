@@ -477,12 +477,21 @@ function PreLevelChangeCleanup()
     GetHudPage().PreLevelChangeCleanup();
 }
 
+function GivePlayerWeapon(class<SwatWeapon> Weapon, class<SwatAmmo> Ammo)
+{
+	if( SwatGamePlayerController(ViewportOwner.Actor) != None )
+	{
+		SwatGamePlayerController(ViewportOwner.Actor).GivenEquipmentFromMenu(Weapon, Ammo);
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // GUI EXECs
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 function DebugServerList(int num);
 function ShowGamePopup( bool bSticky );
+function ShowWeaponCabinet();
 
 function bool CanChat();
 function OpenChat( bool bGlobal );
