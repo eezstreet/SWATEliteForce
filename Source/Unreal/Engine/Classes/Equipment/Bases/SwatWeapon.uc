@@ -164,6 +164,10 @@ var array<vector> AnimationSplinePoints;
 
 var bool bPenetratesDoors;
 
+// ONLY used on grenade launchers
+//clients interested when a grenade is thrown or detonates
+var array<IInterestedGrenadeThrowing> InterestedGrenadeRegistrants;
+
 static function string GetShortName() { return default.ShortName; }
 
 simulated function float GetWeight() {
@@ -1314,6 +1318,56 @@ simulated function EquippedHook()
 simulated function bool AllowedToPassItem()
 {
 	return PassableItem;
+}
+
+// Grenade launcher related functions
+// Register the clients interested in grenade detonation, that are already registered with the weapon,
+// on the newly spawned projectile
+function RegisterInterestedGrenadeRegistrantWithProjectile(SwatGrenadeProjectile Projectile)
+{
+	local int i;
+	assert(Projectile != None);
+
+	for(i=0; i<InterestedGrenadeRegistrants.Length; ++i)
+	{
+		Projectile.RegisterInterestedGrenadeRegistrant(InterestedGrenadeRegistrants[i]);
+	}
+}
+
+// Returns true if the client is already registered on this weapon, false otherwise
+private function bool IsAnInterestedGrenadeRegistrant(IInterestedGrenadeThrowing Client)
+{
+	local int i;
+
+	for(i=0; i<InterestedGrenadeRegistrants.Length; ++i)
+	{
+		if (InterestedGrenadeRegistrants[i] == Client)
+			return true;
+	}
+
+	// didn't find it
+	return false;
+}
+
+function RegisterInterestedGrenadeThrowing(IInterestedGrenadeThrowing Client)
+{
+	assert(! IsAnInterestedGrenadeRegistrant(Client));
+
+	InterestedGrenadeRegistrants[InterestedGrenadeRegistrants.Length] = Client;
+}
+
+function UnRegisterInterestedGrenadeThrowing(IInterestedGrenadeThrowing Client)
+{
+	local int i;
+
+	for(i=0; i<InterestedGrenadeRegistrants.Length; ++i)
+	{
+		if (InterestedGrenadeRegistrants[i] == Client)
+		{
+			InterestedGrenadeRegistrants.Remove(i, 1);
+			break;
+		}
+	}
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?

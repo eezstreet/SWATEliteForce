@@ -376,6 +376,14 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 			    return ((Weapon == None) || !Weapon.IsEmpty());
 		    }
         }
+		else if(Slot == Slot_CSGasGrenade || Slot == Slot_Flashbang || Slot == Slot_StingGrenade)
+		{	// if we have a grenade launcher, then that technically counts
+			Weapon = ISwatOfficer(Officer).GetLauncherWhichFires(Slot);
+			if(Weapon != None && !Weapon.IsEmpty() && (EquipmentClassName == '' || Weapon.IsA(EquipmentClassName)))
+			{
+				return true;
+			}
+		}
 	}
 
 	// no Officer has the equipment

@@ -487,6 +487,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 {
 	local int i;
 	local Pawn Officer;
+	local FiredWeapon GrenadeLauncher;
 
 	// if the door is an empty doorway, is open, is opening, or is broken, try to use the first officer
 	// otherwise use the second officer
@@ -509,7 +510,15 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 		if (class'Pawn'.static.checkConscious(Officer))
 		{
+			GrenadeLauncher = ISwatOfficer(Officer).GetLauncherWhichFires(ThrownItemSlot);
 			if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+			{
+				if (Officer.logAI)
+					log("Officer to throw is: " $ Officer);
+
+				return Officer;
+			}
+			else if(GrenadeLauncher != None && !GrenadeLauncher.IsEmpty())
 			{
 				if (Officer.logAI)
 					log("Officer to throw is: " $ Officer);
@@ -526,7 +535,13 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 	if (class'Pawn'.static.checkConscious(Officer))
 	{
+		GrenadeLauncher = ISwatOfficer(Officer).GetLauncherWhichFires(ThrownItemSlot);
+
 		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+		{
+			return Officer;
+		}
+		else if(GrenadeLauncher != None && !GrenadeLauncher.IsEmpty())
 		{
 			return Officer;
 		}
@@ -537,6 +552,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 	while(i<OfficersInStackupOrder.Length)
 	{
 		Officer = OfficersInStackupOrder[i];
+		GrenadeLauncher = ISwatOfficer(Officer).GetLauncherWhichFires(ThrownItemSlot);
 
 		if (class'Pawn'.static.checkConscious(Officer))
 		{
@@ -545,6 +561,13 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 				if (Officer.logAI)
 					log("Officer to throw is: " $ Officer);
 
+				return Officer;
+			}
+			else if(GrenadeLauncher != None && !GrenadeLauncher.IsEmpty())
+			{
+				if (Officer.logAI)
+					log("Officer to throw is: " $ Officer);
+					
 				return Officer;
 			}
 		}

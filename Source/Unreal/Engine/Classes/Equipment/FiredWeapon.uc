@@ -2527,6 +2527,13 @@ simulated function ApplyPolarOffset(out rotator outDirection, float Rho, float T
     //outDirection.Yaw += Rho * Cos(Theta * DEGREES_TO_RADIANS) * DEGREES_TO_TWOBYTE;
 }
 
+// Retrieves what kind of grenades we are currently firing out of this weapon.
+// If it returns Slot_Invalid then this weapon does not fire any kind of grenade
+function EquipmentSlot GetFiredGrenadeEquipmentSlot()
+{
+	return Slot_Invalid;
+}
+
 cpptext
 {
     UBOOL IsFlashlightInitialized();

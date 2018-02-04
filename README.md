@@ -23,6 +23,7 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
 3. Frequently Asked Questions (FAQ)
 4. Known Issues
 5. Other Minor Changes
+  - AI
   - Gameplay
   - GUI
   - Equipment
@@ -334,8 +335,41 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * FunTime Amusements was missing loading screen text.
  * The accomplice on Fairfax Residence could spawn with two Colt Pythons.
 
+## AI ##
+  * Tons and tons of cut dialogue restored.
+  * Lots of minor little animation glitches on SWAT officers fixed.
+  * In general: SWAT AI is both smarter and better stat-wise. Suspects are statistically worse, but make up for this in intelligence.
+  * Suspects no longer have an instant lock-on aim. Rather, there is a small delay between when they spot you and when they will fire.
+  * Likewise, suspects do not always fire with perfect accuracy. Sometimes, low skill gang members can fire their gun sideways (a cut animation) for even worse accuracy.
+  * Suspects will escape when compliant, but not when watched, and will try to barricade themselves in a room.
+  * Suspects can hear gunshots from across the map (unless they are silenced) and can choose to investigate or barricade their position randomly.
+  * Suspects may take on a variety of personalities, such as Insane and Polite. Insane suspects shoot hostages with little restraint, while Polite ones do not shoot at all at them.
+  * Suspects and civilians may randomly wander around on a few maps, instead of using fixed patrols.
+  * Suspects will close doors after firing at them.
+  * Suspects may shoot the player when running away from them.
+  * Suspects can shoot through thin pieces of cover, if their weapon (and ammo) is capable of it.
+  * Suspects may choose to shoot through their accomplices, if they are low skilled or Insane.
+  * Suspects can wear heavy armor like SWAT can.
+  * Suspects drop their weapons much faster. Most of the time.
+  * Suspects react faster to grenades.
+  * Suspects fire upon hostages twice as quickly.
+  * Suspects will choose to fire either in full auto or in burst, depending on their skill level.
+  * Suspects firing from cover may choose to pause or regroup between their shots, instead of constantly aiming at their target.
+  * Civilians may be Fearless. When they are Fearless, they do not scream when in the presence of a suspect.
+  * SWAT are much more dangerous and less hesitant to shoot at suspects.
+  * SWAT do not form "death funnels" in doors and instead will try to continue moving.
+  * SWAT will attempt to seek out cover when engaging suspects.
+  * SWAT can properly use the grenade launcher now.
+  * SWAT will no longer stare at uncompliant civilians or cuffed civilians/suspects.
+  * SWAT will no longer try to shoot through civilians or players when attacking their target.
+  * SWAT will reload their weapons when ordered to fall in.
+  * SWAT will listen to and respond to sounds even when they have an enemy, so they have better situational awareness.
+  * SWAT clears rooms quicker and drops a lightstick after clearing.
+  * SWAT now turns at the same rate that suspects do (which is faster) and have higher field of vision.
+
 ## GAMEPLAY ##
   * Maps may now alter themselves based on difficulty level, for instance adding more suspects or traps in Elite difficulty. Only a few maps use this feature currently.
+  * Doors can randomly be locked or opened.
   * You can now lock doors using the toolkit. Suspects cannot flee as easily through locked doors (they need to unlock them first)
   * The toolkit interface no longer shows up for doors that cannot be locked
   * Tasing your fellow officer and tripping traps now incurs a penalty
@@ -385,7 +419,8 @@ All weapons have been changed to have correct muzzle velocities.
 	- In the SWAT 4 + TSS campaign, this weapon must be unlocked.
 * Colt M4A1 Carbine:
 	- New ammo types: AP, JSP
-	- Now has a silenced counterpart
+	- Uses Brettzie's model.
+	- Four variants in total (M4A1, Suppressed M4A1, M4A1 w/ Aimpoint, Suppressed M4A1 w/ Aimpoint)
 * AK47 Machinegun:
 	- Now has a flashlight
 	- New ammo types: AP, JSP

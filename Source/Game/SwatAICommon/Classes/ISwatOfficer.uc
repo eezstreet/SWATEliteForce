@@ -33,6 +33,8 @@ function ReEquipFiredWeapon();
 function InstantReEquipFiredWeapon();
 
 function bool HasTaser();
+function bool HasLauncherWhichFires(EquipmentSlot Slot);
+function FiredWeapon GetLauncherWhichFires(EquipmentSlot Slot);
 
 function SetDoorToBlowC2On(Door TargetDoor);
 

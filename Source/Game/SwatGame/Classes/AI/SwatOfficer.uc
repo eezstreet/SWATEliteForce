@@ -290,6 +290,7 @@ protected function ConstructWeaponAI()
 
 	weaponResource.addAbility(new class'SwatAICommon.UseOptiwandAction');
 	weaponResource.addAbility(new class'SwatAICommon.UseGrenadeAction');
+	weaponResource.addAbility(new class'SwatAICommon.LaunchGrenadeAction');
 	weaponResource.addAbility(new class'SwatAICommon.OrderComplianceAction');
 	weaponResource.addAbility(new class'SwatAICommon.ReloadAction');
 
@@ -849,6 +850,34 @@ function InstantReEquipFiredWeapon()
 function bool HasTaser()
 {
 	return HasA('Taser');
+}
+
+function bool HasLauncherWhichFires(EquipmentSlot Slot)
+{
+	return (GetLauncherWhichFires(Slot) != None);
+}
+
+function FiredWeapon GetLauncherWhichFires(EquipmentSlot Slot)
+{
+	local FiredWeapon PrimaryWeapon;
+	local FiredWeapon SecondaryWeapon;
+
+	PrimaryWeapon = GetPrimaryWeapon();
+	if(PrimaryWeapon == None || !PrimaryWeapon.IsA('GrenadeLauncherBase') ||
+		PrimaryWeapon.IsEmpty() || PrimaryWeapon.GetFiredGrenadeEquipmentSlot() != Slot)
+	{
+		SecondaryWeapon = GetBackupWeapon();
+
+		if(SecondaryWeapon == None || !SecondaryWeapon.IsA('GrenadeLauncherBase') ||
+			SecondaryWeapon.IsEmpty() || SecondaryWeapon.GetFiredGrenadeEquipmentSlot() != Slot)
+		{
+			return None;
+		}
+
+		return SecondaryWeapon;
+	}
+
+	return PrimaryWeapon;
 }
 
 function SetDoorToBlowC2On(Door TargetDoor)

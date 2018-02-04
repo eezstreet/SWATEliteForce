@@ -31,9 +31,35 @@ function BallisticFire(vector StartTrace, vector EndTrace)
 	{
 		SwatGrenadeProjectile(Grenade).Launcher = self;
 		SwatGrenadeProjectile(Grenade).bWasFired = true;
+		RegisterInterestedGrenadeRegistrantWithProjectile(SwatGrenadeProjectile(Grenade));
 	}
 
     Grenade.Velocity = ShotVector * MuzzleVelocity;
+}
+
+function EquipmentSlot GetFiredGrenadeEquipmentSlot()
+{
+	if(Ammo == None)
+	{
+		return Slot_Invalid;
+	}
+	// HACK here
+	else if(Ammo.IsA('HK69GL_CSGasGrenadeAmmo'))
+	{
+		return Slot_CSGasGrenade;
+	}
+	else if(Ammo.IsA('HK69GL_FlashbangGrenadeAmmo'))
+	{
+		return Slot_Flashbang;
+	}
+	else if(Ammo.IsA('HK69GL_StingerGrenadeAmmo'))
+	{
+		return Slot_StingGrenade;
+	}
+	else
+	{
+		return Slot_PrimaryWeapon;
+	}
 }
 
 defaultproperties

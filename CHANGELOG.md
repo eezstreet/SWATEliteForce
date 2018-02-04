@@ -4,16 +4,21 @@
 
 - New and altered equipment!
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18 and Glock 19.
+ - Added Brettzie's M4A1! There are now two additional M4 variants (M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint)
  - Added the ability to take no weapon!
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
 - New AI behavior!
+ - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
 
 #### ALL CHANGES ####
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
  - Implemented new Desert Eagle model
+ - Implemented Brettzie's M4A1.
+ - Added two new M4A1 variants: M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint.
+ - SWAT AI now uses the grenade launcher correctly.
  - Suspects will attempt to escape when compliant and not being watched. 
  - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
  - Suspects will remain in a barricaded state, even after firing upon a door.
