@@ -47,6 +47,9 @@
  - Added new keybind, "Check Lock"
  - Added new keybind, "Give Item"
  - Added new keybind, "Drop Lightstick". Added by popular request, it lets you drop lightsticks like the original game did (instead of throwing)
+ - Renamed keybind "Use" to "Shout For Compliance/Interact"
+ - Added new keybind, "Shout For Compliance" (only shouts, doesn't interact with things)
+ - Added new keybind, "Interact" (only interacts, doesn't shout)
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
