@@ -53,6 +53,7 @@
  - Fixed SEF bug: In WebAdmin, all admins had the same name (it now shows the correct alias)
  - Fixed SEF bug: In WebAdmin, when room names are turned on, the chat color turned white
  - Fixed SEF bug: Flashbang grenade launcher rounds did less direct damage than other round types
+ - Fixed SEF bug: Officers would look away from the door when ordered to Mirror Under Door.
  - Fixed TSS bug: Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
 
 ##### Map-Specific Changes #####
