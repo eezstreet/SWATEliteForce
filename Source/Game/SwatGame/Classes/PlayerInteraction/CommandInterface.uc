@@ -251,6 +251,19 @@ enum ECommand
     Command_SecureAll,          // Secure all evidence in the same room as target
     Command_DisableAll,         // Disable all targets in the same room
 
+	//
+	// v7
+	//
+	Command_Request,
+	Command_Request_Flashbang,
+	Command_Request_CSGas,
+	Command_Request_Stinger,
+	Command_Request_Pepperspray,
+	Command_Request_Optiwand,
+	Command_Request_Wedge,
+	Command_Request_Lightstick,
+	Command_Request_C2,
+
     Command_Static,
 };
 
@@ -850,6 +863,31 @@ simulated function bool IsLeaderThrowCommand(Command Command) {
   return false;
 }
 
+simulated function bool CommandUsesOptiwand(Command Command)
+{
+	switch(Command.Command)
+	{
+		case Command_CheckForTraps:
+		case Command_MirrorRoom:
+		case Command_MirrorCorner:
+		case Command_MirrorUnderDoor:
+		case Command_Request_Optiwand:
+			return true;
+	}
+	return false;
+}
+
+simulated function bool CommandUsesPepperSpray(Command Command)
+{
+	switch(Command.Command)
+	{
+		case Command_Deploy_PepperSpray:
+		case Command_Request_Pepperspray:
+			return true;
+	}
+	return false;
+}
+
 simulated function bool CommandUsesFlashbang(Command Command) {
   switch(Command.Command) {
     case Command_Deploy_Flashbang:
@@ -862,6 +900,7 @@ simulated function bool CommandUsesFlashbang(Command Command) {
     case Command_ShotgunBangAndClear:
     case Command_ShotgunBangAndMakeEntry:
     case Command_BangAndClear:
+	case Command_Request_Flashbang:
       return true;
   }
   return false;
@@ -879,6 +918,7 @@ simulated function bool CommandUsesGas(Command Command) {
     case Command_ShotgunGasAndClear:
     case Command_ShotgunGasAndMakeEntry:
     case Command_GasAndClear:
+	case Command_Request_CSGas:
       return true;
   }
   return false;
@@ -896,6 +936,7 @@ simulated function bool CommandUsesStinger(Command Command) {
     case Command_ShotgunStingAndClear:
     case Command_ShotgunStingAndMakeEntry:
     case Command_StingAndClear:
+	case Command_Request_Stinger:
       return true;
   }
   return false;
@@ -914,6 +955,7 @@ simulated function bool CommandUsesC2(Command Command) {
     case Command_C2StingAndMakeEntry:
     case Command_C2LeaderThrowAndClear:
     case Command_C2LeaderThrowAndMakeEntry:
+	case Command_Request_C2:
       return true;
   }
   return false;
@@ -937,10 +979,22 @@ simulated function bool CommandUsesShotgun(Command Command) {
   return false;
 }
 
+simulated function bool CommandUsesWedge(Command Command)
+{
+	switch(Command.Command)
+	{
+		case Command_Deploy_Wedge:
+		case Command_Request_Wedge:
+			return true;
+	}
+	return false;
+}
+
 simulated function bool CommandUsesLightstick(Command Command) {
   switch(Command.Command) {
     case Command_Drop_Lightstick:
     case Command_Deploy_Lightstick:
+	case Command_Request_Lightstick:
       return true;
   }
   return false;
@@ -969,7 +1023,15 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
     if (Command.Command == Command_Preferences) {
       // Makes sense in every context
       Status = Pad_Normal;
-    } else if (Level.NetMode == NM_Standalone && CommandUsesGas(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
+    } else if(Level.NetMode == NM_Standalone && CommandUsesWedge(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Wedge)) {
+		Status = Pad_GreyedOut;
+	} else if(Level.NetMode == NM_Standalone && CommandUsesOptiwand(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Optiwand)) {
+		Status = Pad_GreyedOut;
+	} else if(Level.NetMode == NM_Standalone && Command.Command == Command_Request_Optiwand && SwatPawn(Level.GetLocalPlayerController().Pawn).HasA('Optiwand')) {
+		Status = Pad_GreyedOut; // optiwand not allowed when the player has an optiwand
+	} else if(Level.NetMode == NM_Standalone && CommandUsesPepperSpray(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_PepperSpray)) {
+		Status = Pad_GreyedOut;
+	} else if (Level.NetMode == NM_Standalone && CommandUsesGas(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
       Status = Pad_GreyedOut;
     } else if (Level.NetMode == NM_Standalone && CommandUsesFlashbang(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Flashbang)) {
       Status = Pad_GreyedOut;
@@ -994,7 +1056,7 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
       }
     } else if (IsLeaderThrowCommand(Command)) {
       Status = Pad_Normal;
-    } else if (CommandUsesC2(Command) || CommandUsesShotgun(Command)) {
+    } else if (CommandUsesC2(Command) || CommandUsesShotgun(Command) || CommandUsesFlashbang(Command)) {
       Status = Pad_Normal;
     } else if (CommandIsCleanSweep(Command)) {
       Status = Pad_Normal;
@@ -1908,6 +1970,12 @@ simulated function CleanSweepCommand(Pawn CommandGiver,
     }
 }
 
+// This handles all of the new, SHARE commands that are available in V7
+simulated function ShareCommand(Pawn CommandGiver, EquipmentSlot Equipment)
+{
+	PendingCommandTeam.GiveEquipment(CommandGiver, CommandGiver.Location, Equipment);
+}
+
 //send the pending command to the officers, now that any necessary speech has completed
 simulated function SendCommandToOfficers()
 {
@@ -2417,6 +2485,39 @@ simulated function SendCommandToOfficers()
                       false,
                       true);
               break;
+
+		// New SHARE commands for v7
+		case Command_Request_Flashbang:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_Flashbang);
+			break;
+
+		case Command_Request_CSGas:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_CSGasGrenade);
+			break;
+
+		case Command_Request_Stinger:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_StingGrenade);
+			break;
+
+		case Command_Request_Pepperspray:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_PepperSpray);
+			break;
+
+		case Command_Request_Wedge:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_Wedge);
+			break;
+
+		case Command_Request_Optiwand:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_Optiwand);
+			break;
+
+		case Command_Request_C2:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_Breaching);
+			break;
+
+		case Command_Request_Lightstick:
+			ShareCommand(Level.GetLocalPlayerController().Pawn, Slot_Lightstick);
+			break;
 
         //Commands that require a valid Pawn
 

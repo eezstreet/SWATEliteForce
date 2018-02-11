@@ -503,6 +503,8 @@ function bool OnMessageRecieved( String Msg, Name Type )
 		case 'CantGiveTooMuchBulk':
 		case 'GaveEquipment':
 		case 'GaveYouEquipment':
+		case 'CantReceiveTooMuchWeight':
+		case 'CantReceiveTooMuchBulk':
 			SendMessageToChat( Msg, Type );
 			break;
 

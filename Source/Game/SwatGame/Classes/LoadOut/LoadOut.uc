@@ -716,6 +716,9 @@ simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
 			}
 		}
 	}
+
+	// Have we failed? Let's try storing it in given equipment
+	GivenEquipment[GivenEquipment.Length] = Equipment;
 }
 
 //returns the item, if any, that was replaced

@@ -110,6 +110,8 @@ var() private config localized string AdminPromoteMessage;
 var() private config localized string CantGiveAlreadyHasOptiwandMessage;
 var() private config localized string CantGiveTooMuchWeightMessage;
 var() private config localized string CantGiveTooMuchBulkMessage;
+var() private config localized string CantReceiveTooMuchWeightMessage;
+var() private config localized string CantReceiveTooMuchBulkMessage;
 var() private config localized string GaveEquipmentMessage;
 var() private config localized string GaveYouEquipmentMessage;
 
@@ -864,6 +866,8 @@ defaultproperties
 	CantGiveAlreadyHasOptiwandMessage="[c=ffffff]That person already has an Optiwand."
 	CantGiveTooMuchWeightMessage="[c=ffffff]That person has too much weight."
 	CantGiveTooMuchBulkMessage="[c=ffffff]That person has too much bulk."
+	CantReceiveTooMuchWeightMessage="[c=ffffff]Can't receive item; you have too much weight."
+	CantReceiveTooMuchBulkMessage="[c=ffffff]Can't receive item; you have too much bulk."
 	GaveEquipmentMessage="[c=ffffff]You gave %1 (x%2) to %3."
 	GaveYouEquipmentMessage="[c=ffffff]Received %1 (x%2) from %3."
 

@@ -220,7 +220,7 @@ const HALF_PI = 1.5707963268;
 
 /////////////////////////////////////
 // Loadout
-var private OfficerLoadOut  theLoadOut;
+var public OfficerLoadOut  theLoadOut;
 
 // This value is assigned to the player by the server in a network game. When
 // switching levels, the clients have to disconnect and then reconnect.

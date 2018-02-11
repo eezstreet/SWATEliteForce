@@ -745,6 +745,32 @@ simulated final latent function LatentUse()
     DoUsing();
 }
 
+// Give this equipment to some other actor.
+// Only used by AI.
+simulated final latent function LatentGive(Pawn OtherActor)
+{
+	local int PawnUseAnimationChannel;
+	local HandheldEquipment Weapon;
+
+	if(!IsAvailable())
+	{
+		return;
+	}
+
+	Weapon = Pawn(Owner).GetActiveItem();
+
+	// play the animation
+	PawnUseAnimationChannel = Pawn(Owner).AnimPlayEquipment(
+		kAPT_Normal,
+		Name("LightStickDrop_" $ Weapon.LightstickThrowAnimPostfix),
+		ICanThrowWeapons(Pawn(Owner)).GetPawnThrowTweenTime(),
+		ICanThrowWeapons(Pawn(Owner)).GetPawnThrowRootBone());
+	Pawn(Owner).FinishAnim(PawnUseAnimationChannel);
+
+	// Actually give the item to the player
+	Pawn(Owner).Controller.TryGiveItemToPlayer(OtherActor, self);
+}
+
 simulated function bool PrevalidateUse()
 {
     Assert( Level.NetMode != NM_Standalone );

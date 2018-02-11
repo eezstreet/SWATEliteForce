@@ -263,6 +263,7 @@ protected function ConstructCharacterAI()
   characterResource.addAbility(new class'SwatAICommon.ReportAction');
   characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
   characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
+  	characterResource.addAbility(new class'SwatAICommon.ShareEquipmentAction');
 
 	// call down the chain
 	Super.ConstructCharacterAI();

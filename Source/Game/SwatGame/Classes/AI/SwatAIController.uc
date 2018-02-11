@@ -1,5 +1,5 @@
 
-class SwatAIController extends Tyrion.AI_Controller 
+class SwatAIController extends Tyrion.AI_Controller
     dependsOn(SwatAI)
 	native;
 
@@ -15,6 +15,58 @@ event OnHearSound(Actor SoundMaker, vector SoundOrigin, Name SoundCategory)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
+{
+	local HandheldEquipment ActiveItem;
+	local HandheldEquipment NewItem;
+	local float AddedWeight;
+	local float AddedBulk;
+	local SwatGamePlayerController PC;
+	local SwatPawn Other;
+
+	ActiveItem = EquipmentPiece;
+
+	if(!ActiveItem.AllowedToPassItem())
+	{
+		log("Tried to give "$ActiveItem$" to "$Player$" but failed because NotAllowedToPassItem");
+		return;
+	}
+
+	if(!class'Pawn'.static.checkConscious(Player))
+	{
+		return;
+	}
+
+	PC = SwatGamePlayerController(Player.Controller);
+	Other = SwatPawn(Player);
+
+	AddedWeight = EquipmentPiece.GetWeight();
+	AddedBulk = EquipmentPiece.GetBulk();
+	if(AddedWeight + Other.GetTotalWeight() > Other.GetMaximumWeight())
+	{
+		// this item adds too much weight, tell the client but still block the trace
+		PC.ClientMessage("", 'CantReceiveTooMuchWeight');
+		return;
+	}
+	else if(AddedBulk + Other.GetTotalBulk() > Other.GetMaximumBulk())
+	{
+		// this item adds too much bulk, tell the client but still block the trace
+		PC.ClientMessage("", 'CantReceiveTooMuchBulk');
+		return;
+	}
+
+	// Spawn in the actual equipment and give it to the other player
+	NewItem = Spawn(ActiveItem.class, Other);
+	NewItem.SetAvailableCount(1);
+	NewItem.OnGivenToOwner();
+	Other.GivenEquipmentFromPawn(NewItem);
+
+	ActiveItem.DecrementAvailableCount();
+
+	// Tell the client we received some new equipment
+	PC.ClientMessage(NewItem.GetFriendlyName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
+}
 
 //=============================================================================
 

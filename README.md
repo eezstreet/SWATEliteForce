@@ -93,7 +93,8 @@ More equipment options.
 
 Equipment is also much more realistic.
  * Weapons can be aimed down the sights, for better accuracy, using the zoom key.
- * All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is.
+ * All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is. You can pack No Weapon/No Equipment in some slots to reduce weight and bulk.
+ * You can now share some equipment with other players by pressing the melee key. You can also order your AI officers to give you a piece of equipment as well. Currently this only works for tactical tab items and lightsticks.
  * Bullets of certain types (FMJ, buckshot, etc) can now ricochet off of hard surfaces such as concrete, dirt, and water. Use caution.
  * Bullets are now subject to drag; they lose damage over distance.
  * Less lethal equipment is now actually LESS LETHAL. Some equipment (tasers, beanbag shotgun) can incapacitate or kill if used incorrectly.
@@ -101,6 +102,7 @@ Equipment is also much more realistic.
  * Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
 
 Doors behave more realistically
+ * You can check the lock of a door without opening it by pressing the melee key.
  * Any shotgun can be used to breach any door.
  * A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The M870 Breaching can breach any door in one shot.
  * When doors are breached with shotguns, they do not swing open like when breached with C2. You have to shoot the knob and then open the door.

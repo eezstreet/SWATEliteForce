@@ -7,6 +7,8 @@
  - Added Brettzie's M4A1! There are now two additional M4 variants (M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint)
  - Added the ability to take no weapon!
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
+- Sharing is caring!
+ - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
 - New AI behavior!
  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
@@ -18,6 +20,7 @@
  - Implemented new Desert Eagle model
  - Implemented Brettzie's M4A1.
  - Added two new M4A1 variants: M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint.
+ - You can now order your officers to give you a grenade, lightstick, C2, optiwand, pepper spray or wedge.
  - SWAT AI now uses grenade launchers correctly.
  - SWAT AI can no longer do direct impact damage with grenade launchers.
  - Suspects will attempt to escape when compliant and not being watched. 

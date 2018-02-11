@@ -62,6 +62,7 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadDeployTaserAction' );
 	SquadAI.addAbility( new class'SquadDeployPepperSprayAction' );
 	SquadAI.addAbility( new class'SquadMoveToAction' );
+	SquadAI.addAbility( new class'SquadShareEquipmentAction' );
 	SquadAI.addAbility( new class'SquadCoverAction' );
 	SquadAI.addAbility( new class'SquadDeployShotgunAction' );
 	SquadAI.addAbility( new class'SquadDeployLessLethalShotgunAction' );
@@ -1685,6 +1686,53 @@ function bool SecureEvidence(Pawn CommandGiver, vector CommandOrigin, Actor Evid
 function bool DisableTarget(Pawn CommandGiver, vector CommandOrigin, Actor Target)
 {
 	return Secure(CommandGiver, CommandOrigin, Target);
+}
+
+function bool GiveEquipment(Pawn CommandGiver, vector CommandOrigin, EquipmentSlot Equipment)
+{
+	local SquadShareEquipmentGoal CurrentShareEquipmentGoal;
+
+	if(!DoesAnOfficerHaveUsableEquipment(Equipment))
+	{
+		switch(Equipment)
+		{
+			case Slot_Flashbang:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerFlashbangUnavailableSpeech();
+				break;
+			case Slot_CSGasGrenade:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerGasUnavailableSpeech();
+				break;
+			case Slot_StingGrenade:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerStingUnavailableSpeech();
+				break;
+			case Slot_Wedge:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerWedgeUnavailableSpeech();
+				break;
+			case Slot_Lightstick:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerCantDeployLightstickSpeech();
+				break;
+			case Slot_Optiwand:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerMirrorUnavailableSpeech();
+				break;
+			case Slot_Breaching:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+				break;
+			case Slot_PepperSpray:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerPepperSprayUnavailableSpeech();
+				break;
+		}
+		return false;
+	}
+
+	if(CanExecuteCommand())
+	{
+		CurrentShareEquipmentGoal = new class'SquadShareEquipmentGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, Equipment);
+		assert(CurrentShareEquipmentGoal != None);
+
+		PostCommandGoal(CurrentShareEquipmentGoal);
+		return true;
+	}
+	return false;
 }
 
 function bool MoveTo(Pawn CommandGiver, vector CommandOrigin, vector TargetLocation)

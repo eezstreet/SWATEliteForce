@@ -604,6 +604,12 @@ simulated function bool ValidateEquipSlot( EquipmentSlot Slot )
     if ( NewItem == None )
         return false;
 
+	if(NewItem.GetPocket() == Pocket_Invalid)
+	{
+		// It's fiiiiine. It's fine. It's just a GivenEquipment in this case.
+		return true;
+	}
+
     return ValidateEquipPocket( NewItem.GetPocket() );
 }
 
@@ -3996,6 +4002,7 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
 simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
 {
 	Loadout.GivenEquipmentFromPawn(Equipment);
+	SwatGamePlayerController(controller).theLoadOut.GivenEquipmentFromPawn(Equipment);
 }
 
 simulated function FlagLightstickFastUse()
