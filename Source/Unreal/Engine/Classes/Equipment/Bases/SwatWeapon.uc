@@ -133,6 +133,9 @@ var(AdvancedDescription) protected localized config string RateOfFire           
 var(Categorization) public config WeaponEquipClass WeaponCategory            "Which category this weapon belongs to in the GUI.";
 var(Categorization) public config WeaponEquipType AllowedSlots               "Which slots this weapon is allowed to be equipped in";
 
+// Whether this item ignores the "Disable Ironsights Zoom" property
+var(Zoom) config bool IgnoreZoomSetting;
+
 // New Damage Information
 var(Damage) protected config float Vc0         "Muzzle Velocity of the weapon";
 var(Damage) protected config float Vc1      "Diference between muzzle velocity and velocity at 50m ((Muzzle Velocity/Velocity at 50m)*-1)";
@@ -146,7 +149,7 @@ var() public config float Weight;
 var() public config float Bulk;
 
 var() public config bool PlayerUsable;
-var() public config bool PassableItem;
+var() public config bool PassableItem;	// can this item be passed from one player to another?
 
 var config vector DefaultLocationOffset;
 var config Rotator DefaultRotationOffset;
@@ -221,6 +224,10 @@ simulated function bool ShouldWalkInIronsights()
 simulated function UpdateAmmoDisplay()
 {
   Ammo.UpdateHUD();
+}
+
+function bool ShouldIgnoreDisabledZoom() {
+	return IgnoreZoomSetting;
 }
 
 static function bool IsUsableByPlayer()

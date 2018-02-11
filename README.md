@@ -159,6 +159,7 @@ Multiplayer improvements!
  * How do I disarm a trap?
  * Are you going to add ballistic shields?
  * Are you going to add leaning while moving?
+ * Disabling Ironsights Zoom is not working!
 
 ## HOW DO I INSTALL THE MOD?
 Please read the How to Install section of this README. :)
@@ -270,12 +271,14 @@ Beanbags can be negated by body armor. Try aiming for unarmored parts of the bod
 ## HOW DO I DISARM A TRAP?
 You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around. Or just take the penalty.
 
-##ARE YOU GOING TO ADD BALLISTIC SHIELDS?
-Possibly, at some point.
+## ARE YOU GOING TO ADD BALLISTIC SHIELDS?
+Possibly, at some point. I would need someone to produce the art assets for it, as I'm not an artist.
 
-##ARE YOU GOING TO ADD LEANING WHILE MOVING?
+## ARE YOU GOING TO ADD LEANING WHILE MOVING?
 Moving and leaning requires hundreds of animations to be added to the game, due to the way the animation system in the game works. Unless someone can come forward and make all of those animations for me, then no.
 
+## DISABLING IRONSIGHTS ZOOM IS NOT WORKING!
+If you are ingame and you check "Disable Ironsights Zoom" then it won't work until you change your weapon, because of how the code works. Just change to a different piece of equipment and change back.
 
 # KNOWN ISSUES #
 

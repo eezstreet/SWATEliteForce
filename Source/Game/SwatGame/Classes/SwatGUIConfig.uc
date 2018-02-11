@@ -179,6 +179,7 @@ enum eExtraInts
     ExtraInt_ViewmodelDisabled,     // Boolean
     ExtraInt_CrosshairDisabled,     // Boolean
     ExtraInt_InertiaDisabled,       // Boolean
+	ExtraInt_ZoomDisabled,			// Boolean
 };
 
 var() config            array<string>    ExtraStrOptions "Extra (usermod) options for saving, as strings";

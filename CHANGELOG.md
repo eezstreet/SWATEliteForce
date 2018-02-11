@@ -38,6 +38,7 @@
  - Player names show up according to the color of their team in WebAdmin
  - WebAdmin now shows player status (Ready/Not Ready/Not Available/Injured/Healthy/Incapacitated) and shows who is the leader.
  - WebAdmin now shows the current map and server name on the main interface.
+ - Added the option to disable Ironsights zooming
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
  - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".

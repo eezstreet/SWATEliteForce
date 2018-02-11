@@ -1263,6 +1263,10 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
     Canvas.DrawText("ThirdPersonModel: Anim="$OutSeqName$", Frame="$OutAnimFrame);
 }
 
+function bool ShouldIgnoreDisabledZoom() {
+	return false;
+}
+
 static function String GetDescription()
 {
     return default.Description;

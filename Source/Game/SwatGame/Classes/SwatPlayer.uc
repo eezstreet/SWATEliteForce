@@ -859,10 +859,15 @@ simulated function OnActiveItemEquipped()
 
     if ( Controller == Level.GetLocalPlayerController() )
     {
-        if (GetActiveItem().ZoomedFOV > 0)
-            PlayerController(Controller).ZoomedFOV = GetActiveItem().ZoomedFOV;
-        else
-            PlayerController(Controller).ZoomedFOV = PlayerController(Controller).BaseFOV;
+		PlayerController(Controller).ZoomedFOV = PlayerController(Controller).BaseFOV;
+
+		if(GetActiveItem().ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
+		{
+			if (GetActiveItem().ZoomedFOV > 0)
+			{
+				PlayerController(Controller).ZoomedFOV = GetActiveItem().ZoomedFOV;
+			}
+		}
     }
 }
 
