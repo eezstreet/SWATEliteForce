@@ -404,7 +404,9 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Weapons are now selected by dropdown menus, for faster selection
   * New splash screen
   * More advanced console. It will now show output of commands, and a console log. You need to press ESC to close the console now.
-  * Added 'Take Screenshot' and 'Toggle Speech Interface' key to Controls menu.
+  * All "RESERVED" keys are now able to be edited. The category has been renamed to "NUMBER ROW".
+  * An additional key config category, "MULTIPLAYER", has been added.
+  * Lots of new controls (including 'Take Screenshot' and 'Toggle Speech Interface') have been added to the key config menu.
   * New main menu logo
   * All evidence of Gamespy scrubbed
   * Removed "Check for Patch" button on the join game menu

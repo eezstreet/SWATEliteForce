@@ -49,7 +49,7 @@ function InitComponent(GUIComponent MyOwner)
     MyKeyBindingsBox.OnChange=OnListSelectionChanged;
     SelectedIndex=-1;
 
-    RestrictKeys();
+    //RestrictKeys();
 }
 
 function SaveSettings()
@@ -112,7 +112,7 @@ private function LoadCategory( eCommandCategory Category )
     MyKeyBindingsBox.SetIndex(SelectedIndex);
     SelectedIndex=-1;
 
-    MyKeyBindingsBox.SetEnabled( Category != COMCAT_Reserved );
+    //MyKeyBindingsBox.SetEnabled( Category != COMCAT_Reserved );
 
     for( i = 0; i < MyCategoryButtons.Length; i++ )
     {
@@ -134,7 +134,7 @@ private function bool IsRestricted( string key )
 
 function OnListSelectionChanged( GUIComponent Sender )
 {
-    MyKeyChoose.SetEnabled( LastCategory != COMCAT_Reserved && MyKeyBindingsBox.GetIndex() >= 0 );
+    MyKeyChoose.SetEnabled( /*LastCategory != COMCAT_Reserved &&*/ MyKeyBindingsBox.GetIndex() >= 0 );
 }
 
 function InternalOnClick( GUIComponent Sender )

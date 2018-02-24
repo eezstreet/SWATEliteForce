@@ -48,6 +48,7 @@
  - Added an entrance selection box to the debriefing menu, so you don't have to sit through an extra loading screen to change the entrance.
  - Added ability for actors to be hidden based on system time/date. Currently only used in one place (there is a Jack-o-Lantern in the Training mission that shows up on Halloween)
  - Added console command: "swapweapon" which opens the weapon cabinet screen
+ - All reserved keys are now editable. The "RESERVED" category has been renamed to "NUMBER ROW"
  - Added new keybind, "Melee" (only does melee, won't check locks or give items)
  - Added new keybind, "Check Lock"
  - Added new keybind, "Give Item"

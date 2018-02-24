@@ -37,6 +37,7 @@ var() private config localized string PrimaryEntranceString;
 var() private config localized string SecondaryEntranceString;
 
 var() bool bOpeningSubMenu;
+var() bool bPopulatingEntrances;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -54,13 +55,16 @@ function InternalOnChange(GUIComponent Sender)
 	switch(Sender)
 	{
 		case MyEntranceSelectBox:
-			if(MyEntranceSelectBox.GetInt() == 0)
+			if(!bPopulatingEntrances)
 			{
-				GC.SetDesiredEntryPoint(ET_Primary);
-			}
-			else if(MyEntranceSelectBox.GetInt() == 1)
-			{
-				GC.SetDesiredEntryPoint(ET_Secondary);
+				if(MyEntranceSelectBox.GetInt() == 0)
+				{
+					GC.SetDesiredEntryPoint(ET_Primary);
+				}
+				else if(MyEntranceSelectBox.GetInt() == 1)
+				{
+					GC.SetDesiredEntryPoint(ET_Secondary);
+				}
 			}
 			break;
 	}
@@ -99,9 +103,11 @@ function InternalOnActivate()
         }
     }
 
+	bPopulatingEntrances = true;
 	MyEntranceSelectBox.Clear();
 	MyEntranceSelectBox.AddItem(PrimaryEntranceString, , , 0);
 	MyEntranceSelectBox.AddItem(SecondaryEntranceString, , , 1);
+	bPopulatingEntrances = false;
 
 	if(GC.GetDesiredEntryPoint() == ET_Primary)
 	{

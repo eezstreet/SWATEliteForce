@@ -1951,8 +1951,8 @@ Caption=RESET DEFAULTS
 Hint=Click to reset the key settings to their defaults.
 
 [SwatKeyControlSettingsPanel_ReservedSelectButton]
-Caption=RESERVED
-Hint=Display the reserved keys configuration.
+Caption=NUMBER ROW
+Hint=Display the number row keys configuration.
 
 [SwatKeyControlSettingsPanel_ChatSelectButton]
 Caption=COMMAND
