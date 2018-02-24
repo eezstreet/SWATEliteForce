@@ -397,6 +397,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Server browser has a button to download the server browser patch.
   * Loadout Menu (SP) has a button to apply current tab to Element, Team, or specific officer
   * Loadout Menu (SP) has a button to apply current loadout to Element, Team, or specific officer
+  * The debriefing menu now has an entrance selection box, so you don't have to go back to the main menu to change the entrance.
   * Maps in the Voting screen are now sorted alphabetically.
   * Host Game no longer precaches all of the maps at once; it goes to the menu and loads the maps while in the menu.
   * Added Advanced Information tab to Equipment Panel. It now shows a weapon's manufacturer, manufacturer country, date manufactured, caliber, magazine size, maximum ammo carried, muzzle velocity and firing modes. It also shows advanced information for protective equipment.

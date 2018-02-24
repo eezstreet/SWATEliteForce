@@ -17,6 +17,7 @@ var(SWATGui) private EditInline Config GUIButton		    MyRestartButton;
 var(SWATGui) private EditInline Config SwatObjectivesPanel	MyObjectivesPanel;
 var(SWATGui) private EditInline Config SwatLeadershipPanel	MyLeadershipPanel;
 var(SWATGui) private EditInline Config GUILabel		        MyMissionOutcome;
+var(SWATGui) private EditInline COnfig GUIComboBox			MyEntranceSelectBox;
 
 var(SWATGui) private EditInline Config GUIButton		    MyDebriefingButton;
 var(SWATGui) private EditInline Config GUIButton		    MyLoadoutButton;
@@ -32,6 +33,9 @@ var() private config localized string ContinueMissionEndCampaignString;
 var() private config localized string MainMenuString;
 var() private config localized string ContinueString;
 
+var() private config localized string PrimaryEntranceString;
+var() private config localized string SecondaryEntranceString;
+
 var() bool bOpeningSubMenu;
 
 function InitComponent(GUIComponent MyOwner)
@@ -42,6 +46,24 @@ function InitComponent(GUIComponent MyOwner)
     MyRestartButton.OnClick=InternalOnClick;
     MyDebriefingButton.OnClick=InternalOnClick;
     MyLoadoutButton.OnClick=InternalOnClick;
+	MyEntranceSelectBox.OnChange=InternalOnChange;
+}
+
+function InternalOnChange(GUIComponent Sender)
+{
+	switch(Sender)
+	{
+		case MyEntranceSelectBox:
+			if(MyEntranceSelectBox.GetInt() == 0)
+			{
+				GC.SetDesiredEntryPoint(ET_Primary);
+			}
+			else if(MyEntranceSelectBox.GetInt() == 1)
+			{
+				GC.SetDesiredEntryPoint(ET_Secondary);
+			}
+			break;
+	}
 }
 
 function InternalOnActivate()
@@ -77,11 +99,25 @@ function InternalOnActivate()
         }
     }
 
+	MyEntranceSelectBox.Clear();
+	MyEntranceSelectBox.AddItem(PrimaryEntranceString, , , 0);
+	MyEntranceSelectBox.AddItem(SecondaryEntranceString, , , 1);
+
+	if(GC.GetDesiredEntryPoint() == ET_Primary)
+	{
+		MyEntranceSelectBox.SetIndex(0);
+	}
+	else
+	{
+		MyEntranceSelectBox.SetIndex(1);
+	}
+
     MyRestartButton.SetEnabled(true);
     MyLoadoutButton.SetEnabled(true);
     if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
       MyRestartButton.SetEnabled(false);
       MyLoadoutButton.SetEnabled(false);
+	  MyEntranceSelectBox.DisableComponent();
     }
 
     if( GC.SwatGameRole == GAMEROLE_SP_Other )
@@ -115,7 +151,10 @@ function OpenDebriefing()
     MyDebriefingButton.DisableComponent();
     MyLoadoutButton.EnableComponent();
     if( PlayerOwner().Level.IsTraining )
-        MyLoadoutButton.DisableComponent();
+	{
+		MyLoadoutButton.DisableComponent();
+		MyEntranceSelectBox.DisableComponent();
+	}
 }
 
 function OpenLoadout()
@@ -179,4 +218,7 @@ defaultproperties
     ContinueMissionCompletedString="NEXT MISSION"
     ContinueMissionFailedString="SELECT MISSION"
     ContinueMissionEndCampaignString="END CAMPAIGN"
+
+	PrimaryEntranceString="Primary Entrance"
+	SecondaryEntranceString="Secondary Entrance"
 }
