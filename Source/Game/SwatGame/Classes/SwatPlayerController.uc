@@ -34,6 +34,8 @@ replication
 		ForceAllToTeam, ForcePlayerToTeam, ToggleTeamLock, TogglePlayerTeamLock, ToggleMute,
 		AdminKillPlayer, AdminPromotePlayer,
 		ForceSpec, GoToSpec, ForceLL,
+		ToggleVoteLock, ToggleVoterLock,
+		VerifySEFDeveloper,
 		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
@@ -503,6 +505,21 @@ exec function ForceSpec(string PlayerName)
 exec function ForceLL(string PlayerName)
 {
 	SwatGameInfo(Level.Game).Admin.ForceLL(PlayerName, SwatGamePlayerController(self));
+}
+
+exec function ToggleVoteLock()
+{
+	SwatGameInfo(Level.Game).Admin.ToggleGlobalVoteLock(SwatGamePlayerController(self));
+}
+
+exec function ToggleVoterLock(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ToggleVoterLock(SwatGamePlayerController(self), PlayerName);
+}
+
+exec function VerifySEFDeveloper(string TestString)
+{
+	SwatGameInfo(Level.Game).Admin.VerifySEFDeveloper(TestString, SwatGamePlayerController(self));
 }
 
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)

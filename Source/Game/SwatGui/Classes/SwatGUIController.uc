@@ -420,11 +420,17 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
         case 'ReferendumStarted':
+		case 'ReferendumBlocked':
 		    case 'ReferendumAlreadyActive':
 		    case 'ReferendumStartCooldown':
 		    case 'PlayerImmuneFromReferendum':
 		    case 'ReferendumAgainstAdmin':
 		    case 'ReferendumsDisabled':
+		case 'LockedVoting':
+		case 'UnlockedVoting':
+		case 'LockedVoter':
+		case 'UnlockedVoter':
+		case 'Verification':
 		    case 'LeaderVoteTeamMismatch':
 		    case 'YesVote':
 		    case 'NoVote':

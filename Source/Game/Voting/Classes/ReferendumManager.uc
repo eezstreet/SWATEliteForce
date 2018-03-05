@@ -14,6 +14,7 @@ var public globalconfig int MinVoters;							// Minimum number of voters require
 var public globalconfig bool NonVotersAreNo;				// Whether Non-Voters count as "no" votes
 var public globalconfig array<class<Referendum> > DisabledReferendums;	// What referendum types are disabled
 var private float TimeRemaining;					// How much time remains before the referendum expires
+var private bool TemporarilyDisabled;				// Whether voting is temporarily disabled by admin action
 
 struct CooldownTimer
 {
@@ -27,6 +28,9 @@ var private float StartReferendumCooldown;
 // VoterCooldownTimers tracks the amount of time each previous referendum starter has before they may start another referendum
 // If a PlayerId is in this array they may not start a referendum
 var private array<CooldownTimer> VoterCooldownTimers;
+
+// These people are blacklisted from using the voting system
+var private array<int> VotersBlacklisted;
 
 // Each PlayerId can only have a referendum started against them every ReferendumImmunityCooldown seconds
 var private float ReferendumImmunityCooldown;
@@ -42,6 +46,38 @@ replication
 {
 	reliable if (bNetDirty && (Role == ROLE_Authority))
 		ReferendumTeam, YesVotes, NoVotes, TimeRemaining, CurrentReferendum;
+}
+
+function bool ToggleGlobalVoteLock()
+{
+	if(TemporarilyDisabled)
+	{
+		TemporarilyDisabled = false;
+		return false;
+	}
+	else
+	{
+		TemporarilyDisabled = true;
+		return true;
+	}
+}
+
+function bool TogglePlayerVoteLock(int PlayerID)
+{
+	local int i;
+
+	// Look through the cooldown timers if they exist
+	for(i = 0; i < VotersBlacklisted.Length; i++)
+	{
+		if(VotersBlacklisted[i] == PlayerID)
+		{
+			VotersBlacklisted.Remove(i, 1);
+			return false;
+		}
+	}
+
+	VotersBlacklisted[VotersBlacklisted.Length] = PlayerID;
+	return true;
 }
 
 simulated function TeamInfo GetTeam()
@@ -146,6 +182,26 @@ static function bool ReferendumTypeAllowed(class<Referendum> ReferendumType)
 	return true;
 }
 
+function bool ReferendumNotAllowedByAdmins(int PlayerID)
+{
+	local int i;
+
+	if(TemporarilyDisabled)
+	{
+		return true;
+	}
+
+	for(i = 0; i < VotersBlacklisted.Length; i++)
+	{
+		if(VotersBlacklisted[i] == PlayerID)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Returns false if the referendum could not be started
 protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType)
 {
@@ -159,6 +215,13 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 		//mplog("The referendum has failed to start because a referendum is already in progress");
 		assert(PlayerController(PRI.Owner) != None);
 		Level.Game.Broadcast(None, "", 'ReferendumAlreadyActive', PlayerController(PRI.Owner));
+		return false;
+	}
+
+	// Check to see if the admins disabled it for some reason or another
+	if(ReferendumNotAllowedByAdmins(PRI.PlayerID))
+	{
+		Level.Game.Broadcast(None, "", 'ReferendumBlocked', PlayerController(PRI.Owner));
 		return false;
 	}
 
@@ -248,6 +311,13 @@ function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 		return false;
 	}
 
+	// Can't vote if not allowed
+	if(ReferendumNotAllowedByAdmins())
+	{
+		mplog("Player "$ PlayerID $" tried to vote yes, but they do not have voting rights.");
+		return false;
+	}
+
 	// If this referendum is team only and the voter is not on the right team disallow the vote
 	if (ReferendumTeam != None && ReferendumTeam != Team)
 	{
@@ -275,6 +345,13 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 	if (!ReferendumActive())
 	{
 		mplog("Player " $ PlayerId $ " tried to vote no, but there was no active referendum");
+		return false;
+	}
+
+	// Can't vote if not allowed
+	if(ReferendumNotAllowedByAdmins())
+	{
+		mplog("Player "$ PlayerID $" tried to vote no, but they do not have voting rights.");
 		return false;
 	}
 

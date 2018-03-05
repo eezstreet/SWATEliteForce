@@ -57,6 +57,7 @@ var() private config localized string ReferendumAgainstAdminMessage;
 var() private config localized string ReferendumsDisabledMessage;
 var() private config localized string LeaderVoteTeamMismatchMessage;
 var() private config localized string ReferendumTypeNotAllowedMessage;
+var() private config localized string ReferendumBlockedMessage;
 
 var() private config localized string ReferendumSucceededMessage;
 var() private config localized string ReferendumFailedMessage;
@@ -79,6 +80,7 @@ var() private config localized string PromptToDebriefMessage;
 var() private config localized string SomeoneString;
 
 var() private config localized string SlotNames[EquipmentSlot.EnumCount];
+var() private config localized string VerificationMessage;
 
 var() private Config localized string SmashAndGrabGotItemMessage;
 var() private Config localized string SmashAndGrabDroppedItemMessage;
@@ -103,6 +105,11 @@ var() private config localized string UnmuteMessage;
 
 var() private config localized string ForceLessLethalMessage;
 var() private config localized string UnforceLessLethalMessage;
+
+var() private config localized string VotingLockedMessage;
+var() private config localized string VotingUnlockedMessage;
+var() private config localized string VoterLockedMessage;
+var() private config localized string VoterUnlockedMessage;
 
 var() private config localized string AdminKillMessage;
 var() private config localized string AdminPromoteMessage;
@@ -377,8 +384,28 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
 			MsgText = FormatTextString( ReferendumFailedMessage );
 			break;
 
+		case 'ReferendumBlocked':
+			MsgText = FormatTextString( ReferendumBlockedMessage );
+			break;
+
 		case 'ReferendumTypeNotAllowed':
 			MsgText = FormatTextString( ReferendumTypeNotAllowedMessage );
+			break;
+
+		case 'LockedVoting':
+			MsgText = FormatTextString( VotingLockedMessage, StrA );
+			break;
+
+		case 'UnlockedVoting':
+			MsgText = FormatTextString( VotingUnlockedMessage, StrA);
+			break;
+
+		case 'LockedVoter':
+			MsgText = FormatTextString( VoterLockedMessage, StrA, StrB );
+			break;
+
+		case 'UnlockedVoter':
+			MsgText = FormatTextString( VoterUnlockedMessage, StrA, StrB );
 			break;
 
 		case 'PenaltyIssuedChat':
@@ -443,6 +470,10 @@ function MessageRecieved( String MsgText, Name Type, optional bool bDisplaySpeci
         case 'CommandGiven':
             MsgText = StrA;
             break;
+
+		case 'Verification':
+			MsgText = FormatTextString(VerificationMessage, StrA, StrB);
+			break;
 
 		case 'Stats':
 			MsgText = FormatTextString( StatsMessage, StrA );
@@ -803,6 +834,7 @@ defaultproperties
 	ReferendumsDisabledMessage="[c=ff00ff]Voting has been disabled on this server"
 	LeaderVoteTeamMismatchMessage="[c=ff00ff]You may not start leadership votes for players on the other team"
 	ReferendumTypeNotAllowedMessage="[c=ff00ff]The server has disabled this kind of voting"
+	ReferendumBlockedMessage="[c=FF00FF]The admins have taken away your voting rights."
 
 	ReferendumSucceededMessage="[c=ff00ff]The vote succeeded"
 	ReferendumFailedMessage="[c=ff00ff]The vote failed"
@@ -860,8 +892,14 @@ defaultproperties
 	ForceLessLethalMessage="[c=ff00ff]%1 forced %2 to use less lethal equipment."
 	UnforceLessLethalMessage="[c=ff00ff]%1 allowed %2 to use normal equipment."
 
+	VotingLockedMessage="[c=FF00FF][b]%1[\\b] locked voting."
+	VotingUnlockedMessage="[c=FF00FF][b]%1[\\b] unlocked voting."
+	VoterLockedMessage="[c=FF00FF][b]%1[\\b] blocked [b]%2[\\b] from voting."
+	VoterUnlockedMessage="[c=FF00FF][b]%1[\\b] allowed [b]%2[\\b] to vote."
+
     PromptToDebriefMessage="[c=ffffff]Press '[k=GUICloseMenu]' to proceed to Debrief."
     SomeoneString="someone"
+	VerificationMessage="[c=2ECC71][b]%1[\\b] %2"
 
 	CantGiveAlreadyHasOptiwandMessage="[c=ffffff]That person already has an Optiwand."
 	CantGiveTooMuchWeightMessage="[c=ffffff]That person has too much weight."

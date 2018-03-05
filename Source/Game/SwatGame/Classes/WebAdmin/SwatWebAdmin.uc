@@ -820,6 +820,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ " <option value=\"abortgame\">Abort Round</option>";
 	HTML = HTML $ " <option value=\"nextmap\">Go to Next Map</option>";
 	HTML = HTML $ " <option value=\"lockteams\">Lock/Unlock Teams</option>";
+	HTML = HTML $ " <option value=\"togglevotelock\">Lock/Unlock Voting</option>";
 	HTML = HTML $ " <option value=\"alltoblue\">Send all to Blue</option>";
 	HTML = HTML $ " <option value=\"alltored\">Send all to Red</option>";
 	HTML = HTML $ " <option value=\"startgame\">Start Round</option>";
@@ -836,6 +837,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ " <option value=\"kickban \">Kick-Ban</option>";
 	HTML = HTML $ " <option value=\"kill \">Kill</option>";
 	HTML = HTML $ " <option value=\"lockplayerteam \">Lock/Unlock Player Team</option>";
+	HTML = HTML $ " <option value=\"lockvoter\">Lock/Unlock Voting</option>";
 	HTML = HTML $ " <option value=\"mute \">Mute/Unmute</option>";
 	HTML = HTML $ " <option value=\"promote \">Promote to Leader</option>";
 	HTML = HTML $ "</select> ";
@@ -1031,6 +1033,8 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "<tr><th>/startgame</th><td>Starts the current round.</td></tr>";
 	HTML = HTML $ "<tr><th>/abortgame</th><td>Aborts the current round.</td></tr>";
 	HTML = HTML $ "<tr><th>/forcell -playername-</th><td>Forces a player to use the less lethal loadout.</td></tr>";
+	HTML = HTML $ "<tr><th>/togglevotelock</th><td>Enables/disables voting globally.</td></tr>";
+	HTML = HTML $ "<tr><th>/lockvoter -playername-</th><td>Enables/disables voting on a specific player.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;

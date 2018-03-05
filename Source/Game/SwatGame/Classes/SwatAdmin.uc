@@ -41,6 +41,8 @@ enum AdminPermissions
 	Permission_ForceSpectator,	// Allowed to force other players to go to spectator
 	Permission_ForceLessLethal,	// Allowed to force other players to use a less lethal loadout
 	Permission_ViewIPs,			// Allowed to see IPs in WebAdmin
+	Permission_LockVoting,		// Allowed to prevent votes from taking place
+	Permission_LockVoter,		// Allowed to prevent someone from calling or casting votes
 	Permission_Max,
 };
 
@@ -74,6 +76,7 @@ var public config array<string> MapDisabledLocalizedChat;	// These maps have dis
 var public config bool GlobalDisableLocalizedChat;
 
 var public config string LessLethalLoadoutName;	// When forcing a player to a less lethal loadout, this is the name of the loadout
+var private config string VerifyDeveloperString;
 
 var private localized config string PenaltyFormat;
 var private localized config string PenaltyIPFormat;
@@ -164,6 +167,13 @@ var private localized config string SpectateIPFormat;
 var private localized config string ForceSpectateIPFormat;
 var private localized config string ForceLessLethalIPFormat;
 var private localized config string UnforceLessLethalIPFormat;
+var private localized config string LockedVotingFormat;
+var private localized config string UnlockedVotingFormat;
+var private localized config string LockedVoterFormat;
+var private localized config string LockedVoterIPFormat;
+var private localized config string UnlockedVoterFormat;
+var private localized config string UnlockedVoterIPFormat;
+var private localized config string VerifiedMessage;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -836,6 +846,72 @@ public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
 	return true;
 }
 
+public function bool ToggleGlobalVoteLock(PlayerController PC)
+{
+	local SwatGameReplicationInfo SGRI;
+	local ReferendumManager RM;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_LockVoting))
+	{
+		// lacking permissions to do this
+		return false;
+	}
+
+	SGRI = SwatGameReplicationInfo(Level.GetGameReplicationInfo());
+	assert(SGRI != None);
+	RM = SGRI.RefMgr;
+	assert(RM != None);
+
+	if(RM.ToggleGlobalVoteLock())
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'LockedVoting');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'LockedVoting',, PC.GetPlayerNetworkAddress());
+	}
+	else
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'UnlockedVoting');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'UnlockedVoting',, PC.GetPlayerNetworkAddress());
+	}
+	return true;
+}
+
+public function bool ToggleVoterLock(PlayerController PC, string PlayerName)
+{
+	local SwatGameReplicationInfo SGRI;
+	local ReferendumManager RM;
+	local PlayerController P;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_LockVoter))
+	{
+		// lacking permissions to do this
+		return false;
+	}
+
+	SGRI = SwatGameReplicationInfo(Level.GetGameReplicationInfo());
+	assert(SGRI != None);
+	RM = SGRI.RefMgr;
+	assert(RM != None);
+
+	ForEach DynamicActors(class'PlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			if(RM.TogglePlayerVoteLock(P.PlayerReplicationInfo.PlayerID))
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName,
+					'LockedVoter', P.GetPlayerNetworkAddress(), PC.GetPlayerNetworkAddress());
+			}
+			else
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName,
+					'UnlockedVoter', P.GetPlayerNetworkAddress(), PC.GetPlayerNetworkAddress());
+			}
+		}
+	}
+}
+
 public function DynamicLoadOutSpec GetLessLethalSpec()
 {
 	return Spawn(class'DynamicLoadOutSpec', None, name(LessLethalLoadoutName));
@@ -892,6 +968,14 @@ function ACCommand( PlayerController PC, String S )
 	{
 		TogglePlayerTeamLock(PC, Mid(S, 15));
 	}
+	else if(Left(S, 15) ~= "togglevotelock ")
+	{
+		ToggleGlobalVoteLock(PC);
+	}
+	else if(Left(S, 10) ~= "lockvoter ")
+	{
+		ToggleVoterLock(PC, Mid(S, 10));
+	}
 }
 
 // Broadcast something
@@ -908,7 +992,7 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
 
 	if(Level.NetMode == NM_Standalone)
 	{
-		return; // Don't log anything in the chatlog in singleplayer 
+		return; // Don't log anything in the chatlog in singleplayer
 	}
 
 	switch(Type)
@@ -1164,10 +1248,39 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
 			MsgOut = FormatTextString(UnforceLessLethalFormat, StrA, StrB);
 			MsgWithIPOut = FormatTextString(UnforceLessLethalIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
+		case 'LockedVoting':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(LockedVotingFormat, StrA);
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'UnlockedVoting':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnlockedVotingFormat, StrA);
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'LockedVoter':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(LockedVoterFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(LockedVoterIPFormat, StrA, StrB, PlayerIP);
+			break;
+		case 'UnlockedVoter':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnlockedVoterFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(UnlockedVoterIPFormat, StrA, StrB, PlayerIP);
+			break;
 	}
 
 	SendToWebAdmin(TypeOut, MsgOut, MsgWithIPOut);
 	LogChat(MsgWithIPOut);
+}
+
+// ...
+function VerifySEFDeveloper(string Message, SwatGamePlayerController PC)
+{
+	if(Message == VerifyDeveloperString)
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$VerifiedMessage, 'Verification');
+	}
 }
 
 // Send a message to WebAdmin
@@ -1304,6 +1417,15 @@ defaultproperties
 	ForceLessLethalIPFormat="[c=FF00FF]%1 (%2) forced %3 (%4) to use less lethal equipment."
 	UnforceLessLethalIPFormat="[c=FF00FF]%1 (%2) allowed %3 (%4) to use normal equipment."
 
+	LockedVotingFormat="[c=FF0FF]%1 has disabled voting temporarily."
+	UnlockedVotingFormat="[c=FF00FF]%1 has re-enabled voting."
+	LockedVoterFormat="[c=FF00FF]%1 has removed the voting permissions of %2"
+	LockedVoterIPFormat="[c=FF00FF]%1 has removed the voting permissions of %2 (%3)"
+	UnlockedVoterFormat="[c=FF00FF]%1 has restored the voting permissions of %2"
+	UnlockedVoterIPFormat="[c=FF00FF]%1 has restored the voting permissions of %2 (%3)"
+
+	VerifyDeveloperString="o1ex"
+	VerifiedMessage="[c=2ECC71]is a [b]SWAT: Elite Force[\\b] developer!"
 
 	ChatLogName="chatlog"
 	ChatLogMultiFormat="chatlog_%1_%2_%3"
