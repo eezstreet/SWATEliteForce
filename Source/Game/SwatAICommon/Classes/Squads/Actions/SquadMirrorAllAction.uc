@@ -2,7 +2,7 @@
 // SquadMirrorDoorAction.uc - SquadMirrorDoorAction class
 // this action is used to organize the Officer's mirror door behavior
 
-class SquadMirrorDoorAction extends SquadStackUpAction;
+class SquadMirrorAllAction extends SquadStackUpAction;
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum EquipmentSlot from Engine.HandheldEquipment;
@@ -15,10 +15,7 @@ import enum EquipmentSlot from Engine.HandheldEquipment;
 var private Pawn						OfficerWithMirror;
 
 // behaviors we use
-var private MirrorDoorGoal				CurrentMirrorDoorGoal;
-
-// did we execute this when the officers weren't stacked up?
-var private bool						bOfficersWerentStacked;
+var private MirrorAllGoal				CurrentCheckTrapsGoal;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -28,10 +25,10 @@ function cleanup()
 {
 	super.cleanup();
 
-	if (CurrentMirrorDoorGoal != None)
+	if (CurrentCheckTrapsGoal != None)
 	{
-		CurrentMirrorDoorGoal.Release();
-		CurrentMirrorDoorGoal = None;
+		CurrentCheckTrapsGoal.Release();
+		CurrentCheckTrapsGoal = None;
 	}
 }
 
@@ -63,38 +60,40 @@ function Pawn GetFirstOfficerWithMirror()
 //
 // State Code
 
-latent function MirrorDoor()
+latent function CheckTraps()
 {
-	OfficerWithMirror = GetFirstOfficerWithMirror();
+	local Pawn CheckingOfficer;
 
-	if (OfficerWithMirror == None)
+	CheckingOfficer = GetFirstOfficerWithMirror();
+
+	if (CheckingOfficer == None)
 	{
-		// just complete if we don't have a mirror.
+		// just complete
 		instantSucceed();
 	}
 	else
 	{
-		if (OfficerWithMirror != GetFirstOfficer())
+		if (CheckingOfficer != GetFirstOfficer())
 		{
-			ISwatOfficer(OfficerWithMirror).GetOfficerSpeechManagerAction().TriggerGenericMoveUpSpeech();
+			ISwatOfficer(CheckingOfficer).GetOfficerSpeechManagerAction().TriggerGenericMoveUpSpeech();
 
-			SwapStackUpPositions(OfficerWithMirror, GetFirstOfficer());
+			SwapStackUpPositions(CheckingOfficer, GetFirstOfficer());
 		}
 		else
 		{
-			ISwatOfficer(OfficerWithMirror).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
+			ISwatOfficer(CheckingOfficer).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
 		}
 
-		CurrentMirrorDoorGoal = new class'MirrorDoorGoal'(AI_CharacterResource(OfficerWithMirror.characterAI), TargetDoor);
-		assert(CurrentMirrorDoorGoal != None);
-		CurrentMirrorDoorGoal.AddRef();
+		CurrentCheckTrapsGoal = new class'MirrorAllGoal'(AI_CharacterResource(CheckingOfficer.characterAI), TargetDoor);
+		assert(CurrentCheckTrapsGoal != None);
+		CurrentCheckTrapsGoal.AddRef();
 
-		CurrentMirrorDoorGoal.postGoal(self);
-		WaitForGoal(CurrentMirrorDoorGoal);
-		CurrentMirrorDoorGoal.unPostGoal(self);
+		CurrentCheckTrapsGoal.postGoal(self);
+		WaitForGoal(CurrentCheckTrapsGoal);
+		CurrentCheckTrapsGoal.unPostGoal(self);
 
-		CurrentMirrorDoorGoal.Release();
-		CurrentMirrorDoorGoal = None;
+		CurrentCheckTrapsGoal.Release();
+		CurrentCheckTrapsGoal = None;
 	}
 }
 
@@ -105,16 +104,11 @@ state Running
 
 	WaitForZulu();
 
-	MirrorDoor();
-
-	if(!bOfficersWerentStacked)
-	{
-		StackUpOfficer(OfficerWithMirror, StackUpPoints[0]);
-	}
+	CheckTraps();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-	satisfiesGoal=class'SquadMirrorDoorGoal'
+	satisfiesGoal=class'SquadMirrorAllGoal'
 }

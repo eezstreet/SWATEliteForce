@@ -312,7 +312,7 @@ function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 	}
 
 	// Can't vote if not allowed
-	if(ReferendumNotAllowedByAdmins())
+	if(ReferendumNotAllowedByAdmins(PlayerId))
 	{
 		mplog("Player "$ PlayerID $" tried to vote yes, but they do not have voting rights.");
 		return false;
@@ -349,7 +349,7 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 	}
 
 	// Can't vote if not allowed
-	if(ReferendumNotAllowedByAdmins())
+	if(ReferendumNotAllowedByAdmins(PlayerId))
 	{
 		mplog("Player "$ PlayerID $" tried to vote no, but they do not have voting rights.");
 		return false;

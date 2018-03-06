@@ -238,7 +238,8 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.PickLockAction');
 	characterResource.addAbility(new class'SwatAICommon.TryDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.StackUpAction');
-  characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
+	characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
+	characterResource.addAbility(new class'SwatAICommon.MirrorAllAction');
 	characterResource.addAbility(new class'SwatAICommon.MoveAndClearAction');
 	characterResource.addAbility(new class'SwatAICommon.FallInAction');
 	characterResource.addAbility(new class'SwatAICommon.ThrowGrenadeAction');

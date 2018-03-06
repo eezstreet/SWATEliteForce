@@ -4738,7 +4738,10 @@ Text=MOVE >>
 Text=MIRROR CORNER
 
 [Command_MirrorUnderDoor]
-Text=MIRROR/SCAN DOOR
+Text=MIRROR FOR CONTACTS
+
+[Command_TrapsAndMirror]
+Text=MIRROR FOR ALL
 
 [Command_PosNegPage]
 Text=AFFIRM/DENY >>
@@ -4828,7 +4831,106 @@ Text=PICK LOCK
 Text=TRY LOCK
 
 [Command_CheckForTraps]
-Text=CHECK FOR TRAPS
+Text=MIRROR FOR TRAPS
+
+[Command_Request]
+Text=REQUEST >>
+
+[Command_Request_Flashbang]
+Text=REQUEST FLASHBANG
+
+[Command_Request_CSGas]
+Text=REQUEST CS GAS
+
+[Command_Request_Stinger]
+Text=REQUEST STINGER
+
+[Command_Request_Pepperspray]
+Text=REQUEST PEPPER SPRAY
+
+[Command_Request_Optiwand]
+Text=REQUEST OPTIWAND
+
+[Command_Request_Wedge]
+Text=REQUEST WEDGE
+
+[Command_Request_Lightstick]
+Text=REQUEST LIGHTSTICK
+
+[Command_Request_C2]
+Text=REQUEST C2
+
+[Command_CleanSweep]
+Text=SEARCH AND SECURE
+
+[Command_RestrainAll]
+Text=RESTRAIN ALL
+
+[Command_SecureAll]
+Text=SECURE ALL
+
+[Command_DisableAll]
+Text=DISABLE ALL
+
+[Command_C2AndClear]
+Text=C2 AND CLEAR
+
+[Command_C2BangAndClear]
+Text=C2, BANG, & CLEAR
+
+[Command_C2GasAndClear]
+Text=C2, GAS, & CLEAR
+
+[Command_C2StingAndClear]
+Text=C2, STING, & CLEAR
+
+[Command_C2LeaderThrowAndClear]
+Text=C2, LEADER, & CLEAR
+
+[Command_C2AndMakeEntry]
+Text=C2 AND MAKE ENTRY
+
+[Command_C2BangAndMakeEntry]
+Text=C2, BANG, & MAKE ENTRY
+
+[Command_C2GasAndMakeEntry]
+Text=C2, GAS, & MAKE ENTRY
+
+[Command_C2StingAndMakeEntry]
+Text=C2, STING, & MAKE ENTRY
+
+[Command_C2LeaderThrowAndMakeEntry]
+Text=C2, LEADER, & MAKE ENTRY
+
+[Command_ShotgunAndClear]
+Text=SHOTGUN AND CLEAR
+
+[Command_ShotgunBangAndClear]
+Text=SHOTGUN, BANG, & CLEAR
+
+[Command_ShotgunGasAndClear]
+Text=SHOTGUN, GAS, & CLEAR
+
+[Command_ShotgunStingAndClear]
+Text=SHOTGUN, STING, & CLEAR
+
+[Command_ShotgunLeaderThrowAndClear]
+Text=SHOTGUN, LEADER, & CLEAR
+
+[Command_ShotgunAndMakeEntry]
+Text=SHOTGUN AND MAKE ENTRY
+
+[Command_ShotgunBangAndMakeEntry]
+Text=SHOTGUN, BANG, & MAKE ENTRY
+
+[Command_ShotgunGasAndMakeEntry]
+Text=SHOTGUN, GAS, & MAKE ENTRY
+
+[Command_ShotgunStingAndMakeEntry]
+Text=SHOTGUN, STING, & MAKE ENTRY
+
+[Command_ShotgunLeaderThrowAndMakeEntry]
+Text=SHOTGUN, LEADER, & MAKE ENTRY
 
 [Command_OpenGasAndMakeEntry]
 Text=OPEN, GAS, & MAKE ENTRY

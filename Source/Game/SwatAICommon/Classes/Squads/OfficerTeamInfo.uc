@@ -41,6 +41,7 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadStackUpAction' );
 	SquadAI.addAbility( new class'SquadStackUpAndTryDoorAction' );
 	SquadAI.addAbility( new class'SquadCheckForTrapsAction' );
+	SquadAI.addAbility( new class'SquadMirrorAllAction' );
 	SquadAI.addAbility( new class'SquadMoveAndClearAction' );
 	SquadAI.addAbility( new class'SquadBangAndClearAction' );
 	SquadAI.addAbility( new class'SquadGasAndClearAction' );
@@ -838,6 +839,29 @@ function bool StackUpAndTryDoorAt(Pawn CommandGiver, vector CommandOrigin, Door 
 
 			PostCommandGoal(SquadStackUpAndTryDoorGoal);
 			return true;	// command issued
+		}
+		else
+		{
+			TriggerOtherTeamDoingBehaviorSpeech();
+		}
+	}
+
+	return false;
+}
+
+function bool MirrorAllAt(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
+{
+	local SquadMirrorAllGoal SquadMirrorAllGoal;
+
+	if(CanExecuteCommand())
+	{
+		if(!IsSubElement() || !IsOtherSubElementUsingDoor(TargetDoor))
+		{
+			SquadMirrorAllGoal = new class'SquadMirrorAllGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor);
+			assert(SquadMirrorAllGoal != None);
+
+			PostCommandGoal(SquadMirrorAllGoal);
+			return true; // command issued
 		}
 		else
 		{

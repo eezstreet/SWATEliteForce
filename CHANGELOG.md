@@ -7,9 +7,10 @@
  - Added Brettzie's M4A1! There are now two additional M4 variants (M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint)
  - Added the ability to take no weapon!
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
-- Sharing is caring!
+- New commands: Sharing is caring!
  - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
+ - The INVESTIGATE menu has been spruced up. You can now order your team to either MIRROR FOR TRAPS (replaces CHECK FOR TRAPS), MIRROR FOR CONTACTS, or MIRROR FOR ALL, which combines the two commands, but is slower.
 - New AI behavior!
  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
@@ -23,6 +24,10 @@
  - You can now order your officers to give you a grenade, lightstick, C2, optiwand, pepper spray or wedge.
  - SWAT AI now uses grenade launchers correctly.
  - SWAT AI can no longer do direct impact damage with grenade launchers.
+ - CHECK FOR TRAPS has been renamed to MIRROR FOR TRAPS and requires an optiwand to be equipped on an officer to use.
+ - MIRROR/SCAN DOOR has been renamed to MIRROR FOR CONTACTS
+ - Both MIRROR FOR TRAPS and MIRROR FOR CONTACTS have had their speed increased by about 20%.
+ - Added a new command: MIRROR FOR ALL. This command combines MIRROR FOR TRAPS and MIRROR FOR CONTACTS, but takes about twice as long.
  - Suspects will attempt to escape when compliant and not being watched. 
  - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
  - Suspects will remain in a barricaded state, even after firing upon a door.

@@ -263,6 +263,7 @@ enum ECommand
 	Command_Request_Wedge,
 	Command_Request_Lightstick,
 	Command_Request_C2,
+	Command_TrapsAndMirror,
 
     Command_Static,
 };
@@ -872,6 +873,7 @@ simulated function bool CommandUsesOptiwand(Command Command)
 		case Command_MirrorCorner:
 		case Command_MirrorUnderDoor:
 		case Command_Request_Optiwand:
+		case Command_TrapsAndMirror:
 			return true;
 	}
 	return false;
@@ -1060,11 +1062,12 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
       Status = Pad_Normal;
     } else if (CommandIsCleanSweep(Command)) {
       Status = Pad_Normal;
-    }
+    } else if (CommandUsesOptiwand(Command)) {
+		Status = Pad_Normal;
+	}
     else if  (
             Command.IsCancel
         ||  Command.SubPage != Page_None                        //command is an achor for a sub-page
-        ||  Command.Command == Command_CheckForTraps            // YUGE hack, and we should be able to execute this anyway
         ||  TeamCanExecuteCommand(Command, CurrentDoorFocus)
         )
         Status = Pad_Normal;
@@ -2181,6 +2184,17 @@ simulated function SendCommandToOfficers()
             }
             break;
 
+		case Command_TrapsAndMirror:
+			if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+			{
+				bCommandIssued = PendingCommandTeam.MirrorAllAt(
+					Level.GetLocalPlayerController().Pawn,
+					PendingCommandOrigin,
+					SwatDoor(PendingCommandTargetActor)
+					);
+			}
+			break;
+
         case Command_PickLock:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor)) {
               log("CheckForValidDoorSucceeded");
@@ -2675,6 +2689,7 @@ simulated protected function Actor GetPendingCommandTargetActor()
         case Command_ShotgunStingAndMakeEntry:
         case Command_ShotgunLeaderThrowAndClear:
         case Command_ShotgunLeaderThrowAndMakeEntry:
+		case Command_TrapsAndMirror:
             return GetDoorFocus();
 
         //cases where we prefer an open door

@@ -105,6 +105,22 @@ function DebugSeenPawns()
 	}
 }
 
+private function ReportTrapResultsToTeam()
+{
+	local ISwatDoor SwatTargetDoor;
+
+	SwatTargetDoor = UseOptiwandGoal(achievingGoal).TargetDoor;
+	assert(SwatTargetDoor != None);
+
+  if(SwatTargetDoor.IsBoobyTrapTriggered()) {
+    ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerExaminedAfterTrapWentOffSpeech();
+  } else if(SwatTargetDoor.IsBoobyTrapped()) {
+    ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerExaminedFoundTrapSpeech();
+  } else {
+    ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerExaminedFoundNoTrapSpeech();
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // State Code
@@ -133,13 +149,38 @@ latent function UseOptiwand()
 {
 	local int MirroringAnimChannel;
 
-	MirroringAnimChannel = m_Pawn.AnimPlayEquipment(kAPT_Normal, GetUseOptiwandAnimation(), OptiwandUseTweenTime);
+	if(!UseOptiwandGoal(achievingGoal).bTrapAndMirror)
+	{
+		MirroringAnimChannel = m_Pawn.AnimPlayEquipment(kAPT_Normal, GetUseOptiwandAnimation(), OptiwandUseTweenTime, , 1.2);
 
-	LookForPawnsUsingOptiwand(GetOptiwandViewOrigin());
+		LookForPawnsUsingOptiwand(GetOptiwandViewOrigin());
 
-	m_Pawn.FinishAnim(MirroringAnimChannel);
+		m_Pawn.FinishAnim(MirroringAnimChannel);
 
-	ReportSeeingPawns();
+		if(!UseOptiwandGoal(achievingGoal).bCheckingForTrap)
+		{
+			ReportSeeingPawns();
+		}
+		else
+		{
+			ReportTrapResultsToTeam();
+		}
+	}
+	else
+	{
+		MirroringAnimChannel = m_Pawn.AnimPlayEquipment(kAPT_Normal, GetUseOptiwandAnimation(), OptiwandUseTweenTime, , 0.6);
+
+		LookForPawnsUsingOptiwand(GetOptiwandViewOrigin());
+
+		Sleep(3.5);
+		ReportSeeingPawns();
+
+		//ReportSeeingPawns();
+
+		m_Pawn.FinishAnim(MirroringAnimChannel);
+
+		ReportTrapResultsToTeam();
+	}
 
 	if (m_Pawn.logAI)
 		DebugSeenPawns();

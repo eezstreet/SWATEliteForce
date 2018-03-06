@@ -2,7 +2,7 @@
 // CheckTrapsAction.uc - CheckTrapsAction class
 // The Action that causes the Officers to test and see if a door is trapped
 
-class CheckTrapsAction extends SwatCharacterAction;
+class MirrorAllAction extends SwatCharacterAction;
 ///////////////////////////////////////////////////////////////////////////////
 
 import enum AIDoorUsageSide from ISwatAI;
@@ -158,7 +158,7 @@ latent function UseMirror(ISwatDoor Target)
 {
 	assert(CurrentUseOptiwandGoal == None);
 
-	CurrentUseOptiwandGoal = new class'UseOptiwandGoal'(weaponResource(), vector(MirroringRotation), true, Target);
+	CurrentUseOptiwandGoal = new class'UseOptiwandGoal'(weaponResource(), vector(MirroringRotation), true, Target, true);
 	assert(CurrentUseOptiwandGoal != None);
 	CurrentUseOptiwandGoal.AddRef();
 
@@ -212,5 +212,5 @@ Begin:
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-    satisfiesGoal = class'CheckTrapsGoal'
+    satisfiesGoal = class'MirrorAllGoal'
 }
