@@ -72,6 +72,7 @@
  - Fixed SEF bug: Officers would look away from the door when ordered to Mirror Under Door.
  - Fixed SEF bug: Typo in AP ammo description
  - Fixed SEF bug: Wrong tooltip on entry selection on All Missions campaign
+ - Fixed SEF bug: Frequent crashes when using the mod in conjunction with the Frosty's Playhouse Snitch mod
  - Fixed TSS bug: Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
 
 ##### Map-Specific Changes #####

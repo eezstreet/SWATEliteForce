@@ -1448,6 +1448,26 @@ event bool ShouldShowSubtitles()
     return GuiConfig.bShowSubtitles;
 }
 #endif
+
+// NOTE: these stubs are so that Snitch mod doesn't crash --eez
+function ClearRoundsWon()
+{
+	// do nothing
+	log("WARNING: Deprecated function ClearRoundsWon() called");
+}
+
+function IncrementRoundsWon(int TeamID)
+{
+	// do nothing
+	log("WARNING: Deprecated function IncrementRoundsWon() called");
+}
+
+function UpdateRoundsWon(int TeamID)
+{
+	// do nothing
+	log("WARNING: Deprecated function UpdateRoundsWon() called");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
