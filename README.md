@@ -8,7 +8,7 @@ The gameplay itself has been drastically changed. You can now aim down the sight
 
 The equipment system is incredibly robust. There's over 40 pieces of new equipment, some of which was cut from the original game. You'll need to manage your team's weight and bulk. Too much equipment, and an officer will become too overencumbered. By carrying less weight, you and your officers will move faster, and by carrying less bulk, you and your officers will interact with things faster. In singleplayer, you can also pick your team's helmet and body armor, which protect you similar to how they did in multiplayer. The breaching tab has been removed - instead, there are now six tactical slots and the breaching equipment is available as other equipment. There's twice as many ammo options as in the original game, and the choices matter, since new factors like drag (how much momentum the bullet loses over distance) and ricochet potential (how likely a bullet is to bounce off a surface) vary. Grenades and wedges come in 3-packs, at the cost of consuming more weight and bulk. Less lethal equipment is truly less lethal, since tasers may incapacitate or even kill the elderly, those in poor health, or drug users, and beanbags, stingers and flashbangs can be hazardous at close range.
 
-The game is much more approachable as well, with a cleaned up user interface which functions well on modern widescreen resolutions. There's also an FOV slider and a mouse smoothing checkbox, preventing you from having to tinker with game files to accomplish the same thing. Perhaps most importantly, the game actually warns you when you've encountered a penalty. 
+The game is much more approachable as well, with a cleaned up user interface which functions well on modern widescreen resolutions. There's also an FOV slider and a mouse smoothing checkbox, preventing you from having to tinker with game files to accomplish the same thing. Perhaps most importantly, the game actually warns you when you've encountered a penalty.
 
 Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be used to train police officers in a similar vein to Canadian Forces: Direct Action. After peeking at the games files however, I uncovered a wealth of unused content and decided to contact the original developers about the game. Over time, the game became a much larger, insane overhaul. It's been called the best way to play the game by most people, and I'm proud of that. Perhaps you'll find it to be the same.
 
@@ -21,16 +21,17 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
 1. How to Install
 2. Changes, Summarized
 3. Frequently Asked Questions (FAQ)
-4. Known Issues
-5. Other Minor Changes
+4. Mod Compatibility
+5. Known Issues
+6. Other Minor Changes
   - AI
   - Gameplay
   - GUI
   - Equipment
   - Mission Changes
-6. How to play in Multiplayer
-7. Credits
-8. License
+7. How to play in Multiplayer
+8. Credits
+9. License
 
 
 # HOW TO INSTALL #
@@ -54,35 +55,35 @@ NOTE: You may run into an issue with the game not saving your settings, or throw
 
 The Stetchkov Syndicate and base game missions are compressed into one campaign. As in The Stetchkov Syndicate, some equipment will need to be unlocked.
 
-New campaign options! Now you will have a good reason to create more than one campaign...
+**New campaign options! Now you will have a good reason to create more than one campaign...**
  * A new EXTRA MISSIONS campaign. These are curated missions which have voice acting, full maps, and scripting, and they are designed to feel like part of the original game.
  * Now you can create an ALL MISSIONS campaign. This pulls all of the installed maps from your hard drive and makes them into a campaign, albeit without briefings. Great for use with an installed custom map pack, such as the Mega Map Pack!
  * ..and of course, the original SWAT 4 + TSS missions are a third campaign option.
  * PERMADEATH. There are two Permadeath options, for the extra challenge. AI Permadeath makes slain SWAT officers never come back, and Player Permadeath ends your campaign once you die.
  * CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath) campaign in multiplayer. Help your friends complete their campaigns!
 
-Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority. Civilians behave more realistically. 
+**Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority. Civilians behave more realistically.**
  * Suspects will also try to shoot at you as they're fleeing.
  * Suspects will try to escape, if they are compliant and the player is not watching.
  * Suspects may now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
  * Suspects have new equipment and may equip heavy armor.
  * Civilians may give up easier if they spot a suspect or a civilian being pepper sprayed, hit with beanbags, etc.
 
-Smarter Officer AI!
+**Smarter Officer AI!**
  * Upon restraining a target, SWAT officers will now report it to TOC automatically!
  * SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
  * SWAT officers can now take cover like suspects do (including leaning around corners)
  * SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
  * SWAT officers will drop a lightstick after clearing a room.
 
-Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.
+**Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.**
  * This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
 
-New secondary objectives.
+**New secondary objectives.**
  * Some maps have drug bags which may need to be collected to get a perfect score.
  * Incapacitated civilians may bleed out and die if they aren't reported to TOC in time, which impacts your score slightly.
 
-More equipment options.
+**More equipment options.**
  * Over 40 new pieces of equipment have been added, including shotguns, assault rifles, submachine guns, tactical gear, and armor.
  * The player can carry armor and all helmet options in singleplayer.
  * The breaching tab is removed and replaced with a sixth tactical slot.
@@ -91,7 +92,7 @@ More equipment options.
  * 3-packs have been added for wedges and grenades.
  * All secondary weapons equippable as primaries, and some primaries now equippable as secondaries.
 
-Equipment is also much more realistic.
+**Equipment is also much more realistic.**
  * Weapons can be aimed down the sights, for better accuracy, using the zoom key.
  * All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is. You can pack No Weapon/No Equipment in some slots to reduce weight and bulk.
  * You can now share some equipment with other players by pressing the melee key. You can also order your AI officers to give you a piece of equipment as well. Currently this only works for tactical tab items and lightsticks.
@@ -101,17 +102,17 @@ Equipment is also much more realistic.
  * All equipment has been modified to use real values.
  * Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
 
-Doors behave more realistically
+**Doors behave more realistically**
  * You can check the lock of a door without opening it by pressing the melee key.
  * Any shotgun can be used to breach any door.
  * A door may not be breached on the first shot of a shotgun. This depends on the material of the door. The M870 Breaching can breach any door in one shot.
  * When doors are breached with shotguns, they do not swing open like when breached with C2. You have to shoot the knob and then open the door.
  * Broken doors can now be closed and/or wedged.
 
-Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.
+**Commands can be issued using your voice. To enable this feature, tick 'Use Speech Recognition' in the Audio Options.**
  * See the SpeechCommands.md file for more information on how to issue orders using the Speech Command Interface.
 
-Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.
+**Commands are easier to give with a new Graphic Command Interface with lots of submenus instead of a single long list.**
  * You can now issue BREACH commands on unlocked doors.
  * You can now pick which style of BREACH you would like - either C2 & CLEAR or SHOTGUN & CLEAR
  * New CHECK FOR TRAPS command allows your AI companions to check doors for those all-important traps.
@@ -119,21 +120,21 @@ Commands are easier to give with a new Graphic Command Interface with lots of su
  * Lightsticks are broken into two commands: DROP LIGHTSTICK (where you order the nearest AI officer to drop a lightstick at their feet) and MARK WITH LIGHTSTICK (where you order an AI to drop a lightstick at what you're aiming at)
  * New RESTRAIN ALL, SECURE ALL, DISABLE ALL and SEARCH AND SECURE commands order officers to secure all targets near the player.
 
-Harsher penalties for tougher gameplay.
+**Harsher penalties for tougher gameplay.**
  * Hostages and suspects that become incapacitated or killed now need to be reported to TOC, otherwise there is a penalty.
  * AI controlled officers can now trigger Unauthorized Use of Force when they use C2.
  * Snipers can now trigger Unauthorized Use of Force and Unauthorized Use of Deadly Force.
- ** The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
- ** A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
+  * The game seems to take some wild liberties as to what qualifies as a passing mission. You could shoot all of the suspects illegally (in some cases without getting any penalty) on Food Wall on Hard and still beat it. You would be FIRED if you did this in real life.
+  * A person being incapacitated is a big deal, and an ambulance would need to be ordered. Failing to disclose this could put their lives in jeopardy, so it makes sense for this to be a penalty. It did this for officers though (?) which I found odd.
 
-Important QOL (quality-of-life) and playability features that are essential to playing the game.
+**Important QOL (quality-of-life) and playability features that are essential to playing the game.**
  * There is an FOV slider and Mouse Smoothing disable checkbox. Also, widescreen resolutions are available in the menu and are (mostly) free of bugs.
  * Option to disable the initial dispatch briefings.
  * The game will tell you when you incur a penalty or complete an objective.
  * Wedges, grenades, lightsticks and C2 all show how many pieces you have left, while you have them equipped.
  * You can now assign loadout tabs (or whole loadouts) to one officer, a team, or the whole element.
 
-Multiplayer improvements!
+**Multiplayer improvements!**
  * Includes a fully-functional admin mod, with WebAdmin capabilities.
  * Snipers are now available in multiplayer.
  * New kinds of voting: Next Map, Start Map, and End Current Map. You can now choose to disable certain kinds of votes, instead of disabling all voting. There are other special options added regarding voting.
@@ -144,24 +145,26 @@ Multiplayer improvements!
 
 # FREQUENTLY ASKED QUESTIONS (FAQ) #
 
- * How do I install the mod?
- * How do I use the speech recognition?
- * What's the difference between "MARK WITH LIGHTSTICK" and "DROP LIGHTSTICK"?
- * How can I check for traps in multiplayer?
- * How can I play in Multiplayer? Are there any servers?
- * How can I report a bug?
- * Why can't I play in Barricaded Suspects, VIP Escort, Smash and Grab, or Rapid Deployment?
- * Are you going to add AI officers in CAREER CO-OP?
- * Does this mod work with other mods?
- * I played in singleplayer, but there's very few missions (1 or 2). Why?
- * Are there more missions for Extra Missions coming out?
- * I can't find X piece of equipment! Did you remove it?
- * Breaching doors with the shotgun doesn't work!
- * Beanbags don't work!
- * How do I disarm a trap?
- * Are you going to add ballistic shields?
- * Are you going to add leaning while moving?
- * Disabling Ironsights Zoom is not working!
+## CONTENTS ##
+
+ * **How do I install the mod?**
+ * **How do I use the speech recognition?**
+ * **What's the difference between "MARK WITH LIGHTSTICK" and "DROP LIGHTSTICK"?**
+ * **How can I check for traps in multiplayer?**
+ * **How can I play in Multiplayer? Are there any servers?**
+ * **How can I report a bug?**
+ * **Why can't I play in Barricaded Suspects, VIP Escort, Smash and Grab, or Rapid Deployment?**
+ * **Are you going to add AI officers in CAREER CO-OP?**
+ * **Does this mod work with other mods?**
+ * **I played in singleplayer, but there's very few missions (1 or 2). Why?**
+ * **Are there more missions for Extra Missions coming out?**
+ * **I can't find X piece of equipment! Did you remove it?**
+ * **Breaching doors with the shotgun doesn't work!**
+ * **Beanbags don't work!**
+ * **How do I disarm a trap?**
+ * **Are you going to add ballistic shields?**
+ * **Are you going to add leaning while moving?**
+ * **Disabling Ironsights Zoom is not working!**
 
 ## HOW DO I INSTALL THE MOD?
 Please read the How to Install section of this README. :)
@@ -172,14 +175,14 @@ If your system meets the requirements, the 'Use Speech Recognition' checkbox wil
 You can also bind a key to toggle the functionality ingame, which is good when you're speaking for a Let's Play, for example.
 A list of trigger words is provided, starting with Patch 5.1. See SpeechCommands.md for more information.
 
-IF SPEECH RECOGNITION DOES NOT WORK (CHECKBOX GREYED OUT):
+**IF SPEECH RECOGNITION DOES NOT WORK (CHECKBOX GREYED OUT):**
 
-- What language is your operating system? *By default, the game will only work with an English (United States) version of Windows.* 
+- What language is your operating system? *By default, the game will only work with an English (United States) version of Windows.*
 In order to support more languages, you will need to edit your SEF/System/SpeechCommandGrammar.xml. Near the top of the file will be a line that reads like this:
 ```
 <GRAMMAR LANGID="409">
 ```
-You will want to modify this line so that it uses a number which corresponds to your operating system (NOT THE GAME!). 
+You will want to modify this line so that it uses a number which corresponds to your operating system (NOT THE GAME!).
 The list of languages can be found here: https://msdn.microsoft.com/en-us/library/office/hh361638
 So for instance, if you have a Swedish operating system, you will want to change it so the line looks like this:
 ```
@@ -191,17 +194,17 @@ So for instance, if you have a Swedish operating system, you will want to change
 - Still not working? Try installing the Speech Recognition Improvement mod, and see if that mod works.
 
 
-IF SPEECH RECOGNITION DOES NOT WORK (COMMAND NOT RECOGNIZED, OR MICROPHONE NOT WORKING)
+**IF SPEECH RECOGNITION DOES NOT WORK (COMMAND NOT RECOGNIZED, OR MICROPHONE NOT WORKING)**
 
 - Check to make sure that you did not disable the speech recognition with the keybind. (The key is not bound to anything by default)
 
-- Check to make sure that the microphone works in Windows. 
+- Check to make sure that the microphone works in Windows.
 
 - Check to make sure that the microphone works in the game (try using the built-in VOIP feature and see if your friends can hear you in a multiplayer game)
 
 - Make sure there is no background noise, like a television. The game may misinterpret it as being your voice.
 
-- Make sure you are speaking clearly. 
+- Make sure you are speaking clearly.
 If you are using the language fix from the above, you will want to speak with a bad accent as much as possible. Really roll those Rs if you're using a Spanish OS.
 If you aren't, try to talk like you're a newscaster or like you're having a conversation with someone on the phone and they aren't understanding you.
 Also note that some things sound similar. For example, "Cuff her" sounds a lot like "cover".
@@ -231,23 +234,10 @@ Personally I would recommend playing these PvP modes on the original SWAT 4, non
 Possibly.
 
 ## DOES THIS MOD WORK WITH OTHER MODS?
-Here's a good list of mods that will generally work out of the box, without any kind of issues:
-- Any kind of custom map, including the Mega Map Pack
-- Any kind of added custom skin
-- Any kind of texture mod, like SWAT 4: GEM
-
-Here's a good list of mods that will work, with tinkering:
-- The Mega Map Campaign Mod. This will work if you don't include the changes to the System folder. The maps themselves will work in an All Missions campaign without further modding.
-- SWAT 4: Remake. The weapons can be merged into SEF, but this requires some modding knowledge. They have a guide somewhere about merging the two mods.
-- Any kind of custom weapon model mod, like Brettskie's M4 mod. Again, this will require some modding knowledge but it's possible to merge them.
-
-Here's a good list of mods that won't work, even with tinkering:
-- Any kind of code mod (11-99 enhancement mod, SSF, ...)
-- SAS mod; the weapons from that mod are included with SEF though.
-- Speech Recognition Improvement; the Speech Recognition feature is available but not all of the commands from that mod are present.
+Please refer to the "Mod Compatibility" section of the README.
 
 ## I PLAYED IN SINGLEPLAYER, BUT THERE'S VERY FEW MISSIONS (1 OR 2). WHY?
-You most likely selected the Extra Missions path when you started the career. There's three options: Extra Missions (missions added by the mod), SWAT 4 + TSS (the original game's missions), and All Missions (all missions from your hard drive, with no equipment progression). 
+You most likely selected the Extra Missions path when you started the career. There's three options: Extra Missions (missions added by the mod), SWAT 4 + TSS (the original game's missions), and All Missions (all missions from your hard drive, with no equipment progression).
 
 ## ARE THERE MORE MISSIONS FOR EXTRA MISSIONS COMING OUT?
 Yes.
@@ -281,6 +271,47 @@ Moving and leaning requires hundreds of animations to be added to the game, due 
 
 ## DISABLING IRONSIGHTS ZOOM IS NOT WORKING!
 If you are ingame and you check "Disable Ironsights Zoom" then it won't work until you change your weapon, because of how the code works. Just change to a different piece of equipment and change back.
+
+# MOD COMPATIBILITY #
+
+SWAT: Elite Force is compatible with skins and custom maps out of the box, without modifications. It is not compatible with total conversions or new weapon mods. It has some compatibility issues with admin mods.
+To make this process more painless, I've gone ahead and listed each of the mods on Moddb and elsewhere, and provided the compatibility status.
+
+**Fully Compatible; no special installation steps:**
+ * SWAT 4 ENB / Reshade
+ * Elite Tactical Force Map Pack
+ * Mega Map Pack. (DO NOT install the mod, just the maps)
+ * GSF Map Pack
+ * ANY custom officer skin mod.
+
+**Partially Compatible; some assembly required or there are bugs:**
+ * SWAT 4 Graphical Enrichment Mod (GEM). (Not usable in multiplayer)
+ * SWAT 4 Retextured Mod. (Not usable in multiplayer)
+ * SWAT 4 Music Overhaul (Not usable in multiplayer)
+ * Snitch Mod. (It can crash on occasion)
+ * LEVEL 13. (Only the maps are supported.)
+ * BFHL Mod. (Can be installed, but requires a great deal of patience and use of the editor to do so)
+ * GSK Character Models (see above)
+
+
+**Not applicable; SEF includes the features of these mods and/or improves upon them:**
+ * Brettzie's M4
+ * SWAT 4 Widescreen Mod
+ * Gez Admin Mod
+ * Markmods Admin Mod
+ * Mega Map Mod
+
+
+**Not compatible; SEF does not work with these mods at all and cannot possibly function with:**
+ * SWAT 4 Remake Mod
+ * SWAT 4 1.2 Mod
+ * Code 11
+ * 11-99 Enhancement Mod
+ * HSM Enhancements
+ * Sheriff's Special Forces (SSF)
+ * SAS Mod (SEF includes many of its weapons)
+ * Speech Recognition Improvement (SEF includes many of its features)
+
 
 # KNOWN ISSUES #
 
@@ -606,14 +637,14 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- The training mission is now usable again in the main menu, and is good for testing weapons as well as learning the game.
 	- All of the onscreen instructions have been updated to reflect the changes in the mod, and in The Stetchkov Syndicate expansion.
 	- Removed weapon pickups at the beginning.
-	- Made the cabinets at the beginning interactable. You can now use them to swap for a new weapon. 
+	- Made the cabinets at the beginning interactable. You can now use them to swap for a new weapon.
 
 * Fairfax Residence
 	- CAUTION! May contain traps! (Evidence shows that they were cut from the original game on this mission)
 	- ELITE Difficulty: Always spawns a trap and the accomplice.
 	- Restored a cut conversation between Lead and TOC that triggers when tripping a trap
 	- Restored a cut conversation between Lead and TOC that triggers when arresting the accomplice
-	- Restored a cut conversation between Jackson and Fields 
+	- Restored a cut conversation between Jackson and Fields
 	- Gladys Fairfax is Fearless
 	- Gladys Fairfax has a chance to die from the taser
 	- Melinda Kline has a very small chance to die from the taser
@@ -737,49 +768,49 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 ### Score ###
 
 #### BONUSES ####
-- Mission Completed: Awarded when all of the mission objectives are completed. 
+- Mission Completed: Awarded when all of the mission objectives are completed.
  * Points: 40
-- Suspects Arrested: Bonus based on the number of suspects secured. 
+- Suspects Arrested: Bonus based on the number of suspects secured.
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
-- Suspects Incapacitated: Bonus based on the number of suspects incapacitated and secured. 
+- Suspects Incapacitated: Bonus based on the number of suspects incapacitated and secured.
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 13 (65% of 20).
-- Suspects Neutralized: Bonus based on the number of suspects neutralized. 
+- Suspects Neutralized: Bonus based on the number of suspects neutralized.
  * Points: (Number of suspects arrested)/(Total Number of suspects) x 4 (20% of 20).
 - All Civilians Unharmed: Bonus based on the number of civilians that have been uninjured, and not DOA.
  * Points: (Number of civilians unharmed)/(Total number of civilians) x 10
-- No Officers Downed: Bonus based on the number of incapacitated officers. 
+- No Officers Downed: Bonus based on the number of incapacitated officers.
  * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
-- Player Uninjured: Bonus based on the number of players that sustained no injuries during a mission. 
+- Player Uninjured: Bonus based on the number of players that sustained no injuries during a mission.
  * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
-- Report Status to TOC: Bonus based on the number of reports to TOC. 
+- Report Status to TOC: Bonus based on the number of reports to TOC.
  * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
-- All Evidence Secured: Bonus based on the number of evidence collected. 
+- All Evidence Secured: Bonus based on the number of evidence collected.
  * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
 
 #### PENALTIES: ####
-- Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+- Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges.
  * Points: -5 per suspect.
-- Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+- Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges.
  * Points: -20 per suspect.
-- Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
+- Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges.
  * Points: -20 per hostage.
-- Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission. 
+- Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission.
  * Points: -50 per hostage.
-- Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire. 
+- Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire.
  * Points: -10 per officer.
-- Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator. 
+- Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator.
  * Points: -25 per officer.
-- Tased a fellow officer: Given when an officer uses a taser another officer. 
+- Tased a fellow officer: Given when an officer uses a taser another officer.
  * Points: -5 per infraction.
-- Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it. 
+- Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it.
  * Points: -10 per trap.
-- Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area. 
+- Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area.
  * Points: -5 per suspect.
-- Failed to report a downed officer: Given when a downed officer is not reported to TOC: 
+- Failed to report a downed officer: Given when a downed officer is not reported to TOC:
  * Points: -5 per downed officer
-- Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: 
+- Failed to report a downed suspect: Given when a downed suspect is not reported to TOC:
  * Points: -5 per downed suspect
-- Failed to report a downed hostage: Given when a downed or DOA hostage is not reported to TOC: 
+- Failed to report a downed hostage: Given when a downed or DOA hostage is not reported to TOC:
  * Points: -5 per downed hostage
 
 # HOW TO PLAY IN MULTIPLAYER #
@@ -803,26 +834,34 @@ Join a public game, or your friend's game. That's all you really need to do.
 
 ### TROUBLESHOOTING ###
 **NOTE: If you have the mod installed incorrectly, LaunchSEF.exe won't work!**
-Make sure you have the Microsoft Visual Studio 2017 Redistributable. It is required to run LaunchSEF.exe and other applications. Download it here: 
 
-64-bit operating system: https://go.microsoft.com/fwlink/?LinkId=746572
-32-bit operating system: https://go.microsoft.com/fwlink/?LinkId=746571
+Make sure you have the Microsoft Visual Studio 2017 Redistributable. It is required to run LaunchSEF.exe and other applications. Download it here:
 
-If GameRanger "aborts" when it launches, you may have some application (antivirus?) interfering with LaunchSEF.exe. If this happens, copy all .exe and .dll files from ContentExpansion/System into SEF/System and point GameRanger to the Swat4X.exe that is in SEF/System. This is kind of an ultra last resort option however!
+* **64-bit Windows:** https://go.microsoft.com/fwlink/?LinkId=746572
+* **32-bit Windows:** https://go.microsoft.com/fwlink/?LinkId=746571
+
+If GameRanger "aborts" when it launches, you may have some application (antivirus?) interfering with LaunchSEF.exe. If this happens, copy all .exe and .dll files from `ContentExpansion/System` into `SEF/System` and point GameRanger to the Swat4X.exe that is in `SEF/System`. This is kind of an ultra last resort option however!
 
 ## Traditional Method (TCP/IP) ##
 SWAT: Elite Force v4 was the first version of this mod to allow for multiplayer play. v5 introduced Campaign CO-OP and allowed for publishing of games to Swat4Stats without a CD-key (removing DRM that GOG didn't).
 
-If you want to join a game:
-If the game you want is not hosted via LAN, then you will need the SWAT4Stats server browser plugin. It's available at http://swat4stats.com - make sure you get the TSS version. 
+### If you want to join a game: ###
+
+If the game you want is not hosted via LAN, then you will need the SWAT4Stats server browser plugin. It's available at http://swat4stats.com - make sure you get the TSS version.
+
 After it is installed, your server list will show all of the servers, including the ones that are on different mods. Just join the one you want. There are a number of 24/7 SEF servers out there.
+
 If the game you want is hosted via LAN, or you cannot find the server in the list, you will need the host's external IP address (have the host look this up on http://myexternalip.com). You can then join the game from the Join Game menu using the IP address.
 
-If you want to host a game:
+### If you want to host a game ###
+
 First, you will need to open some ports on your router: 10480 - 10483, TCP/UDP. If you aren't sure how to do this, the following article explains it well: https://www.howtogeek.com/66214/how-to-forward-ports-on-your-router/
-OPTIONAL: If you want your game to be publicly visible on the master server list (on swat4stats), you will need to install the Swat4Stats server browser plugin, available at http://swat4stats.com - You'll also want to set your game to be "Internet" and not "LAN" for this to work.
+
+**OPTIONAL:** If you want your game to be publicly visible on the master server list (on swat4stats), you will need to install the Swat4Stats server browser plugin, available at http://swat4stats.com - You'll also want to set your game to be "Internet" and not "LAN" for this to work.
+
 If you aren't playing an Internet/Swat4Stats enabled game, you will need your external IP address for other players to connect. You can look this up on http://myexternalip.com
 Lastly, you need to determine what type of game you want to play. Regular CO-OP is handled through the Host Game menu ingame, but Campaign CO-OP is done through the Career menu - select a campaign and hit Career CO-OP. The "Equipment" panel will change to a "Settings" panel where you can configure a password, etc just like in Host Game.
+
 Once you have selected your map settings and have started the server at least once, you can quickly launch a server (without going ingame) by using the Dedicated Server.bat file. You can then join the server from the Join Server menu.
 
 ## Admin System ##
@@ -834,15 +873,15 @@ Admin Roles should be assigned through the Host Game menu, when setting up the s
 
 Additionally, SEF also has an MOTD system. The only way (currently) to configure this is through the use of editing INI files. Open SEF/System/Swat4XDedicatedServer.ini. In the section titled `[SwatGame.SwatAdmin]` (at the bottom), add your MOTD lines by the following:
 
-```
+```ini
 AutoActions=(Delay=NumSeconds,ExecuteText="Command")
 ```
 
-Replace NumSeconds with the number of seconds (decimal number) before the command will be executed, and "Command" with the command text. The command text can be "print " followed by a message to print a string to chat, or "ac " followed by an admin command to execute that command.
+Replace `NumSeconds` with the number of seconds (decimal number) before the command will be executed, and `"Command"` with the command text. The command text can be "print " followed by a message to print a string to chat, or "ac " followed by an admin command to execute that command.
 
 As a trivial example, this will print three lines of text every 10 minutes:
 
-```
+```ini
 AutoActions=(Delay=600.0,ExecuteText="[c=FFFFFF]Welcome to my server![\\c]")
 AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]I hope you have fun![\\c]]")
 AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
@@ -852,47 +891,53 @@ WebAdmin defaults to port 6000. You can access it in a web browser by going to: 
 On the host machine, this can be reached from http://127.0.0.1:6000/
 
 # CREDITS/THANK-YOUS #
-Irrational Games and Sierra for the game.
-KevinL for a tip about Voting Screen.
-BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
-Sebasien NovA for his modified SwatEd.exe
-Ryo Ohki for a tip about P90 and SAW animations
-Dc247 for typo corrections in this document
-MulleDK19 for help with the Speech Recognition feature
-Yasuntei for spotting a typo
-FrancisSwat for being gracious in giving us the SAS mod assets.
-Hellfire Entertainment for being gracious in giving us the SWAT4 1.2 mod assets.
+* Irrational Games and Sierra for the game.
+* BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
+* Sebastien NovA for his modified SwatEd.exe
+* FrancisSwat for being gracious in giving us the SAS mod assets.
+* Hellfire Entertainment for being gracious in giving us the SWAT4 1.2 mod assets.
+* KevinL for a tip about Voting Screen.
+* Ryo Ohki for a tip about P90 and SAW animations
+* Dc247 for typo corrections in this document
+* MulleDK19 for help with the Speech Recognition feature
+* Yasuntei for spotting a typo
+* SS for hosting EU servers
+* Audio for help hosting NA servers
+* Gez for producing the Gez admin mod, which I referenced a lot.
+* RUNEPATRIARCH for finding some unused audio
 
-Briefing Voice-Over: LethalFeline (go check out his YouTube channel!)
-Dispatch Voice-Over: Kita Nash (go check out her YouTube channel!)
-Adam Moretti Voice-Over: GrimithM (go check out his YouTube channel!)
+**Briefing Voice-Over:** LethalFeline (go check out his YouTube channel!)
 
-ELITE SUPPORTERS
+**Dispatch Voice-Over:** Kita Nash (go check out her YouTube channel!)
+
+**Adam Moretti Voice-Over:** GrimithM (go check out his YouTube channel!)
+
+## ELITE SUPPORTERS ##
 These people have generously donated money to Elite Force via Patreon. If you are interested in helping out, you can find our Patreon page here: https://www.patreon.com/user?u=4885526
-TheTCREngineer
-Jake Robinson/sandman332
-Evan Derickson
-Mad Max
-Jordan Harrison
 
-PUBLICITY
-GOG.com (Ran a very nice overview of our mod, you should check it out!)
-PC Power Play (Also ran a nice overview of the mod)
-GamingPastime did an excellent review of v5.3.
-StrawberryClock (Streamer)
+* TheTCREngineer
+* Jake Robinson/sandman332
+* Evan Derickson
+* Mad Max
+* Jordan Harrison
 
-WE ARE: ELITE SQUAD
-eezstreet: Team Lead, Programming, Map Editing
-Jose21Crisis: Programming, Weapons Analysis
-kevinfoley: Programming, Model Editing
-Rangar: Music (Composition), Textures
-TheTCREngineer: Models
-sandman332: Programming
+## PUBLICITY ##
+* GOG.com ran a very nice overview of our mod, you should check it out!
+* PC Power Play also ran a nice overview of the mod
+* GamingPastime did an excellent review of v5.3.
 
-RETIRED ELITE SQUAD
+## WHO WE ARE: ELITE SQUAD ##
+* eezstreet: Team Lead, Programming, Map Editing
+* Jose21Crisis: Programming, Weapons Analysis
+* kevinfoley: Programming, Model Editing
+* Rangar: Music (Composition), Textures
+* TheTCREngineer: Models
+* sandman332: Programming
+
+## RETIRED ELITE SQUAD ##
 mezzokoko: Programming
 
-.. if there is anyone I missed, feel free to send me a message and this will be corrected.
+*... if there is anyone I missed, feel free to send me a message on Moddb, and this will be corrected. --eezstreet*
 
 # LICENSE #
-This software is licensed under the GNU General Public License v2. You can read it in more detail in LICENSE
+This software is licensed under the GNU General Public License v2. You can read it in more detail in the LICENSE file. The source code is freely available at https://github.com/eezstreet/SWATEliteForce
