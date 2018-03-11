@@ -700,13 +700,14 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- Made loading screen text consistent with other missions ("732 Gridley Street, Red Library Inc." -> "732 Gridley St., Red Library Inc.")
 	- Unlocks the Colt Accurized Rifle
 * Seller's Street Auditorium
+	- Restored a cut 911 call that was mistakenly disabled in the vanilla game.
 	- All of the static drug bags were removed. They have been replaced with drug evidence which can be collected.
 	- Andrew Norman is Insane and has a very small chance to die from the taser
 	- Made loading screen text consistent with other missions ("The Sellers Street Auditorium, 1801 Sellers St" -> "1801 Sellers St., The Sellers Street Auditorium")
 	- Unlocks the UMP 45 and the MP5SSD6
 * DuPlessi Wholesale Diamonds
 	- No changes
-	- Unlocks the Grenade Launcher
+	- Unlocks the HK69 Grenade Launcher
 * Children of Taronne Tenement
 	- CAUTION! May contain traps.
 	- All civilians are Fearless

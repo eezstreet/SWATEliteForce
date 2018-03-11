@@ -93,6 +93,7 @@
   - More enemies spawn on Hard and Elite difficulties.
   - Some doors may be randomly locked or opened.
  - Sellers St. Auditorium
+  - Restored a cut 911 call that present, but could not be played due to a designer error
   - Fixed bag of drugs that was spawning through the couch.
   - Restored objective: Neutralize Andrew Norman
  - Department of Agriculture
