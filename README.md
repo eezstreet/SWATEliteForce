@@ -678,7 +678,6 @@ If an equipment is not listed as unlocked by a mission, it is unlocked by defaul
 	- Both entryway doors now correctly have MAKE ENTRY commands on them.
 	- Locked a bunch of doors
 	- The residents (elderly) have a very high chance of dying from a taser
-	- Removed objective: Rescue Lionel McArthur
 	- Fixed a bug with the suspects where they were holding the wrong weapon (code calls for M249 SAW, actual model displayed is M4 Carbine, and behavior makes sense in this context)
 	- Made loading screen text consistent with other missions ("Our Sisters of Mercy Halfway House, 796 Newbury St." -> "796 Newbury St., Our Sisters of Mercy")
 	- Unlocks the Pepperball Gun and the Suppressed Browning Hi-Power

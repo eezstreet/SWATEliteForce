@@ -87,13 +87,20 @@
  - Red Library Offices
   - Fixed TSS visual glitch where sometimes enemies would wear sunglasses and a gas mask at the same time
   - Suspects can wear hats like the loading screen suggests they're able to
+ - Our Sisters of Mercy Hostel
+  - Restored objective: Rescue Lionel McArthur
  - Northside Vending and Amusements
   - More enemies spawn on Hard and Elite difficulties.
   - Some doors may be randomly locked or opened.
  - Sellers St. Auditorium
   - Fixed bag of drugs that was spawning through the couch.
+  - Restored objective: Neutralize Andrew Norman
+ - Department of Agriculture
+  - Restored objective: Rescue Rita Winston
  - DuPlessis Diamonds
   - Fixed double doors that were able to be locked
+ - Fresnal St. Station
+  - Restored objective: Neutralize Anton Georgiev
  - Old Granite Hotel
   - More suspects and civilians spawn on the first floor.
   - Spawning areas are split up.
