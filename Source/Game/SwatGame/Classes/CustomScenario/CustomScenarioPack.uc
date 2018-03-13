@@ -2,7 +2,24 @@ class CustomScenarioPack extends Core.Object
     config(_DynamicallyDetermined_)     //this is a dummy value - instances never use the default config file
     perObjectConfig;                    //we specify a section name in calls to Save/ResetConfig()
 
+/*
+ *	SWAT: Elite Force Scenario Pack Versions
+ *
+ *	Version 0: Vanilla game custom scenario packs
+ *	Version 1: Elite Force custom scenario packs (base)
+ */
+const LatestPackVersion = 1;
+var config localized int PackVersion;
+
+// Added in version 0
 var config localized array<string> ScenarioStrings;
+
+// Added in version 1
+var config bool UseProgression;
+var config bool UseGearUnlocks;
+var config array<class<Actor> > FirstEquipmentUnlocks;
+var config array<class<Actor> > SecondEquipmentUnlocks;
+var config array<class<Actor> > DisabledEquipment;
 
 function Reset(
         string PackName,
@@ -14,9 +31,9 @@ function Reset(
 
 //loads custom scenario data into the supplied CustomScenario
 function LoadCustomScenarioInPlace(
-        CustomScenario Scenario, 
-        string ScenarioString, 
-        string PackName, 
+        CustomScenario Scenario,
+        string ScenarioString,
+        string PackName,
         string Path)
 {
     local string Section;
@@ -36,19 +53,19 @@ function LoadCustomScenarioInPlace(
     }
 
     ScenarioStrings[Index] = ScenarioString;
-    
+
     Section = "Scenario_"$ComputeMD5Checksum(ScenarioString);
 
     Scenario.ResetConfig(Section, Path$PackName);
-    
+
     Scenario.ScenarioName = ScenarioString;
     Scenario.PackName = PackName;
 }
 
 function SaveCustomScenario(
-        CustomScenario Scenario, 
-        string ScenarioString, 
-        string PackName, 
+        CustomScenario Scenario,
+        string ScenarioString,
+        string PackName,
         string Path)
 {
     local string Section;
@@ -59,15 +76,22 @@ function SaveCustomScenario(
     Index = GetScenarioIndex(ScenarioString);
 
     ScenarioStrings[Index] = ScenarioString;
-    
+
+	log("Saving Custom Scenario: "$Path$PackName);
     SaveConfig("Pack_Catalog", Path$PackName);
     Section = "Scenario_"$ComputeMD5Checksum(ScenarioString);
     Scenario.SaveConfig(Section, Path$PackName);
 }
 
+function SavePack(string Path, string PackName)
+{
+	log(self$"...SavePack("$Path$", "$PackName$")");
+	SaveConfig("Pack_Catalog", Path$PackName);
+}
+
 function DeleteCustomScenario(
-        string ScenarioString, 
-        string PackName, 
+        string ScenarioString,
+        string PackName,
         string Path)
 {
     local int Index;

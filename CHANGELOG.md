@@ -15,6 +15,11 @@
  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
+- Upgraded Quick Mission Maker!
+ - Have you ever wanted to create your own campaign path? Perhaps with custom levels? Now you can!
+ - You can now use custom maps and write your own briefings for the Quick Mission Maker.
+ - Additionally, you can create a progression and unlock system for your custom campaign.
+ - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
 
 #### ALL CHANGES ####
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
@@ -109,6 +114,11 @@
   - More enemy spawn points (so as to be less predictable)
   - More enemies spawn on Hard and Elite difficulties.
   - Suspects are more likely to wear heavy armor on Hard and Elite difficulties.
+
+##### Quick Mission Maker Changes #####
+ - The INVALID stamp over the briefing will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the timeline will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the Civilians and Suspects portion will no longer display if you have "Use Campaign Settings" for Hostages or Suspects, respectively, checked.
 
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)

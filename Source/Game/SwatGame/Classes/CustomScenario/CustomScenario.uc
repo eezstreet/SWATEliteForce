@@ -4,6 +4,16 @@ class CustomScenario extends Core.Object
 
 import enum EnemySkill from SwatAICommon.ISwatEnemy;
 
+/*
+ *	SWAT: Elite Force Custom Scenario Versions
+ *
+ *	Version 0: Base Game
+ *	Version 1: Elite Force (base)
+ */
+var config int ScenarioVersion;
+
+////////////////////////////////////////
+// Added in Version 0
 var String ScenarioName;
 var String PackName;
 
@@ -60,6 +70,15 @@ var config string           EnemyBackupWeaponSpecific;
 var config string           EnemySkill;
 
 var config localized string Notes;    //localized for any shipping custom scenarios
+
+////////////////////////////////////////
+// Added in Version 1
+var config bool UseCustomBriefing;
+var config localized string CustomBriefing;
+var config bool DisableBriefingAudio;
+var config bool DisableEnemiesTab;
+var config bool DisableHostagesTab;
+var config bool DisableTimelineTab;
 
 var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 

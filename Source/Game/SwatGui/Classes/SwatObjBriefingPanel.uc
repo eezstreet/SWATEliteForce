@@ -22,7 +22,7 @@ function InternalOnShow()
     local MissionObjectives theObjectives;
     local int i;
     local string displayString;
-    
+
     // display objectives
     theObjectives = GC.CurrentMission.Objectives;
 
@@ -36,14 +36,21 @@ function InternalOnShow()
     }
 
     MyObjectivesBox.SetContent( displayString );
-        
+
 
     // display briefing
     displayString = "";
-    for( i = 0; i < GC.CurrentMission.BriefingText.Length; i++ )
-    {
-        displayString = displayString $ GC.CurrentMission.BriefingText[i] $ "|";
-    }
+	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.UseCustomBriefing)
+	{
+		displayString = GC.CurrentMission.CustomScenario.CustomBriefing;
+	}
+	else
+	{
+		for( i = 0; i < GC.CurrentMission.BriefingText.Length; i++ )
+	    {
+	        displayString = displayString $ GC.CurrentMission.BriefingText[i] $ "|";
+	    }
+	}
 
     MyBriefingBox.SetContent( displayString );
 }
@@ -51,7 +58,8 @@ function InternalOnShow()
 event Show()
 {
     Super.Show();
-    MyInvalidImage.SetVisibility( GC.CurrentMission.CustomScenario != None );
+
+	MyInvalidImage.SetVisibility(GC.CurrentMission.CustomScenario != None && !GC.CurrentMission.CustomScenario.UseCustomBriefing && !GC.CurrentMission.CustomScenario.UseCampaignObjectives);
 }
 
 defaultproperties
