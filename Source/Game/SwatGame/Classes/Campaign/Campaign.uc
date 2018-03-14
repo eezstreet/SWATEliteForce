@@ -21,7 +21,10 @@ var config bool RedOneDead; // Whether Red One is dead.
 var config bool RedTwoDead; // Whether Red Two is dead.
 var config bool BlueOneDead; // Whether Blue One is dead.
 var config bool BlueTwoDead; // Whether Blue Two is dead.
+var config bool CustomCareerPath; // Whether this career is a Quick Mission Maker career
+var config string CustomCareer; // The pack associated with this Quick Mission Maker career
 
+// Stats
 var(Stats) config int MissionsCompleted; // The number of missions that have been successfully completed
 var(Stats) config int TimesIncapacitated; // Number of times that you have been incapacitated in this campaign
 var(Stats) config int TimesInjured; // Number of times that you have been injured in this campaign
@@ -146,6 +149,8 @@ function PreDelete()
 	RedTwoDead = false;
 	BlueOneDead = false;
 	BlueTwoDead = false;
+	CustomCareerPath = false;
+	CustomCareer = "";
 	MissionsCompleted = 0;
 	TimesIncapacitated = 0;
 	TimesInjured = 0;

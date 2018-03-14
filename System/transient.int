@@ -575,7 +575,7 @@ Caption=KEY:
 Caption=NOTES
 
 [CSC_pnl_notes_LBL_NOTES]
-Caption=NOTES
+Caption=TEXT
 
 [CSC_pnl_notes_TXT_NOTES]
 Hint=Enter a note about the custom mission.

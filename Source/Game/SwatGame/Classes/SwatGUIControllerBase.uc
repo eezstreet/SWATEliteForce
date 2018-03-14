@@ -171,9 +171,10 @@ final function bool CampaignExists(string inCampaign)
     return Campaigns.CampaignExists(inCampaign);
 }
 
-final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath)
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath,
+	optional bool bCustomCareer, optional string CustomCareer)
 {
-    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath);
+    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath, bCustomCareer, CustomCareer);
 }
 
 final function DeleteCampaign(string inCampaign)

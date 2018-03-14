@@ -136,37 +136,6 @@ function int GetScenarioCount()
     return ScenarioStrings.Length;
 }
 
-//Pass ScenarioIterator=-1 to begin iteration.
-//Repeated calls to NextScenario() will return each contained ScenarioString.
-//NextScenario maintains ScenarioIterator, which will be set to -1 when
-//  contained ScenarioStrings are exhausted.
-//Proper usage looks like:
-//  Iterator = -1;
-//  do {
-//      SomeItem = Next(Iterator);
-//      if (Iterator >= 0)
-//          Use(SomeItem);
-//  } until (Iterator < 0);
-function string NextScenario(out int ScenarioIterator)
-{
-    local int Index;
-
-    assert(ScenarioIterator < ScenarioStrings.length);
-
-    Index = ScenarioIterator + 1;
-
-    if (Index < ScenarioStrings.length)
-    {
-        ScenarioIterator++;
-        return ScenarioStrings[Index];
-    }
-    else
-    {
-        ScenarioIterator = -1;
-        return "";
-    }
-}
-
 function bool HasScenario(string ScenarioString)
 {
     local int i;

@@ -57,54 +57,52 @@ function InternalOnActivate()
 {
     log("SwatMissionSelectionPanel("$self$"):InternalOnActivate(Role="$GC.SwatGameRole$")");
 
-    if( GC.GetCustomScenarioPack() != None || GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom )
-    {
-        theCampaign = None;
-        MyCampaignNameLabel.SetCaption(GC.GetPakFriendlyName());
+	theCampaign = SwatGUIController(Controller).GetCampaign();
 
-        MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
-        MyMissionSelectionBox.List.UpdateSortFunction();
+	if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+		Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
+		return;
+	}
 
-        PopulateCustomScenarioList();
+	MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
+	MyCampaignNameLabel.SetCaption(theCampaign.StringName);
 
-        MyMissionSelectionBox.List.FindExtra( GC.GetScenarioName() );
-    }
-    else
-    {
-        theCampaign = SwatGUIController(Controller).GetCampaign();
+	if(theCampaign.CampaignPath != 2 || GC.GetCustomScenarioPack() != None)
+	{	// Use numeric sorting
+		MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+		MyMissionSelectionBox.List.UpdateSortFunction();
+	}
+	else
+	{	// All Missions uses alphabetic sorting
+		MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
+		MyMissionSelectionBox.List.UpdateSortFunction();
+	}
 
-        if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
-          Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
-          return;
-        }
+	// Populate either by what's hardcoded to specific paths or by what's in the custom scenario list
+	if(GC.GetCustomScenarioPack() != None)
+	{
+		PopulateCustomScenarioList();
+	}
+	else
+	{
+		PopulateCampaignMissionList();
+	}
 
-        if(theCampaign.CampaignPath == 2)
-        {	// All Missions uses alphabetic sorting
-        	MyMissionSelectionBox.List.TypeOfSort = SORT_AlphaExtra;
-        	MyMissionSelectionBox.List.UpdateSortFunction();
-        }
-        else
-        {	// Other paths use their campaign sorting
-        	MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
-        	MyMissionSelectionBox.List.UpdateSortFunction();
-        }
+	// Play the credits if we've completed the campaign and not already played them
+	if( theCampaign.GetAvailableIndex() >= MyMissionSelectionBox.Num() && !theCampaign.HasPlayedCreditsOnCampaignCompletion() )
+	{
+		CompletedCampaign();
+	}
 
-        MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
-
-        MyCampaignNameLabel.SetCaption(theCampaign.StringName);
-
-        PopulateCampaignMissionList();
-
-        if( theCampaign.GetAvailableIndex() >= MyMissionSelectionBox.Num() && !theCampaign.HasPlayedCreditsOnCampaignCompletion() )
-            CompletedCampaign();
-
-        //Select as default, the next mission to be played
-        if( GC.CurrentMission != None )
-            MyMissionSelectionBox.List.Find( string(GC.CurrentMission.Name) ) == "";
-    }
-
-    if( GC.CurrentMission == None )
-        MyMissionSelectionBox.SetIndex(MyMissionSelectionBox.Num()-1);
+	// Select either the current mission (if we're using a non-custom campaign) or the last one in the list
+	if( GC.GetCustomScenarioPack() == None && GC.CurrentMission != None )
+	{
+		MyMissionSelectionBox.List.Find( string(GC.CurrentMission.Name) ) == "";
+	}
+	else
+	{
+	    MyMissionSelectionBox.SetIndex(MyMissionSelectionBox.Num()-1);
+	}
 }
 
 function DisplayMissionResults( MissionResults Results )
@@ -347,7 +345,7 @@ function SetRadioGroup( GUIRadioButton group )
 
 private function PopulateCustomScenarioList()
 {
-    local int i,ScenarioIterator;
+    local int i;
     local CustomScenario CustomScen;
     local string ScenarioString;
 
@@ -355,31 +353,31 @@ private function PopulateCustomScenarioList()
 
     MyMissionSelectionBox.List.Clear();
 
-    ScenarioIterator = -1;
-    i = 0;
-    do
-    {
-        ScenarioString = GC.GetCustomScenarioPack().NextScenario(ScenarioIterator);
+	for(i = 0; i < GC.GetCustomScenarioPack().ScenarioStrings.Length; i++)
+	{
+		if(GC.GetCustomScenarioPack().UseProgression && i > theCampaign.GetAvailableIndex())
+		{	// not unlocked yet
+			break;
+		}
 
-        if (ScenarioIterator >= 0)
-        {
-            CustomScen = new() class'CustomScenario';
+		ScenarioString = GC.GetCustomScenarioPack().ScenarioStrings[i];
 
-            GC.GetCustomScenarioPack().LoadCustomScenarioInPlace(
-                CustomScen,
-                ScenarioString,
-                GC.GetPakName(),
-                GC.GetPakExtension());
+		CustomScen = new() class'CustomScenario';
 
-            MyMissionSelectionBox.List.Add(string(CustomScen.LevelLabel),CustomScen,ScenarioString,i,,true);
-            i++;
-        }
-    }   until (ScenarioIterator < 0);
+		GC.GetCustomScenarioPack().LoadCustomScenarioInPlace(
+			CustomScen,
+			ScenarioString,
+			GC.GetPakName(),
+			GC.GetPakExtension()
+			);
 
-    MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
+		MyMissionSelectionBox.List.Add(string(CustomScen.LevelLabel), CustomScen, ScenarioString, i,, true);
+	}
+
+    /*MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
     MyMissionSelectionBox.List.UpdateSortFunction();
 	MyMissionSelectionBox.List.bSortForward=true;
-    MyMissionSelectionBox.List.Sort();
+    MyMissionSelectionBox.List.Sort();*/
 
     bAddingMissions=false;
 }

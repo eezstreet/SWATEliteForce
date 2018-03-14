@@ -291,6 +291,10 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
                     AssertWithDescription( CustomMissionLabel != "", "Attempted to save results for a custom mission with no name. This should never happen. Contact a programmer." );
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
+					if(Campaign != None)
+					{
+						Campaign.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty, !(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );
+					}
                 }
 
                 if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
