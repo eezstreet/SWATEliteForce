@@ -72,13 +72,36 @@ function PopulateFieldsFromScenario(bool NewScenario)
 
     Scenario = CustomScenarioPage.GetCustomScenario();
 
+	if(Scenario.IsCustomMap)
+	{
+		audio_enable.SetChecked(false);
+		briefing_enable.SetChecked(true);
+		enemies_enable.SetChecked(false);
+		hostages_enable.SetChecked(false);
+		timeline_enable.SetChecked(false);
+		audio_enable.DisableComponent();
+		briefing_enable.DisableComponent();
+		enemies_enable.DisableComponent();
+		hostages_enable.DisableComponent();
+		timeline_enable.DisableComponent();
+	}
+	else
+	{
+		audio_enable.SetChecked(!Scenario.DisableBriefingAudio);
+		briefing_enable.SetChecked(Scenario.UseCustomBriefing);
+		enemies_enable.SetChecked(!Scenario.DisableEnemiesTab);
+		hostages_enable.SetChecked(!Scenario.DisableHostagesTab);
+		timeline_enable.SetChecked(!Scenario.DisableTimelineTab);
+		audio_enable.EnableComponent();
+		briefing_enable.EnableComponent();
+		enemies_enable.EnableComponent();
+		hostages_enable.EnableComponent();
+		timeline_enable.EnableComponent();
+	}
+
     txt_notes.SetText(Scenario.Notes);
 	txt_briefing.SetText(Scenario.CustomBriefing);
-	audio_enable.SetChecked(!Scenario.DisableBriefingAudio);
-	briefing_enable.SetChecked(Scenario.UseCustomBriefing);
-	enemies_enable.SetChecked(!Scenario.DisableEnemiesTab);
-	hostages_enable.SetChecked(!Scenario.DisableHostagesTab);
-	timeline_enable.SetChecked(!Scenario.DisableTimelineTab);
+
 }
 
 function GatherScenarioFromFields()

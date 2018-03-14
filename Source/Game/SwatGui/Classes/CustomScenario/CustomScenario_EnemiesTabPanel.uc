@@ -73,12 +73,12 @@ function InitComponent(GUIComponent MyOwner)
     for (i=0; i<Data.PrimaryWeaponCategory.length; ++i)
         cbo_primary_type.AddItem(
                 string(Data.PrimaryWeaponCategory[i]),
-                , 
+                ,
                 Data.PrimaryWeaponCategoryDescription[i]);
     for (i=0; i<Data.BackupWeaponCategory.length; ++i)
         cbo_backup_type.AddItem(
                 string(Data.BackupWeaponCategory[i]),
-                , 
+                ,
                 Data.BackupWeaponCategoryDescription[i]);
 
 	cbo_primary_specific.OnChange           = cbo_primary_specific_OnChange;
@@ -193,7 +193,7 @@ function ClientPoll(CoopQMMReplicationInfo CoopQMMRI)
 event Activate()
 {
     Super.Activate();
-    
+
     SetPanelActive();
 }
 
@@ -247,7 +247,7 @@ function cbo_primary_type_OnChange(GUIComponent Sender)
 
         //TMC TODO prevent None-None weapon selections. Why?
         cbo_primary_specific.AddItem("Any",, Data.AnyString);
-        
+
         //anything else, populate the "specific" list with specific weapons
         for (i=0; i<Data.PrimaryWeapon.length; ++i)
         {
@@ -419,17 +419,27 @@ function PopulateFieldsFromScenario(bool NewScenario)
 
     Scenario = CustomScenarioPage.GetCustomScenario();
 
-    chk_campaign.SetChecked(Scenario.UseCampaignEnemySettings, true);
+	if(Scenario.IsCustomMap)
+	{
+		chk_campaign.SetChecked(false);
+		chk_campaign.DisableComponent();
+	}
+	else
+	{
+		chk_campaign.SetChecked(Scenario.UseCampaignEnemySettings, true);
+		chk_campaign.EnableComponent();
+	}
+
 
     spin_count_min.SetValue(Scenario.EnemyCountRangeCow.Min, true);
     spin_count_max.SetValue(Scenario.EnemyCountRangeCow.Max, true);
 
     slide_morale_min.SetValue(Scenario.EnemyMorale.Min);
     slide_morale_max.SetValue(Scenario.EnemyMorale.Max);
-    
+
     dlist_archetypes.ListBoxA.Clear();
     dlist_archetypes.ListBoxB.Clear();
-    
+
     //fill archetypes
     for (i=0; i<Data.EnemyArchetype.length; ++i)
     {
@@ -480,10 +490,10 @@ function PopulateFieldsFromScenario(bool NewScenario)
                         Archetype.Description);
         }
     }
-    
+
     dlist_archetypes.ListBoxA.SetIndex(0);
     dlist_archetypes.ListBoxB.SetIndex(0);
-    
+
     if (NewScenario)
     {
         cbo_skill.SetIndex(0);
@@ -511,41 +521,49 @@ function GatherScenarioFromFields()
 
     Scenario = CustomScenarioPage.GetCustomScenario();
 
-    Scenario.UseCampaignEnemySettings = chk_campaign.bChecked;
+	if(Scenario.IsCustomMap)
+	{
+		Scenario.UseCampaignEnemySettings = false;
+	}
+	else
+	{
+		Scenario.UseCampaignEnemySettings = chk_campaign.bChecked;
+	}
+
 
     Scenario.EnemyCountRangeCow.Min = spin_count_min.Value;
     Scenario.EnemyCountRangeCow.Max = spin_count_max.Value;
 
     Scenario.EnemyMorale.Min = slide_morale_min.Value;
     Scenario.EnemyMorale.Max = slide_morale_max.Value;
-    
+
     //add archetypes
     Scenario.EnemyArchetypes.Remove(0, Scenario.EnemyArchetypes.length);
     for (i=0; i<dlist_archetypes.ListBoxB.List.Elements.length; ++i)
         Scenario.EnemyArchetypes[Scenario.EnemyArchetypes.length] = name(dlist_archetypes.ListBoxB.List.GetItemAtIndex(i));
 
     Scenario.EnemySkill = cbo_skill.List.Get();
-    
+
     Scenario.EnemyPrimaryWeaponType = cbo_primary_type.List.Get();
     Scenario.EnemyPrimaryWeaponSpecific = cbo_primary_specific.List.Get();
     GatherWeaponsOfType(
-            Scenario.EnemyPrimaryWeaponType, 
-            Scenario.EnemyPrimaryWeaponSpecific, 
+            Scenario.EnemyPrimaryWeaponType,
+            Scenario.EnemyPrimaryWeaponSpecific,
             Data.PrimaryWeapon,
             Scenario.EnemyPrimaryWeaponOptions);
 
     Scenario.EnemyBackupWeaponType = cbo_backup_type.List.Get();
     Scenario.EnemyBackupWeaponSpecific = cbo_backup_specific.List.Get();
     GatherWeaponsOfType(
-            Scenario.EnemyBackupWeaponType, 
-            Scenario.EnemyBackupWeaponSpecific, 
+            Scenario.EnemyBackupWeaponType,
+            Scenario.EnemyBackupWeaponSpecific,
             Data.BackupWeapon,
             Scenario.EnemyBackupWeaponOptions);
 }
 
 function GatherWeaponsOfType(
-        string Type, 
-        string Specific, 
+        string Type,
+        string Specific,
         array<CustomScenarioCreatorData.WeaponPresentation> WeaponOptions,
         out array<string> WeaponSelections)
 {

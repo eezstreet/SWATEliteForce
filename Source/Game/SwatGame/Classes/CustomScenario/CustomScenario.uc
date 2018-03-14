@@ -79,6 +79,8 @@ var config bool DisableBriefingAudio;
 var config bool DisableEnemiesTab;
 var config bool DisableHostagesTab;
 var config bool DisableTimelineTab;
+var config bool IsCustomMap;
+var config string CustomMapURL;
 
 var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 

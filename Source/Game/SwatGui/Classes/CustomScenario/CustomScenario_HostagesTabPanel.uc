@@ -35,7 +35,7 @@ function InitComponent(GUIComponent MyOwner)
 
 	dlist_archetypes.OnMoveAB = dlist_archetypes_OnMoveAB;
 	dlist_archetypes.OnMoveBA = dlist_archetypes_OnMoveBA;
-	
+
 	spin_count_min.OnChange = spin_count_min_OnChange;
 	spin_count_max.OnChange = spin_count_max_OnChange;
 	slide_morale_min.OnChange = slide_morale_min_OnChange;
@@ -117,7 +117,7 @@ function ClientPoll(CoopQMMReplicationInfo CoopQMMRI)
 event Activate()
 {
     Super.Activate();
-    
+
     SetPanelActive();
 }
 
@@ -212,17 +212,26 @@ function PopulateFieldsFromScenario(bool NewScenario)
 
     Scenario = CustomScenarioPage.GetCustomScenario();
 
-    chk_campaign.SetChecked(Scenario.UseCampaignHostageSettings, true);
+	if(Scenario.IsCustomMap)
+	{
+		chk_campaign.SetChecked(false);
+		chk_campaign.DisableComponent();
+	}
+    else
+	{
+		chk_campaign.SetChecked(Scenario.UseCampaignHostageSettings, true);
+		chk_campaign.EnableComponent();
+	}
 
     spin_count_min.SetValue(Scenario.HostageCountRangeCow.Min, true);
     spin_count_max.SetValue(Scenario.HostageCountRangeCow.Max, true);
 
     slide_morale_min.SetValue(Scenario.HostageMorale.Min);
     slide_morale_max.SetValue(Scenario.HostageMorale.Max);
-    
+
     dlist_archetypes.ListBoxA.Clear();
     dlist_archetypes.ListBoxB.Clear();
-    
+
     //fill archetypes
     for (i=0; i<Data.HostageArchetype.length; ++i)
     {
@@ -273,7 +282,7 @@ function PopulateFieldsFromScenario(bool NewScenario)
                         Archetype.Description);
         }
     }
-    
+
     dlist_archetypes.ListBoxA.SetIndex(0);
     dlist_archetypes.ListBoxB.SetIndex(0);
 
@@ -287,14 +296,21 @@ function GatherScenarioFromFields()
 
     Scenario = CustomScenarioPage.GetCustomScenario();
 
-    Scenario.UseCampaignHostageSettings = chk_campaign.bChecked;
+	if(Scenario.IsCustomMap)
+	{
+		Scenario.UseCampaignHostageSettings = false;
+	}
+    else
+	{
+		Scenario.UseCampaignHostageSettings = chk_campaign.bChecked;
+	}
 
     Scenario.HostageCountRangeCow.Min = spin_count_min.Value;
     Scenario.HostageCountRangeCow.Max = spin_count_max.Value;
 
     Scenario.HostageMorale.Min = slide_morale_min.Value;
     Scenario.HostageMorale.Max = slide_morale_max.Value;
-    
+
     //add archetypes
     Scenario.HostageArchetypes.Remove(0, Scenario.HostageArchetypes.length);
     for (i=0; i<dlist_archetypes.ListBoxB.List.Elements.length; ++i)
