@@ -7,6 +7,10 @@ var(SWATGui) private EditInline Config GUIComboBox note_selector;
 var(SWATGui) private EditInline Config GUICheckBoxButton audio_enable;
 var(SWATGui) private EditInline Config GUICheckBoxButton briefing_enable;
 
+var(SWATGui) private EditInline Config GUICheckBoxButton enemies_enable;
+var(SWATGui) private EditInline Config GUICheckBoxButton hostages_enable;
+var(SWATGui) private EditInline Config GUICheckBoxButton timeline_enable;
+
 var() private localized config string NotesStr;
 var() private localized config string BriefingStr;
 
@@ -72,6 +76,9 @@ function PopulateFieldsFromScenario(bool NewScenario)
 	txt_briefing.SetText(Scenario.CustomBriefing);
 	audio_enable.SetChecked(!Scenario.DisableBriefingAudio);
 	briefing_enable.SetChecked(Scenario.UseCustomBriefing);
+	enemies_enable.SetChecked(!Scenario.DisableEnemiesTab);
+	hostages_enable.SetChecked(!Scenario.DisableHostagesTab);
+	timeline_enable.SetChecked(!Scenario.DisableTimelineTab);
 }
 
 function GatherScenarioFromFields()
@@ -84,6 +91,9 @@ function GatherScenarioFromFields()
 	Scenario.CustomBriefing = txt_briefing.GetText();
 	Scenario.UseCustomBriefing = briefing_enable.bChecked;
 	Scenario.DisableBriefingAudio = !audio_enable.bChecked;
+	Scenario.DisableEnemiesTab = !enemies_enable.bChecked;
+	Scenario.DisableHostagesTab = !hostages_enable.bChecked;
+	Scenario.DisableTimelineTab = !timeline_enable.bChecked;
 }
 
 function bool AllowChat()
