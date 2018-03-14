@@ -48,6 +48,9 @@ event Show()
 	BriefingAudioLabel.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
 	Swat911AudioLabel.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
 	NoAudioLabel.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	BriefingAudioToggle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	Swat911AudioToggle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	NoAudioToggle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
 
 	// Disable the Enemies tab if necessary
 	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.DisableEnemiesTab)
