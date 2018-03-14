@@ -207,7 +207,10 @@ private function InternalOnChange(GUIComponent Sender)
             MyCreateCampaignButton.SetEnabled( IsCampaignNameValid( MyNameEntry.GetText() ) );
             break;
 		case MyCampaignPathBox:
-			MyCampaignPathBlurbLabel.SetContent(CampaignPathBlurb[MyCampaignPathBox.GetInt()]);
+			if(!MyCampaignCustomBox.List.GetExtraBoolData())
+			{
+				MyCampaignPathBlurbLabel.SetContent(CampaignPathBlurb[MyCampaignPathBox.GetInt()]);
+			}
 			break;
 		case MyCampaignCustomBox:
 			if(MyCampaignCustomBox.List.GetExtraBoolData())
