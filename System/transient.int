@@ -572,13 +572,13 @@ Caption=Newline = '|'
 Caption=KEY:
 
 [CSC_pnl_notes_notesheaderlabel]
-Caption=NOTES
+Caption=MISSION TEXT
 
 [CSC_pnl_notes_LBL_NOTES]
 Caption=TEXT
 
 [CSC_pnl_notes_TXT_NOTES]
-Hint=Enter a note about the custom mission.
+Hint=Edit the currently selected text.
 
 [CSC_pnl_enemies_suspectsheaderlabel]
 Caption=SUSPECTS
@@ -1251,8 +1251,8 @@ Hint=Select a pack or create a new pack.
 Hint=Enter a name for this scenario.
 
 [CustomScenarioCoop_tab_notes]
-Caption=NOTES
-Hint=Add custom notes to the scenario.
+Caption=TEXT
+Hint=Modify the briefing and notes for the scenario.
 
 [CustomScenarioCoop_tab_enemies]
 Caption=SUSPECTS
@@ -3463,13 +3463,13 @@ Caption=Newline = '|'
 Caption=KEY:
 
 [CustomScenario_pnl_notes_notesheaderlabel]
-Caption=NOTES
+Caption=MISSION TEXT
 
 [CustomScenario_pnl_notes_LBL_NOTES]
-Caption=NOTES
+Caption=ENTER TEXT
 
 [CustomScenario_pnl_notes_TXT_NOTES]
-Hint=Enter a note about the custom mission.
+Hint=Modify the selected text.
 
 [CustomScenario_pnl_enemies_suspectsheaderlabel]
 Caption=SUSPECTS
@@ -4274,8 +4274,8 @@ Hint=Select a pack or create a new pack.
 Hint=Enter a name for this scenario.
 
 [CustomScenario_tab_notes]
-Caption=NOTES
-Hint=Add custom notes to the scenario.
+Caption=TEXT
+Hint=Edit the mission briefing and add custom notes to the scenario.
 
 [CustomScenario_tab_enemies]
 Caption=SUSPECTS

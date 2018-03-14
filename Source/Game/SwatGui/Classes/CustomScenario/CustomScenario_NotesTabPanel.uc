@@ -1,15 +1,27 @@
 class CustomScenario_NotesTabPanel extends CustomScenarioTabPanel;
 
 var(SWATGui) private EditInline Config GUIEditBox   txt_notes;
-var(SWATGui) private EditInline Config GUIScrollTextBox   scroll_notes;
+var(SWATGui) private EditInline Config GUIEditBox	txt_briefing;
+var(SWATGui) private EditInline Config GUIScrollTextBox   scroll_preview;
+var(SWATGui) private EditInline Config GUIComboBox note_selector;
+var(SWATGui) private EditInline Config GUICheckBoxButton audio_enable;
+var(SWATGui) private EditInline Config GUICheckBoxButton briefing_enable;
+
+var() private localized config string NotesStr;
+var() private localized config string BriefingStr;
 
 function InitComponent(GUIComponent MyOwner)
 {
 	Super.InitComponent(MyOwner);
 
+	note_selector.OnChange = note_selector_OnChange;
+	note_selector.List.Add(NotesStr, , , , false);
+	note_selector.List.Add(BriefingStr, , , , true);
+
     Data = CustomScenarioPage.CustomScenarioCreatorData;
-    
+
     txt_notes.OnChange=txt_notes_OnChange;
+	txt_briefing.OnChange=txt_briefing_OnChange;
 }
 
 function ServerPoll(CoopQMMReplicationInfo CoopQMMRI)
@@ -24,7 +36,28 @@ function ClientPoll(CoopQMMReplicationInfo CoopQMMRI)
 
 function txt_notes_OnChange( GUIComponent Sender )
 {
-    scroll_notes.SetContent( txt_notes.GetText() );
+    scroll_preview.SetContent( txt_notes.GetText() );
+}
+
+function txt_briefing_OnChange( GUIComponent Sender)
+{
+	scroll_preview.SetContent( txt_briefing.GetText() );
+}
+
+function note_selector_OnChange( GUIComponent Sender )
+{
+	if(note_selector.List.GetExtraBoolData())
+	{
+		scroll_preview.SetContent(txt_briefing.GetText());
+		txt_briefing.Show();
+		txt_notes.Hide();
+	}
+	else
+	{
+		scroll_preview.SetContent(txt_notes.GetText());
+		txt_briefing.Hide();
+		txt_notes.Show();
+	}
 }
 
 // CustomScenarioTabPanel overrides
@@ -36,6 +69,9 @@ function PopulateFieldsFromScenario(bool NewScenario)
     Scenario = CustomScenarioPage.GetCustomScenario();
 
     txt_notes.SetText(Scenario.Notes);
+	txt_briefing.SetText(Scenario.CustomBriefing);
+	audio_enable.SetChecked(!Scenario.DisableBriefingAudio);
+	briefing_enable.SetChecked(Scenario.UseCustomBriefing);
 }
 
 function GatherScenarioFromFields()
@@ -45,9 +81,18 @@ function GatherScenarioFromFields()
     Scenario = CustomScenarioPage.GetCustomScenario();
 
     Scenario.Notes = txt_notes.GetText();
+	Scenario.CustomBriefing = txt_briefing.GetText();
+	Scenario.UseCustomBriefing = briefing_enable.bChecked;
+	Scenario.DisableBriefingAudio = !audio_enable.bChecked;
 }
 
 function bool AllowChat()
 {
 	return txt_notes.MenuState != MSAT_Focused;
+}
+
+defaultproperties
+{
+	NotesStr="Notes"
+	BriefingStr="Briefing"
 }
