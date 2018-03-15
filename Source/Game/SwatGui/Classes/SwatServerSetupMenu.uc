@@ -331,7 +331,11 @@ function SaveServerSettings()
 								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
 								!AdvancedSetupPanel.MyEnableKillMessagesCheck.bChecked,
 								AdvancedSetupPanel.MyEnableSnipers.bChecked);
-
+	SwatPlayerController(PlayerOwner()).ServerSetQMMSettings(Settings,
+		None,
+		None,
+		false,
+		0);
     GC.SaveConfig();
 }
 

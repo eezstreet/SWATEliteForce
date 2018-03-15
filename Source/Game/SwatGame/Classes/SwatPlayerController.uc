@@ -26,7 +26,7 @@ var int VOIPIgnoreStaticArray[MAX_PLAYERS];	//list of PlayerIDs ignored by this 
 replication
 {
     reliable if( Role<ROLE_Authority )
-        ServerSetSettings, ServerSetAdminSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
+        ServerSetSettings, ServerSetAdminSettings, ServerSetQMMSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
@@ -574,6 +574,15 @@ function ServerSetSettings( ServerSettings Settings,
 								newbNoLeaders,
 								newbNoKillMessages,
 								newbDisableTeamSpecificWeapons );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Set the QMM settings on the server
+///////////////////////////////////////////////////////////////////////////////
+
+function ServerSetQMMSettings(ServerSettings Settings, CustomScenario NewScenario, CustomScenarioPack Pack, bool CareerCOOP, int CampaignCOOPIndex)
+{
+	Settings.SetQMMSettings(NewScenario, Pack, CareerCOOP, CampaignCOOPIndex);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

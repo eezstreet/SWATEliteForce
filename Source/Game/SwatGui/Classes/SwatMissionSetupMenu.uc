@@ -86,6 +86,7 @@ function InternalOnClick(GUIComponent Sender)
 	local SwatCampaignCoopSettingsPanel ServerPanel;
 	local SwatGUIController GUIController;
 	local SwatPlayerController PlayerController;
+	local EMPMode DesiredMode;
 
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 	GUIController = SwatGUIController(Controller);
@@ -114,6 +115,8 @@ function InternalOnClick(GUIComponent Sender)
 					// Hack to clear the list of disabled referendums
 					class'Voting.ReferendumManager'.default.DisabledReferendums.Length = 0;
 
+					DesiredMode = EMPMode.MPM_COOP;
+
 					PlayerController.ServerSetDirty(Settings);
 					PlayerController.ServerSetAdminSettings(
 						Settings,
@@ -122,9 +125,10 @@ function InternalOnClick(GUIComponent Sender)
 						ServerPanel.MyPasswordedButton.bChecked,
 						ServerPanel.MyPublishModeBox.GetIndex() == 0
 					);
+
 					PlayerController.ServerSetSettings(
 						Settings,
-						EMPMode.MPM_COOP,
+						DesiredMode,
 						0, // Map index
 						1, // Number of rounds
 						ServerPanel.MyMaxPlayersSpinner.Value, // Max players
@@ -145,8 +149,28 @@ function InternalOnClick(GUIComponent Sender)
 						!ServerPanel.MyEnableKillsBox.bChecked,
 						true // Add snipers
 					);
+					if(GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom)
+					{
+						PlayerController.ServerSetQMMSettings(Settings,
+							GC.CurrentMission.CustomScenario,
+							GC.GetCustomScenarioPack(),
+							true,
+							GUIController.GetCampaign().GetAvailableIndex());
+					}
+					else
+					{
+						PlayerController.ServerSetQMMSettings(Settings, None, None, true, 0);
+					}
 					GC.SaveConfig();
-					GUIController.LoadLevel(GC.CurrentMission.Name $ "?listen");
+
+					if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.IsCustomMap)
+					{	// Custom map in QMM scenario - use the URL
+						GUIController.LoadLevel(GC.CurrentMission.CustomScenario.CustomMapURL $ "?listen");
+					}
+					else
+					{
+						GUIController.LoadLevel(GC.CurrentMission.Name $ "?listen");
+					}
 				}
 				else
 				{

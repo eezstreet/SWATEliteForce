@@ -49,6 +49,11 @@ var(ServerSettings) config int				TeamForcedMax "If bForceTeamMax, the maximum n
 var private array<class> CachedDisabledEquipment;
 var private bool CacheBuilt;
 
+// v7
+var(ServerSettings) config bool						bIsQMM;
+var(ServerSettings) config CustomScenario			QMMScenario;
+var(ServerSettings) config string			QMMScenarioQueue[MAX_MAPS];
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,7 +66,8 @@ replication
         bUseRoundEndTimer, MPMissionReadyTime, bShowTeammateNames, Unused, bAllowReferendums, bNoRespawn,
         bQuickRoundReset, FriendlyFireAmount, DisabledEquipment,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
-		bNoLeaders, bNoKillMessages, bEnableSnipers;
+		bNoLeaders, bNoKillMessages, bEnableSnipers,
+		bIsQMM, QMMScenario;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,6 +106,49 @@ log( self$"::SetAdminServerSettings( "$PC$", ServerName="$newServerName$", Passw
     Password = newPassword;
     bPassworded = newbPassworded;
     bLAN = newbLAN;
+}
+
+function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, bool IsCampaignCOOP, int CampaignCOOPIndex)
+{
+	local int i;
+
+	QMMScenario = NewScenario;
+	if(QMMScenario != None && Pack != None)
+	{
+		// We need to append some things to the list of disabled equipment
+		bIsQMM = true;
+
+		// First, disable the equipment that is in the pack
+		for(i = 0; i < Pack.DisabledEquipment.Length; i++)
+		{
+			DisabledEquipment = DisabledEquipment $ string(Pack.DisabledEquipment[i]) $ ",";
+		}
+
+		// Then disable the equipment that is locked
+		for(i = CampaignCOOPIndex + 1; i < Pack.FirstEquipmentUnlocks.Length; i++)
+		{
+			if(Pack.FirstEquipmentUnlocks[i] != None)
+			{
+				DisabledEquipment = DisabledEquipment $ string(Pack.FirstEquipmentUnlocks[i]) $ ",";
+			}
+		}
+
+		for(i = CampaignCOOPIndex + 1; i < Pack.SecondEquipmentUnlocks.Length; i++)
+		{
+			if(Pack.SecondEquipmentUnlocks[i] != None)
+			{
+				DisabledEquipment = DisabledEquipment $ string(Pack.SecondEquipmentUnlocks[i]) $ ",";
+			}
+		}
+	}
+	else
+	{
+		bIsQMM = false;
+	}
+
+	log("SetQMMSettings: New DisabledEquipment is '"$DisabledEquipment$"'");
+	log("SetQMMSettings: New bIsQMM is "$bIsQMM);
+	SaveConfig();
 }
 
 function SetServerSettings( PlayerController PC,

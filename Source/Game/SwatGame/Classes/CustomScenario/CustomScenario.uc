@@ -84,6 +84,12 @@ var config string CustomMapURL;
 
 var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 
+replication
+{
+	reliable if ( true ) // ?
+		ScenarioName, CustomBriefing, UseCustomBriefing;
+}
+
 function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> Rosters)
 {
     local EnemyRoster EnemyRoster;
