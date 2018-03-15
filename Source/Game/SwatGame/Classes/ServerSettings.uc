@@ -52,6 +52,8 @@ var private bool CacheBuilt;
 // v7
 var(ServerSettings) config bool						bIsQMM;
 var(ServerSettings) config CustomScenario			QMMScenario;
+var(ServerSettings) config bool						QMMUseCustomBriefing;
+var(ServerSettings) config string					QMMCustomBriefing;
 var(ServerSettings) config string			QMMScenarioQueue[MAX_MAPS];
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ replication
         bQuickRoundReset, FriendlyFireAmount, DisabledEquipment,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
 		bNoLeaders, bNoKillMessages, bEnableSnipers,
-		bIsQMM, QMMScenario;
+		bIsQMM, QMMUseCustomBriefing, QMMCustomBriefing, QMMScenario;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -140,6 +142,9 @@ function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, boo
 				DisabledEquipment = DisabledEquipment $ string(Pack.SecondEquipmentUnlocks[i]) $ ",";
 			}
 		}
+
+		QMMUseCustomBriefing = QMMScenario.UseCustomBriefing;
+		QMMCustomBriefing = QMMScenario.CustomBriefing;
 	}
 	else
 	{
