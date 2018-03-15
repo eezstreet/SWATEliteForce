@@ -68,6 +68,9 @@
  - Renamed keybind "Use" to "Shout For Compliance/Interact"
  - Added new keybind, "Shout For Compliance" (only shouts, doesn't interact with things)
  - Added new keybind, "Interact" (only interacts, doesn't shout)
+ - Removed "Instant Action" from the main menu.
+ - Removed "Play Quick Mission" from the main menu.
+ - Added option to make a Quick Mission Maker career in the Career menu.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
@@ -116,6 +119,19 @@
   - Suspects are more likely to wear heavy armor on Hard and Elite difficulties.
 
 ##### Quick Mission Maker Changes #####
+ - IMPORTANT NOTICE: Quick Mission Maker missions are no longer played through the special menu. Instead, you need to make a career for them, through the Career menu.
+ - Quick Missions are now saved in SEF/Content/Scenarios. You can share them with your friends!
+ - You can now rearrange the order of the missions within a Quick Mission Maker pack.
+ - You can now choose to have missions unlocked one-at-a-time for a Quick Mission Maker pack, or have them all unlocked at the start. (Enable Progression)
+ - You can now assign an unlocks system within a Quick Mission Maker pack. (If unlocks are not available for the pack, the New Equipment tab will be disabled)
+ - You can now use custom maps in a Quick Mission Maker pack. Custom maps force you to use a custom briefing, and all "Use Campaign Settings" options are disabled, as well as the briefing audio.
+ - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
+ - You can now disable the mission briefing audio in a Quick Mission.
+ - You can now write custom briefing text for Quick Missions.
+ - Notes entry field size increased from 500 to 4000.
+ - NOTES tab renamed to TEXT.
+ - You can now choose to disable the Timeline, Suspects, and Hostages tabs on the briefing.
+ - The level loading screenshot and text will display if you have "Use Campaign Objectives" marked.
  - The INVALID stamp over the briefing will no longer display if you have "Use Campaign Objectives" marked.
  - The INVALID stamp over the timeline will no longer display if you have "Use Campaign Objectives" marked.
  - The INVALID stamp over the Civilians and Suspects portion will no longer display if you have "Use Campaign Settings" for Hostages or Suspects, respectively, checked.

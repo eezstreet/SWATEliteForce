@@ -28,6 +28,7 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
   - Gameplay
   - GUI
   - Equipment
+  - Quick Mission Maker
   - Mission Changes
 7. How to play in Multiplayer
 8. Credits
@@ -134,6 +135,15 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * Wedges, grenades, lightsticks and C2 all show how many pieces you have left, while you have them equipped.
  * You can now assign loadout tabs (or whole loadouts) to one officer, a team, or the whole element.
 
+**Overhauled Quick Mission Maker.**
+ * All of the Quick Mission Maker scenarios are accessed from the Career menu instead of the Play Quick Mission menu. You need to create a new career for each one.
+ * You can now use custom maps in the Quick Mission Maker.
+ * You can now write your own briefings, as well as disable the civilians, suspects, and timeline tabs of the briefing.
+ * You can now create a progression system, where missions are completed one-at-a-time.
+ * You can now attach unlocks to each mission in a Quick Mission Maker pack.
+ * You can now disable equipment in a Quick Mission Maker pack.
+ * You can now rearrange the missions in a Quick Mission Maker pack. (Yes, this was something you couldn't do before...)
+
 **Multiplayer improvements!**
  * Includes a fully-functional admin mod, with WebAdmin capabilities.
  * Snipers are now available in multiplayer.
@@ -165,6 +175,9 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * **Are you going to add ballistic shields?**
  * **Are you going to add leaning while moving?**
  * **Disabling Ironsights Zoom is not working!**
+ * **What happened to Instant Action?**
+ * **The Play Quick Mission button was removed on the main menu. How do I play them?**
+ * **I cannot progress in the campaign!**
 
 ## HOW DO I INSTALL THE MOD?
 Please read the How to Install section of this README. :)
@@ -261,7 +274,7 @@ Generally it takes about 2-3 shots on a wooden door and 3-4 shots on a metal doo
 Beanbags can be negated by body armor. Try aiming for unarmored parts of the body.
 
 ## HOW DO I DISARM A TRAP?
-You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around. Or just take the penalty.
+You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around and remove it with the toolkit. Or just take the penalty.
 
 ## ARE YOU GOING TO ADD BALLISTIC SHIELDS?
 Possibly, at some point. I would need someone to produce the art assets for it, as I'm not an artist.
@@ -271,6 +284,30 @@ Moving and leaning requires hundreds of animations to be added to the game, due 
 
 ## DISABLING IRONSIGHTS ZOOM IS NOT WORKING!
 If you are ingame and you check "Disable Ironsights Zoom" then it won't work until you change your weapon, because of how the code works. Just change to a different piece of equipment and change back.
+
+## WHAT HAPPENED TO INSTANT ACTION? ##
+Instant Action was removed because nobody used it. Furthermore, it causes issues with Permadeath campaigns, among other things.
+
+## THE PLAY QUICK MISSION BUTTON WAS REMOVED ON THE MAIN MENU. HOW DO I PLAY THEM? ##
+You now need to create a career for them, in the Career menu. This is because Quick Missions support a ton of new features, like progression, unlocks, etc. They also work with Permadeath modes.
+
+## I CANNOT PROGRESS IN THE CAMPAIGN! ##
+This is a common bug that is encountered. Sometimes you will play a mission, even scoring a 100/100 on it, and the next mission won't unlock. Sometimes even if you replay it over and over again, even on Easy, it won't progress. This seems to happen a lot on the first mission for some reason.
+I have no idea why this happens, or what the explanation is for it. It has happened to me and others in the vanilla game, both with and without the expansion.
+To solve it, you can just unlock the next mission and the campaign will progress normally after this.
+
+To unlock the next mission, find your SEF/System/Campaign.ini file. (Sometimes it is not here, it is ContentExpansion/System/Campaign.ini)
+Edit this file in Notepad, and find your career in here. It should be fairly obvious, and look something like this:
+```ini
+[Campaign_Officer_Default]
+StringName=Officer Default
+CampaignPath=0
+availableIndex=0
+HACK_HasPlayedCreditsOnCampaignCompletion=False
+```
+All you need to do here is take the line that reads `availableIndex=<SOME NUMBER>` and increase that number by 1.
+So for example, if I am stuck on the first level, I need to increase that 0 to a 1.
+You can increase this all the way to 20 and unlock all of the missions, if you feel like cheating.
 
 # MOD COMPATIBILITY #
 
@@ -621,11 +658,30 @@ All weapons have been changed to have correct muzzle velocities.
 	- M1Super90 Shotgun: Cut shotgun from the original game. Lower magazine size than the M4Super90 but faster firing rate and more manageable recoil.
 	- Glock 18: Spitfire machine pistol, available as a secondary.
 	- Glock 19: Ultra lightweight 9mm pistol.
-* Added 3-Packs (tactical) of the following. They are equivalent weight and bulk of five items:
+* Added 3-Packs (tactical) of the following. They are equivalent in weight and bulk to five items, to incentivize taking single items over packs:
 	- Grenades
 	- Wedges
 * Ammo Pouch:
 	- Removed.
+
+## QUICK MISSION MAKER ##
+The Quick Mission Maker missions are now accessed in the Career menu. Meaning, you need to create a new career for each pack you want to play through.
+Quick Mission Maker packs are stored in `SEF/Content/Scenarios`. You can download new packs off the internet or share your custom-made ones.
+
+ - You can now rearrange the order of the missions within a Quick Mission Maker pack.
+ - You can now choose to have missions unlocked one-at-a-time for a Quick Mission Maker pack, or have them all unlocked at the start. (Enable Progression)
+ - You can now assign an unlocks system within a Quick Mission Maker pack. (If unlocks are not available for the pack, the New Equipment tab will be disabled)
+ - You can now use custom maps in a Quick Mission Maker pack. Custom maps force you to use a custom briefing, and all "Use Campaign Settings" options are disabled, as well as the briefing audio.
+ - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
+ - You can now disable the mission briefing audio in a Quick Mission.
+ - You can now write custom briefing text for Quick Missions.
+ - Notes entry field size increased from 500 to 4000.
+ - NOTES tab renamed to TEXT.
+ - You can now choose to disable the Timeline, Suspects, and Hostages tabs on the briefing.
+ - The level loading screenshot and text will display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the briefing will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the timeline will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the Civilians and Suspects portion will no longer display if you have "Use Campaign Settings" for Hostages or Suspects, respectively, checked.
 
 ## MISSION CHANGES ##
 WARNING: This section contains spoilers
