@@ -126,7 +126,7 @@ function InternalOnClick(GUIComponent Sender)
 						ServerPanel.MyPublishModeBox.GetIndex() == 0
 					);
 
-					PlayerController.ServerSetSettings(
+					PlayerController.ServerSetSettingsNoConfigSave(
 						Settings,
 						DesiredMode,
 						0, // Map index

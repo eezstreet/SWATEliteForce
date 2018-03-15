@@ -151,6 +151,52 @@ function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, boo
 	SaveConfig();
 }
 
+function SetServerSettingsNoConfigSave(PlayerController PC,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
+                            bool newbUseRoundStartTimer,
+                            int newPostGameTimeLimit,
+                            bool newbUseRoundEndTimer,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
+                            bool newUnused,
+							bool newbAllowReferendums,
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
+                            string newDisabledEquipment,
+							float newCampaignCOOP,
+							int newAdditionalRespawnTime,
+							bool newbNoLeaders,
+							bool newbNoKillMessages,
+							bool newbEnableSnipers)
+{
+	GameType = newGameType;
+    MapIndex = newMapIndex;
+    NumRounds = newNumRounds;
+    MaxPlayers = newMaxPlayers;
+    bUseRoundStartTimer = newbUseRoundStartTimer;
+    PostGameTimeLimit = newPostGameTimeLimit;
+    bUseRoundEndTimer = newbUseRoundEndTimer;
+    MPMissionReadyTime = newMPMissionReadyTime;
+    bShowTeammateNames = newbShowTeammateNames;
+    Unused = newUnused;
+	bAllowReferendums = newbAllowReferendums;
+    bNoRespawn = newbNoRespawn;
+    bQuickRoundReset = newbQuickRoundReset;
+    FriendlyFireAmount = newFriendlyFireAmount;
+    DisabledEquipment = newDisabledEquipment;
+	CampaignCOOP = newCampaignCOOP;
+	AdditionalRespawnTime = newAdditionalRespawnTime;
+	bNoLeaders = newbNoLeaders;
+	bNoKillMessages = newbNoKillMessages;
+	bEnableSnipers = newbEnableSnipers;
+
+    RoundNumber=0;
+}
+
 function SetServerSettings( PlayerController PC,
                             EMPMode newGameType,
                             int newMapIndex,
@@ -181,28 +227,10 @@ log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameTyp
 		return;
 	}
 
-    GameType = newGameType;
-    MapIndex = newMapIndex;
-    NumRounds = newNumRounds;
-    MaxPlayers = newMaxPlayers;
-    bUseRoundStartTimer = newbUseRoundStartTimer;
-    PostGameTimeLimit = newPostGameTimeLimit;
-    bUseRoundEndTimer = newbUseRoundEndTimer;
-    MPMissionReadyTime = newMPMissionReadyTime;
-    bShowTeammateNames = newbShowTeammateNames;
-    Unused = newUnused;
-	bAllowReferendums = newbAllowReferendums;
-    bNoRespawn = newbNoRespawn;
-    bQuickRoundReset = newbQuickRoundReset;
-    FriendlyFireAmount = newFriendlyFireAmount;
-    DisabledEquipment = newDisabledEquipment;
-	CampaignCOOP = newCampaignCOOP;
-	AdditionalRespawnTime = newAdditionalRespawnTime;
-	bNoLeaders = newbNoLeaders;
-	bNoKillMessages = newbNoKillMessages;
-	bEnableSnipers = newbEnableSnipers;
-
-    RoundNumber=0;
+	SetServerSettingsNoConfigSave(PC, newGameType, newMapIndex, newNumRounds, newMaxPlayers, newbUseRoundStartTimer,
+		newPostGameTimeLimit, newbUseRoundEndTimer, newMPMissionReadyTime, newbShowTeammateNames, newUnused, newbAllowReferendums,
+		newbNoRespawn, newbQuickRoundReset, newFriendlyFireAmount, newDisabledEquipment, newCampaignCOOP, newAdditionalRespawnTime,
+		newbNoLeaders, newbNoKillMessages, newbEnableSnipers);
 
 log( self$"::SetServerSettings(...) ... saving config" );
     SaveMapListForGameType();

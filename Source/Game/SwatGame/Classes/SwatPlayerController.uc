@@ -26,7 +26,7 @@ var int VOIPIgnoreStaticArray[MAX_PLAYERS];	//list of PlayerIDs ignored by this 
 replication
 {
     reliable if( Role<ROLE_Authority )
-        ServerSetSettings, ServerSetAdminSettings, ServerSetQMMSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
+        ServerSetSettings, ServerSetSettingsNoConfigSave, ServerSetAdminSettings, ServerSetQMMSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
@@ -530,6 +530,51 @@ function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPa
 ///////////////////////////////////////////////////////////////////////////////
 // Set the ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
+
+function ServerSetSettingsNoConfigSave(ServerSettings Settings,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
+                            bool newUseRoundStartTimer,
+                            int newPostGameTimeLimit,
+                            bool newUseRoundEndTimer,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
+                            bool unused,
+							bool newbAllowReferendums,
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
+                            string newDisabledEquipment,
+							float newCampaignCOOP,
+							int newAdditionalRespawnTime,
+							bool newbNoLeaders,
+							bool newbNoKillMessages,
+							bool newbDisableTeamSpecificWeapons)
+{
+	Settings.SetServerSettingsNoConfigSave( self,
+                                newGameType,
+                                newMapIndex,
+                                newNumRounds,
+                                newMaxPlayers,
+                                newUseRoundStartTimer,
+                                newPostGameTimeLimit,
+                                newUseRoundEndTimer,
+                                newMPMissionReadyTime,
+                                newbShowTeammateNames,
+                                unused,
+								newbAllowReferendums,
+                                newbNoRespawn,
+                                newbQuickRoundReset,
+                                newFriendlyFireAmount,
+                                newDisabledEquipment,
+								newCampaignCOOP,
+								newAdditionalRespawnTime,
+								newbNoLeaders,
+								newbNoKillMessages,
+								newbDisableTeamSpecificWeapons );
+}
 
 function ServerSetSettings( ServerSettings Settings,
                             EMPMode newGameType,
