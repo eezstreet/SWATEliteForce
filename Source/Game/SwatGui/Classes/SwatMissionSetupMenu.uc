@@ -34,21 +34,14 @@ function InternalOnShow()
     MyStartButton.OnClick=InternalOnClick;
     MyBackButton.OnClick=InternalOnClick;
     MyMainMenuButton.OnClick=InternalOnClick;
-		MyServerSetupButton.OnClick=InternalOnClick;
+	MyServerSetupButton.OnClick=InternalOnClick;
 
-    if( GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom )
-    {
-        MyBackButton.SetCaption(CustomString );
-    }
-    else
-    {
-        MyBackButton.SetCaption(CampaignString );
-    }
+    MyBackButton.SetCaption(CampaignString );
 }
 
 function InternalOnActivate()
 {
-    if (GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && SwatGUIController(Controller).coopcampaign)
+    if (SwatGUIController(Controller).coopcampaign)
 	{
 		MyLoadoutButton.Hide();
 		MyLoadoutButton.DisableComponent();
@@ -57,7 +50,6 @@ function InternalOnActivate()
 	}
 	else
 	{
-		SwatGUIController(Controller).coopcampaign = false;
 		MyLoadoutButton.Show();
 		MyLoadoutButton.EnableComponent();
 		MyServerSetupButton.Hide();
@@ -70,7 +62,7 @@ function InternalOnActivate()
     bOpeningSubMenu = false;
 
     // Megahack to deal with All Campaigns having greyed-out Briefing panel
-	if( GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom &&  SwatGUIControllerBase(Controller).GetCampaign().CampaignPath == 2)
+	if( GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && SwatGUIControllerBase(Controller).GetCampaign().CampaignPath == 2)
 	{
 	    MyTabControl.MyTabs[2].TabHeader.DisableComponent();
 	}
@@ -110,7 +102,7 @@ function InternalOnClick(GUIComponent Sender)
 		case MyStartButton:
             if(GUIController.SPLoadoutPanel == None || GUIController.SPLoadoutPanel.CheckWeightBulkValidity())
 			{
-				if (GC.SwatGameRole != eSwatGameRole.GAMEROLE_SP_Custom && GUIController.coopcampaign)
+				if (GUIController.coopcampaign)
 				{
 					ServerPanel = SwatCampaignCoopSettingsPanel(MyTabControl.GetTab(3).TabPanel);
 
@@ -146,7 +138,7 @@ function InternalOnClick(GUIComponent Sender)
 						true, // No respawning
 						true, // Quick round reset
 						1, // Friendly fire amount (FIXME: Make this configurable)
-						"", // Disabled equipment 
+						"", // Disabled equipment
 						CampaignInfo, // Campaign CO-OP data
 						0, // Time between respawns
 						false, // No Leaders
