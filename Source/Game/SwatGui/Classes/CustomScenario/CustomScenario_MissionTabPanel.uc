@@ -313,6 +313,11 @@ function AddCustomMapsToList()
 			continue;
 		}
 
+		// Remove the extension
+	    if(Right(FileName, 4) ~= ".s4m") {
+	    	FileName = Left(FileName, Len(FileName) - 4);
+	    }
+
 		Summary = Controller.LoadLevelSummary(FileName$".LevelSummary");
 		if(Summary == None)
 		{
@@ -337,7 +342,7 @@ function enable_custommaps_OnChange(GUIComponent Sender)
 
 	Scenario = CustomScenarioPage.GetCustomScenario();
 	Scenario.IsCustomMap = enable_custommaps.bChecked;
-	
+
 	if(enable_custommaps.bChecked)
 	{
 		// it got checked, try and load the maps

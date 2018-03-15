@@ -298,7 +298,16 @@ private function ShowMissionDescription()
     else
     {
         Content = GC.CurrentMission.CustomScenario.Notes;
-        MyThumbnail.Image = GC.CurrentMission.Thumbnail;
+		if(GC.CurrentMission.CustomScenario.IsCustomMap)
+		{	// Load up the mission summary and get it that way
+			LevelSummary = Controller.LoadLevelSummary(MyMissionSelectionBox.List.Get()$".LevelSummary");
+			MyThumbnail.Image = LevelSummary.Screenshot;
+			GC.CurrentMission.MapName = MyMissionSelectionBox.List.Get();
+		}
+		else
+		{
+			MyThumbnail.Image = GC.CurrentMission.Thumbnail;
+		}
         MyMissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
         MyMissionInfo.SetContent( Content );
     }
@@ -438,7 +447,15 @@ private function PopulateCustomScenarioList()
 			GC.GetPakExtension()
 			);
 
-		MyMissionSelectionBox.List.Add(string(CustomScen.LevelLabel), CustomScen, ScenarioString, i,, true);
+		if(CustomScen.IsCustomMap)
+		{
+			MyMissionSelectionBox.List.Add(CustomScen.CustomMapURL, CustomScen, ScenarioString, i,, true);
+		}
+		else
+		{
+			MyMissionSelectionBox.List.Add(string(CustomScen.LevelLabel), CustomScen, ScenarioString, i,, true);
+		}
+
 	}
 
     /*MyMissionSelectionBox.List.TypeOfSort = SORT_Numeric;
