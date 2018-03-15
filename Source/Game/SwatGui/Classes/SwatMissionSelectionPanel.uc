@@ -142,14 +142,81 @@ function DisplayMissionResults( MissionResults Results )
 function MyMissionSelectionBox_OnChange(GUIComponent Sender)
 {
     local CustomScenario CustomScen;
+	local CustomScenarioPack CustomPack;
+	local class<Equipment> FirstEquipment, SecondEquipment;
+	local int Index;
 
     if( bAddingMissions )
         return;
 
     CustomScen = CustomScenario(MyMissionSelectionBox.List.GetObject());
+	CustomPack = GC.GetCustomScenarioPack();
+	Index = MyMissionSelectionBox.List.GetIndex();
 
     //Set current mission to be played
     GC.SetCurrentMission(Name(MyMissionSelectionBox.List.Get()), MyMissionSelectionBox.List.GetExtra(), CustomScen );
+
+	if(CustomScen != None && CustomPack != None && CustomPack.UseGearUnlocks)
+	{	// We have to manually set the unlock and entry information
+		if(CustomPack.FirstEquipmentUnlocks.Length > Index)
+		{
+			FirstEquipment = class<Equipment>(CustomPack.FirstEquipmentUnlocks[Index]);
+		}
+
+		if(CustomPack.SecondEquipmentUnlocks.Length > Index)
+		{
+			SecondEquipment = class<Equipment>(CustomPack.SecondEquipmentUnlocks[Index]);
+		}
+
+		if(SecondEquipment == None)
+		{
+			GC.CurrentMission.SecondEquipmentImage = None;
+			GC.CurrentMission.SecondEquipmentName = "";
+			GC.CurrentMission.SecondEquipmentDescription = "";
+		}
+		else
+		{
+			GC.CurrentMission.SecondEquipmentImage = SecondEquipment.static.GetGUIImage();
+			GC.CurrentMission.SecondEquipmentName = SecondEquipment.static.GetFriendlyName();
+			GC.CurrentMission.SecondEquipmentDescription = SecondEquipment.static.GetDescription();
+		}
+
+		if(FirstEquipment == None)
+		{
+			GC.CurrentMission.NewEquipmentImage = None;
+			if(Index == 0)
+			{
+				GC.CurrentMission.NewEquipmentName = class'SwatNewEquipmentPanel'.default.FirstMissionHeader;
+				GC.CurrentMission.NewEquipmentDescription = class'SwatNewEquipmentPanel'.default.FirstMissionText;
+			}
+			else
+			{
+				GC.CurrentMission.NewEquipmentName = "";
+				GC.CurrentMission.NewEquipmentDescription = class'SwatNewEquipmentPanel'.default.NoEquipmentText;
+			}
+		}
+		else
+		{
+			GC.CurrentMission.NewEquipmentImage = FirstEquipment.static.GetGUIImage();
+			GC.CurrentMission.NewEquipmentName = FirstEquipment.static.GetFriendlyName();
+			GC.CurrentMission.NewEquipmentDescription = FirstEquipment.static.GetDescription();
+		}
+
+		if(CustomScen.IsCustomMap)
+		{
+			GC.CurrentMission.LocationInfoText.Length = 0;
+			GC.CurrentMission.Floorplans = None;
+			GC.CurrentMission.EntryOptionTitle.Length = 0;
+			GC.CurrentMission.EntryOptionTitle[0] = class'SwatEntryOptionsPanel'.default.PrimaryEntranceString;
+			GC.CurrentMission.EntryOptionTitle[1] = class'SwatEntryOptionsPanel'.default.SecondaryEntranceString;
+			GC.CurrentMission.EntryImage.Length = 0;
+			GC.CurrentMission.EntryImage[0] = None;
+			GC.CurrentMission.EntryImage[1] = None;
+			GC.CurrentMission.EntryDescription.Length = 0;
+			GC.CurrentMission.EntryDescription[0] = class'SwatEntryOptionsPanel'.default.PrimaryEntranceDesc;
+			GC.CurrentMission.EntryDescription[1] = class'SwatEntryOptionsPanel'.default.SecondaryEntranceDesc;
+		}
+	}
 
     //always select the primary entry point by default
     if( CustomScen == None || !CustomScen.SpecifyStartPoint || !CustomScen.UseSecondaryStartPoint )

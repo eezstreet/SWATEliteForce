@@ -352,8 +352,8 @@ Caption=START
 Hint=Start the selected mission.
 
 [SwatMissionSetupMenu_BackButton]
-Caption=CUSTOM
-Hint=Go back to Career/Pack selection.
+Caption=CAREER
+Hint=Go back to Career selection.
 
 [SwatMainMenu_TextQuitButton]
 Caption=QUIT

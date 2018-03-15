@@ -7,9 +7,9 @@ class SwatWeapon extends FiredWeapon
  */
 enum WeaponEquipType
 {
-  WeaponEquip_PrimaryOnly,
-  WeaponEquip_SecondaryOnly,
-  WeaponEquip_Either
+	WeaponEquip_PrimaryOnly,
+	WeaponEquip_SecondaryOnly,
+	WeaponEquip_Either
 };
 
 /*
@@ -37,36 +37,36 @@ enum WeaponEquipClass
  */
 enum WeaponAimAnimationType
 {
-  WeaponAnimAim_Handgun,
-  WeaponAnimAim_SubmachineGun,
-  WeaponAnimAim_MachineGun,
-  WeaponAnimAim_Shotgun,
-  WeaponAnimAim_Grenade,
-  WeaponAnimAim_TacticalAid,
-  WeaponAnimAim_TacticalAidUse,
-  WeaponAnimAim_PepperSpray,
-  WeaponAnimAim_M4,
-  WeaponAnimAim_UMP,
-  WeaponAnimAim_P90,
-  WeaponAnimAim_Optiwand,
-  WeaponAnimAim_Paintball,
-  WeaponAnimAim_Cuffed
+	WeaponAnimAim_Handgun,
+	WeaponAnimAim_SubmachineGun,
+	WeaponAnimAim_MachineGun,
+	WeaponAnimAim_Shotgun,
+	WeaponAnimAim_Grenade,
+	WeaponAnimAim_TacticalAid,
+	WeaponAnimAim_TacticalAidUse,
+	WeaponAnimAim_PepperSpray,
+	WeaponAnimAim_M4,
+	WeaponAnimAim_UMP,
+	WeaponAnimAim_P90,
+	WeaponAnimAim_Optiwand,
+	WeaponAnimAim_Paintball,
+	WeaponAnimAim_Cuffed
 };
 
 enum WeaponLowReadyAnimationType
 {
-  WeaponAnimLowReady_Handgun,
-  WeaponAnimLowReady_SubmachineGun,
-  WeaponAnimLowReady_MachineGun,
-  WeaponAnimLowReady_Shotgun,
-  WeaponAnimLowReady_Grenade,
-  WeaponAnimLowReady_TacticalAid,
-  WeaponAnimLowReady_PepperSpray,
-  WeaponAnimLowReady_M4,
-  WeaponAnimLowReady_UMP,
-  WeaponAnimLowReady_P90,
-  WeaponAnimLowReady_Optiwand,
-  WeaponAnimLowReady_Paintball
+	WeaponAnimLowReady_Handgun,
+	WeaponAnimLowReady_SubmachineGun,
+	WeaponAnimLowReady_MachineGun,
+	WeaponAnimLowReady_Shotgun,
+	WeaponAnimLowReady_Grenade,
+	WeaponAnimLowReady_TacticalAid,
+	WeaponAnimLowReady_PepperSpray,
+	WeaponAnimLowReady_M4,
+	WeaponAnimLowReady_UMP,
+	WeaponAnimLowReady_P90,
+	WeaponAnimLowReady_Optiwand,
+	WeaponAnimLowReady_Paintball
 };
 
 /*
@@ -76,18 +76,18 @@ enum WeaponLowReadyAnimationType
 enum EIdleWeaponStatus
 {
 	IdleWeaponDoesNotMatter,
-  IdleWithSAW,
-  IdleWithMachineGun,
+	IdleWithSAW,
+	IdleWithMachineGun,
 	IdleWithG36,
 	IdleWithSubMachineGun,
 	IdleWithUMP,
-  IdleWithHandgun,
+	IdleWithHandgun,
 	IdleWithShotgun,
 	IdleWithPaintballGun,
 	IdleWithGrenade,
-  IdleWithP90,
+	IdleWithP90,
 	IdleWithAnyWeapon,
-  IdleWithoutWeapon
+	IdleWithoutWeapon
 };
 
 /*
@@ -96,11 +96,11 @@ enum EIdleWeaponStatus
 
 enum EComplianceWeaponAnimation
 {
-  Compliance_Machinegun,
-  Compliance_Shotgun,
-  Compliance_SubmachineGun,
-  Compliance_CSBallLauncher,
-  Compliance_Handgun
+	Compliance_Machinegun,
+	Compliance_Shotgun,
+	Compliance_SubmachineGun,
+	Compliance_CSBallLauncher,
+	Compliance_Handgun
 };
 
 var() localized config string ShortName;

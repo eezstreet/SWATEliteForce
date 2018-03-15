@@ -7,6 +7,10 @@ var(SWATGui) private EditInline GUIImage SecondEquipmentImage;
 var(SWATGui) private EditInline GUILabel SecondEquipmentName;
 var(SWATGui) private EditInline GUIScrollTextBox SecondEquipmentDescription;
 
+var() localized config string FirstMissionHeader;
+var() localized config string FirstMissionText;
+var() localized config string NoEquipmentText;
+
 function InitComponent(GUIComponent MyOwner)
 {
 	Super.InitComponent(MyOwner);
@@ -34,6 +38,10 @@ function InternalOnActivate()
 defaultproperties
 {
     OnActivate=InternalOnActivate
+
+	FirstMissionHeader="INFORMATION"
+	FirstMissionText="As you progress through the campaign, you will unlock new pieces of equipment, including weapons, less lethal equipment, and protective gear. This tab will show you the equipment that you have unlocked on each mission. If you wish to replay an earlier mission for a higher score, your new equipment may come in handy."
+	NoEquipmentText="No new equipment is available on this mission."
 
     WinLeft=0.05
     WinTop=0.21333
