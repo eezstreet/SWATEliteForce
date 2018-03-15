@@ -411,6 +411,19 @@ function dlist_archetypes_OnMoveBA(GUIComponent Sender, GUIListElem Element)
 
 // CustomScenarioTabPanel overrides
 
+function InternalOnActivate()
+{
+	if(CustomScenarioPage.UsingCustomMap)
+	{
+		chk_campaign.SetChecked(false);
+		chk_campaign.DisableComponent();
+	}
+	else
+	{
+		chk_campaign.EnableComponent();
+	}
+}
+
 function PopulateFieldsFromScenario(bool NewScenario)
 {
     local CustomScenario Scenario;
@@ -588,6 +601,7 @@ function GatherWeaponsOfType(
 
 defaultproperties
 {
+	OnActivate=InternalOnActivate
 	UsingCampaignSettingsMessage="Using campaign settings"
 	NotUsingCampaignSettingsMessage="Not using campaign settings"
 	ModifiedEnemyCountMinMessage="Minimum enemy count modified:"

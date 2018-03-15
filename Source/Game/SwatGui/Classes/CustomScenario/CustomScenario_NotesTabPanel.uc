@@ -64,6 +64,31 @@ function note_selector_OnChange( GUIComponent Sender )
 	}
 }
 
+function InternalOnActivate()
+{
+	if(CustomScenarioPage.UsingCustomMap)
+	{
+		audio_enable.SetChecked(false);
+		briefing_enable.SetChecked(true);
+		enemies_enable.SetChecked(false);
+		hostages_enable.SetChecked(false);
+		timeline_enable.SetChecked(false);
+		audio_enable.DisableComponent();
+		briefing_enable.DisableComponent();
+		enemies_enable.DisableComponent();
+		hostages_enable.DisableComponent();
+		timeline_enable.DisableComponent();
+	}
+	else
+	{
+		audio_enable.EnableComponent();
+		briefing_enable.EnableComponent();
+		enemies_enable.EnableComponent();
+		hostages_enable.EnableComponent();
+		timeline_enable.EnableComponent();
+	}
+}
+
 // CustomScenarioTabPanel overrides
 
 function PopulateFieldsFromScenario(bool NewScenario)
@@ -126,6 +151,7 @@ function bool AllowChat()
 
 defaultproperties
 {
+	OnActivate=InternalOnActivate
 	NotesStr="Notes"
 	BriefingStr="Briefing"
 }

@@ -24,6 +24,7 @@ var private localized config string ConfirmationString;
 var private localized config string ConfirmOverwriteExistingScenarioString;
 
 var private bool bCheckForOverwrite;
+var bool UsingCustomMap;
 
 function bool IsClient()
 {

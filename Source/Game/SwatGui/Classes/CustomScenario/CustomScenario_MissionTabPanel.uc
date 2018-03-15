@@ -342,6 +342,7 @@ function enable_custommaps_OnChange(GUIComponent Sender)
 
 	Scenario = CustomScenarioPage.GetCustomScenario();
 	Scenario.IsCustomMap = enable_custommaps.bChecked;
+	CustomScenarioPage.UsingCustomMap = enable_custommaps.bChecked;
 
 	if(enable_custommaps.bChecked)
 	{
@@ -597,8 +598,23 @@ event Activate()
     Super.Activate();
 }
 
+function InternalOnActivate()
+{
+	if(CustomScenarioPage.UsingCustomMap)
+	{
+		lbl_primary_detail.Hide();
+		lbl_secondary_detail.Hide();
+	}
+	else
+	{
+		lbl_primary_detail.Show();
+		lbl_secondary_detail.Show();
+	}
+}
+
 defaultproperties
 {
+	OnActivate=InternalOnActivate
 	MissionChangedMessage="Mission changed:"
 	UsingCampaignObjecivesMessage="Using campaign objectives"
 	NotUsingCampaignObjecivesMessage="Not using campaign objectives"

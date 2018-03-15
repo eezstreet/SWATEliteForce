@@ -202,6 +202,19 @@ function dlist_archetypes_OnMoveBA(GUIComponent Sender, GUIListElem Element)
 	CustomScenarioPage.SendChangeMessage(HostageArchetypeRemovedMessage @ Element.ExtraStrData);
 }
 
+function InternalOnActivate()
+{
+	if(CustomScenarioPage.UsingCustomMap)
+	{
+		chk_campaign.SetChecked(false);
+		chk_campaign.DisableComponent();
+	}
+	else
+	{
+		chk_campaign.EnableComponent();
+	}
+}
+
 // CustomScenarioTabPanel overrides
 
 function PopulateFieldsFromScenario(bool NewScenario)
@@ -319,6 +332,7 @@ function GatherScenarioFromFields()
 
 defaultproperties
 {
+	OnActivate=InternalOnActivate
 	UsingCampaignSettingsMessage="Using campaign settings"
 	NotUsingCampaignSettingsMessage="Not using campaign settings"
 	ModifiedHostageCountMinMessage="Minimum hostage count modified:"
