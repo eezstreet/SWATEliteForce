@@ -321,6 +321,7 @@ private function InternalOnDlgReturned( int Selection, String passback )
 ////////////////////////////////////////////////////////////////////////////////////
 private function SetCampaign( Campaign theCampaign )
 {
+	log("SetCampaign: "$theCampaign);
     if( theCampaign == None )
         return;
 

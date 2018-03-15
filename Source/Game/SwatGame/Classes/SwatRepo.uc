@@ -828,8 +828,8 @@ function NetNextRound()
 
     if(SwatGUIControllerBase(GUIController).coopcampaign && SGRI.NextMap == "")
     {
-      // we CANNOT go to a next map until the host has picked a new map!
-      return;
+    	// we CANNOT go to a next map until the host has picked a new map!
+    	return;
     }
 
     log("[dkaplan] >>> NetNextRound()" );
@@ -884,6 +884,8 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
 {
     local SwatGameReplicationInfo SGRI;
     local int NextMapIndex;
+	local CustomScenario CustomScen;
+	local int AvailableIndex;
 
     SGRI = GetSGRI();
 
@@ -916,11 +918,46 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
 
     if(SwatGuiControllerBase(GUIController).coopcampaign)
     {
-      Level.ServerTravel( SGRI.NextMap, false );
+		if(ServerSettings(Level.CurrentServerSettings).bIsQMM)
+		{	// We gotta save the new QMM settings
+			// Get the current available index
+			AvailableIndex = (ServerSettings(Level.CurrentServerSettings).CampaignCOOP & -65536) >> 16;
+
+			// Load the custom scenario
+			CustomScen = new() class'CustomScenario';
+			GuiConfig.GetCustomScenarioPack().LoadCustomScenarioInPlace(
+				CustomScen,
+				SGRI.NextMap,
+				GuiConfig.GetPakName(),
+				GuiConfig.GetPakExtension()
+				);
+
+			// Feed everything into new server settings
+			ServerSettings(Level.CurrentServerSettings).SetQMMSettings(
+				CustomScen,
+				GuiConfig.GetCustomScenarioPack(),
+				true,
+				AvailableIndex
+				);
+
+			// Actually travel to the level
+			if(CustomScen.IsCustomMap)
+			{	// Use the custom map URL instead of the level label
+				Level.ServerTravel( CustomScen.CustomMapURL, false );
+			}
+			else
+			{
+				Level.ServerTravel( string(CustomScen.LevelLabel), false );
+			}
+		}
+		else
+		{	// is not a QMM
+			Level.ServerTravel( SGRI.NextMap, false );
+		}
     }
     else
     {
-      Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
+    	Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
     }
 }
 

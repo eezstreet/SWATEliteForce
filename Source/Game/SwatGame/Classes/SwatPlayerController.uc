@@ -524,7 +524,7 @@ exec function VerifySEFDeveloper(string TestString)
 
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
 {
-  Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
+	Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

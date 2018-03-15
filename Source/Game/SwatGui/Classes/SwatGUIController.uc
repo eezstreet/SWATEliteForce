@@ -263,17 +263,34 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             }
             else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
             {
-
-
+				log("Game Ended. Campaign was "$Campaign);
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
-                if(Campaign != None) {
-                  Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                if(Campaign != None)
+				{
+					Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
+					if(Settings.bIsQMM)
+					{
+						CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
+						Campaign.MissionEnded(name(CustomMissionLabel),
+							GuiConfig.CurrentDifficulty,
+							!(GuiConfig.CurrentMission.IsMissionFailed()),
+							GetSwatGameInfo().LeadershipStatus(),
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+					}
+					else
+					{
+						Campaign.MissionEnded(GetLevelInfo().Label,
+							GuiConfig.CurrentDifficulty,
+							!(GuiConfig.CurrentMission.IsMissionFailed()),
+							GetSwatGameInfo().LeadershipStatus(),
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+					}
 
-                  Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
 
-                  Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+
+	                Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
+	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
                 }
                 InternalOpenMenu( MPPopupMenu );
             }
