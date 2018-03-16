@@ -54,7 +54,8 @@ var(ServerSettings) config bool						bIsQMM;
 var(ServerSettings) config CustomScenario			QMMScenario;
 var(ServerSettings) config bool						QMMUseCustomBriefing;
 var(ServerSettings) config string					QMMCustomBriefing;
-var(ServerSettings) config string			QMMScenarioQueue[MAX_MAPS];
+var(ServerSettings) config string					QMMScenarioQueue[MAX_MAPS];
+var(ServerSettings) config string					QMMPackQueue[MAX_MAPS];
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -114,6 +115,8 @@ function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, boo
 {
 	local int i;
 
+	log("SetQMMSettings: DisabledEquipment was "$DisabledEquipment);
+
 	QMMScenario = NewScenario;
 	if(QMMScenario != None && Pack != None)
 	{
@@ -121,25 +124,28 @@ function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, boo
 		bIsQMM = true;
 
 		// First, disable the equipment that is in the pack
-		for(i = 0; i < Pack.DisabledEquipment.Length; i++)
+		if(IsCampaignCOOP)
 		{
-			DisabledEquipment = DisabledEquipment $ string(Pack.DisabledEquipment[i]) $ ",";
-		}
-
-		// Then disable the equipment that is locked
-		for(i = CampaignCOOPIndex + 1; i < Pack.FirstEquipmentUnlocks.Length; i++)
-		{
-			if(Pack.FirstEquipmentUnlocks[i] != None)
+			for(i = 0; i < Pack.DisabledEquipment.Length; i++)
 			{
-				DisabledEquipment = DisabledEquipment $ string(Pack.FirstEquipmentUnlocks[i]) $ ",";
+				DisabledEquipment = DisabledEquipment $ string(Pack.DisabledEquipment[i]) $ ",";
 			}
-		}
 
-		for(i = CampaignCOOPIndex + 1; i < Pack.SecondEquipmentUnlocks.Length; i++)
-		{
-			if(Pack.SecondEquipmentUnlocks[i] != None)
+			// Then disable the equipment that is locked
+			for(i = CampaignCOOPIndex + 1; i < Pack.FirstEquipmentUnlocks.Length; i++)
 			{
-				DisabledEquipment = DisabledEquipment $ string(Pack.SecondEquipmentUnlocks[i]) $ ",";
+				if(Pack.FirstEquipmentUnlocks[i] != None)
+				{
+					DisabledEquipment = DisabledEquipment $ string(Pack.FirstEquipmentUnlocks[i]) $ ",";
+				}
+			}
+
+			for(i = CampaignCOOPIndex + 1; i < Pack.SecondEquipmentUnlocks.Length; i++)
+			{
+				if(Pack.SecondEquipmentUnlocks[i] != None)
+				{
+					DisabledEquipment = DisabledEquipment $ string(Pack.SecondEquipmentUnlocks[i]) $ ",";
+				}
 			}
 		}
 
@@ -251,7 +257,7 @@ log( self$"::SetServerSettings(...) ... saving config" );
 // Set a map at a specific index on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function AddMap( PlayerController PC, string MapName )
+function AddMap( PlayerController PC, string MapName, optional string QMMPackName )
 {
 	if(Level.Game.IsA('SwatGameInfo'))
 	{
@@ -264,7 +270,16 @@ function AddMap( PlayerController PC, string MapName )
     if( NumMaps >= MAX_MAPS )
         return;
 
-    Maps[NumMaps] = MapName;
+	if(bIsQMM)
+	{
+		QMMScenarioQueue[NumMaps] = MapName;
+		QMMPackQueue[NumMaps] = QMMPackName;
+	}
+	else
+	{
+		Maps[NumMaps] = MapName;
+	}
+
 
     NumMaps++;
 }
@@ -284,6 +299,7 @@ function ClearMaps( PlayerController PC )
     for( i = 0; i < MAX_MAPS; i++ )
     {
         Maps[i] = "";
+		QMMScenarioQueue[i] = "";
     }
 
     NumMaps=0;

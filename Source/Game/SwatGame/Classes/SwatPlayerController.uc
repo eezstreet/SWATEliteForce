@@ -651,9 +651,9 @@ function ServerSetAdminSettings( ServerSettings Settings,
 // Set a map at a specific index on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function ServerAddMap( ServerSettings Settings, string MapName )
+function ServerAddMap( ServerSettings Settings, string MapName, optional string QMMPackName )
 {
-    Settings.AddMap( self, MapName );
+    Settings.AddMap( self, MapName, QMMPackName );
 }
 
 function ServerClearMaps( ServerSettings Settings )

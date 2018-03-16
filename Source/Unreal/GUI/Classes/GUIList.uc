@@ -713,6 +713,24 @@ function int FindObjectData(object TheObjectToFind, optional bool bDontSetIndex,
   return -1;
 }
 
+// returns the index of the found element
+function int FindExtraBoolData(bool TheBoolToFind, optional bool bDontSetIndex, optional bool bDontReAlign)
+{
+	local int i;
+	for(i = 0; i < ItemCount; i++)
+	{
+		if(TheBoolToFind == Elements[i].ExtraBoolData)
+		{
+			if(!bDontSetIndex)
+			{
+				SetIndex(i, false, bDontReAlign);
+			}
+			return i;
+		}
+	}
+	return -1;
+}
+
 defaultproperties
 {
 	bSortForward=True
