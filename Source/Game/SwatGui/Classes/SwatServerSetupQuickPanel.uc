@@ -343,11 +343,6 @@ function LoadServerSettings( optional bool ReadOnly )
         Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
 
     //
-    // Load the selected maps from the ServerSettings
-    //
-    LoadServerMapList( SelectedMaps, Settings );
-
-    //
     // Select the current map
     //
     SetSelectedMapsIndex( Settings.MapIndex );
@@ -358,8 +353,6 @@ function LoadServerSettings( optional bool ReadOnly )
     //
     if( ReadOnly )
     {
-        LoadServerMapList( DisplayOnlyMaps, Settings );
-
         DisplayOnlyMaps.SetIndex( Settings.MapIndex );
         UpdateSelectedIndexColoring( DisplayOnlyMaps );
         DisplayLevelSummary( LevelSummary( DisplayOnlyMaps.List.GetObject() ) );
@@ -503,6 +496,53 @@ function OnLoadMapsButtonClicked( GUIComponent Sender )
 }
 
 ///////////////////////////////////////////////////////////////////////////
+//	Populating with the current list of maps
+///////////////////////////////////////////////////////////////////////////
+function PopulateNormalMaps()
+{
+	local ServerSettings Settings;
+	local LevelSummary Summary;
+	local int i;
+
+	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
+
+	// Clear out map list
+	SelectedMaps.List.Clear();
+
+	// Iterate through the list of maps
+	for(i = 0; i < Settings.NumMaps; i++)
+	{
+		if(Settings.Maps[i] != "")
+		{
+			Summary = Controller.LoadLevelSummary(Settings.Maps[i]$".LevelSummary");
+			SelectedMaps.List.Add(Settings.Maps[i], Summary, Summary.Title);
+		}
+	}
+}
+
+function PopulateQMMMaps()
+{
+	local ServerSettings Settings;
+	local int i;
+	local string PackName;
+
+	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
+
+	// Clear out map list
+	SelectedMaps.List.Clear();
+
+	// Iterate through the list of maps
+	for(i = 0; i < Settings.NumMaps; i++)
+	{
+		if(Settings.QMMScenarioQueue[i] != "" && Settings.QMMPackQueue[i] != "")
+		{
+			PackName = PackMinusExtension(Settings.QMMPackQueue[i]);
+			SelectedMaps.List.Add(PackName, , Settings.QMMScenarioQueue[i]);
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////
 //	Map Type box
 ///////////////////////////////////////////////////////////////////////////
 function OnMapTypeChanged(bool bQMM)
@@ -510,15 +550,16 @@ function OnMapTypeChanged(bool bQMM)
 	bHaltMapLoading = true;
 
 	AvailableMaps.List.Clear();
-	SelectedMaps.List.Clear();
 
 	if(bQMM)
 	{
 		MyMapFilterBox.DisableComponent();
+		PopulateQMMMaps();
 	}
 	else
 	{
 		MyMapFilterBox.EnableComponent();
+		PopulateNormalMaps();
 	}
 
 	SwatServerSetupMenu.bQMM = bQMM;
@@ -653,27 +694,6 @@ function LoadMapList( EMPMode NewMode )
     }
 
     SetSelectedMapsIndex( 0 );
-}
-
-/*
- * Loads the server's list of maps
- */
-function LoadServerMapList( GUIListBox MapListBox, ServerSettings Settings )
-{
-    local int i, j;
-
-    MapListBox.Clear();
-
-    for( i = 0; i < Settings.NumMaps; i++ )
-    {
-        AvailableMaps.List.Find( Settings.Maps[i] );
-        j = AvailableMaps.GetIndex();
-
-        if( j < 0 )
-            continue;
-
-        MapListBox.List.AddElement( AvailableMaps.List.GetAtIndex(j) );
-    }
 }
 
 /*
