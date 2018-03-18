@@ -98,7 +98,7 @@ Begin:
 
 	PlaceWedge();
 
-    StackUpOfficer(OfficerWithWedge, OfficerWithWedgeStackupPoint);
+    	StackUpSquad(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
