@@ -71,6 +71,8 @@
  - Removed "Instant Action" from the main menu.
  - Removed "Play Quick Mission" from the main menu.
  - Added option to make a Quick Mission Maker career in the Career menu.
+ - Removed gametype selector on Host Game menu. Replaced it with a selector for Quick Mission Maker missions or Missions.
+ - Removed CO-OP QMM gamemode (you can still play Quick Missions in CO-OP but the interface makes much more sense and doesn't use a separate gamemode)
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
@@ -120,6 +122,7 @@
 
 ##### Quick Mission Maker Changes #####
  - IMPORTANT NOTICE: Quick Mission Maker missions are no longer played through the special menu. Instead, you need to make a career for them, through the Career menu.
+  - This means that you can use the Permadeath, Career CO-OP, and stat tracking features present for regular campaigns!
  - Quick Missions are now saved in SEF/Content/Scenarios. You can share them with your friends!
  - You can now rearrange the order of the missions within a Quick Mission Maker pack.
  - You can now choose to have missions unlocked one-at-a-time for a Quick Mission Maker pack, or have them all unlocked at the start. (Enable Progression)
@@ -128,6 +131,8 @@
  - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
  - You can now disable the mission briefing audio in a Quick Mission.
  - You can now write custom briefing text for Quick Missions.
+ - In the Host Game menu, you can now choose to create a Quick Mission Maker rotation as opposed to a regular Mission rotation.
+  - NOTE: Any pack-specific properties (progression, unlocks, disabled equipment) do not function unless used in a Career CO-OP game.
  - Notes entry field size increased from 500 to 4000.
  - NOTES tab renamed to TEXT.
  - You can now choose to disable the Timeline, Suspects, and Hostages tabs on the briefing.

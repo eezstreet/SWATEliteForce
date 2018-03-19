@@ -166,11 +166,14 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * **Why can't I play in Barricaded Suspects, VIP Escort, Smash and Grab, or Rapid Deployment?**
  * **Are you going to add AI officers in CAREER CO-OP?**
  * **Does this mod work with other mods?**
+ * **I played in singleplayer, but there's no briefings. Why?**
+ * **I want to change the entry in All Missions, but you removed the Briefing tab?**
  * **I played in singleplayer, but there's very few missions (1 or 2). Why?**
  * **Are there more missions for Extra Missions coming out?**
  * **I can't find X piece of equipment! Did you remove it?**
  * **Breaching doors with the shotgun doesn't work!**
  * **Beanbags don't work!**
+ * **Traps aren't showing up!**
  * **How do I disarm a trap?**
  * **Are you going to add ballistic shields?**
  * **Are you going to add leaning while moving?**
@@ -249,6 +252,14 @@ Possibly.
 ## DOES THIS MOD WORK WITH OTHER MODS?
 Please refer to the "Mod Compatibility" section of the README.
 
+## I PLAYED IN SINGLEPLAYER, BUT THERE'S NO BRIEFINGS. WHY? ##
+There are no briefings in an All Missions campaign. Play with either a SWAT 4 + TSS or Extra Missions campaign.
+The reason there is no briefing is because the All Missions campaign pulls *all* missions from your hard drive, including custom maps.
+These custom maps cannot have briefing or entry information added to them very easily. Loading up the briefing will cause a crash on those missions.
+
+## I WANT TO CHANGE THE ENTRY IN ALL MISSIONS, BUT YOU REMOVED THE BRIEFING TAB? ##
+The entry options are available on the Mission Selection screen, underneath the difficulty selection.
+
 ## I PLAYED IN SINGLEPLAYER, BUT THERE'S VERY FEW MISSIONS (1 OR 2). WHY?
 You most likely selected the Extra Missions path when you started the career. There's three options: Extra Missions (missions added by the mod), SWAT 4 + TSS (the original game's missions), and All Missions (all missions from your hard drive, with no equipment progression).
 
@@ -262,16 +273,21 @@ Note that some equipment (M16, Uzi, AKM, etc) is only available in multiplayer.
 ## BREACHING DOORS WITH THE SHOTGUN DOESN'T WORK!
 Whether or not a shotgun breaches the door successfully is random and depends upon a few things:
 
-- The material of the door (wooden doors are easier to breach than metal ones)
-
-- The ammo type you are using (larger pellets = more likely to breach)
-
-- Which shotgun you are using (the M870 Breaching *always* breaches the door on the first shot)
+ - The material of the door (wooden doors are easier to breach than metal ones)
+ - The ammo type you are using (larger pellets = more likely to breach)
+ - Which shotgun you are using (the M870 Breaching *always* breaches the door on the first shot)
 
 Generally it takes about 2-3 shots on a wooden door and 3-4 shots on a metal door to breach it successfully.
 
 ## BEANBAGS DON'T WORK!
 Beanbags can be negated by body armor. Try aiming for unarmored parts of the body.
+
+## TRAPS AREN'T SHOWING UP! ##
+...or another variation of this: "I played through the first mission, and the README says that there's supposed to be traps on it, but I never saw any traps!"
+The traps are randomly generated on the mission. On almost every map that they can show up, it's possible for them to not show up at all.
+On the Fairfax Residence mission, there's a 50% chance (100% on Elite) that a trap will spawn - and there's four total doors it can spawn on. 
+So it's possible to trigger the trap almost immediately, but also possible to never encounter it, depending on the route you take and the randomization.
+Also: traps do not spawn on Quick Mission Maker missions.
 
 ## HOW DO I DISARM A TRAP?
 You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around and remove it with the toolkit. Or just take the penalty.
