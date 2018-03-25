@@ -456,6 +456,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * SWAT will listen to and respond to sounds even when they have an enemy, so they have better situational awareness.
   * SWAT clears rooms quicker and drops a lightstick after clearing.
   * SWAT now turns at the same rate that suspects do (which is faster) and have higher field of vision.
+  * SWAT no longer moves out of the way if they are deploying a wedge and they are bumped by the door. Note, if they are moving into position to deploy the wedge, they will still get out of the way.
 
 ## GAMEPLAY ##
   * Maps may now alter themselves based on difficulty level, for instance adding more suspects or traps in Elite difficulty. Only a few maps use this feature currently.

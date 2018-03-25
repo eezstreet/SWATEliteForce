@@ -13,6 +13,7 @@
  - The INVESTIGATE menu has been spruced up. You can now order your team to either MIRROR FOR TRAPS (replaces CHECK FOR TRAPS), MIRROR FOR CONTACTS, or MIRROR FOR ALL, which combines the two commands, but is slower.
 - New AI behavior!
  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
+ - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
 - Upgraded Quick Mission Maker!
@@ -29,6 +30,7 @@
  - You can now order your officers to give you a grenade, lightstick, C2, optiwand, pepper spray or wedge.
  - SWAT AI now uses grenade launchers correctly.
  - SWAT AI can no longer do direct impact damage with grenade launchers.
+ - SWAT AI no longer moves out of the way when bumped by a door, if they are deploying a wedge. Note, if they are moving into position to deploy the wedge, they will still move out of the way.
  - CHECK FOR TRAPS has been renamed to MIRROR FOR TRAPS and requires an optiwand to be equipped on an officer to use.
  - MIRROR/SCAN DOOR has been renamed to MIRROR FOR CONTACTS
  - Both MIRROR FOR TRAPS and MIRROR FOR CONTACTS have had their speed increased by about 20%.
