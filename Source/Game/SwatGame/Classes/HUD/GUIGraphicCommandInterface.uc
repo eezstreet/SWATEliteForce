@@ -236,10 +236,10 @@ final function Open()
     MenuPages[Logic.GetCurrentMainPage()].Open();
 
     //select the default command
-    if (SwatGUIControllerBase(Controller).GuiConfig.bUseExitMenu)
+    //if (SwatGUIControllerBase(Controller).GuiConfig.bUseExitMenu)
         SelectCommand(MenuPages[Logic.GetCurrentMainPage()].MenuPads[0].Command);
-    else
-        SelectCommand(Logic.GetDefaultCommand());
+    //else
+    //    SelectCommand(Logic.GetDefaultCommand());
 }
 
 final function Close()
