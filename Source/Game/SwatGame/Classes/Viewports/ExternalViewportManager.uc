@@ -323,6 +323,15 @@ simulated function CycleControllableViewport( optional string SpecificControllab
     }
 }
 
+simulated function bool CurrentControllableIs( string SpecificControllableFilter )
+{
+	if(SpecificControllableFilter != "")
+	{
+		return ControllableMatchesFilter(GetCurrentControllable(), SpecificControllableFilter);
+	}
+	return false;
+}
+
 // Update the GUI Component to have the same location and dimensions of this viewport
 simulated private function UpdateGUIComponent(Canvas inCanvas, int X, int Y, int W, int H)
 {

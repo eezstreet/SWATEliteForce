@@ -2188,8 +2188,11 @@ exec function ShowViewport(string ViewportType)
     {
         if ( ViewportManager.HasOfficers( ViewportType ) )
         {
-            if ( ViewportType ~= "sniper" )
+            if ( ViewportType ~= "sniper" && !(ViewportManager.GetFilter() ~= "sniper") )
+			{	// SEF: only go to the sniper viewport if we don't have the sniper filter up
                 SpecificOfficer = SniperAlertFilter;
+			}
+
 
             GetHUDPage().ExternalViewport.Show();
             ViewportManager.ShowViewport(ViewportType, SpecificOfficer);

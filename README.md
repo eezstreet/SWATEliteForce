@@ -389,6 +389,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * "Press ESC and debrief to exit the game" now shows on ALL missions, not just Food Wall, Fairfax Residence and Qwik Fuel missions.
  * Punching a restrained suspect no longer makes them stand up.
  * Punching while changing weapons or while arresting will no longer turn your weapon invisible.
+ * There is no longer a cooldown between swapping sniper viewports after "Press Page Up to view sniper view" triggers.
  * Wild-Gunner AIs had the wrong weapon equipped (M4A1 instead of M249 SAW)
  * Wild-Gunner AIs will no longer sweep back and forth while compliant.
  * M249 SAW, P90 and TEC-9 made the wrong sound effect when fired in Full-Auto from other player's perspectives
