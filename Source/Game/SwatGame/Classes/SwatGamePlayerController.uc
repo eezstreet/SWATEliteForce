@@ -312,7 +312,7 @@ replication
 		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
         ServerHandleViewportFire, ServerHandleViewportReload,
-		ServerDisableSpecialInteractions;
+		ServerDisableSpecialInteractions, ServerMPCommandIssued;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1614,6 +1614,13 @@ simulated function ServerDisableSpecialInteractions()
 {
 	SpecialInteractionsDisabled = !SpecialInteractionsDisabled;
 	SpecialInteractionsNotification(SpecialInteractionsDisabled);
+}
+
+simulated function ServerMPCommandIssued(string CommandText)
+{
+	Level.Game.AdminLog(CommandText,
+		'CommandGiven',
+		GetPlayerNetworkAddress());
 }
 
 exec function ToggleSpecialInteractions()

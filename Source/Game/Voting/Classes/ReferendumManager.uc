@@ -262,6 +262,8 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 	AddVoterToCooldownList(PRI.PlayerId);
 
 	Level.Game.Broadcast(None, CurrentReferendum.ReferendumDescription(), 'ReferendumStarted');
+	Level.Game.AdminLog(PRI.PlayerName$"\t"$CurrentReferendum.ReferendumDescription(), 'ReferendumStarted',
+		PlayerController(PRI.Owner).GetPlayerNetworkAddress());
 
 	return true;
 }
@@ -304,6 +306,8 @@ function bool StartNewReferendum(PlayerController PC, class<Referendum> Referend
 
 function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 {
+	local PlayerReplicationInfo PRI;
+
 	// Can't vote if a referendum is not active
 	if (!ReferendumActive())
 	{
@@ -332,6 +336,10 @@ function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 		return false;
 	}
 
+	PRI = Level.ReplicationInfoFromPlayerID(PlayerId);
+
+	Level.Game.AdminLog(PRI.PlayerName, 'ReferendumVoteYes',
+		PlayerController(PRI.Owner).GetPlayerNetworkAddress());
 	Voters[Voters.Length] = PlayerId;
 
 	++YesVotes;
@@ -341,6 +349,8 @@ function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 
 function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 {
+	local PlayerReplicationInfo PRI;
+
 	// Can't vote if a referendum is not active
 	if (!ReferendumActive())
 	{
@@ -369,6 +379,10 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 		return false;
 	}
 
+	PRI = Level.ReplicationInfoFromPlayerID(PlayerId);
+
+	Level.Game.AdminLog(PRI.PlayerName, 'ReferendumVoteNo',
+		PlayerController(PRI.Owner).GetPlayerNetworkAddress());
 	Voters[Voters.Length] = PlayerId;
 
 	++NoVotes;
@@ -407,6 +421,14 @@ private function EndReferendum()
 
 private function ReferendumDecided()
 {
+	if(YesVotesWin())
+	{
+		Level.Game.AdminLog("", 'ReferendumPassed');
+	}
+	else
+	{
+		Level.Game.AdminLog("", 'ReferendumFailed');
+	}
 	CurrentReferendum.ReferendumDecided(YesVotesWin());
 	CurrentReferendum = None;
 }

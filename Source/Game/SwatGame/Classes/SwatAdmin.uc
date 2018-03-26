@@ -174,6 +174,17 @@ var private localized config string LockedVoterIPFormat;
 var private localized config string UnlockedVoterFormat;
 var private localized config string UnlockedVoterIPFormat;
 var private localized config string VerifiedMessage;
+var private localized config string MapChangedMessage;
+var private localized config string ReferendumVoteYesFormat;
+var private localized config string ReferendumVoteNoFormat;
+var private localized config string ReferendumVoteYesIPFormat;
+var private localized config string ReferendumVoteNoIPFormat;
+var private localized config string ReferendumStartedFormat;
+var private localized config string ReferendumStartedIPFormat;
+var private localized config string ReferendumFailedFormat;
+var private localized config string ReferendumPassedFormat;
+var private localized config string CommandIssuedFormat;
+var private localized config string CommandIssuedIPFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1033,36 +1044,6 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
 			MsgOut = FormatTextString(NameChangeFormat, StrA, StrB);
 			MsgWithIPOut = FormatTextString(NameChangeIPFormat, StrA, PlayerIP, StrB);
 			break;
-		case 'CommandGiven':
-			TypeOut = WebAdminMessageType.MessageType_Chat;
-			MsgOut = Msg;
-			MsgWithIPOut = Msg;
-			break;
-		case 'YesVote':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = FormatTextString(YesVoteFormat, StrA);
-			MsgWithIPOut = FormatTextString(YesVoteIPFormat, StrA, PlayerIP);
-			break;
-		case 'NoVote':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = FormatTextString(NoVoteFormat, StrA);
-			MsgWithIPOut = FormatTextString(NoVoteIPFormat, StrA, PlayerIP);
-			break;
-		case 'ReferendumStarted':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = FormatTextString(VoteStartedFormat, Msg);
-			MsgWithIPOut = MsgOut;
-			break;
-		case 'ReferendumSucceeded':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = VoteSuccessfulFormat;
-			MsgWithIPOut = MsgOut;
-			break;
-		case 'ReferendumFailed':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = VoteFailedFormat;
-			MsgWithIPOut = MsgOut;
-			break;
 		case 'BlueSuicide':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(BlueSuicideFormat, StrA);
@@ -1268,6 +1249,41 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
 			MsgOut = FormatTextString(UnlockedVoterFormat, StrA, StrB);
 			MsgWithIPOut = FormatTextString(UnlockedVoterIPFormat, StrA, StrB, PlayerIP);
 			break;
+		case 'NewMap':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(MapChangedMessage, StrA);
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'ReferendumVoteYes':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ReferendumVoteYesFormat, StrA);
+			MsgWithIPOut = FormatTextString(ReferendumVoteYesIPFormat, StrA, PlayerIP);
+			break;
+		case 'ReferendumVoteNo':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ReferendumVoteNoFormat, StrA);
+			MsgWithIPOut = FormatTextString(ReferendumVoteNoIPFormat, StrA, PlayerIP);
+			break;
+		case 'ReferendumStarted':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ReferendumStartedFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(ReferendumStartedIPFormat, StrA, PlayerIP, StrB);
+			break;
+		case 'ReferendumPassed':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = ReferendumPassedFormat;
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'ReferendumFailed':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = ReferendumFailedFormat;
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'CommandGiven':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(CommandIssuedFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(CommandIssuedIPFormat, StrA, PlayerIP, StrB);
+			break;
 	}
 
 	SendToWebAdmin(TypeOut, MsgOut, MsgWithIPOut);
@@ -1289,6 +1305,10 @@ private function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg, coe
 	if(WebAdmin != None)
 	{
 		WebAdmin.SendWebAdminMessage(Type, Msg, MsgWithIP);
+	}
+	else
+	{
+		LogChat("--Previous message not sent to WebAdmin--");
 	}
 }
 
@@ -1329,16 +1349,6 @@ defaultproperties
 	NameChangeFormat="[c=FF00FF][b]%1[\\b] changed their name to [b]%2[\\b]"
 	SwitchTeamsIPFormat="[c=00FFFF][b]%1 (%2)[\\b] switched teams."
 	NameChangeIPFormat="[c=FF00FF][b]%1 (%2)[\\b] changed their name to [b]%2[\\b]"
-
-	VoteStartedFormat="[c=FF00FF]%1"
-
-	YesVoteFormat="[c=FF00FF]%1 voted yes."
-	NoVoteFormat="[c=FF00FF]%1 voted no."
-	YesVoteIPFormat="[c=FF00FF]%1 (%2) voted yes."
-	NoVoteIPFormat="[c=FF00FF]%1 (%2) voted no."
-
-	VoteSuccessfulFormat="[c=FF00FF]The vote was successful."
-	VoteFailedFormat="[c=FF00FF]The vote failed."
 
 	RedSuicideFormat="[c=FF0000][b]%1[\\b] committed suicide."
 	BlueSuicideFormat="[c=3333FF][b]%1[\\b] committed suicide."
@@ -1424,8 +1434,21 @@ defaultproperties
 	UnlockedVoterFormat="[c=FF00FF]%1 has restored the voting permissions of %2"
 	UnlockedVoterIPFormat="[c=FF00FF]%1 has restored the voting permissions of %2 (%3)"
 
+	ReferendumVoteYesFormat="[c=FF00FF][b]%1[\\b] voted yes.";
+	ReferendumVoteNoFormat="[c=FF00FF][b]%1[\\b] voted no.";
+	ReferendumVoteYesIPFormat="[c=FF00FF][b]%1 (%2)[\\b] voted yes.";
+	ReferendumVoteNoIPFormat="[c=FF00FF][b]%1 (%2)[\\b] voted no.";
+	ReferendumStartedFormat="[c=FF00FF][b]%1[\\b] started a vote: %2";
+	ReferendumStartedIPFormat="[c=FF00FF][b]%1 (%2)[\\b] started a vote: %3";
+	ReferendumFailedFormat="[c=FF00FF]The vote has failed.";
+	ReferendumPassedFormat="[c=FF00FF]The vote has passed.";
+	CommandIssuedFormat="[c=FFFF00][b]%1: %2";
+	CommandIssuedIPFormat="[c=FFFF00][b]%1 (%2): %3";
+
 	VerifyDeveloperString="o1ex"
 	VerifiedMessage="[c=2ECC71]is a [b]SWAT: Elite Force[\\b] developer!"
+
+	MapChangedMessage="[c=FF00FF]The map has been changed to [b]%1"
 
 	ChatLogName="chatlog"
 	ChatLogMultiFormat="chatlog_%1_%2_%3"

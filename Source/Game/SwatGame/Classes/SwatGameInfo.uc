@@ -3119,6 +3119,8 @@ function ProcessServerTravel(string URL, bool bItems)
 {
 	Super.ProcessServerTravel(URL, bItems);
 
+	AdminLog(URL, 'NewMap');
+
 	Level.GetGamespyManager().OnLevelChange();
 }
 

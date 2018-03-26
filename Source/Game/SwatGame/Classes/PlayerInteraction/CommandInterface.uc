@@ -1486,6 +1486,8 @@ simulated function GiveCommandMP()
             PendingCommandTargetLocation,
             VoiceType );
 
+		PlayerController.ServerMPCommandIssued(PlayerController.GetHumanReadableName()$"\t"$Commands[PendingCommand.Index].Text);
+
         //instant feedback on client who gives the command (the local player)
         ReceiveCommandMP(
             PendingCommand.Index,
