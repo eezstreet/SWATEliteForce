@@ -87,6 +87,7 @@
  - Fixed SEF bug: Wrong tooltip on entry selection on All Missions campaign
  - Fixed SEF bug: Frequent crashes when using the mod in conjunction with the Frosty's Playhouse Snitch mod
  - Fixed SEF bug: Tasing officers with the Cobra Stun Gun melee did not trigger "Tased a fellow officer" penalty.
+ - Fixed SEF bug: The Server Setup panel, when used to restart the game, would set the game to be Barricaded Suspects.
  - Fixed SEF/TSS bug: If the Graphic Command Interface is used, and the EXIT MENU button is disabled, and aiming at a door, nothing would be highlighted (the menu would be broken). This is triggered by bad logic in TSS code but only visible if SEF or another mod is used.
  - Fixed TSS bug: Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
  - Fixed TSS bug: You can now swap between sniper viewports after a sniper has reported a contact (If "Press Page Up to view sniper viewport" appears), instead of there being a cooldown.
