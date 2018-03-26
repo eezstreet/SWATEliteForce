@@ -551,6 +551,8 @@ function OnMapTypeChanged(bool bQMM)
 
 	AvailableMaps.List.Clear();
 
+	SwatServerSetupMenu.bQMM = bQMM;
+
 	if(bQMM)
 	{
 		MyMapFilterBox.DisableComponent();
@@ -561,8 +563,6 @@ function OnMapTypeChanged(bool bQMM)
 		MyMapFilterBox.EnableComponent();
 		PopulateNormalMaps();
 	}
-
-	SwatServerSetupMenu.bQMM = bQMM;
 }
 
 ///////////////////////////////////////////////////////////////////////////
