@@ -316,6 +316,16 @@ function SanitizeLogMessage(out string Message)
 	} until(i == -1);
 }
 
+// Return a number that is always formatted to be at least 2 digits long
+function string I2(int Number)
+{
+	if(Number < 10)
+	{
+		return "0"$Number;
+	}
+	return ""$Number;
+}
+
 // Log something to the chatlog
 function LogChat(string Message)
 {
@@ -334,7 +344,7 @@ function LogChat(string Message)
 		{
 			ChatLog.OpenLog(ChatLogName);
 		}
-		ChatLog.Logf("["$Level.Day$"/"$Level.Month$"/"$Level.Year$" "$Level.Hour$":"$Level.Minute$":"$Level.Second$"] "$Message);
+		ChatLog.Logf("["$I2(Level.Day)$"/"$I2(Level.Month)$"/"$Level.Year$" "$I2(Level.Hour)$":"$I2(Level.Minute)$":"$I2(Level.Second)$"] "$Message);
 		ChatLog.CloseLog();
 	}
 }

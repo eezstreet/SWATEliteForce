@@ -76,6 +76,7 @@
  - Added option to make a Quick Mission Maker career in the Career menu.
  - Removed gametype selector on Host Game menu. Replaced it with a selector for Quick Mission Maker missions or Missions.
  - Removed CO-OP QMM gamemode (you can still play Quick Missions in CO-OP but the interface makes much more sense and doesn't use a separate gamemode)
+ - The chatlog now uses a minimum of 2 digits when showing the day, month, hour, minute, and second.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
