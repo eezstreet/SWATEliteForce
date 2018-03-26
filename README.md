@@ -24,6 +24,7 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
 4. Mod Compatibility
 5. Known Issues
 6. Other Minor Changes
+  - TSS Bugs Fixed
   - AI
   - Gameplay
   - GUI
@@ -424,6 +425,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * On Fresnal St. Station, there is a mirror point that can have orders issued to it, but it is inaccessible.
  * FunTime Amusements was missing loading screen text.
  * The accomplice on Fairfax Residence could spawn with two Colt Pythons.
+ * The Host Game and Server Setup menus did not display color codes properly on the map list, map name, and map author.
 
 ## AI ##
   * Tons and tons of cut dialogue restored.
