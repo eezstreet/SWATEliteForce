@@ -142,6 +142,7 @@
  - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
  - You can now disable the mission briefing audio in a Quick Mission.
  - You can now write custom briefing text for Quick Missions.
+ - Added a new objective type: "Rescue as many civilians as possible." This is similar to Rescue All Civilians, but if a suspect downs a hostage, it does not fail the mission.
  - In the Host Game menu, you can now choose to create a Quick Mission Maker rotation as opposed to a regular Mission rotation.
   - NOTE: Any pack-specific properties (progression, unlocks, disabled equipment) do not function unless used in a Career CO-OP game.
  - Notes entry field size increased from 500 to 4000.
