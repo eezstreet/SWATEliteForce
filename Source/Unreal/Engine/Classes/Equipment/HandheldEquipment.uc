@@ -1191,14 +1191,17 @@ simulated final function SetAvailableCount(int NewCount)
 
 simulated final function AddAvailableCount(int Add)
 {
-	AvailableCount += Add;
-	if(AvailableCount <= 0)
+	local int NewAvailableCount;
+
+	NewAvailableCount = AvailableCount + Add;
+	if(NewAvailableCount <= 0)
 	{
 		SetAvailable(false);
 	}
 	else
 	{
 		SetAvailable(true);
+		AvailableCount = NewAvailableCount;
 	}
 }
 
