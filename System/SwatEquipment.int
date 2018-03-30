@@ -677,14 +677,17 @@ ShortName=Flashbang
 [Sting3pack]
 Description=This 3-pack of stingers contains three times as many stingers, but occupies five times as much space and weight.
 FriendlyName=Stinger (x3)
+ShortName=Stinger (x3)
 
 [CS3pack]
 Description=This 3-pack of gas grenades contains three times as many CS gas grenades, but occupies five times as much space and weight.
 FriendlyName=CS Gas (x3)
+ShortName=CS Gas (x3)
 
 [Flashbang3pack]
 Description=This 3-pack of flashbangs contains three times as many flashbangs, but occupies five times as much space and weight.
 FriendlyName=Flashbang (x3)
+ShortName=Flashbang (x3)
 
 [BreachingSG]
 Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This weapon can be modified with special breaching ammunition for quick room entries, or beanbags for a less-lethal approach.||This particular variant is equipped with a special breaching nozzle, which ensures that every shot will consistently breach a door.
