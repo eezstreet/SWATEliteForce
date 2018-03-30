@@ -77,6 +77,10 @@ simulated function OnUsingFinishedHook()
 			SwatPlayer(Owner).DoDefaultEquip();
 		}
 	}
+	else
+	{
+		Used = false;
+	}
 	ThrowingFast = false;
 }
 
