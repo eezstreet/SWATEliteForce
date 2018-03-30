@@ -303,7 +303,7 @@ TotalAmmoString=10 magazines
 RateOfFire=390 RPM
 
 [Glock18HG]
-Description=One of the first machine pistols, the Glock 18 was developed at the request of EKO Cobra, the elite tactical unit of Austria's Ministry of the Interior, in order to test the wear of Glock's signature polymer materials. Since then, the Glock 18 has become a formidable
+Description=One of the first machine pistols, the Glock 18 was developed at the request of EKO Cobra, the elite tactical unit of Austria's Ministry of the Interior, in order to test the wear of Glock's signature polymer materials. It was later determined that this weapon, with its incredible firerate, has some potential in the field, if the operator can manage its intense recoil. Due to its fully automatic nature, this weapon is not available for civilians to purchase and is only available to elite, tactical units such as SWAT.
 FriendlyName=Glock 18
 ShortName=Glock 18
 Manufacturer=Glock
