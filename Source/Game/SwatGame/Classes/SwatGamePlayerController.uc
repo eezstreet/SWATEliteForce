@@ -2522,6 +2522,13 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	{
 		return false;
 	}
+
+	AssertWithDescription(Other != SwatPlayer, "Somehow, you tried to give the item '"$ActiveItem$"' to yourself. How did you do this?");
+	if(Other == SwatPlayer)
+	{
+		// just die I guess
+		return false;
+	}
 	// From this point on, we will --always-- block the trace
 
 	AddedWeight = ActiveItem.GetWeight();
