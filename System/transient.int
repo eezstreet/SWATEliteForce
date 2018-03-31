@@ -5704,6 +5704,9 @@ Description=Neutralize Hadeon Koshka
 [Rescue_All_Hostages]
 Description=Rescue all of the civilians
 
+[Rescue_Hostages]
+Description=Rescue as many civilians as possible
+
 [Neutralize_All_Enemies]
 Description=Bring order to chaos
 
