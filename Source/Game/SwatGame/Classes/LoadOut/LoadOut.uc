@@ -771,7 +771,7 @@ simulated event Destroyed()
 // IHaveWeight implementation
 
 // Used for the functions below
-function float GetEquipmentWeight(Engine.IHaveWeight PocketItem, int i, bool extra)
+function float GetEquipmentWeight(Engine.IHaveWeight PocketItem, int i)
 {
 	local float total;
 	local Engine.HandheldEquipment HHEItem;
@@ -790,7 +790,8 @@ function float GetEquipmentWeight(Engine.IHaveWeight PocketItem, int i, bool ext
 		total += PocketItem.GetWeight();
 	}
 
-	if(!extra && (i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon)) {
+	if(PocketItem.IsA('FiredWeapon'))
+	{
 		// A weapon
 		FiredItem = FiredWeapon(PocketItem);
 		FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
@@ -814,7 +815,7 @@ function float GetTotalWeight() {
 	    	continue;
 	    }
 
-	    total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i, false);
+	    total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
 
 	for(i = 0; i < GivenEquipment.Length; i++)
@@ -824,7 +825,7 @@ function float GetTotalWeight() {
 			continue;
 		}
 
-		total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i, true);
+		total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
 
 	if(total < minimum)
@@ -835,7 +836,7 @@ function float GetTotalWeight() {
 	return total;
 }
 
-function float GetEquipmentBulk(Engine.IHaveWeight PocketItem, int i, bool extra)
+function float GetEquipmentBulk(Engine.IHaveWeight PocketItem, int i)
 {
 	local float total;
 	local Engine.FiredWeapon FiredItem;
@@ -843,7 +844,7 @@ function float GetEquipmentBulk(Engine.IHaveWeight PocketItem, int i, bool extra
 
 	total = PocketItem.GetBulk();
 
-	if(!extra && (i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon))
+	if(PocketItem.IsA('FiredWeapon'))
 	{
 		// Weapon
 		FiredItem = FiredWeapon(PocketItem);
@@ -869,7 +870,7 @@ function float GetTotalBulk() {
 	    	continue;
 	    }
 
-		total += GetEquipmentBulk(Engine.IHaveWeight(PocketEquipment[i]), i, false);
+		total += GetEquipmentBulk(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
 
 	for(i = 0; i < GivenEquipment.Length; i++)
@@ -879,7 +880,7 @@ function float GetTotalBulk() {
 			continue;
 		}
 
-		total += GetEquipmentBulk(Engine.IHaveWeight(GivenEquipment[i]), i, true);
+		total += GetEquipmentBulk(Engine.IHaveWeight(GivenEquipment[i]), i);
 	}
 
 	if(total < minimum)
