@@ -65,7 +65,7 @@ function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
 	ActiveItem.DecrementAvailableCount();
 
 	// Tell the client we received some new equipment
-	PC.ClientMessage(NewItem.GetFriendlyName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
+	PC.ClientMessage(NewItem.GetGivenEquipmentName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
 }
 
 //=============================================================================

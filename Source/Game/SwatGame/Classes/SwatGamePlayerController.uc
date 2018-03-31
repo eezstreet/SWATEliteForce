@@ -2586,11 +2586,11 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	////////////////////////////////////////////////////////////////
 	//
 	//	Tell the client we gave our equipment away
-	ClientMessage(ActiveItem.GetFriendlyName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
+	ClientMessage(ActiveItem.GetGivenEquipmentName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
 	if(Other.IsA('SwatPlayer'))
 	{
 		SwatGamePlayerController(Other.Controller).ClientMessage(
-			ActiveItem.GetFriendlyName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
+			ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
 	}
 	return true;
 }

@@ -1306,6 +1306,11 @@ static function String GetFriendlyName()
     return default.FriendlyName;
 }
 
+static function String GetGivenEquipmentName()
+{
+	return static.GetFriendlyName();
+}
+
 static function string GetShortName()
 {
 	return default.FriendlyName;

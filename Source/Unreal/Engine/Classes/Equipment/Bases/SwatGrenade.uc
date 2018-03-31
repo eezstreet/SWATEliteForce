@@ -3,6 +3,7 @@ class SwatGrenade extends ThrownWeapon;
 var() config vector PlayerViewOffset;
 var() config bool PlayerUsable;
 var() localized config string ShortName;
+var() localized config string GivenName;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -14,6 +15,15 @@ var() public config float StartCount;
 
 static function string GetShortName() {
 	return default.ShortName;
+}
+
+static function string GetGivenEquipmentName()
+{
+	if(default.GivenName == "")
+	{
+		return default.FriendlyName;
+	}
+	return default.GivenName;
 }
 
 static function float GetInitialWeight() {
