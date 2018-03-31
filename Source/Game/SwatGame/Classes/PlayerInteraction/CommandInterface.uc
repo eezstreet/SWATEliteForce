@@ -509,6 +509,20 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
     LastFocusUpdateOrigin = SwatGamePlayerController(Level.GetLocalPlayerController()).LastFocusUpdateOrigin;
 }
 
+simulated function bool SpecialCondition_Uncompliant(Actor Target)
+{
+	local SwatPawn TargetPawn;
+
+	TargetPawn = SwatPawn(Target);
+	if(TargetPawn == None || !class'Pawn'.static.checkConscious(TargetPawn)
+		|| TargetPawn.IsArrested() || TargetPawn.IsBeingArrestedNow() || TargetPawn.IsDead())
+	{
+		return false;
+	}
+
+	return true;
+}
+
 simulated protected function UncompliantDefaultCommand(Actor Target, CommandInterfaceContext Context)
 {
 	local SwatPawn TargetPawn;

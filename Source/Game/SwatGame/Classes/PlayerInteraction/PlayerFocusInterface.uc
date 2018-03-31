@@ -211,6 +211,7 @@ native function bool RejectFocus(
 
 // Meant to be subclassed.
 simulated function bool SpecialCondition_Zulu() { return false; }
+simulated function bool SpecialCondition_Uncompliant(Actor Target) { return false; }
 simulated function bool SpecialCondition_CanBeArrested(Actor Target) { return false; }
 simulated function bool SpecialCondition_LowReadyPawn(SwatPlayer Player, Actor Target) { return false; }
 
@@ -406,6 +407,12 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 			case 'Zulu':
 				// False if we don't have a held command
 				if(!SpecialCondition_Zulu())
+				{
+					return false;
+				}
+				break;
+			case 'Uncompliant':
+				if(!SpecialCondition_Uncompliant(Target))
 				{
 					return false;
 				}
