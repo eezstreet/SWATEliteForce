@@ -2553,9 +2553,10 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	//	This is because it is only temporarily in our inventory.
 
 	// Don't give the other person an optiwand if they already have one
-	if(ActiveItem.IsA('Optiwand') && Other.HasA('Optiwand'))
+	if(ActiveItem.IsA('Optiwand'))
 	{
-		if(Other.HasA('Optiwand'))
+		if((SwatPlayer(Other) != None && SwatPlayer(Other).GetEquipmentAtSlot(Slot_Optiwand) != None) ||
+			(SwatOfficer(Other) != None && SwatOfficer(Other).GetItemAtSlot(Slot_Optiwand) != None))
 		{
 			// the other player has an optiwand already, don't give it to them
 			ClientMessage("", 'CantGiveAlreadyHasOptiwand');
