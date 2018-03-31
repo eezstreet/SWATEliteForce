@@ -1175,7 +1175,7 @@ simulated final function int GetAvailableCount()
   return AvailableCount;
 }
 
-simulated final function SetAvailableCount(int NewCount)
+simulated final function SetAvailableCount(int NewCount, optional bool InitiallyGiven)
 {
   if(NewCount == 0)
   {
@@ -1184,8 +1184,23 @@ simulated final function SetAvailableCount(int NewCount)
   }
   else
   {
-    AvailableCount = NewCount;
-    SetAvailable(true);
+	  // If we were given this item from another person, we want to set the available count *AFTER* setting its available state.
+	  // Why?
+	  // Because the act of setting it to available(true) also in effect gives it the default count.
+	  // If we didn't do this, receiving an item from a 3-pack would cause us to get a whole 3-pack, and obviously this leads to issues.
+	  if(InitiallyGiven)
+	  {
+		  log("..."$self$"::SetAvailableCount("$NewCount$"): InitiallyGiven = true");
+		  SetAvailable(true);
+		  AvailableCount = NewCount;
+	  }
+	  else
+	  {
+		  log("..."$self$"::SetAvailableCount("$NewCount$"): InitiallyGiven = false");
+		  AvailableCount = NewCount;
+	      SetAvailable(true);
+	  }
+	  log("..."$self$"::New AvailableCount is "$AvailableCount);
   }
 }
 
@@ -1202,6 +1217,7 @@ simulated final function AddAvailableCount(int Add)
 	{
 		SetAvailable(true);
 		AvailableCount = NewAvailableCount;
+		log("..."$self$"::AddAvailableCount("$Add$"): New available count is "$AvailableCount);
 	}
 }
 
@@ -1223,6 +1239,7 @@ simulated final function SetAvailable(bool inAvailable)
   else if(inAvailable)
   {
     AvailableCount = GetDefaultAvailableCount();
+	log("..."$self$"::SetAvailable("$inAvailable$"): AvailableCount is "$AvailableCount$" because Default");
   }
 
   Available = inAvailable;

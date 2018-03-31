@@ -58,7 +58,7 @@ function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
 
 	// Spawn in the actual equipment and give it to the other player
 	NewItem = Spawn(ActiveItem.class, Other);
-	NewItem.SetAvailableCount(1);
+	NewItem.SetAvailableCount(1, true);
 	NewItem.OnGivenToOwner();
 	Other.GivenEquipmentFromPawn(NewItem);
 
