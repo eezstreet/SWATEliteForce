@@ -457,6 +457,11 @@ function ConsiderNewFocus(SwatPlayer Player, Actor CandidateActor, float Distanc
 	local SwatDoor Door;
 	local DoorPart DoorPart;
 
+	if(FocusIsBlocked)
+	{
+		return;
+	}
+
 	if(CandidateActor.IsA('SwatDoor') || CandidateActor.IsA('DoorModel') || CandidateActor.IsA('DoorWay'))
 	{
 		bDoorRelated = true;
