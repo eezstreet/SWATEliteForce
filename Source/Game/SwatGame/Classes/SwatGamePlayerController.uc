@@ -297,6 +297,7 @@ replication
 		ClientPreQuickRoundRestart,
 		ClientStartConversation, ClientSetTrainingText, ClientTriggerDynamicMusic,
         ClientReceiveCommand, /*ClientOnTargetUsed,*/
+		ClientSentOrReceivedEquipment,
         ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedActiveWeapon, ClientAIDroppedAllEvidence,
         ClientInterruptAndGotoState, ClientInterruptState, ClientSetObjectiveVisibility, ClientReportableReportedToTOC,
         ClientAddPrecacheableMaterial, ClientAddPrecacheableMesh, ClientAddPrecacheableStaticMesh, ClientPrecacheAll,
@@ -2499,6 +2500,13 @@ simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCh
 	}
 }
 
+// We just received a new piece of equipment. Deal with it!
+function ClientSentOrReceivedEquipment()
+{
+	GetHUDPage().UpdateWeight();
+	SwatPlayer.GetActiveItem().UpdateHUD();
+}
+
 // Tries to give the currently equipped item to a SwatOfficer/SwatPlayer.
 // Returns true if we should halt the melee trace
 simulated function bool TryGiveItem(SwatPawn Other)
@@ -2591,6 +2599,7 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	{
 		SwatGamePlayerController(Other.Controller).ClientMessage(
 			ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
+		SwatGamePlayerController(Other.Controller).ClientSentOrReceivedEquipment();
 	}
 	return true;
 }

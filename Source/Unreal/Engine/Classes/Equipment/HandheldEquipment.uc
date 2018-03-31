@@ -1175,6 +1175,9 @@ simulated final function int GetAvailableCount()
   return AvailableCount;
 }
 
+// Called whenever we need to update the HUD for some reason --eez
+simulated function UpdateHUD() {}
+
 simulated final function SetAvailableCount(int NewCount, optional bool InitiallyGiven)
 {
   if(NewCount == 0)

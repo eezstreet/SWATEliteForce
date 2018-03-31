@@ -66,6 +66,7 @@ function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
 
 	// Tell the client we received some new equipment
 	PC.ClientMessage(NewItem.GetGivenEquipmentName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
+	PC.ClientSentOrReceivedEquipment();
 }
 
 //=============================================================================
