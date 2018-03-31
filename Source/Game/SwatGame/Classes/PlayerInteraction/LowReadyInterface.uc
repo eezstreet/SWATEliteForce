@@ -110,6 +110,30 @@ simulated function bool InLowReadyRefractoryPeriod()
         );
 }
 
+simulated function bool SpecialCondition_LowReadyPawn(SwatPlayer Player, Actor Target)
+{
+	local HandheldEquipment CurrentItem;
+
+	CurrentItem = Player.GetActiveItem();
+	if(CurrentItem.IsA('Optiwand') || !CurrentItem.IsA('FiredWeapon'))
+	{	// Only FiredWeapons can trigger this context, but not Optiwands
+		return false;
+	}
+	else if(Target.IsA('SwatOfficer') || Target.IsA('SwatPlayer'))
+	{	// not allowed to be firing upon friendlies
+		return true;
+	}
+	else if(Target.IsA('SwatEnemy') || Target.IsA('SwatHostage'))
+	{
+		if(SwatPawn(Target).IsArrested() || SwatPawn(Target).CanBeArrestedNow() || SwatPawn(Target).IsBeingArrestedNow())
+		{	// Don't allow us to fire on compliant or arrested targets
+			return true;
+		}
+	}
+
+	return false;
+}
+
 simulated function BeginLowReadyRefractoryPeriod()
 {
     LastTimeLowReadyRefractoryBegan = Level.TimeSeconds;
