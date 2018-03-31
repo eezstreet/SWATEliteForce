@@ -1178,6 +1178,9 @@ simulated final function int GetAvailableCount()
 // Called whenever we need to update the HUD for some reason --eez
 simulated function UpdateHUD() {}
 
+// Gets the class that we use for spawning the equipment for Giving actions
+static function class GetGivenClass() { return default.class; }
+
 simulated final function SetAvailableCount(int NewCount, optional bool InitiallyGiven)
 {
   if(NewCount == 0)

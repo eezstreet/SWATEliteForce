@@ -2574,7 +2574,7 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	}
 
 	// Spawn in the actual equipment and give it to the other player
-	NewItem = Spawn(ActiveItem.class, Other);
+	NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
 	NewItem.SetAvailableCount(1, true);
 	NewItem.OnGivenToOwner();
 	Other.GivenEquipmentFromPawn(NewItem);
@@ -2601,6 +2601,7 @@ simulated function bool TryGiveItem(SwatPawn Other)
 			ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
 		SwatGamePlayerController(Other.Controller).ClientSentOrReceivedEquipment();
 	}
+	ClientSentOrReceivedEquipment();
 	return true;
 }
 
