@@ -112,6 +112,8 @@ function EditScenario(string Scenario, string Pack)
             PackPlusExtension(Pack),
             CustomScenarioCreatorData.ScenariosPath);
 
+	CustomScenario.UpgradeScenarioToLatestVersion();
+
     InternalEditScenario(false);
 
     Controller.CloseWaitDialog();
@@ -242,6 +244,7 @@ function CustomScenario NewCustomScenario()
 
     CustomScenario = new() class'CustomScenario';
     assert(CustomScenario != None);
+	CustomScenario.ScenarioVersion = CustomScenario.CurrentScenarioVersion;
 
     CustomScenarioPack.LoadCustomScenarioInPlace(
             CustomScenario,

@@ -2073,6 +2073,22 @@ function AdminLog(coerce string Msg, name Type, optional string PlayerIP, option
 	}
 }
 
+function SendDiscordMessage(coerce string Msg, optional bool IsTTS, optional string ChangeUsername)
+{
+	if(Admin != None)
+	{
+		Admin.SendDiscordMessage(Msg, IsTTS, ChangeUsername);
+	}
+}
+
+function TestDiscord()
+{
+	if(Admin != None)
+	{
+		Admin.TestDiscord();
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //overridden from Engine.GameInfo
 function bool IsBroadcastDisabled(name Type)

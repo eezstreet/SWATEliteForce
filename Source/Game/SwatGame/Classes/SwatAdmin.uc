@@ -65,6 +65,10 @@ var public config int WebAdminPort;
 var public config class<SwatWebAdminListener> WebAdminClass;
 var private SwatWebAdminListener WebAdmin;
 
+var public config bool UseDiscord;
+var public config class<DiscordWebhookListener> DiscordClass;
+var private DiscordWebhookListener Discord;
+
 var public config bool UseChatLog;
 var private FileLog ChatLog;
 var public config bool SanitizeChatLog;
@@ -239,6 +243,12 @@ function PostBeginPlay()
 	{
 		log("Spawning webadmin");
 		WebAdmin = Spawn(WebAdminClass, self);
+	}
+
+	if(UseDiscord)
+	{
+		log("Spawning Discord");
+		Discord = Spawn(DiscordClass, self);
 	}
 }
 
@@ -1309,6 +1319,17 @@ function VerifySEFDeveloper(string Message, SwatGamePlayerController PC)
 	}
 }
 
+// Discord Integration
+function TestDiscord()
+{
+	Discord.TestGetWebhook();
+}
+
+function SendDiscordMessage(coerce string Message, optional bool IsTTS, optional string ReplaceUsername)
+{
+	Discord.SendMessage(Message, IsTTS, ReplaceUsername);
+}
+
 // Send a message to WebAdmin
 private function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg, coerce string MsgWithIP)
 {
@@ -1338,6 +1359,9 @@ defaultproperties
 	UseWebAdmin=true
 	WebAdminPort=6000
 	WebAdminClass=class'SwatWebAdminListener'
+
+	UseDiscord=true
+	DiscordClass=class'DiscordWebhookListener'
 
 	UseChatLog=true
 	SanitizeChatLog=true

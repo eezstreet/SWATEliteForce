@@ -42,7 +42,7 @@ function InternalOnShow()
     displayString = "";
 	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.UseCustomBriefing)
 	{
-		displayString = GC.CurrentMission.CustomScenario.CustomBriefing;
+		displayString = GC.CurrentMission.CustomScenario.GetCustomScenarioBriefing();
 	}
 	else
 	{

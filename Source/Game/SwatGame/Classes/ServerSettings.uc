@@ -150,7 +150,7 @@ function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, boo
 		}
 
 		QMMUseCustomBriefing = QMMScenario.UseCustomBriefing;
-		QMMCustomBriefing = QMMScenario.CustomBriefing;
+		QMMCustomBriefing = QMMScenario.GetCustomScenarioBriefing();
 	}
 	else
 	{

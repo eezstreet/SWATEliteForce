@@ -313,7 +313,8 @@ replication
 		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
         ServerHandleViewportFire, ServerHandleViewportReload,
-		ServerDisableSpecialInteractions, ServerMPCommandIssued;
+		ServerDisableSpecialInteractions, ServerMPCommandIssued,
+		ServerDiscordTest, ServerDiscordTest2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1124,6 +1125,16 @@ exec function EnableMirrors( bool bInEnabledMirrors )
 exec function Echo(string s)
 {
 	Player.Console.Message(s, 0);
+}
+
+exec function ServerDiscordTest()
+{
+	SwatGameInfo(Level.Game).SendDiscordMessage("One small step for man...one giant leap for SWAT-kind.");
+}
+
+exec function ServerDiscordTest2()
+{
+	SwatGameInfo(Level.Game).TestDiscord();
 }
 
 // Called when the player is holding down the button to Control the viewport.

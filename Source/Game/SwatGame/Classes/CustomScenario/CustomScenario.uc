@@ -9,8 +9,11 @@ import enum EnemySkill from SwatAICommon.ISwatEnemy;
  *
  *	Version 0: Base Game
  *	Version 1: Elite Force (base)
+ *	Version 2: Elite Force v7 Alpha 3
+ *		CustomBriefing is deprecated. Instead,
  */
 var config int ScenarioVersion;
+const CurrentScenarioVersion = 2;
 
 ////////////////////////////////////////
 // Added in Version 0
@@ -74,7 +77,8 @@ var config localized string Notes;    //localized for any shipping custom scenar
 ////////////////////////////////////////
 // Added in Version 1
 var config bool UseCustomBriefing;
-var config localized string CustomBriefing;
+var private config localized string CustomBriefing;	// DEPRECATED.
+var localized config array<string> BriefingChunks;
 var config bool DisableBriefingAudio;
 var config bool DisableEnemiesTab;
 var config bool DisableHostagesTab;
@@ -87,7 +91,66 @@ var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 replication
 {
 	reliable if ( true ) // ?
-		ScenarioName, CustomBriefing, UseCustomBriefing;
+		ScenarioName, CustomBriefing, UseCustomBriefing, GetCustomScenarioBriefing;
+}
+
+function string GetCustomScenarioBriefing()
+{
+	local string BuiltString;
+	local int i;
+
+	if(ScenarioVersion < 2)
+	{
+		return CustomBriefing;
+	}
+
+	for(i = 0; i < BriefingChunks.Length; i++)
+	{
+		BuiltString = BuiltString $ BriefingChunks[i];
+	}
+
+	return BuiltString;
+}
+
+function SetCustomScenarioBriefing(string NewString)
+{
+	local int lengthLeft;
+	local int strStart;
+
+	if(ScenarioVersion < 2)
+	{
+		CustomBriefing = NewString;
+		return;
+	}
+
+	lengthLeft = Len(NewString);
+	strStart = 0;
+	BriefingChunks.Length = 0;
+	while(lengthLeft >= 1000)
+	{
+		BriefingChunks[BriefingChunks.Length] = Mid(NewString, strStart, 1000);
+		lengthLeft -= 1000;
+		strStart += 1000;
+	}
+
+	if(lengthLeft > 0)
+	{
+		BriefingChunks[BriefingChunks.Length] = Mid(NewString, strStart, lengthLeft);
+	}
+}
+
+function UpgradeScenarioToLatestVersion()
+{
+	local int OldScenarioVersion;
+
+	OldScenarioVersion = ScenarioVersion;
+	ScenarioVersion = CurrentScenarioVersion;
+
+	// 2 --> 3 changed the briefing
+	if(OldScenarioVersion < 2)
+	{
+		SetCustomScenarioBriefing(CustomBriefing);
+	}
 }
 
 function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> Rosters)
@@ -344,4 +407,9 @@ function MutateEnemyWeapons(out array<EnemyArchetype.WeaponClipcountChanceSet> A
 
         ArchetypeWeapons[i] = ArchetypeWeapon;
     }
+}
+
+defaultproperties
+{
+	ScenarioVersion = CurrentScenarioVersion
 }

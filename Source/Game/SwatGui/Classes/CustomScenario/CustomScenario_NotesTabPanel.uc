@@ -125,7 +125,7 @@ function PopulateFieldsFromScenario(bool NewScenario)
 	}
 
     txt_notes.SetText(Scenario.Notes);
-	txt_briefing.SetText(Scenario.CustomBriefing);
+	txt_briefing.SetText(Scenario.GetCustomScenarioBriefing());
 
 }
 
@@ -136,7 +136,7 @@ function GatherScenarioFromFields()
     Scenario = CustomScenarioPage.GetCustomScenario();
 
     Scenario.Notes = txt_notes.GetText();
-	Scenario.CustomBriefing = txt_briefing.GetText();
+	Scenario.SetCustomScenarioBriefing(txt_briefing.GetText());
 	Scenario.UseCustomBriefing = briefing_enable.bChecked;
 	Scenario.DisableBriefingAudio = !audio_enable.bChecked;
 	Scenario.DisableEnemiesTab = !enemies_enable.bChecked;
