@@ -699,6 +699,7 @@ Quick Mission Maker packs are stored in `SEF/Content/Scenarios`. You can downloa
  - You can now write custom briefing text for Quick Missions.
  - Notes entry field size increased from 500 to 4000.
  - NOTES tab renamed to TEXT.
+ - Effectively removed the per-map limits on civilian and suspect counts. You can now have up to 999 suspects or civilians on a map.
  - You can now choose to disable the Timeline, Suspects, and Hostages tabs on the briefing.
  - The level loading screenshot and text will display if you have "Use Campaign Objectives" marked.
  - The INVALID stamp over the briefing will no longer display if you have "Use Campaign Objectives" marked.

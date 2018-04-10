@@ -413,8 +413,8 @@ function UpdateSpawnCounts(CustomScenarioCreatorMissionSpecificData MissionData)
     }
 
     //max'es are the number of spawners
-    CustomScenarioPage.pnl_enemies_spin_count_min.SetMaxValue(MissionData.EnemySpawners);
-    CustomScenarioPage.pnl_enemies_spin_count_max.SetMaxValue(MissionData.EnemySpawners);
+    CustomScenarioPage.pnl_enemies_spin_count_min.SetMaxValue(999);
+    CustomScenarioPage.pnl_enemies_spin_count_max.SetMaxValue(999);
 
     //
     //Hostages
@@ -449,8 +449,8 @@ function UpdateSpawnCounts(CustomScenarioCreatorMissionSpecificData MissionData)
     }
 
     //max'es are the number of spawners
-    CustomScenarioPage.pnl_hostages_spin_count_min.SetMaxValue(MissionData.HostageSpawners);
-    CustomScenarioPage.pnl_hostages_spin_count_max.SetMaxValue(MissionData.HostageSpawners);
+    CustomScenarioPage.pnl_hostages_spin_count_min.SetMaxValue(999);
+    CustomScenarioPage.pnl_hostages_spin_count_max.SetMaxValue(999);
 }
 
 //reset the state of dlist_objectives to present all potential
