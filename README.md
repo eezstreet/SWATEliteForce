@@ -421,6 +421,8 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
  * Applying a loadout to the whole team in a Quick Mission which has locked equipment allowed the player to bypass the locked equipment entirely.
  * Enemies could spawn in an unreachable spot on The Wolcott Projects.
+ * The gunshot sound effects on Northside Vending and Amusements from the laundromat would not play correctly on the expansion (but would in the vanilla game).
+ * The gunshot sound effects on A-Bomb Nightclub from the stage would not play correctly on the expansion (but would in the vanilla game).
  * On Fresnal St. Station, hostages that spawned on the train platform would scream endlessly after a suspect escaped.
  * On Fresnal St. Station, there is a mirror point that can have orders issued to it, but it is inaccessible.
  * FunTime Amusements was missing loading screen text.
