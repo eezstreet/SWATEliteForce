@@ -313,6 +313,7 @@ function ProcessPostRequest(HTTPMessage InMessage)
 function ProcessGetRequest(HTTPMessage InMessage)
 {
 	local string HTML;
+	local string JSON;
 
 	ParseGetData(InMessage);
 
@@ -366,6 +367,18 @@ function ProcessGetRequest(HTTPMessage InMessage)
 	{
 		HTML = HTML $ WebAdminPage_CommandHelp(InMessage);
 	}
+	else if(InMessage.URL ~= "/json/players")
+	{
+		JSON = SwatGameInfo(Level.Game).Admin.GetPlayersJSON();
+		SendJSON(JSON);
+		return;
+	}
+	else if(InMessage.URL ~= "/json/log")
+	{
+		JSON = SwatGameInfo(Level.Game).Admin.GetLogJSON();
+		SendJSON(JSON);
+		return;
+	}
 	else
 	{
 		HTML = HTML $ WebAdminPage_404(InMessage);
@@ -413,6 +426,22 @@ function SendHTML(string HTML)
 	OutMessage.CacheControl = CacheControl;
 	OutMessage.Pragma = Pragma;
 	OutMessage.Body = HTML;
+
+	SendHTTPResponse(OutMessage);
+}
+
+// Send some JSON to the client
+function SendJSON(string JSON)
+{
+	local HTTPMessage OutMessage;
+
+	OutMessage.Version = HTTPVersion;
+	OutMessage.Type = "200 OK";
+	OutMessage.ContentType = "application/json";
+	OutMessage.ContentLength = Len(JSON);
+	OutMessage.CacheControl = CacheControl;
+	OutMessage.Pragma = Pragma;
+	OutMessage.Body = JSON;
 
 	SendHTTPResponse(OutMessage);
 }

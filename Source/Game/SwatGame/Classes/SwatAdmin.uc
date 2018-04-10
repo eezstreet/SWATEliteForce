@@ -52,6 +52,13 @@ struct AutoAction
 	var string ExecuteText;
 };
 
+struct JSONMessage
+{
+	var int Sequence;
+	var int Type;
+	var string Text;
+};
+
 var public SwatAdminPermissions GuestPermissions;			// Guest permissions are given to every player, even ones that aren't signed in
 var public array<SwatAdminPermissions> Permissions;			// These require someone to sign in
 var public config name GuestPermissionName;
@@ -65,16 +72,22 @@ var public config int WebAdminPort;
 var public config class<SwatWebAdminListener> WebAdminClass;
 var private SwatWebAdminListener WebAdmin;
 
+// Discord integration
 var public config bool UseDiscord;
 var public config class<DiscordWebhookListener> DiscordClass;
 var private DiscordWebhookListener Discord;
 
+// Chatlog integration
 var public config bool UseChatLog;
 var private FileLog ChatLog;
 var public config bool SanitizeChatLog;
 var public config bool UseNewChatLogPerDay;
 var public config string ChatLogMultiFormat;
 var public config string ChatLogName;
+
+// JSON integration
+var private int JSONSequence;
+var private array<JSONMessage> JSONMessages;
 
 var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
 var public config bool GlobalDisableLocalizedChat;
@@ -1330,17 +1343,101 @@ function SendDiscordMessage(coerce string Message, optional bool IsTTS, optional
 	Discord.SendMessage(Message, IsTTS, ReplaceUsername);
 }
 
+// JSON integration
+function string GetPlayersJSON()
+{
+	local string JSON;
+	local ServerSettings Settings;
+	local SwatGameReplicationInfo SGRI;
+	local SwatPlayerReplicationInfo PRI;
+	local int i;
+
+	Settings = ServerSettings(Level.CurrentServerSettings);
+	SGRI = SwatGameReplicationInfo(Level.Game.GameReplicationInfo);
+
+	JSON = "{";
+	JSON = JSON $ "\"playercount\": " $ Level.Game.NumPlayers $ ", ";
+	JSON = JSON $ "\"maxplayercount\": " $ Settings.MaxPlayers;
+
+	if(Level.Game.NumPlayers > 0)
+	{
+		JSON = JSON $ ", \"players\": [";
+	}
+	for(i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
+	{
+		PRI = SGRI.PRIStaticArray[i];
+		if(PRI.PlayerName ~= "")
+		{
+			continue;
+		}
+
+		if(i != 0)
+		{
+			JSON = JSON $ ", ";
+		}
+		JSON = JSON $ "{";
+		// player data
+		JSON = JSON $ "\"name\": \"" $ PRI.PlayerName $"\", ";
+		JSON = JSON $ "\"ping\": "$ PRI.Ping $ ", ";
+		JSON = JSON $ "\"team\": \"" $ PRI.Team.TeamName $ "\", ";
+		JSON = JSON $ "\"status\": " $ PRI.COOPPlayerStatus $ ", ";
+		JSON = JSON $ "\"leader\": \"" $ PRI.IsLeader $ "\"";
+
+		JSON = JSON $ "}";
+	}
+	if(Level.Game.NumPlayers > 0)
+	{
+		JSON = JSON $ "]";
+	}
+	JSON = JSON $ "}";
+
+	return JSON;
+}
+
+function string GetLogJSON()
+{
+	local string JSON;
+	local int i;
+
+	JSON = "{";
+	if(JSONMessages.Length > 0)
+	{
+		JSON = JSON $ "\"log\": [";
+	}
+	for(i = 0; i < JSONMessages.Length; i++)
+	{
+		if(i != 0)
+		{
+			JSON = JSON $ ",";
+		}
+		JSON = JSON $ "{";
+		JSON = JSON $ "\"seq\": " $ JSONMessages[i].Sequence $ ", ";
+		JSON = JSON $ "\"type\": " $ JSONMessages[i].Type $ ", ";
+		JSON = JSON $ "\"text\": \"" $ JSONMessages[i].Text $ "\"";
+		JSON = JSON $ "}";
+	}
+	if(JSONMessages.Length > 0)
+	{
+		JSON = JSON $ "]";
+	}
+	JSON = JSON $ "}";
+	return JSON;
+}
+
 // Send a message to WebAdmin
 private function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg, coerce string MsgWithIP)
 {
+	local JSONMessage JSON;
+
 	if(WebAdmin != None)
 	{
 		WebAdmin.SendWebAdminMessage(Type, Msg, MsgWithIP);
 	}
-	else
-	{
-		LogChat("--Previous message not sent to WebAdmin--");
-	}
+	JSON.Sequence = JSONSequence;
+	JSON.Type = Type;
+	JSON.Text = Msg;
+	JSONMessages[JSONMessages.Length] = JSON;
+	JSONSequence++;
 }
 
 defaultproperties

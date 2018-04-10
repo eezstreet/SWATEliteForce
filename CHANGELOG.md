@@ -57,6 +57,7 @@
  - WebAdmin now shows player status (Ready/Not Ready/Not Available/Injured/Healthy/Incapacitated) and shows who is the leader.
  - WebAdmin now shows the current map and server name on the main interface.
  - WebAdmin now displays voting messages, as well as commands that are issued (e.g, "FALL IN") in order to minimize abuse.
+ - You can now pull JSON data from WebAdmin. For more information, see the section titled Admin System in the README.md.
  - Added the option to disable Ironsights zooming
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"

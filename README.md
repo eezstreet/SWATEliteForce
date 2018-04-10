@@ -966,6 +966,46 @@ AutoActions=(Delay=0.5,ExecuteText="[c=FFFFFF]Please be nice to others![\\c]")
 WebAdmin defaults to port 6000. You can access it in a web browser by going to: http://<external ip>:6000/
 On the host machine, this can be reached from http://127.0.0.1:6000/
 
+For some tools, you might want to get JSON metadata off of the server. There are two specialized addresses to pull data from. You can see an example of how the data is formatted by going to the listed addresses in your browser.
+Note that all enumerations start from zero. They are updated as of v7.
+
+ * Player data can be pulled from `<webadmin address>/json/players`. The Status field can be one of the following from this enumeration:
+
+```cpp
+enum COOPStatus
+{
+    STATUS_NotReady,
+    STATUS_Ready,
+    STATUS_Healthy,
+    STATUS_Injured,
+    STATUS_Incapacitated,
+};
+```
+
+ * A full readout of the server's webadmin logs can be pulled from `<webadmin address>/json/log`. The Message Type field can be one of the following from this enumeration:
+
+```cpp
+enum WebAdminMessageType
+{
+	MessageType_Chat,
+	MessageType_PlayerJoin,
+	MessageType_AdminJoin,
+	MessageType_AdminLeave,
+	MessageType_Penalty,
+	MessageType_SwitchTeams,
+	MessageType_NameChange,
+	MessageType_Voting,
+	MessageType_Kill,
+	MessageType_TeamKill,
+	MessageType_Arrest,
+	MessageType_Round,
+	MessageType_WebAdminError,
+};
+```
+
+Note that `MessageType_SwitchTeams` is also used for administrator actions, and messages sent by AutoActions are *not* included as part of these logs.
+As a security precaution, note that *anyone* can access these URLs and get a message log. So you should probably not be discussing sensitive information on the server.
+
 # CREDITS/THANK-YOUS #
 * Irrational Games and Sierra for the game.
 * BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
