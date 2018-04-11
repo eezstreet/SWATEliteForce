@@ -333,15 +333,16 @@ To make this process more painless, I've gone ahead and listed each of the mods 
 
 **Fully Compatible; no special installation steps:**
  * SWAT 4 ENB / Reshade
+ * SWAT 4 Music Overhaul
  * Elite Tactical Force Map Pack
  * Mega Map Pack. (DO NOT install the mod, just the maps)
  * GSF Map Pack
  * ANY custom officer skin mod.
 
+
 **Partially Compatible; some assembly required or there are bugs:**
  * SWAT 4 Graphical Enrichment Mod (GEM). (Not usable in multiplayer)
  * SWAT 4 Retextured Mod. (Not usable in multiplayer)
- * SWAT 4 Music Overhaul (Not usable in multiplayer)
  * Snitch Mod. (It can crash on occasion)
  * LEVEL 13. (Only the maps are supported.)
  * BFHL Mod. (Can be installed, but requires a great deal of patience and use of the editor to do so)
