@@ -80,6 +80,10 @@ latent function MirrorDoor()
 
 			SwapStackUpPositions(OfficerWithMirror, GetFirstOfficer());
 		}
+		else
+		{
+			ISwatOfficer(OfficerWithMirror).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
+		}
 
 		CurrentMirrorDoorGoal = new class'MirrorDoorGoal'(AI_CharacterResource(OfficerWithMirror.characterAI), TargetDoor);
 		assert(CurrentMirrorDoorGoal != None);

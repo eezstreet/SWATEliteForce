@@ -297,6 +297,7 @@ replication
 		ClientPreQuickRoundRestart,
 		ClientStartConversation, ClientSetTrainingText, ClientTriggerDynamicMusic,
         ClientReceiveCommand, /*ClientOnTargetUsed,*/
+		ClientSentOrReceivedEquipment,
         ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedActiveWeapon, ClientAIDroppedAllEvidence,
         ClientInterruptAndGotoState, ClientInterruptState, ClientSetObjectiveVisibility, ClientReportableReportedToTOC,
         ClientAddPrecacheableMaterial, ClientAddPrecacheableMesh, ClientAddPrecacheableStaticMesh, ClientPrecacheAll,
@@ -312,7 +313,8 @@ replication
 		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
         ServerHandleViewportFire, ServerHandleViewportReload,
-		ServerDisableSpecialInteractions;
+		ServerDisableSpecialInteractions, ServerMPCommandIssued,
+		ServerDiscordTest, ServerDiscordTest2;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1125,6 +1127,16 @@ exec function Echo(string s)
 	Player.Console.Message(s, 0);
 }
 
+exec function ServerDiscordTest()
+{
+	SwatGameInfo(Level.Game).SendDiscordMessage("One small step for man...one giant leap for SWAT-kind.");
+}
+
+exec function ServerDiscordTest2()
+{
+	SwatGameInfo(Level.Game).TestDiscord();
+}
+
 // Called when the player is holding down the button to Control the viewport.
 exec function ControlOfficerViewport()
 {
@@ -1614,6 +1626,13 @@ simulated function ServerDisableSpecialInteractions()
 {
 	SpecialInteractionsDisabled = !SpecialInteractionsDisabled;
 	SpecialInteractionsNotification(SpecialInteractionsDisabled);
+}
+
+simulated function ServerMPCommandIssued(string CommandText)
+{
+	Level.Game.AdminLog(CommandText,
+		'CommandGiven',
+		GetPlayerNetworkAddress());
 }
 
 exec function ToggleSpecialInteractions()
@@ -2188,8 +2207,11 @@ exec function ShowViewport(string ViewportType)
     {
         if ( ViewportManager.HasOfficers( ViewportType ) )
         {
-            if ( ViewportType ~= "sniper" )
+            if ( ViewportType ~= "sniper" && !(ViewportManager.GetFilter() ~= "sniper") )
+			{	// SEF: only go to the sniper viewport if we don't have the sniper filter up
                 SpecificOfficer = SniperAlertFilter;
+			}
+
 
             GetHUDPage().ExternalViewport.Show();
             ViewportManager.ShowViewport(ViewportType, SpecificOfficer);
@@ -2489,6 +2511,13 @@ simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCh
 	}
 }
 
+// We just received a new piece of equipment. Deal with it!
+function ClientSentOrReceivedEquipment()
+{
+	GetHUDPage().UpdateWeight();
+	SwatPlayer.GetActiveItem().UpdateHUD();
+}
+
 // Tries to give the currently equipped item to a SwatOfficer/SwatPlayer.
 // Returns true if we should halt the melee trace
 simulated function bool TryGiveItem(SwatPawn Other)
@@ -2510,6 +2539,13 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	// If the target is unconscious, continue with the trace
 	if(!class'Pawn'.static.checkConscious(Other))
 	{
+		return false;
+	}
+
+	AssertWithDescription(Other != SwatPlayer, "Somehow, you tried to give the item '"$ActiveItem$"' to yourself. How did you do this?");
+	if(Other == SwatPlayer)
+	{
+		// just die I guess
 		return false;
 	}
 	// From this point on, we will --always-- block the trace
@@ -2536,9 +2572,10 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	//	This is because it is only temporarily in our inventory.
 
 	// Don't give the other person an optiwand if they already have one
-	if(ActiveItem.IsA('Optiwand') && Other.HasA('Optiwand'))
+	if(ActiveItem.IsA('Optiwand'))
 	{
-		if(Other.HasA('Optiwand'))
+		if((SwatPlayer(Other) != None && SwatPlayer(Other).GetEquipmentAtSlot(Slot_Optiwand) != None) ||
+			(SwatOfficer(Other) != None && SwatOfficer(Other).GetItemAtSlot(Slot_Optiwand) != None))
 		{
 			// the other player has an optiwand already, don't give it to them
 			ClientMessage("", 'CantGiveAlreadyHasOptiwand');
@@ -2548,8 +2585,8 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	}
 
 	// Spawn in the actual equipment and give it to the other player
-	NewItem = Spawn(ActiveItem.class, Other);
-	NewItem.SetAvailableCount(1);
+	NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
+	NewItem.SetAvailableCount(1, true);
 	NewItem.OnGivenToOwner();
 	Other.GivenEquipmentFromPawn(NewItem);
 
@@ -2568,12 +2605,14 @@ simulated function bool TryGiveItem(SwatPawn Other)
 	////////////////////////////////////////////////////////////////
 	//
 	//	Tell the client we gave our equipment away
-	ClientMessage(ActiveItem.GetFriendlyName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
+	ClientMessage(ActiveItem.GetGivenEquipmentName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
 	if(Other.IsA('SwatPlayer'))
 	{
 		SwatGamePlayerController(Other.Controller).ClientMessage(
-			ActiveItem.GetFriendlyName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
+			ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
+		SwatGamePlayerController(Other.Controller).ClientSentOrReceivedEquipment();
 	}
+	ClientSentOrReceivedEquipment();
 	return true;
 }
 

@@ -26,9 +26,14 @@ var private Formation CurrentFormation;
 
 var private SwatDoor  DoorToBlowC2On;
 
+var private bool bIgnoreDoorBlocking;
+
 // config
-var private config float	 MinTimeToFireFullAuto;
-var private config float	 MaxTimeToFireFullAuto;
+// Moved to SwatAICharacterConfig.
+//var private config float	 MinTimeToFireFullAuto;
+//var private config float	 MaxTimeToFireFullAuto;
+
+var private config float NotUsed;	// slack space --eez
 
 var private config Material  ViewportOverlayMaterial;
 
@@ -238,7 +243,8 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.PickLockAction');
 	characterResource.addAbility(new class'SwatAICommon.TryDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.StackUpAction');
-  characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
+	characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
+	characterResource.addAbility(new class'SwatAICommon.MirrorAllAction');
 	characterResource.addAbility(new class'SwatAICommon.MoveAndClearAction');
 	characterResource.addAbility(new class'SwatAICommon.FallInAction');
 	characterResource.addAbility(new class'SwatAICommon.ThrowGrenadeAction');
@@ -736,13 +742,15 @@ function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 // overridden from ISwatAI
 function float GetTimeToWaitBeforeFiring()
 {
-	return RandRange(0.05, 0.1);
+	return RandRange(class'SwatAICharacterConfig'.default.OfficerMinTimeToWaitBeforeFiring,
+		class'SwatAICharacterConfig'.default.OfficerMaxTimeToWaitBeforeFiring);
 }
 
 // overridden from SwatAI
 protected function float GetLengthOfTimeToFireFullAuto()
 {
-	return RandRange(MinTimeToFireFullAuto, MaxTimeToFireFullAuto);
+	return RandRange(class'SwatAICharacterConfig'.default.OfficerMinTimeToFireFullAuto,
+		class'SwatAICharacterConfig'.default.OfficerMaxTimeToFireFullAuto);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1122,6 +1130,17 @@ simulated function Tick(float dTime) {
 simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
 {
 	Loadout.GivenEquipmentFromPawn(Equipment);
+}
+
+// Ignore door blocking, SEF addition
+function SetIgnoreDoorBlocking(bool NewDoorBlocking)
+{
+	bIgnoreDoorBlocking = NewDoorBlocking;
+}
+
+function bool GetIgnoreDoorBlocking()
+{
+	return bIgnoreDoorBlocking;
 }
 
 defaultproperties

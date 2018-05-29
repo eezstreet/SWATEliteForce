@@ -5,6 +5,8 @@
 class SquadCheckForTrapsAction extends SquadStackUpAction;
 ///////////////////////////////////////////////////////////////////////////////
 
+import enum EquipmentSlot from Engine.HandheldEquipment;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Variables
@@ -34,15 +36,35 @@ function cleanup()
 //
 // Queries
 
+function Pawn GetFirstOfficerWithMirror()
+{
+	local int i;
+	local Pawn Officer;
+
+	for(i=0; i<OfficersInStackUpOrder.Length; ++i)
+	{
+		Officer = OfficersInStackUpOrder[i];
+
+		if(class'Pawn'.static.checkConscious(Officer) &&
+		   (ISwatOfficer(Officer).GetItemAtSlot(Slot_Optiwand) != None))
+		{
+			return Officer;
+		}
+	}
+
+	// it's ok to get here
+	return None;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // State Code
 
 latent function CheckTraps()
 {
-  local Pawn CheckingOfficer;
+	local Pawn CheckingOfficer;
 
-  CheckingOfficer = OfficersInStackUpOrder[0];
+	CheckingOfficer = GetFirstOfficerWithMirror();
 
 	if (CheckingOfficer == None)
 	{
@@ -51,7 +73,16 @@ latent function CheckTraps()
 	}
 	else
 	{
-		ISwatOfficer(CheckingOfficer).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
+		if (CheckingOfficer != GetFirstOfficer())
+		{
+			ISwatOfficer(CheckingOfficer).GetOfficerSpeechManagerAction().TriggerGenericMoveUpSpeech();
+
+			SwapStackUpPositions(CheckingOfficer, GetFirstOfficer());
+		}
+		else
+		{
+			ISwatOfficer(CheckingOfficer).GetOfficerSpeechManagerAction().TriggerGenericOrderReplySpeech();
+		}
 
 		CurrentCheckTrapsGoal = new class'CheckTrapsGoal'(AI_CharacterResource(CheckingOfficer.characterAI), TargetDoor);
 		assert(CurrentCheckTrapsGoal != None);

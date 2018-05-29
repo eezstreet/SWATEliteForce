@@ -11,6 +11,7 @@ class SquadPlaceWedgeAction extends SquadStackUpAction;
 
 // behaviors we use
 var private PlaceWedgeGoal	CurrentPlaceWedgeGoal;
+var private CloseDoorGoal	CurrentCloseDoorGoal;
 
 // internal
 var private Pawn			OfficerWithWedge;
@@ -28,6 +29,12 @@ function Cleanup()
 	{
 		CurrentPlaceWedgeGoal.Release();
 		CurrentPlaceWedgeGoal = None;
+	}
+
+	if(CurrentCloseDoorGoal != None)
+	{
+		CurrentCloseDoorGoal.Release();
+		CurrentCloseDoorGoal = None;
 	}
 }
 
@@ -75,6 +82,27 @@ latent function PlaceWedge()
 	{
 		OfficerWithWedge             = OfficersInStackUpOrder[OfficerWithWedgeIndex];
 		OfficerWithWedgeStackupPoint = StackupPoints[OfficerWithWedgeIndex];
+
+		// If the door is open, shut it.
+		if(TargetDoor.IsOpen())
+		{
+			CurrentCloseDoorGoal = new class'CloseDoorGoal'(AI_Resource(OfficerWithWedge.movementAI), TargetDoor);
+			assert(CurrentCloseDoorGoal != None);
+			CurrentCloseDoorGoal.AddRef();
+
+			CurrentCloseDoorGoal.postGoal(self);
+			WaitForGoal(CurrentCloseDoorGoal);
+			CurrentCloseDoorGoal.unPostGoal(self);
+
+			CurrentCloseDoorGoal.Release();
+			CurrentCloseDoorGoal = None;
+
+			// Wait until the door is closed
+			while(!TargetDoor.IsClosed())
+			{
+				yield();
+			}
+		}
 
 		CurrentPlaceWedgeGoal = new class'PlaceWedgeGoal'(AI_Resource(OfficerWithWedge.characterAI), TargetDoor);
 		assert(CurrentPlaceWedgeGoal != None);

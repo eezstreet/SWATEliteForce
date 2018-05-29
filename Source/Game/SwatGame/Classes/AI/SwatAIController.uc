@@ -57,15 +57,16 @@ function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
 	}
 
 	// Spawn in the actual equipment and give it to the other player
-	NewItem = Spawn(ActiveItem.class, Other);
-	NewItem.SetAvailableCount(1);
+	NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
+	NewItem.SetAvailableCount(1, true);
 	NewItem.OnGivenToOwner();
 	Other.GivenEquipmentFromPawn(NewItem);
 
 	ActiveItem.DecrementAvailableCount();
 
 	// Tell the client we received some new equipment
-	PC.ClientMessage(NewItem.GetFriendlyName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
+	PC.ClientMessage(NewItem.GetGivenEquipmentName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
+	PC.ClientSentOrReceivedEquipment();
 }
 
 //=============================================================================

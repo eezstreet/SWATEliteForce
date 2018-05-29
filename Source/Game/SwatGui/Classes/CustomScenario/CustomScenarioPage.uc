@@ -1,7 +1,7 @@
 class CustomScenarioPage extends SwatCustomScenarioPageBase
     dependsOn(CustomScenarioTabControl)
     ;
-    
+
 import enum ETabPanels from SwatGui.CustomScenarioTabControl;
 
 var(SWATGui) private EditInline Config GUIButton		    cmd_main;
@@ -24,6 +24,7 @@ var private localized config string ConfirmationString;
 var private localized config string ConfirmOverwriteExistingScenarioString;
 
 var private bool bCheckForOverwrite;
+var bool UsingCustomMap;
 
 function bool IsClient()
 {
@@ -107,9 +108,11 @@ function EditScenario(string Scenario, string Pack)
 
     CustomScenarioPack.LoadCustomScenarioInPlace(
             NewCustomScenario(),
-            Scenario, 
-            PackPlusExtension(Pack), 
+            Scenario,
+            PackPlusExtension(Pack),
             CustomScenarioCreatorData.ScenariosPath);
+
+	CustomScenario.UpgradeScenarioToLatestVersion();
 
     InternalEditScenario(false);
 
@@ -121,11 +124,16 @@ function EditScenario(string Scenario, string Pack)
 function DeleteScenario(string Scenario, string Pack)
 {
     CustomScenarioPack.DeleteCustomScenario(
-            Scenario, 
-            PackPlusExtension(Pack), 
+            Scenario,
+            PackPlusExtension(Pack),
             CustomScenarioCreatorData.ScenariosPath);
 
     OnActivate();
+}
+
+function SavePack(string PackName, CustomScenarioPack ThePack)
+{
+	ThePack.SavePack(CustomScenarioCreatorData.ScenariosPath, PackPlusExtension(PackName));
 }
 
 function SaveCurrentScenario()
@@ -134,7 +142,7 @@ function SaveCurrentScenario()
     local string Pack;
 
     GatherScenarioFromFields();
-    
+
     // Check for scenario overwrite
     if (bCheckForOverwrite)
     {
@@ -147,7 +155,7 @@ function SaveCurrentScenario()
         //log( FormatTextString( ConfirmOverwriteExistingScenarioString, Scenario, Pack ) );
             OnDlgReturned=ConfirmOverwriteExistingScenario;
             OpenDlg( FormatTextString( ConfirmOverwriteExistingScenarioString, Scenario, Pack ), QBTN_YesNo, "Overwrite" );
-            
+
             return;
         }
     }
@@ -164,9 +172,9 @@ function ReallySaveCurrentScenario()
     Pack = GetCustomScenario().PackName;
 
     CustomScenarioPack.SaveCustomScenario(
-            GetCustomScenario(), 
-            Scenario, 
-            PackPlusExtension(Pack), 
+            GetCustomScenario(),
+            Scenario,
+            PackPlusExtension(Pack),
             CustomScenarioCreatorData.ScenariosPath);
 
     OnActivate();   //return to list
@@ -236,11 +244,12 @@ function CustomScenario NewCustomScenario()
 
     CustomScenario = new() class'CustomScenario';
     assert(CustomScenario != None);
+	CustomScenario.ScenarioVersion = CustomScenario.CurrentScenarioVersion;
 
     CustomScenarioPack.LoadCustomScenarioInPlace(
             CustomScenario,
-            "New Scenario", 
-            "Default.pak", 
+            "New Scenario",
+            "Default.pak",
             "..\\..\\Content\\Classes\\");
 
     return CustomScenario;
@@ -257,22 +266,22 @@ function PlayScenario( string ScenarioName, string PackName )
 {
     //reset the current pack
     SetCustomScenarioPack( PackName );
-    
+
     //store the selected pack & scenario data
 	GC.SetCustomScenarioPackData( CustomScenarioPack, PackPlusExtension( PackName ), PackMinusExtension( PackName ), CustomScenarioCreatorData.ScenariosPath );
     GC.SetScenarioName( ScenarioName );
 
     //return to main menu
-	Controller.CloseMenu(); 
+	Controller.CloseMenu();
 
 	//Perform the role change
-	SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Custom ); 
+	SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Custom );
 
     //open Play QM menu
-	Controller.OpenMenu("SwatGui.SwatCustomMenu","SwatCustomMenu"); 
+	Controller.OpenMenu("SwatGui.SwatCustomMenu","SwatCustomMenu");
 
     //open Mission Setup menu
-	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu"); 
+	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
 }
 
 

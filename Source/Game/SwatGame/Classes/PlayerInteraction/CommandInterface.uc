@@ -263,6 +263,7 @@ enum ECommand
 	Command_Request_Wedge,
 	Command_Request_Lightstick,
 	Command_Request_C2,
+	Command_TrapsAndMirror,
 
     Command_Static,
 };
@@ -506,6 +507,20 @@ simulated protected function ResetFocusHook(SwatGamePlayerController Player, HUD
 
     //remember the origin of the focus trace
     LastFocusUpdateOrigin = SwatGamePlayerController(Level.GetLocalPlayerController()).LastFocusUpdateOrigin;
+}
+
+simulated function bool SpecialCondition_Uncompliant(Actor Target)
+{
+	local SwatPawn TargetPawn;
+
+	TargetPawn = SwatPawn(Target);
+	if(TargetPawn == None || !class'Pawn'.static.checkConscious(TargetPawn)
+		|| TargetPawn.IsArrested() || TargetPawn.IsBeingArrestedNow() || TargetPawn.IsDead())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 simulated protected function UncompliantDefaultCommand(Actor Target, CommandInterfaceContext Context)
@@ -872,6 +887,7 @@ simulated function bool CommandUsesOptiwand(Command Command)
 		case Command_MirrorCorner:
 		case Command_MirrorUnderDoor:
 		case Command_Request_Optiwand:
+		case Command_TrapsAndMirror:
 			return true;
 	}
 	return false;
@@ -1027,7 +1043,8 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
 		Status = Pad_GreyedOut;
 	} else if(Level.NetMode == NM_Standalone && CommandUsesOptiwand(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_Optiwand)) {
 		Status = Pad_GreyedOut;
-	} else if(Level.NetMode == NM_Standalone && Command.Command == Command_Request_Optiwand && SwatPawn(Level.GetLocalPlayerController().Pawn).HasA('Optiwand')) {
+	} else if(Level.NetMode == NM_Standalone && Command.Command == Command_Request_Optiwand
+		&& SwatGamePlayerController(Level.GetLocalPlayerController()).SwatPlayer.GetEquipmentAtSlot(Slot_Optiwand) != None) {
 		Status = Pad_GreyedOut; // optiwand not allowed when the player has an optiwand
 	} else if(Level.NetMode == NM_Standalone && CommandUsesPepperSpray(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_PepperSpray)) {
 		Status = Pad_GreyedOut;
@@ -1060,11 +1077,12 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
       Status = Pad_Normal;
     } else if (CommandIsCleanSweep(Command)) {
       Status = Pad_Normal;
-    }
+    } else if (CommandUsesOptiwand(Command)) {
+		Status = Pad_Normal;
+	}
     else if  (
             Command.IsCancel
         ||  Command.SubPage != Page_None                        //command is an achor for a sub-page
-        ||  Command.Command == Command_CheckForTraps            // YUGE hack, and we should be able to execute this anyway
         ||  TeamCanExecuteCommand(Command, CurrentDoorFocus)
         )
         Status = Pad_Normal;
@@ -1482,6 +1500,8 @@ simulated function GiveCommandMP()
             TargetID,
             PendingCommandTargetLocation,
             VoiceType );
+
+		PlayerController.ServerMPCommandIssued(PlayerController.GetHumanReadableName()$"\t"$Commands[PendingCommand.Index].Text);
 
         //instant feedback on client who gives the command (the local player)
         ReceiveCommandMP(
@@ -2181,6 +2201,17 @@ simulated function SendCommandToOfficers()
             }
             break;
 
+		case Command_TrapsAndMirror:
+			if(CheckForValidDoor(PendingCommand, PendingCommandTargetActor))
+			{
+				bCommandIssued = PendingCommandTeam.MirrorAllAt(
+					Level.GetLocalPlayerController().Pawn,
+					PendingCommandOrigin,
+					SwatDoor(PendingCommandTargetActor)
+					);
+			}
+			break;
+
         case Command_PickLock:
             if (CheckForValidDoor(PendingCommand, PendingCommandTargetActor)) {
               log("CheckForValidDoorSucceeded");
@@ -2675,6 +2706,7 @@ simulated protected function Actor GetPendingCommandTargetActor()
         case Command_ShotgunStingAndMakeEntry:
         case Command_ShotgunLeaderThrowAndClear:
         case Command_ShotgunLeaderThrowAndMakeEntry:
+		case Command_TrapsAndMirror:
             return GetDoorFocus();
 
         //cases where we prefer an open door

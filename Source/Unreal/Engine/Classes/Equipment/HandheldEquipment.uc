@@ -1175,7 +1175,13 @@ simulated final function int GetAvailableCount()
   return AvailableCount;
 }
 
-simulated final function SetAvailableCount(int NewCount)
+// Called whenever we need to update the HUD for some reason --eez
+simulated function UpdateHUD() {}
+
+// Gets the class that we use for spawning the equipment for Giving actions
+static function class GetGivenClass() { return default.class; }
+
+simulated final function SetAvailableCount(int NewCount, optional bool InitiallyGiven)
 {
   if(NewCount == 0)
   {
@@ -1184,21 +1190,40 @@ simulated final function SetAvailableCount(int NewCount)
   }
   else
   {
-    AvailableCount = NewCount;
-    SetAvailable(true);
+	  // If we were given this item from another person, we want to set the available count *AFTER* setting its available state.
+	  // Why?
+	  // Because the act of setting it to available(true) also in effect gives it the default count.
+	  // If we didn't do this, receiving an item from a 3-pack would cause us to get a whole 3-pack, and obviously this leads to issues.
+	  if(InitiallyGiven)
+	  {
+		  log("..."$self$"::SetAvailableCount("$NewCount$"): InitiallyGiven = true");
+		  SetAvailable(true);
+		  AvailableCount = NewCount;
+	  }
+	  else
+	  {
+		  log("..."$self$"::SetAvailableCount("$NewCount$"): InitiallyGiven = false");
+		  AvailableCount = NewCount;
+	      SetAvailable(true);
+	  }
+	  log("..."$self$"::New AvailableCount is "$AvailableCount);
   }
 }
 
 simulated final function AddAvailableCount(int Add)
 {
-	AvailableCount += Add;
-	if(AvailableCount <= 0)
+	local int NewAvailableCount;
+
+	NewAvailableCount = AvailableCount + Add;
+	if(NewAvailableCount <= 0)
 	{
 		SetAvailable(false);
 	}
 	else
 	{
 		SetAvailable(true);
+		AvailableCount = NewAvailableCount;
+		log("..."$self$"::AddAvailableCount("$Add$"): New available count is "$AvailableCount);
 	}
 }
 
@@ -1220,6 +1245,7 @@ simulated final function SetAvailable(bool inAvailable)
   else if(inAvailable)
   {
     AvailableCount = GetDefaultAvailableCount();
+	log("..."$self$"::SetAvailable("$inAvailable$"): AvailableCount is "$AvailableCount$" because Default");
   }
 
   Available = inAvailable;
@@ -1301,6 +1327,11 @@ static function String GetDescription()
 static function String GetFriendlyName()
 {
     return default.FriendlyName;
+}
+
+static function String GetGivenEquipmentName()
+{
+	return static.GetFriendlyName();
 }
 
 static function string GetShortName()

@@ -211,7 +211,9 @@ native function bool RejectFocus(
 
 // Meant to be subclassed.
 simulated function bool SpecialCondition_Zulu() { return false; }
+simulated function bool SpecialCondition_Uncompliant(Actor Target) { return false; }
 simulated function bool SpecialCondition_CanBeArrested(Actor Target) { return false; }
+simulated function bool SpecialCondition_LowReadyPawn(SwatPlayer Player, Actor Target) { return false; }
 
 
 // This function also got rewritten from native code
@@ -409,8 +411,20 @@ function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceCon
 					return false;
 				}
 				break;
+			case 'Uncompliant':
+				if(!SpecialCondition_Uncompliant(Target))
+				{
+					return false;
+				}
+				break;
 			case 'CanBeArrested':
 				if(!SpecialCondition_CanBeArrested(Target))
+				{
+					return false;
+				}
+				break;
+			case 'LowReadyPawn':
+				if(!SpecialCondition_LowReadyPawn(Player, Target))
 				{
 					return false;
 				}
@@ -449,6 +463,11 @@ function ConsiderNewFocus(SwatPlayer Player, Actor CandidateActor, float Distanc
 	local int i;
 	local SwatDoor Door;
 	local DoorPart DoorPart;
+
+	if(FocusIsBlocked)
+	{
+		return;
+	}
 
 	if(CandidateActor.IsA('SwatDoor') || CandidateActor.IsA('DoorModel') || CandidateActor.IsA('DoorWay'))
 	{

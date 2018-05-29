@@ -55,7 +55,8 @@ final function bool CampaignExists(string inCampaign)
 //call CampaignExists() first to find out.
 //note that more than one string may map to the same name.
 //returns the newly added Campaign
-final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath)
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath,
+	optional bool bUseCustom, optional string CustomCampaign)
 {
     local name CampaignName;
     local int i;
@@ -78,6 +79,8 @@ final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlaye
 	  Campaigns[i].CampaignPath = campPath;
     Campaigns[i].PlayerPermadeath = bPlayerPermadeath;
     Campaigns[i].OfficerPermadeath = bOfficerPermadeath;
+	Campaigns[i].CustomCareerPath = bUseCustom;
+	Campaigns[i].CustomCareer = CustomCampaign;
 
     SaveConfig();
     Campaigns[i].SaveConfig();

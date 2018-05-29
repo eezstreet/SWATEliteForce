@@ -769,12 +769,40 @@ simulated event Destroyed()
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // IHaveWeight implementation
+
+// Used for the functions below
+function float GetEquipmentWeight(Engine.IHaveWeight PocketItem, int i)
+{
+	local float total;
+	local Engine.HandheldEquipment HHEItem;
+	local Engine.FiredWeapon FiredItem;
+	local Engine.SwatAmmo FiredItemAmmo;
+
+	total = 0;
+
+	HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
+	if(HHEItem == None)
+	{
+		total += PocketItem.GetWeight();
+	}
+	else if(HHEItem.IsAvailable())
+	{
+		total += PocketItem.GetWeight();
+	}
+
+	if(PocketItem.IsA('FiredWeapon'))
+	{
+		// A weapon
+		FiredItem = FiredWeapon(PocketItem);
+		FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
+		total += FiredItemAmmo.GetCurrentAmmoWeight();
+	}
+
+	return total;
+}
+
 function float GetTotalWeight() {
 	local int i;
-	local Engine.IHaveWeight PocketItem;
-	local Engine.FiredWeapon FiredItem;
-	local Engine.HandHeldEquipment HHEItem;
-	local Engine.SwatAmmo FiredItemAmmo;
 	local float total;
 	local float minimum;
 
@@ -787,23 +815,17 @@ function float GetTotalWeight() {
 	    	continue;
 	    }
 
-	    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
-	    HHEItem = Engine.HandHeldEquipment(PocketEquipment[i]);
-	    if(HHEItem == None)
-		{
-		    total += PocketItem.GetWeight();
-	    }
-		else if(HHEItem.IsAvailable())
-		{
-		    total += PocketItem.GetWeight();
-	    }
+	    total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
+	}
 
-	    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon) {
-		    // A weapon
-		    FiredItem = FiredWeapon(PocketItem);
-		    FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
-		    total += FiredItemAmmo.GetCurrentAmmoWeight();
-	    }
+	for(i = 0; i < GivenEquipment.Length; i++)
+	{
+		if(GivenEquipment[i] == None)
+		{
+			continue;
+		}
+
+		total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
 
 	if(total < minimum)
@@ -814,11 +836,27 @@ function float GetTotalWeight() {
 	return total;
 }
 
-function float GetTotalBulk() {
-	local int i;
-	local Engine.IHaveWeight PocketItem;
+function float GetEquipmentBulk(Engine.IHaveWeight PocketItem, int i)
+{
+	local float total;
 	local Engine.FiredWeapon FiredItem;
 	local Engine.SwatAmmo FiredItemAmmo;
+
+	total = PocketItem.GetBulk();
+
+	if(PocketItem.IsA('FiredWeapon'))
+	{
+		// Weapon
+		FiredItem = FiredWeapon(PocketItem);
+		FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
+		total += FiredItemAmmo.GetCurrentAmmoBulk();
+	}
+
+	return total;
+}
+
+function float GetTotalBulk() {
+	local int i;
 	local float total;
 	local float minimum;
 
@@ -832,16 +870,17 @@ function float GetTotalBulk() {
 	    	continue;
 	    }
 
-	    PocketItem = Engine.IHaveWeight(PocketEquipment[i]);
-	    total += PocketItem.GetBulk();
+		total += GetEquipmentBulk(Engine.IHaveWeight(PocketEquipment[i]), i);
+	}
 
-	    if(i == Pocket.Pocket_PrimaryWeapon || i == Pocket.Pocket_SecondaryWeapon)
+	for(i = 0; i < GivenEquipment.Length; i++)
+	{
+		if(GivenEquipment[i] == None)
 		{
-	    	// Weapon
-	    	FiredItem = FiredWeapon(PocketItem);
-	    	FiredItemAmmo = SwatAmmo(FiredItem.Ammo);
-	    	total += FiredItemAmmo.GetCurrentAmmoBulk();
-	    }
+			continue;
+		}
+
+		total += GetEquipmentBulk(Engine.IHaveWeight(GivenEquipment[i]), i);
 	}
 
 	if(total < minimum)

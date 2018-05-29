@@ -1231,7 +1231,13 @@ latent function ReactInitiallyToEnemy()
 
 latent function EngageCurrentEnemy()
 {
-	assert(CurrentEngageOfficerGoal == None);
+	// If we had an engagement goal, drop it
+	if(CurrentEngageOfficerGoal != None)
+	{
+		CurrentEngageOfficerGoal.unPostGoal(self);
+		CurrentEngageOfficerGoal.Release();
+		CurrentEngageOfficerGoal = None;
+	}
 
 	if ((CurrentEnemy != None) || bIgnoreCurrentEnemy)
 	{

@@ -7,13 +7,20 @@
  - Added Brettzie's M4A1! There are now two additional M4 variants (M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint)
  - Added the ability to take no weapon!
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
-- Sharing is caring!
+- New commands: Sharing is caring!
  - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
+ - The INVESTIGATE menu has been spruced up. You can now order your team to either MIRROR FOR TRAPS (replaces CHECK FOR TRAPS), MIRROR FOR CONTACTS, or MIRROR FOR ALL, which combines the two commands, but is slower.
 - New AI behavior!
  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
+ - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
+- Upgraded Quick Mission Maker!
+ - Have you ever wanted to create your own campaign path? Perhaps with custom levels? Now you can!
+ - You can now use custom maps and write your own briefings for the Quick Mission Maker.
+ - Additionally, you can create a progression and unlock system for your custom campaign.
+ - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
 
 #### ALL CHANGES ####
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
@@ -23,6 +30,12 @@
  - You can now order your officers to give you a grenade, lightstick, C2, optiwand, pepper spray or wedge.
  - SWAT AI now uses grenade launchers correctly.
  - SWAT AI can no longer do direct impact damage with grenade launchers.
+ - SWAT AI no longer moves out of the way when bumped by a door, if they are deploying a wedge. Note, if they are moving into position to deploy the wedge, they will still move out of the way.
+ - You can now issue a DEPLOY WEDGE command on an open door. When used, officers will close the door and then deploy the wedge, instead of having to issue two separate commands. (note, it was possible to have officers wedge doors open when using the Speech Command Interface. This has been fixed.)
+ - CHECK FOR TRAPS has been renamed to MIRROR FOR TRAPS and requires an optiwand to be equipped on an officer to use.
+ - MIRROR/SCAN DOOR has been renamed to MIRROR FOR CONTACTS
+ - Both MIRROR FOR TRAPS and MIRROR FOR CONTACTS have had their speed increased by about 20%.
+ - Added a new command: MIRROR FOR ALL. This command combines MIRROR FOR TRAPS and MIRROR FOR CONTACTS, but takes about twice as long.
  - Suspects will attempt to escape when compliant and not being watched. 
  - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
  - Suspects will remain in a barricaded state, even after firing upon a door.
@@ -37,10 +50,14 @@
  - Maps have the ability to randomly open or lock doors which were ordinarily closed.
  - In multiplayer, you can modify the amount of suspects and hostages that spawn (check the Advanced tab on Host Game)
  - Added new admin permission, "View IPs". When a role has this permission, it can see player IPs in the WebAdmin interface.
+ - Added new admin permission, "Toggle Voting". When this is used, voting can be temporarily disabled.
+ - Added new admin permission, "Toggle Player Voting". When this is used, a player's voting rights can be temporarily taken away.
  - When a person logs in as a guest on WebAdmin, their name shows up as "Name (WebGuest)" instead of "Name (WebAdmin)" to better differentiate between admins and guests.
  - Player names show up according to the color of their team in WebAdmin
  - WebAdmin now shows player status (Ready/Not Ready/Not Available/Injured/Healthy/Incapacitated) and shows who is the leader.
  - WebAdmin now shows the current map and server name on the main interface.
+ - WebAdmin now displays voting messages, as well as commands that are issued (e.g, "FALL IN") in order to minimize abuse.
+ - You can now pull JSON data from WebAdmin. For more information, see the section titled Admin System in the README.md.
  - Added the option to disable Ironsights zooming
  - Added a new Controls category, "Multiplayer"
  - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
@@ -56,6 +73,13 @@
  - Renamed keybind "Use" to "Shout For Compliance/Interact"
  - Added new keybind, "Shout For Compliance" (only shouts, doesn't interact with things)
  - Added new keybind, "Interact" (only interacts, doesn't shout)
+ - Removed "Instant Action" from the main menu.
+ - Removed "Play Quick Mission" from the main menu.
+ - Added option to make a Quick Mission Maker career in the Career menu.
+ - Removed gametype selector on Host Game menu. Replaced it with a selector for Quick Mission Maker missions or Missions.
+ - Removed CO-OP QMM gamemode (you can still play Quick Missions in CO-OP but the interface makes much more sense and doesn't use a separate gamemode)
+ - The chatlog now uses a minimum of 2 digits when showing the day, month, hour, minute, and second.
+ - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
@@ -65,7 +89,15 @@
  - Fixed SEF bug: Officers would look away from the door when ordered to Mirror Under Door.
  - Fixed SEF bug: Typo in AP ammo description
  - Fixed SEF bug: Wrong tooltip on entry selection on All Missions campaign
+ - Fixed SEF bug: Frequent crashes when using the mod in conjunction with the Frosty's Playhouse Snitch mod
+ - Fixed SEF bug: Tasing officers with the Cobra Stun Gun melee did not trigger "Tased a fellow officer" penalty.
+ - Fixed SEF bug: The Server Setup panel, when used to restart the game, would set the game to be Barricaded Suspects.
+ - Fixed SEF/TSS bug: If the Graphic Command Interface is used, and the EXIT MENU button is disabled, and aiming at a door, nothing would be highlighted (the menu would be broken). This is triggered by bad logic in TSS code but only visible if SEF or another mod is used.
+ - Fixed TSS bug: The gunshots that play on Northside Vending and Amusements from the laundromat wouldn't play. (They worked in the vanilla game, broken in the expansion)
+ - Fixed TSS bug: The gunshots that play on the A-Bomb Nightclub near the entrance wouldn't play. (They worked in the vanilla game, broken in the expansion)
  - Fixed TSS bug: Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
+ - Fixed TSS bug: You can now swap between sniper viewports after a sniper has reported a contact (If "Press Page Up to view sniper viewport" appears), instead of there being a cooldown.
+ - Fixed TSS bug: The map list, map name, and map author on the Host Game and Server Setup menus did not display HTML color codes properly.
 
 ##### Map-Specific Changes #####
 
@@ -79,13 +111,21 @@
  - Red Library Offices
   - Fixed TSS visual glitch where sometimes enemies would wear sunglasses and a gas mask at the same time
   - Suspects can wear hats like the loading screen suggests they're able to
+ - Our Sisters of Mercy Hostel
+  - Restored objective: Rescue Lionel McArthur
  - Northside Vending and Amusements
   - More enemies spawn on Hard and Elite difficulties.
   - Some doors may be randomly locked or opened.
  - Sellers St. Auditorium
+  - Restored a cut 911 call that present, but could not be played due to a designer error
   - Fixed bag of drugs that was spawning through the couch.
+  - Restored objective: Neutralize Andrew Norman
+ - Department of Agriculture
+  - Restored objective: Rescue Rita Winston
  - DuPlessis Diamonds
   - Fixed double doors that were able to be locked
+ - Fresnal St. Station
+  - Restored objective: Neutralize Anton Georgiev
  - Old Granite Hotel
   - More suspects and civilians spawn on the first floor.
   - Spawning areas are split up.
@@ -93,6 +133,29 @@
   - More enemy spawn points (so as to be less predictable)
   - More enemies spawn on Hard and Elite difficulties.
   - Suspects are more likely to wear heavy armor on Hard and Elite difficulties.
+
+##### Quick Mission Maker Changes #####
+ - IMPORTANT NOTICE: Quick Mission Maker missions are no longer played through the special menu. Instead, you need to make a career for them, through the Career menu.
+  - This means that you can use the Permadeath, Career CO-OP, and stat tracking features present for regular campaigns!
+ - Quick Missions are now saved in SEF/Content/Scenarios. You can share them with your friends!
+ - You can now rearrange the order of the missions within a Quick Mission Maker pack.
+ - You can now choose to have missions unlocked one-at-a-time for a Quick Mission Maker pack, or have them all unlocked at the start. (Enable Progression)
+ - You can now assign an unlocks system within a Quick Mission Maker pack. (If unlocks are not available for the pack, the New Equipment tab will be disabled)
+ - You can now use custom maps in a Quick Mission Maker pack. Custom maps force you to use a custom briefing, and all "Use Campaign Settings" options are disabled, as well as the briefing audio.
+ - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
+ - You can now disable the mission briefing audio in a Quick Mission.
+ - You can now write custom briefing text for Quick Missions.
+ - Removed the per-map limits on suspect/civilian counts. (You can now have up to 999 suspects and/or civilians on a map)
+ - Added a new objective type: "Rescue as many civilians as possible." This is similar to Rescue All Civilians, but if a suspect downs a hostage, it does not fail the mission.
+ - In the Host Game menu, you can now choose to create a Quick Mission Maker rotation as opposed to a regular Mission rotation.
+  - NOTE: Any pack-specific properties (progression, unlocks, disabled equipment) do not function unless used in a Career CO-OP game.
+ - Notes entry field size increased from 500 to 4000.
+ - NOTES tab renamed to TEXT.
+ - You can now choose to disable the Timeline, Suspects, and Hostages tabs on the briefing.
+ - The level loading screenshot and text will display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the briefing will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the timeline will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the Civilians and Suspects portion will no longer display if you have "Use Campaign Settings" for Hostages or Suspects, respectively, checked.
 
 #### v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)

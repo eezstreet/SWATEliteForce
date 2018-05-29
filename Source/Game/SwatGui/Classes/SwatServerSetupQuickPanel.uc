@@ -17,8 +17,8 @@ var(SWATGui) EditInline Config GUICheckBoxButton   MyPasswordedButton;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyNoRespawnButton;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyQuickResetBox;
 
-var(SWATGui) EditInline Config GUIComboBox         MyGameTypeBox;
 var(SWATGui) EditInline Config GUIComboBox         MyUseGameSpyBox;
+var(SWATGui) EditInline Config GUIComboBox		   MyMapTypeBox;
 
 var(SWATGui) EditInline Config GUIListBox          DisplayOnlyMaps;
 
@@ -29,6 +29,7 @@ var(SWATGui) EditInline Config GUIButton		   MyRemoveButton;
 var(SWATGui) EditInline Config GUIButton		   MyAddButton;
 var(SWATGui) EditInline Config GUIButton		   MyUpButton;
 var(SWATGui) EditInline Config GUIButton		   MyDownButton;
+var(SWATGui) EditInline Config GUIButton           MyLoadMapsButton;
 
 //Level information
 var(SWATGui) EditInline Config GUIImage            MyLevelScreenshot;
@@ -50,19 +51,28 @@ var(DEBUG) private config localized string IdealPlayerCountString;
 var(DEBUG) private config localized string LevelAuthorString;
 var(DEBUG) private config localized string LevelTitleString;
 
-var(DEBUG) private bool bUpdatingMapLists;
-
 var(DEBUG) private GUIList FullMapList;
 
 var() private config localized string LoadingMaplistString;
 var() private config localized string LANString;
 var() private config localized string GAMESPYString;
+var() private config localized string MissionsString;
+var() private config localized string QMMString;
 
-enum ServerSetupMapTypes
+var() private CustomScenarioCreatorData CustomScenarioCreatorData;
+var protected CustomScenarioPack        CustomScenarioPack;
+
+var() private bool bHaltMapLoading;
+var() private bool bAllMissionsLoaded;
+var() private array<string> AllMissionURLs;
+var() private array<string> AllMissionDisplayNames;
+var() private array<LevelSummary> AllMissionSummaries;
+
+enum ServerSetupMapFilters
 {
-	MapType_All,		// All maps
-	MapType_Original,	// SWAT 4 + TSS + SEF maps
-	MapType_Custom,		// Custom Maps
+	MapFilter_All,		// All maps
+	MapFilter_Original,	// SWAT 4 + TSS + SEF maps
+	MapFilter_Custom,	// Custom Maps
 };
 
 var() private config localized array<String> MapFilterString;
@@ -73,46 +83,76 @@ var() private config localized array<String> MapFilterString;
 var private array<String> MapsToLoad;
 var private int CurrentMapLoadIndex;
 
-function LoadNextMap() {
-  local String NextMap;
-  local LevelSummary Summary;
+function LoadNextMap()
+{
+	local String NextMap;
+	local LevelSummary Summary;
 
-  NextMap = MapsToLoad[CurrentMapLoadIndex];
+	NextMap = MapsToLoad[CurrentMapLoadIndex];
 
-  //remove the extension
-  if(Right(NextMap, 4) ~= ".s4m")
-    NextMap = Left(NextMap, Len(NextMap) - 4);
+	//remove the extension
+	if(Right(NextMap, 4) ~= ".s4m")
+	{
+		NextMap = Left(NextMap, Len(NextMap) - 4);
+	}
 
-  Summary = Controller.LoadLevelSummary(NextMap$".LevelSummary");
+	Summary = Controller.LoadLevelSummary(NextMap$".LevelSummary");
 
-  if( Summary == None )
-  {
-      log( "WARNING: Could not load a level summary for map '"$NextMap$".s4m'" );
-  }
-  else
-  {
-      FullMapList.Add( NextMap, Summary, Summary.Title );
-  }
+	if( Summary == None )
+	{
+	    log( "WARNING: Could not load a level summary for map '"$NextMap$".s4m'" );
+	}
+	else
+	{
+	    FullMapList.Add( NextMap, Summary, Summary.Title );
+		AllMissionURLs[AllMissionURLs.Length] = NextMap;
+		AllMissionDisplayNames[AllMissionDisplayNames.Length] = Summary.Title;
+		AllMissionSummaries[AllMissionSummaries.Length] = Summary;
+	}
 
-  LoadAvailableMaps( SwatServerSetupMenu.CurGameType, MyMapFilterBox.List.GetExtraIntData() );
-  LoadMapList( SwatServerSetupMenu.CurGameType );
+	LoadAvailableMaps( EMPMode.MPM_COOP, MyMapFilterBox.List.GetExtraIntData() );
+	LoadMapList( EMPMode.MPM_COOP );
 }
 
-event Timer() {
-  // Don't update the map list if it's not a valid gametype
-  if(MyGameTypeBox.List.GetExtraIntData() != EMPMode.MPM_COOP && MyGameTypeBox.List.GetExtraIntData() != EMPMode.MPM_COOPQMM) {
-    bUpdatingMapLists = false;
-    return;
-  }
+function RegularMissionFrame()
+{
+	if(CurrentMapLoadIndex >= MapsToLoad.Length || bHaltMapLoading)
+	{
+		if(!bHaltMapLoading)
+		{
+			bAllMissionsLoaded = true;
+		}
+		else
+		{
+			AllMissionURLs.Length = 0;
+			AllMissionDisplayNames.Length = 0;
+			AllMissionSummaries.Length = 0;
+			CurrentMapLoadIndex = 0;
+		}
+		bHaltMapLoading = false;
+		return;
+	}
 
-  if(CurrentMapLoadIndex >= MapsToLoad.Length) {
-    bUpdatingMapLists = false;
-    return;
-  }
+	LoadNextMap();
+	SetTimer(0.03);
+	CurrentMapLoadIndex++;
+}
 
-  LoadNextMap();
-  SetTimer(0.03);
-  CurrentMapLoadIndex++;
+function CustomMissionFrame()
+{
+
+}
+
+event Timer()
+{
+	if(SwatServerSetupMenu.bQMM)
+	{	// Load next QMM
+		CustomMissionFrame();
+	}
+	else
+	{	// Load next regular map
+		RegularMissionFrame();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -124,6 +164,13 @@ function InitComponent(GUIComponent MyOwner)
 
     Super.InitComponent(MyOwner);
 
+	CustomScenarioCreatorData = new class'CustomScenarioCreatorData';
+    assert(CustomScenarioCreatorData != None);
+    CustomScenarioCreatorData.Init(SwatGUIController(Controller).GuiConfig);
+
+	CustomScenarioPack = new class'CustomScenarioPack';
+    assert(CustomScenarioPack != None);
+
     FullMapList = GUIList(AddComponent("GUI.GUIList", self.Name$"_FullMapList", true ));
 
     LoadFullMapList();
@@ -131,16 +178,11 @@ function InitComponent(GUIComponent MyOwner)
     MyUseGameSpyBox.AddItem( LANString );
     MyUseGameSpyBox.AddItem( GAMESPYString );
 
-	for(i = 0; i < ServerSetupMapTypes.EnumCount; i++)
+	for(i = 0; i < ServerSetupMapFilters.EnumCount; i++)
 	{
 		MyMapFilterBox.AddItem(MapFilterString[i],,, i);
 	}
 	MyMapFilterBox.List.FindExtraIntData(0);
-	MyMapFilterBox.DisableComponent();	// gets re-enabled when we have finished loading all the maps
-
-	MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOP),,, EMPMode.MPM_COOP);
-	MyGameTypeBox.AddItem(GC.GetGameModeName(MPM_COOPQMM),,, EMPMode.MPM_COOPQMM);
-    MyGameTypeBox.List.FindExtraIntData(EMPMode.MPM_COOP);
 
     SelectedMaps.List.OnDblClick=OnSelectedMapsDblClicked;
     SelectedMaps.OnChange=  OnSelectedMapsChanged;
@@ -151,8 +193,13 @@ function InitComponent(GUIComponent MyOwner)
     MyAddButton.OnClick=    OnAddButtonClicked;
     MyUpButton.OnClick=     OnUpButtonClicked;
     MyDownButton.OnClick=   OnDownButtonClicked;
+	MyLoadMapsButton.OnClick= OnLoadMapsButtonClicked;
 
-    MyGameTypeBox.OnChange=InternalOnChange;
+	MyMapTypeBox.Clear();
+	MyMapTypeBox.List.Add(QMMString, , , , true);
+	MyMapTypeBox.List.Add(MissionsString, , , , false);
+
+	MyMapTypeBox.OnChange=InternalOnChange;
     MyUseGameSpyBox.OnChange=InternalOnChange;
     MyPasswordedButton.OnChange=InternalOnChange;
 	MyMapFilterBox.OnChange=InternalOnChange;
@@ -163,9 +210,6 @@ function InitComponent(GUIComponent MyOwner)
 
     MyServerNameBox.OnChange=OnNameSelectionChanged;
     MyPasswordBox.OnChange=OnNameSelectionChanged;
-
-    SetTimer(0.03);
-    bUpdatingMapLists = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -192,11 +236,11 @@ function InternalOnChange(GUIComponent Sender)
             SwatServerSetupMenu.bUseGameSpy = (MyUseGameSpyBox.List.Get() == GAMESPYString);
 		    SwatServerSetupMenu.RefreshEnabled();
             break;
-        case MyGameTypeBox:
-            OnGameModeChanged( EMPMode(MyGameTypeBox.GetInt()) );
-            break;
 		case MyMapFilterBox:
-			OnMapFilterChanged( ServerSetupMapTypes(MyMapFilterBox.GetInt()) );
+			OnMapFilterChanged( ServerSetupMapFilters(MyMapFilterBox.GetInt()) );
+			break;
+		case MyMapTypeBox:
+			OnMapTypeChanged( MyMapTypeBox.List.GetExtraBoolData() );
 			break;
     }
 }
@@ -233,9 +277,10 @@ function SetSubComponentsEnabled( bool bSetEnabled )
     MyNoRespawnButton.SetEnabled( bSetEnabled );
     MyQuickResetBox.SetEnabled( bSetEnabled );
     MyUseGameSpyBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
-    MyGameTypeBox.SetEnabled( bSetEnabled );
     MyNameBox.SetEnabled( bSetEnabled && !SwatServerSetupMenu.bInGame );
 	MyMapFilterBox.SetEnabled(bSetEnabled);
+	MyMapTypeBox.SetEnabled(bSetEnabled);
+	MyLoadMapsButton.SetEnabled(bSetEnabled);
 
     MyRemoveButton.SetVisibility( bSetEnabled );
     MyAddButton.SetVisibility( bSetEnabled );
@@ -244,6 +289,7 @@ function SetSubComponentsEnabled( bool bSetEnabled )
     AvailableMaps.SetVisibility( bSetEnabled );
     SelectedMaps.SetVisibility( bSetEnabled );
     DisplayOnlyMaps.SetVisibility( !bSetEnabled );
+
 }
 
 function DoRefreshEnabled()
@@ -297,16 +343,6 @@ function LoadServerSettings( optional bool ReadOnly )
         Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
 
     //
-    // update the game type, (also loads the available maps)
-    //
-    MyGameTypeBox.SetIndex(Settings.GameType);
-
-    //
-    // Load the selected maps from the ServerSettings
-    //
-    LoadServerMapList( SelectedMaps, Settings );
-
-    //
     // Select the current map
     //
     SetSelectedMapsIndex( Settings.MapIndex );
@@ -317,8 +353,6 @@ function LoadServerSettings( optional bool ReadOnly )
     //
     if( ReadOnly )
     {
-        LoadServerMapList( DisplayOnlyMaps, Settings );
-
         DisplayOnlyMaps.SetIndex( Settings.MapIndex );
         UpdateSelectedIndexColoring( DisplayOnlyMaps );
         DisplayLevelSummary( LevelSummary( DisplayOnlyMaps.List.GetObject() ) );
@@ -331,6 +365,7 @@ function LoadServerSettings( optional bool ReadOnly )
     MyPasswordedButton.bForceUpdate = true;
     MyNoRespawnButton.SetChecked( Settings.bNoRespawn );
     MyQuickResetBox.SetChecked( Settings.bQuickRoundReset );
+	MyMapTypeBox.List.FindExtraBoolData(Settings.bIsQMM);
 
     //
     // Update the general server information/player name
@@ -363,10 +398,22 @@ function SaveServerSettings()
     //
     // Save all maps
     //
+	Settings.bIsQMM = MyMapTypeBox.List.GetExtraBoolData();
     SwatPlayerController(PlayerOwner()).ServerClearMaps( Settings );
+
     for( i = 0; i < SelectedMaps.Num(); i++ )
     {
-        SwatPlayerController(PlayerOwner()).ServerAddMap( Settings, SelectedMaps.List.GetItemAtindex( i ) );
+		if(Settings.bIsQMM)
+		{	// Flipped for QMM purposes
+			log("Adding map to list: "$SelectedMaps.List.GetExtraAt(i));
+			SwatPlayerController(PlayerOwner()).ServerAddMap( Settings,
+				StripHTMLColors(SelectedMaps.List.GetExtraAt(i)),
+				PackPlusExtension(SelectedMaps.List.GetAt(i)) );
+		}
+		else
+		{
+			SwatPlayerController(PlayerOwner()).ServerAddMap( Settings, SelectedMaps.List.GetAt(i) );
+		}
     }
 
     //
@@ -376,8 +423,7 @@ function SaveServerSettings()
     //  - LAN / Internet
     //  - Selected Map
     //
-    if( Settings.GameType != SwatServerSetupMenu.CurGameType ||
-        Settings.bLAN != !SwatServerSetupMenu.bUseGameSpy ||
+    if( Settings.bLAN != !SwatServerSetupMenu.bUseGameSpy ||
         PreviousMap != SelectedMaps.List.GetItemAtIndex(SelectedIndex) )
     {
         SwatPlayerController(PlayerOwner()).ServerSetDirty( Settings );
@@ -401,10 +447,122 @@ function SaveServerSettings()
 ///////////////////////////////////////////////////////////////////////////
 // MapFilter change
 ///////////////////////////////////////////////////////////////////////////
-function OnMapFilterChanged( ServerSetupMapTypes NewFilter )
+function OnMapFilterChanged( ServerSetupMapFilters NewFilter )
 {
 	// Just load the available maps
-	LoadAvailableMaps(EMPMode(MyGameTypeBox.List.GetExtraIntData()), NewFilter);
+	LoadAvailableMaps(EMPMode.MPM_COOP, NewFilter);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// Load Maps button
+///////////////////////////////////////////////////////////////////////////
+function OnLoadMapsButtonClicked( GUIComponent Sender )
+{
+	local int i;
+	local string PackFileName;
+
+	//DisplayLevelSummary( LevelSummary( AvailableMaps.List.GetObject() ) );
+	AvailableMaps.Clear();
+	SelectedMaps.Clear();
+
+	if(SwatServerSetupMenu.bQMM)
+	{
+		foreach FileMatchingPattern("*."$CustomScenarioCreatorData.PackExtension, PackFileName)
+		{
+			CustomScenarioPack.Reset(PackFileName, CustomScenarioCreatorData.ScenariosPath);
+			PackFileName = PackMinusExtension(PackFileName);
+
+			// Add each one from the pack
+			for(i = 0; i < CustomScenarioPack.ScenarioStrings.Length; i++)
+			{
+				AvailableMaps.List.Add(PackFileName, , CustomScenarioPack.ScenarioStrings[i]);
+			}
+		}
+	}
+	else if(bAllMissionsLoaded)
+	{	// We loaded all of the missions previously. No need to load them again.
+		assert(AllMissionURLs.Length == AllMissionDisplayNames.Length);
+		assert(AllMissionSummaries.Length == AllMissionURLs.Length);
+
+		for(i = 0; i < AllMissionURLs.Length; i++)
+		{
+			AvailableMaps.List.Add(AllMissionURLs[i], AllMissionSummaries[i], AllMissionDisplayNames[i]);
+		}
+	}
+	else
+	{	// Start loading them!
+		SetTimer(0.03);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Populating with the current list of maps
+///////////////////////////////////////////////////////////////////////////
+function PopulateNormalMaps()
+{
+	local ServerSettings Settings;
+	local LevelSummary Summary;
+	local int i;
+
+	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
+
+	// Clear out map list
+	SelectedMaps.List.Clear();
+
+	// Iterate through the list of maps
+	for(i = 0; i < Settings.NumMaps; i++)
+	{
+		if(Settings.Maps[i] != "")
+		{
+			Summary = Controller.LoadLevelSummary(Settings.Maps[i]$".LevelSummary");
+			SelectedMaps.List.Add(Settings.Maps[i], Summary, Summary.Title);
+		}
+	}
+}
+
+function PopulateQMMMaps()
+{
+	local ServerSettings Settings;
+	local int i;
+	local string PackName;
+
+	Settings = ServerSettings(PlayerOwner().Level.PendingServerSettings);
+
+	// Clear out map list
+	SelectedMaps.List.Clear();
+
+	// Iterate through the list of maps
+	for(i = 0; i < Settings.NumMaps; i++)
+	{
+		if(Settings.QMMScenarioQueue[i] != "" && Settings.QMMPackQueue[i] != "")
+		{
+			PackName = PackMinusExtension(Settings.QMMPackQueue[i]);
+			SelectedMaps.List.Add(PackName, , Settings.QMMScenarioQueue[i]);
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////
+//	Map Type box
+///////////////////////////////////////////////////////////////////////////
+function OnMapTypeChanged(bool bQMM)
+{
+	bHaltMapLoading = true;
+
+	AvailableMaps.List.Clear();
+
+	SwatServerSetupMenu.bQMM = bQMM;
+
+	if(bQMM)
+	{
+		MyMapFilterBox.DisableComponent();
+		PopulateQMMMaps();
+	}
+	else
+	{
+		MyMapFilterBox.EnableComponent();
+		PopulateNormalMaps();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -413,8 +571,6 @@ function OnMapFilterChanged( ServerSetupMapTypes NewFilter )
 function OnGameModeChanged( EMPMode NewMode )
 {
     log( self$"::OnGameModeChanged( "$GetEnum(EMPMode,NewMode)$" )" );
-
-    SwatServerSetupMenu.CurGameType = NewMode;
 
     //load the available map list
     LoadAvailableMaps( NewMode, 0 );
@@ -430,7 +586,6 @@ function OnGameModeChanged( EMPMode NewMode )
     DisplayLevelSummary( LevelSummary( AvailableMaps.List.GetObject() ) );
 
     SetTimer(0.03);
-    bUpdatingMapLists = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -458,7 +613,7 @@ function bool IsHardcoreMap(String LevelName)
  */
 function bool MapAllowed(String AuthorName, String LevelName, int NewFilter)
 {
-	if(NewFilter == ServerSetupMapTypes.MapType_Custom)
+	if(NewFilter == ServerSetupMapFilters.MapFilter_Custom)
 	{
 		if(IsRMXMap(LevelName) || IsHardcoreMap(LevelName))
 		{
@@ -470,7 +625,7 @@ function bool MapAllowed(String AuthorName, String LevelName, int NewFilter)
 		}
 		return true;
 	}
-	else if(NewFilter == ServerSetupMapTypes.MapType_Original)
+	else if(NewFilter == ServerSetupMapFilters.MapFilter_Original)
 	{
 		if(IsRMXMap(LevelName) || IsHardcoreMap(LevelName))
 		{
@@ -493,8 +648,6 @@ function LoadAvailableMaps( EMPMode NewMode, int NewFilter )
     local int i, j;
     local LevelSummary Summary;
 
-    bUpdatingMapLists = true;
-
     AvailableMaps.Clear();
 
     for( i = 0; i < FullMapList.ItemCount; i++ )
@@ -516,7 +669,6 @@ function LoadAvailableMaps( EMPMode NewMode, int NewFilter )
 
     if(CurrentMapLoadIndex >= MapsToLoad.Length)
 	{
-    	bUpdatingMapLists = false;
 		MyMapFilterBox.EnableComponent();
     }
 }
@@ -527,8 +679,6 @@ function LoadAvailableMaps( EMPMode NewMode, int NewFilter )
 function LoadMapList( EMPMode NewMode )
 {
     local int i, j;
-
-    bUpdatingMapLists = true;
 
     SelectedMaps.Clear();
 
@@ -544,37 +694,6 @@ function LoadMapList( EMPMode NewMode )
     }
 
     SetSelectedMapsIndex( 0 );
-
-    if(CurrentMapLoadIndex >= MapsToLoad.Length) {
-      bUpdatingMapLists = false;
-    }
-}
-
-/*
- * Loads the server's list of maps
- */
-function LoadServerMapList( GUIListBox MapListBox, ServerSettings Settings )
-{
-    local int i, j;
-
-    bUpdatingMapLists = true;
-
-    MapListBox.Clear();
-
-    for( i = 0; i < Settings.NumMaps; i++ )
-    {
-        AvailableMaps.List.Find( Settings.Maps[i] );
-        j = AvailableMaps.GetIndex();
-
-        if( j < 0 )
-            continue;
-
-        MapListBox.List.AddElement( AvailableMaps.List.GetAtIndex(j) );
-    }
-
-    if(CurrentMapLoadIndex >= MapsToLoad.Length) {
-      bUpdatingMapLists = false;
-    }
 }
 
 /*
@@ -660,29 +779,159 @@ function OnDownButtonClicked( GUIComponent Sender )
         SelectedIndex--;
 }
 
+function LevelSummary GetSummaryFromQMMData(string PackName, string ScenarioName)
+{
+	local CustomScenario Scenario;
+	local LevelSummary Summary;
+
+	if(PackName == "" || ScenarioName == "")
+	{	// lol "heh"
+		return Summary;
+	}
+
+	// Load the scenario from the pack
+	Scenario = new class'CustomScenario';
+	assert(Scenario != None);
+
+	ScenarioName=StripHTMLColors(ScenarioName); // stupid, a color code gets injected in here when adding a new map
+
+	CustomScenarioPack.Reset(PackPlusExtension(PackName), CustomScenarioCreatorData.ScenariosPath);
+	log("--GetSummaryFromQMMData("$PackName$","$ScenarioName$")");
+	log("--CustomScenarioPack = "$CustomScenarioPack);
+	assert(CustomScenarioPack.HasScenario(ScenarioName));
+
+	CustomScenarioPack.LoadCustomScenarioInPlace(
+		Scenario,
+		ScenarioName,
+		PackPlusExtension(PackName),
+		CustomScenarioCreatorData.ScenariosPath
+		);
+
+	// Suss out what it is that we need to pull the summary from.
+	// For non-custom maps, it's from the LevelLabel.
+	// For custom maps, it's from the CustomMapURL
+	if(Scenario.IsCustomMap)
+	{
+		Summary = Controller.LoadLevelSummary(Scenario.CustomMapURL$".LevelSummary");
+	}
+	else
+	{
+		Summary = Controller.LoadLevelSummary(string(Scenario.LevelLabel)$".LevelSummary");
+	}
+
+	return Summary;
+}
+
+function string GetMapURLFromQMM(string PackName, string ScenarioName)
+{
+	local CustomScenario Scenario;
+	local string URL;
+
+	if(PackName == "" || ScenarioName == "")
+	{	// lol "heh"
+		return "";
+	}
+
+	// Load the scenario from the pack
+	Scenario = new class'CustomScenario';
+	assert(Scenario != None);
+
+	ScenarioName=StripHTMLColors(ScenarioName); // stupid, a color code gets injected in here when adding a new map
+
+	CustomScenarioPack.Reset(PackPlusExtension(PackName), CustomScenarioCreatorData.ScenariosPath);
+	assert(CustomScenarioPack.HasScenario(ScenarioName));
+
+	CustomScenarioPack.LoadCustomScenarioInPlace(
+		Scenario,
+		ScenarioName,
+		PackPlusExtension(PackName),
+		CustomScenarioCreatorData.ScenariosPath
+		);
+
+	GC.SetCustomScenarioPackData(CustomScenarioPack, PackPlusExtension(PackName), CustomScenarioCreatorData.ScenariosPath);
+	GC.SetCurrentMission(Scenario.LevelLabel, ScenarioName, Scenario);
+	ServerSettings(PlayerOwner().Level.PendingServerSettings).SetQMMSettings(
+		Scenario,
+		CustomScenarioPack,
+		false,
+		0
+		);
+
+	if(Scenario.IsCustomMap)
+	{
+		URL = Scenario.CustomMapURL;
+	}
+	else
+	{
+		URL = string(Scenario.LevelLabel);
+	}
+
+	return URL;
+}
+
 function OnAvailableMapsChanged( GUIComponent Sender )
 {
-    if( bUpdatingMapLists )
-        return;
+	local LevelSummary Summary;
 
-    DisplayLevelSummary( LevelSummary( AvailableMaps.List.GetObject() ) );
+	if(SwatServerSetupMenu.bQMM)
+	{	// Pull from the pack (Data) and the scenario string (ExtraStrData)
+		Summary = GetSummaryFromQMMData(AvailableMaps.List.Get(), AvailableMaps.List.GetExtra());
+	}
+	else
+	{
+		Summary = LevelSummary( AvailableMaps.List.GetObject() );
+	}
+
+	DisplayLevelSummary( Summary );
 
     SwatServerSetupMenu.RefreshEnabled();
 }
 
 function OnSelectedMapsChanged( GUIComponent Sender )
 {
-    if( bUpdatingMapLists )
-        return;
+	local LevelSummary Summary;
 
-    MapListOnChange( SwatServerSetupMenu.CurGameType );
+    MapListOnChange( EMPMode.MPM_COOP );
 
     if( SelectedMaps.Num() <= 1 )
         SetSelectedMapsIndex( 0 );
 
-    DisplayLevelSummary( LevelSummary( SelectedMaps.List.GetObject() ) );
+	if(SwatServerSetupMenu.bQMM)
+	{	// Pull from the pack (Data) and the scenario string (ExtraStrData)
+		Summary = GetSummaryFromQMMData(SelectedMaps.List.Get(), SelectedMaps.List.GetExtra());
+	}
+	else
+	{
+		Summary = LevelSummary( SelectedMaps.List.GetObject() );
+	}
+
+	DisplayLevelSummary(Summary);
 
     SwatServerSetupMenu.RefreshEnabled();
+}
+
+function BootUpSelectedMap()
+{
+	local String URL;
+
+	if(SwatServerSetupMenu.bQMM)
+	{	// Painful.. we need to get the map URL from the custom scenario data
+		URL = GetMapURLFromQMM(SelectedMaps.List.GetAt(SelectedIndex), SelectedMaps.List.GetExtraAt(SelectedIndex));
+	}
+	else
+	{
+		URL = SelectedMaps.List.GetItemAtIndex(SelectedIndex);
+	}
+
+
+    URL = URL $ "?Name=" $ MyNameBox.GetText() $ "?listen";
+
+    if (MyPasswordedButton.bChecked)
+    {
+        URL = URL$"?GamePassword="$MyPasswordBox.GetText();
+    }
+
+    SwatGUIController(Controller).LoadLevel(URL);
 }
 
 function MapListOnChange( EMPMode NewMode )
@@ -756,6 +1005,33 @@ function DisplayLevelSummary( LevelSummary Summary )
 }
 
 //////////////////////////////////////////////////////////////////////
+
+//returns a PackName with an extension
+function string PackPlusExtension(string PackName)
+{
+    local string extension;
+
+    extension = "." $ CustomScenarioCreatorData.PackExtension;
+
+    if (Right(PackName, Len(extension)) == extension)
+        return PackName;    //PackName already has extension
+    else
+        return PackName $ extension;
+}
+
+//returns a PackName without an extension
+function string PackMinusExtension(string PackName)
+{
+    local string extension;
+
+    extension = "." $ CustomScenarioCreatorData.PackExtension;
+
+    if (Right(PackName, Len(extension)) != extension)
+        return PackName;    //PackName already doesn't have an extension
+    else
+        return Left(PackName, Len(PackName) - Len(extension));
+}
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -775,6 +1051,9 @@ defaultproperties
 	MapFilterString[0]="All Maps"
 	MapFilterString[1]="Stock Maps"
 	MapFilterString[2]="Custom Maps"
+
+	MissionsString="Missions"
+	QMMString="Quick Missions"
 
     SelectedIndexColorString="[c=00ff00]"
 

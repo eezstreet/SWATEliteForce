@@ -122,16 +122,20 @@ NOTES:
 			<PHRASE VALSTR="Command_Restrain">Make ?him ?her secure</PHRASE>
 
 			<PHRASE VALSTR="Command_MirrorRoom">Mirror ?into ?the room ...</PHRASE>
-			<PHRASE VALSTR="Command_MirrorUnderDoor">Mirror ?under ?the door ...</PHRASE>
+			<PHRASE VALSTR="Command_MirrorUnderDoor">Mirror ?behind ?under ?the door ...</PHRASE>
+			<PHRASE VALSTR="Command_MirrorUnderDoor">Check ?the ?door ?it for contacts.</PHRASE>
+			<PHRASE VALSTR="Command_MirrorUnderDoor">Check ?the ?door ?it for suspects.</PHRASE>
 			<PHRASE VALSTR="Command_MirrorUnderDoor">Look under ?the door ...</PHRASE>
 			<PHRASE VALSTR="Command_MirrorUnderDoor">?Take ?a peek under ?the door ...</PHRASE>
-			<PHRASE VALSTR="Command_MirrorCorner">Mirror ?around ?the corner ...</PHRASE>
-			<PHRASE VALSTR="Command_MirrorCorner">Look ?around ?the corner ...</PHRASE>
-			<PHRASE VALSTR="Command_MirrorCorner">?Take ?a peek ?around ?the corner ...</PHRASE>
-
 			<PHRASE VALSTR="Command_CheckForTraps">Check ?the ?door ?it for traps.</PHRASE>
 			<PHRASE VALSTR="Command_CheckForTraps">Look ?out for traps ?on ?the ?door</PHRASE>
 			<PHRASE VALSTR="Command_CheckForTraps">Search ?the ?door ?it for traps.</PHRASE>
+			<PHRASE VALSTR="Command_TrapsAndMirror">Mirror all</PHRASE>
+			<PHRASE VALSTR="Command_TrapsAndMirror">Look for ?both contacts and traps ...</PHRASE>
+			<PHRASE VALSTR="Command_TrapsAndMirror">Look for ?both suspects and traps ...</PHRASE>
+			<PHRASE VALSTR="Command_MirrorCorner">Mirror ?around ?the corner ...</PHRASE>
+			<PHRASE VALSTR="Command_MirrorCorner">Look ?around ?the corner ...</PHRASE>
+			<PHRASE VALSTR="Command_MirrorCorner">?Take ?a peek ?around ?the corner ...</PHRASE>
 
 			<PHRASE VALSTR="Command_Deploy_Wedge">Deploy ... +wedge</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Wedge">Use ... +wedge</PHRASE>
@@ -160,11 +164,11 @@ NOTES:
 			<PHRASE VALSTR="Command_Deploy_CSBallLauncher">Use ... pepper ?gun ...</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Lightstick">?Mark ?it ?with ?Deploy ?a +light stick ...</PHRASE>
 
-			<PHRASE VALSTR="Command_LeaderThrowAndClear">+Leader Throw ?and Clear</PHRASE>
-			<PHRASE VALSTR="Command_LeaderThrowAndClear">+Let ... throw ... clear</PHRASE>
-			<PHRASE VALSTR="Command_BreachLeaderThrowAndClear">+Breach ... +leader ?throw and ... +clear ...</PHRASE>
-			<PHRASE VALSTR="Command_BreachLeaderThrowAndClear">+Breach ... let me ?throw and ... +clear ...</PHRASE>
-			<PHRASE VALSTR="Command_OpenLeaderThrowAndClear">Open ... +leader ?throw and ... +clear ...</PHRASE>
+			<PHRASE VALSTR="Command_LeaderThrowAndClear">Leader Throw ?and Clear</PHRASE>
+			<PHRASE VALSTR="Command_LeaderThrowAndClear">Let ... throw ... clear</PHRASE>
+			<PHRASE VALSTR="Command_BreachLeaderThrowAndClear">Breach ... leader throw and ... clear ...</PHRASE>
+			<PHRASE VALSTR="Command_BreachLeaderThrowAndClear">Breach ... let me ... and ... clear ...</PHRASE>
+			<PHRASE VALSTR="Command_OpenLeaderThrowAndClear">Open ... leader throw and ... clear ...</PHRASE>
 
 			<PHRASE VALSTR="Command_C2AndClear">?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two and ... clear ...</PHRASE>
     			<PHRASE VALSTR="Command_C2BangAndClear">?Break ?Open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with +see +two ?and ?throw ?toss ?a ?flash +bang ?grenade ?and ... clear ...</PHRASE>
@@ -196,15 +200,43 @@ NOTES:
 			<PHRASE VALSTR="Command_ShotgunLeaderThrowAndMakeEntry">?Break ?open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and let me throw ... make entry.</PHRASE>
 			<PHRASE VALSTR="Command_ShotgunLeaderThrowAndMakeEntry">?Break ?open ?Breach ?it ?the ?that ?room ?door ?over ?there ?with ?a ?the ?breaching shot gun ?and leader throw ... make entry.</PHRASE>
 
-			<PHRASE VALSTR="Command_CleanSweep">... +sweep ...</PHRASE>
-			<PHRASE VALSTR="Command_CleanSweep">+Search ...</PHRASE>
-			<PHRASE VALSTR="Command_CleanSweep">+Fan out ...</PHRASE>
+			<PHRASE VALSTR="Command_CleanSweep">... sweep ...</PHRASE>
+			<PHRASE VALSTR="Command_CleanSweep">Search ...</PHRASE>
+			<PHRASE VALSTR="Command_CleanSweep">Fan out ...</PHRASE>
 			<PHRASE VALSTR="Command_RestrainAll">Restrain all ...</PHRASE>
-			<PHRASE VALSTR="Command_RestrainAll">+Cuff all ...</PHRASE>
+			<PHRASE VALSTR="Command_RestrainAll">Cuff all ...</PHRASE>
 			<PHRASE VALSTR="Command_SecureAll">Secure all ...</PHRASE>
 			<PHRASE VALSTR="Command_SecureAll">Grab all ...</PHRASE>
 			<PHRASE VALSTR="Command_DisableAll">Disable all ...</PHRASE>
 			<PHRASE VALSTR="Command_DisableAll">Disarm all ...</PHRASE>
+
+			<PHRASE VALSTR="Command_Request_Flashbang">I need ... ?flash bang ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Flashbang">Requesting ... ?flash bang ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Flashbang">Request ... ?flash bang ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_CSGas">I need ... ?see ?yes ?tear gas ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_CSGas">Requesting ... ?see ?yes ?tear gas ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_CSGas">Request ... ?see ?yes ?tear gas ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Stinger">I need ... stinger ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Stinger">Requesting ... stinger ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Stinger">Request ... stinger ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Stinger">I need ... sting ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Stinger">Requesting ... sting ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Stinger">Request ... sting ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Pepperspray">I need ... pepper ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Pepperspray">Requesting ... pepper ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Pepperspray">Request ... pepper ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Optiwand">I need ... ?opti wand ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Optiwand">Requesting ... ?opti wand ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Optiwand">Request ... ?opti wand ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Wedge">I need ... ?door wedge ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Wedge">Requesting ... ?door wedge ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Wedge">Request ... ?door wedge ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Lightstick">I need ... ?light ?glow stick ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Lightstick">Requesting ... ?light ?glow stick ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_Lightstick">Request ... ?light ?glow stick ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_C2">I need ... see two ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_C2">Requesting ... see two ...</PHRASE>
+			<PHRASE VALSTR="Command_Request_C2">Request ... see two ...</PHRASE>
 		</LIST>
 	</RULE>
 

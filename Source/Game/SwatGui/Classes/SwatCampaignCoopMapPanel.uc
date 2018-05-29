@@ -27,16 +27,16 @@ var() private eEntryType CurrentEntry;
 
 private function SetMap()
 {
-  local SwatGameReplicationInfo SGRI;
+	local SwatGameReplicationInfo SGRI;
 
-  SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
+	SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
 
-  SGRI.NextMap = CurrentMap;
-  GC.SetDesiredEntryPoint(eEntryType(MyEntryBox.GetIndex()));
-  GC.CurrentDifficulty = CurrentDifficulty;
-  GC.SaveConfig();
+	SGRI.NextMap = CurrentMap;
+	GC.SetDesiredEntryPoint(eEntryType(MyEntryBox.GetIndex()));
+	GC.CurrentDifficulty = CurrentDifficulty;
+	GC.SaveConfig();
 
-  log(self$": SetMap(): SGRI.NextMap = "$CurrentMap$", GC.DesiredEntryPoint = "$CurrentEntry$", GC.CurrentDifficulty = "$CurrentDifficulty$"");
+	log(self$": SetMap(): SGRI.NextMap = "$CurrentMap$", GC.DesiredEntryPoint = "$CurrentEntry$", GC.CurrentDifficulty = "$CurrentDifficulty$"");
 }
 
 private function ClearMap()
@@ -50,25 +50,39 @@ private function ClearMap()
 
 private function MapChanged()
 {
-  local SwatMission MissionInfo;
-  local int i;
+	local SwatMission MissionInfo;
+	local int i;
+	local ServerSettings Settings;
 
-  CurrentMap = MyMapsList.List.Get();
-  MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
+	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 
-  MyEntryBox.Clear();
-  for(i = 0; i < MissionInfo.EntryOptionTitle.Length; i++)
-  {
-    if(i == 0)
-    {
-      MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Primary)");
-    }
-    else
-    {
-      MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Secondary)");
-    }
-    MyEntryDescription.SetContent(MissionInfo.EntryDescription[i]);
-  }
+	MyEntryBox.Clear();
+
+	CurrentMap = MyMapsList.List.Get();
+
+	if(Settings.bIsQMM)
+	{
+		MyEntryBox.AddItem("Primary");
+		MyEntryBox.AddItem("Secondary");
+		MyEntryDescription.SetContent("");
+	}
+	else
+	{
+		MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
+
+		for(i = 0; i < MissionInfo.EntryOptionTitle.Length; i++)
+		{
+		    if(i == 0)
+		    {
+		    	MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Primary)");
+		    }
+		    else
+		    {
+		    	MyEntryBox.AddItem(MissionInfo.EntryOptionTitle[i] $ " (Secondary)");
+		    }
+		    MyEntryDescription.SetContent(MissionInfo.EntryDescription[i]);
+		}
+	}
 }
 
 private function DifficultyChanged()
@@ -79,11 +93,20 @@ private function DifficultyChanged()
 
 private function EntryChanged(int ChangedTo)
 {
-  local SwatMission MissionInfo;
+	local SwatMission MissionInfo;
+	local ServerSettings Settings;
 
-  MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
+	if(Settings.bIsQMM)
+	{
+		MyEntryDescription.SetContent("");
+	}
+	else
+	{
+		MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
 
-  MyEntryDescription.SetContent(MissionInfo.EntryDescription[ChangedTo]);
+		MyEntryDescription.SetContent(MissionInfo.EntryDescription[ChangedTo]);
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -125,48 +148,64 @@ function CommonOnChange(GUIComponent Sender)
 
 private function BuildCampaignMissionList()
 {
-  local SwatGameReplicationInfo SGRI;
-  local int i;
-  local int CampaignPath;
-  local int CampaignAvailableIndex;
-  local ServerSettings Settings;
+	local SwatGameReplicationInfo SGRI;
+	local int i;
+	local int CampaignPath;
+	local int CampaignAvailableIndex;
+	local ServerSettings Settings;
+	local CustomScenarioPack Pack;
 
-  Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
-  CampaignPath = Settings.CampaignCOOP & 65535;
-  CampaignAvailableIndex = (Settings.CampaignCOOP & -65536) >> 16;
+	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+	CampaignPath = Settings.CampaignCOOP & 65535;
+	CampaignAvailableIndex = (Settings.CampaignCOOP & -65536) >> 16;
 
-  SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
-  CurrentMap = SGRI.NextMap;
+	SGRI = SwatGameReplicationInfo( PlayerOwner().GameReplicationInfo );
+	CurrentMap = SGRI.NextMap;
 
-  MyMapsList.Clear();
+	MyMapsList.Clear();
 
-  if(CampaignPath == 0)
-  {
-    for(i = 0; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; i++)
-    {
-      if( i <= CampaignAvailableIndex ) {
-        MyMapsList.List.Add(string(class'SwatGame.SwatVanillaCareerPath'.default.Missions[i]),,
-			class'SwatGame.SwatVanillaCareerPath'.default.MissionFriendlyNames[i],i,,true);
-      }
-    }
-  }
-  else if(CampaignPath == 1)
-  {
-    for(i = 0; i < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; i++)
-    {
-      if( i <= CampaignAvailableIndex ) {
-        MyMapsList.List.Add(
-			string(class'SwatGame.SwatSEFCareerPath'.default.Missions[i]),,
-			class'SwatGame.SwatSEFCareerPath'.default.MissionFriendlyNames[i],
-          i,,
-          true);
-      }
-    }
-  }
-  else
-  {
-    // assert or something?
-  }
+	if(Settings.bIsQMM)
+	{	// Populate with missions from the pack
+		Pack = GC.GetCustomScenarioPack();
+		if(Pack.UseProgression)
+		{	// Using progression.
+			for(i = 0; i <= CampaignAvailableIndex && i < Pack.ScenarioStrings.Length; i++)
+			{
+				MyMapsList.List.Add(Pack.ScenarioStrings[i],,Pack.ScenarioStrings[i],i,,true);
+			}
+		}
+		else
+		{	// Not using progression.
+			for(i = 0; i < Pack.ScenarioStrings.Length; i++)
+			{
+				MyMapsList.List.Add(Pack.ScenarioStrings[i],,Pack.ScenarioStrings[i],i,,true);
+			}
+		}
+	}
+	else if(CampaignPath == 0)
+	{
+	    for(i = 0; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; i++)
+	    {
+	      	if( i <= CampaignAvailableIndex )
+			{
+	        	MyMapsList.List.Add(string(class'SwatGame.SwatVanillaCareerPath'.default.Missions[i]),,
+					class'SwatGame.SwatVanillaCareerPath'.default.MissionFriendlyNames[i],i,,false);
+	      	}
+	    }
+	}
+	else if(CampaignPath == 1)
+	{
+	    for(i = 0; i < class'SwatGame.SwatSEFCareerPath'.default.Missions.Length; i++)
+	    {
+	    	if( i <= CampaignAvailableIndex ) {
+	        	MyMapsList.List.Add(
+					string(class'SwatGame.SwatSEFCareerPath'.default.Missions[i]),,
+					class'SwatGame.SwatSEFCareerPath'.default.MissionFriendlyNames[i],
+	          		i,,
+	          		false);
+	      	}
+	    }
+	}
 }
 
 private function InitialSelections()

@@ -303,7 +303,7 @@ TotalAmmoString=10 magazines
 RateOfFire=390 RPM
 
 [Glock18HG]
-Description=One of the first machine pistols, the Glock 18 was developed at the request of EKO Cobra, the elite tactical unit of Austria's Ministry of the Interior, in order to test the wear of Glock's signature polymer materials. Since then, the Glock 18 has become a formidable
+Description=One of the first machine pistols, the Glock 18 was developed at the request of EKO Cobra, the elite tactical unit of Austria's Ministry of the Interior, in order to test the wear of Glock's signature polymer materials. It was later determined that this weapon, with its incredible firerate, has some potential in the field, if the operator can manage its intense recoil. Due to its fully automatic nature, this weapon is not available for civilians to purchase and is only available to elite, tactical units such as SWAT.
 FriendlyName=Glock 18
 ShortName=Glock 18
 Manufacturer=Glock
@@ -617,6 +617,7 @@ FriendlyName=Remington 700 Sniper rifle
 [C2Charge]
 Description=The C2 breaching charge is a powerful and devastating method of breaching a door.  The compact and specially designed charge destroys the locking mechanism of the door and forcefully opens the door at the same time.  The noise and shock of the detonation causes people on the opposite side of the door to react in a similar manner to a flashbang detonation, which can provide a tactical advantage for using it instead of the breaching shotgun.  The C2 breaching charge is an explosive and can injure or kill anyone unlucky enough to be directly behind the door.
 FriendlyName=C2 (x3)
+GivenName=C2 Charge
 
 [LessLethalSG]
 Description=The less lethal shotgun is a Benelli Nova, pump-action shotgun which is always loaded with less than lethal beanbag rounds.  It is most often used on an uncooperative suspect or civilian.  The specially designated less lethal shotgun is necessary to eliminate errors that can occur from individually loading lethal or less than lethal munitions into the same weapon.  To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted green.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation. Sufficient distance should be kept between the operator and the intended target for the beanbag to slow down, otherwise it may produce a potentially life threatening injury such as broken bones.
@@ -645,10 +646,12 @@ RateOfFire=600 RPM
 [Wedge]
 Description=This specially designed tactical wedge is slid under the door and then activated.  The spring loaded action flips up wedges preventing the door from opening from either direction.  The rubber coating along the bottom of the wedge increases friction making it extremely difficult to push open with brute force.  It can only be removed with a cutting tool reducing the risk of a suspect dislodging the device.
 FriendlyName=Door Wedge
+GivenName=Door Wedge
 
 [Wedge3pack]
 Description=This pack of three door wedges contains three times as many wedges, but occupies five times as much space and weight.
 FriendlyName=Wedge 3-Pack
+GivenName=Door Wedge
 
 [Optiwand]
 Description=The opti-wand is a sophisticated observation device which allows officers to examine situations around corners and under closed doors without exposing themselves to lines of fire.  On top of the device is a small LCD screen which displays the images seen by the camera at the end of the expandable rod.  It is an invaluable tool for gathering intelligence on suspect and civilian locations before performing dangerous clear routines and potentially exposing your team to fire.
@@ -663,28 +666,37 @@ ShortName=Pepper Spray
 Description=The sting grenade, or Stinger, is filled with many small rubber balls.  Upon detonation these balls are ejected from the grenade, bombarding targets with blunt force projectiles.  The rubber balls will not penetrate the skin but can cause dizzyness, disorientation, and severe pain from the impact of the projectiles. ||While considered less lethal, the sting grenade can cause severe injury if it detonates in very close proximity to someone.
 FriendlyName=Model 9590 Stinger
 ShortName=Stinger
+GivenName=Stinger
 
 [CSGasGrenade]
 Description=This grenade emits Chlorobenzylidene malonitrile, or CS.  CS is a chemical agent which causes tearing in the eyes and irritation of the mucus membranes.  Commonly known as Tear gas, this agent causes people to lose visual acuity and have difficulty breathing.  While under the influence of tear gas, suspects are at a significant disadvantage when encountering officers.
 FriendlyName=M7A3 CS Grenade
 ShortName=CS Gas
+GivenName=CS Gas
 
 [FlashbangGrenade]
 Description=The stun grenade is a diversionary device that stuns and disorients people with an explosive report and a brillant flash.  People that are affected by the device can be temporarily blinded and deafened by the blast.  During this time SWAT has a significant tactical advantage over the affected persons.||Flashbangs are designed so that they will not fragment on detonation, but can still cause serious injury if detonation occurs in close proximity to a person.  Caution is advised.
 FriendlyName=M84 Flashbang
 ShortName=Flashbang
+GivenName=Flashbang
 
 [Sting3pack]
 Description=This 3-pack of stingers contains three times as many stingers, but occupies five times as much space and weight.
 FriendlyName=Stinger (x3)
+ShortName=Stinger (x3)
+GivenName=Stinger
 
 [CS3pack]
 Description=This 3-pack of gas grenades contains three times as many CS gas grenades, but occupies five times as much space and weight.
 FriendlyName=CS Gas (x3)
+ShortName=CS Gas (x3)
+GivenName=CS Gas
 
 [Flashbang3pack]
 Description=This 3-pack of flashbangs contains three times as many flashbangs, but occupies five times as much space and weight.
 FriendlyName=Flashbang (x3)
+ShortName=Flashbang (x3)
+GivenName=Flashbang
 
 [BreachingSG]
 Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This weapon can be modified with special breaching ammunition for quick room entries, or beanbags for a less-lethal approach.||This particular variant is equipped with a special breaching nozzle, which ensures that every shot will consistently breach a door.
@@ -742,6 +754,7 @@ FriendlyName=The Detonator
 Description=Lightsticks are used to designate paths through buildings and to mark areas as having been cleared.
 FriendlyName=Lightstick
 ShortName=Lightstick
+GivenName=Lightstick
 
 [IngramHG]
 Description=Ingram Handgun

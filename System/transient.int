@@ -352,8 +352,8 @@ Caption=START
 Hint=Start the selected mission.
 
 [SwatMissionSetupMenu_BackButton]
-Caption=CUSTOM
-Hint=Go back to Career/Pack selection.
+Caption=CAREER
+Hint=Go back to Career selection.
 
 [SwatMainMenu_TextQuitButton]
 Caption=QUIT
@@ -572,13 +572,13 @@ Caption=Newline = '|'
 Caption=KEY:
 
 [CSC_pnl_notes_notesheaderlabel]
-Caption=NOTES
+Caption=MISSION TEXT
 
 [CSC_pnl_notes_LBL_NOTES]
-Caption=NOTES
+Caption=TEXT
 
 [CSC_pnl_notes_TXT_NOTES]
-Hint=Enter a note about the custom mission.
+Hint=Edit the currently selected text.
 
 [CSC_pnl_enemies_suspectsheaderlabel]
 Caption=SUSPECTS
@@ -1251,8 +1251,8 @@ Hint=Select a pack or create a new pack.
 Hint=Enter a name for this scenario.
 
 [CustomScenarioCoop_tab_notes]
-Caption=NOTES
-Hint=Add custom notes to the scenario.
+Caption=TEXT
+Hint=Modify the briefing and notes for the scenario.
 
 [CustomScenarioCoop_tab_enemies]
 Caption=SUSPECTS
@@ -3463,13 +3463,13 @@ Caption=Newline = '|'
 Caption=KEY:
 
 [CustomScenario_pnl_notes_notesheaderlabel]
-Caption=NOTES
+Caption=MISSION TEXT
 
 [CustomScenario_pnl_notes_LBL_NOTES]
-Caption=NOTES
+Caption=ENTER TEXT
 
 [CustomScenario_pnl_notes_TXT_NOTES]
-Hint=Enter a note about the custom mission.
+Hint=Modify the selected text.
 
 [CustomScenario_pnl_enemies_suspectsheaderlabel]
 Caption=SUSPECTS
@@ -4274,8 +4274,8 @@ Hint=Select a pack or create a new pack.
 Hint=Enter a name for this scenario.
 
 [CustomScenario_tab_notes]
-Caption=NOTES
-Hint=Add custom notes to the scenario.
+Caption=TEXT
+Hint=Edit the mission briefing and add custom notes to the scenario.
 
 [CustomScenario_tab_enemies]
 Caption=SUSPECTS
@@ -4435,7 +4435,7 @@ Caption=SELECT CUSTOM MISSION PACK
 Caption=CUSTOM
 
 [SwatCustomMenu_custombuttongreyed]
-Caption=CUSTOM
+Caption=CAREER
 
 [SwatCampaignMenu_startButtonGreyed]
 Caption=START
@@ -4738,7 +4738,10 @@ Text=MOVE >>
 Text=MIRROR CORNER
 
 [Command_MirrorUnderDoor]
-Text=MIRROR/SCAN DOOR
+Text=MIRROR FOR CONTACTS
+
+[Command_TrapsAndMirror]
+Text=MIRROR FOR ALL
 
 [Command_PosNegPage]
 Text=AFFIRM/DENY >>
@@ -4828,7 +4831,106 @@ Text=PICK LOCK
 Text=TRY LOCK
 
 [Command_CheckForTraps]
-Text=CHECK FOR TRAPS
+Text=MIRROR FOR TRAPS
+
+[Command_Request]
+Text=REQUEST >>
+
+[Command_Request_Flashbang]
+Text=REQUEST FLASHBANG
+
+[Command_Request_CSGas]
+Text=REQUEST CS GAS
+
+[Command_Request_Stinger]
+Text=REQUEST STINGER
+
+[Command_Request_Pepperspray]
+Text=REQUEST PEPPER SPRAY
+
+[Command_Request_Optiwand]
+Text=REQUEST OPTIWAND
+
+[Command_Request_Wedge]
+Text=REQUEST WEDGE
+
+[Command_Request_Lightstick]
+Text=REQUEST LIGHTSTICK
+
+[Command_Request_C2]
+Text=REQUEST C2
+
+[Command_CleanSweep]
+Text=SEARCH AND SECURE
+
+[Command_RestrainAll]
+Text=RESTRAIN ALL
+
+[Command_SecureAll]
+Text=SECURE ALL
+
+[Command_DisableAll]
+Text=DISABLE ALL
+
+[Command_C2AndClear]
+Text=C2 AND CLEAR
+
+[Command_C2BangAndClear]
+Text=C2, BANG, & CLEAR
+
+[Command_C2GasAndClear]
+Text=C2, GAS, & CLEAR
+
+[Command_C2StingAndClear]
+Text=C2, STING, & CLEAR
+
+[Command_C2LeaderThrowAndClear]
+Text=C2, LEADER, & CLEAR
+
+[Command_C2AndMakeEntry]
+Text=C2 AND MAKE ENTRY
+
+[Command_C2BangAndMakeEntry]
+Text=C2, BANG, & MAKE ENTRY
+
+[Command_C2GasAndMakeEntry]
+Text=C2, GAS, & MAKE ENTRY
+
+[Command_C2StingAndMakeEntry]
+Text=C2, STING, & MAKE ENTRY
+
+[Command_C2LeaderThrowAndMakeEntry]
+Text=C2, LEADER, & MAKE ENTRY
+
+[Command_ShotgunAndClear]
+Text=SHOTGUN AND CLEAR
+
+[Command_ShotgunBangAndClear]
+Text=SHOTGUN, BANG, & CLEAR
+
+[Command_ShotgunGasAndClear]
+Text=SHOTGUN, GAS, & CLEAR
+
+[Command_ShotgunStingAndClear]
+Text=SHOTGUN, STING, & CLEAR
+
+[Command_ShotgunLeaderThrowAndClear]
+Text=SHOTGUN, LEADER, & CLEAR
+
+[Command_ShotgunAndMakeEntry]
+Text=SHOTGUN AND MAKE ENTRY
+
+[Command_ShotgunBangAndMakeEntry]
+Text=SHOTGUN, BANG, & MAKE ENTRY
+
+[Command_ShotgunGasAndMakeEntry]
+Text=SHOTGUN, GAS, & MAKE ENTRY
+
+[Command_ShotgunStingAndMakeEntry]
+Text=SHOTGUN, STING, & MAKE ENTRY
+
+[Command_ShotgunLeaderThrowAndMakeEntry]
+Text=SHOTGUN, LEADER, & MAKE ENTRY
 
 [Command_OpenGasAndMakeEntry]
 Text=OPEN, GAS, & MAKE ENTRY
@@ -5601,6 +5703,9 @@ Description=Neutralize Hadeon Koshka
 
 [Rescue_All_Hostages]
 Description=Rescue all of the civilians
+
+[Rescue_Hostages]
+Description=Rescue as many civilians as possible
 
 [Neutralize_All_Enemies]
 Description=Bring order to chaos

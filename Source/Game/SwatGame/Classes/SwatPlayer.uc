@@ -488,6 +488,11 @@ simulated protected function bool CanPawnUseLowReady()
   return true;
 }
 
+function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
+{
+	return LoadOut.GetItemAtSlot(Slot);
+}
+
 simulated function SetLowReady(bool bEnable, optional name Reason)
 {
     if (bEnable == IsLowReady()) return;        //already there

@@ -263,17 +263,34 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             }
             else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
             {
-
-
+				log("Game Ended. Campaign was "$Campaign);
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
-                if(Campaign != None) {
-                  Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                if(Campaign != None)
+				{
+					Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
+					if(Settings.bIsQMM)
+					{
+						CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
+						Campaign.MissionEnded(name(CustomMissionLabel),
+							GuiConfig.CurrentDifficulty,
+							!(GuiConfig.CurrentMission.IsMissionFailed()),
+							GetSwatGameInfo().LeadershipStatus(),
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+					}
+					else
+					{
+						Campaign.MissionEnded(GetLevelInfo().Label,
+							GuiConfig.CurrentDifficulty,
+							!(GuiConfig.CurrentMission.IsMissionFailed()),
+							GetSwatGameInfo().LeadershipStatus(),
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+					}
 
-                  Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
 
-                  Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+
+	                Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
+	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
                 }
                 InternalOpenMenu( MPPopupMenu );
             }
@@ -291,6 +308,10 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
                     AssertWithDescription( CustomMissionLabel != "", "Attempted to save results for a custom mission with no name. This should never happen. Contact a programmer." );
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
+					if(Campaign != None)
+					{
+						Campaign.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty, !(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );
+					}
                 }
 
                 if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
@@ -420,11 +441,17 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
         case 'ReferendumStarted':
+		case 'ReferendumBlocked':
 		    case 'ReferendumAlreadyActive':
 		    case 'ReferendumStartCooldown':
 		    case 'PlayerImmuneFromReferendum':
 		    case 'ReferendumAgainstAdmin':
 		    case 'ReferendumsDisabled':
+		case 'LockedVoting':
+		case 'UnlockedVoting':
+		case 'LockedVoter':
+		case 'UnlockedVoter':
+		case 'Verification':
 		    case 'LeaderVoteTeamMismatch':
 		    case 'YesVote':
 		    case 'NoVote':

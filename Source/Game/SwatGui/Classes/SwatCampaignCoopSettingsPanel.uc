@@ -1,6 +1,7 @@
 class SwatCampaignCoopSettingsPanel extends SwatGUIPanel;
 
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
+import enum eSwatGameRole from SwatGame.SwatGuiConfig;
 
 var(SWATGui) EditInline Config GUILabel MyCampaignNameLabel;
 
@@ -125,13 +126,65 @@ function InternalOnActivate()
         }
     }
 
-    PopulateCampaignUnlocks();
+	if(GC.SwatGameRole == eSwatGameRole.GAMEROLE_SP_Custom)
+	{
+		PopulateCustomUnlocks();
+	}
+	else
+	{
+		PopulateCampaignUnlocks();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 //
 
+// Called when using a QMM campaign
+function PopulateCustomUnlocks()
+{
+	local Campaign theCampaign;
+	local int i;
+	local class<Equipment> Item;
+	local CustomScenarioPack thePack;
+
+	// Clear it first
+	MyUnlockedEquipmentBox.List.Clear();
+
+	theCampaign = SwatGuiController(Controller).GetCampaign();
+	thePack = GC.GetCustomScenarioPack();
+
+	if(thePack == None || !thePack.UseGearUnlocks)
+	{	// Either no pack is loaded or the pack doesn't use unlocks
+		return;
+	}
+
+	// First unlocks
+	for(i = 0; i < theCampaign.GetAvailableIndex() + 1 && i < thePack.FirstEquipmentUnlocks.Length; i++)
+	{
+		Item = class<Equipment>(thePack.FirstEquipmentUnlocks[i]);
+		if(Item == None)
+		{
+			continue;
+		}
+		MyUnlockedEquipmentBox.List.Add(Item.static.GetFriendlyName());
+	}
+
+	// Second unlocks
+	for(i = 0; i < theCampaign.GetAvailableIndex() + 1 && i < thePack.SecondEquipmentUnlocks.Length; i++)
+	{
+		Item = class<Equipment>(thePack.SecondEquipmentUnlocks[i]);
+		if(Item == None)
+		{
+			continue;
+		}
+		MyUnlockedEquipmentBox.List.Add(Item.static.GetFriendlyName());
+	}
+
+	MyUnlockedEquipmentBox.List.Sort();
+}
+
+// Called when using a non-QMM campaign
 function PopulateCampaignUnlocks()
 {
     local Campaign theCampaign;
