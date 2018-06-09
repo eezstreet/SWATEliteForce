@@ -27,6 +27,8 @@
  - Implemented new Desert Eagle model
  - Implemented Brettzie's M4A1.
  - Added two new M4A1 variants: M4A1 w/ Aimpoint and Suppressed M4A1 w/ Aimpoint.
+ - Added a new damage/armor system based on ballistic information fo each caliber and weapon, as well as the resistance and durability of each piece of armor.
+ - Added 2 new armor pieces: Heavy Kevlar Armor (Level IIIA) and Heavy Ceramic Armor (Level IV).
  - You can now order your officers to give you a grenade, lightstick, C2, optiwand, pepper spray or wedge.
  - SWAT AI now uses grenade launchers correctly.
  - SWAT AI can no longer do direct impact damage with grenade launchers.
@@ -79,6 +81,8 @@
  - Removed gametype selector on Host Game menu. Replaced it with a selector for Quick Mission Maker missions or Missions.
  - Removed CO-OP QMM gamemode (you can still play Quick Missions in CO-OP but the interface makes much more sense and doesn't use a separate gamemode)
  - The chatlog now uses a minimum of 2 digits when showing the day, month, hour, minute, and second.
+ - The effects of each grenade are now based on the distance to the affected individual.
+ - The suspects loadouts and equipment for each mission has been revised and updated to be more in line with the descriptions of the briefing, as well as featuring some of the new weapons.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set

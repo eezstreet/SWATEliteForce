@@ -661,6 +661,9 @@ All weapons have been changed to have correct muzzle velocities.
 	- Riot Helmet: Offers slightly less protection than the Helmet, but also cuts Pepper Spray and Gas durations in half
 	- ProArmor Helmet: Offers highest possible protection, but confers no other bonuses.
 	- S10 Helmet: Offers protection from CS gas and pepper spray, as well as ballistic protection. However, it is bulky and restricts the field of view.
+* Added two new body armor items:
+	- Heavy Kevlar Body Armor: Being rated Level IIIA, it provides higher protection capabilities than the standard Level II Kevlar Armor, at the cost of a slight increase in weight.
+	- Heavy Ceramic Body Armor: A plate carrier featuring NIJ Level IV rated plates, it is the ultimate in ballistic protection. It's main disadvantage is the massive weight of the plates, which slow down the user.
 * Added new weapons from the SAS mod, most have a suppressed version as well:
 	- ARWEN 37: Dedicated grenade launcher with flashlight and 5-round magazine.
 	- SG552 Commando: Versatile assault rifle
@@ -711,6 +714,7 @@ Quick Mission Maker packs are stored in `SEF/Content/Scenarios`. You can downloa
 WARNING: This section contains spoilers
 Missions are listed in order that they occur
 Morale has been modified across the board.
+Equipment has been revised and altered to be more in line with what the briefing describers.
 If an equipment is not listed as unlocked by a mission, it is unlocked by default.
 
 * Training Mission (Riverside Training Facility)
