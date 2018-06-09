@@ -47,6 +47,7 @@ var config float			  IncapacitatedHealthAmount;
 
 var private bool bIsAggressive; // whether this AI is aggressive
 var private bool bTaserKillsMe;
+var private bool bGasAffectsMe;
 var private bool bPepperKillsMe;
 
 // Each character AI has its own instance of an awareness object, held as an
@@ -457,6 +458,7 @@ function InitializeFromArchetypeInstance()
 	InitialMorale = Instance.Morale;
 	bTaserKillsMe = Instance.TaserKillsMe;
 	bPepperKillsMe = Instance.PepperKillsMe;
+	bGasAffectsMe = Instance.GasAffectsMe;
 
 	SetVoiceType(Instance);
 
@@ -559,6 +561,9 @@ function bool PepperKillsMe() {
 	return bPepperKillsMe;
 }
 
+function bool GasAffectsMe() {
+	return bGasAffectsMe;
+}
 simulated function bool IsFearless()
 {
   local CharacterArchetypeInstance OurArchetypeInstance;
@@ -827,6 +832,7 @@ function ReactToFlashbangGrenade(
 {
     local vector Direction, GrenadeLocation;
     local float Distance;
+    local float DistanceEffect;
     local float Magnitude;
 
     if ( HasProtection( 'IProtectFromFlashbang' ) )
@@ -841,6 +847,8 @@ function ReactToFlashbangGrenade(
 			GrenadeLocation = Grenade.Location;
 			Direction       = Location - Grenade.Location;
 			Distance        = VSize(Direction);
+			DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+			AIStunDuration *= DistanceEffect;
 			if (Instigator == None)
 				Instigator = Pawn(Grenade.Owner);
 		}
@@ -849,6 +857,8 @@ function ReactToFlashbangGrenade(
 			// Handle cheat commands and unexpecteed pathological cases
 			GrenadeLocation = Location;
 			Distance = 0;
+			DistanceEffect = 1;
+			AIStunDuration *= DistanceEffect;
 			if (Instigator != None)
 				Direction = Location - Instigator.Location;
 			else
@@ -898,9 +908,24 @@ function ReactToFlashbangGrenade(
 
 function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
+    local float Distance;
+    local float DistanceEffect;
+	
+	Distance = VSize(Location - GasContainer.Location);
+	DistanceEffect = (600 - Distance)/(600);
+	
     if ( HasProtection( 'IProtectFromCSGas' ) )
     {
         return;
+    }
+	
+	if (DistanceEffect > FRand())
+    {
+        return;
+    }
+	else
+    {
+        Duration *= DistanceEffect;
     }
 
 	if (IsConscious())
@@ -931,11 +956,13 @@ function ReactToStingGrenade(
     float MoraleModifier)
 {
     local float Distance;
+    local float DistanceEffect;
 
     if ( Grenade == None || CantBeDazed() )
         return;
 
 	Distance = VSize(Location - Grenade.Location);
+	DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
 
 	//damage - Damage should be applied constantly over DamageRadius
 	if ( Distance <= DamageRadius )
@@ -947,7 +974,21 @@ function ReactToStingGrenade(
 	}
 
 	if ( Distance <= StingRadius )
+	{
+		if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		{
+			HeavilyArmoredPlayerStingDuration *= DistanceEffect;
+			ApplyDazedEffect(Grenade, Grenade.Location, HeavilyArmoredPlayerStingDuration);
+		}
+		else if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerMesh())
+		{
+			PlayerStingDuration *= DistanceEffect;
+			ApplyDazedEffect(Grenade, Grenade.Location, PlayerStingDuration);
+		}
+		else
+		AIStingDuration *= DistanceEffect;
 		ApplyDazedEffect(Grenade, Grenade.Location, AIStingDuration);
+	}
 }
 
 //
@@ -988,7 +1029,13 @@ function ReactToBeingTased(Actor Taser, float PlayerDuration, float AIDuration)
 //returns false if the ICanBeTased has some inherent protection from Taser, ie. HeavyArmor
 simulated function bool IsVulnerableToTaser()
 {
-    return true;    //AICharacters can't be protected from Taser
+	if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		{
+			return false;
+		}
+	else
+		return true;
+//    return true;    //AICharacters can't be protected from Taser
 }
 
 ///////////////////////////////////////////////////////////////////////////////
