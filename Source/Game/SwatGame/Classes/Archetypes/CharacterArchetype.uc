@@ -36,6 +36,7 @@ var config float AggressiveChance;
 
 var config float TaserDeathChance;	// Chance that any hit with a taser may cause cardiac arrest in this archetype (will probably not actually kill?)
 var config float PepperDeathChance;	// Chance that any hit with pepper spray may cause respiratory failure in this archetype (will probably not actually kill?)
+var config float GasEffectChance;	// Chance that any cloud of CS Gas won't cause any negative effect in this archetype.
 
 var config bool Fearless;   // Won't scream if in a room with a suspect
 var config bool Polite;     // Won't threaten hostages
@@ -215,6 +216,7 @@ function InitializeInstance(ArchetypeInstance inInstance)
 	Instance.IsAggressive	   = (FRand() < AggressiveChance);
 
 	// SEF modifiers
+	Instance.GasAffectsMe = (FRand() < GasEffectChance);
 	Instance.TaserKillsMe = (FRand() < TaserDeathChance);
 	Instance.PepperKillsMe = (FRand() < PepperDeathChance);
 	Instance.Fearless = Fearless;
@@ -311,6 +313,7 @@ defaultproperties
 	// There's only really a small handful of archetypes that can cause issues here. Probably best we leave this at zero.
 	TaserDeathChance = 0.0
 	PepperDeathChance = 0.0
+	GasEffectChance = 0.0
 	Fearless = false
 	Polite = false
 	Insane = false
