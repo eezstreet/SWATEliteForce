@@ -2390,6 +2390,7 @@ Function ReactToFlashbangGrenade(
 {
     local vector Direction, GrenadeLocation;
     local float Distance;
+    local float DistanceEffect;
     local name Reason;
     local name NewControllerState;
     local name NewPawnState;
@@ -2418,6 +2419,8 @@ Function ReactToFlashbangGrenade(
         GrenadeLocation = Grenade.Location;
     		Direction       = Location - Grenade.Location;
     		Distance        = VSize(Direction);
+			DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+			PlayerFlashbangStunDuration *= DistanceEffect;
     		if (Instigator == None)
     			Instigator = Pawn(Grenade.Owner);
 	  }
@@ -2426,6 +2429,8 @@ Function ReactToFlashbangGrenade(
   		GrenadeLocation = Location; // we were hit by a cheat command without an actual grenade
 		                            // so the hit location is the player's location
   		Distance        = 0;
+		DistanceEffect = 1;
+		PlayerFlashbangStunDuration *= DistanceEffect;
   	}
 
     PlayerController(Controller).PlayerCalcView(ViewTarget, CameraLocation, CameraRotation);
@@ -2523,6 +2528,11 @@ function ReactToCSGas( Actor GasContainer,
     local name Reason;
     local name NewControllerState;
     local name NewPawnState;
+    local float Distance;
+    local float DistanceEffect;
+	
+	Distance = VSize(Location - GasContainer.Location);
+	DistanceEffect = (600 - Distance)/(600);
 
     if ( Level.NetMode == NM_Client )
         return;
@@ -2532,7 +2542,16 @@ function ReactToCSGas( Actor GasContainer,
 		// Protects from the effects of gas, so no sense in doing this
         return;
     }
-
+	
+	if (DistanceEffect > FRand())
+    {
+        return;
+    }
+	else
+    {
+        Duration *= DistanceEffect;
+    }
+	
 	if ( GetLoadOut().HasRiotHelmet() )
 	{
 		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
@@ -2827,6 +2846,7 @@ function ReactToStingGrenade(
 {
     local vector Direction, GrenadeLocation;
     local float Distance;
+    local float DistanceEffect;
 
 	if ( Grenade == None || CantBeDazed() )
 		return;
@@ -2834,6 +2854,10 @@ function ReactToStingGrenade(
 	GrenadeLocation = Grenade.Location;
 	Direction       = Location - Grenade.Location;
 	Distance        = VSize(Direction);
+	DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
+	PlayerStingDuration *= DistanceEffect;
+	HeavilyArmoredPlayerStingDuration *= DistanceEffect;
+	NonArmoredPlayerStingDuration *= DistanceEffect;
 
 	if (Instigator == None)
 		Instigator = Pawn(Grenade.Owner);

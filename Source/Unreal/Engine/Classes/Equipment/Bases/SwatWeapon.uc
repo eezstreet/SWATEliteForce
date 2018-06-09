@@ -7,9 +7,9 @@ class SwatWeapon extends FiredWeapon
  */
 enum WeaponEquipType
 {
-	WeaponEquip_PrimaryOnly,
-	WeaponEquip_SecondaryOnly,
-	WeaponEquip_Either
+  WeaponEquip_PrimaryOnly,
+  WeaponEquip_SecondaryOnly,
+  WeaponEquip_Either
 };
 
 /*
@@ -37,36 +37,36 @@ enum WeaponEquipClass
  */
 enum WeaponAimAnimationType
 {
-	WeaponAnimAim_Handgun,
-	WeaponAnimAim_SubmachineGun,
-	WeaponAnimAim_MachineGun,
-	WeaponAnimAim_Shotgun,
-	WeaponAnimAim_Grenade,
-	WeaponAnimAim_TacticalAid,
-	WeaponAnimAim_TacticalAidUse,
-	WeaponAnimAim_PepperSpray,
-	WeaponAnimAim_M4,
-	WeaponAnimAim_UMP,
-	WeaponAnimAim_P90,
-	WeaponAnimAim_Optiwand,
-	WeaponAnimAim_Paintball,
-	WeaponAnimAim_Cuffed
+  WeaponAnimAim_Handgun,
+  WeaponAnimAim_SubmachineGun,
+  WeaponAnimAim_MachineGun,
+  WeaponAnimAim_Shotgun,
+  WeaponAnimAim_Grenade,
+  WeaponAnimAim_TacticalAid,
+  WeaponAnimAim_TacticalAidUse,
+  WeaponAnimAim_PepperSpray,
+  WeaponAnimAim_M4,
+  WeaponAnimAim_UMP,
+  WeaponAnimAim_P90,
+  WeaponAnimAim_Optiwand,
+  WeaponAnimAim_Paintball,
+  WeaponAnimAim_Cuffed
 };
 
 enum WeaponLowReadyAnimationType
 {
-	WeaponAnimLowReady_Handgun,
-	WeaponAnimLowReady_SubmachineGun,
-	WeaponAnimLowReady_MachineGun,
-	WeaponAnimLowReady_Shotgun,
-	WeaponAnimLowReady_Grenade,
-	WeaponAnimLowReady_TacticalAid,
-	WeaponAnimLowReady_PepperSpray,
-	WeaponAnimLowReady_M4,
-	WeaponAnimLowReady_UMP,
-	WeaponAnimLowReady_P90,
-	WeaponAnimLowReady_Optiwand,
-	WeaponAnimLowReady_Paintball
+  WeaponAnimLowReady_Handgun,
+  WeaponAnimLowReady_SubmachineGun,
+  WeaponAnimLowReady_MachineGun,
+  WeaponAnimLowReady_Shotgun,
+  WeaponAnimLowReady_Grenade,
+  WeaponAnimLowReady_TacticalAid,
+  WeaponAnimLowReady_PepperSpray,
+  WeaponAnimLowReady_M4,
+  WeaponAnimLowReady_UMP,
+  WeaponAnimLowReady_P90,
+  WeaponAnimLowReady_Optiwand,
+  WeaponAnimLowReady_Paintball
 };
 
 /*
@@ -76,18 +76,18 @@ enum WeaponLowReadyAnimationType
 enum EIdleWeaponStatus
 {
 	IdleWeaponDoesNotMatter,
-	IdleWithSAW,
-	IdleWithMachineGun,
+  IdleWithSAW,
+  IdleWithMachineGun,
 	IdleWithG36,
 	IdleWithSubMachineGun,
 	IdleWithUMP,
-	IdleWithHandgun,
+  IdleWithHandgun,
 	IdleWithShotgun,
 	IdleWithPaintballGun,
 	IdleWithGrenade,
-	IdleWithP90,
+  IdleWithP90,
 	IdleWithAnyWeapon,
-	IdleWithoutWeapon
+  IdleWithoutWeapon
 };
 
 /*
@@ -96,11 +96,11 @@ enum EIdleWeaponStatus
 
 enum EComplianceWeaponAnimation
 {
-	Compliance_Machinegun,
-	Compliance_Shotgun,
-	Compliance_SubmachineGun,
-	Compliance_CSBallLauncher,
-	Compliance_Handgun
+  Compliance_Machinegun,
+  Compliance_Shotgun,
+  Compliance_SubmachineGun,
+  Compliance_CSBallLauncher,
+  Compliance_Handgun
 };
 
 var() localized config string ShortName;
@@ -392,6 +392,7 @@ simulated function bool HandleBallisticImpact(
     local float ActualVelocity;
     local float VelocityRatio;
     local float OriginalKillEnergy;
+    local float StartingKillEnergy;
     local SkeletalRegionInformation SkeletalRegionInformation;
     local ProtectiveEquipment Protection;
     local int ArmorLevel;
@@ -546,7 +547,7 @@ simulated function bool HandleBallisticImpact(
 			switch(BulletType)
 				{
 				case 1:
-					WoundChance = 180;
+					WoundChance = 280;
 					break;
 				case 2:
 					WoundChance = 140;
@@ -558,7 +559,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 100;
 					break;
 				case 5:
-					WoundChance = 150;
+					WoundChance = 195;
 					break;
 				case 6:
 					WoundChance = 125;
@@ -570,7 +571,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 70;
 					break;
 				case 9:
-					WoundChance = 140;
+					WoundChance = 300;
 					break;
 				case 10:
 					WoundChance = 120;
@@ -582,7 +583,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 65;
 					break;
 				case 13:
-					WoundChance = 90;
+					WoundChance = 150;
 					break;
 				case 14:
 					WoundChance = 70;
@@ -594,7 +595,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 50;
 					break;
 				case 17:
-					WoundChance = 460;
+					WoundChance = 715;
 					break;
 				case 18:
 					WoundChance = 375;
@@ -606,7 +607,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 250;
 					break;
 				case 21:
-					WoundChance = 75;
+					WoundChance = 100;
 					break;
 				case 22:
 					WoundChance = 60;
@@ -618,7 +619,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 45;
 					break;
 				case 25:
-					WoundChance = 475;
+					WoundChance = 620;
 					break;
 				case 26:
 					WoundChance = 220;
@@ -630,7 +631,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 155;
 					break;
 				case 29:
-					WoundChance = 650;
+					WoundChance = 845;
 					break;
 				case 30:
 					WoundChance = 400;
@@ -642,7 +643,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 300;
 					break;
 				case 33:
-					WoundChance = 650;
+					WoundChance = 850;
 					break;
 				case 34:
 					WoundChance = 300;
@@ -654,7 +655,7 @@ simulated function bool HandleBallisticImpact(
 					WoundChance = 200;
 					break;
 				case 37:
-					WoundChance = 550;
+					WoundChance = 650;
 					break;
 				case 38:
 					WoundChance = 330;
@@ -679,9 +680,9 @@ simulated function bool HandleBallisticImpact(
 			}
 
         if ((HitRegion == REGION_LeftArm || HitRegion == REGION_RightArm))
-        WoundChance = 750;
+        WoundChance = 1350;
         if ((HitRegion == REGION_LeftLeg || HitRegion == REGION_RightLeg))
-        WoundChance = 400;
+        WoundChance = 600;
 
 		//Reset damage First
 		Damage = 0;
@@ -712,16 +713,26 @@ simulated function bool HandleBallisticImpact(
 			}
 			KillEnergy = KillEnergy - WoundChance;
 		}
-			until( KillEnergy <= 0 || RandomChance > KillChance);
+			until( KillEnergy <= 0 || RandomChance > KillChance || Damage > 150);
 			log( "Stopping, RandomChance is higher than kill chance");
 			log( "We need to restore the kill energy");
 			log("IMPACT: KillEnergy before calculating penetration: "$OriginalKillEnergy);
-			ActualVelocity = Momentum / Ammo.Mass;
+			StartingKillEnergy = OriginalKillEnergy;
+			ActualVelocity = (Momentum - MomentumLostToVictim) / Ammo.Mass;
 			VelocityRatio = ActualVelocity / MuzzleVelocity;
 			OriginalKillEnergy *= VelocityRatio;
 			KillEnergy = OriginalKillEnergy;
-			log("IMPACT: KillEnergy before calculating penetration: "$KillEnergy);
+			if (KillEnergy <= 0)
+			{
+					KillEnergy = 0;
+			}
+			log("IMPACT: KillEnergy after calculating penetration: "$KillEnergy);
 			log( "KillEnergy now is " $ KillEnergy );
+			if (StartingKillEnergy <= 0)
+			{
+					Damage = 0;
+					log( "This was pointless because Originally our Kill Energy was 0 or less." );
+			}
 			log( "Final damage is " $ Damage );
     }
     if( Damage > 0 && SkeletalRegionInformation != None && PawnVictim != None)
@@ -869,6 +880,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float ActualVelocity;
     local float VelocityRatio;
     local float OriginalKillEnergy;
+    local float StartingKillEnergy;
     local float KillChance;
 	local float RandomChance;
     local float WoundChance;
@@ -900,9 +912,9 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 		if (HitRegion == REGION_Head)
 			{
 			if (BulletLevel >= ArmorLevel)
-				WoundChance = 10;
+				WoundChance = 1;
 			else
-				WoundChance = 500;
+				WoundChance = 400;
 			}
 		if (HitRegion == REGION_Torso)
 			{
@@ -911,67 +923,67 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			switch(BulletType)
 				{
 				case 1:
-					WoundChance = 215;
+					WoundChance = 280;
 					break;
 				case 2:
-					WoundChance = 170;
+					WoundChance = 140;
 					break;
 				case 3:
-					WoundChance = 145;
+					WoundChance = 120;
 					break;
 				case 4:
-					WoundChance = 120;
+					WoundChance = 100;
 					break;
 				case 5:
-					WoundChance = 180;
+					WoundChance = 195;
 					break;
 				case 6:
-					WoundChance = 150;
+					WoundChance = 125;
 					break;
 				case 7:
-					WoundChance = 120;
+					WoundChance = 100;
 					break;
 				case 8:
-					WoundChance = 85;
+					WoundChance = 70;
 					break;
 				case 9:
-					WoundChance = 230;
-					break;
-				case 10:
-					WoundChance = 190;
-					break;
-				case 11:
-					WoundChance = 145;
-					break;
-				case 12:
-					WoundChance = 105;
-					break;
-				case 13:
-					WoundChance = 110;
-					break;
-				case 14:
-					WoundChance = 85;
-					break;
-				case 15:
-					WoundChance = 75;
-					break;
-				case 16:
-					WoundChance = 60;
-					break;
-				case 17:
-					WoundChance = 550;
-					break;
-				case 18:
-					WoundChance = 450;
-					break;
-				case 19:
-					WoundChance = 400;
-					break;
-				case 20:
 					WoundChance = 300;
 					break;
+				case 10:
+					WoundChance = 120;
+					break;
+				case 11:
+					WoundChance = 90;
+					break;
+				case 12:
+					WoundChance = 65;
+					break;
+				case 13:
+					WoundChance = 150;
+					break;
+				case 14:
+					WoundChance = 70;
+					break;
+				case 15:
+					WoundChance = 60;
+					break;
+				case 16:
+					WoundChance = 50;
+					break;
+				case 17:
+					WoundChance = 715;
+					break;
+				case 18:
+					WoundChance = 375;
+					break;
+				case 19:
+					WoundChance = 330;
+					break;
+				case 20:
+					WoundChance = 250;
+					break;
 				case 21:
-					WoundChance = 75;
+					WoundChance = 100;
 					break;
 				case 22:
 					WoundChance = 60;
@@ -983,7 +995,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 					WoundChance = 45;
 					break;
 				case 25:
-					WoundChance = 475;
+					WoundChance = 620;
 					break;
 				case 26:
 					WoundChance = 220;
@@ -995,7 +1007,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 					WoundChance = 155;
 					break;
 				case 29:
-					WoundChance = 650;
+					WoundChance = 845;
 					break;
 				case 30:
 					WoundChance = 400;
@@ -1007,7 +1019,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 					WoundChance = 300;
 					break;
 				case 33:
-					WoundChance = 650;
+					WoundChance = 850;
 					break;
 				case 34:
 					WoundChance = 300;
@@ -1019,7 +1031,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 					WoundChance = 200;
 					break;
 				case 37:
-					WoundChance = 550;
+					WoundChance = 650;
 					break;
 				case 38:
 					WoundChance = 330;
@@ -1074,30 +1086,28 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
 			}
 			else
 			{
-				if (ArmorLevel >= 7)
-				{
-					Damage += 3;
-					log( "Victim is not wounded and has 3+ Armor. Adding 3 damage point. Actual Damage points are " $ Damage );
-				}
-				else
-				{
-					Damage += 5;
-					log( "Victim is not wounded. Adding 5 damage point. Actual Damage points are " $ Damage );
-				}
+					Damage += 4;
+					log( "Victim is not wounded. Adding 4 damage point. Actual Damage points are " $ Damage );
 			}
 			KillEnergy = KillEnergy - WoundChance;
 		}
-			until( KillEnergy <= 0 || RandomChance > KillChance);
+			until( KillEnergy <= 0 || RandomChance > KillChance || Damage > 150);
 
 			log( "Stopping, RandomChance is higher than kill chance");
 			log( "We need to restore the kill energy");
 			log("IMPACT: KillEnergy before calculating penetration: "$OriginalKillEnergy);
-			ActualVelocity = Momentum / Ammo.Mass;
-			VelocityRatio = ActualVelocity / MuzzleVelocity;
-			OriginalKillEnergy *= VelocityRatio;
-			KillEnergy = OriginalKillEnergy;
-			log("IMPACT: KillEnergy before calculating penetration: "$KillEnergy);
+			KillEnergy = OriginalKillEnergy - WoundChance;
+			if (KillEnergy <= 0)
+			{
+					KillEnergy = 0;
+			}
+			log("IMPACT: KillEnergy after calculating penetration: "$KillEnergy);
 			log( "KillEnergy now is " $ KillEnergy );
+			if (StartingKillEnergy <= 0)
+			{
+					Damage = 0;
+					log( "This was pointless because Originally our Kill Energy was 0 or less." );
+			}
 			log( "Final damage is " $ Damage );
 	}
 
