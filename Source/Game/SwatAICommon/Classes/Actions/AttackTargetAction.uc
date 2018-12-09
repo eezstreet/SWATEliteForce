@@ -115,7 +115,9 @@ latent function ReadyWeapon()
 	local FiredWeapon CurrentWeapon, PendingWeapon;
 
     CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
-
+	
+	ISwatEnemy(m_Pawn).BecomeAThreat();
+	
 	// if we don't have a weapon equipped, first check and see if an item is being equipped
 //	log(m_Pawn.Name $ " current weapon: " $ CurrentWeapon);
 	if (CurrentWeapon == None)

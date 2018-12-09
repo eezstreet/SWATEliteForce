@@ -119,6 +119,7 @@ function float GetSkillSpecificSuccessAfterFiringChance()
 
 latent function MoveToAttackEnemy()
 {
+	ISwatEnemy(m_Pawn).BecomeAThreat();
     CurrentMoveToAttackOfficerGoal = new class'MoveToAttackOfficerGoal'(movementResource(), achievingGoal.Priority, GetOfficerTarget());
     assert(CurrentMoveToAttackOfficerGoal != None);
 	CurrentMoveToAttackOfficerGoal.AddRef();
