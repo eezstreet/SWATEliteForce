@@ -305,6 +305,11 @@ function ProcessPostRequest(HTTPMessage InMessage)
 		}
 		return;
 	}
+	else if(InMessage.URL ~= "/raw/send")
+	{
+		WebAdminRaw_Send(InMessage);
+		return;
+	}
 	HTML = HTML $ PageFooter;
 	SendHTML(HTML);
 }
@@ -578,6 +583,39 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "<span class=\"sty_statictext\">You have logged in successfully and will enter the WebAdmin panel in 5 seconds.</span><br>";
 	HTML = HTML $ "<span class=\"sty_statictext\">Click <a href=\"/webadmin\">here</a> if your browser does not redirect you.</span>";
 	HTML = HTML $ "<meta http-equiv=\"refresh\" content=\"5; url=/webadmin\">";
+	return true;
+}
+
+function bool WebAdminRaw_Send(HTTPMessage InMessage)
+{
+	local string Alias;
+	local string Password;
+	local string Command;
+	local SwatAdminPermissions Perms;
+	local IPAddr IP;
+
+	Alias = GetPostDataKey(InMessage.Params, "alias");
+	Password = GetPostDataKey(InMessage.Params, "password");
+	Command = GetPostDataKey(InMessage.Params, "cmd");
+
+	if(Alias ~= "")
+	{	// not allowed to send with invalid alias
+		return false;
+	}
+
+	if(Password ~= "")
+	{
+		// Maybe try it as a guest?
+		Perms = SwatGameInfo(Level.Game).Admin.GuestPermissions;
+	}
+	else
+	{
+		Perms = SwatGameInfo(Level.Game).Admin.FindRole(Password);
+	}
+
+	GetLocalIP(IP);
+
+	Listener.SentCommand(self, -1, Command, Alias, Perms, IpAddrToString(IP));
 	return true;
 }
 
