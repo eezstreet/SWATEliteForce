@@ -2,8 +2,11 @@
 class SwatOfficer extends SwatAI
     implements  SwatAICommon.ISwatOfficer,
                 IControllableThroughViewport,
+                IReactToFlashbangGrenade,
+                IReactToStingGrenade,
+                IReactToDazingWeapon,
                 Engine.ICanBePepperSprayed,
-                Engine.IReactToCSGas,
+                IReactToCSGas,
                 Engine.ICanBeTased,
                 Engine.IAmAffectedByWeight,
                 Engine.ICarryGuns,
@@ -269,10 +272,26 @@ protected function ConstructCharacterAI()
   characterResource.addAbility(new class'SwatAICommon.ReportAction');
   characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
   characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
-  	characterResource.addAbility(new class'SwatAICommon.ShareEquipmentAction');
+    characterResource.addAbility(new class'SwatAICommon.ShareEquipmentAction');
+
+    if (ShouldReactToNonLethals()) {
+        characterResource.addAbility(new class'SwatAICommon.PepperSprayedAction');
+        characterResource.addAbility(new class'SwatAICommon.GassedAction');
+        characterResource.addAbility(new class'SwatAICommon.FlashbangedAction');
+        characterResource.addAbility(new class'SwatAICommon.TasedAction');
+        characterResource.addAbility(new class'SwatAICommon.StunnedByC2Action');
+        characterResource.addAbility(new class'SwatAICommon.InitialReactionAction');
+        characterResource.addAbility(new class'SwatAICommon.StungAction');
+        characterResource.addAbility(new class'SwatAICommon.AvoidLocationAction');
+    }
 
 	// call down the chain
 	Super.ConstructCharacterAI();
+}
+
+protected function bool ShouldReactToNonLethals()
+{
+    return true;
 }
 
 protected function ConstructMovementAI()
@@ -971,10 +990,117 @@ private function TriggerHarmlessShotSpeech()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Dazing
+
+private function bool CantBeDazed()
+{
+    return HasProtection('IProtectFromSting') || !IsConscious();
+}
+
+private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation, float AIStingDuration)
+{
+    GetCommanderAction().NotifyStung(Grenade, SourceLocation, AIStingDuration);
+}
+
+private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
+{
+    if ( CantBeDazed() )
+        return;
+
+    if (Damage > 0.0) {
+        TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), DamageType);
+  }
+
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+     ApplyDazedEffect(None, Location, AIStingDuration);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IReactToDazingWeapon implementation
+
+function ReactToLessLeathalShotgun(
+    Pawn Instigator,
+    float Damage,
+    Vector MomentumVector,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    class<DamageType> DamageType)
+{
+    if ( CantBeDazed() )
+        return;
+
+        if (Damage > 0.0)
+        {
+            // event Actor::TakeDamage()
+            TakeDamage( Damage,                               // int Damage
+                        Instigator,                           // Pawn EventInstigator
+                        Location,                             // vector HitLocation
+                        MomentumVector,                          // vector Momentum
+                        DamageType );
+        }
+
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+       ApplyDazedEffect(None, Location, AIStingDuration);
+}
+
+// Triple baton rounds are launched from the grenade launcher but are handle differently than a direct hit from a launched grenade
+function ReactToGLTripleBaton(
+    Pawn  Instigator,
+    float Damage,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    class<DamageType> DamageType)
+{
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
+}
+
+// React to a direct hit from a grenade launched from the grenade launcher
+function ReactToGLDirectGrenadeHit(
+    Pawn  Instigator,
+    float Damage,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    class<DamageType> DamageType)
+{
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
+}
+
+function ReactToMeleeAttack(
+    class<DamageType> MeleeDamageType,
+    Pawn  Instigator,
+    float Damage,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration)
+{
+    if ( CantBeDazed() )
+        return;
+
+    // Only apply damage if the damage wont kill the target. You can't kill someone with the melee attack.
+    if (Damage > 0.0 && Damage < Health) {
+        TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), MeleeDamageType);
+    }
+
+    ApplyDazedEffect(None, Location, AIStingDuration);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // IReactToFlashbangGrenade implementation
-/*function ReactToFlashbangGrenade(
+function ReactToFlashbangGrenade(
     SwatGrenadeProjectile Grenade,
 	Pawn  Instigator,
     float Damage, float DamageRadius,
@@ -985,13 +1111,74 @@ private function TriggerHarmlessShotSpeech()
     float AIStunDuration,
     float MoraleModifier)
 {
-	if(HasProtection( 'IProtectFromFlashbang' ) )) {
-		return;
-	}
+	local vector Direction, GrenadeLocation;
+    local float Distance;
+    local float DistanceEffect;
+    local float Magnitude;
 
-	if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
+    if ( HasProtection( 'IProtectFromFlashbang' ) )
+    {
         return;
-}*/
+    }
+
+    if (IsConscious())
+    {
+        if (Grenade != None)
+        {
+            GrenadeLocation = Grenade.Location;
+            Direction       = Location - Grenade.Location;
+            Distance        = VSize(Direction);
+            DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+            AIStunDuration *= DistanceEffect;
+            if (Instigator == None)
+                Instigator = Pawn(Grenade.Owner);
+        }
+        else
+        {
+            // Handle cheat commands and unexpecteed pathological cases
+            GrenadeLocation = Location;
+            Distance = 0;
+            DistanceEffect = 1;
+            AIStunDuration *= DistanceEffect;
+            if (Instigator != None)
+                Direction = Location - Instigator.Location;
+            else
+                Direction = Location; // just for completeness, this should never
+                                      // be reached in practice, except for during debug testing
+        }
+
+        //damage - Damage should be applied constantly over DamageRadius
+        if (Distance <= DamageRadius)
+        {
+            //event Actor::
+            //  TakeDamage(int Damage,  Pawn EventInstigator,   vector HitLocation, vector Momentum,    class<DamageType> DamageType    );
+                TakeDamage(Damage,      Instigator,             GrenadeLocation,    vect(0,0,0),        class'Engine.GrenadeDamageType' );
+        }
+
+        //apply karma impulse to ragdolls
+        if (!isConscious())
+        {
+            //karma impulse - Karma impulse should be applied linearly from KarmaImpulse.Max to KarmaImpulse.Min over KarmaImpulseRadius
+            if (Distance <= KarmaImpulseRadius)
+            {
+                Magnitude = Lerp(Distance / KarmaImpulseRadius, KarmaImpulse.Max, KarmaImpulse.Min);
+
+                //native final function Actor::
+                //  KAddImpulse(vector Impulse, vector Position, optional name BoneName );
+#if WITH_KARMA
+                    KAddImpulse(Direction, Normal(Direction) * Magnitude);
+#endif
+            }
+        }
+
+        if (Distance <= StunRadius)
+        {
+            assert(AIStunDuration > 0.0);
+
+            GetCommanderAction().NotifyFlashbanged(GrenadeLocation, AIStunDuration);
+        }
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -999,11 +1186,84 @@ private function TriggerHarmlessShotSpeech()
 
 function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
-	if (GasContainer.IsA('CSBallBase'))
-	{
-		TriggerHarmlessShotSpeech();
-	}
+	local float Distance;
+    local float DistanceEffect;
+    
+    Distance = VSize(Location - GasContainer.Location);
+    DistanceEffect = (600 - Distance)/(600);
+    
+    if ( HasProtection( 'IProtectFromCSGas' ) )
+    {
+        return;
+    }
+    
+    if (DistanceEffect > FRand())
+    {
+        return;
+    }
+    else
+    {
+        Duration *= DistanceEffect;
+    }
 
+    if (IsConscious())
+    {
+        GetCommanderAction().NotifyGassed(GasContainer.Location, Duration);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IReactToStingGrenade implementation
+
+function ReactToStingGrenade(
+    SwatProjectile Grenade,
+    Pawn  Instigator,
+    float Damage,
+    float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
+    float StingRadius,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    float MoraleModifier)
+{
+    local float Distance;
+    local float DistanceEffect;
+
+    if ( Grenade == None || CantBeDazed() )
+        return;
+
+    Distance = VSize(Location - Grenade.Location);
+    DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
+
+    //damage - Damage should be applied constantly over DamageRadius
+    if ( Distance <= DamageRadius )
+    {
+        if ( Instigator == None )
+            Instigator = Pawn(Grenade.Owner);
+
+        TakeDamage(Damage, Instigator, Grenade.Location, vect(0.0, 0.0, 0.0), class'Engine.GrenadeDamageType');
+    }
+
+    if ( Distance <= StingRadius )
+    {
+        if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+        {
+            HeavilyArmoredPlayerStingDuration *= DistanceEffect;
+            ApplyDazedEffect(Grenade, Grenade.Location, HeavilyArmoredPlayerStingDuration);
+        }
+        else if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerMesh())
+        {
+            PlayerStingDuration *= DistanceEffect;
+            ApplyDazedEffect(Grenade, Grenade.Location, PlayerStingDuration);
+        }
+        else
+        AIStingDuration *= DistanceEffect;
+        ApplyDazedEffect(Grenade, Grenade.Location, AIStingDuration);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1013,7 +1273,15 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 
 function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, float AIDuration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
-	TriggerHarmlessShotSpeech();
+	if ( HasProtection( 'IProtectFromPepperSpray' ) )
+    {
+        return;
+    }
+
+    if (IsConscious())
+    {
+        GetCommanderAction().NotifyPepperSprayed(PepperSpray.Location, AIDuration);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1023,6 +1291,11 @@ function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, floa
 function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration )
 {
   SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(self, Taser);
+
+  if (IsConscious() && IsVulnerableToTaser())
+    {
+        GetCommanderAction().NotifyTased(Taser.Location, AIDuration);
+    }
 }
 
 simulated function bool IsVulnerableToTaser()

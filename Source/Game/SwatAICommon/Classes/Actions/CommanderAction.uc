@@ -954,12 +954,12 @@ protected function PlayFlinch()
 //
 // Stunned functions
 
-function float GetFlashbangedMoraleModification()			{ assert(false); return 0.0; } // subclasses override
-function float GetGassedMoraleModification()				{ assert(false); return 0.0; } // subclasses override
-function float GetPepperSprayedMoraleModification()			{ assert(false); return 0.0; } // subclasses override
-function float GetStungMoraleModification()					{ assert(false); return 0.0; } // subclasses override
-function float GetTasedMoraleModification()					{ assert(false); return 0.0; } // subclasses override
-function float GetStunnedByC2DetonationMoraleModification()	{ assert(false); return 0.0; } // subclasses override
+function float GetFlashbangedMoraleModification()			{ return 0.0; }
+function float GetGassedMoraleModification()				{ return 0.0; }
+function float GetPepperSprayedMoraleModification()			{ return 0.0; }
+function float GetStungMoraleModification()					{ return 0.0; }
+function float GetTasedMoraleModification()					{ return 0.0; }
+function float GetStunnedByC2DetonationMoraleModification()	{ return 0.0; }
 function float GetUnobservedComplianceMoraleModification()	{ return 0.0; }
 
 function bool ShouldRunWhenFlashBanged()    { return true;  }

@@ -1017,7 +1017,7 @@ function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, floa
 
 function ReactToBeingTased(Actor Taser, float PlayerDuration, float AIDuration)
 {
-	if (IsConscious())
+	if (IsConscious() && IsVulnerableToTaser())
 	{
 	    LastTimeTased = Level.TimeSeconds;
 		TasedDuration = AIDuration;
