@@ -325,7 +325,7 @@ function bool CheckValidity( class EquipmentClass, eNetworkValidity type )
 			}
 		}
 
-		return Super.CheckValidity(EquipmentClass, Type);
+		return true;
 	}
 	else
 	{
