@@ -410,7 +410,7 @@ latent function CloseDoor(Door TargetDoor)
 
 latent function LockDoor(Door TargetDoor)
 {
-	if (ISwatDoor(TargetDoor).CanBeLocked())
+	if (ISwatDoor(TargetDoor).CanBeLocked() && !ISwatDoor(TargetDoor).IsLocked())
 	{
 		CurrentMoveToDoorGoal = new class'MoveToDoorGoal'(movementResource(), TargetDoor);
 		assert(CurrentMoveToDoorGoal != None);
