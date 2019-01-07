@@ -79,8 +79,12 @@ function cleanup()
 
 function NotifyDoorOpening(Door TargetDoor)
 {
-	// if we are kneeling down to place a wedge, we don't care
-	if(bPlacingWedge)
+    local Pawn LastInteractor;
+
+    // if we are kneeling down to place a wedge, we don't care
+	// unless it is a player who opened the door
+    LastInteractor = ISwatDoor(TargetDoor).GetLastInteractor();
+    if(!LastInteractor.IsA('SwatPlayer') && bPlacingWedge)
 	{
 		return;
 	}
