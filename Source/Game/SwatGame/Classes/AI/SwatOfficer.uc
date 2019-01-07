@@ -1188,15 +1188,15 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 {
 	local float Distance;
     local float DistanceEffect;
-    
+
     Distance = VSize(Location - GasContainer.Location);
     DistanceEffect = (600 - Distance)/(600);
-    
+
     if ( HasProtection( 'IProtectFromCSGas' ) )
     {
         return;
     }
-    
+
     if (DistanceEffect > FRand())
     {
         return;
@@ -1206,7 +1206,7 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
         Duration *= DistanceEffect;
     }
 
-    if (IsConscious())
+    if (IsConscious() && Duration > 0.0)
     {
         GetCommanderAction().NotifyGassed(GasContainer.Location, Duration);
     }
@@ -1261,8 +1261,10 @@ function ReactToStingGrenade(
             ApplyDazedEffect(Grenade, Grenade.Location, PlayerStingDuration);
         }
         else
-        AIStingDuration *= DistanceEffect;
-        ApplyDazedEffect(Grenade, Grenade.Location, AIStingDuration);
+        {
+            AIStingDuration *= DistanceEffect;
+            ApplyDazedEffect(Grenade, Grenade.Location, AIStingDuration);
+        }
     }
 }
 
