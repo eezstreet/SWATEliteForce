@@ -430,6 +430,10 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * FunTime Amusements was missing loading screen text.
  * The accomplice on Fairfax Residence could spawn with two Colt Pythons.
  * The Host Game and Server Setup menus did not display color codes properly on the map list, map name, and map author.
+ * Highground did not work correctly due to a bug on many maps. Now you can place Highground volumes and they will function properly.
+ * Victory Imports did not have working Highground due to the bug listed above.
+ * Highground audio on Food Wall was wrong ("He went back into the house", this was meant for Fairfax Residence)
+ * Highground audio on Fairfax Residence was wrong ("Side 3 Level 2")
 
 ## AI ##
   * Tons and tons of cut dialogue restored.

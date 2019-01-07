@@ -103,6 +103,7 @@
  - Fixed TSS bug: Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
  - Fixed TSS bug: You can now swap between sniper viewports after a sniper has reported a contact (If "Press Page Up to view sniper viewport" appears), instead of there being a cooldown.
  - Fixed TSS bug: The map list, map name, and map author on the Host Game and Server Setup menus did not display HTML color codes properly.
+ - Fixed TSS bug: Highground volumes now work correctly on Victory Imports Auto Center and Meat Barn Restaurant. (config bug not map bug)
 
 ##### Map-Specific Changes #####
 
