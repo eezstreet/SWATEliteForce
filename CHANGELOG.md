@@ -95,6 +95,7 @@
  - Fixed SEF bug: Frequent crashes when using the mod in conjunction with the Frosty's Playhouse Snitch mod
  - Fixed SEF bug: Tasing officers with the Cobra Stun Gun melee did not trigger "Tased a fellow officer" penalty.
  - Fixed SEF bug: The Server Setup panel, when used to restart the game, would set the game to be Barricaded Suspects.
+ - Fixed SEF bug: Lowready was triggering when the flashlight was on (the vanilla game disables this)
  - Fixed SEF/TSS bug: If the Graphic Command Interface is used, and the EXIT MENU button is disabled, and aiming at a door, nothing would be highlighted (the menu would be broken). This is triggered by bad logic in TSS code but only visible if SEF or another mod is used.
  - Fixed TSS bug: Some buttons and other things have missing text in 1600x900 resolution
  - Fixed TSS bug: The gunshots that play on Northside Vending and Amusements from the laundromat wouldn't play. (They worked in the vanilla game, broken in the expansion)

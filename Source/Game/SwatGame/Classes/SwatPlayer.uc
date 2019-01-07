@@ -474,6 +474,7 @@ simulated protected function bool CanPawnUseLowReady()
 {
   local HandheldEquipment Equipment;
   local PlayerController SGPC;
+  local FiredWeapon Weapon;
 
   SGPC = PlayerController(Controller);
   if(SGPC == None)
@@ -484,6 +485,16 @@ simulated protected function bool CanPawnUseLowReady()
     return false;
   else if(SGPC.WantsZoom && !Equipment.ShouldLowReadyInIronsights())
     return false;
+
+  Weapon = FiredWeapon(Equipment);
+  if(Weapon != None)
+  {
+    if(Weapon.IsFlashlightOn())
+    {
+        // #402 - lowready not allowed when flashlight on
+        return false;
+    }
+  }
 
   return true;
 }
@@ -2530,7 +2541,7 @@ function ReactToCSGas( Actor GasContainer,
     local name NewPawnState;
     local float Distance;
     local float DistanceEffect;
-	
+
 	Distance = VSize(Location - GasContainer.Location);
 	DistanceEffect = (600 - Distance)/(600);
 
@@ -2542,7 +2553,7 @@ function ReactToCSGas( Actor GasContainer,
 		// Protects from the effects of gas, so no sense in doing this
         return;
     }
-	
+
 	if (DistanceEffect > FRand())
     {
         return;
@@ -2551,7 +2562,7 @@ function ReactToCSGas( Actor GasContainer,
     {
         Duration *= DistanceEffect;
     }
-	
+
 	if ( GetLoadOut().HasRiotHelmet() )
 	{
 		// Riot helmet reduces by the argument, as opposed to original method (since gas masks will ALWAYS provide immunity to CS gas)
