@@ -114,6 +114,8 @@
   - Fixed the suspect spawn point in the closet (it was not configured correctly)
   - The back door may be randomly locked or open.
   - The bathrooms and kitchen area door may be randomly locked or open.
+ - Victory Imports Auto Garage
+  - Fixed highground not working on the roof
  - Red Library Offices
   - Fixed TSS visual glitch where sometimes enemies would wear sunglasses and a gas mask at the same time
   - Suspects can wear hats like the loading screen suggests they're able to
@@ -130,11 +132,15 @@
   - Restored objective: Rescue Rita Winston
  - DuPlessis Diamonds
   - Fixed double doors that were able to be locked
+ - Children of Taronne Tenement
+  - Now unlocks Glock 18
  - Fresnal St. Station
   - Restored objective: Neutralize Anton Georgiev
  - Old Granite Hotel
   - More suspects and civilians spawn on the first floor.
   - Spawning areas are split up.
+ - Meat Barn Restaurant
+  - Fixed high ground not working on the entrances
  - Brewer County Courthouse
   - More enemy spawn points (so as to be less predictable)
   - More enemies spawn on Hard and Elite difficulties.
