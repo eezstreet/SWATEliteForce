@@ -454,8 +454,11 @@ latent function CloseAndLockDoorsInRoom()
 			CurrentDoor = GetClosestDoorToStimuliOrigin();
 			RemoveDoorFromCloseAndLockList(CurrentDoor);
 
-			CloseDoor(CurrentDoor);
-			LockDoor(CurrentDoor);
+            if(ISwatDoor(CurrentDoor).IsOpen() && !ISwatDoor(CurrentDoor).IsLocked())
+            { // it's possible for another AI to have locked and closed the door in the meantime
+             CloseDoor(CurrentDoor);
+			 LockDoor(CurrentDoor);
+            }
 
 			// check to see the chance we will close and lock subsequent doors (another die roll)
 			if (FRand() > CloseAndLockSubsequentDoorChance)
