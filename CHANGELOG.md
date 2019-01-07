@@ -73,6 +73,7 @@
  - Renamed keybind "Use" to "Shout For Compliance/Interact"
  - Added new keybind, "Shout For Compliance" (only shouts, doesn't interact with things)
  - Added new keybind, "Interact" (only interacts, doesn't shout)
+ - Added 21:9 resolution options to the menus (2560x1080, 3440x1440, 3840x1600)
  - Removed "Instant Action" from the main menu.
  - Removed "Play Quick Mission" from the main menu.
  - Added option to make a Quick Mission Maker career in the Career menu.
