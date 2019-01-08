@@ -6,6 +6,7 @@
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18 and Glock 19.
  - Added the ability to take no weapon!
  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
+ - Gas and pepperballs are now less effective.
 - New commands: Sharing is caring!
  - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
@@ -82,6 +83,10 @@
  - The chatlog now uses a minimum of 2 digits when showing the day, month, hour, minute, and second.
  - The effects of each grenade are now based on the distance to the affected individual.
  - The suspects loadouts and equipment for each mission has been revised and updated to be more in line with the descriptions of the briefing, as well as featuring some of the new weapons.
+ - CS Gas now has a somewhat random effect. Sometimes it might fail to gas someone immediately if they are right next to the grenade. Generally, it works better as the grenade is closer to the person.
+ - Pepperball gas cloud radius reduced by 50%. You need to aim closer to the face to get an effect.
+ - Pepperball gas cloud update rate changed from 0.6s to 1.0s, so there is sometimes some random lag in the effect occurring.
+ - Pepperball effect is random. Sometimes it will take multiple shots to affect someone.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
