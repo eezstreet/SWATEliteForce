@@ -48,6 +48,11 @@ function initAction(AI_Resource r, AI_Goal goal)
 {
     super.initAction(r, goal);
 
+    if(StunnedDuration <= 0.0)
+    {
+     instantFail(ACT_GENERAL_FAILURE);
+    }
+
 	// disable our senses
 	DisableSenses();
 

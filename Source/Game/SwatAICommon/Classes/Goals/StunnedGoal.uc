@@ -30,8 +30,6 @@ overloaded function construct(AI_Resource r, vector inStunningDeviceLocation, fl
 {
 	super.construct(r);
 
-    Assert(inStunnedDuration > 0.0);
-
     StunningDeviceLocation = inStunningDeviceLocation;
 	StunnedDuration        = inStunnedDuration;
 }
