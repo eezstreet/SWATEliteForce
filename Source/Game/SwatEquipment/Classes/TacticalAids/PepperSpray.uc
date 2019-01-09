@@ -49,7 +49,15 @@ simulated function TraceFire()
     foreach RadiusActors(class'ICanBePepperSprayed', Candidate, Range, StartLocation)
     {
         assert(Candidate.IsA('Pawn'));
-        CandidateViewPoint = SwatPawn(Candidate).GetViewPoint();
+
+        // TSS bugfix: pepperspray does not affect AI from their proper viewpoint
+        if (Pawn.IsA('SwatAI'))
+            CandidateViewPoint = SwatAI(Pawn).GetViewPoint();
+        else if (Pawn.IsA('SwatPlayer'))
+            CandidateViewPoint = SwatPlayer(Pawn).GetThirdPersonEyesLocation();
+        else
+            CandidateViewPoint = Pawn.GetAimOrigin();
+        //CandidateViewPoint = SwatPawn(Candidate).GetViewPoint();
 //        log("PepperSpray testing sprayable actor within radius: "$Candidate.Name);
 
         //disqualify if Candidate is not within the spray "cone",

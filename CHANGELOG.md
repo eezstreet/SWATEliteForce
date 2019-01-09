@@ -87,6 +87,7 @@
  - Pepperball gas cloud radius reduced by 50%. You need to aim closer to the face to get an effect.
  - Pepperball gas cloud update rate changed from 0.6s to 1.0s, so there is sometimes some random lag in the effect occurring.
  - Pepperball effect is random. Sometimes it will take multiple shots to affect someone.
+ - Pepperspray cone reduced by 50%, you need to aim closer to people's faces now.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
@@ -109,6 +110,7 @@
  - Fixed TSS bug: You can now swap between sniper viewports after a sniper has reported a contact (If "Press Page Up to view sniper viewport" appears), instead of there being a cooldown.
  - Fixed TSS bug: The map list, map name, and map author on the Host Game and Server Setup menus did not display HTML color codes properly.
  - Fixed TSS bug: Highground volumes now work correctly on Victory Imports Auto Center and Meat Barn Restaurant. (config bug not map bug)
+ - Fixed TSS bug: Pepperspray cone was reduced when standing still, which made you *less* likely to hit your target. It's now a constant amount.
 
 ##### Map-Specific Changes #####
 
