@@ -3,25 +3,25 @@
 #### MAJOR FEATURES ####
 
 - New and altered equipment!
- - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18 and Glock 19.
- - Added the ability to take no weapon!
- - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
- - Gas and pepperballs are now less effective.
+  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18 and Glock 19.
+  - Added the ability to take no weapon!
+  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
+  - Gas and pepperballs are now less effective.
 - New commands: Sharing is caring!
- - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
- - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
- - The INVESTIGATE menu has been spruced up. You can now order your team to either MIRROR FOR TRAPS (replaces CHECK FOR TRAPS), MIRROR FOR CONTACTS, or MIRROR FOR ALL, which combines the two commands, but is slower.
+  - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
+  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
+  - The INVESTIGATE menu has been spruced up. You can now order your team to either MIRROR FOR TRAPS (replaces CHECK FOR TRAPS), MIRROR FOR CONTACTS, or MIRROR FOR ALL, which combines the two commands, but is slower.
 - New AI behavior!
- - SWAT AI can now be affected by less lethals! There's now a very clear reason why you want to grab a gas mask over helmets for your AI.
- - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
- - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
- - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
- - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
+  - SWAT AI can now be affected by less lethals! There's now a very clear reason why you want to grab a gas mask over helmets for your AI.
+  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
+  - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
+  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
+  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
 - Upgraded Quick Mission Maker!
- - Have you ever wanted to create your own campaign path? Perhaps with custom levels? Now you can!
- - You can now use custom maps and write your own briefings for the Quick Mission Maker.
- - Additionally, you can create a progression and unlock system for your custom campaign.
- - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
+  - Have you ever wanted to create your own campaign path? Perhaps with custom levels? Now you can!
+  - You can now use custom maps and write your own briefings for the Quick Mission Maker.
+  - Additionally, you can create a progression and unlock system for your custom campaign.
+  - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
 
 #### ALL CHANGES ####
  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
