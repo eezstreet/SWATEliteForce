@@ -111,6 +111,7 @@
  - Fixed TSS bug: The map list, map name, and map author on the Host Game and Server Setup menus did not display HTML color codes properly.
  - Fixed TSS bug: Highground volumes now work correctly on Victory Imports Auto Center and Meat Barn Restaurant. (config bug not map bug)
  - Fixed TSS bug: Pepperspray cone was reduced when standing still, which made you *less* likely to hit your target. It's now a constant amount.
+ - Fixed TSS bug: Various typos in Food Wall briefing docs refer to Jimenez as "Columbian" and not "Colombian" (thanks to JalapenoPepsi for pointing this out)
 
 ##### Map-Specific Changes #####
 
