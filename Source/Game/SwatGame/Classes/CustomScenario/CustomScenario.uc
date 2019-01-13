@@ -88,10 +88,13 @@ var config string CustomMapURL;
 
 var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 
+var config bool AllowDispatch;
+var config bool ForceScriptedSequences;
+
 replication
 {
 	reliable if ( true ) // ?
-		ScenarioName, CustomBriefing, UseCustomBriefing, GetCustomScenarioBriefing;
+		ScenarioName, CustomBriefing, UseCustomBriefing, GetCustomScenarioBriefing, AllowDispatch, ForceScriptedSequences;
 }
 
 function string GetCustomScenarioBriefing()

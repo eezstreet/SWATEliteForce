@@ -866,7 +866,7 @@ function OnMissionStarted()
     GameEvents.MissionStarted.Triggered();
 
 	// send a message that the level has started
-	dispatchMessage(new class'Gameplay.MessageLevelStart'(GetCustomScenario() != None));
+	dispatchMessage(new class'Gameplay.MessageLevelStart'(GetCustomScenario() != None && !GetCustomScenario().ForceScriptedSequences));
 
 	AdminLog("", 'RoundStarted');
 }

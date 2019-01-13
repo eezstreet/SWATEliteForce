@@ -21,6 +21,9 @@ var(SWATGui) private EditInline Config GUILabel             lbl_secondary_detail
 var(SWATGui) private EditInline Config GUINumericEdit       time_limit;
 var(SWATGui) private EditInline Config GUIComboBox          cbo_difficulty;
 
+var(SWATGui) private EditInline Config GUICheckBoxButton 	chk_force_scripts;
+var(SWATGui) private EditInline Config GUICheckBoxButton	chk_allow_dispatch;
+
 var MissionObjectives CustomMissionObjectives;  //the set of available objectives for custom scenarios
 
 var() private config localized string MissionChangedMessage;
@@ -549,6 +552,10 @@ function PopulateFieldsFromScenario(bool NewScenario)
         time_limit.SetValue(Scenario.TimeLimit, true);
     else
         time_limit.SetValue(Data.DefaultTimeLimit, true);
+
+    // new stuff
+    chk_force_scripts.SetChecked(Scenario.ForceScriptedSequences);
+    chk_allow_dispatch.SetChecked(Scenario.AllowDispatch);
 }
 
 function GatherScenarioFromFields()
@@ -590,6 +597,9 @@ function GatherScenarioFromFields()
         Scenario.TimeLimit = 0;
     else
         Scenario.TimeLimit = time_limit.Value;
+
+    Scenario.ForceScriptedSequences = chk_force_scripts.bChecked;
+    Scenario.AllowDispatch = chk_allow_dispatch.bChecked;
 }
 
 event Activate()
