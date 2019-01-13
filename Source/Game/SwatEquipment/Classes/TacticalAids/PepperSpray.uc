@@ -51,12 +51,13 @@ simulated function TraceFire()
         assert(Candidate.IsA('Pawn'));
 
         // TSS bugfix: pepperspray does not affect AI from their proper viewpoint
-        if (Pawn.IsA('SwatAI'))
-            CandidateViewPoint = SwatAI(Pawn).GetViewPoint();
-        else if (Pawn.IsA('SwatPlayer'))
-            CandidateViewPoint = SwatPlayer(Pawn).GetThirdPersonEyesLocation();
+        if (Candidate.IsA('SwatAI'))
+            CandidateViewPoint = SwatAI(Candidate).GetViewPoint();
+        else if (Candidate.IsA('SwatPlayer'))
+            CandidateViewPoint = SwatPlayer(Candidate).GetThirdPersonEyesLocation();
         else
-            CandidateViewPoint = Pawn.GetAimOrigin();
+            CandidateViewPoint = Pawn(Candidate).GetAimOrigin();
+            
         //CandidateViewPoint = SwatPawn(Candidate).GetViewPoint();
 //        log("PepperSpray testing sprayable actor within radius: "$Candidate.Name);
 
