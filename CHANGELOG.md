@@ -88,6 +88,7 @@
  - Pepperball gas cloud update rate changed from 0.6s to 1.0s, so there is sometimes some random lag in the effect occurring.
  - Pepperball effect is random. Sometimes it will take multiple shots to affect someone.
  - Pepperspray cone reduced by 50%, you need to aim closer to people's faces now.
+ - Recoil is now affected by arm injuries.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set

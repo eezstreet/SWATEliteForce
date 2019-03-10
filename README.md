@@ -103,6 +103,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * Bullets are now subject to drag; they lose damage over distance.
  * Less lethal equipment is now actually LESS LETHAL. Some equipment (tasers, beanbag shotgun) can incapacitate or kill if used incorrectly.
  * All equipment has been modified to use real values.
+ * Recoil is now affected by arm injuries.
  * Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
 
 **Doors behave more realistically**
