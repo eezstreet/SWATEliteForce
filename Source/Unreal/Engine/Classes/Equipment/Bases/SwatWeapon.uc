@@ -144,6 +144,18 @@ var(Damage) protected config float Dc1      "Proportion between energy at 50m an
 var(Damage) protected config float Dc2      "Last damage factor ((Dc0-(Dc1*Velocity at 50m))/(Velocity at 50m^2))";
 var(Damage) protected config bool bUsesBullets;
 
+// New recoil stuff as of V7
+var(Recoil) protected config float AutoRecoilBase;
+var(Recoil) protected config float AutoRecoilPerShot;
+var(Recoil) protected config float BurstRecoilBase;
+var(Recoil) protected config float SemiRecoilBase;
+var(Recoil) protected config float ZoomedAutoRecoilBase;
+var(Recoil) protected config float ZoomedAutoRecoilPerShot;
+var(Recoil) protected config float ZoomedBurstRecoilBase;
+var(Recoil) protected config float ZoomedSemiRecoilBase;
+var(Recoil) protected config float ArmInjurySingleRecoilModifier;
+var(Recoil) protected config float ArmInjuryDoubleRecoilModifier;
+
 // Weight/bulk
 var() public config float Weight;
 var() public config float Bulk;
@@ -172,6 +184,93 @@ var bool bPenetratesDoors;
 var array<IInterestedGrenadeThrowing> InterestedGrenadeRegistrants;
 
 static function string GetShortName() { return default.ShortName; }
+
+// Get the amount of recoil that exists per shot (auto fire only)
+simulated function float GetAutoRecoilMagnitude()
+{
+  local float RecoilModifier;
+  local float RecoilBase;
+  local PlayerController PlayerController;
+  local Pawn PawnOwner;
+
+  PawnOwner = Pawn(Owner);
+
+  PlayerController = PlayerController(PawnOwner.Controller);
+  if(PlayerController != None && PlayerController.WantsZoom)
+  {
+    RecoilBase = ZoomedAutoRecoilPerShot;
+  }
+  else
+  {
+    RecoilBase = AutoRecoilPerShot;
+  }
+
+  RecoilModifier = 1.0f;
+  if(PawnOwner.GetNumberOfArmsInjured() == 2)
+  {
+    RecoilModifier = ArmInjuryDoubleRecoilModifier;
+  }
+  else if(PawnOwner.GetNumberOfArmsInjured() == 1)
+  {
+    RecoilModifier = ArmInjurySingleRecoilModifier;
+  }
+
+  return RecoilBase * RecoilModifier;
+}
+
+// Get the amount of recoil that exists when we fire (single fire only)
+simulated function float GetPerBurstRecoilMagnitude()
+{
+  local float RecoilModifier;
+  local float RecoilBase;
+  local Pawn PawnOwner;
+  local PlayerController PlayerController;
+
+  PawnOwner = Pawn(Owner);
+  PlayerController = PlayerController(PawnOwner.Controller);
+  if(PlayerController != None && PlayerController.WantsZoom)
+  {
+    if(CurrentFireMode == FireMode_Burst)
+    {
+      RecoilBase = ZoomedBurstRecoilBase;
+    }
+    else if(CurrentFireMode == FireMode_Auto)
+    {
+      RecoilBase = ZoomedAutoRecoilBase;
+    }
+    else
+    {
+      RecoilBase = ZoomedSemiRecoilBase;
+    }
+  }
+  else
+  {
+    if(CurrentFireMode == FireMode_Burst)
+    {
+      RecoilBase = BurstRecoilBase;
+    }
+    else if(CurrentFireMode == FireMode_Auto)
+    {
+      RecoilBase = AutoRecoilBase;
+    }
+    else
+    {
+      RecoilBase = SemiRecoilBase;
+    }
+  }
+
+  RecoilModifier = 1.0f;
+  if(PawnOwner.GetNumberOfArmsInjured() == 2)
+  {
+    RecoilModifier = ArmInjuryDoubleRecoilModifier;
+  } 
+  else if(PawnOwner.GetNumberOfArmsInjured() == 1)
+  {
+    RecoilModifier = ArmInjurySingleRecoilModifier;
+  }
+
+  return RecoilBase * RecoilModifier;
+}
 
 simulated function float GetWeight() {
   return Weight;
@@ -1407,4 +1506,7 @@ defaultproperties
   ZoomedAimErrorModifier = 0.75
   ComplianceAnimation=Compliance_Handgun
   FlashlightTextureIndex=1
+
+  ArmInjurySingleRecoilModifier = 1.5f
+  ArmInjuryDoubleRecoilModifier = 2.0f
 }

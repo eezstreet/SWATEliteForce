@@ -113,7 +113,7 @@ var config float LowReadyFireTweenTime;
 // Reporting-to-TOC state variables
 var private IAmReportableCharacter CurrentReportableCharacter;
 
-var private bool bNotifiedPlayerTheyAreVIP;
+var private int ArmInjuryFlags;
 
 var SwatPlayer LastArrester;
 
@@ -155,7 +155,7 @@ replication
         ClientOnPepperSprayedTimerExpired, ClientOnTasedTimerExpired,
         ClientDoFlashbangReaction, ClientDoGassedReaction, ClientDoStungReaction,
         ClientDoPepperSprayedReaction, ClientDoTasedReaction,
-        bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired;
+        bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired, ArmInjuryFlags;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1415,17 +1415,7 @@ simulated function OnEquippingFinished()
 
 simulated function NotifyPlayerHeIsVIPIfNecessary()
 {
-    if ( Level.NetMode != NM_Standalone )
-    {
-        if ( Controller == Level.GetLocalPlayerController() )
-        {
-            if ( IsTheVIP() && !bNotifiedPlayerTheyAreVIP )
-            {
-                ClientMessage( "", 'YouAreVIP' );
-                bNotifiedPlayerTheyAreVIP = true;
-            }
-        }
-    }
+    return; // not used since SEF is a PvE game
 }
 
 
@@ -3695,6 +3685,15 @@ simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLoca
         {
             RegionInfo = SkeletalRegionInformation[RegionHit];
 
+            if(RegionHit == REGION_LeftArm)
+            {
+                ArmInjuryFlags = ArmInjuryFlags | 1;
+            }
+            else if(RegionHit == REGION_RightArm)
+            {
+                ArmInjuryFlags = ArmInjuryFlags | 2;
+            }
+
             CurrentLimp += StandardLimpPenalty * RandRange(RegionInfo.LimpModifier.Min, RegionInfo.LimpModifier.Max);
 
             // MCJ: On clients, this will get called in
@@ -4056,6 +4055,23 @@ simulated function FlagLightstickFastUse()
 	}
 
 	PlayerLightstick.FlagForFastUse();
+}
+
+simulated function int GetNumberOfArmsInjured()
+{
+    local int ArmsInjured;
+
+    ArmsInjured = 0;
+    if((ArmInjuryFlags & 1) != 0)
+    {
+        ArmsInjured++;
+    }
+    if((ArmInjuryFlags & 2) != 0)
+    {
+        ArmsInjured++;
+    }
+
+    return ArmsInjured;
 }
 
 defaultproperties

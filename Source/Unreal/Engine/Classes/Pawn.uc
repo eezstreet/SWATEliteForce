@@ -2987,6 +2987,11 @@ simulated event bool ShouldPlayWalkingAnimations()
 }
 #endif
 
+simulated function int GetNumberOfArmsInjured()
+{
+	return 0; // meant to be subclassed
+}
+
 defaultproperties
 {
 	bCanBeDamaged=true

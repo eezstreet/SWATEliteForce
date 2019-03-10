@@ -274,6 +274,16 @@ simulated function bool ShouldReload()
 }
 simulated function float GetChoke();
 
+simulated function float GetAutoRecoilMagnitude()
+{
+    return AutoFireRecoilMagnitudeIncrement;
+}
+
+simulated function float GetPerBurstRecoilMagnitude()
+{
+    return RecoilMagnitude;
+}
+
 //this is the base FiredWeapon's implementation of firing a single shot.
 //note that some FiredWeapon subclasses override this and implement firing
 //  a single shot in a completely different way.
@@ -319,15 +329,15 @@ simulated function TraceFire()
 
     if (Pawn(Owner).Controller == LocalPlayerController)    //I'm the one firing
     {
-        Magnitude = RecoilMagnitude;
+        Magnitude = GetPerBurstRecoilMagnitude();
         Shot = 0;
         AutoMagnitude = 0.0;
         ForeDuration = RecoilForeDuration;
         BackDuration = RecoilBackDuration;
 
-        if(CurrentFireMode == FireMode_Auto)
+        if(CurrentFireMode == FireMode_Auto || CurrentFireMode == FireMode_Burst)
         {
-            AutoMagnitude = AutoFireRecoilMagnitudeIncrement;
+            AutoMagnitude = GetAutoRecoilMagnitude();
             Shot = AutoFireShotIndex;
         }
 
