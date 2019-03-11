@@ -534,6 +534,19 @@ MagazineSizeString=200
 TotalAmmoString=10 belts
 RateOfFire=800 RPM
 
+[FNFALMG]
+Description=Nicknamed 'The right arm of the free world', the FAL was manufactured by FN Herstal during the Cold War and saw use in a large number of countries during that period. It remains in wide use to this day. While its long stature makes it a bit unwieldy for close quarters and its recoil makes it difficult to sustain fully automatic fire, it makes up for this with sheer strength of firepower. 
+FriendlyName=FAL
+ShortName=FAL
+Manufacturer=FN Herstal
+Caliber=7.62x51mm
+CountryOfOrigin=Belgium
+ProductionStart=1954
+FireModes=Semi-Automatic, Full-Auto
+MagazineSizeString=30
+TotalAmmoString=10 magazines
+RateOfFire=700 RPM
+
 [AK47MG]
 Description=The Kalashnikov AKM was designed in the Soviet Union in 1957 by Mikhail Kalashnikov. It was officially accepted by the Soviet army in 1959, but has since been replaced by the AK-74.  It has remained in service in many third world armies as well as terrorist organizations around the world due to its dependability and the ease at which it can be maintained.  It has a slower rate of fire and lower muzzle velocity than the Colt M4A1, but uses a higher caliber bullet which makes it comparable to its American counterpart at short ranges.
 FriendlyName=AKM
