@@ -145,6 +145,8 @@
   - Fixed double doors that were able to be locked
  - Children of Taronne Tenement
   - Now unlocks Glock 18
+ - Drug Lab
+  - Fixed some of the patrol paths, including one that had a suspect able to kill the player immediately at the start of the level
  - Fresnal St. Station
   - Restored objective: Neutralize Anton Georgiev
  - Old Granite Hotel
