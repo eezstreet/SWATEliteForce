@@ -314,7 +314,7 @@ replication
         ServerViewportActivate, ServerViewportDeactivate,
         ServerHandleViewportFire, ServerHandleViewportReload,
 		ServerDisableSpecialInteractions, ServerMPCommandIssued,
-		ServerDiscordTest, ServerDiscordTest2;
+		ServerDiscordTest, ServerDiscordTest2, ServerGiveItem;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2523,7 +2523,7 @@ function ClientSentOrReceivedEquipment()
 simulated function bool TryGiveItem(SwatPawn Other)
 {
 	local HandheldEquipment ActiveItem;
-	local HandheldEquipment NewItem;
+	
 	local float AddedWeight;
 	local float AddedBulk;
 
@@ -2584,36 +2584,43 @@ simulated function bool TryGiveItem(SwatPawn Other)
 
 	}
 
-	// Spawn in the actual equipment and give it to the other player
-	NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
-	NewItem.SetAvailableCount(1, true);
-	NewItem.OnGivenToOwner();
-	Other.GivenEquipmentFromPawn(NewItem);
-
-	/////////////////////////////////////////////////////////////////
-	//
-	//	Remove the equipment from our inventory
-	//	All we need to do is reduce the available count by 1
-	ActiveItem.DecrementAvailableCount();
-	if(!ActiveItem.IsAvailable())
-	{
-		// Switch to another weapon
-		EquipNextSlot();
-		ActiveItem.UnequippedHook();
-	}
-
-	////////////////////////////////////////////////////////////////
-	//
-	//	Tell the client we gave our equipment away
-	ClientMessage(ActiveItem.GetGivenEquipmentName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
-	if(Other.IsA('SwatPlayer'))
-	{
-		SwatGamePlayerController(Other.Controller).ClientMessage(
-			ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
-		SwatGamePlayerController(Other.Controller).ClientSentOrReceivedEquipment();
-	}
-	ClientSentOrReceivedEquipment();
+	ServerGiveItem(Other, ActiveItem);
 	return true;
+}
+
+function ServerGiveItem(SwatPawn Other, HandheldEquipment ActiveItem)
+{
+    local HandheldEquipment NewItem;
+
+    // Spawn in the actual equipment and give it to the other player
+    NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
+    NewItem.SetAvailableCount(1, true);
+    NewItem.OnGivenToOwner();
+    Other.GivenEquipmentFromPawn(NewItem);
+
+    /////////////////////////////////////////////////////////////////
+    //
+    //  Remove the equipment from our inventory
+    //  All we need to do is reduce the available count by 1
+    ActiveItem.DecrementAvailableCount();
+    if(!ActiveItem.IsAvailable())
+    {
+        // Switch to another weapon
+        EquipNextSlot();
+        ActiveItem.UnequippedHook();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //
+    //  Tell the client we gave our equipment away
+    ClientMessage(ActiveItem.GetGivenEquipmentName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
+    if(Other.IsA('SwatPlayer'))
+    {
+        SwatGamePlayerController(Other.Controller).ClientMessage(
+            ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
+        SwatGamePlayerController(Other.Controller).ClientSentOrReceivedEquipment();
+    }
+    ClientSentOrReceivedEquipment();
 }
 
 // Overridden from PlayerController::Reload().
