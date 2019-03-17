@@ -1192,6 +1192,11 @@ protected function NotifyWeaponDischarged()
 	}
 }
 
+function bool IsAnInvestigator()
+{
+	return !bDontInvestigate;
+}
+
 ///////////////////////////////////////
 
 // Provides the effect event name to use when this ai is being reported to
