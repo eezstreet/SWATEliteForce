@@ -73,6 +73,8 @@ latent function GiveEquipment()
 	}
 
 	EquipmentPiece.LatentGive(Destination);
+
+	ISwatAI(m_Pawn).UnlockAim();
 }
 
 state Running
