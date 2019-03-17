@@ -90,6 +90,7 @@
  - Pepperspray cone reduced by 50%, you need to aim closer to people's faces now.
  - Recoil is now affected by arm injuries.
  - Added a unique GUI icon for the Less Lethal M870
+ - Fixed SEF bug: Shooting a bomb trap now causes it to detonate, instead of silently becoming disarmed. It will trigger the "Tripped Trap" penalty when you do so.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
