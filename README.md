@@ -78,6 +78,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
  * SWAT officers will drop a lightstick after clearing a room.
  * SWAT officers can now be affected by CS gas, flashbangs, tasers, pepper spray, etc.
+ * SWAT officers will use pathfinding distance (instead of Euclidean distance) to determine the closest officer for things such as closing doors, etc, so it correctly picks the closest one.
 
 **Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.**
  * This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.

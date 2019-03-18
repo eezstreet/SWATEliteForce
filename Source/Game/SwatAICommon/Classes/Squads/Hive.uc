@@ -64,11 +64,11 @@ overloaded function construct()
 native function int GetNumOfficers();
 native function Pawn GetOfficer(int Index);
 
-function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSight)
+function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSight, optional bool bUsePathfindingDistance)
 {
 	assert(Target != None);
 
-	return SwatAIRepo.GetElementSquad().GetClosestOfficerTo(Target, bRequiresLineOfSight);
+	return SwatAIRepo.GetElementSquad().GetClosestOfficerTo(Target, bRequiresLineOfSight, bUsePathfindingDistance);
 }
 
 function Pawn GetClosestOfficerThatCanHit(Actor Target)
