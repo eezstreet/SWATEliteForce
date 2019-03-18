@@ -2584,13 +2584,18 @@ simulated function bool TryGiveItem(SwatPawn Other)
 
 	}
 
-	ServerGiveItem(Other, ActiveItem);
+	ServerGiveItem(Other);
 	return true;
 }
 
-function ServerGiveItem(SwatPawn Other, HandheldEquipment ActiveItem)
+function ServerGiveItem(SwatPawn Other)
 {
     local HandheldEquipment NewItem;
+    local HandheldEquipment ActiveItem;
+
+    ActiveItem = SwatPlayer.GetActiveItem();
+
+    mplog("Given item was "$ActiveItem);
 
     // Spawn in the actual equipment and give it to the other player
     NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
