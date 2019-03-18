@@ -43,11 +43,11 @@ protected function NotifyPawnDied(Pawn pawn);
 //
 // Officer Accessors
 
-function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point)
+function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point, optional bool bUsePathfindingDistance)
 {
 	assert(squad().IsA('OfficerTeamInfo'));
 
-	return OfficerTeamInfo(squad()).GetClosestOfficerWithEquipmentTo(Slot, Point);
+	return OfficerTeamInfo(squad()).GetClosestOfficerWithEquipmentTo(Slot, Point, bUsePathfindingDistance);
 }
 
 function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name EquipmentClassName)
@@ -92,11 +92,11 @@ function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSig
 	return OfficerTeamInfo(squad()).GetClosestOfficerTo(Target, bRequiresLineOfSight, bUsePathfindingDistance);
 }
 
-function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot, optional Name EquipmentClassName)
+function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot, optional Name EquipmentClassName, optional bool bUsePathfindingDistance)
 {
 	assert(squad().IsA('OfficerTeamInfo'));
 
-	return OfficerTeamInfo(squad()).GetClosestOfficerWithEquipment(Location, Slot, EquipmentClassName);
+	return OfficerTeamInfo(squad()).GetClosestOfficerWithEquipment(Location, Slot, EquipmentClassName, bUsePathfindingDistance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,7 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 // Find which officer is the closest to the player
 function DetermineGivingOfficer()
 {
-	GivingPawn = GetClosestOfficerWithEquipmentTo(Slot, CommandOrigin);
+	GivingPawn = GetClosestOfficerWithEquipmentTo(Slot, CommandOrigin, true);
 	GivingOfficer = ISwatOfficer(GivingPawn);
 }
 

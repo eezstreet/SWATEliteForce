@@ -154,7 +154,7 @@ function Pawn GetSecondOfficer()
 		return None;
 }
 
-function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point)
+function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point, optional bool bUsePathfindingDistance)
 {
 	local int i;
 	local Pawn IterOfficer, ClosestOfficer;
@@ -165,7 +165,7 @@ function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point)
 
 		if (ISwatOfficer(IterOfficer).GetItemAtSlot(Slot) != None)
 		{
-			if (IterOfficer.FastTrace(Point, IterOfficer.Location))
+			if (!bUsePathfindingDistance && IterOfficer.FastTrace(Point, IterOfficer.Location))
 			{
 				IterDistance = VSize(Point - IterOfficer.Location);
 			}
@@ -220,7 +220,7 @@ function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSig
 	return Closest;
 }
 
-function Pawn GetClosestOfficerThatCanHit(Actor Target)
+function Pawn GetClosestOfficerThatCanHit(Actor Target, optional bool bUsePathfindingDistance)
 {
 	local int i;
 	local Pawn Iter, Closest;
@@ -232,7 +232,15 @@ function Pawn GetClosestOfficerThatCanHit(Actor Target)
 
 		if (Iter.CanHit(Target))
 		{
-			IterDistance = VSize(Target.Location - Iter.Location);
+			if(bUsePathfindingDistance)
+			{
+				IterDistance = Iter.GetPathfindingDistanceToActor(Target);
+			}
+			
+			if(!bUsePathfindingDistance || (IterDistance == 0.0))
+			{
+				IterDistance = VSize(Target.Location - Iter.Location);
+			}
 
 			if ((Closest == None) || (IterDistance < ClosestDistance))
 			{
@@ -245,7 +253,7 @@ function Pawn GetClosestOfficerThatCanHit(Actor Target)
 	return Closest;
 }
 
-function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot, optional Name EquipmentClassName)
+function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot, optional Name EquipmentClassName, optional bool bUsePathfindingDistance)
 {
 	local int i;
 	local Pawn Iter, Closest;
@@ -264,7 +272,16 @@ function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot
             // equipment
             if (EquipmentClassName == '' || Equipment.IsA(EquipmentClassName))
             {
-			    IterDistance = VSize(Location - Iter.Location);
+            	if(bUsePathfindingDistance)
+            	{
+            		IterDistance = Iter.GetPathfindingDistanceToPoint(Location);
+            	}
+
+            	if(!bUsePathfindingDistance || IterDistance == 0.0)
+            	{
+            		IterDistance = VSize(Location - Iter.Location);
+            	}
+			    
 
 			    if ((Closest == None) || (IterDistance < ClosestDistance))
 			    {
