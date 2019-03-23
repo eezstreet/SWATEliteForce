@@ -1121,6 +1121,11 @@ function ReactToFlashbangGrenade(
         return;
     }
 
+    if(Instigator.IsA('SwatOfficer'))
+    {
+        return; // SWAT officers can't flashbang each other --eez
+    }
+
     if (IsConscious())
     {
         if (Grenade != None)
@@ -1235,6 +1240,11 @@ function ReactToStingGrenade(
 
     if ( Grenade == None || CantBeDazed() )
         return;
+
+    if(Instigator.IsA('SwatOfficer'))
+    {
+        return; // SWAT officers can't sting each other --eez
+    }
 
     Distance = VSize(Location - Grenade.Location);
     DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
