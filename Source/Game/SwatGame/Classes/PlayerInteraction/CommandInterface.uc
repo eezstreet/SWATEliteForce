@@ -3089,7 +3089,7 @@ function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, Player
 		}
 	}
 
-	if(CommandContext.CaresAboutCanIssueCommandsFromMySide)
+	if(CommandContext.CaresAboutCanIssueCommandsFromMySide && Level.NetMode == NM_Standalone)
 	{
 		if(CommandContext.CanIssueCommandsFromMySide ^^ Door.PlayerCanIssueCommandsFromTheirSide())
 		{
