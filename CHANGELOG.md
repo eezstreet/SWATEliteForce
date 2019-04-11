@@ -116,6 +116,7 @@
  - Fixed TSS bug: Highground volumes now work correctly on Victory Imports Auto Center and Meat Barn Restaurant. (config bug not map bug)
  - Fixed TSS bug: Pepperspray cone was reduced when standing still, which made you *less* likely to hit your target. It's now a constant amount.
  - Fixed TSS bug: Various typos in Food Wall briefing docs refer to Jimenez as "Columbian" and not "Colombian" (thanks to JalapenoPepsi for pointing this out)
+ - Fixed TSS bug: Fixed some custom maps having no objectives (but working fine in vanilla SWAT4; thanks to SS for the fix)
 
 ##### Map-Specific Changes #####
 
