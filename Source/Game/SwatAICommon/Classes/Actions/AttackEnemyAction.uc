@@ -107,6 +107,7 @@ private function MoveToAttackEnemy()
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " will move to attack the enemy");
 
+	ISwatEnemy(m_Pawn).BecomeAThreat();
 	CurrentMoveOfficerToEngageGoal = new class'MoveOfficerToEngageGoal'(movementResource(), achievingGoal.Priority, GetEnemy());
 	assert(CurrentMoveOfficerToEngageGoal != None);
 	CurrentMoveOfficerToEngageGoal.AddRef();
