@@ -270,6 +270,8 @@ function AttackWhileFleeing()
 {
   local Pawn Enemy;
 
+  ISwatEnemy(m_Pawn).BecomeAThreat();
+  
   Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
   if(Enemy == None) {
     return;
@@ -361,6 +363,8 @@ latent function Flee()
 	local Pawn CurrentEnemy;
 	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
 
+	ISwatEnemy(m_Pawn).UnbecomeAThreat();
+	
 	// trigger the speech
 	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();
 
@@ -410,6 +414,7 @@ latent function Flee()
     CurrentMoveToActorGoal.unPostGoal(self);
 	CurrentMoveToActorGoal.Release();
 	CurrentMoveToActorGoal = None;
+	
 }
 
 state Running
