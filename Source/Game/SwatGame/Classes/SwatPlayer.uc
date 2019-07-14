@@ -1757,6 +1757,8 @@ simulated function EndThrow( float ThrowHeldTimeFromNetwork )
     GotoState( 'ThrowingFinish' );
 }
 
+function OnTick(){}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
@@ -1856,6 +1858,7 @@ simulated state ThrowingPrep
         Global.Tick(dTime);
 
         AdjustPlayerMovementSpeed();
+        OnTick();
 
         if (!DoneThrowing)
         {
@@ -1936,6 +1939,7 @@ simulated state Throwing
     simulated function Tick(float dTime)
     {
         Global.Tick(dTime);
+        OnTick();
 
         AdjustPlayerMovementSpeed();
 
@@ -2147,6 +2151,7 @@ Begin:
 
 simulated function Tick(float dTime) {
     AdjustPlayerMovementSpeed();
+    OnTick();
 }
 
 
@@ -4038,10 +4043,20 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
   }
 }
 
-simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
+simulated function OnGivenNewEquipment(HandheldEquipment NewItem) {}
+
+simulated function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
 {
-	Loadout.GivenEquipmentFromPawn(Equipment);
-	SwatGamePlayerController(controller).theLoadOut.GivenEquipmentFromPawn(Equipment);
+    local HandheldEquipment NewItem;
+    NewItem = Spawn(Equipment, self, 'GivenEquipment');
+    NewItem.bAlwaysRelevant = true;
+    NewItem.SetAvailableCount(1, true);
+    NewItem.OnGivenToOwner();
+
+	Loadout.GivenEquipmentFromPawn(NewItem);
+	SwatGamePlayerController(controller).theLoadOut.GivenEquipmentFromPawn(NewItem);
+
+    OnGivenNewEquipment(NewItem);
 }
 
 simulated function FlagLightstickFastUse()

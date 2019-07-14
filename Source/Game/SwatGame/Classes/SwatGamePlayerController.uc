@@ -2598,10 +2598,7 @@ function ServerGiveItem(SwatPawn Other)
     mplog("Given item was "$ActiveItem);
 
     // Spawn in the actual equipment and give it to the other player
-    NewItem = Spawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()), Other);
-    NewItem.SetAvailableCount(1, true);
-    NewItem.OnGivenToOwner();
-    Other.GivenEquipmentFromPawn(NewItem);
+    Other.GivenEquipmentFromPawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()));
 
     /////////////////////////////////////////////////////////////////
     //

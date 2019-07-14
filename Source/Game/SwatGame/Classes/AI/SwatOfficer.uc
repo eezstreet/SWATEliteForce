@@ -1412,9 +1412,14 @@ simulated function Tick(float dTime) {
   AdjustOfficerMovementSpeed();
 }
 
-simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
+simulated function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
 {
-	Loadout.GivenEquipmentFromPawn(Equipment);
+    local HandheldEquipment NewItem;
+    NewItem = Spawn(Equipment, self, 'GivenEquipment');
+    NewItem.SetAvailableCount(1, true);
+    NewItem.OnGivenToOwner();
+
+	Loadout.GivenEquipmentFromPawn(NewItem);
 }
 
 // Ignore door blocking, SEF addition

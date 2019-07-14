@@ -2104,7 +2104,7 @@ simulated function float GetTotalBulk() { return 0.0; }
 simulated function float GetMaximumWeight() { return 0.0; }
 simulated function float GetMaximumBulk() { return 0.0; }
 simulated function bool HasA(name Class) { return false; }
-simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment) {}
+simulated function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 
