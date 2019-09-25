@@ -25,23 +25,23 @@ var protected OfficerLoadOut LoadOut;
 //the pitch above the camera rotation to throw
 var config int ThrownProjectilePitch;
 
-var config float MinimumLongThrowSpeed;         //if a ThrownWeapon is thrown at a speed less than this, then the 'short' animations are played, otherwise, 'long' animations are used
+var config float Unused1;
 
-var config name PreThrowAnimation;
-var config name ThrowShortAnimation;
-var config name ThrowLongAnimation;
+var config name Unused2;
+var config name Unused3;
+var config name Unused4;
 
-var config name	 ThrowAnimationRootBone;
+var config name	 Unused5;
 var config float ThrowAnimationTweenTime;
 
-var config float ThrowSpeedTimeFactor;      //when a ThrownWeapon is thrown, its speed will be this times the time that the throw button is held
-var config Range ThrowSpeedRange;           //clamp the throw speed
+var config float Unused6;
+var config Range Unused7;
 
 var private Material SuspectHandsMaterial;
 var private Material VIPHandsMaterial;
 
 // NonLethal Effects
-var config bool bTestingCameraEffects; // allow the player to be hit with nonlethals in standalone
+var config bool Unused8;
 var private Timer StungTimer;
 var private Timer FlashbangedTimer;
 var private Timer GassedTimer;
@@ -86,14 +86,11 @@ var private PerlinNoise PerlinNoiseAxisA;
 var private PerlinNoise PerlinNoiseAxisB;
 var config float StingEffectDropOffTimePercent;
 var config float StingEffectFrequency;
-//maximum angular offset in unreal angle units
-var config Rotator StingViewEffectAmplitude;
-var config float StingInputEffectMagnitude;
 
-//in unreal distance units, the farthest shake distance
-var config float TasedViewEffectAmplitude;
-//how often to recenter
-var config float TasedViewEffectFrequency;
+var config Rotator Unused9;
+var config float Unused10;
+var config float Unused11;
+var config float Unused12;
 
 var bool EquipOtherAfterUsed;                   //if true,
 var EquipmentSlot SlotForReequip;               //if TryToReequipAfterUsed is set, then SlotForReequip records the EquipmentSlot that should be used to try to reequip
@@ -108,7 +105,7 @@ var protected bool bIsUsingOptiwand;
 
 var private DeployedC2ChargeBase DeployedC2Charge;
 
-var config float LowReadyFireTweenTime;
+var config float Unused13;
 
 // Reporting-to-TOC state variables
 var private IAmReportableCharacter CurrentReportableCharacter;
@@ -121,13 +118,13 @@ var SwatPlayer LastArrester;
 var private vector OneFrameNudgeDirection;
 const OneFrameNudgeDirectionStrength = 2.0;
 
-var config const private float LimpThreshold;
+var config const private float Unused14;
 var config private float       CurrentLimp;
-var config private float       StandardLimpPenalty;
+var config private float       Unused15;
 var private config localized string YouString;
 
-var private config float PawnModelApparentBaseEyeHeight;        //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
-var private config float PawnModelApparentCrouchEyeHeight;      //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
+var private config float Unused16;        //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
+var private config float Unused17;      //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
 
 var private bool                        bHasBeenReportedToTOC;
 
@@ -1650,7 +1647,7 @@ simulated function bool ValidateReload()
 simulated function float GetFireTweenTime()
 {
     if (IsLowReady())
-        return LowReadyFireTweenTime;
+        return class'SwatPlayerConfig'.static.GetLowReadyFireTweenTime();
     else
         return 0.0;
 }
@@ -1791,14 +1788,14 @@ simulated state ThrowingPrep
         ThrowHeldTime = 0;
         DoneThrowing = false;
 
-        assertWithDescription(ThrowSpeedTimeFactor > 0.0,
+        assertWithDescription(class'SwatPlayerConfig'.static.GetThrowSpeedTimeFactor() > 0.0,
             "[tcohen] ThrowSpeedTimeFactor is not specified for the class "$class.name
             $".  Please set it in SwatGame.ini, section [SwatGame."$class.name
             $"].");
 
-        assertWithDescription(ThrowSpeedRange.Min > 0.0,
-            "[tcohen] ThrowSpeedRange.Min is not specified for the class "$class.name
-            $".  Please set it in SwatGame.ini, section [SwatGame."$class.name
+        assertWithDescription(class'SwatPlayerConfig'.static.GetThrowSpeedRange().Min > 0.0,
+            "[tcohen] ThrowSpeedRange.Min is not specified for the class SwatPlayerConfig"
+            $".  Please set it in SwatPawn.ini, section [SwatGame.SwatPlayerConfig"
             $"].");
     }
 
@@ -2057,13 +2054,13 @@ simulated state ThrowingFinish
         if(ThrownWeapon.IsA('Lightstick'))
         {
           // Lightsticks can be dropped at the feet. Grenades, not so much.
-          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime;
-          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, ThrowSpeedRange.Max));
+          ThrowSpeed = class'SwatPlayerConfig'.static.GetThrowSpeedTimeFactor() * ThrowHeldTime;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, class'SwatPlayerConfig'.static.GetThrowSpeedRange().Max));
         }
         else
         {
-          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
-          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+          ThrowSpeed = class'SwatPlayerConfig'.static.GetThrowSpeedTimeFactor() * ThrowHeldTime + class'SwatPlayerConfig'.static.GetThrowSpeedRange().Min;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, class'SwatPlayerConfig'.static.GetThrowSpeedRange().Min, class'SwatPlayerConfig'.static.GetThrowSpeedRange().Max));
         }
     }
 
@@ -2174,20 +2171,20 @@ function GetThrownProjectileParams(out vector outLocation, out rotator outRotati
 
 simulated function name GetPreThrowAnimation()
 {
-    return PreThrowAnimation;
+    return class'SwatPlayerConfig'.static.GetPreThrowAnimation();
 }
 
 simulated function name GetThrowAnimation(float ThrowSpeed)
 {
-    if (ThrowSpeed < MinimumLongThrowSpeed)
-        return ThrowShortAnimation;
+    if (ThrowSpeed < class'SwatPlayerConfig'.static.GetMinimumLongThrowSpeed())
+        return class'SwatPlayerConfig'.static.GetThrowShortAnimation();
     else
-        return ThrowLongAnimation;
+        return class'SwatPlayerConfig'.static.GetThrowLongAnimation();
 }
 
 simulated function name GetPawnThrowRootBone()
 {
-	return ThrowAnimationRootBone;
+	return class'SwatPlayerConfig'.static.GetThrowAnimationRootBone();
 }
 
 simulated function float GetPawnThrowTweenTime()
@@ -2449,7 +2446,7 @@ Function ReactToFlashbangGrenade(
 					 GrenadeLocation,
 					 Controller.FOVAngle * DEGREES_TO_RADIANS));
 log("TMC FOVMatters="$FOVMatters$", CanSee="$CanSee);
-    if  (bTestingCameraEffects ||  (Distance <= StunRadius && CanSee))
+    if  (class'SwatPlayerConfig'.static.GetTestingCameraEffects() ||  (Distance <= StunRadius && CanSee))
     {
         if (Level.NetMode != NM_Client)
         {
@@ -3484,9 +3481,9 @@ simulated function vector GetThirdPersonEyesLocation()
     ThirdPersonEyesLocation = GetViewPoint();
 
     if (bIsCrouched)
-        EyeHeightCompensation = PawnModelApparentCrouchEyeHeight - default.CrouchEyeHeight;
+        EyeHeightCompensation = class'SwatPlayerConfig'.static.GetPawnModelApparentCrouchEyeHeight() - default.CrouchEyeHeight;
     else
-        EyeHeightCompensation = PawnModelApparentBaseEyeHeight - default.BaseEyeHeight;
+        EyeHeightCompensation = class'SwatPlayerConfig'.static.GetPawnModelApparentBaseEyeHeight() - default.BaseEyeHeight;
 
     //compensate for the difference between where the player's camera would be, and where the Pawn model's eyes appear to be
     ThirdPersonEyesLocation.Z += EyeHeightCompensation;
@@ -3565,12 +3562,12 @@ function Rotator GetStungRotationOffset()
         //calculate the ordinate for evaluation of the noise function
         Ordinate = Alpha * StingEffectFrequency;
         //apply noise to the pitch
-        Result.Pitch = ScaleStingEffectAmplitude(StingViewEffectAmplitude.Pitch, Alpha) * PerlinNoiseAxisA.Noise1(Ordinate);
+        Result.Pitch = ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Pitch, Alpha) * PerlinNoiseAxisA.Noise1(Ordinate);
         //calculate the value of the perlin noise function at the RollAndYawOrdinate
         RollAndYawAbcissa = PerlinNoiseAxisB.Noise1(Ordinate);
         //apply noise to the roll and yaw
-        Result.Roll = RollAndYawAbcissa * ScaleStingEffectAmplitude(StingViewEffectAmplitude.Roll, Alpha);
-        Result.Yaw = RollAndYawAbcissa * ScaleStingEffectAmplitude(StingViewEffectAmplitude.Yaw, Alpha);
+        Result.Roll = RollAndYawAbcissa * ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Roll, Alpha);
+        Result.Yaw = RollAndYawAbcissa * ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Yaw, Alpha);
     }
 
     return Result;
@@ -3585,7 +3582,7 @@ simulated event ApplyStungRotationOffset(out Vector Acceleration)
         StungRotation = GetStungRotationOffset();
         StungRotation.Pitch = 0;
 
-        Acceleration = Acceleration << (StungRotation * StingInputEffectMagnitude);
+        Acceleration = Acceleration << (StungRotation * class'SwatPlayerConfig'.static.GetStingInputEffectMagnitude());
     }
 }
 
@@ -3612,8 +3609,8 @@ function vector GetTasedViewLocationOffset(Rotator CameraRotation)
 
         LocalXAxis = vect(0, 1, 0) >> CameraRotation;
 
-        Result = LocalXAxis * TasedViewEffectAmplitude * PerlinNoiseAxisA.Noise1(Alpha * TasedViewEffectFrequency);
-        Result.Z = TasedViewEffectAmplitude * PerlinNoiseAxisB.Noise1(Alpha * TasedViewEffectFrequency);
+        Result = LocalXAxis * class'SwatPlayerConfig'.static.GetTasedViewEffectAmplitude() * PerlinNoiseAxisA.Noise1(Alpha * class'SwatPlayerConfig'.static.GetTasedViewEffectFrequency());
+        Result.Z = class'SwatPlayerConfig'.static.GetTasedViewEffectAmplitude() * PerlinNoiseAxisB.Noise1(Alpha * class'SwatPlayerConfig'.static.GetTasedViewEffectFrequency());
     }
 
     return Result;
@@ -3671,7 +3668,7 @@ simulated function bool HasTheItem()
 
 simulated function bool IsLowerBodyInjured()
 {
-    return CurrentLimp > LimpThreshold;
+    return CurrentLimp > class'SwatPlayerConfig'.static.GetLimpThreshold();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3699,7 +3696,7 @@ simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLoca
                 ArmInjuryFlags = ArmInjuryFlags | 2;
             }
 
-            CurrentLimp += StandardLimpPenalty * RandRange(RegionInfo.LimpModifier.Min, RegionInfo.LimpModifier.Max);
+            CurrentLimp += class'SwatPlayerConfig'.static.GetStandardLimpPenalty() * RandRange(RegionInfo.LimpModifier.Min, RegionInfo.LimpModifier.Max);
 
             // MCJ: On clients, this will get called in
             // OnCurrentLimpChanged(). This doesn't get called in standalone
