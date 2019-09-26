@@ -6501,7 +6501,7 @@ simulated event RenderOverlays( canvas Canvas )
 		}
    }
 
-   RenderDebugInfo(Canvas);
+   //RenderDebugInfo(Canvas);
 }
 
 simulated function RenderDebugInfo(Canvas Canvas)
