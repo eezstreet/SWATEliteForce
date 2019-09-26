@@ -25,16 +25,16 @@ var protected OfficerLoadOut LoadOut;
 //the pitch above the camera rotation to throw
 var config int ThrownProjectilePitch;
 
-var config float Unused1;
+// Only valid in non-NM_Standalone
+var HandheldEquipment GivenFlashbangs;
+var HandheldEquipment GivenStinger;
+var HandheldEquipment GivenGas;
+var HandheldEquipment GivenC2;
+var HandheldEquipment GivenWedge;
 
-var config name Unused2;
-var config name Unused3;
-var config name Unused4;
+var float ThrowAnimationTweenTime;
 
-var config name	 Unused5;
-var config float ThrowAnimationTweenTime;
-
-var config float Unused6;
+var HandheldEquipment GivenPepperSpray;
 var config Range Unused7;
 
 var private Material SuspectHandsMaterial;
@@ -148,11 +148,13 @@ replication
         ClientFaceRotation, CurrentLimp,
         ClientStartQualify, ClientFinishQualify, ClientUse,
         DeployedC2Charge,
+        GivenFlashbangs, GivenStinger, GivenGas, GivenC2, GivenWedge, GivenPepperSpray,
         ClientOnFlashbangTimerExpired, ClientOnGassedTimerExpired, ClientOnStungTimerExpired,
         ClientOnPepperSprayedTimerExpired, ClientOnTasedTimerExpired,
         ClientDoFlashbangReaction, ClientDoGassedReaction, ClientDoStungReaction,
         ClientDoPepperSprayedReaction, ClientDoTasedReaction,
-        bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired, ArmInjuryFlags;
+        bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired, ArmInjuryFlags,
+        ClientIncrementItemCount;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -160,7 +162,41 @@ replication
 //
 simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
 {
-  return LoadOut.GetTacticalAidAvailableCount(Slot);
+    if(Level.NetMode != NM_Standalone)
+    {
+        if(Slot == SLOT_Flashbang && GivenFlashbangs != None)
+        {
+            return GivenFlashbangs.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_CSGasGrenade && GivenGas != None)
+        {
+            return GivenGas.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_StingGrenade && GivenStinger != None)
+        {
+            return GivenStinger.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_Breaching && GivenC2 != None)
+        {
+            return GivenC2.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_Wedge && GivenWedge != None)
+        {
+            return GivenWedge.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_PepperSpray && GivenPepperSpray != None)
+        {
+            return GivenPepperSpray.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else
+        {
+            return LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+    }
+    else
+    {
+        return LoadOut.GetTacticalAidAvailableCount(Slot);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -864,7 +900,7 @@ function ServerRequestEquip( EquipmentSlot Slot )
         }
         else
         {
-            SetDesiredItemPocket( NewEquipment.GetPocket() );
+            SetDesiredItemSlot( NewEquipment.GetSlot() );
 
             // And then do the equipping here on the server.
             CheckDesiredItemAndEquipIfNeeded();
@@ -915,8 +951,7 @@ function AuthorizedEquipOnServer( EquipmentSlot Slot )
     }
     else
     {
-        NewEquipment = GetEquipmentAtSlot( Slot );
-        SetDesiredItemPocket( NewEquipment.GetPocket() );
+        SetDesiredItemSlot( Slot );
         if ( ValidateEquipSlot( Slot ) )
         {
             CheckDesiredItemAndEquipIfNeeded();
@@ -1539,49 +1574,45 @@ simulated function OnReloadingFinished()
 //returns true iff it needed to begin equipping something else
 simulated protected function bool CheckDesiredItemAndEquipIfNeeded()
 {
-    local Pocket DesiredItemPocket;
+    local EquipmentSlot DesiredEquipmentSlot;
     local HandheldEquipment ActiveItem;
     local HandheldEquipment NewEquipment;
 
-	if (Level.GetEngine().EnableDevTools)
-		mplog( self$"---SwatPlayer::CheckDesiredItemAndEquipIfNeeded()." );
+	//if (Level.GetEngine().EnableDevTools)
+		log( self$"---SwatPlayer::CheckDesiredItemAndEquipIfNeeded()." );
 
     if ( Level.NetMode != NM_Standalone && LoadOut != None )
     {
-        DesiredItemPocket = GetDesiredItemPocket();
+        DesiredEquipmentSlot = GetDesiredItemSlot();
         ActiveItem = GetActiveItem();
 
         // If the active item is the same as the desired item, do nothing.
-        if ( ActiveItem != None && DesiredItemPocket == ActiveItem.GetPocket() )
+        if ( ActiveItem != None && DesiredEquipmentSlot == ActiveItem.GetSlot() )
         {
-			if (Level.GetEngine().EnableDevTools)
-				mplog( self$"...returning false: Pockets are same="$DesiredItemPocket );
+			//if (Level.GetEngine().EnableDevTools)
+				log( self$"...returning false: Slots are same="$DesiredEquipmentSlot );
 
             return false;
         }
 
-		if (Level.GetEngine().EnableDevTools)
-			mplog( self$"...Pockets differ:" );
+		//if (Level.GetEngine().EnableDevTools)
+			log( self$"...Slots differ:" );
 
 		if (Level.GetEngine().EnableDevTools)
 		{
 			if ( ActiveItem != None )
-				mplog( "...DesiredItemPocket="$DesiredItemPocket$", ActiveItemPocket="$ActiveItem.GetPocket() );
+				log( "...DesiredEquipmentSlot="$DesiredEquipmentSlot$", ActiveEquipmentSlot="$ActiveItem.GetSlot() );
 			else
-				mplog( "...DesiredItemPocket="$DesiredItemPocket$", ActiveItem=None" );
+				log( "...DesiredEquipmentSlot="$DesiredEquipmentSlot$", ActiveEquipmentSlot=None" );
 		}
 
-        if ( ValidateEquipPocket( DesiredItemPocket ))
+        NewEquipment = LoadOut.GetFirstAvailableItemAtSlot(DesiredEquipmentSlot);
+        if(NewEquipment != None)
         {
-            NewEquipment = HandheldEquipment( LoadOut.GetItemAtPocket( DesiredItemPocket ) );
-
-			if (Level.GetEngine().EnableDevTools)
-				mplog( "...LoadOut.GetItemAtPocket( DesiredItemPocket ) = "$NewEquipment );
-
             NewEquipment.Equip();
+            return true;
         }
-
-        return true;
+        return false;
     }
     else
         return false;
@@ -4042,18 +4073,90 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
 
 simulated function OnGivenNewEquipment(HandheldEquipment NewItem) {}
 
-simulated function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
+function ClientIncrementItemCount(class<HandheldEquipment> Equipment)
+{
+    if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
+    {
+        GivenFlashbangs.AddAvailableCount(1);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenGasClass() && GivenGas != None)
+    {
+        GivenGas.AddAvailableCount(1);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenStingerClass() && GivenStinger != None)
+    {
+        GivenStinger.AddAvailableCount(1);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenC2Class() && GivenC2 != None)
+    {
+        GivenC2.AddAvailableCount(1);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenPepperSprayClass() && GivenPepperSpray != None)
+    {
+        GivenPepperSpray.AddAvailableCount(1);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
+    {
+        GivenWedge.AddAvailableCount(1);
+    }
+}
+
+function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
 {
     local HandheldEquipment NewItem;
-    NewItem = Spawn(Equipment, self, 'GivenEquipment');
-    NewItem.bAlwaysRelevant = true;
-    NewItem.SetAvailableCount(1, true);
-    NewItem.OnGivenToOwner();
 
-	Loadout.GivenEquipmentFromPawn(NewItem);
-	SwatGamePlayerController(controller).theLoadOut.GivenEquipmentFromPawn(NewItem);
+    log("" $ self $ "::GivenEquipmentFromPawn: " $ Equipment);
 
-    OnGivenNewEquipment(NewItem);
+    // we have different behavior depending on whether we're in singleplayer or not.
+    if(Level.NetMode == NM_Standalone)
+    {
+        NewItem = Spawn(Equipment, self, 'GivenEquipment');
+        NewItem.bAlwaysRelevant = true;
+        NewItem.SetAvailableCount(1, true);
+        NewItem.OnGivenToOwner();
+
+        Loadout.GivenEquipmentFromPawn(NewItem);
+        SwatGamePlayerController(controller).theLoadOut.GivenEquipmentFromPawn(NewItem);
+
+        OnGivenNewEquipment(NewItem);
+    }
+    else
+    {
+        if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
+        {
+            GivenFlashbangs.AddAvailableCount(1);
+            ClientIncrementItemCount(Equipment);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenGasClass() && GivenGas != None)
+        {
+            GivenGas.AddAvailableCount(1);
+            ClientIncrementItemCount(Equipment);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenStingerClass() && GivenStinger != None)
+        {
+            GivenStinger.AddAvailableCount(1);
+            ClientIncrementItemCount(Equipment);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenC2Class() && GivenC2 != None)
+        {
+            GivenC2.AddAvailableCount(1);
+            ClientIncrementItemCount(Equipment);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenPepperSprayClass() && GivenPepperSpray != None)
+        {
+            GivenPepperSpray.AddAvailableCount(1);
+            ClientIncrementItemCount(Equipment);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
+        {
+            GivenWedge.AddAvailableCount(1);
+            ClientIncrementItemCount(Equipment);
+        }
+        else
+        {
+            // break?
+        }
+    }
 }
 
 simulated function FlagLightstickFastUse()

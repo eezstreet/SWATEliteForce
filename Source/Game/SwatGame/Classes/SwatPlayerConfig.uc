@@ -31,6 +31,13 @@ var config float       StandardLimpPenalty;
 var config float PawnModelApparentBaseEyeHeight;        //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
 var config float PawnModelApparentCrouchEyeHeight;      //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
 
+var config class<HandheldEquipment> GivenFlashbangClass;
+var config class<HandheldEquipment> GivenGasClass;
+var config class<HandheldEquipment> GivenStingerClass;
+var config class<HandheldEquipment> GivenC2Class;
+var config class<HandheldEquipment> GivenPepperSprayClass;
+var config class<HandheldEquipment> GivenWedgeClass;
+
 static function float GetMinimumLongThrowSpeed()
 {
 	return default.MinimumLongThrowSpeed;
@@ -114,4 +121,34 @@ static function float GetPawnModelApparentBaseEyeHeight()
 static function float GetPawnModelApparentCrouchEyeHeight()
 {
 	return default.PawnModelApparentCrouchEyeHeight;
+}
+
+static function class<HandheldEquipment> GetGivenFlashbangClass()
+{
+	return default.GivenFlashbangClass;
+}
+
+static function class<HandheldEquipment> GetGivenGasClass()
+{
+	return default.GivenGasClass;
+}
+
+static function class<HandheldEquipment> GetGivenStingerClass()
+{
+	return default.GivenStingerClass;
+}
+
+static function class<HandheldEquipment> GetGivenC2Class()
+{
+	return default.GivenC2Class;
+}
+
+static function class<HandheldEquipment> GetGivenPepperSprayClass()
+{
+	return default.GivenPepperSprayClass;
+}
+
+static function class<HandheldEquipment> GetGivenWedgeClass()
+{
+	return default.GivenWedgeClass;
 }

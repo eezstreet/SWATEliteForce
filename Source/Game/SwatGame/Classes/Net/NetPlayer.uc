@@ -238,7 +238,7 @@ simulated event PostReplication()
     //mplog( "Should have completed spawning the loadout." );
 
     // Start equipping the desired equipment item here, if it's not equal to None.
-    if ( GetDesiredItemPocket() != Pocket_Invalid )
+    if ( GetDesiredItemSlot() != Slot_Invalid )
         CheckDesiredItemAndEquipIfNeeded();
 
  	if (Level.GetEngine().EnableDevTools)
@@ -467,7 +467,7 @@ simulated function OnArrestBegan(Pawn Arrester)
         MoveIntoBeingCuffedPosition(Arrester);
 
         // Equip the IAmCuffed item, only on the server.
-        IAmCuffedEquipment = HandheldEquipment(GetLoadOut().GetItemAtPocket( Pocket_IAmCuffed ));
+        IAmCuffedEquipment = GetLoadOut().GetItemAtSlot(Slot_IAmCuffed);
         AssertWithDescription( IAmCuffedEquipment != None, "[mcj] I'm being arrested but have no IAmCuffed equipment." );
 
         // MCJ: Calling server request equip here has the bad side-effect of
@@ -477,8 +477,7 @@ simulated function OnArrestBegan(Pawn Arrester)
         //circumstances. Instead of calling ServerRequestEquip(), I'm going to
         //do what it does but minus the validation check code.
         //ServerRequestEquip( IAmCuffedEquipment.GetSlot() );
-
-        SetDesiredItemPocket( Pocket_IAmCuffed );
+        SetDesiredItemSlot(Slot_IAmCuffed);
         CheckDesiredItemAndEquipIfNeeded();
     }
 }
@@ -1008,8 +1007,8 @@ function OnKilled(Actor Killer, class<DamageType> damageType)
 simulated protected function bool CheckDesiredItemAndEquipIfNeeded()
 {
 	// We can't equip anything except a secondary weapon if we have the smash and grab case
-	if (GetDesiredItemPocket() != POCKET_SecondaryWeapon && HasTheItem())
-		SetDesiredItemPocket(POCKET_SecondaryWeapon);
+	if (GetDesiredItemSlot() != Slot_SecondaryWeapon && HasTheItem())
+        SetDesiredItemSlot(Slot_SecondaryWeapon);
 
 	return Super.CheckDesiredItemAndEquipIfNeeded();
 }

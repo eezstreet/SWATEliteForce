@@ -415,7 +415,7 @@ var private HandheldEquipment PendingItem;   //access with GetPendingItem(), set
 
 // This is the way the server tells all clients in a network game which item
 // should be equipped.
-var private Pocket DesiredItemPocket;
+var private EquipmentSlot DesiredItemPocket;
 
 // This value starts off being false. When the first piece of equipment is
 // equipped we set it to true and it stays true from then on. This value is
@@ -2677,16 +2677,16 @@ function PlayVictoryAnimation();
 function HoldCarriedObject(CarriedObject O, name AttachmentBone);
 #endif
 
-simulated function Pocket GetDesiredItemPocket()
+simulated function EquipmentSlot GetDesiredItemSlot()
 {
     return DesiredItemPocket;
 }
 
 // Only the server should call this.
-function SetDesiredItemPocket( Pocket NewPocket )
+function SetDesiredItemSlot( EquipmentSlot NewSlot )
 {
     assert( Role == ROLE_Authority );
-    DesiredItemPocket = NewPocket;
+    DesiredItemPocket = NewSlot;
 }
 
 // override in derived class if necessary.
@@ -3090,7 +3090,7 @@ defaultproperties
     LeanTransitionDuration=0.3
     LeanHorizontalDistance=44.0f
     bForceCrouch=false
-    DesiredItemPocket=Pocket_Invalid
+    DesiredItemPocket=Slot_Invalid
     HasEquippedFirstItemYet=false
 //#endif
 //#if IG_SWAT // ckline: better lighting on characters

@@ -196,6 +196,11 @@ simulated function TraceFire()
     }
 }
 
+simulated function bool AllowedToPassItem()
+{
+    return Level.NetMode == NM_Standalone;
+}
+
 simulated latent function EndFiring()
 {
     Super.EndFiring();

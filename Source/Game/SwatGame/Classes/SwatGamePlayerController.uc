@@ -6500,6 +6500,23 @@ simulated event RenderOverlays( canvas Canvas )
 				512);				// Extend to the bottom-right corner of the 512x512 texture
 		}
    }
+
+   RenderDebugInfo(Canvas);
+}
+
+simulated function RenderDebugInfo(Canvas Canvas)
+{
+    local float YP;
+
+    YP = 40;
+
+    Canvas.SetDrawColor(255, 255, 255, 255);
+
+    Canvas.SetPos(10, YP);
+    Canvas.DrawText("GivenFlashbangs: " $ SwatPlayer(Pawn).GivenFlashbangs);
+    YP += 16;
+    Canvas.SetPos(10, YP);
+    Canvas.DrawText("GivenFlashbangs AvailableCount: " $ SwatPlayer(Pawn).GivenFlashbangs.GetAvailableCount());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

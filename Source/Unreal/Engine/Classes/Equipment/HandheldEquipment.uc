@@ -1215,6 +1215,7 @@ simulated final function AddAvailableCount(int Add)
 	local int NewAvailableCount;
 
 	NewAvailableCount = AvailableCount + Add;
+
 	if(NewAvailableCount <= 0)
 	{
 		SetAvailable(false);
@@ -1223,7 +1224,7 @@ simulated final function AddAvailableCount(int Add)
 	{
 		SetAvailable(true);
 		AvailableCount = NewAvailableCount;
-		log("..."$self$"::AddAvailableCount("$Add$"): New available count is "$AvailableCount);
+		log("..."$self$"::AddAvailableCount("$Add$"): New available count is "$AvailableCount$"(And owner is: " $Owner$")");
 	}
 }
 

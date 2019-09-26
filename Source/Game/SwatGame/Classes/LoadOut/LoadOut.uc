@@ -15,7 +15,7 @@ import enum eTeamValidity from SwatGame.SwatGUIConfig;
 var(DEBUG) protected array<Actor> PocketEquipment/*[Pocket.EnumCount]*/;
 var(DEBUG) protected array<Actor> GivenEquipment;
 
-var int unused[21];
+var Actor unused[21];
 
 // Cached reference to the GuiConfig
 var(DEBUG) SwatGUIConfig GC;
@@ -269,6 +269,8 @@ simulated protected function bool CheckValidity( eNetworkValidity type )  //may 
 simulated protected function SpawnEquipmentFromLoadOutSpec(DynamicLoadOutSpec DynamicSpec)
 {
     local int i;
+    local SwatPlayer Player;
+    local HandheldEquipment Eq;
 
     for( i = 0; i < Pocket.EnumCount; i++ )
     {
@@ -276,6 +278,67 @@ simulated protected function SpawnEquipmentFromLoadOutSpec(DynamicLoadOutSpec Dy
             continue;
 
         SpawnEquipmentForPocket( Pocket(i), LoadOutSpec[i], DynamicSpec );
+    }
+
+    // Spawn blanks
+    if(Level.NetMode != NM_Standalone)
+    {
+        Player = SwatPlayer(Owner);
+
+        // Flashbangs
+        Eq = Owner.Spawn(class'SwatPlayerConfig'.static.GetGivenFlashbangClass(), Owner);
+        log("Spawned "$Eq$" for GivenFlashbangs on " $ Player);
+
+        Player.GivenFlashbangs = Eq;
+        Eq.bAlwaysRelevant = true;
+        Eq.SetAvailable(false);
+        Eq.OnGivenToOwner();
+        Eq.SetPocket(Pocket.Pocket_Invalid);
+
+        // Gas
+        Eq = Owner.Spawn(class'SwatPlayerConfig'.static.GetGivenGasClass(), Owner);
+
+        Player.GivenGas = Eq;
+        Eq.bAlwaysRelevant = true;
+        Eq.SetAvailable(false);
+        Eq.OnGivenToOwner();
+        Eq.SetPocket(Pocket.Pocket_Invalid);
+
+        // Stinger
+        Eq = Owner.Spawn(class'SwatPlayerConfig'.static.GetGivenStingerClass(), Owner);
+
+        Player.GivenStinger = Eq;
+        Eq.bAlwaysRelevant = true;
+        Eq.SetAvailable(false);
+        Eq.OnGivenToOwner();
+        Eq.SetPocket(Pocket.Pocket_Invalid);
+
+        // C2
+        Eq = Owner.Spawn(class'SwatPlayerConfig'.static.GetGivenC2Class(), Owner);
+
+        Player.GivenC2 = Eq;
+        Eq.bAlwaysRelevant = true;
+        Eq.SetAvailable(false);
+        Eq.OnGivenToOwner();
+        Eq.SetPocket(Pocket.Pocket_Invalid);
+
+        // Pepper Spray
+        Eq = Owner.Spawn(class'SwatPlayerConfig'.static.GetGivenPepperSprayClass(), Owner);
+
+        Player.GivenPepperSpray = Eq;
+        Eq.bAlwaysRelevant = true;
+        Eq.SetAvailable(false);
+        Eq.OnGivenToOwner();
+        Eq.SetPocket(Pocket.Pocket_Invalid);
+
+        // Wedge
+        Eq = Owner.Spawn(class'SwatPlayerConfig'.static.GetGivenWedgeClass(), Owner);
+
+        Player.GivenWedge = Eq;
+        Eq.bAlwaysRelevant = true;
+        Eq.SetAvailable(false);
+        Eq.OnGivenToOwner();
+        Eq.SetPocket(Pocket.Pocket_Invalid);
     }
 }
 
@@ -397,12 +460,120 @@ simulated function PrintLoadOutToMPLog()
 // Accessors
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Returns the first (non-busy) handheld equipment corresponding to the given slot
+simulated function HandHeldEquipment GetFirstAvailableItemAtSlot(EquipmentSlot Slot)
+{
+    local int i;
+    local HandheldEquipment Item;
+    local HandheldEquipment Candidate;
+    local SwatPlayer Player;
+
+    // FIXME BIGTIME
+    assert(Owner.IsA('ICanUseC2Charge'));
+    if( Slot == SLOT_Breaching && ICanUseC2Charge(Owner).GetDeployedC2Charge() != None )
+        return GetItemAtSlot( Slot_Detonator );
+
+    for( i = 0; i < PocketEquipment.Length; i++ )
+    {
+        Item = HandheldEquipment(PocketEquipment[i]);
+        if  (
+                Item != None
+            &&  Item.GetSlot() == Slot
+            &&  Item.IsAvailable()
+            &&  Item.IsIdle()
+            )
+        {
+            Candidate = Item;
+
+            //tcohen, fix 5480: Can never equip second PepperSpray
+            //  this is the only case of LoadOut containing more than one instance
+            //of any FiredWeapon class.  if one has empty ammo and another does not,
+            //then we want to select the one that is not empty, regardless of order.
+            if (!Candidate.IsA('FiredWeapon') || !FiredWeapon(Candidate).Ammo.IsEmpty())
+                return Item;
+            //else, Candidate IsA 'FiredWeapon' && Candidate's Ammo IsEmpty()
+                //continue looking for an instance that isn't empty
+        }
+    }
+
+    if(Candidate == None && Level.NetMode == NM_Standalone)
+    {
+        // Couldn't find one in our normal pocket equipment, let's search through the given equipment
+        // (NM_Standalone only)
+        for(i = 0; i < GivenEquipment.Length; i++)
+        {
+            Item = HandheldEquipment(GivenEquipment[i]);
+            if(Item != None && Item.GetSlot() == Slot && Item.IsAvailable() && Item.IsIdle())
+            {
+                Candidate = Item;
+
+                if(!Candidate.IsA('FiredWeapon') || !FiredWeapon(Candidate).Ammo.IsEmpty())
+                {   // see above, this fixes pepper spray
+                    return Item;
+                }
+            }
+        }
+    }
+
+    Player = SwatPlayer(Owner);
+    if(Player != None && Candidate == None && Level.NetMode != NM_Standalone)
+    {
+        if(Slot == SLOT_Flashbang)
+        {
+            Item = Player.GivenFlashbangs;
+        }
+        else if(Slot == Slot_CSGasGrenade)
+        {
+            Item = Player.GivenGas;
+        }
+        else if(Slot == Slot_StingGrenade)
+        {
+            Item = Player.GivenStinger;
+        }
+        else if(Slot == Slot_PepperSpray)
+        {
+            Item = Player.GivenPepperSpray;
+        }
+        else if(Slot == Slot_Breaching)
+        {
+            Item = Player.GivenC2;
+        }
+
+        log("Checking given equipment;");
+        log("Item = "$Item);
+        if(Item != None)
+        {
+            log("Item.Slot = "$Item.GetSlot()$", IsAvailable="$Item.IsAvailable()$", IsIdle="$Item.IsIdle());
+        }
+
+        if(Item != None && Item.GetSlot() == Slot && Item.IsAvailable() && Item.IsIdle())
+        {
+            Candidate = Item;
+        }
+    }
+    
+
+    if (Level.NetMode != NM_Standalone ) // ckline: this was bogging down SP performance
+    {
+        if (Level.GetEngine().EnableDevTools)
+        {
+            mplog( self$"---LoadOut::GetItemAtSlot(). Slot="$Slot );
+            mplog( "...Returning None because no item was found for that slot." );
+            PrintLoadOutToMPLog();
+        }
+    }
+
+    //if we never found a match, or if we only found an empty FiredWeapon, the return that
+    return Candidate;
+}
+
 // Returns the first handheld equipment corresponding to the given slot
 simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 {
     local int i;
     local HandheldEquipment Item;
     local HandheldEquipment Candidate;
+    local SwatPlayer Player;
 
     // FIXME BIGTIME
     assert(Owner.IsA('ICanUseC2Charge'));
@@ -431,9 +602,10 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
         }
     }
 
-	if(Candidate == None/* || Candidate == SwatPawn(Owner).GetActiveItem()*/)
+	if(Candidate == None && Level.NetMode == NM_Standalone)
 	{
 		// Couldn't find one in our normal pocket equipment, let's search through the given equipment
+        // (NM_Standalone only)
 		for(i = 0; i < GivenEquipment.Length; i++)
 		{
 			Item = HandheldEquipment(GivenEquipment[i]);
@@ -448,6 +620,37 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 			}
 		}
 	}
+
+    Player = SwatPlayer(Owner);
+    if(Player != None && Candidate == None && Level.NetMode != NM_Standalone)
+    {
+        if(Slot == SLOT_Flashbang)
+        {
+            Item = Player.GivenFlashbangs;
+        }
+        else if(Slot == Slot_CSGasGrenade)
+        {
+            Item = Player.GivenGas;
+        }
+        else if(Slot == Slot_StingGrenade)
+        {
+            Item = Player.GivenStinger;
+        }
+        else if(Slot == Slot_PepperSpray)
+        {
+            Item = Player.GivenPepperSpray;
+        }
+        else if(Slot == Slot_Breaching)
+        {
+            Item = Player.GivenC2;
+        }
+
+        if(Item != None && Item.GetSlot() == Slot && Item.IsAvailable())
+        {
+            Candidate = Item;
+        }
+    }
+    
 
     if (Level.NetMode != NM_Standalone ) // ckline: this was bogging down SP performance
     {
@@ -805,6 +1008,7 @@ function float GetTotalWeight() {
 	local int i;
 	local float total;
 	local float minimum;
+    local SwatPlayer SwatOwner;
 
 	total = 0.0;
 	minimum = GetMinimumWeight();
@@ -827,6 +1031,35 @@ function float GetTotalWeight() {
 
 		total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
+
+    SwatOwner = SwatPlayer(Owner);
+    if(Level.NetMode != NM_Standalone && SwatOwner != None)
+    {
+        if(SwatOwner.GivenFlashbangs != None)
+        {
+            total += SwatOwner.GivenFlashbangs.GetWeight();
+        }
+        if(SwatOwner.GivenStinger != None)
+        {
+            total += SwatOwner.GivenStinger.GetWeight();
+        }
+        if(SwatOwner.GivenGas != None)
+        {
+            total += SwatOwner.GivenGas.GetWeight();
+        }
+        if(SwatOwner.GivenC2 != None)
+        {
+            total += SwatOwner.GivenC2.GetWeight();
+        }
+        if(SwatOwner.GivenPepperSpray != None)
+        {
+            total += SwatOwner.GivenPepperSpray.GetWeight();
+        }
+        if(SwatOwner.GivenWedge != None)
+        {
+            total += SwatOwner.GivenWedge.GetWeight();
+        }
+    }
 
 	if(total < minimum)
 	{
@@ -859,6 +1092,7 @@ function float GetTotalBulk() {
 	local int i;
 	local float total;
 	local float minimum;
+    local SwatPlayer SwatOwner;
 
 	minimum = GetMinimumBulk();
 	total = 0.0;
@@ -882,6 +1116,35 @@ function float GetTotalBulk() {
 
 		total += GetEquipmentBulk(Engine.IHaveWeight(GivenEquipment[i]), i);
 	}
+
+    SwatOwner = SwatPlayer(Owner);
+    if(Level.NetMode != NM_Standalone && SwatOwner != None)
+    {
+        if(SwatOwner.GivenFlashbangs != None)
+        {
+            total += SwatOwner.GivenFlashbangs.GetBulk();
+        }
+        if(SwatOwner.GivenStinger != None)
+        {
+            total += SwatOwner.GivenStinger.GetBulk();
+        }
+        if(SwatOwner.GivenGas != None)
+        {
+            total += SwatOwner.GivenGas.GetBulk();
+        }
+        if(SwatOwner.GivenC2 != None)
+        {
+            total += SwatOwner.GivenC2.GetBulk();
+        }
+        if(SwatOwner.GivenPepperSpray != None)
+        {
+            total += SwatOwner.GivenPepperSpray.GetBulk();
+        }
+        if(SwatOwner.GivenWedge != None)
+        {
+            total += SwatOwner.GivenWedge.GetBulk();
+        }
+    }
 
 	if(total < minimum)
 	{

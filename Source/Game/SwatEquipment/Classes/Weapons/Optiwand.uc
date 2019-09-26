@@ -485,6 +485,11 @@ simulated function Tick(float DeltaTime)
 	}
 }
 
+simulated function bool AllowedToPassItem()
+{
+    return Level.NetMode == NM_Standalone;
+}
+
 defaultproperties
 {
     Slot=Slot_Optiwand
