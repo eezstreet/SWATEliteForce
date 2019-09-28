@@ -56,10 +56,6 @@ private function MapChanged()
 
 	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
 
-	MyEntryBox.Clear();
-
-	CurrentMap = MyMapsList.List.Get();
-
 	if(Settings.bIsQMM)
 	{
 		MyEntryBox.AddItem("Primary");
@@ -68,8 +64,10 @@ private function MapChanged()
 	}
 	else
 	{
+		CurrentMap = MyMapsList.List.Get();
 		MissionInfo = new(None, CurrentMap) class'SwatGame.SwatMission';
 
+		MyEntryBox.Clear();
 		for(i = 0; i < MissionInfo.EntryOptionTitle.Length; i++)
 		{
 		    if(i == 0)
