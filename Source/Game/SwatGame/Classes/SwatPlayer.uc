@@ -154,7 +154,7 @@ replication
         ClientDoFlashbangReaction, ClientDoGassedReaction, ClientDoStungReaction,
         ClientDoPepperSprayedReaction, ClientDoTasedReaction,
         bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired, ArmInjuryFlags,
-        ClientIncrementItemCount;
+        ClientSetItemAvailableCount;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4073,37 +4073,38 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
 
 simulated function OnGivenNewEquipment(HandheldEquipment NewItem) {}
 
-function ClientIncrementItemCount(class<HandheldEquipment> Equipment)
+function ClientSetItemAvailableCount(class<HandheldEquipment> Equipment, int NewAvailableCount)
 {
     if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
     {
-        GivenFlashbangs.AddAvailableCount(1);
+        GivenFlashbangs.SetAvailableCount(NewAvailableCount);
     }
     else if(Equipment == class'SwatPlayerConfig'.static.GetGivenGasClass() && GivenGas != None)
     {
-        GivenGas.AddAvailableCount(1);
+        GivenGas.SetAvailableCount(NewAvailableCount);
     }
     else if(Equipment == class'SwatPlayerConfig'.static.GetGivenStingerClass() && GivenStinger != None)
     {
-        GivenStinger.AddAvailableCount(1);
+        GivenStinger.SetAvailableCount(NewAvailableCount);
     }
     else if(Equipment == class'SwatPlayerConfig'.static.GetGivenC2Class() && GivenC2 != None)
     {
-        GivenC2.AddAvailableCount(1);
+        GivenC2.SetAvailableCount(NewAvailableCount);
     }
     else if(Equipment == class'SwatPlayerConfig'.static.GetGivenPepperSprayClass() && GivenPepperSpray != None)
     {
-        GivenPepperSpray.AddAvailableCount(1);
+        GivenPepperSpray.SetAvailableCount(NewAvailableCount);
     }
     else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
     {
-        GivenWedge.AddAvailableCount(1);
+        GivenWedge.SetAvailableCount(NewAvailableCount);
     }
 }
 
 function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
 {
     local HandheldEquipment NewItem;
+    local int NewAvailableCount;
 
     log("" $ self $ "::GivenEquipmentFromPawn: " $ Equipment);
 
@@ -4125,32 +4126,38 @@ function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
         if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
         {
             GivenFlashbangs.AddAvailableCount(1);
-            ClientIncrementItemCount(Equipment);
+            NewAvailableCount = GivenFlashbangs.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
         }
         else if(Equipment == class'SwatPlayerConfig'.static.GetGivenGasClass() && GivenGas != None)
         {
             GivenGas.AddAvailableCount(1);
-            ClientIncrementItemCount(Equipment);
+            NewAvailableCount = GivenGas.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
         }
         else if(Equipment == class'SwatPlayerConfig'.static.GetGivenStingerClass() && GivenStinger != None)
         {
             GivenStinger.AddAvailableCount(1);
-            ClientIncrementItemCount(Equipment);
+            NewAvailableCount = GivenStinger.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
         }
         else if(Equipment == class'SwatPlayerConfig'.static.GetGivenC2Class() && GivenC2 != None)
         {
             GivenC2.AddAvailableCount(1);
-            ClientIncrementItemCount(Equipment);
+            NewAvailableCount = GivenC2.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
         }
         else if(Equipment == class'SwatPlayerConfig'.static.GetGivenPepperSprayClass() && GivenPepperSpray != None)
         {
             GivenPepperSpray.AddAvailableCount(1);
-            ClientIncrementItemCount(Equipment);
+            NewAvailableCount = GivenPepperSpray.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
         }
         else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
         {
             GivenWedge.AddAvailableCount(1);
-            ClientIncrementItemCount(Equipment);
+            NewAvailableCount = GivenWedge.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
         }
         else
         {
