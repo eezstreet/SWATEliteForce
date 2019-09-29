@@ -236,7 +236,7 @@ See the SpeechCommands.md if you are having trouble saying a particular command.
 MARK WITH LIGHTSTICK orders the nearest officer to go to the location and drop a lightstick. DROP LIGHTSTICK orders the nearest officer to drop a lightstick at their feet.
 
 ## HOW CAN I CHECK FOR TRAPS IN MULTIPLAYER?
-Use the Optiwand, and aim up at the doorknob. The AI in singleplayer don't use the optiwand because they're super duper pros at it, and pulling out the optiwand is slower.
+Use the Optiwand, and aim up at the doorknob.
 
 ## HOW CAN I PLAY IN MULTIPLAYER? ARE THERE ANY SERVERS?
 Please read the How to Play in Multiplayer section of this README. :)
