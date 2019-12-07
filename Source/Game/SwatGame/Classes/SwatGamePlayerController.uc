@@ -5781,21 +5781,33 @@ function ServerIssueCompliance( optional string VoiceTag )
         {
             Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
         }
-        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage))
+        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage, Candidate))
 		{
           Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
         }
         else if(TargetIsSuspect == 1)
 		{
           Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
+          if(FRand() < 0.1)
+          {
+            ISwatAI(Candidate).GetSpeechManagerAction().TriggerRestrainedSpeech();
+          }
         }
         else if((TargetIsSuspect == 0) && (TargetIsAggressiveHostage == 1))
 		{
           Pawn.BroadcastEffectEvent('ReassuredAggressiveHostage',,,,,,,,name(VoiceTag));
+          if(FRand() < 0.1)
+          {
+            ISwatAI(Candidate).GetSpeechManagerAction().TriggerRestrainedSpeech();
+          }
         }
         else
 		{
           Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag));
+          if(FRand() < 0.1)
+          {
+            ISwatAI(Candidate).GetSpeechManagerAction().TriggerRestrainedSpeech();
+          }
         }
       } else
 	  {

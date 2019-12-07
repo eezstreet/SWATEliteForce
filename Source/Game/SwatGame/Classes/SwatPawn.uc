@@ -1773,7 +1773,7 @@ function RefundLightstick() {}
 // returns true if we should issue a taunt to the subject
 // returns false otherwise
 // out bool says if it's a suspect
-simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect, out int bIsAggressiveHostage)
+simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect, out int bIsAggressiveHostage, out Actor TargetActor)
 {
   local Actor TraceActor;
   local Actor CandidateActor;
@@ -1828,6 +1828,7 @@ simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRot
       bIsAggressiveHostage = 0;
     }
 
+    TargetActor = CandidateActor;
     if(SwatPawn(CandidateActor).bArrested) {
       return true; // They're already handcuffed
     }
