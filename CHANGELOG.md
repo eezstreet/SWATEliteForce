@@ -95,6 +95,7 @@
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
  - Fixed SEF bug: Melee was not punching people, instead it was checking locks when near a door (you now must always aim at a door in order to trigger the check lock dialogue)
  - Fixed SEF bug: G36K, Suppressed G36K, Silenced MP5, and Silenced UMP were using the wrong texture set
+ - Fixed SEF bug: MP5SD6 didn't have an animation for firing in full auto or reloading from empty
  - Fixed SEF bug: Some voting types (ie voting for map) used the team count instead of the total client count
  - Fixed SEF bug: In WebAdmin, all admins had the same name (it now shows the correct alias)
  - Fixed SEF bug: In WebAdmin, when room names are turned on, the chat color turned white
