@@ -490,6 +490,24 @@ function GivePlayerWeapon(class<SwatWeapon> Weapon, class<SwatAmmo> Ammo)
 	}
 }
 
+function bool IsUsingMetricSystem()
+{
+    local SwatGuiConfig GC;
+
+    GC = Repo.GuiConfig;
+
+    return GC.ExtraIntOptions[5] == 0;
+}
+
+function bool IsUsingImperialMeasurements()
+{
+    local SwatGuiConfig GC;
+
+    GC = Repo.GuiConfig;
+
+    return GC.ExtraIntOptions[5] == 1;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // GUI EXECs
 ///////////////////////////////////////////////////////////////////////////////////////////

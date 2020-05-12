@@ -349,7 +349,15 @@ function UpdateWeights() {
 	  bulkDisplay = 0.0;
   }
 
-  MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
+  if(SwatGUIControllerBase(Controller).IsUsingMetricSystem())
+  {
+    MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
+  }
+  else if(SwatGUIControllerBase(Controller).IsUsingImperialMeasurements())
+  {
+    MyEquipmentWeightLabel.Caption = ""$(MyCurrentLoadOut.GetTotalWeight() * 0.453592)$" lb";
+  }
+  
   MyEquipmentBulkLabel.Caption =""$bulkDisplay$"%";
 }
 
