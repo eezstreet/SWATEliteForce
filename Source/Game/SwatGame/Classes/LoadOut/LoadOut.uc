@@ -12,10 +12,7 @@ import enum eNetworkValidity from SwatGame.SwatGUIConfig;
 import enum eTeamValidity from SwatGame.SwatGUIConfig;
 
 // The Actual Equipment
-var(DEBUG) protected array<Actor> PocketEquipment/*[Pocket.EnumCount]*/;
-var(DEBUG) protected array<Actor> GivenEquipment;
-
-var Actor unused[21];
+var(DEBUG) protected Actor PocketEquipment[Pocket.EnumCount];
 
 // Cached reference to the GuiConfig
 var(DEBUG) SwatGUIConfig GC;
@@ -460,6 +457,11 @@ simulated function PrintLoadOutToMPLog()
 // Accessors
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+simulated function HandHeldEquipment FindGivenItemForSlot(EquipmentSlot Slot)
+{
+    return None;
+}
+
 // Returns the first (non-busy) handheld equipment corresponding to the given slot
 simulated function HandHeldEquipment GetFirstAvailableItemAtSlot(EquipmentSlot Slot)
 {
@@ -473,7 +475,7 @@ simulated function HandHeldEquipment GetFirstAvailableItemAtSlot(EquipmentSlot S
     if( Slot == SLOT_Breaching && ICanUseC2Charge(Owner).GetDeployedC2Charge() != None )
         return GetItemAtSlot( Slot_Detonator );
 
-    for( i = 0; i < PocketEquipment.Length; i++ )
+    for( i = 0; i < Pocket.EnumCount; i++ )
     {
         Item = HandheldEquipment(PocketEquipment[i]);
         if  (
@@ -496,22 +498,12 @@ simulated function HandHeldEquipment GetFirstAvailableItemAtSlot(EquipmentSlot S
         }
     }
 
-    if(Candidate == None && Level.NetMode == NM_Standalone)
+    if(Candidate == None)
     {
-        // Couldn't find one in our normal pocket equipment, let's search through the given equipment
-        // (NM_Standalone only)
-        for(i = 0; i < GivenEquipment.Length; i++)
+        Candidate = FindGivenItemForSlot(Slot);
+        if(Candidate != None)
         {
-            Item = HandheldEquipment(GivenEquipment[i]);
-            if(Item != None && Item.GetSlot() == Slot && Item.IsAvailable() && Item.IsIdle())
-            {
-                Candidate = Item;
-
-                if(!Candidate.IsA('FiredWeapon') || !FiredWeapon(Candidate).Ammo.IsEmpty())
-                {   // see above, this fixes pepper spray
-                    return Item;
-                }
-            }
+            return Candidate;
         }
     }
 
@@ -580,7 +572,7 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
     if( Slot == SLOT_Breaching && ICanUseC2Charge(Owner).GetDeployedC2Charge() != None )
         return GetItemAtSlot( Slot_Detonator );
 
-    for( i = 0; i < PocketEquipment.Length; i++ )
+    for( i = 0; i < Pocket.EnumCount; i++ )
     {
         Item = HandheldEquipment(PocketEquipment[i]);
         if  (
@@ -602,24 +594,14 @@ simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
         }
     }
 
-	if(Candidate == None && Level.NetMode == NM_Standalone)
-	{
-		// Couldn't find one in our normal pocket equipment, let's search through the given equipment
-        // (NM_Standalone only)
-		for(i = 0; i < GivenEquipment.Length; i++)
-		{
-			Item = HandheldEquipment(GivenEquipment[i]);
-			if(Item != None && Item.GetSlot() == Slot && Item.IsAvailable())
-			{
-				Candidate = Item;
-
-				if(!Candidate.IsA('FiredWeapon') || !FiredWeapon(Candidate).Ammo.IsEmpty())
-				{	// see above, this fixes pepper spray
-					return Item;
-				}
-			}
-		}
-	}
+    if(Candidate == None)
+    {
+        Candidate = FindGivenItemForSlot(Slot);
+        if(Candidate != None)
+        {
+            return Candidate;
+        }
+    }
 
     Player = SwatPlayer(Owner);
     if(Player != None && Candidate == None && Level.NetMode != NM_Standalone)
@@ -822,6 +804,11 @@ simulated function bool HasProArmorHelmet()
 		return false; // The VIP has no head armor
 }
 
+simulated function int AdditionalAvailableCountForItem(EquipmentSlot Slot)
+{
+    return 0;
+}
+
 // For an EquipmentSlot, determine how many items we have
 simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
 {
@@ -855,32 +842,12 @@ simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
     }
   }
 
-  for(i = 0; i < GivenEquipment.Length; i++)
-  {
-	  Equipment = HandheldEquipment(GivenEquipment[i]);
-	  if(Slot == SLOT_Detonator)
-	  {
-		  if(Equipment != None && Equipment.IsA('C2Charge'))
-		  {
-			  Count += Equipment.GetAvailableCount();
-		  }
-	  }
-	  else if(Equipment != None && Equipment.GetSlot() == Slot && Equipment.IsAvailable())
-	  {
-		  if(Equipment.IsA('PepperSpray'))
-		  {
-			  Weapon = FiredWeapon(Equipment);
-			  if(Weapon.Ammo.IsEmpty())
-			  {
-				  continue;
-			  }
-		  }
-		  Count += Equipment.GetAvailableCount();
-	  }
-  }
+  Count += AdditionalAvailableCountForItem(Slot);
 
   return Count;
 }
+
+simulated function AddToGivenEquipmentStore(HandHeldEquipment Equipment) {}
 
 // We were given some kind of equipment from the player. Add it.
 simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
@@ -899,7 +866,7 @@ simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
 	if(Equipment.IsA('Optiwand') || Equipment.IsA('FiredWeapon'))
 	{
 		// Just store it in our given equipment I guess
-		GivenEquipment[GivenEquipment.Length] = Equipment;
+		AddToGivenEquipmentStore(Equipment);
 		return;
 	}
 
@@ -921,7 +888,7 @@ simulated function GivenEquipmentFromPawn(HandheldEquipment Equipment)
 	}
 
 	// Have we failed? Let's try storing it in given equipment
-	GivenEquipment[GivenEquipment.Length] = Equipment;
+	AddToGivenEquipmentStore(Equipment);
 }
 
 //returns the item, if any, that was replaced
@@ -1004,6 +971,8 @@ function float GetEquipmentWeight(Engine.IHaveWeight PocketItem, int i)
 	return total;
 }
 
+simulated function float GetGivenItemWeight() { return 0.0; }
+
 function float GetTotalWeight() {
 	local int i;
 	local float total;
@@ -1022,15 +991,7 @@ function float GetTotalWeight() {
 	    total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
 
-	for(i = 0; i < GivenEquipment.Length; i++)
-	{
-		if(GivenEquipment[i] == None)
-		{
-			continue;
-		}
-
-		total += GetEquipmentWeight(Engine.IHaveWeight(PocketEquipment[i]), i);
-	}
+    total += GetGivenItemWeight();
 
     SwatOwner = SwatPlayer(Owner);
     if(Level.NetMode != NM_Standalone && SwatOwner != None)
@@ -1088,6 +1049,8 @@ function float GetEquipmentBulk(Engine.IHaveWeight PocketItem, int i)
 	return total;
 }
 
+simulated function float GetGivenItemBulk() { return 0.0; }
+
 function float GetTotalBulk() {
 	local int i;
 	local float total;
@@ -1107,15 +1070,7 @@ function float GetTotalBulk() {
 		total += GetEquipmentBulk(Engine.IHaveWeight(PocketEquipment[i]), i);
 	}
 
-	for(i = 0; i < GivenEquipment.Length; i++)
-	{
-		if(GivenEquipment[i] == None)
-		{
-			continue;
-		}
-
-		total += GetEquipmentBulk(Engine.IHaveWeight(GivenEquipment[i]), i);
-	}
+    total += GetGivenItemBulk();
 
     SwatOwner = SwatPlayer(Owner);
     if(Level.NetMode != NM_Standalone && SwatOwner != None)
@@ -1234,11 +1189,13 @@ function AddLightstick(optional int Quantity)
 	HandheldEquipment(PocketEquipment[Pocket.Pocket_Lightstick]).AddAvailableCount(Quantity);
 }
 
+simulated function bool GivenEquipmentIncludes(Name EquipmentName) { return false; }
+
 simulated function bool HasA(Name EquipmentName)
 {
 	local int i;
 
-	for(i = 0; i < PocketEquipment.Length; i++)
+	for(i = 0; i < Pocket.EnumCount; i++)
 	{
 		if(PocketEquipment[i] != None && PocketEquipment[i].IsA(EquipmentName))
 		{
@@ -1246,15 +1203,7 @@ simulated function bool HasA(Name EquipmentName)
 		}
 	}
 
-	for(i = 0; i < GivenEquipment.Length; i++)
-	{
-		if(GivenEquipment[i] != None && GivenEquipment[i].IsA(EquipmentName))
-		{
-			return true;
-		}
-	}
-
-	return false;
+    return GivenEquipmentIncludes(EquipmentName);
 }
 
 

@@ -1084,12 +1084,12 @@ function AddDefaultInventory(Pawn inPlayerPawn)
     {
         if( Level.IsTraining )
         {
-            LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'TrainingLoadOut');
+            LoadOut = Spawn(class'EliteLoadout', PlayerPawn, 'TrainingLoadOut');
             LoadOutSpec = Spawn(class'DynamicLoadOutSpec', PlayerPawn, 'TrainingLoadOut');
         }
         else
         {
-            LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'DefaultPlayerLoadOut');
+            LoadOut = Spawn(class'EliteLoadout', PlayerPawn, 'DefaultPlayerLoadOut');
             LoadOutSpec = Spawn(class'DynamicLoadOutSpec', PlayerPawn, 'CurrentPlayerLoadOut');
         }
         assert(LoadOut != None);
@@ -1108,7 +1108,7 @@ function AddDefaultInventory(Pawn inPlayerPawn)
             // The VIP must always be on the SWAT team.
             Assert( NetPlayer(PlayerPawn).GetTeamNumber() == 0 );
 
-            LoadOut = Spawn( class'OfficerLoadOut', PlayerPawn, 'VIPLoadOut' );
+            LoadOut = Spawn( class'EliteLoadout', PlayerPawn, 'VIPLoadOut' );
             LoadOutSpec = Spawn(class'DynamicLoadOutSpec', None, 'DefaultVIPLoadOut');
             Assert( LoadOutSpec != None );
 
@@ -1125,9 +1125,9 @@ function AddDefaultInventory(Pawn inPlayerPawn)
         else
         {
             if ( NetPlayer(PlayerPawn).GetTeamNumber() == 0 )
-                LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerOfficerLoadOut' );
+                LoadOut = Spawn(class'EliteLoadout', PlayerPawn, 'EmptyMultiplayerOfficerLoadOut' );
             else
-                LoadOut = Spawn(class'OfficerLoadOut', PlayerPawn, 'EmptyMultiplayerSuspectLoadOut' );
+                LoadOut = Spawn(class'EliteLoadout', PlayerPawn, 'EmptyMultiplayerSuspectLoadOut' );
 
             assert(LoadOut != None);
 

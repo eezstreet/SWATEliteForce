@@ -573,7 +573,7 @@ private function InitLoadOut( String LoadOutName )
     local DynamicLoadOutSpec LoadOutSpec;
     local CustomScenario CustomScen;
 
-	LoadOut = Spawn(class'OfficerLoadOut', self, name("Default"$LoadOutName));
+	LoadOut = Spawn(class'EliteLoadout', self, name("Default"$LoadOutName));
 	assert(LoadOut != None);
 
     if( Level.IsTraining )

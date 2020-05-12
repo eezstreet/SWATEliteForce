@@ -19,7 +19,6 @@ event OnHearSound(Actor SoundMaker, vector SoundOrigin, Name SoundCategory)
 function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
 {
 	local HandheldEquipment ActiveItem;
-	local HandheldEquipment NewItem;
 	local float AddedWeight;
 	local float AddedBulk;
 	local SwatGamePlayerController PC;
@@ -62,7 +61,7 @@ function TryGiveItemToPlayer(Pawn Player, HandheldEquipment EquipmentPiece)
 	ActiveItem.DecrementAvailableCount();
 
 	// Tell the client we received some new equipment
-	PC.ClientMessage(NewItem.GetGivenEquipmentName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
+	PC.ClientMessage(ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPawn(Pawn).GetHumanReadableName(), 'GaveYouEquipment');
 	PC.ClientSentOrReceivedEquipment();
 }
 

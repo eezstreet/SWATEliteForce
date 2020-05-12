@@ -213,13 +213,13 @@ simulated event PostReplication()
     if ( GetTeamNumber() == 0 )
     {
         if ( IsTheVIP() )
-            newLoadOut = Spawn(class'OfficerLoadOut', self, 'VIPLoadOut' );
+            newLoadOut = Spawn(class'EliteLoadout', self, 'VIPLoadOut' );
         else
-            newLoadOut = Spawn(class'OfficerLoadOut', self, 'EmptyMultiplayerOfficerLoadOut' );
+            newLoadOut = Spawn(class'EliteLoadout', self, 'EmptyMultiplayerOfficerLoadOut' );
     }
     else
     {
-        newLoadOut = Spawn(class'OfficerLoadOut', self, 'EmptyMultiplayerSuspectLoadOut' );
+        newLoadOut = Spawn(class'EliteLoadout', self, 'EmptyMultiplayerSuspectLoadOut' );
     }
     assert( newLoadOut != None );
 
@@ -252,7 +252,7 @@ event PostNetReceive()
 	if(ReplicatedLoadoutSpec[0] != DynamicLoadoutSpec.LoadOutSpec[0])
 	{
 		// Our loadout got forced to something else by the server. Adjust. Adapt. Overcome.
-		NewLoadOut = Spawn(class'OfficerLoadOut', self, 'EmptyMultiplayerOfficerLoadOut' );
+		NewLoadOut = Spawn(class'EliteLoadout', self, 'EmptyMultiplayerOfficerLoadOut' );
 
 		CopyReplicatedSpecToDynamicSpec();
 

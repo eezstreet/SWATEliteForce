@@ -862,7 +862,7 @@ public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
 		return false;
 	}
 
-	NewLoadout = Spawn(class'OfficerLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
+	NewLoadout = Spawn(class'EliteLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
 
 	for(i = 0; i < Pocket.EnumCount; i++)
 	{
