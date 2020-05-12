@@ -21,6 +21,21 @@ final function array<Campaign> GetCampaigns()
     return Campaigns;
 }
 
+final function bool HasCompletedCampaignAtLeastOnce()
+{
+    local int i;
+
+    for(i = 0; i < Campaigns.length; i++)
+    {
+        if(Campaigns[i].HACK_HasPlayedCreditsOnCampaignCompletion && Campaigns[i].CampaignPath == 0 && !Campaigns[i].CustomCareerPath)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 final function Campaign GetCampaign(string inCampaign)
 {
     local int i;

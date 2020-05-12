@@ -62,7 +62,8 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * Now you can create an ALL MISSIONS campaign. This pulls all of the installed maps from your hard drive and makes them into a campaign, albeit without briefings. Great for use with an installed custom map pack, such as the Mega Map Pack!
  * ..and of course, the original SWAT 4 + TSS missions are a third campaign option.
  * PERMADEATH. There are two Permadeath options, for the extra challenge. AI Permadeath makes slain SWAT officers never come back, and Player Permadeath ends your campaign once you die.
- * CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath) campaign in multiplayer. Help your friends complete their campaigns!
+ * HARDCORE MODE. Unlocked when the SWAT 4 + TSS campaign has been completed at least once. If a mission is failed once, your campaign is over. You cannot exit a mission prematurely or restart, so keep that in mind!
+ * CAMPAIGN CO-OP. This feature allows you to play any (non All Missions, non Permadeath, non Hardcore) campaign in multiplayer. Help your friends complete their campaigns!
 
 **Suspects employ a greater variety of tactics. "Insane" suspects will shoot without hesitation at hostages. "Polite" ones on the other hand, won't make this a priority. Civilians behave more realistically.**
  * Suspects will also try to shoot at you as they're fleeing.

@@ -86,11 +86,13 @@ var() private config localized string HardcoreDeadCampaignNotification;
 var() private config localized string PlayerPermadeathNotification;
 var() private config localized string HardcoreNotification;
 var() private config localized string KIAString;
+var() private config localized string NoHardcoreAllowed;
 var() private config localized string NoPermadeathAllowed;
 var() private config localized string NoAllMissionsAllowed;
 
 var() private config localized string CampaignPathBlurb[3];
 var() private config localized string CustomPathBlurb;
+var() private config localized string NeedToUnlockHardcoreMode;
 
 var Campaign currentCampaign;
 
@@ -138,6 +140,12 @@ function InitComponent(GUIComponent MyOwner)
 
     MyCampaignHardcoreModeButton.OnChange=HardcoreModeChanged;
     MyCampaignPlayerPermadeathButton.OnChange=HardcoreModeChanged;
+
+    if(!SwatGuiController(Controller).GetCampaigns().HasCompletedCampaignAtLeastOnce())
+    {
+        MyCampaignHardcoreModeButton.DisableComponent();
+        MyCampaignHardcoreModeButton.Hint = NeedToUnlockHardcoreMode;
+    }
 
     CampaignTabButton.bNeverFocus=false;
 }
@@ -287,7 +295,10 @@ private function InternalOnClick(GUIComponent Sender)
 	        }
 			break;
     	case MyCoopCampaignButton:
-		    if(currentCampaign.PlayerPermadeath || currentCampaign.OfficerPermadeath) {
+            if(currentCampaign.HardcoreMode) {
+                OnDlgReturned=InternalOnDlgReturned;
+                OpenDlg(NoHardcoreAllowed, QBTN_OK, "NoHardcoreAllowed");
+            } else if(currentCampaign.PlayerPermadeath || currentCampaign.OfficerPermadeath) {
 		        OnDlgReturned=InternalOnDlgReturned;
 		        OpenDlg(NoPermadeathAllowed, QBTN_OK, "NoPermadeathAllowed");
 		    } else if(currentCampaign.CampaignPath == 2) {
@@ -565,4 +576,6 @@ defaultproperties
 	CampaignPathBlurb[0]="[c=FFFFFF]A combined campaign of the original SWAT 4 and The Stetchkov Syndicate missions. [b]Some equipment may need to be unlocked.[\\b]"
 	CampaignPathBlurb[1]="[c=FFFFFF]A campaign containing Extra Missions added by SWAT: Elite Force."
 	CampaignPathBlurb[2]="[c=FFFFFF]A campaign containing all missions on your hard drive, including customs. [b]All missions and equipment are unlocked at the start.[\\b] Some additional equipment is available."
+
+    NeedToUnlockHardcoreMode="Complete the SWAT 4 + Expansion campaign at least once to unlock."
 }

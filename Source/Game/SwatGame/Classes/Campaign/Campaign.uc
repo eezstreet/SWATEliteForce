@@ -10,7 +10,7 @@ var config localized string StringName;
 var config array<Name> MissionResultNames;
 var array<MissionResults> MissionResults;
 var config private int availableIndex;  //the index of the highest mission that is unlocked in the Campaign
-var config private bool HACK_HasPlayedCreditsOnCampaignCompletion;
+var config public bool HACK_HasPlayedCreditsOnCampaignCompletion;
 
 // SEF additions
 var config int CampaignPath;  // Which campaign path we're on (0 = SWAT 4 + TSS, 1 = Extra Missions, 2 = All Missions)
@@ -145,6 +145,8 @@ function PreDelete()
     StringName = "";
 	CampaignPath = 0;
 	PlayerPermadeath = false;
+    HardcoreMode = false;
+    HardcoreFailed = false;
 	PlayerDied = false;
 	OfficerPermadeath = false;
 	RedOneDead = false;
