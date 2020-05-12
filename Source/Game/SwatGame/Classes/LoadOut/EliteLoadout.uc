@@ -2,6 +2,17 @@ class EliteLoadout extends OfficerLoadOut;
 
 var(DEBUG) protected array<Actor> GivenEquipment;
 
+replication
+{
+	reliable if(Role == ROLE_Authority)
+		ClientAddItemToGivenEquipment;
+}
+
+function ClientAddItemToGivenEquipment(Actor newItem)
+{
+	GivenEquipment[GivenEquipment.Length] = newItem;
+}
+
 simulated function HandHeldEquipment FindGivenItemForSlot(EquipmentSlot Slot)
 {
 	local int i;
@@ -61,6 +72,11 @@ simulated function int AdditionalAvailableCountForItem(EquipmentSlot Slot)
 simulated function AddToGivenEquipmentStore(HandHeldEquipment Equipment)
 {
 	GivenEquipment[GivenEquipment.Length] = Equipment;
+
+	if(Role == ROLE_Authority && Level.NetMode != NM_Standalone)
+	{
+		ClientAddItemToGivenEquipment(Equipment);
+	}
 }
 
 simulated function float GetGivenItemWeight()
