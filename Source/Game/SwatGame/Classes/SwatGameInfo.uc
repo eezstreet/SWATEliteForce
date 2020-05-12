@@ -453,10 +453,19 @@ final function MissionCompleted()
 
 final function MissionFailed()
 {
+    local Campaign Campaign;
+
     log("[dkaplan] >>> MissionFailed" );
     bAlreadyFailed=true;
     Broadcast( None, "", 'MissionFailed' );
 	AdminLog("", 'MissionFailed');
+
+    // If this is a hardcore campaign, then mark it as failed
+    Campaign = Repo.GetCampaign();
+    if(Campaign.HardcoreMode)
+    {
+        Campaign.HardcoreFailed = true;
+    }
 
     GameEvents.ReportableReportedToTOC.Register(self);
     GameEvents.EvidenceSecured.Register(self);

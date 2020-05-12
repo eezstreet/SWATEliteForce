@@ -59,7 +59,10 @@ function InternalOnActivate()
 
 	theCampaign = SwatGUIController(Controller).GetCampaign();
 
-	if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+    if(theCampaign.HardcoreMode && theCampaign.HardcoreFailed) {
+        Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
+        return;
+    } else if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
 		Controller.OpenMenu("SwatGui.SwatCampaignMenu", "SwatCampaignMenu");
 		return;
 	}

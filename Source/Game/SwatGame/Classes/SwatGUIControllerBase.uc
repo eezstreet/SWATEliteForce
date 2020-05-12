@@ -171,10 +171,10 @@ final function bool CampaignExists(string inCampaign)
     return Campaigns.CampaignExists(inCampaign);
 }
 
-final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath,
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode,
 	optional bool bCustomCareer, optional string CustomCareer)
 {
-    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath, bCustomCareer, CustomCareer);
+    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath, bHardcoreMode, bCustomCareer, CustomCareer);
 }
 
 final function DeleteCampaign(string inCampaign)
@@ -192,6 +192,10 @@ final function UpdateCampaignDeathInformation(Pawn Pawn) {
   local Campaign theCampaign;
 
   theCampaign = GetCampaign();
+
+  if(Pawn.IsA('SwatPlayer') && theCampaign.HardcoreMode) {
+    theCampaign.HardcoreFailed = true;
+  }
 
   if(Pawn.IsA('SwatPlayer') && theCampaign.PlayerPermadeath) {
     theCampaign.PlayerDied = true;

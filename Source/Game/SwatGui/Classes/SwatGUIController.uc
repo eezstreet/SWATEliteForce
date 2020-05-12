@@ -316,6 +316,8 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
 
                 if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
                   GameOver();
+                } else if(Campaign != None && Campaign.HardcoreMode && Campaign.HardcoreFailed) {
+                    GameOver();
                 } else {
                   OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
                 }

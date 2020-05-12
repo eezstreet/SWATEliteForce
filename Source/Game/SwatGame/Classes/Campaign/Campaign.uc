@@ -23,6 +23,8 @@ var config bool BlueOneDead; // Whether Blue One is dead.
 var config bool BlueTwoDead; // Whether Blue Two is dead.
 var config bool CustomCareerPath; // Whether this career is a Quick Mission Maker career
 var config string CustomCareer; // The pack associated with this Quick Mission Maker career
+var config bool HardcoreMode; // New in v7: Hardcore mode doesn't allow failure of any kind. (Player permadeath is implied)
+var config bool HardcoreFailed; // Hardcore only - true if the campaign was failed
 
 // Stats
 var(Stats) config int MissionsCompleted; // The number of missions that have been successfully completed

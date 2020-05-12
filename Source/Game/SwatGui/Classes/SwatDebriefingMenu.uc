@@ -96,7 +96,9 @@ function InternalOnActivate()
     {
         MyMissionOutcome.SetCaption( MissionFailedString );
 
-        if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
+        if(theCampaign.HardcoreMode) {
+            MyContinueButton.SetCaption(ContinueMissionEndCampaignString);
+        } else if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
           MyContinueButton.SetCaption(ContinueMissionEndCampaignString);
         } else {
           MyContinueButton.SetCaption( ContinueMissionFailedString );
@@ -120,11 +122,15 @@ function InternalOnActivate()
 
     MyRestartButton.SetEnabled(true);
     MyLoadoutButton.SetEnabled(true);
-    if(theCampaign.PlayerPermadeath && theCampaign.PlayerDied) {
-      MyRestartButton.SetEnabled(false);
-      MyLoadoutButton.SetEnabled(false);
-	  MyEntranceSelectBox.DisableComponent();
+
+    if(GC.CurrentMission.IsMissionFailed()) {
+        if((theCampaign.PlayerPermadeath && theCampaign.PlayerDied) || theCampaign.HardcoreMode) {
+            MyRestartButton.SetEnabled(false);
+            MyLoadoutButton.SetEnabled(false);
+            MyEntranceSelectBox.DisableComponent();
+        }
     }
+    
 
     if( GC.SwatGameRole == GAMEROLE_SP_Other )
         MyContinueButton.SetCaption( MainMenuString );
