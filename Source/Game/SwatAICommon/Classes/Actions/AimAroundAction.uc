@@ -308,10 +308,10 @@ function ApplyThreatWeight(out float Weight, EAimFov AimFov, float Threat)
     // If this point is in the outer fov, square it's weight. This will drop
     // low weights even lower, thus urging the pawn to only aim at an outer
     // fov point if it truly has a high weight (low threat)
-    if (AimFov == kAimFovOuter)
-    {
-        ThreatWeight = ThreatWeight * ThreatWeight;
-    }
+    //if (AimFov == kAimFovOuter)
+    //{
+    //    ThreatWeight = ThreatWeight * ThreatWeight;
+    //}
 
     // Quadruple the weight of threat, and add it to our total weight
     Weight += ThreatWeight * 4.0;
@@ -352,7 +352,8 @@ function ApplyNearFriendlyPawnPenalty(out float Weight, EAimFov AimFov, vector A
     local float TotalSimilarity;
 
     // about 11.25 degree dot product
-    MinSimilarityDot = 0.981;
+    //MinSimilarityDot = 0.981;
+    MinSimilarityDot = 0.2;
 
     // For each direction to a friendly pawn, compare it to the aim direction.
     // If the angle is identical, weight the similarity 1.0. If the angle is
@@ -361,11 +362,17 @@ function ApplyNearFriendlyPawnPenalty(out float Weight, EAimFov AimFov, vector A
     for (i = 0; i < FriendlyPawnDirectionNormals.length && TotalSimilarity < 1.0; i++)
     {
         Similarity = AimDirectionNormal Dot FriendlyPawnDirectionNormals[i];
+        // New way ...?
+        //Similarity = FClamp(Similarity, MinSimilarityDot, 1.0);
+        // Old way ...? this math seems kinda fucky
+        
         Similarity = (Similarity - MinSimilarityDot) / (1.0 - MinSimilarityDot);
         Similarity = FClamp(Similarity, 0.0, 1.0);
+        
         TotalSimilarity += Similarity;
     }
 
+    //TotalSimilarity /= FriendlyPawnDirectionNormals.length;
     TotalSimilarity = FClamp(TotalSimilarity, 0.0, 1.0);
 
     // Multiply the weight by the inverse of the similarity. That is to say,
@@ -403,6 +410,34 @@ function float GetKnowledgeAimWeight(AwarenessProxy.AwarenessKnowledge Knowledge
     Weight = 0.0;
     // The aim direction from the pawn to the point
     Distance = GetAimDirectionNormal(Knowledge.aboutAwarenessPoint, AimDirectionNormal);
+
+    // FIXME: Do an extra trace from the pawn's eyes to the awareness point to see if we can hit the awareness point?
+    // Otherwise we lead to awkward situations like officers trying to aim through each other...
+
+    /*
+    if(ISwatOfficer(m_Pawn).IsRedTeam())
+    {
+        if(ISwatOfficer(m_Pawn).IsOfficerOne())
+        {
+            m_Pawn.Level.GetLocalPlayerController().myHUD.AddDebugLine(m_Pawn.Location, Knowledge.aboutAwarenessPoint.Location, class'Engine.Canvas'.Static.MakeColor(50,50,200), 1.0);
+        }
+        else
+        {
+            m_Pawn.Level.GetLocalPlayerController().myHUD.AddDebugLine(m_Pawn.Location, Knowledge.aboutAwarenessPoint.Location, class'Engine.Canvas'.Static.MakeColor(0,0,100), 1.0);
+        }
+    }
+    else
+    {
+        if(ISwatOfficer(m_Pawn).IsOfficerOne())
+        {
+            m_Pawn.Level.GetLocalPlayerController().myHUD.AddDebugLine(m_Pawn.Location, Knowledge.aboutAwarenessPoint.Location, class'Engine.Canvas'.Static.MakeColor(255,50,50), 1.0);
+        }
+        else
+        {
+            m_Pawn.Level.GetLocalPlayerController().myHUD.AddDebugLine(m_Pawn.Location, Knowledge.aboutAwarenessPoint.Location, class'Engine.Canvas'.Static.MakeColor(100,0,0), 1.0);
+        }
+    }
+    */
 
     if (!IsPointTooClose(Knowledge.aboutAwarenessPoint))
     {

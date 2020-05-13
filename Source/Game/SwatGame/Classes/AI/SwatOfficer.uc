@@ -776,6 +776,26 @@ protected function float GetLengthOfTimeToFireFullAuto()
 //
 // ISwatOfficer implementation
 
+function bool IsBlueTeam()
+{
+    return self.IsA('OfficerBlueOne') || self.IsA('OfficerBlueTwo');
+}
+
+function bool IsRedTeam()
+{
+    return self.IsA('OfficerRedOne') || self.IsA('OfficerRedTwo');
+}
+
+function bool IsOfficerOne()
+{
+    return self.IsA('OfficerRedOne') || self.IsA('OfficerBlueOne');
+}
+
+function bool IsOfficerTwo()
+{
+    return self.IsA('OfficerRedTwo') || self.IsA('OfficerBlueTwo');
+}
+
 function FiredWeapon GetPrimaryWeapon()
 {
     return LoadOut.GetPrimaryWeapon();

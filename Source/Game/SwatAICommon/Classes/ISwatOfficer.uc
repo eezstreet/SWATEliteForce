@@ -19,6 +19,11 @@ function OfficerSpeechManagerAction	GetOfficerSpeechManagerAction();
 
 function PlayTurnAwayAnimation();
 
+function bool IsRedTeam();
+function bool IsBlueTeam();
+function bool IsOfficerOne();
+function bool IsOfficerTwo();
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 //	Doors
