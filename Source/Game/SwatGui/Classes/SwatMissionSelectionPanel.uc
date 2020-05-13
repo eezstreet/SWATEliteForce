@@ -20,6 +20,10 @@ var(SWATGui) private EditInline Config GUILabel          MyMissionNameLabel;
 var(SWATGui) private EditInline Config GUIImage          MyThumbnail;
 var(SWATGui) private EditInline Config GUIScrollTextBox  MyMissionInfo;
 
+var() private localized config string NotYetCompletedString;
+var() private localized config string TopScoreString;
+var() private localized config string TopMoneyString;
+
 var config array<Name> ExtraMissionName "Name used for this mission (extra missions)";
 var config array<String> ExtraFriendlyName "Friendly name used for this mission (extra missions)";
 
@@ -67,7 +71,17 @@ function InternalOnActivate()
 		return;
 	}
 
-	MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
+    if(theCampaign.CommanderMode) {
+        MyDifficultySelector.SetIndex(eDifficultyLevel.DIFFICULTY_Elite);
+
+        GC.CurrentDifficulty=eDifficultyLevel(MyDifficultySelector.GetIndex());
+        MyDifficultyLabel.SetCaption( FormatTextString( DifficultyLabelString, GC.DifficultyScoreRequirement[int(GC.CurrentDifficulty)] ) );
+        GC.SaveConfig();
+        MyDifficultySelector.Hide();
+    } else {
+	   MyDifficultySelector.SetIndex(GC.CurrentDifficulty);
+       MyDifficultySelector.Show();
+    }
 	MyCampaignNameLabel.SetCaption(theCampaign.StringName);
 
 	if(theCampaign.CampaignPath != 2 || GC.GetCustomScenarioPack() != None)
@@ -122,23 +136,45 @@ function DisplayMissionResults( MissionResults Results )
 //    }
 
     MyMissionInfoBox.SetContent( "" );
-    for( i = 0; i < eDifficultyLevel.EnumCount; i++ )
-    {
-        Result = Results.GetResult( eDifficultyLevel(i) );
+    if(theCampaign.CommanderMode) {
+        Result = Results.GetResult(eDifficultyLevel.DIFFICULTY_Elite);
 
-        if( !Result.Played )
+        if(!Result.Played)
         {
-            scoreString = "( - )";
+            MyMissionInfoBox.AddText(NotYetCompletedString);
         }
         else
         {
-            scoreString = string(Result.Score);
-            if( !Result.Completed )
-                scoreString = "("@scoreString@")";
+            if(!Result.Completed)
+            {
+                MyMissionInfoBox.AddText(TopScoreString $ "(" $ string(Result.Score) $ ")");
+            }
+            else
+            {
+                MyMissionInfoBox.AddText(TopScoreString $ string(Result.Score));
+                MyMissionInfoBox.AddText(TopMoneyString $ string(Result.Score * 1000));
+            }
+            
         }
-        scoreString = ":"@scoreString;
+    } else {
+        for( i = 0; i < eDifficultyLevel.EnumCount; i++ )
+        {
+            Result = Results.GetResult( eDifficultyLevel(i) );
 
-        MyMissionInfoBox.AddText( GC.GetDifficultyString(eDifficultyLevel(i)) $ scoreString );
+            if( !Result.Played )
+            {
+                scoreString = "( - )";
+            }
+            else
+            {
+                scoreString = string(Result.Score);
+                if( !Result.Completed )
+                    scoreString = "("@scoreString@")";
+            }
+            scoreString = ":"@scoreString;
+
+            MyMissionInfoBox.AddText( GC.GetDifficultyString(eDifficultyLevel(i)) $ scoreString );
+        }
     }
 }
 
@@ -532,4 +568,7 @@ defaultproperties
 //	StringD="Mission Results: "
     DifficultyLabelString="Score of [b]%1[\\b] required to advance."
     ByString="by [b]%1[\\b]||%2"
+    TopScoreString="Top Score: "
+    TopMoneyString="Funds Earned: "
+    NotYetCompletedString="Not yet completed"
 }

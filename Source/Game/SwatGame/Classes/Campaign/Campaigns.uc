@@ -4,6 +4,8 @@ class Campaigns extends Core.Object
 var config  String  CurCampaignName;        //name of the current campaign
 
 var private config array<Name> Campaign;    //the list of known campaign names... named for clarity of .ini file
+var private config int DefaultCommanderModeCash;
+var public config int CashPerPoint;
 
 var private array<Campaign> Campaigns;      //the list of known campaigns, each one instantiated in construct()
 
@@ -70,7 +72,7 @@ final function bool CampaignExists(string inCampaign)
 //call CampaignExists() first to find out.
 //note that more than one string may map to the same name.
 //returns the newly added Campaign
-final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode,
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode, bool bCommanderMode,
 	optional bool bUseCustom, optional string CustomCampaign)
 {
     local name CampaignName;
@@ -97,6 +99,8 @@ final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlaye
 	Campaigns[i].CustomCareerPath = bUseCustom;
 	Campaigns[i].CustomCareer = CustomCampaign;
     Campaigns[i].HardcoreMode = bHardcoreMode;
+    Campaigns[i].CommanderMode = bCommanderMode;
+    Campaigns[i].CommanderModeCash = DefaultCommanderModeCash;
 
     SaveConfig();
     Campaigns[i].SaveConfig();
@@ -168,4 +172,10 @@ private final function name CampaignStringToName(string inString)
         inString = inString $ "end";
 
     return name(inString);
+}
+
+DefaultProperties
+{
+    DefaultCommanderModeCash=5000
+    CashPerPoint=100
 }
