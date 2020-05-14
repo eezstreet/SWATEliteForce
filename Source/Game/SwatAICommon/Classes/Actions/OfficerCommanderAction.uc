@@ -442,7 +442,17 @@ private latent function EngageTargetForCompliance(Pawn Target)
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " is going to engage " $ Target.Name $ " for compliance");
 
-	CurrentEngageForComplianceGoal = new class'EngageForComplianceGoal'(characterResource(), Target);
+	if(GetHive().IsMovingTo(self.m_Pawn))
+	{
+		CurrentEngageForComplianceGoal = new class'EngageForComplianceWhileMovingToGoal'(characterResource(), Target, 
+			GetHive().GetMoveToGoalForOfficer(self.m_Pawn).Destination,
+			GetHive().GetMoveToGoalForOfficer(self.m_Pawn).CommandGiver);
+	}
+	else
+	{
+		CurrentEngageForComplianceGoal = new class'EngageForComplianceGoal'(characterResource(), Target);
+	}
+	
 	assert(CurrentEngageForComplianceGoal != None);
 	CurrentEngageForComplianceGoal.AddRef();
 
@@ -452,17 +462,35 @@ private latent function EngageTargetForCompliance(Pawn Target)
 
 private latent function AttackTarget(Pawn Target)
 {
+	local AttackTargetGoal AttackGoal;
+
 	assert(CurrentAttackEnemyGoal == None);
 
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " is going to attack " $ Target.Name);
 
-	CurrentAttackEnemyGoal = new class'AttackEnemyGoal'(characterResource());
-	assert(CurrentAttackEnemyGoal != None);
-	CurrentAttackEnemyGoal.AddRef();
+	// If we're just moving to the destination, just attack.
+	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
+	{
+		AttackGoal = new class'AttackTargetGoal'(weaponResource(), Target);
+		assert(AttackGoal != None);
+		AttackGoal.AddRef();
+		AttackGoal.postGoal(self);
+		WaitForGoal(AttackGoal);
 
-	CurrentAttackEnemyGoal.postGoal(self);
-	WaitForGoal(CurrentAttackEnemyGoal);
+		AttackGoal.Release();
+		AttackGoal = None;
+	}
+	else
+	{	// Otherwise, attack. Optionally while falling in.
+		CurrentAttackEnemyGoal = new class'AttackEnemyGoal'(characterResource());
+		assert(CurrentAttackEnemyGoal != None);
+		CurrentAttackEnemyGoal.AddRef();
+
+		CurrentAttackEnemyGoal.postGoal(self);
+		WaitForGoal(CurrentAttackEnemyGoal);
+	}
+	
 }
 
 private function bool ShouldAttackRunner(Pawn target)

@@ -254,6 +254,8 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.UseBreachingChargeAction');
 	characterResource.addAbility(new class'SwatAICommon.UseBreachingShotgunAction');
 	characterResource.addAbility(new class'SwatAICommon.EngageForComplianceAction');
+    characterResource.addAbility(new class'SwatAICommon.EngageForComplianceWhileFallingInAction');
+    characterResource.addAbility(new class'SwatAICommon.EngageForComplianceWhileMovingToAction');
 	characterResource.addAbility(new class'SwatAICommon.AttackEnemyAction');
 	characterResource.addAbility(new class'SwatAICommon.RestrainAndReportAction');
 	characterResource.addAbility(new class'SwatAICommon.SecureEvidenceAction');
@@ -269,10 +271,11 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.WatchNonHostileTargetAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorCornerAction');
-  characterResource.addAbility(new class'SwatAICommon.ReportAction');
-  characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
-  characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
+    characterResource.addAbility(new class'SwatAICommon.ReportAction');
+    characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
+    characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
     characterResource.addAbility(new class'SwatAICommon.ShareEquipmentAction');
+    characterResource.addAbility(new class'SwatAICommon.AttackEnemyWhileFallingInAction');
 
     if (ShouldReactToNonLethals()) {
         characterResource.addAbility(new class'SwatAICommon.PepperSprayedAction');

@@ -675,10 +675,20 @@ function bool IsExecutingCommandGoal()
 	return ((CurrentSquadCommandGoal != None) && !CurrentSquadCommandGoal.hasCompleted());
 }
 
+function SquadCommandGoal GetCurrentCommandGoal()
+{
+	return CurrentSquadCommandGoal;
+}
+
 // Overridden in ColoredSquadInfo
 function bool IsSubElement()
 {
 	return false;
+}
+
+function bool IsMovingTo()
+{
+	return IsExecutingCommandGoal() && CurrentSquadCommandGoal.IsA('SquadMoveToGoal');
 }
 
 function ColoredSquadInfo GetOtherTeam()

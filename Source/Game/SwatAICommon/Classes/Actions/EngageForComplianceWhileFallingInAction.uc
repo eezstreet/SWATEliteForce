@@ -1,24 +1,37 @@
-///////////////////////////////////////////////////////////////////////////////
-// FallInAction.uc - FallInAction class
-// The Action that causes an Officer AI to fall in around the player
-
-class FallInAction extends SwatCharacterAction;
-///////////////////////////////////////////////////////////////////////////////
+class EngageForComplianceWhileFallingInAction extends SwatCharacterAction;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // FallInAction variables
 
+// copied from our goal
+var(parameters) Pawn					TargetPawn;
+
 var private MoveInFormationGoal	CurrentMoveInFormationGoal;
 var private AimAroundGoal		CurrentAimAroundGoal;
 var private ReloadGoal			CurrentReloadGoal;
+var private OrderComplianceGoal			CurrentOrderComplianceGoal;
 
 var config float				FallInMinAimHoldTime; // 0.25
 var config float				FallInMaxAimHoldTime; // 1
 
 var private bool				bIsLowReady;
 
-const kCheckFullBodyUpdateRate = 0.5;
+const kMinComplianceUpdateTime = 0.1;
+const kMaxComplianceUpdateTime = 0.25;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Selection heuristic
+
+function float selectionHeuristic( AI_Goal Goal )
+{
+	if(IsFallingIn())
+	{
+		return 1.0;
+	}
+	return 0.0;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -44,6 +57,12 @@ function cleanup()
 	{
 		CurrentReloadGoal.Release();
 		CurrentReloadGoal = None;
+	}
+
+	if(CurrentOrderComplianceGoal != None)
+	{
+		CurrentOrderComplianceGoal.Release();
+		CurrentOrderComplianceGoal = None;
 	}
 
 	// in case it's not unset
@@ -100,9 +119,19 @@ latent function FollowPlayer()
     // Let the aim around action perform the aiming and rotation for us
 	CurrentMoveInFormationGoal.SetRotateTowardsPointsDuringMovement(false);
 	CurrentMoveInFormationGoal.SetAcceptNearbyPath(true);
-	CurrentMoveInFormationGoal.SetWalkThreshold(192.0);
 
 	CurrentMoveInFormationGoal.postGoal( self );
+}
+
+private function OrderTargetToComply()
+{
+	assert(CurrentOrderComplianceGoal == None);
+
+	CurrentOrderComplianceGoal = new class'OrderComplianceGoal'(AI_WeaponResource(m_Pawn.WeaponAI), TargetPawn);
+	assert(CurrentOrderComplianceGoal != None);
+	CurrentOrderComplianceGoal.AddRef();
+
+	CurrentOrderComplianceGoal.postGoal(self);
 }
 
 state Running
@@ -111,33 +140,30 @@ Begin:
 	SleepInitialDelayTime(true);		
 
 	ReloadWeapons();
-	AimAround();
+	if(TargetPawn.IsA('SwatHostage'))
+	{	// Disregard hostages as being a threat, just aim around
+		AimAround();
+	}
 	FollowPlayer();
 
 	// don't succeed, stick around
 
 	// check to see if we should be doing full body animations while not moving
- Loop:
-	if (VSize(m_Pawn.Velocity) > 0.0)
-	{
-		if (! bIsLowReady)		// starts out false
-		{
-			ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_FallIn);
-			bIsLowReady = true;
-		}
-	}
-	else if (bIsLowReady)
-	{
-		ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_FullBody, kUBABCI_FallIn);
-		bIsLowReady = false;
-	}
+ 	OrderTargetToComply();
 	
-	sleep(kCheckFullBodyUpdateRate);
-	goto('Loop');
+	while (! CurrentOrderComplianceGoal.hasCompleted())
+	{
+		sleep(RandRange(kMinComplianceUpdateTime, kMaxComplianceUpdateTime));
+	}
+
+	// Post a Fall In goal ?
+	//(new class'FallInGoal'(AI_CharacterResource(m_Pawn.CharacterAI))).postGoal(self);
+
+	succeed();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
-    satisfiesGoal = class'FallInGoal'
+    satisfiesGoal = class'EngageForComplianceGoal'
 }

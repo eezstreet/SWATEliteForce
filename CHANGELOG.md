@@ -15,6 +15,7 @@
   - SWAT AI can now be affected by less lethals! There's now a very clear reason why you want to grab a gas mask over helmets for your AI.
   - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
   - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
+  - SWAT AI will better cover each others' backs when moving to locations (or falling in) and will continue movement actions when distracted by civilians or suspects.
   - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
   - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
 - Upgraded Quick Mission Maker!
@@ -32,6 +33,9 @@
  - SWAT AI now uses grenade launchers correctly.
  - SWAT AI can no longer do direct impact damage with grenade launchers.
  - SWAT AI no longer moves out of the way when bumped by a door, if they are deploying a wedge. Note, if they are moving into position to deploy the wedge, they will still move out of the way.
+ - SWAT AI no longer run when they are issued a MOVE TO command.
+ - SWAT AI better "slice the pie" while moving for a MOVE TO or FALL IN command.
+ - SWAT AI will not stop to engage targets when issued a MOVE TO or FALL IN command.
  - Optimized SWAT AI pathfinding for Close Door, Deploy Pepper Spray, Deploy Taser, and Mark With Lightstick commands.
  - You can now issue a DEPLOY WEDGE command on an open door. When used, officers will close the door and then deploy the wedge, instead of having to issue two separate commands. (note, it was possible to have officers wedge doors open when using the Speech Command Interface. This has been fixed.)
  - CHECK FOR TRAPS has been renamed to MIRROR FOR TRAPS and requires an optiwand to be equipped on an officer to use.

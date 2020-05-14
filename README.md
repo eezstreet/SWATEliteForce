@@ -75,14 +75,19 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
 **Smarter Officer AI!**
  * Upon restraining a target, SWAT officers will now report it to TOC automatically!
  * SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
+ * SWAT officers will smartly avoid looking in the same direction as their teammates while moving if possible to mitigate threat exposure.
+ * SWAT officers don't become distracted by civilians and suspects while moving. They will continue following you or going towards their destination (even possibly attacking)
  * SWAT officers can now take cover like suspects do (including leaning around corners)
  * SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
+ * SWAT officers can now use grenade launchers, and will use them if a GAS AND CLEAR, OPEN BANG AND CLEAR, etc action is commanded.
  * SWAT officers will drop a lightstick after clearing a room.
  * SWAT officers can now be affected by CS gas, flashbangs, tasers, pepper spray, etc.
  * SWAT officers will use pathfinding distance (instead of Euclidean distance) to determine the closest officer for things such as closing doors, etc, so it correctly picks the closest one.
 
 **Traps. This is a huge cut feature from the game. Some doors may be trapped with bombs or alarms, and you'll need to adjust your approach to deal with it.**
  * This is a small thing but it has huge ramifications. Since some doors will be trapped, you will need to take alternate routes instead of using the same strategy every time.
+ * Traps can be disarmed from the other side with the Toolkit.
+ * You can order your squad to disarm traps and check for traps with the optiwand.
 
 **New secondary objectives.**
  * Some maps have drug bags which may need to be collected to get a perfect score.
@@ -442,10 +447,10 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
 ## AI ##
   * Tons and tons of cut dialogue restored.
   * Lots of minor little animation glitches on SWAT officers fixed.
-  * In general: SWAT AI is both smarter and better stat-wise. Suspects are statistically worse, but make up for this in intelligence.
+  * In general: SWAT AI is both smarter and better stat-wise. Suspects are statistically worse, but make up for this in intelligence and cunning strategies.
   * Suspects no longer have an instant lock-on aim. Rather, there is a small delay between when they spot you and when they will fire.
   * Likewise, suspects do not always fire with perfect accuracy. Sometimes, low skill gang members can fire their gun sideways (a cut animation) for even worse accuracy.
-  * Suspects will escape when compliant, but not when watched, and will try to barricade themselves in a room.
+  * Suspects will escape after giving up (even if there is no gun present -- if there is one, they will pick it up and attack), but not when watched, and will try to barricade themselves in a room.
   * Suspects can hear gunshots from across the map (unless they are silenced) and can choose to investigate or barricade their position randomly.
   * Suspects may take on a variety of personalities, such as Insane and Polite. Insane suspects shoot hostages with little restraint, while Polite ones do not shoot at all at them.
   * Suspects and civilians may randomly wander around on a few maps, instead of using fixed patrols.
@@ -462,11 +467,12 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Civilians may be Fearless. When they are Fearless, they do not scream when in the presence of a suspect.
   * SWAT are much more dangerous and less hesitant to shoot at suspects.
   * SWAT do not form "death funnels" in doors and instead will try to continue moving.
-  * SWAT will attempt to seek out cover when engaging suspects.
+  * SWAT will attempt to seek out cover when engaging suspects (only after clearing a room or when issued a COVER command)
   * SWAT can properly use the grenade launcher now.
-  * SWAT will no longer stare at uncompliant civilians or cuffed civilians/suspects.
+  * SWAT AI will ignore uncompliant civilians or cuffed civilians/suspects while there are active threats.
   * SWAT will no longer try to shoot through civilians or players when attacking their target.
   * SWAT will reload their weapons when ordered to fall in.
+  * SWAT do not become distracted by suspects/civilians when they are following you or going to a specific destination (with MOVE TO). They will shout at them (and/or attack), but continue moving.
   * SWAT will listen to and respond to sounds even when they have an enemy, so they have better situational awareness.
   * SWAT clears rooms quicker and drops a lightstick after clearing.
   * SWAT now turns at the same rate that suspects do (which is faster) and have higher field of vision.
@@ -486,7 +492,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * (Non-Insane/Non-Polite) suspects take twice as long before shooting hostages
   * Added a new quality: Polite. Any suspect archetype with this quality won't attempt to shoot hostages.
   * Added a new quality: Insane. Any suspect archetype with this quality will shoot hostages *much* faster (basically instantly) and ignores distance checks.
-  * Grenades and wedges now go back to your last used weapon after using one, instead of switching back to the flashbang.
+  * Grenades and wedges now go back to your last used weapon after using one, instead of switching back to that item.
 
 ## GUI ##
   * Training mission returns! New Features from the Expansion are gone.
