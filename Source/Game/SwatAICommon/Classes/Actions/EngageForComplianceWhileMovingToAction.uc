@@ -28,7 +28,7 @@ const kMaxComplianceUpdateTime = 0.25;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Cleanup
+// Cleanup/init
 
 function cleanup()
 {
@@ -51,6 +51,16 @@ function cleanup()
 		CurrentOrderComplianceGoal.Release();
 		CurrentOrderComplianceGoal = None;
 	}
+
+	// in case we have been set to use covered paths
+	ISwatAI(m_Pawn).DisableFavorCoveredPath();
+}
+
+function initAction(AI_Resource r, AI_Goal goal)
+{
+    super.initAction(r, goal);
+
+    ISwatAI(m_pawn).EnableFavorCoveredPath(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

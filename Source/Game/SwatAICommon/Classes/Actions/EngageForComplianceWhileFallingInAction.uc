@@ -35,7 +35,14 @@ function float selectionHeuristic( AI_Goal Goal )
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Cleanup
+// Init/Cleanup
+
+function initAction(AI_Resource r, AI_Goal goal)
+{
+    super.initAction(r, goal);
+
+    ISwatAI(m_pawn).EnableFavorCoveredPath(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns);
+}
 
 function cleanup()
 {
@@ -67,6 +74,9 @@ function cleanup()
 
 	// in case it's not unset
 	ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_FallIn);
+
+	// in case we have been set to use covered paths
+	ISwatAI(m_Pawn).DisableFavorCoveredPath();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
