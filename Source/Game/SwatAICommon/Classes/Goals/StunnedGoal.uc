@@ -15,6 +15,7 @@ var(parameters) vector	StunningDeviceLocation;
 var(parameters) float	StunnedDuration;
 var(parameters) bool	bShouldRunFromStunningDevice;
 var(parameters) bool	bPlayedReaction;
+var(parameters) bool    bComplexFlee;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -39,4 +40,5 @@ defaultproperties
 {
     priority = 95
 	bShouldRunFromStunningDevice=true
+	bComplexFlee=false
 }
