@@ -333,11 +333,6 @@ function NavigationPoint FindRunToPoint()
     local NavigationPoint BestRunToPoint;
     local float BestRunToPointWeight;
 
-    if(bComplexFlee)
-    {
-
-    }
-
     DirectionToStunningDevice = StunningDeviceLocation - m_Pawn.Location;
 
     PotentiallyVisibleSet = ISwatAI(m_Pawn).GetAwareness().GetPotentiallyVisibleKnowledge(m_Pawn);
@@ -480,6 +475,11 @@ latent function Flee()
 		// let the hive know so officers can "notice" it if they see us
 		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyFleeing(m_Pawn);
 	}
+
+	clearDummyMovementGoal();
+
+	// unlock our aim while we move
+	ISwatAI(m_Pawn).UnlockAim();
 
 	assert(FleeDestination != None);
 
@@ -654,7 +654,7 @@ Begin:
 		PlayReactionAnimation();
 		m_Pawn.EnableCollisionAvoidance();
 
-		if(FindFleeDestination() && bComplexFlee && ISwatEnemy(m_Pawn) != None)
+		if(FindFleeDestination() && CanGetOutOfRoomSafely() && bComplexFlee && ISwatOfficer(m_Pawn) == None)
 		{
 			Flee();
 		}
