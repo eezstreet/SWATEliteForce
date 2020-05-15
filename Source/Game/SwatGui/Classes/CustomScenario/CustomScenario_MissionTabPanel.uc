@@ -23,6 +23,7 @@ var(SWATGui) private EditInline Config GUIComboBox          cbo_difficulty;
 
 var(SWATGui) private EditInline Config GUICheckBoxButton 	chk_force_scripts;
 var(SWATGui) private EditInline Config GUICheckBoxButton	chk_allow_dispatch;
+var(SWATGui) private EditInline Config GUICheckBoxButton    chk_allow_traps;
 
 var MissionObjectives CustomMissionObjectives;  //the set of available objectives for custom scenarios
 
@@ -556,6 +557,7 @@ function PopulateFieldsFromScenario(bool NewScenario)
     // new stuff
     chk_force_scripts.SetChecked(Scenario.ForceScriptedSequences);
     chk_allow_dispatch.SetChecked(Scenario.AllowDispatch);
+    chk_allow_traps.SetChecked(Scenario.KeepTraps);
 }
 
 function GatherScenarioFromFields()
@@ -600,6 +602,7 @@ function GatherScenarioFromFields()
 
     Scenario.ForceScriptedSequences = chk_force_scripts.bChecked;
     Scenario.AllowDispatch = chk_allow_dispatch.bChecked;
+    Scenario.KeepTraps = chk_allow_traps.bChecked;
 }
 
 event Activate()

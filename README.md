@@ -297,7 +297,6 @@ Beanbags can be negated by body armor. Try aiming for unarmored parts of the bod
 The traps are randomly generated on the mission. On almost every map that they can show up, it's possible for them to not show up at all.
 On the Fairfax Residence mission, there's a 50% chance (100% on Elite) that a trap will spawn - and there's four total doors it can spawn on. 
 So it's possible to trigger the trap almost immediately, but also possible to never encounter it, depending on the route you take and the randomization.
-Also: traps do not spawn on Quick Mission Maker missions.
 
 ## HOW DO I DISARM A TRAP?
 You can't disarm a trap if it's on the other side of a door. You can either blow it up (if it's electronic) with C2 or you can go around and remove it with the toolkit. Or just take the penalty.
@@ -716,6 +715,8 @@ Quick Mission Maker packs are stored in `SEF/Content/Scenarios`. You can downloa
  - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
  - You can now disable the mission briefing audio in a Quick Mission.
  - You can now write custom briefing text for Quick Missions.
+ - You can now allow the Singleplayer map scripts to function in QMM missions (note, may cause instability)
+ - You can now allow traps to spawn in QMM missions.
  - Notes entry field size increased from 500 to 4000.
  - NOTES tab renamed to TEXT.
  - Effectively removed the per-map limits on civilian and suspect counts. You can now have up to 999 suspects or civilians on a map.

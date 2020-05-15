@@ -37,6 +37,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     local Spawner Spawner;
     local name Archetype;
     local array<Spawner> CandidateSpawners;
+    local array<Spawner> ResetSpawners;
     local int Count;
     local int SelectedIndex;
     local Actor Spawned;
@@ -224,21 +225,19 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             CandidateSpawners[CandidateSpawners.length] = Spawner;
         }
 
-        //we can't spawn more than the number of candidate spawners
-        AssertWithDescription(CandidateSpawners.length >= CurrentRoster.Count.Max,
-                "[tcohen] (SwatLevelInfo was selecting spawners to spawn level rosters) "
-                $"There aren't enough qualified spawners to spawn the max from roster #"$i
-                $" with SpawnerGroup="$CurrentRoster.SpawnerGroup
-                $": Roster max count is "$CurrentRoster.Count.Max
-                $", and there is/are only "$CandidateSpawners.length
-                $" candidate spawners available.");
+        // if we can spawn more than the number of spawners, set ResetSpawners. --eez
+        if(CurrentRoster.Count.Max > CandidateSpawners.Length)
+        {
+            ResetSpawners = CandidateSpawners;
+        }
 
-        //min should be <= max
-        AssertWithDescription(CurrentRoster.Count.Min <= CurrentRoster.Count.Max,
-                "[tcohen] SpawningManager::DoSpawning() Roster #"$i
-                $" has Min="$CurrentRoster.Count.Min
-                $" and Max="$CurrentRoster.Count.Max
-                $".  Please make Max greater than or equal to Min.");
+        // if min > max, just flip min and max --eez
+        if(CurrentRoster.Count.Min > CurrentRoster.Count.Max)
+        {
+            j = CurrentRoster.Count.Min;
+            CurrentRoster.Count.Min = CurrentRoster.Count.Max;
+            CurrentRoster.Count.Max = j;
+        }
 
         //how many will we spawn from this roster?
         Count = Rand(CurrentRoster.Count.Max - CurrentRoster.Count.Min + 1) + CurrentRoster.Count.Min;
@@ -255,8 +254,8 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         for (j=0; j<Count; ++j)
         {
             if(CandidateSpawners.length <= 0) {
-              assertWithDescription(false, "Ran out of candidate spawners for Roster "$CurrentRoster.SpawnerGroup);
-              break;
+                // Copy the reset spawners back; we will just keep spawning even though we ran out of spawners. The spawn will be deferred until the target moves out of the way. --eez
+                CandidateSpawners = ResetSpawners;
             }
 
             //find out if any of the candidate spawners have priority

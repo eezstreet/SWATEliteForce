@@ -180,6 +180,7 @@
  - You can now disable the mission briefing audio in a Quick Mission.
  - You can now write custom briefing text for Quick Missions.
  - You can now force level scripts to function like they would in a campaign (note, this may cause instability)
+ - You can now allow traps to spawn in the level.
  - You can now allow dispatch audio to work in a Quick Mission.
  - Removed the per-map limits on suspect/civilian counts. (You can now have up to 999 suspects and/or civilians on a map)
  - Added a new objective type: "Rescue as many civilians as possible." This is similar to Rescue All Civilians, but if a suspect downs a hostage, it does not fail the mission.

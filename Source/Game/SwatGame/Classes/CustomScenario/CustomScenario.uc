@@ -10,10 +10,12 @@ import enum EnemySkill from SwatAICommon.ISwatEnemy;
  *	Version 0: Base Game
  *	Version 1: Elite Force (base)
  *	Version 2: Elite Force v7 Alpha 3
- *		CustomBriefing is deprecated. Instead,
+ *		CustomBriefing is deprecated. Use BriefingChunks instead to prevent string limits.
+ *  Version 3: Elite Force v7 Beta 5
+ *      Added KeepTraps
  */
 var config int ScenarioVersion;
-const CurrentScenarioVersion = 2;
+const CurrentScenarioVersion = 3;
 
 ////////////////////////////////////////
 // Added in Version 0
@@ -90,6 +92,11 @@ var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 
 var config bool AllowDispatch;
 var config bool ForceScriptedSequences;
+
+////////////////////////////////////////
+//
+// Added in Version 2
+var config bool KeepTraps;
 
 replication
 {
@@ -196,6 +203,11 @@ function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> R
             log("[CUSTOM SCENARIO] Keeping Roster index "$i
                     $" with SpawnerGroup="$Rosters[i].SpawnerGroup
                     $" because IsA('HostageRoster') && UseCampaignHostageSettings.");
+            DeleteRoster = false;
+        }
+        else if(Rosters[i].IsA('InanimateRoster') && KeepTraps && !SpawningManager.IsMissionObjective(Rosters[i].SpawnerGroup))
+        {
+            // We need to determine if this is a trap roster. TrapRosters only have trap archetypes.
             DeleteRoster = false;
         }
 
