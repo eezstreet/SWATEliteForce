@@ -13,6 +13,7 @@ import enum EnemySkill from SwatAICommon.ISwatEnemy;
  *		CustomBriefing is deprecated. Use BriefingChunks instead to prevent string limits.
  *  Version 3: Elite Force v7 Beta 5
  *      Added KeepTraps
+ *      Added advanced hostage and suspect rosters
  */
 var config int ScenarioVersion;
 const CurrentScenarioVersion = 3;
@@ -79,7 +80,7 @@ var config localized string Notes;    //localized for any shipping custom scenar
 ////////////////////////////////////////
 // Added in Version 1
 var config bool UseCustomBriefing;
-var private config localized string CustomBriefing;	// DEPRECATED.
+var private config localized string CustomBriefing;	// DEPRECATED as of version 2
 var localized config array<string> BriefingChunks;
 var config bool DisableBriefingAudio;
 var config bool DisableEnemiesTab;
@@ -93,10 +94,45 @@ var DoNot_LetTimerExpire TimedMissionObjective; // dbeswick:
 var config bool AllowDispatch;
 var config bool ForceScriptedSequences;
 
+/////////////////////////////////////////
+// Version 2 did not add anything; it deprecated CustomBriefing
+
 ////////////////////////////////////////
-//
-// Added in Version 2
+// Added in Version 3
 var config bool KeepTraps;
+var config bool UseAdvancedHostageRosters;
+var config bool UseAdvancedEnemyRosters;
+
+struct ArchetypeData
+{
+    var() config float Chance;
+    var() config name BaseArchetype;
+    var() config bool bOverrideVoiceType;
+    var() config name OverrideVoiceType;
+    var() config bool bOverrideMorale;
+    var() config float OverrideMinMorale;
+    var() config float OverrideMaxMorale;
+    var() config bool bOverridePrimaryWeapon;
+    var() config bool bOverrideBackupWeapon;
+    var() config bool bOverrideHelmet;
+    var() config string OverridePrimaryWeapon;
+    var() config string OverrideBackupWeapon;
+    var() config string OverrideHelmet;
+
+};
+
+struct QMMRoster
+{
+    var() config int Minimum;
+    var() config int Maximum;
+    var() config bool SpawnAnywhere;
+    var() config string SpawnGroup;
+    var() config string DisplayName;
+    var() config array<ArchetypeData> Archetypes;
+};
+
+var config array<QMMRoster> AdvancedHostageRosters;
+var config array<QMMRoster> AdvancedEnemyRosters;
 
 replication
 {
@@ -163,15 +199,45 @@ function UpgradeScenarioToLatestVersion()
 	}
 }
 
+function AddAdvancedEnemyRoster(QMMRoster Data, out array<Roster> Rosters)
+{
+    local EnemyRoster Roster;
+    local int i;
+    local Archetype.ChanceArchetypePair ChanceArchetypePair;
+
+    Roster = new(None, "CustomScenarioEnemyRoster"$Rosters.Length) class'CustomScenarioAdvancedEnemyRoster';
+
+    for(i = 0; i < Data.Archetypes.Length; i++)
+    {
+        ChanceArchetypePair.Archetype = Data.Archetypes[i].BaseArchetype;
+        ChanceArchetypePair.Chance = Data.Archetypes[i].Chance * 100;
+        Roster.Archetypes[i] = ChanceArchetypePair;
+    }
+    Roster.Count.Min = Data.Minimum;
+    Roster.Count.Max = Data.Maximum;
+
+    if(Data.SpawnAnywhere)
+    {
+        Roster.SpawnerGroup = 'CustomRosterSpawnerGroup';
+    }
+    else
+    {
+        Roster.SpawnerGroup = name(Data.SpawnGroup);
+    }
+
+    Rosters[Rosters.Length] = Roster;
+}
+
 function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> Rosters)
 {
     local EnemyRoster EnemyRoster;
     local HostageRoster HostageRoster;
+    local Roster.CustomScenarioDataForArchetype CustomData;
     local Archetype.ChanceArchetypePair ChanceArchetypePair;
     local CustomScenarioCreatorMissionSpecificData MissionData;
     local int CampaignEnemies, CampaignHostages;
     local bool DeleteRoster;
-    local int i;
+    local int i, j;
 
     //delete any rosters that shouldn't spawn in this CustomScenario
     //iterate backward because removing items changes array indices
@@ -256,40 +322,80 @@ function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> R
 
     if (!UseCampaignEnemySettings)
     {
-        // add enemy roster
-
-        EnemyRoster = new(None, "CustomScenarioEnemyRoster") class'EnemyRoster';
-        for (i=0; i<EnemyArchetypes.length; ++i)
+        // If we're using advanced enemy rosters, just use the settings from this custom scenario itself.
+        if(UseAdvancedEnemyRosters)
         {
-            ChanceArchetypePair.Archetype = EnemyArchetypes[i];
-            ChanceArchetypePair.Chance = 100 / EnemyArchetypes.length;
-            EnemyRoster.Archetypes[i] = ChanceArchetypePair;
+            for(i = 0; i < AdvancedEnemyRosters.Length; i++)
+            {
+                AddAdvancedEnemyRoster(AdvancedEnemyRosters[i], Rosters);
+            }
+            
         }
-        EnemyRoster.Count.Min = EnemyCountRangeCow.Min - CampaignEnemies;
-        EnemyRoster.Count.Max = EnemyCountRangeCow.Max - CampaignEnemies;
-        EnemyRoster.SpawnerGroup = 'CustomRosterSpawnerGroup';
-        //add the enemy roster to the list of rosters
-        log("[CUSTOM SCENARIO] Adding Custom Enemy Roster, Count.Min="$EnemyRoster.Count.Min$", Count.Max="$EnemyRoster.Count.Max);
-        Rosters[Rosters.length] = EnemyRoster;
+        else
+        {
+            // add enemy roster
+            EnemyRoster = new(None, "CustomScenarioEnemyRoster") class'EnemyRoster';
+            for (i=0; i<EnemyArchetypes.length; ++i)
+            {
+                ChanceArchetypePair.Archetype = EnemyArchetypes[i];
+                ChanceArchetypePair.Chance = 100 / EnemyArchetypes.length;
+                EnemyRoster.Archetypes[i] = ChanceArchetypePair;
+            }
+            EnemyRoster.Count.Min = EnemyCountRangeCow.Min - CampaignEnemies;
+            EnemyRoster.Count.Max = EnemyCountRangeCow.Max - CampaignEnemies;
+            EnemyRoster.SpawnerGroup = 'CustomRosterSpawnerGroup';
+            //add the enemy roster to the list of rosters
+            log("[CUSTOM SCENARIO] Adding Custom Enemy Roster, Count.Min="$EnemyRoster.Count.Min$", Count.Max="$EnemyRoster.Count.Max);
+            Rosters[Rosters.length] = EnemyRoster;
+        }
+        
     }
 
     if (!UseCampaignHostageSettings)
     {
-        // add hostage roster
-
-        HostageRoster = new(None, "CustomScenarioHostageRoster") class'HostageRoster';
-        for (i=0; i<HostageArchetypes.length; ++i)
+        // If we're using advanced hostage rosters, just use the settings from this custom scenario itself.
+        if(UseAdvancedHostageRosters)
         {
-            ChanceArchetypePair.Archetype = HostageArchetypes[i];
-            ChanceArchetypePair.Chance = 100 / HostageArchetypes.length;
-            HostageRoster.Archetypes[i] = ChanceArchetypePair;
+            // FIXME
+            //for(i = 0; i < AdvancedHostageRosters.Length; i++)
+            //{
+            //    Rosters[Rosters.Length] = AdvancedHostageRosters[i];
+            //}
         }
-        HostageRoster.Count.Min = HostageCountRangeCow.Min - CampaignHostages;
-        HostageRoster.Count.Max = HostageCountRangeCow.Max - CampaignHostages;
-        HostageRoster.SpawnerGroup = 'CustomRosterSpawnerGroup';
-        //add the Hostage roster to the list of rosters
-        log("[CUSTOM SCENARIO] Adding Custom Hostage Roster, Count.Min="$HostageRoster.Count.Min$", Count.Max="$HostageRoster.Count.Max);
-        Rosters[Rosters.length] = HostageRoster;
+        else if(HostageCountRangeCow.Min - CampaignHostages > 0 || HostageCountRangeCow.Max - CampaignHostages > 0)
+        {
+            // add hostage roster
+            HostageRoster = new(None, "CustomScenarioHostageRoster") class'HostageRoster';
+            for (i=0; i<HostageArchetypes.length; ++i)
+            {
+                ChanceArchetypePair.Archetype = HostageArchetypes[i];
+                ChanceArchetypePair.Chance = 100 / HostageArchetypes.length;
+                HostageRoster.Archetypes[i] = ChanceArchetypePair;
+            }
+            HostageRoster.Count.Min = HostageCountRangeCow.Min - CampaignHostages;
+            HostageRoster.Count.Max = HostageCountRangeCow.Max - CampaignHostages;
+            HostageRoster.SpawnerGroup = 'CustomRosterSpawnerGroup';
+            //add the Hostage roster to the list of rosters
+            log("[CUSTOM SCENARIO] Adding Custom Hostage Roster, Count.Min="$HostageRoster.Count.Min$", Count.Max="$HostageRoster.Count.Max);
+            Rosters[Rosters.length] = HostageRoster;
+        }
+    }
+
+    Log("[SUMMARY] The rosters that will spawn in this Custom Scenario will be: ");
+    for(i = 0; i < Rosters.Length; i++)
+    {
+        Log("... Rosters["$i$"]="
+            $ Rosters[i] $"(" $Rosters[i].name $"), "
+            $ "SpawnAnywhere="$Rosters[i].SpawnAnywhere $ ", "
+            $ "Count=("$Rosters[i].Count.Min$"-"$Rosters[i].Count.Max$")"
+            );
+        Log("... Archetypes =");
+        for(j = 0; j < Rosters[i].Archetypes.Length; j++)
+        {
+            Log("... ... Archetype["$j$"] = "
+                $ "(Chance = " $Rosters[i].Archetypes[j].Chance $ ", Archetype = " $Rosters[i].Archetypes[j].Archetype $")"
+                );
+        }
     }
 }
 
@@ -376,7 +482,7 @@ function MutateArchetype(Archetype Archetype)
     local EnemyArchetype EnemyArchetype;
     local EnemyArchetype.EnemySkillChancePair CurrentSkill;
 
-    if (Archetype.IsA('EnemyArchetype') && !UseCampaignEnemySettings)
+    if (Archetype.IsA('EnemyArchetype') && !UseCampaignEnemySettings && !UseAdvancedEnemyRosters)
     {
         EnemyArchetype = EnemyArchetype(Archetype);
         EnemyArchetype.Morale = EnemyMorale;
@@ -402,7 +508,7 @@ function MutateArchetype(Archetype Archetype)
         }
     }
     else
-    if (Archetype.IsA('HostageArchetype') && !UseCampaignHostageSettings)
+    if (Archetype.IsA('HostageArchetype') && !UseCampaignHostageSettings && !UseAdvancedHostageRosters)
         HostageArchetype(Archetype).Morale = HostageMorale;
     //else, the Archetype may be an InanimateArchetype or maybe something else
     //anyway, it doesn't have morale.
@@ -422,6 +528,50 @@ function MutateEnemyWeapons(out array<EnemyArchetype.WeaponClipcountChanceSet> A
 
         ArchetypeWeapons[i] = ArchetypeWeapon;
     }
+}
+
+function MutateAdvancedEnemyArchetypeInstance(EnemyArchetypeInstance Instance, int RosterIndex, int ArchetypeIndex)
+{
+    local ArchetypeData Data;
+
+    if(!UseAdvancedEnemyRosters)
+    {
+        return;
+    }
+
+    Data = AdvancedEnemyRosters[RosterIndex].Archetypes[ArchetypeIndex];
+
+    if(Data.bOverrideMorale)
+    {
+        Instance.Morale = RandRange(Data.OverrideMinMorale, Data.OverrideMaxMorale);
+    }
+
+    Log("MutateAdvancedEnemyArchetypeInstance: RosterIndex is "$RosterIndex$", ArchetypeIndex is "$ArchetypeIndex);
+    if(Data.bOverrideVoiceType)
+    {
+        Log("Overriding voice type of "$Instance$" with "$Data.OverrideVoiceType);
+        Instance.VoiceTypeOverride = Data.OverrideVoiceType;
+    }
+
+    if(Data.bOverridePrimaryWeapon)
+    {
+        // FIXME
+    }
+
+    if(Data.bOverrideBackupWeapon)
+    {
+        // FIXME
+    }
+
+    if(Data.bOverrideHelmet)
+    {
+        // FIXME
+    }
+}
+
+function MutateAdvancedHostageArchetypeInstance(HostageArchetypeInstance Instance, int RosterIndex, int ArchetypeIndex)
+{
+    local ArchetypeData Data;
 }
 
 defaultproperties

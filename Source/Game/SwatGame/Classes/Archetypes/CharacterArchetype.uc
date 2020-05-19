@@ -181,7 +181,10 @@ function ValidateEquipment(
 }
 
 //initialize an instance of this archetype
-function InitializeInstance(ArchetypeInstance inInstance)
+function InitializeInstance(ArchetypeInstance inInstance, 
+    optional CustomScenario CustomScenario, 
+    optional int CustomScenarioAdvancedRosterIndex,
+    optional int CustomScenarioAdvancedArchetypeIndex)
 {
     local CharacterArchetypeInstance Instance;
     local float StaticDOAConversionTimePicked;

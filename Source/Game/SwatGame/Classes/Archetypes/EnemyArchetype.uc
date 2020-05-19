@@ -105,7 +105,10 @@ protected function Validate()
 //        "The Enemy could have no weapon.");
 }
 
-function InitializeInstance(ArchetypeInstance inInstance)
+function InitializeInstance(ArchetypeInstance inInstance, 
+    optional CustomScenario CustomScenario, 
+    optional int CustomScenarioAdvancedRosterIndex,
+    optional int CustomScenarioAdvancedArchetypeIndex)
 {
     local EnemyArchetypeInstance Instance;
 
@@ -122,6 +125,8 @@ function InitializeInstance(ArchetypeInstance inInstance)
     //initialize weapons
     InitializeWeapon(PrimaryWeapon, PrimaryWeaponClass, Instance.SelectedPrimaryWeaponClass, Instance.SelectedPrimaryWeaponAmmoClass, Instance.PrimaryWeapon, Instance);
     InitializeWeapon(BackupWeapon, BackupWeaponClass, Instance.SelectedBackupWeaponClass, Instance.SelectedBackupWeaponAmmoClass, Instance.BackupWeapon, Instance);
+
+    CustomScenario.MutateAdvancedEnemyArchetypeInstance(Instance, CustomScenarioAdvancedRosterIndex, CustomScenarioAdvancedArchetypeIndex);
 }
 
 private function InitializeSkill(EnemyArchetypeInstance inInstance)

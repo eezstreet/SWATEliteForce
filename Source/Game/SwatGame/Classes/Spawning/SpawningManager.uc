@@ -52,6 +52,10 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
     local eDifficultyLevel DifficultyLevel;
     local bool ThisRosterNotAllowed;
 	local bool isCampaignCoop;
+    local int NumEnemyRostersSpawned, NumHostageRostersSpawned;
+
+    NumEnemyRostersSpawned = 0;
+    NumHostageRostersSpawned = 0;
 
 	isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
 
@@ -162,7 +166,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             log("[SPAWNING] SpawningManager is selecting "$CurrentRoster.Count.Min
                     $" to "$CurrentRoster.Count.Max
                     $" Spawner(s) to spawn CurrentRoster index "$i
-                    $" named "$CurrentRoster.name
+                    $" named "$CurrentRoster.name$" ("$CurrentRoster$")"
                     $" from SpawnerGroup="$CurrentRoster.SpawnerGroup);
 
         ObjectiveFromRoster = GetMissionObjectiveForSpawnerGroup(CurrentRoster.SpawnerGroup);
@@ -209,6 +213,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             if (UsingCustomScenario)
             {
                 if  (
+                        !CurrentRoster.SpawnAnywhere &&
                         CurrentRoster.SpawnerGroup != 'CustomRosterSpawnerGroup'    //the roster should be spawned from a SpawnerGroup
                     &&  CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup()     //wrong SpawnerGroup
                     )
@@ -216,7 +221,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             }
             else                                                            //!UsingCustomScenario
             {
-                if (CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup())        //wrong spawner group
+                if (!CurrentRoster.SpawnAnywhere && CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup())        //wrong spawner group
                     continue;
             }
 
@@ -274,20 +279,19 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             Spawner = CandidateSpawners[SelectedIndex];
 
-            Archetype = CurrentRoster.PickArchetype();
-
-            if (Game.DebugSpawning)
-                log("[SPAWNING] ... "$j+1
-                        $") selected "$Spawner
-                        $" (Tag="$Spawner.Tag
-                        $", Priority="$Spawner.Priority
-                        $"), and chose to spawn from Archetype "$Archetype$".");
-
-            //tell the spawner to spawn (it will call SpawnerAlocated() to remove itself from the unallocated spawners list)
-            Spawned = Spawner.SpawnArchetype(
-                    Archetype,
-                    bTesting,
-                    CustomScenario);
+            if(CurrentRoster.IsA('EnemyRoster'))
+            {
+                Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, CustomScenario, bTesting, NumEnemyRostersSpawned);
+            }
+            else if(CurrentRoster.IsA('HostageRoster'))
+            {
+                Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, CustomScenario, bTesting, NumHostageRostersSpawned);
+            }
+            else
+            {
+                Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, CustomScenario, bTesting);
+            }
+            
 
             //for testing, record counts of each type of spawned Actor
             if (Spawned != None)
@@ -298,6 +302,15 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             //its no longer a candidate since it has been allocated
             CandidateSpawners.Remove(SelectedIndex, 1);
+        }
+
+        if(CurrentRoster.IsA('EnemyRoster'))
+        {
+            NumEnemyRostersSpawned++;
+        }
+        else if(CurrentRoster.IsA('HostageRoster'))
+        {
+            NumHostageRostersSpawned++;
         }
     }
 
@@ -466,21 +479,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
             SelectedIndex = Rand(CandidateSpawners.length);
 
             Spawner = CandidateSpawners[SelectedIndex];
-
-            Archetype = CurrentRoster.PickArchetype();
-
-            if (Game.DebugSpawning)
-                log("[SPAWNING] ... "$j+1
-                        $") selected "$Spawner
-                        $" (Tag="$Spawner.Tag
-                        $"), and chose to spawn from Archetype "$Archetype$".");
-
-            //tell the spawner to spawn (it will call SpawnerAlocated() to remove itself from the unallocated spawners list)
-            Spawned = Spawner.SpawnArchetype(Archetype, bTesting);
-
-            //for testing, record counts of each type of spawned Actor
-            //if (Spawned != None)
-            //    SpawnedCounts[Spawner.ProfileArrayIndex] = SpawnedCounts[Spawner.ProfileArrayIndex] + 1;    //note can't use ++ operator because it can't grow the dyn. array
+            Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, None, bTesting);
 
             //its no longer a candidate since it has been allocated
             CandidateSpawners.Remove(SelectedIndex, 1);
@@ -502,15 +501,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
         Spawner = UnallocatedSpawners[0];
 
         Spawned = Spawner.SpawnFromLocalProperties(bTesting);
-
-        //for testing, record counts of each type of spawned Actor
-        //if (Spawned != None)
-        //    SpawnedCounts[Spawner.ProfileArrayIndex] = SpawnedCounts[Spawner.ProfileArrayIndex] + 1;    //note can't use ++ operator because it can't grow the dyn. array
     }
-
-    //log("[SPAWNING] Summary:");
-    //if (SpawnedCounts.length > 0)
-    //    log("[SPAWNING]     "$SpawnedCounts[0]$" MP objects");
 
     HasSpawned = true;
 
