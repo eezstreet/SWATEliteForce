@@ -555,12 +555,12 @@ function MutateAdvancedEnemyArchetypeInstance(EnemyArchetypeInstance Instance, i
 
     if(Data.bOverridePrimaryWeapon)
     {
-        // FIXME
+        Instance.SelectedPrimaryWeaponClass = class<FiredWeapon>(DynamicLoadObject(Data.OverridePrimaryWeapon, class'Class'));
     }
 
     if(Data.bOverrideBackupWeapon)
     {
-        // FIXME
+        Instance.SelectedBackupWeaponClass = class<FiredWeapon>(DynamicLoadObject(Data.OverrideBackupWeapon, class'Class'));
     }
 
     if(Data.bOverrideHelmet)
