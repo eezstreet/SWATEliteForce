@@ -442,6 +442,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * Highground audio on Food Wall was wrong ("He went back into the house", this was meant for Fairfax Residence)
  * Highground audio on Fairfax Residence was wrong ("Side 3 Level 2")
  * Some vanilla SWAT co-op missions used an objective set called "COOPClearTest". TSS removed this objective set and broke those missions. I have restored it.
+ * Re-enabled Auto Downloads feature.
 
 ## AI ##
   * Tons and tons of cut dialogue restored.

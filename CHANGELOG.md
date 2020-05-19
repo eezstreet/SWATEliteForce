@@ -97,6 +97,7 @@
  - Pepperspray cone reduced by 50%, you need to aim closer to people's faces now.
  - Recoil is now affected by arm injuries.
  - Added a unique GUI icon for the Less Lethal M870
+ - Auto-Downloads are now enabled by default.
  - Fixed SEF bug: Taunts would sometimes not elicit a response, now they do it at a consistent 10% rate.
  - Fixed SEF bug: Shooting a bomb trap now causes it to detonate, instead of silently becoming disarmed. It will trigger the "Tripped Trap" penalty when you do so.
  - Fixed SEF bug: SHOTGUN AND CLEAR and associated actions would not work very well, and sometimes lead to bumping and fighting at entrances.
