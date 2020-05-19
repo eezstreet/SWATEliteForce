@@ -228,6 +228,35 @@ function AddAdvancedEnemyRoster(QMMRoster Data, out array<Roster> Rosters)
     Rosters[Rosters.Length] = Roster;
 }
 
+function AddAdvancedHostageRoster(QMMRoster Data, out array<Roster> Rosters)
+{
+    local HostageRoster Roster;
+    local int i;
+    local Archetype.ChanceArchetypePair ChanceArchetypePair;
+
+    Roster = new(None, "CustomScenarioHostageRoster"$Rosters.Length) class'CustomScenarioAdvancedHostageRoster';
+
+    for(i = 0; i < Data.Archetypes.Length; i++)
+    {
+        ChanceArchetypePair.Archetype = Data.Archetypes[i].BaseArchetype;
+        ChanceArchetypePair.Chance = Data.Archetypes[i].Chance * 100;
+        Roster.Archetypes[i] = ChanceArchetypePair;
+    }
+    Roster.Count.Min = Data.Minimum;
+    Roster.Count.Max = Data.Maximum;
+
+    if(Data.SpawnAnywhere)
+    {
+        Roster.SpawnerGroup = 'CustomRosterSpawnerGroup';
+    }
+    else
+    {
+        Roster.SpawnerGroup = name(Data.SpawnGroup);
+    }
+
+    Rosters[Rosters.Length] = Roster;
+}
+
 function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> Rosters)
 {
     local EnemyRoster EnemyRoster;
@@ -356,11 +385,10 @@ function MutateLevelRosters(SpawningManager SpawningManager, out array<Roster> R
         // If we're using advanced hostage rosters, just use the settings from this custom scenario itself.
         if(UseAdvancedHostageRosters)
         {
-            // FIXME
-            //for(i = 0; i < AdvancedHostageRosters.Length; i++)
-            //{
-            //    Rosters[Rosters.Length] = AdvancedHostageRosters[i];
-            //}
+            for(i = 0; i < AdvancedHostageRosters.Length; i++)
+            {
+                AddAdvancedHostageRoster(AdvancedHostageRosters[i], Rosters);
+            }
         }
         else if(HostageCountRangeCow.Min - CampaignHostages > 0 || HostageCountRangeCow.Max - CampaignHostages > 0)
         {
@@ -572,6 +600,28 @@ function MutateAdvancedEnemyArchetypeInstance(EnemyArchetypeInstance Instance, i
 function MutateAdvancedHostageArchetypeInstance(HostageArchetypeInstance Instance, int RosterIndex, int ArchetypeIndex)
 {
     local ArchetypeData Data;
+
+    if(!UseAdvancedHostageRosters)
+    {
+        return;
+    }
+
+    Data = AdvancedHostageRosters[RosterIndex].Archetypes[ArchetypeIndex];
+
+    if(Data.bOverrideMorale)
+    {
+        Instance.Morale = RandRange(Data.OverrideMinMorale, Data.OverrideMaxMorale);
+    }
+
+    if(Data.bOverrideVoiceType)
+    {
+        Instance.VoiceTypeOverride = Data.OverrideVoiceType;
+    }
+
+    if(Data.bOverrideHelmet)
+    {
+        // FIXME
+    }
 }
 
 defaultproperties

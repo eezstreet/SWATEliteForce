@@ -91,7 +91,7 @@ function actor SpawnArchetype(
     local Spawner Slave;
 
     //we don't expect any Spawner to ever spawn more than once (unless we're testing)
-    assert((!HasSpawned && !Disabled) || bTesting || ArchetypeName == 'TestSpawn');
+    assert((!Disabled) || bTesting || ArchetypeName == 'TestSpawn');
 
     //tell the level that we're used-up
     //  (need to do this before we might return!)

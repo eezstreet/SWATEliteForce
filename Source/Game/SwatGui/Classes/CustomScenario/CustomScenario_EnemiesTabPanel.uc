@@ -778,6 +778,7 @@ function Roster_NewArchetypeAdded(GUIComponent Sender)
 	RosterDeleteArchetypeButton.EnableComponent();
 
 	Scenario = CustomScenarioPage.GetCustomScenario();
+	CurrentRoster = Scenario.AdvancedEnemyRosters[RosterList.List.Index];
 	ArchetypeData.Chance = 0.5;
 	ArchetypeData.bOverrideVoiceType = false;
 	ArchetypeData.bOverrideMorale = false;
@@ -961,7 +962,6 @@ function PopulateFieldsFromScenario(bool NewScenario)
 {
     local CustomScenario Scenario;
     local EnemyArchetype Archetype;
-    local CustomScenario.QMMRoster CurrentRoster;
     local CustomScenario.ArchetypeData ArchetypeData;
     local int i,j;
 
@@ -1007,9 +1007,6 @@ function PopulateFieldsFromScenario(bool NewScenario)
     		RosterList.List.Add(Scenario.AdvancedEnemyRosters[i].DisplayName);
     	}
     }
-
-    // Save the current archetype pair from the rosters
-    CurrentRoster = Scenario.AdvancedEnemyRosters[RosterList.List.Index];
 
     //fill archetypes
     for (i=0; i<Data.EnemyArchetype.length; ++i)
