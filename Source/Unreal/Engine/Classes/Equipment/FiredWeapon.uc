@@ -2001,7 +2001,7 @@ simulated function OnHolderDesiredFlashlightStateChanged()
                 true);      //PlayOnOther
 
 	    // change texture on 3rd person model
-	    if (! InFirstPersonView())
+	    if (! InFirstPersonView() && Index != -1)
 	    {
 			if (PawnWantsFlashlightOn) // turn on the glow texture on the flashlight bulb
 			{
