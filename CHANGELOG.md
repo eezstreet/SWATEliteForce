@@ -21,6 +21,7 @@
 - Upgraded Quick Mission Maker!
   - Have you ever wanted to create your own campaign path? Perhaps with custom levels? Now you can!
   - You can now use custom maps and write your own briefings for the Quick Mission Maker.
+  - The Quick Mission Maker now has finer control over suspects and hostages through an ADVANCED MODE.
   - Additionally, you can create a progression and unlock system for your custom campaign.
   - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
 
@@ -182,6 +183,7 @@
  - You can now force level scripts to function like they would in a campaign (note, this may cause instability)
  - You can now allow traps to spawn in the level.
  - You can now allow dispatch audio to work in a Quick Mission.
+ - The hostages and suspects that spawn on a level can be more finely controlled through an "Advanced Mode" that allows editing details such as individual character morale, weapons used, and even what voice they have.
  - Removed the per-map limits on suspect/civilian counts. (You can now have up to 999 suspects and/or civilians on a map)
  - Added a new objective type: "Rescue as many civilians as possible." This is similar to Rescue All Civilians, but if a suspect downs a hostage, it does not fail the mission.
  - In the Host Game menu, you can now choose to create a Quick Mission Maker rotation as opposed to a regular Mission rotation.

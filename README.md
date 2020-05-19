@@ -717,6 +717,7 @@ Quick Mission Maker packs are stored in `SEF/Content/Scenarios`. You can downloa
  - You can now write custom briefing text for Quick Missions.
  - You can now allow the Singleplayer map scripts to function in QMM missions (note, may cause instability)
  - You can now allow traps to spawn in QMM missions.
+ - The hostages and suspects that spawn on a level can be more finely controlled through an "Advanced Mode" that allows editing details such as individual character morale, weapons used, and even what voice they have.
  - Notes entry field size increased from 500 to 4000.
  - NOTES tab renamed to TEXT.
  - Effectively removed the per-map limits on civilian and suspect counts. You can now have up to 999 suspects or civilians on a map.
