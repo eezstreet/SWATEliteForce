@@ -30,6 +30,93 @@ function Initialize(LevelInfo inLevel)
     Level = inLevel;
 }
 
+function RefreshUnallocatedSpawners(SwatGameInfo Game)
+{
+    local Spawner Spawner;
+    local CustomScenario CustomScenario;
+    local bool UsingCustomScenario;
+    local bool isCampaignCoop;
+    local SwatRepo Repo;
+    local EEntryType StartPoint;
+
+    //we may want to know where the player is starting
+    Repo = SwatRepo(Level.GetRepo());
+    assert(Repo != None);
+    StartPoint = Repo.GetDesiredEntryPoint();
+
+    isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
+
+    //reference any custom scenario
+    CustomScenario = SwatGameInfo(Level.Game).GetCustomScenario();
+    UsingCustomScenario = (CustomScenario != None);
+
+
+     //empty unallocated spawners list (we may be testing)
+    UnallocatedSpawners.Remove(0, UnallocatedSpawners.length);
+
+    //build list of spawners
+    foreach Game.AllActors(class'Spawner', Spawner)
+    {
+        //try to disqualify the spawner for this level
+
+        //spawners can only spawn once.
+        if (Spawner.HasSpawned)
+            continue;
+
+        //disabled spawners shouldn't spawn
+        if (Spawner.Disabled)
+            continue;
+
+        //slave-only spawners will only spawn if their master spawns
+        //(in Custom Scnearios, slave spawners are regular spawners)
+        if  (
+                !UsingCustomScenario
+            &&  Spawner.SpawnMode == SpawnMode_SlaveOnly
+            )
+            continue;
+
+        //obey the spawner's "MissionSpawn" wishes
+        if (Spawner.MissionSpawn > MissionSpawn_Any)
+        {
+            if  (
+                    Spawner.MissionSpawn == MissionSpawn_CampaignOnly
+                &&  UsingCustomScenario
+                &&  !CustomScenario.UseCampaignObjectives
+                )
+                continue;
+
+            if  (
+                    !UsingCustomScenario
+                &&  Spawner.MissionSpawn == MissionSpawn_CustomOnly
+                )
+                continue;
+        }
+
+        //spawners may be disabled based on the selected player start point
+        if (Spawner.StartPointDependent > StartPoint_Any)
+        {
+            // dbeswick: don't use these spawns during coop games, frequently both spawns are in use
+            if ( Level.IsCOOPServer && !isCampaignCoop )
+                continue;
+
+            if  (
+                    Spawner.StartPointDependent == EStartPointDependent.StartPoint_OnlyPrimary
+                &&  StartPoint != EEntryType.ET_Primary
+                )
+                continue;
+
+            if  (
+                    Spawner.StartPointDependent == EStartPointDependent.StartPoint_OnlySecondary
+                &&  StartPoint != EEntryType.ET_Secondary
+                )
+                continue;
+        }
+
+        //okay, its qualified
+        UnallocatedSpawners[UnallocatedSpawners.length] = Spawner;
+    }
+}
+
 //returns results as an array of ints, each index is the total of EArchetypeCategory spawned
 //  (ie. enemies, hostages, etc.)
 function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
@@ -89,70 +176,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
     log("Difficulty level is "$DifficultyLevel$", spawning appropriate rosters...");
 
-    //empty unallocated spawners list (we may be testing)
-    UnallocatedSpawners.Remove(0, UnallocatedSpawners.length);
-
-    //build list of spawners
-    foreach Game.AllActors(class'Spawner', Spawner)
-    {
-        //try to disqualify the spawner for this level
-
-        //spawners can only spawn once.
-        if (Spawner.HasSpawned)
-            continue;
-
-        //disabled spawners shouldn't spawn
-        if (Spawner.Disabled)
-            continue;
-
-        //slave-only spawners will only spawn if their master spawns
-        //(in Custom Scnearios, slave spawners are regular spawners)
-        if  (
-                !UsingCustomScenario
-            &&  Spawner.SpawnMode == SpawnMode_SlaveOnly
-            )
-            continue;
-
-        //obey the spawner's "MissionSpawn" wishes
-        if (Spawner.MissionSpawn > MissionSpawn_Any)
-        {
-            if  (
-                    Spawner.MissionSpawn == MissionSpawn_CampaignOnly
-                &&  UsingCustomScenario
-                &&  !CustomScenario.UseCampaignObjectives
-                )
-                continue;
-
-            if  (
-                    !UsingCustomScenario
-                &&  Spawner.MissionSpawn == MissionSpawn_CustomOnly
-                )
-                continue;
-        }
-
-        //spawners may be disabled based on the selected player start point
-        if (Spawner.StartPointDependent > StartPoint_Any)
-        {
-			// dbeswick: don't use these spawns during coop games, frequently both spawns are in use
-			if ( Level.IsCOOPServer && !isCampaignCoop )
-				continue;
-
-            if  (
-                    Spawner.StartPointDependent == EStartPointDependent.StartPoint_OnlyPrimary
-                &&  StartPoint != EEntryType.ET_Primary
-                )
-                continue;
-
-            if  (
-                    Spawner.StartPointDependent == EStartPointDependent.StartPoint_OnlySecondary
-                &&  StartPoint != EEntryType.ET_Secondary
-                )
-                continue;
-        }
-
-        //okay, its qualified
-        UnallocatedSpawners[UnallocatedSpawners.length] = Spawner;
-    }
+    RefreshUnallocatedSpawners(Game);
 
     //give any custom scenario a chance to mutate the roster list
     if (UsingCustomScenario)
@@ -528,7 +552,12 @@ function SpawnerAllocated(Actor Spawner)
     }
 
     if (ConcreteSpawner.SpawnMode != SpawnMode_Slave && ConcreteSpawner.SpawnMode != SpawnMode_SlaveOnly)
-        assert(found);      //we shouldn't try to allocate a spawner that isn't in the unallocated spawners list
+    {
+        if(!found)
+        {
+            RefreshUnallocatedSpawners(SwatGameInfo(Level.Game));
+        }
+    }
     //if the spawner is a slave, then it may spawn during level roster spawning even if its not qualified to spawn from a roster
 }
 

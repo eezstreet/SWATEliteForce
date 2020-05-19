@@ -118,6 +118,10 @@ function actor SpawnArchetype(
         Spawned = Spawn(ClassToSpawn);
         AssertWithDescription(Spawned != None,
                 "[tcohen] "$name$" tried to spawn an instance of class "$ClassToSpawn$", but couldn't.");
+        if(Spawned == None)
+        {
+            return Spawned;
+        }
 
 
             log("[SPAWNING] ... ... "$name
