@@ -402,13 +402,25 @@ private function SetTimeToStopTryingToAttack()
 	TimeToStopTryingToAttack = Level.TimeSeconds + MaximumTimeToWaitToAttack;
 }
 
+private function LogForOfficer(string logText)
+{
+	if(m_Pawn.IsA('SwatOfficer'))
+	{
+		Log(logText);
+	}
+}
+
 state Running
 {
  Begin:
 	if (m_Pawn.logTyrion )
 		log( self.name $ " started " $ Name $ " at time " $ Level.TimeSeconds );
 
+	LogForOfficer("AttackTargetAction: " $m_Pawn.name$" has started action.");
+
 	ActivateTargetSensor();
+
+	LogForOfficer("AttackTargetAction: "$m_Pawn.name$" has activated their target sensor.");
 
 	// we're going to attack, so we might as well have a ready weapon when it comes time.
 	ReadyWeapon();

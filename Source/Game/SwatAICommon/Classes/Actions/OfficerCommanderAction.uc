@@ -472,12 +472,15 @@ private latent function AttackTarget(Pawn Target)
 	// If we're just moving to the destination, just attack.
 	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
 	{
+		log("SwatOfficer: "$self.m_Pawn$" should now be attacking "$Target.name);
 		AttackGoal = new class'AttackTargetGoal'(weaponResource(), Target);
 		assert(AttackGoal != None);
 		AttackGoal.AddRef();
 		AttackGoal.postGoal(self);
 		WaitForGoal(AttackGoal);
+		log("SwatOfficer: "$self.m_Pawn$" has finished attacking "$Target.name);
 
+		AttackGoal.unPostGoal(self);
 		AttackGoal.Release();
 		AttackGoal = None;
 	}
