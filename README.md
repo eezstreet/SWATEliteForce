@@ -95,6 +95,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
 
 **More equipment options.**
  * Over 40 new pieces of equipment have been added, including shotguns, assault rifles, submachine guns, tactical gear, and armor.
+ * Several existing pieces of equipment have been improved visually.
  * The player can carry armor and all helmet options in singleplayer.
  * The breaching tab is removed and replaced with a sixth tactical slot.
  * The player can select how many magazines they would like to bring in the mission.
@@ -342,9 +343,7 @@ To make this process more painless, I've gone ahead and listed each of the mods 
 **Fully Compatible; no special installation steps:**
  * SWAT 4 ENB / Reshade
  * SWAT 4 Music Overhaul
- * Elite Tactical Force Map Pack
- * Mega Map Pack. (DO NOT install the mod, just the maps)
- * GSF Map Pack
+ * ANY map pack mod. (DO NOT install the Mega Map Pack campaign mod in its installer, it is not needed with this mod)
  * ANY custom officer skin mod.
 
 
@@ -353,16 +352,20 @@ To make this process more painless, I've gone ahead and listed each of the mods 
  * SWAT 4 Retextured Mod. (Not usable in multiplayer)
  * Snitch Mod. (It can crash on occasion)
  * LEVEL 13. (Only the maps are supported.)
- * BFHL Mod. (Can be installed, but requires a great deal of patience and use of the editor to do so)
  * GSK Character Models (see above)
 
 
 **Not applicable; SEF includes the features of these mods and/or improves upon them:**
- * Brettzie's M4
+ * Brettzie's M4A1
  * SWAT 4 Widescreen Mod
  * Gez Admin Mod
  * Markmods Admin Mod
  * Mega Map Mod
+
+
+**Already present; this mod is either incorporated into or is a base for another mod:**
+ * BFHL character models mod (the author provides a compatible version)
+ * HugeOfficerVarieties
 
 
 **Not compatible; SEF does not work with these mods at all and cannot possibly function with:**
@@ -699,6 +702,7 @@ All weapons have been changed to have correct muzzle velocities.
 	- M1Super90 Shotgun: Cut shotgun from the original game. Lower magazine size than the M4Super90 but faster firing rate and more manageable recoil.
 	- Glock 18: Spitfire machine pistol, available as a secondary.
 	- Glock 19: Ultra lightweight 9mm pistol.
+        - Colt Model 635 9mm SMG: SMG based on the M4A1. Includes a suppressed variant.
 * Added 3-Packs (tactical) of the following. They are equivalent in weight and bulk to five items, to incentivize taking single items over packs:
 	- Grenades
 	- Wedges
@@ -1047,6 +1051,7 @@ As a security precaution, note that *anyone* can access these URLs and get a mes
 * Audio for help hosting NA servers
 * Gez for producing the Gez admin mod, which I referenced a lot.
 * RUNEPATRIARCH for finding some unused audio
+* 
 
 **Briefing Voice-Over:** LethalFeline (go check out his YouTube channel!)
 
@@ -1071,13 +1076,13 @@ These people have generously donated money to Elite Force via Patreon. If you ar
 ## WHO WE ARE: ELITE SQUAD ##
 * eezstreet: Team Lead, Programming, Map Editing
 * Jose21Crisis: Programming, Weapons Analysis
-* kevinfoley: Programming, Model Editing
 * Rangar: Music (Composition), Textures
 * TheTCREngineer: Models
 * sandman332: Programming
 
 ## RETIRED ELITE SQUAD ##
-mezzokoko: Programming
+* mezzokoko: Programming
+* kevinfoley: Programming, Model Editing
 
 *... if there is anyone I missed, feel free to send me a message on Moddb, and this will be corrected. --eezstreet*
 

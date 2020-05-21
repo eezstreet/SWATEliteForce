@@ -3,7 +3,9 @@
 #### MAJOR FEATURES ####
 
 - New and altered equipment!
-  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18 and Glock 19.
+  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+suppressed), Colt 9mm SMG (+suppressed), Glock 18 and Glock 19.
+  - Added Brettzie's M4A1 as a replacement for the original M4A1! It also has suppressed and Aimpoint variants, for a total of 4 varieties of M4A1.
+  - Added two new armor variants.
   - Added the ability to take no weapon!
   - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
   - Gas and pepperballs are now less effective.
@@ -26,7 +28,8 @@
   - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
 
 #### ALL CHANGES ####
- - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+1 variant), Glock 18, Glock 19, No Weapon
+ - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+suppressed), Glock 18, Glock 19, No Weapon, Colt 9mm SMG (+suppressed)
+ - Implemented Brettzie's M4A1.
  - Implemented new Desert Eagle model
  - Added 2 new armor pieces: Heavy Kevlar Armor (Level IIIA) and Heavy Ceramic Armor (Level IV).
  - Added Hardcore Mode. Unlocked when the SWAT 4 + Expansion campaign has been completed at least once.
