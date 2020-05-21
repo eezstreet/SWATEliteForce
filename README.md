@@ -77,8 +77,9 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * SWAT officers are much more efficient at clearing rooms and don't form "death funnels" at doors as often
  * SWAT officers will smartly avoid looking in the same direction as their teammates while moving if possible to mitigate threat exposure.
  * SWAT officers don't become distracted by civilians and suspects while moving. They will continue following you or going towards their destination (even possibly attacking)
+ * SWAT officers will automatically fire beanbags or pepperballs at fleeing suspects, and will keep them equipped as a primary weapon.
  * SWAT officers can now take cover like suspects do (including leaning around corners)
- * SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items.
+ * SWAT officers won't shoot through civilians to hit their target and are better at aiming with less lethal items in general.
  * SWAT officers can now use grenade launchers, and will use them if a GAS AND CLEAR, OPEN BANG AND CLEAR, etc action is commanded.
  * SWAT officers will drop a lightstick after clearing a room.
  * SWAT officers can now be affected by CS gas, flashbangs, tasers, pepper spray, etc.
@@ -476,6 +477,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * SWAT will no longer try to shoot through civilians or players when attacking their target.
   * SWAT will reload their weapons when ordered to fall in.
   * SWAT do not become distracted by suspects/civilians when they are following you or going to a specific destination (with MOVE TO). They will shout at them (and/or attack), but continue moving.
+  * SWAT will shoot beanbags and pepperballs at fleeing suspects (when following a FALL IN or MOVE TO command) intelligently, keeping in mind not to spam beanbags and kill people. SWAT can now use pepperballs and beanbags as proper weapons in general.
   * SWAT will listen to and respond to sounds even when they have an enemy, so they have better situational awareness.
   * SWAT clears rooms quicker and drops a lightstick after clearing.
   * SWAT now turns at the same rate that suspects do (which is faster) and have higher field of vision.

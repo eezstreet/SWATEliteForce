@@ -268,18 +268,20 @@ function bool ShouldAttackWhileFleeing()
 
 function AttackWhileFleeing()
 {
-  local Pawn Enemy;
+  	local Pawn Enemy;
 
-  Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
-  if(Enemy == None) {
-    return;
-  }
+	Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+	if(Enemy == None) {
+	    return;
+	}
 
 	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
     assert(CurrentAttackTargetGoal != None);
 	CurrentAttackTargetGoal.AddRef();
 
 	CurrentAttackTargetGoal.postGoal(self);
+
+	ISwatEnemy(m_Pawn).BecomeAThreat();
 }
 
 
@@ -360,6 +362,8 @@ latent function Flee()
 {
 	local Pawn CurrentEnemy;
 	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+
+	ISwatEnemy(m_Pawn).UnbecomeAThreat();
 
 	// trigger the speech
 	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();

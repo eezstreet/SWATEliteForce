@@ -502,6 +502,33 @@ private function bool ShouldAttackRunner(Pawn target)
 	  (ISwatOfficer(m_Pawn).GetPrimaryWeapon().IsLessLethal() || (ISwatOfficer(m_Pawn).GetBackupWeapon() != None && ISwatOfficer(m_Pawn).GetBackupWeapon().IsLessLethal()));
 }
 
+private function bool ShouldAttackUsingLessLethal(Pawn target)
+{
+	local FiredWeapon Item;
+
+	if(ISwatAI(target).IsCompliant() || ISwatAI(target).IsArrested() || target.IsA('SwatUndercover'))
+	{
+		return false; // Don't target compliant or arrested people. And leave Carl Jennings alone!
+	}
+
+	Item = FiredWeapon(m_Pawn.GetActiveItem());
+
+	if(Item == None || !Item.IsLessLethal() || Item.IsA('Taser')      || // Don't tase people, it can kill
+		(Item.IsA('CSBallLauncher') && ISwatAI(target).IsGassed())    || // Pepperball is uselss on already gassed people
+		(Item.IsA('BeanbagShotgunBase') && ISwatAI(target).IsStung()) || // Don't keep spamming beanbags at people.
+		(Item.IsA('GrenadeLauncherBase')))                            	 // Don't use the grenade launcher. It's stupid.
+	{
+		return false;
+	}
+
+	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
+	{	// The AI is trained to attack on the move in this state; we don't want them to walk up to people and start beaning them.
+		return true;
+	}
+
+	return false;
+}
+
 private latent function EngageAssignment()
 {
 	local bool bCompletedEngagementGoals;
@@ -509,8 +536,10 @@ private latent function EngageAssignment()
 	// we should have an assignment here
 	assert (CurrentAssignment != None);
 
-	if ((CurrentAssignment.IsA('SwatEnemy') && ISwatEnemy(CurrentAssignment).IsAThreat()) ||
-		CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment))
+	if(CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment) ||
+		(CurrentAssignment.IsA('SwatEnemy') && ISwatEnemy(CurrentAssignment).IsAThreat()) ||	// Current assignment is a threat
+		(CurrentAssignment.IsA('SwatEnemy') && !ISwatEnemy(CurrentAssignment).IsAThreat() && ShouldAttackUsingLessLethal(CurrentAssignment))	// Not a threat but we can use less lethal to subdue them
+		)
 	{
 		AttackTarget(CurrentAssignment);
 

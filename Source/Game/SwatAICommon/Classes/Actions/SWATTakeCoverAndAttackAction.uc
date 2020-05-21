@@ -104,11 +104,6 @@ protected function bool CoverIsInBadPosition()
 
 function float selectionHeuristic( AI_Goal goal )
 {
-	if(IsFallingIn())
-	{	// Is handled by AttackEnemyWhileFallingInAction
-		return 0.0;
-	}
-
 	// if we don't have a pawn yet, set it
 	if (m_Pawn == None)
 	{

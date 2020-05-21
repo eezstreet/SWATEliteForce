@@ -18,6 +18,7 @@
   - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
   - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
   - SWAT AI will better cover each others' backs when moving to locations (or falling in) and will continue movement actions when distracted by civilians or suspects.
+  - SWAT AI will utilize the pepperball gun and beanbag shotguns automatically against uncompliant, running suspects (only while following a FALL IN or MOVE TO order)
   - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
   - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
 - Upgraded Quick Mission Maker!
