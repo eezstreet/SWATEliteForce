@@ -1038,7 +1038,9 @@ As a security precaution, note that *anyone* can access these URLs and get a mes
 
 # CREDITS/THANK-YOUS #
 * Irrational Games and Sierra for the game.
-* BeyondUnreal for keeping their old school Unreal Engine 1/2/3 documentation alive
+* BeyondUnreal for providing Unreal Engine 1/2/3 documentation
+* Beppe_goodoldrebel for the Colt 9mm SMG models
+* Immortal Fishy for many ironsight offset corrections.
 * Sebastien NovA for his modified SwatEd.exe
 * FrancisSwat for being gracious in giving us the SAS mod assets.
 * Hellfire Entertainment for being gracious in giving us the SWAT4 1.2 mod assets.
@@ -1047,11 +1049,13 @@ As a security precaution, note that *anyone* can access these URLs and get a mes
 * Dc247 for typo corrections in this document
 * MulleDK19 for help with the Speech Recognition feature
 * Yasuntei for spotting a typo
-* SS for hosting EU servers
 * Audio for help hosting NA servers
 * Gez for producing the Gez admin mod, which I referenced a lot.
 * RUNEPATRIARCH for finding some unused audio
-* 
+
+
+A big massive thank-you to SS for hosting the official EU servers and providing a lot of support with the mod, including finding bugs and providing fixes for them.
+Countless issues have been fixed because of him.
 
 **Briefing Voice-Over:** LethalFeline (go check out his YouTube channel!)
 
