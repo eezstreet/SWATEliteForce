@@ -447,7 +447,7 @@ RateOfFire=800 RPM
 [SilencedColtSMG]
 Description=This shortened version of the M16 assault rifle is designed for close quarters. Instead of firing 5.56x45mm NATO rounds from a gas-operated receiver however, this model fires 9x19mm Parabellum rounds from a closed bolt. It has become popular amongst law enforcement agencies for its relative cheap cost compared to German imports and accuracy compared to open-bolt submachine guns. This particular model is equipped with a sound and flash suppressor for when stealth is paramount.
 FriendlyName=Suppressed Colt 635
-ShortName=Suppressed Colt 635
+ShortName=Sup. Colt 635
 
 [SCARHMG]
 Description=A truly next-generation assault rifle, the SCAR, short for ''Special operations forces Combat Assault Rifle'' is the latest offering from FN Herstal in full-sized assault rifles. The H designation indicates that this particular model fires in 7.62x51mm rounds. While firing slower and having a smaller magazine size than the M4, it fires a much larger round to compensate.
