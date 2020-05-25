@@ -536,11 +536,13 @@ private latent function EngageAssignment()
 	// we should have an assignment here
 	assert (CurrentAssignment != None);
 
+	log("EngageAssignment() for "$self.m_Pawn.name);
 	if(CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment) ||
 		(CurrentAssignment.IsA('SwatEnemy') && ISwatEnemy(CurrentAssignment).IsAThreat()) ||	// Current assignment is a threat
 		(CurrentAssignment.IsA('SwatEnemy') && !ISwatEnemy(CurrentAssignment).IsAThreat() && ShouldAttackUsingLessLethal(CurrentAssignment))	// Not a threat but we can use less lethal to subdue them
 		)
 	{
+		log(""$self.m_Pawn.name$" should attack assignment "$CurrentAssignment.name$", so let's do that now!");
 		AttackTarget(CurrentAssignment);
 
 		if (CurrentAttackEnemyGoal != None)

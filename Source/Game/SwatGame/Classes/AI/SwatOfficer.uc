@@ -275,7 +275,6 @@ protected function ConstructCharacterAI()
     characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
     characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
     characterResource.addAbility(new class'SwatAICommon.ShareEquipmentAction');
-    characterResource.addAbility(new class'SwatAICommon.AttackEnemyWhileFallingInAction');
 
     if (ShouldReactToNonLethals()) {
         characterResource.addAbility(new class'SwatAICommon.PepperSprayedAction');
