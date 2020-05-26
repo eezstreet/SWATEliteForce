@@ -4075,6 +4075,7 @@ simulated function OnGivenNewEquipment(HandheldEquipment NewItem) {}
 
 function ClientSetItemAvailableCount(class<HandheldEquipment> Equipment, int NewAvailableCount)
 {
+    log("ClientSetItemAvailableCount("$Equipment$", "$NewAvailableCount$")");
     if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
     {
         GivenFlashbangs.SetAvailableCount(NewAvailableCount);
@@ -4098,6 +4099,10 @@ function ClientSetItemAvailableCount(class<HandheldEquipment> Equipment, int New
     else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
     {
         GivenWedge.SetAvailableCount(NewAvailableCount);
+    }
+    else
+    {
+        log("No equipment matches for ClientSetItemAvailableCount.")
     }
 }
 
