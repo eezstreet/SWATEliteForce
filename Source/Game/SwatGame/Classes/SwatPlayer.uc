@@ -4102,7 +4102,7 @@ function ClientSetItemAvailableCount(class<HandheldEquipment> Equipment, int New
     }
     else
     {
-        log("No equipment matches for ClientSetItemAvailableCount.")
+        log("No equipment matches for ClientSetItemAvailableCount.");
     }
 }
 
