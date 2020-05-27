@@ -73,7 +73,7 @@ replication
 {
     // I'm not replicating this bNetDirty, so make sure that the spec is set
     // immediately after spawning.
-    reliable if ( Role == ROLE_Authority )
+    reliable if ( bNetDirty )
         LoadOutSpecCount, SkinsCount,
         ReplicatedLoadOutSpec, ReplicatedCustomSkinClassName, ReplicatedSkins, bThisPlayerIsTheVIP, SwatPlayerID, VoiceType;
 
