@@ -403,6 +403,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * "Press ESC and debrief to exit the game" now shows on ALL missions, not just Food Wall, Fairfax Residence and Qwik Fuel missions.
  * Punching a restrained suspect no longer makes them stand up.
  * Punching while changing weapons or while arresting will no longer turn your weapon invisible.
+ * Punching while firing pepper spray, reloading weapons, or firing weapons is no longer allowed for obvious reasons.
  * There is no longer a cooldown between swapping sniper viewports after "Press Page Up to view sniper view" triggers.
  * Wild-Gunner AIs had the wrong weapon equipped (M4A1 instead of M249 SAW)
  * Wild-Gunner AIs will no longer sweep back and forth while compliant.
@@ -428,12 +429,12 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * In CO-OP, suspect skins were visible despite only SWAT skins being available for use. All skins are available for use now.
  * You could reload the same magazine back into the weapon, if it was the highest-containing, but not full magazine.
  * Spoken lines by TOC on the expansion missions would cut off if the player used the shout button
- * Wedges did not appear on the player model.
+ * Wedges did not appear in players' holsters.
  * If a suspect unlocked a door, it is still "known" as a locked door.
  * The enemy "CallForHelp" speech was rarely/if at all triggering.
  * The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
  * Applying a loadout to the whole team in a Quick Mission which has locked equipment allowed the player to bypass the locked equipment entirely.
- * Enemies could spawn in an unreachable spot on The Wolcott Projects.
+ * Enemies could spawn in an unreachable spot on The Wolcott Projects (QMM only), making it impossible to collect the evidence.
  * The gunshot sound effects on Northside Vending and Amusements from the laundromat would not play correctly on the expansion (but would in the vanilla game).
  * The gunshot sound effects on A-Bomb Nightclub from the stage would not play correctly on the expansion (but would in the vanilla game).
  * On Fresnal St. Station, hostages that spawned on the train platform would scream endlessly after a suspect escaped.
@@ -445,7 +446,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * Victory Imports did not have working Highground due to the bug listed above.
  * Highground audio on Food Wall was wrong ("He went back into the house", this was meant for Fairfax Residence)
  * Highground audio on Fairfax Residence was wrong ("Side 3 Level 2")
- * Some vanilla SWAT co-op missions used an objective set called "COOPClearTest". TSS removed this objective set and broke those missions. I have restored it.
+ * Some custom SWAT 4 (non-expansion) co-op missions used an objective set called "COOPClearTest". TSS removed this objective set and broke those missions. I have restored it. (Thanks to SS for the tip.)
  * Re-enabled Auto Downloads feature.
 
 ## AI ##

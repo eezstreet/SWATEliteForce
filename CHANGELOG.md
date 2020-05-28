@@ -120,6 +120,7 @@
  - Fixed SEF bug: The Server Setup panel, when used to restart the game, would set the game to be Barricaded Suspects.
  - Fixed SEF bug: Lowready was triggering when the flashlight was on (the vanilla game disables this)
  - Fixed SEF bug: M4super90 and Nova Pump had wrong ironsight positions
+ - Fixed SEF bug: Sometimes the player can be seen wearing a gas mask and M4A1 carbine that they don't have.
  - Fixed SEF/TSS bug: If the Graphic Command Interface is used, and the EXIT MENU button is disabled, and aiming at a door, nothing would be highlighted (the menu would be broken). This is triggered by bad logic in TSS code but only visible if SEF or another mod is used.
  - Fixed TSS bug: Some buttons and other things have missing text in 1600x900 resolution
  - Fixed TSS bug: The gunshots that play on Northside Vending and Amusements from the laundromat wouldn't play. (They worked in the vanilla game, broken in the expansion)
@@ -131,6 +132,7 @@
  - Fixed TSS bug: Pepperspray cone was reduced when standing still, which made you *less* likely to hit your target. It's now a constant amount.
  - Fixed TSS bug: Various typos in Food Wall briefing docs refer to Jimenez as "Columbian" and not "Colombian" (thanks to JalapenoPepsi for pointing this out)
  - Fixed TSS bug: Fixed some custom maps having no objectives (but working fine in vanilla SWAT4; thanks to SS for the fix)
+ - Fixed TSS bug: Fixed being able to melee people while spraying with pepper spray or firing.
 
 ##### Map-Specific Changes #####
 
