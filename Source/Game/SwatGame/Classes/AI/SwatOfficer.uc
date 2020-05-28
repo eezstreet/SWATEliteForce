@@ -959,35 +959,32 @@ simulated function name GetEffectEventForReportResponseFromTOCWhenNotIncapacitat
 
 // IIInterested_GameEvent_ReportableReportedToTOC implementation
 
-function ReportToTOC(name EffectEventName, name ReplyEventName, Actor other, SwatGamePlayerController controller);
-function IAmReportableCharacter GetCurrentReportableCharacter();
-function SetCurrentReportableCharacter(IAmReportableCharacter InChar);
+function ReportToTOC(name EffectEventName, name ReplyEventName, Actor other, SwatPlayer player);
 
 function OnReportableReportedToTOC(IAmReportableCharacter ReportableCharacter, Pawn Reporter) {
-  local Controller i;
-  local SwatGamePlayerController current;
-  local name EffectEventName;
-  local name ReplyEventName;
+	local Controller i;
+	local SwatGamePlayerController current;
+	local name EffectEventName;
+	local name ReplyEventName;
 
-  if(Reporter != Self) {
-    return;
-  }
+	if(Reporter != Self) {
+	    return;
+	}
 
-  EffectEventName = ReportableCharacter.GetEffectEventForReportingToTOC();
-  ReplyEventName = ReportableCharacter.GetEffectEventForReportResponseFromTOC();
-  SetCurrentReportableCharacter(ReportableCharacter);
+	EffectEventName = ReportableCharacter.GetEffectEventForReportingToTOC();
+	ReplyEventName = ReportableCharacter.GetEffectEventForReportResponseFromTOC();
 
-  log("Officer "$Reporter$" is reporting "$ReportableCharacter);
+	log("Officer "$Reporter$" is reporting "$ReportableCharacter);
 
-  // Walk the controller list here to notify all clients
-  for ( i = Level.ControllerList; i != None; i = i.NextController )
-  {
-      current = SwatGamePlayerController( i );
-      if ( current != None )
-      {
-          ReportToTOC(EffectEventName, ReplyEventName, Actor(ReportableCharacter), current);
-      }
-  }
+	// Walk the controller list here to notify all clients
+	for ( i = Level.ControllerList; i != None; i = i.NextController )
+	{
+	    current = SwatGamePlayerController( i );
+	    if ( current != None )
+	    {
+	        ReportToTOC(EffectEventName, ReplyEventName, Actor(ReportableCharacter), SwatPlayer(current.pawn));
+	    }
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

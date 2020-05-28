@@ -43,6 +43,7 @@
  - SWAT AI will not stop to engage targets when issued a MOVE TO or FALL IN command.
  - Optimized SWAT AI pathfinding for Close Door, Deploy Pepper Spray, Deploy Taser, and Mark With Lightstick commands.
  - You can now issue a DEPLOY WEDGE command on an open door. When used, officers will close the door and then deploy the wedge, instead of having to issue two separate commands. (note, it was possible to have officers wedge doors open when using the Speech Command Interface. This has been fixed.)
+ - TOC now responds to SWAT AI reports.
  - CHECK FOR TRAPS has been renamed to MIRROR FOR TRAPS and requires an optiwand to be equipped on an officer to use.
  - MIRROR/SCAN DOOR has been renamed to MIRROR FOR CONTACTS
  - Both MIRROR FOR TRAPS and MIRROR FOR CONTACTS have had their speed increased by about 20%.

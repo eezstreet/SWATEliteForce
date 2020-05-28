@@ -108,7 +108,7 @@ var private DeployedC2ChargeBase DeployedC2Charge;
 var config float Unused13;
 
 // Reporting-to-TOC state variables
-var private IAmReportableCharacter CurrentReportableCharacter;
+var public IAmReportableCharacter CurrentReportableCharacter;
 
 var private int ArmInjuryFlags;
 
@@ -3981,6 +3981,8 @@ simulated function OnEffectStarted(Actor inStartedEffect);
 simulated function OnEffectStopped(Actor inStoppedEffect, bool Completed)
 {
     local name EffectEventName;
+    local IGSoundEffectsSubsystem.SoundInstance StoppedSoundInstance;
+    StoppedSoundInstance = IGSoundEffectsSubsystem.SoundInstance(inStoppedEffect);
 
     if (Completed)
     {
