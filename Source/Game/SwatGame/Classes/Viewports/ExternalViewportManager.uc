@@ -164,6 +164,11 @@ simulated function bool ShouldControlViewport()
     return false;
   }
 
+  if(!Controller.ShouldControlViewport())
+  {
+    return false;
+  }
+
   if(Level.NetMode != NM_Standalone)
   {
     PlayerReplicationInfo = SwatPlayerReplicationInfo(Controller.PlayerReplicationInfo);

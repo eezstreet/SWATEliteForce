@@ -1117,6 +1117,16 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
     }
 }
 
+// Returns true if we are allowed to control viewports
+simulated function bool ShouldControlViewport()
+{
+    local HandheldEquipment Item;
+
+    Item = Pawn.GetActiveItem();
+
+    return Item.IsIdle();
+}
+
 exec function EnableMirrors( bool bInEnabledMirrors )
 {
     class'Mirror'.Static.SetMirrorsEnabled( bInEnabledMirrors );

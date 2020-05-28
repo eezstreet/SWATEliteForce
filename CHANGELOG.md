@@ -132,8 +132,9 @@
  - Fixed TSS bug: Highground volumes now work correctly on Victory Imports Auto Center and Meat Barn Restaurant. (config bug not map bug)
  - Fixed TSS bug: Pepperspray cone was reduced when standing still, which made you *less* likely to hit your target. It's now a constant amount.
  - Fixed TSS bug: Various typos in Food Wall briefing docs refer to Jimenez as "Columbian" and not "Colombian" (thanks to JalapenoPepsi for pointing this out)
- - Fixed TSS bug: Fixed some custom maps having no objectives (but working fine in vanilla SWAT4; thanks to SS for the fix)
- - Fixed TSS bug: Fixed being able to melee people while spraying with pepper spray or firing.
+ - Fixed TSS bug: Some custom maps in the SWAT 4 base game (non-expansion) did not have objectives in TSS (thanks to SS for the fix)
+ - Fixed TSS bug: The player was able to melee people while spraying with pepper spray or firing.
+ - Fixed TSS bug: The player could control the officer viewport while reloading, switching weapons, or using an item. This allowed for an exploit where players could move while placing C2, arresting people, or picking a lock.
 
 ##### Map-Specific Changes #####
 
