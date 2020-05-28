@@ -2453,11 +2453,11 @@ simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCh
 	Item = Pawn.GetActiveItem();
 	PendingItem = SwatPlayer.GetPendingItem();
 
-	// TSS bugfix: don't allow us to melee while changing weapons --eez
-	if(PendingItem != None && PendingItem != Item)
-	{
-	    return;
-	}
+    // Don't allow meleeing while in a firing animation, changing weapons, or already meleeing... --eez
+    if(!Item.IsIdle())
+    {
+        return;
+    }
 
 	if(WantsZoom)
 	    return; // Not allowed while zooming
