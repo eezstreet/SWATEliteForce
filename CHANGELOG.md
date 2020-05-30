@@ -41,6 +41,7 @@
  - SWAT AI no longer run when they are issued a MOVE TO command.
  - SWAT AI better "slice the pie" while moving for a MOVE TO or FALL IN command.
  - SWAT AI will not stop to engage targets when issued a MOVE TO or FALL IN command.
+ - SWAT AI will further distance themselves from uncompliant suspects/hostages when executing the move & clear command.
  - Optimized SWAT AI pathfinding for Close Door, Deploy Pepper Spray, Deploy Taser, and Mark With Lightstick commands.
  - You can now issue a DEPLOY WEDGE command on an open door. When used, officers will close the door and then deploy the wedge, instead of having to issue two separate commands. (note, it was possible to have officers wedge doors open when using the Speech Command Interface. This has been fixed.)
  - TOC now responds to SWAT AI reports.
