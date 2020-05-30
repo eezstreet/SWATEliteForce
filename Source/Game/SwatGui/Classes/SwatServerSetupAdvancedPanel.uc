@@ -18,6 +18,8 @@ var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableSnipers;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyRoundStartTimerCheck;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyRoundEndTimerCheck;
 var(SWATGui) EditInline Config GUICheckBoxButton   MyEnableKillMessagesCheck;
+var(SWATGui) EditInline Config GUISlider		   MyHostageSpawnSlider;
+var(SWATGui) EditInline Config GUISlider		   MySuspectSpawnSlider;
 
 var private config int COOPMaxPlayers;
 var private bool bIsCoop;
@@ -37,6 +39,9 @@ function SetSubComponentsEnabled( bool bSetEnabled )
 	MyRoundStartTimerCheck.SetEnabled( bSetEnabled );
 	MyRoundEndTimerCheck.SetEnabled( bSetEnabled );
 	MyEnableKillMessagesCheck.SetEnabled(bSetEnabled);
+
+	MyHostageSpawnSlider.SetEnabled(bSetEnabled);
+	MySuspectSpawnSlider.SetEnabled(bSetEnabled);
 }
 
 function DoResetDefaultsForGameMode( EMPMode NewMode )
@@ -64,6 +69,9 @@ function DoResetDefaultsForGameMode( EMPMode NewMode )
 	    MyShowTeammatesButton.SetChecked( true );
 
 		MyEnableLeadersCheck.SetChecked( true );
+
+		MyHostageSpawnSlider.SetValue(1.0);
+		MySuspectSpawnSlider.SetValue(1.0);
 
 		bIsCoop = true;
     }
@@ -110,13 +118,16 @@ function LoadServerSettings( optional bool ReadOnly )
 	MyRoundStartTimerCheck.SetChecked (Settings.bUseRoundStartTimer);
 	MyRoundEndTimerCheck.SetChecked(Settings.bUseRoundEndTimer);
 	MyEnableKillMessagesCheck.SetChecked(!Settings.bNoKillMessages);
+	MyHostageSpawnSlider.SetValue(GC.ExtraFloatOptions[1]);
+	MySuspectSpawnSlider.SetValue(GC.ExtraFloatOptions[0]);
 
 	MyEnableLeadersCheck.SetChecked( !Settings.bNoLeaders );
 }
 
 function SaveServerSettings()
 {
-
+	GC.ExtraFloatOptions[0] = MySuspectSpawnSlider.GetValue();
+	GC.ExtraFloatOptions[1] = MyHostageSpawnSlider.GetValue();
 }
 
 event HandleParameters(string Param1, string Param2, optional int param3)

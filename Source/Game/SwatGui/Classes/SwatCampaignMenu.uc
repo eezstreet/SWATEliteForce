@@ -10,6 +10,7 @@ class SwatCampaignMenu extends SwatGUIPage
 
 import enum eDifficultyLevel from SwatGame.SwatGUIConfig;
 
+var CustomScenarioCreatorData CustomScenarioCreatorData;
 
 var(SWATGui) private EditInline Config GUIButton		    MyMainMenuButton;
 var(SWATGui) private EditInline Config GUIButton		    MyQuitButton;
@@ -24,15 +25,17 @@ var(SWATGui) private EditInline Config GUIButton		    StartButton;
 var(SWATGui) private EditInline Config GUIEditbox		    MyNameEntry;
 var(SWATGui) private EditInline Config GUIButton		    MyCreateCampaignButton;
 var(SWATGui) private EditInline Config GUIComboBox			MyCampaignPathBox;
-var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignPlayerPermadeathButton;
-var(SWATGui) private EditInline Config GUICheckBoxButton MyCampaignOfficerPermadeathButton;
+var(SWATGui) private EditInline Config GUIComboBox			MyCampaignCustomBox;
+var(SWATGui) private EditInline Config GUICheckBoxButton	MyCampaignPlayerPermadeathButton;
+var(SWATGui) private EditInline Config GUICheckBoxButton	MyCampaignOfficerPermadeathButton;
+var(SWATGui) private EditInline Config GUICheckboxButton    MyCampaignHardcoreModeButton;
 var(SWATGui) private EditInline Config GUIScrollTextBox		MyCampaignPathBlurbLabel;
 
 //load campaign panel
 var(SWATGui) private EditInline Config GUIComboBox          MyCampaignSelectionBox;
 var(SWATGui) private EditInline Config GUIButton		    MyDeleteCampaignButton;
 var(SWATGui) private EditInline Config GUIButton		    MyUseCampaignButton;
-var(SWATGui) private EditInline Config GUIButton        MyCoopCampaignButton;
+var(SWATGui) private EditInline Config GUIButton			MyCoopCampaignButton;
 
 // Campaign Stats
 var(SWATGui) private EditInline Config GUILabel         Stat_MissionsCompletedLabel;
@@ -74,13 +77,22 @@ var() private config localized string StringM;
 var() private config localized string StringN;
 var() private config localized string StringO;
 
+// Campaign custom/whatever strings
+var() private config localized string MajorPathA;
+var() private config localized string MajorPathB;
+
 var() private config localized string DeadCampaignNotification;
+var() private config localized string HardcoreDeadCampaignNotification;
 var() private config localized string PlayerPermadeathNotification;
+var() private config localized string HardcoreNotification;
 var() private config localized string KIAString;
+var() private config localized string NoHardcoreAllowed;
 var() private config localized string NoPermadeathAllowed;
 var() private config localized string NoAllMissionsAllowed;
 
 var() private config localized string CampaignPathBlurb[3];
+var() private config localized string CustomPathBlurb;
+var() private config localized string NeedToUnlockHardcoreMode;
 
 var Campaign currentCampaign;
 
@@ -90,6 +102,10 @@ function InitComponent(GUIComponent MyOwner)
     local array<Campaign> TheCampaigns;
 
  	Super.InitComponent(MyOwner);
+
+	CustomScenarioCreatorData = new class'CustomScenarioCreatorData';
+	assert(CustomScenarioCreatorData != None);
+    CustomScenarioCreatorData.Init(SwatGUIController(Controller).GuiConfig);
 
 	// Campaign selection box
     TheCampaigns = SwatGUIController(Controller).GetCampaigns().GetCampaigns();
@@ -105,14 +121,13 @@ function InitComponent(GUIComponent MyOwner)
 	}
     MyCampaignSelectionBox.List.Sort();
 
-	// Campaign path selection box
-	MyCampaignPathBox.Clear();
-    MyCampaignPathBox.List.Add(StringM, , , 0);	// Original Missions
-	MyCampaignPathBox.List.Add(StringN, , , 1);	// Extra Missions
-    MyCampaignPathBox.List.Add(StringO, , , 2); // All missions
-
     MyCampaignSelectionBox.OnChange=InternalOnChange;
 	MyCampaignPathBox.OnChange=InternalOnChange;
+	MyCampaignCustomBox.OnChange=InternalOnChange;
+
+	// Campaign custom/not custom
+	MyCampaignCustomBox.List.Add(MajorPathB, , , , true);
+	MyCampaignCustomBox.List.Add(MajorPathA, , , , false);
 
     MyNameEntry.OnEntryCompleted=InternalOnClick;
     MyNameEntry.OnChange=InternalOnChange;
@@ -122,6 +137,15 @@ function InitComponent(GUIComponent MyOwner)
     MyUseCampaignButton.OnClick=InternalOnClick;
     MyDeleteCampaignButton.OnClick=InternalOnClick;
     MyCoopCampaignButton.OnClick=InternalOnClick;
+
+    MyCampaignHardcoreModeButton.OnChange=HardcoreModeChanged;
+    MyCampaignPlayerPermadeathButton.OnChange=HardcoreModeChanged;
+
+    if(!SwatGuiController(Controller).GetCampaigns().HasCompletedCampaignAtLeastOnce())
+    {
+        MyCampaignHardcoreModeButton.DisableComponent();
+        MyCampaignHardcoreModeButton.Hint = NeedToUnlockHardcoreMode;
+    }
 
     CampaignTabButton.bNeverFocus=false;
 }
@@ -162,6 +186,59 @@ private function InternalOnFocused(GUIComponent Sender)
     MyNameEntry.Focus();
 }
 
+// Hardcore mode and player permadeath can't be selected at the same time (they do basically the same thing)
+private function HardcoreModeChanged(GUIComponent Sender)
+{
+    switch(Sender)
+    {
+        case MyCampaignHardcoreModeButton:
+            if(MyCampaignHardcoreModeButton.bChecked)
+            {
+                MyCampaignPlayerPermadeathButton.SetChecked(false);
+                MyCampaignPlayerPermadeathButton.DisableComponent();
+            }
+            else
+            {
+                MyCampaignPlayerPermadeathButton.EnableComponent();
+            }
+            break;
+        case MyCampaignPlayerPermadeathButton:
+            if(MyCampaignPlayerPermadeathButton.bChecked)
+            {
+                MyCampaignHardcoreModeButton.SetChecked(false);
+                MyCampaignHardcoreModeButton.DisableComponent();
+            }
+            else
+            {
+                MyCampaignHardcoreModeButton.EnableComponent();
+            }
+            break;
+    }
+}
+
+private function StockCareersSelected()
+{
+	// Campaign path selection box
+	MyCampaignPathBox.Clear();
+    MyCampaignPathBox.List.Add(StringM, , , 0);	// Original Missions
+	MyCampaignPathBox.List.Add(StringN, , , 1);	// Extra Missions
+    MyCampaignPathBox.List.Add(StringO, , , 2); // All missions
+}
+
+private function CustomCareersSelected()
+{
+	local string PackFileName;
+
+	MyCampaignPathBox.Clear();
+
+	foreach FileMatchingPattern(
+            "*."$CustomScenarioCreatorData.PackExtension,
+            PackFilename)
+    {
+		MyCampaignPathBox.List.Add(PackMinusExtension(PackFileName));
+    };
+}
+
 private function InternalOnChange(GUIComponent Sender)
 {
 	switch (Sender)
@@ -174,7 +251,21 @@ private function InternalOnChange(GUIComponent Sender)
             MyCreateCampaignButton.SetEnabled( IsCampaignNameValid( MyNameEntry.GetText() ) );
             break;
 		case MyCampaignPathBox:
-			MyCampaignPathBlurbLabel.SetContent(CampaignPathBlurb[MyCampaignPathBox.GetInt()]);
+			if(!MyCampaignCustomBox.List.GetExtraBoolData())
+			{
+				MyCampaignPathBlurbLabel.SetContent(CampaignPathBlurb[MyCampaignPathBox.GetInt()]);
+			}
+			break;
+		case MyCampaignCustomBox:
+			if(MyCampaignCustomBox.List.GetExtraBoolData())
+			{	// Extra Bool true = we are using custom campaigns
+				CustomCareersSelected();
+				MyCampaignPathBlurbLabel.SetContent(CustomPathBlurb);
+			}
+			else
+			{
+				StockCareersSelected();
+			}
 			break;
 	}
 }
@@ -192,30 +283,35 @@ private function InternalOnClick(GUIComponent Sender)
 			break;
 		case MyUseCampaignButton:
 		    //unset the pak for campaigns
-        if(currentCampaign.PlayerPermadeath && currentCampaign.PlayerDied) {
-          OnDlgReturned=InternalOnDlgReturned;
-          OpenDlg( DeadCampaignNotification, QBTN_OK, "DeadCampaignNotification" );
-        } else {
-          GC.SetCustomScenarioPackData( None );
-          SwatGuiController(Controller).CoopCampaign = false;
-  			  Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
-        }
+	        if(currentCampaign.PlayerPermadeath && currentCampaign.PlayerDied) {
+	          OnDlgReturned=InternalOnDlgReturned;
+	          OpenDlg( DeadCampaignNotification, QBTN_OK, "DeadCampaignNotification" );
+	        } else if(currentCampaign.HardcoreMode && currentCampaign.HardcoreFailed) {
+                OnDlgReturned=InternalOnDlgReturned;
+                OpenDlg( HardcoreDeadCampaignNotification, QBTN_OK, "HardcoreDeadCampaignNotification");
+            } else {
+	          SwatGuiController(Controller).CoopCampaign = false;
+			  GoToMissionSetup(currentCampaign);
+	        }
 			break;
-    case MyCoopCampaignButton:
-      if(currentCampaign.PlayerPermadeath || currentCampaign.OfficerPermadeath) {
-        OnDlgReturned=InternalOnDlgReturned;
-        OpenDlg(NoPermadeathAllowed, QBTN_OK, "NoPermadeathAllowed");
-      } else if(currentCampaign.CampaignPath == 2) {
-        OnDlgReturned=InternalOnDlgReturned;
-        OpenDlg(NoAllMissionsAllowed, QBTN_OK, "NoAllMissionsAllowed");
-      } else {
-        GC.SetCustomScenarioPackData( None );
-        SwatGuiController(Controller).CoopCampaign = true;
-        Controller.OpenMenu("SwatGui.SwatMissionSetupMenu", "SwatMissionSetupMenu");
-      }
-      break;
+    	case MyCoopCampaignButton:
+            if(currentCampaign.HardcoreMode) {
+                OnDlgReturned=InternalOnDlgReturned;
+                OpenDlg(NoHardcoreAllowed, QBTN_OK, "NoHardcoreAllowed");
+            } else if(currentCampaign.PlayerPermadeath || currentCampaign.OfficerPermadeath) {
+		        OnDlgReturned=InternalOnDlgReturned;
+		        OpenDlg(NoPermadeathAllowed, QBTN_OK, "NoPermadeathAllowed");
+		    } else if(currentCampaign.CampaignPath == 2) {
+		        OnDlgReturned=InternalOnDlgReturned;
+		        OpenDlg(NoAllMissionsAllowed, QBTN_OK, "NoAllMissionsAllowed");
+		    } else {
+		        SwatGuiController(Controller).CoopCampaign = true;
+				GoToMissionSetup(currentCampaign);
+		    }
+		    break;
 		case MyMainMenuButton:
-            PerformClose(); break;
+            PerformClose();
+			break;
         case MyDeleteCampaignButton:
             OnDlgReturned=InternalOnDlgReturned;
             OpenDlg( StringJ$MyCampaignSelectionBox.Get(), QBTN_YesNo, "DeleteCampaign" );
@@ -253,7 +349,7 @@ private function InternalOnDlgReturned( int Selection, String passback )
             if(Selection == QBTN_Yes) {
               campName = MyNameEntry.GetText();
               campPath = MyCampaignPathBox.GetInt();
-              CreateCampaign(campName, campPath, MyCampaignPlayerPermadeathButton.bChecked, MyCampaignOfficerPermadeathButton.bChecked);
+              CreateCampaign(campName, campPath, MyCampaignPlayerPermadeathButton.bChecked, MyCampaignOfficerPermadeathButton.bChecked, false);
             }
             break;
         case "OverwriteCampaign":
@@ -265,6 +361,18 @@ private function InternalOnDlgReturned( int Selection, String passback )
                   OnDlgReturned=InternalonDlgReturned;
                   OpenDlg(PlayerPermadeathNotification, QBTN_YesNo, "PermadeathNotice");
                 }
+                else if(MyCampaignHardcoreModeButton.bChecked)
+                {
+                    OnDlgReturned=InternalonDlgReturned;
+                    OpenDlg(HardcoreNotification, QBTN_YesNo, "HardcoreNotice");
+                }
+            }
+            break;
+        case "HardcoreNotice":
+            if(Selection == QBTN_Yes) {
+                campName = MyNameEntry.GetText();
+                campPath = MyCampaignPathBox.GetInt();
+                CreateCampaign(campName, campPath, false, MyCampaignOfficerPermadeathButton.bChecked, MyCampaignHardcoreModeButton.bChecked);
             }
             break;
     }
@@ -275,6 +383,7 @@ private function InternalOnDlgReturned( int Selection, String passback )
 ////////////////////////////////////////////////////////////////////////////////////
 private function SetCampaign( Campaign theCampaign )
 {
+	log("SetCampaign: "$theCampaign);
     if( theCampaign == None )
         return;
 
@@ -315,17 +424,50 @@ private function AttemptCreateCampaign( string campName, int campPath )
       OnDlgReturned=InternalonDlgReturned;
       OpenDlg(PlayerPermadeathNotification, QBTN_YesNo, "PermadeathNotice");
     }
+    else if(MyCampaignHardcoreModeButton.bChecked)
+    {
+        OnDlgReturned=InternalOnDlgReturned;
+        OpenDlg(HardcoreNotification, QBTN_YesNo, "HardcoreNotice");
+    }
     else {
-        CreateCampaign( campName, campPath, MyCampaignPlayerPermadeathButton.bChecked, MyCampaignOfficerPermadeathButton.bChecked );
+        CreateCampaign( campName, campPath, MyCampaignPlayerPermadeathButton.bChecked, MyCampaignOfficerPermadeathButton.bChecked, MyCampaignHardcoreModeButton.bChecked );
     }
 }
 
-private function CreateCampaign( string campName, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath )
+private function GoToMissionSetup(Campaign TheCampaign)
+{
+	local CustomScenarioPack CustomPack;
+
+	if(TheCampaign.CustomCareerPath)
+	{
+		CustomPack = new class'CustomScenarioPack';
+		CustomPack.Reset(PackPlusExtension(TheCampaign.CustomCareer), CustomScenarioCreatorData.ScenariosPath);
+		GC.SetCustomScenarioPackData(CustomPack, PackPlusExtension(TheCampaign.CustomCareer),
+			PackMinusExtension(TheCampaign.CustomCareer), CustomScenarioCreatorData.ScenariosPath);
+		SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Custom );
+	}
+	else
+	{
+		GC.SetCustomScenarioPackData( None );
+		SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Campaign );
+	}
+	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
+}
+
+private function CreateCampaign( string campName, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode )
 {
     local Campaign NewCampaign;
 
     //create the new campaign
-    NewCampaign=SwatGuiController(Controller).AddCampaign(campName, campPath, bPlayerPermadeath, bOfficerPermadeath);
+	if(MyCampaignCustomBox.List.GetExtraBoolData())
+	{
+		NewCampaign=SwatGuiController(Controller).AddCampaign(campName, campPath, bPlayerPermadeath, bOfficerPermadeath, bHardcoreMode, true, MyCampaignPathBox.List.Get());
+	}
+	else
+	{
+		NewCampaign=SwatGuiController(Controller).AddCampaign(campName, campPath, bPlayerPermadeath, bOfficerPermadeath, bHardcoreMode);
+	}
+
     AssertWithDescription( NewCampaign != None, "Could not create campaign with name: " $ campName );
 
     //... and add it to the campaign selection box
@@ -336,7 +478,7 @@ private function CreateCampaign( string campName, int campPath, bool bPlayerPerm
     //clear the campaign name entry box
     MyNameEntry.SetText("");
 
-    Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
+    GoToMissionSetup(NewCampaign);
 }
 
 private function DeleteCampaign( string campName )
@@ -361,6 +503,32 @@ private function bool IsCampaignNameValid( string Campaign )
     }
 
     return false;
+}
+
+//returns a PackName with an extension
+function string PackPlusExtension(string PackName)
+{
+    local string extension;
+
+    extension = "." $ CustomScenarioCreatorData.PackExtension;
+
+    if (Right(PackName, Len(extension)) == extension)
+        return PackName;    //PackName already has extension
+    else
+        return PackName $ extension;
+}
+
+//returns a PackName without an extension
+function string PackMinusExtension(string PackName)
+{
+    local string extension;
+
+    extension = "." $ CustomScenarioCreatorData.PackExtension;
+
+    if (Right(PackName, Len(extension)) != extension)
+        return PackName;    //PackName already doesn't have an extension
+    else
+        return Left(PackName, Len(PackName) - Len(extension));
 }
 
 defaultproperties
@@ -392,13 +560,22 @@ defaultproperties
 	StringN="Extra Missions"
 	StringO="All Missions"
 
+	MajorPathA="Stock Campaigns"
+	MajorPathB="Quick Mission Maker"
+	CustomPathBlurb="[c=FFFFFF]A campaign created in the Quick Mission Maker."
+
 	DeadCampaignNotification="This campaign was killed in action (KIA). You will still be able to view its stats, but you cannot play with it."
+    HardcoreDeadCampaignNotification="This campaign is a failed Hardcore Mode campaign. You will still be able to view its stats, but you cannot play with it."
 	PlayerPermadeathNotification="You are about to start a campaign with Player Permadeath enabled. Once you die, you cannot play with this campaign again. Are you sure you want to do this?"
+    HardcoreNotification="You are about to start a Hardcore Mode campaign. If the mission fails, you die, or you quit a mission in progress, you cannot play this campaign again. Continue?"
 	KIAString=" (KIA)"
 	NoPermadeathAllowed="You cannot play this campaign in Career CO-OP because it has a permadeath setting enabled. Try again with a different campaign."
 	NoAllMissionsAllowed="You cannot play an All Missions campaign in Career CO-OP. Try again with a different campaign."
+    NoHardcoreAllowed="You cannot play this campaign in Career CO-OP because it has Hardcore mode enabled. Try again with a different campaign."
 
-	CampaignPathBlurb[0]="A combined campaign of the original SWAT 4 and The Stetchkov Syndicate missions. [b]Some equipment may need to be unlocked.[\\b]"
-	CampaignPathBlurb[1]="A campaign containing Extra Missions added by SWAT: Elite Force."
-	CampaignPathBlurb[2]="A campaign containing all missions on your hard drive, including customs. [b]All missions and equipment are unlocked at the start.[\\b] Some additional equipment is available."
+	CampaignPathBlurb[0]="[c=FFFFFF]A combined campaign of the original SWAT 4 and The Stetchkov Syndicate missions. [b]Some equipment may need to be unlocked.[\\b]"
+	CampaignPathBlurb[1]="[c=FFFFFF]A campaign containing Extra Missions added by SWAT: Elite Force."
+	CampaignPathBlurb[2]="[c=FFFFFF]A campaign containing all missions on your hard drive, including customs. [b]All missions and equipment are unlocked at the start.[\\b] Some additional equipment is available."
+
+    NeedToUnlockHardcoreMode="Complete the SWAT 4 + Expansion campaign at least once to unlock."
 }

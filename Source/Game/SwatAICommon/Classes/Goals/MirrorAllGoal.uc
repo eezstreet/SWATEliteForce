@@ -1,0 +1,38 @@
+///////////////////////////////////////////////////////////////////////////////
+// CheckTrapsGoal.uc - CheckTrapsGoal class
+// this goal is given to a Officer to check for traps
+
+class MirrorAllGoal extends OfficerCommandGoal;
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Variables
+
+// copied to our action
+var(parameters) Door TargetDoor;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Constructors
+
+overloaded function construct( AI_Resource r )
+{
+    // don't use this constructor
+	assert(false);
+}
+
+overloaded function construct( AI_Resource r, Door inTargetDoor )
+{
+    Super.construct(r);
+
+    assert(inTargetDoor != None);
+    TargetDoor = inTargetDoor;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+defaultproperties
+{
+    priority   = 80
+    goalName   = "MirrorAll"
+}

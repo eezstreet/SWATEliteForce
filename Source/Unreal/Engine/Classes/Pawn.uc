@@ -401,7 +401,7 @@ var transient CompressedPosition PawnPosition;
 // Equipment variables
 //
 
-var config float FirstPersonFOV;
+var config float FirstPersonFOV; // NOT USED ... real value is in PlayerController.FirstPersonFOV
 var protected Hands Hands;
 var bool bRenderHands; // if false, the first person Hands (and hence weapon) will not be rendered
 
@@ -415,7 +415,7 @@ var private HandheldEquipment PendingItem;   //access with GetPendingItem(), set
 
 // This is the way the server tells all clients in a network game which item
 // should be equipped.
-var private Pocket DesiredItemPocket;
+var private EquipmentSlot DesiredItemPocket;
 
 // This value starts off being false. When the first piece of equipment is
 // equipped we set it to true and it stays true from then on. This value is
@@ -885,15 +885,20 @@ simulated function vector CalcDrawOffset()
 	local vector DrawOffset;
 	local PlayerController OwnerController;
     local HandheldEquipment EquippedItem;
+	local float FirstPersonFOV;
 
     AssertWithDescription(Hands != None,
         "[tcohen] The Pawn named "$name$" was called to CalcDrawOffset().  But it has no Hands.");
 
 	if ( Controller == None )
 		return (Hands.PlayerViewOffset >> Rotation) + BaseEyeHeight * vect(0,0,1);
-	
+
+	FirstPersonFOV = class'FOVSettings'.default.FPFOV - 85.0000;
+	FirstPersonFOV *= (PlayerController(Controller).ZoomAlpha - 1.0);
+	FirstPersonFOV += 85.0000;
+
 	DrawOffset = ((90/FirstPersonFOV * Hands.PlayerViewOffset) >> GetViewRotation() );
-	
+
 	if ( !IsLocallyControlled() )
 		DrawOffset.Z += BaseEyeHeight;
 	else
@@ -1540,10 +1545,10 @@ simulated function vector GetEyeLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bone01Eye');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 
@@ -1551,10 +1556,10 @@ simulated function vector GetChestLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bip01_Spine2');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 
@@ -1562,10 +1567,10 @@ simulated function vector GetHeadLocation()
 {
     local Coords  cTarget;
     local vector  vTarget;
-	
+
     cTarget = GetBoneCoords('Bone01Eye');
     vTarget = cTarget.Origin;
-		
+
 	return vTarget;
 }
 
@@ -2672,16 +2677,16 @@ function PlayVictoryAnimation();
 function HoldCarriedObject(CarriedObject O, name AttachmentBone);
 #endif
 
-simulated function Pocket GetDesiredItemPocket()
+simulated function EquipmentSlot GetDesiredItemSlot()
 {
     return DesiredItemPocket;
 }
 
 // Only the server should call this.
-function SetDesiredItemPocket( Pocket NewPocket )
+function SetDesiredItemSlot( EquipmentSlot NewSlot )
 {
     assert( Role == ROLE_Authority );
-    DesiredItemPocket = NewPocket;
+    DesiredItemPocket = NewSlot;
 }
 
 // override in derived class if necessary.
@@ -2811,7 +2816,7 @@ simulated function OnUseKeyFrame()
 
         if (!Level.IsTraining)
         {
-            LocalActiveItem.DecrementAvailableCount();
+            LocalActiveItem.UpdateAvailability();
         }
         else
         {
@@ -2982,6 +2987,11 @@ simulated event bool ShouldPlayWalkingAnimations()
 }
 #endif
 
+simulated function int GetNumberOfArmsInjured()
+{
+	return 0; // meant to be subclassed
+}
+
 defaultproperties
 {
 	bCanBeDamaged=true
@@ -3080,7 +3090,7 @@ defaultproperties
     LeanTransitionDuration=0.3
     LeanHorizontalDistance=44.0f
     bForceCrouch=false
-    DesiredItemPocket=Pocket_Invalid
+    DesiredItemPocket=Slot_Invalid
     HasEquippedFirstItemYet=false
 //#endif
 //#if IG_SWAT // ckline: better lighting on characters

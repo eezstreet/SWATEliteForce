@@ -97,12 +97,26 @@ enum eCommandCategory
     COMCAT_Movement,
     COMCAT_Interactions,
     COMCAT_Chat,
+	COMCAT_Multiplayer,
     COMCAT_Reserved,
 };
 
+// These got moved to SwatKeyControlSettingsPanel.
+/*
 var(KeyConfigSettings) config           array<string>   CommandString "The string corresponding to the command this Input Function struct is representing";
 var(KeyConfigSettings) config localized array<string>   LocalizedCommandString "The localized string corresponding to the command this Input Function struct is representing";
 var(KeyConfigSettings) config array<eCommandCategory>   CommandCategory "The category of this command";
+*/
+
+enum eFloatOptions
+{
+	ExtraFloat_SuspectSpawnModifier,
+	ExtraFloat_HostageSpawnModifier,
+};
+
+var() config array<float>				ExtraFloatOptions;
+var() config array<string>				NotUsed7 "Not used.";
+var() config array<eCommandCategory>	NotUsed8 "Not used.";
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Audio Settings
@@ -165,6 +179,8 @@ enum eExtraInts
     ExtraInt_ViewmodelDisabled,     // Boolean
     ExtraInt_CrosshairDisabled,     // Boolean
     ExtraInt_InertiaDisabled,       // Boolean
+	ExtraInt_ZoomDisabled,			// Boolean
+    ExtraInt_ImperialMeasurements,  // Boolean
 };
 
 var() config            array<string>    ExtraStrOptions "Extra (usermod) options for saving, as strings";
@@ -699,6 +715,8 @@ defaultproperties
     DifficultyScoreRequirement(1)=50
     DifficultyScoreRequirement(2)=75
     DifficultyScoreRequirement(3)=95
+	ExtraFloatOptions[0] = 1.0
+	ExtraFloatOptions[1] = 1.0
     TDMFriendlyName="Barricaded Suspects"
     VIPFriendlyName="VIP Escort"
     BombFriendlyName="Rapid Deployment"

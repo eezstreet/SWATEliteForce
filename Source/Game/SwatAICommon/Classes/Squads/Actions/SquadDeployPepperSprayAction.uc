@@ -34,7 +34,7 @@ latent function DeployPepperSprayOnTarget()
 {
 	local Pawn Officer;
 
-	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_PepperSpray);
+	Officer = GetClosestOfficerWithEquipment(TargetPawn.Location, Slot_PepperSpray, , true);
 
 	CurrentDeployPepperSprayGoal = new class'DeployPepperSprayGoal'(AI_Resource(Officer.characterAI), TargetPawn);
 	assert(CurrentDeployPepperSprayGoal != None);

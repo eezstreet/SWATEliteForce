@@ -57,7 +57,10 @@ function class<Actor> PickClass()
     return None;
 }
 
-private final function ArchetypeInstance NewInstance(IUseArchetype Spawned)
+private final function ArchetypeInstance NewInstance(IUseArchetype Spawned, 
+    optional CustomScenario CustomScenario, 
+    optional int CustomScenarioAdvancedRosterIndex,
+    optional int CustomScenarioAdvancedArchetypeIndex)
 {
     local ArchetypeInstance Instance;
 
@@ -66,11 +69,11 @@ private final function ArchetypeInstance NewInstance(IUseArchetype Spawned)
     Instance.Owner = Actor(Spawned);
     assert(Instance.Owner != None);
 
-    InitializeInstance(Instance);
+    InitializeInstance(Instance, CustomScenario, CustomScenarioAdvancedRosterIndex, CustomScenarioAdvancedArchetypeIndex);
 
     return Instance;
 }
-function InitializeInstance(ArchetypeInstance Instance);
+function InitializeInstance(ArchetypeInstance Instance, optional CustomScenario CustomScenario, optional int CustomScenarioAdvancedRosterIndex, optional int CustomScenarioAdvancedArchetypeIndex);
 
 static function name PickArchetype(array<ChanceArchetypePair> Archetypes)
 {
@@ -111,11 +114,14 @@ static function name PickArchetype(array<ChanceArchetypePair> Archetypes)
     assert(false);  //we should have chosen something to spawn
 }
 
-function InitializeSpawned(IUseArchetype Spawned, Spawner Spawner)
+function InitializeSpawned(IUseArchetype Spawned, Spawner Spawner, 
+    optional CustomScenario CustomScenario, 
+    optional int CustomScenarioAdvancedRosterIndex,
+    optional int CustomScenarioAdvancedArchetypeIndex)
 {
     local ArchetypeInstance Instance;
 
-    Instance = NewInstance(Spawned);
+    Instance = NewInstance(Spawned, CustomScenario, CustomScenarioAdvancedRosterIndex, CustomScenarioAdvancedArchetypeIndex);
     assert(Instance != None);
 
     // NOTE: do not change this order, we depend on the Archetype initializing the 

@@ -2090,23 +2090,6 @@ simulated function String GetHumanReadableName()
 	return GetItemName(string(class));
 }
 
-final function ReplaceText(out string Text, string Replace, string With)
-{
-	local int i;
-	local string Input;
-
-	Input = Text;
-	Text = "";
-	i = InStr(Input, Replace);
-	while(i != -1)
-	{
-		Text = Text $ Left(Input, i) $ With;
-		Input = Mid(Input, i + Len(Replace));
-		i = InStr(Input, Replace);
-	}
-	Text = Text $ Input;
-}
-
 // Set the display properties of an actor.  By setting them through this function, it allows
 // the actor to modify other components (such as a Pawn's weapon) or to adjust the result
 // based on other factors (such as a Pawn's other inventory wanting to affect the result)

@@ -68,19 +68,30 @@ function PreBeginPlay()
 			log("           " $ Archetypes[i].Archetype $ " (Chance: " $ Archetypes[i].Chance $ ")");
 		}
 	}
+}
 
+function Archetype CreateArchetype(name ArchetypeName, CustomScenario CustomScenario)
+{
+    local Archetype SpawnedArchetype;
+
+    SpawnedArchetype = new(None, string(ArchetypeName), 0) ArchetypeClass;
+    SpawnedArchetype.Initialize(self);
+
+    return SpawnedArchetype;
 }
 
 function actor SpawnArchetype(
         name ArchetypeName,
         optional bool bTesting,
-        optional CustomScenario CustomScenario)
+        optional CustomScenario CustomScenario,
+        optional int CustomRosterNumber,
+        optional int CustomArchetypeNumber)
 {
     local class<Actor> ClassToSpawn;
     local Spawner Slave;
 
     //we don't expect any Spawner to ever spawn more than once (unless we're testing)
-    assert((!HasSpawned && !Disabled) || bTesting || ArchetypeName == 'TestSpawn');
+    assert((!Disabled) || bTesting || ArchetypeName == 'TestSpawn');
 
     //tell the level that we're used-up
     //  (need to do this before we might return!)
@@ -92,8 +103,7 @@ function actor SpawnArchetype(
     if (ArchetypeName == '')
         return None;
 
-    Archetype = new(None, string(ArchetypeName), 0) ArchetypeClass;
-    Archetype.Initialize(self);
+    Archetype = CreateArchetype(ArchetypeName, CustomScenario);
 
     if (CustomScenario != None)
         CustomScenario.MutateArchetype(Archetype);
@@ -108,6 +118,10 @@ function actor SpawnArchetype(
         Spawned = Spawn(ClassToSpawn);
         AssertWithDescription(Spawned != None,
                 "[tcohen] "$name$" tried to spawn an instance of class "$ClassToSpawn$", but couldn't.");
+        if(Spawned == None)
+        {
+            return Spawned;
+        }
 
 
             log("[SPAWNING] ... ... "$name
@@ -126,7 +140,7 @@ function actor SpawnArchetype(
 
             log("[SPAWNING] ... ... Spawner "$name$" (SpawnerGroup "$SpawnerGroup$") is calling Archetype "$Archetype.name$" to InitializeSpawned "$Spawned.name);
 
-        Archetype.InitializeSpawned(IUseArchetype(Spawned), self);
+        Archetype.InitializeSpawned(IUseArchetype(Spawned), self, CustomScenario, CustomRosterNumber, CustomArchetypeNumber);
     }
     else
         //TMC NOTE when testing, we return the *spawner* as spawned!

@@ -14,6 +14,7 @@ import enum eDifficultyLevel from SwatGUIConfig;
 
 var (Swat) editinline array<Roster> Rosters;
 var (Swat) editinline array<MPRoster> MPRosters;
+var (Swat) editinline array<DoorRoster> DoorRosters;
 
 var private LevelInfo Level;
 
@@ -29,55 +30,28 @@ function Initialize(LevelInfo inLevel)
     Level = inLevel;
 }
 
-//returns results as an array of ints, each index is the total of EArchetypeCategory spawned
-//  (ie. enemies, hostages, etc.)
-function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
+function RefreshUnallocatedSpawners(SwatGameInfo Game)
 {
     local Spawner Spawner;
-    local name Archetype;
-    local array<Spawner> CandidateSpawners;
-    local int Count;
-    local int SelectedIndex;
-    local Actor Spawned;
-    local array<int> SpawnedCounts;             //for testing, number of spawned enemies/hostages/inanimates
-    local int i, j, k;
     local CustomScenario CustomScenario;
     local bool UsingCustomScenario;
-    local Objective ObjectiveFromRoster;        //this will hold the objective (if any) has targets spawned from the current Roster
+    local bool isCampaignCoop;
     local SwatRepo Repo;
     local EEntryType StartPoint;
-    local int HighPriority;
-    local eDifficultyLevel DifficultyLevel;
-    local bool ThisRosterNotAllowed;
-	local bool isCampaignCoop;
-
-	isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
-
-    // DoSpawning() should only be called in standalone games.
-    assert( Level.NetMode == NM_Standalone || Level.IsCOOPServer );
-
-    //we only expect to do this once per run
-    assert(!HasSpawned || bTesting);
-
-    //reference any custom scenario
-    CustomScenario = SwatGameInfo(Level.Game).GetCustomScenario();
-    UsingCustomScenario = (CustomScenario != None);
 
     //we may want to know where the player is starting
     Repo = SwatRepo(Level.GetRepo());
     assert(Repo != None);
     StartPoint = Repo.GetDesiredEntryPoint();
 
-    // Determine the difficulty level
-    if(Level.IsCOOPServer && !isCampaignCoop) {	//Are we coop & is campaign disabled?
-      DifficultyLevel = Difficulty_Elite; // Gloves are off in (normal) co-op mode..!
-    } else {
-      DifficultyLevel = Repo.GuiConfig.CurrentDifficulty;
-    }
+    isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
 
-    log("Difficulty level is "$DifficultyLevel$", spawning appropriate rosters...");
+    //reference any custom scenario
+    CustomScenario = SwatGameInfo(Level.Game).GetCustomScenario();
+    UsingCustomScenario = (CustomScenario != None);
 
-    //empty unallocated spawners list (we may be testing)
+
+     //empty unallocated spawners list (we may be testing)
     UnallocatedSpawners.Remove(0, UnallocatedSpawners.length);
 
     //build list of spawners
@@ -121,9 +95,9 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         //spawners may be disabled based on the selected player start point
         if (Spawner.StartPointDependent > StartPoint_Any)
         {
-			// dbeswick: don't use these spawns during coop games, frequently both spawns are in use
-			if ( Level.IsCOOPServer && !isCampaignCoop )
-				continue;
+            // dbeswick: don't use these spawns during coop games, frequently both spawns are in use
+            if ( Level.IsCOOPServer && !isCampaignCoop )
+                continue;
 
             if  (
                     Spawner.StartPointDependent == EStartPointDependent.StartPoint_OnlyPrimary
@@ -141,6 +115,68 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         //okay, its qualified
         UnallocatedSpawners[UnallocatedSpawners.length] = Spawner;
     }
+}
+
+//returns results as an array of ints, each index is the total of EArchetypeCategory spawned
+//  (ie. enemies, hostages, etc.)
+function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
+{
+    local Spawner Spawner;
+    local name Archetype;
+    local array<Spawner> CandidateSpawners;
+    local array<Spawner> ResetSpawners;
+    local int Count;
+    local int SelectedIndex;
+    local Actor Spawned;
+    local array<int> SpawnedCounts;             //for testing, number of spawned enemies/hostages/inanimates
+    local int i, j, k;
+    local CustomScenario CustomScenario;
+    local bool UsingCustomScenario;
+    local Objective ObjectiveFromRoster;        //this will hold the objective (if any) has targets spawned from the current Roster
+    local SwatRepo Repo;
+    local EEntryType StartPoint;
+    local int HighPriority;
+    local eDifficultyLevel DifficultyLevel;
+    local bool ThisRosterNotAllowed;
+	local bool isCampaignCoop;
+    local int NumEnemyRostersSpawned, NumHostageRostersSpawned;
+
+    NumEnemyRostersSpawned = 0;
+    NumHostageRostersSpawned = 0;
+
+	isCampaignCoop = ServerSettings(Level.CurrentServerSettings).IsCampaignCoop();
+
+    // DoSpawning() should only be called in standalone games.
+    assert( Level.NetMode == NM_Standalone || Level.IsCOOPServer );
+
+	// Do door rosters
+	for(i = 0; i < DoorRosters.Length; i++)
+	{
+		DoorRosters[i].DoDoorRoster();
+	}
+
+    //we only expect to do this once per run
+    assert(!HasSpawned || bTesting);
+
+    //reference any custom scenario
+    CustomScenario = SwatGameInfo(Level.Game).GetCustomScenario();
+    UsingCustomScenario = (CustomScenario != None);
+
+    //we may want to know where the player is starting
+    Repo = SwatRepo(Level.GetRepo());
+    assert(Repo != None);
+    StartPoint = Repo.GetDesiredEntryPoint();
+
+    // Determine the difficulty level
+    if(Level.IsCOOPServer && !isCampaignCoop) {	//Are we coop & is campaign disabled?
+      DifficultyLevel = Difficulty_Elite; // Gloves are off in (normal) co-op mode..!
+    } else {
+      DifficultyLevel = Repo.GuiConfig.CurrentDifficulty;
+    }
+
+    log("Difficulty level is "$DifficultyLevel$", spawning appropriate rosters...");
+
+    RefreshUnallocatedSpawners(Game);
 
     //give any custom scenario a chance to mutate the roster list
     if (UsingCustomScenario)
@@ -154,7 +190,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             log("[SPAWNING] SpawningManager is selecting "$CurrentRoster.Count.Min
                     $" to "$CurrentRoster.Count.Max
                     $" Spawner(s) to spawn CurrentRoster index "$i
-                    $" named "$CurrentRoster.name
+                    $" named "$CurrentRoster.name$" ("$CurrentRoster$")"
                     $" from SpawnerGroup="$CurrentRoster.SpawnerGroup);
 
         ObjectiveFromRoster = GetMissionObjectiveForSpawnerGroup(CurrentRoster.SpawnerGroup);
@@ -201,6 +237,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             if (UsingCustomScenario)
             {
                 if  (
+                        !CurrentRoster.SpawnAnywhere &&
                         CurrentRoster.SpawnerGroup != 'CustomRosterSpawnerGroup'    //the roster should be spawned from a SpawnerGroup
                     &&  CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup()     //wrong SpawnerGroup
                     )
@@ -208,7 +245,7 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             }
             else                                                            //!UsingCustomScenario
             {
-                if (CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup())        //wrong spawner group
+                if (!CurrentRoster.SpawnAnywhere && CurrentRoster.SpawnerGroup != Spawner.GetSpawnerGroup())        //wrong spawner group
                     continue;
             }
 
@@ -217,24 +254,26 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
             CandidateSpawners[CandidateSpawners.length] = Spawner;
         }
 
-        //we can't spawn more than the number of candidate spawners
-        AssertWithDescription(CandidateSpawners.length >= CurrentRoster.Count.Max,
-                "[tcohen] (SwatLevelInfo was selecting spawners to spawn level rosters) "
-                $"There aren't enough qualified spawners to spawn the max from roster #"$i
-                $" with SpawnerGroup="$CurrentRoster.SpawnerGroup
-                $": Roster max count is "$CurrentRoster.Count.Max
-                $", and there is/are only "$CandidateSpawners.length
-                $" candidate spawners available.");
+        // if we can spawn more than the number of spawners, set ResetSpawners. --eez
+        if(CurrentRoster.Count.Max > CandidateSpawners.Length)
+        {
+            ResetSpawners = CandidateSpawners;
+        }
 
-        //min should be <= max
-        AssertWithDescription(CurrentRoster.Count.Min <= CurrentRoster.Count.Max,
-                "[tcohen] SpawningManager::DoSpawning() Roster #"$i
-                $" has Min="$CurrentRoster.Count.Min
-                $" and Max="$CurrentRoster.Count.Max
-                $".  Please make Max greater than or equal to Min.");
+        // if min > max, just flip min and max --eez
+        if(CurrentRoster.Count.Min > CurrentRoster.Count.Max)
+        {
+            j = CurrentRoster.Count.Min;
+            CurrentRoster.Count.Min = CurrentRoster.Count.Max;
+            CurrentRoster.Count.Max = j;
+        }
 
         //how many will we spawn from this roster?
         Count = Rand(CurrentRoster.Count.Max - CurrentRoster.Count.Min + 1) + CurrentRoster.Count.Min;
+		if(Level.NetMode != NM_Standalone)
+		{
+			Count = CurrentRoster.MutateSpawnCount(Count, SwatRepo(Level.GetRepo()).GuiConfig);
+		}
 
         if (Game.DebugSpawning)
             log("[SPAWNING] ... decided to spawn "$Count
@@ -244,8 +283,8 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
         for (j=0; j<Count; ++j)
         {
             if(CandidateSpawners.length <= 0) {
-              assertWithDescription(false, "Ran out of candidate spawners for Roster "$CurrentRoster.SpawnerGroup);
-              break;
+                // Copy the reset spawners back; we will just keep spawning even though we ran out of spawners. The spawn will be deferred until the target moves out of the way. --eez
+                CandidateSpawners = ResetSpawners;
             }
 
             //find out if any of the candidate spawners have priority
@@ -264,20 +303,19 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             Spawner = CandidateSpawners[SelectedIndex];
 
-            Archetype = CurrentRoster.PickArchetype();
-
-            if (Game.DebugSpawning)
-                log("[SPAWNING] ... "$j+1
-                        $") selected "$Spawner
-                        $" (Tag="$Spawner.Tag
-                        $", Priority="$Spawner.Priority
-                        $"), and chose to spawn from Archetype "$Archetype$".");
-
-            //tell the spawner to spawn (it will call SpawnerAlocated() to remove itself from the unallocated spawners list)
-            Spawned = Spawner.SpawnArchetype(
-                    Archetype,
-                    bTesting,
-                    CustomScenario);
+            if(CurrentRoster.IsA('EnemyRoster'))
+            {
+                Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, CustomScenario, bTesting, NumEnemyRostersSpawned);
+            }
+            else if(CurrentRoster.IsA('HostageRoster'))
+            {
+                Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, CustomScenario, bTesting, NumHostageRostersSpawned);
+            }
+            else
+            {
+                Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, CustomScenario, bTesting);
+            }
+            
 
             //for testing, record counts of each type of spawned Actor
             if (Spawned != None)
@@ -288,6 +326,15 @@ function array<int> DoSpawning(SwatGameInfo Game, optional bool bTesting)
 
             //its no longer a candidate since it has been allocated
             CandidateSpawners.Remove(SelectedIndex, 1);
+        }
+
+        if(CurrentRoster.IsA('EnemyRoster'))
+        {
+            NumEnemyRostersSpawned++;
+        }
+        else if(CurrentRoster.IsA('HostageRoster'))
+        {
+            NumHostageRostersSpawned++;
         }
     }
 
@@ -456,21 +503,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
             SelectedIndex = Rand(CandidateSpawners.length);
 
             Spawner = CandidateSpawners[SelectedIndex];
-
-            Archetype = CurrentRoster.PickArchetype();
-
-            if (Game.DebugSpawning)
-                log("[SPAWNING] ... "$j+1
-                        $") selected "$Spawner
-                        $" (Tag="$Spawner.Tag
-                        $"), and chose to spawn from Archetype "$Archetype$".");
-
-            //tell the spawner to spawn (it will call SpawnerAlocated() to remove itself from the unallocated spawners list)
-            Spawned = Spawner.SpawnArchetype(Archetype, bTesting);
-
-            //for testing, record counts of each type of spawned Actor
-            //if (Spawned != None)
-            //    SpawnedCounts[Spawner.ProfileArrayIndex] = SpawnedCounts[Spawner.ProfileArrayIndex] + 1;    //note can't use ++ operator because it can't grow the dyn. array
+            Spawned = CurrentRoster.PickAndSpawnArchetype(Spawner, None, bTesting);
 
             //its no longer a candidate since it has been allocated
             CandidateSpawners.Remove(SelectedIndex, 1);
@@ -492,15 +525,7 @@ function DoMPSpawning(SwatGameInfo Game, coerce string MPRosterClassNames,option
         Spawner = UnallocatedSpawners[0];
 
         Spawned = Spawner.SpawnFromLocalProperties(bTesting);
-
-        //for testing, record counts of each type of spawned Actor
-        //if (Spawned != None)
-        //    SpawnedCounts[Spawner.ProfileArrayIndex] = SpawnedCounts[Spawner.ProfileArrayIndex] + 1;    //note can't use ++ operator because it can't grow the dyn. array
     }
-
-    //log("[SPAWNING] Summary:");
-    //if (SpawnedCounts.length > 0)
-    //    log("[SPAWNING]     "$SpawnedCounts[0]$" MP objects");
 
     HasSpawned = true;
 
@@ -527,7 +552,12 @@ function SpawnerAllocated(Actor Spawner)
     }
 
     if (ConcreteSpawner.SpawnMode != SpawnMode_Slave && ConcreteSpawner.SpawnMode != SpawnMode_SlaveOnly)
-        assert(found);      //we shouldn't try to allocate a spawner that isn't in the unallocated spawners list
+    {
+        if(!found)
+        {
+            RefreshUnallocatedSpawners(SwatGameInfo(Level.Game));
+        }
+    }
     //if the spawner is a slave, then it may spawn during level roster spawning even if its not qualified to spawn from a roster
 }
 

@@ -100,6 +100,7 @@ latent function FollowPlayer()
     // Let the aim around action perform the aiming and rotation for us
 	CurrentMoveInFormationGoal.SetRotateTowardsPointsDuringMovement(false);
 	CurrentMoveInFormationGoal.SetAcceptNearbyPath(true);
+	CurrentMoveInFormationGoal.SetWalkThreshold(192.0);
 
 	CurrentMoveInFormationGoal.postGoal( self );
 }
@@ -129,6 +130,16 @@ Begin:
 	{
 		ISwatAI(m_Pawn).SetUpperBodyAnimBehavior(kUBAB_FullBody, kUBABCI_FallIn);
 		bIsLowReady = false;
+	}
+
+	if(ISwatOfficer(m_Pawn).GetOfficerCommanderAction().GetCurrentAssignment() != None)
+	{
+		ISwatAI(m_pawn).EnableFavorCoveredPath(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns);
+	}
+	else
+	{
+		// in case we have been set to use covered paths
+		ISwatAI(m_Pawn).DisableFavorCoveredPath();
 	}
 	
 	sleep(kCheckFullBodyUpdateRate);

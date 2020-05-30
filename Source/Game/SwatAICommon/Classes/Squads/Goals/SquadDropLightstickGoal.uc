@@ -7,6 +7,7 @@ class SquadDropLightstickGoal extends SquadCommandGoal;
 // Variables
 
 var(parameters) Pawn TargetPawn;
+var bool			bPlaySpeech;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -19,6 +20,20 @@ overloaded function construct( AI_Resource r, Pawn inCommandGiver, vector inComm
 
 	assert(inCommandGiver != None);
 	TargetPawn = inCommandGiver;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Other
+
+function SetPlaySpeech(bool play)
+{
+	bPlaySpeech = play;
+}
+
+function bool GetPlaySpeech()
+{
+	return bPlaySpeech;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

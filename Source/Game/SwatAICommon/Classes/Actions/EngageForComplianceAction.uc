@@ -26,6 +26,20 @@ const kMaxComplianceUpdateTime = 0.25;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// Selection Heuristic
+
+function float selectionHeuristic( AI_Goal Goal )
+{
+	// If we are falling in or moving, use the specialized actions instead
+	if(IsMovingTo() || IsFallingIn())
+	{
+		return 0.0;
+	}
+	return 1.0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // Cleanup
 
 function cleanup()

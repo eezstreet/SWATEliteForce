@@ -1,6 +1,6 @@
 //=============================================================================
-// LevelInfo contains information about the current level. There should 
-// be one per level and it should be actor 0. UnrealEd creates each level's 
+// LevelInfo contains information about the current level. There should
+// be one per level and it should be actor 0. UnrealEd creates each level's
 // LevelInfo automatically so you should never have to place one
 // manually.
 //
@@ -73,7 +73,7 @@ var(Havok)    string HavokMoppCodeFilename; // The optional filename to load the
 var(Havok)    int HavokBroadPhaseDimension; // Something like 50,000 or so. Must encompase the whole world from the orign
 
 #if IG_SWAT // ckline: allow designers to try different solvers
-var(Havok) enum EHavokSolverType 
+var(Havok) enum EHavokSolverType
 {
     HAVOKSOLVER_4ITERS_SOFT,
     HAVOKSOLVER_4ITERS_MEDIUM,
@@ -240,7 +240,7 @@ var private array<Actor> InterestedActorsGameStarted;		//these are the Actors wh
 var MessageDispatcher messageDispatcher;
 #endif
 
-#if IG_SHARED	// marc: class to hang global AI data from 
+#if IG_SHARED	// marc: class to hang global AI data from
 var Tyrion_Setup	AI_Setup;
 #endif
 
@@ -251,7 +251,7 @@ var private bool bGameStarted;  // use HasGameStarted() to access
 //-----------------------------------------------------------------------------
 // AI Repository variables (SWAT-specific)
 
-var config string               AIRepositoryClassName; 
+var config string               AIRepositoryClassName;
 var AIRepository                AIRepo;
 
 //-----------------------------------------------------------------------------
@@ -269,8 +269,8 @@ var() bool						EnemiesAlwaysTalkToHostages;
 #if IG_SWAT
 //true iff this map is being played in COOP mode on the server
 // Note that if this ever is true on clients, some assumptions that have been made will not be valid! [crombie]
-var bool IsCOOPServer; 
-var bool IsPlayingCOOP; 
+var bool IsCOOPServer;
+var bool IsPlayingCOOP;
 
 var actor CurrentServerSettings;
 var actor PendingServerSettings;
@@ -298,7 +298,7 @@ var const Actor  ReplicationViewTarget;				// during replication, set to the vie
 //-----------------------------------------------------------------------------
 // speed hack detection
 #if IG_SPEED_HACK_PROTECTION
-var globalconfig float MaxTimeMargin; 
+var globalconfig float MaxTimeMargin;
 var globalconfig float TimeMarginSlack;
 var globalconfig float MinTimeMargin;
 #endif
@@ -316,7 +316,7 @@ final native function GameSpyManager GetGameSpyManager();
 
 //#ifdef UNREAL_HAVOK
 
-// Update the collidabilty between two layers (A and B). See the HavokRigidBody.uc for details on 
+// Update the collidabilty between two layers (A and B). See the HavokRigidBody.uc for details on
 // layers. If you are doing a few of these updates at once, only updateWorldInfo as true on the last one.
 // updateWorldInfo needs to be set for at least one before the next step, BUT it is slow to do.
 native final function HavokSetCollisionLayerEnabled(int layerA, int layerB, bool enabled, bool updateWorldInfo);
@@ -330,7 +330,7 @@ native final function HavokGetNextFreeSystemLayer(out int systemLayer);
 
 //endif
 
-#if IG_MOJO // rowan: 
+#if IG_MOJO // rowan:
 native final function PlayMojoCutscene(name cutsceneName);
 native function bool EscapeCutscene();
 #endif // IG
@@ -339,7 +339,7 @@ native simulated function DetailChange(EDetailMode NewDetailMode);
 
 // MCJ: this function is named poorly. It does NOT tell you whether this
 // LevelInfo's level is the entry level. What is DOES is tell you if the
-// game's current level is the entry level. 
+// game's current level is the entry level.
 //
 // I suppose a better name for this method would be AmIInTheEntryLevel().
 native simulated function bool IsEntry();
@@ -361,7 +361,7 @@ simulated function PostBeginPlay()
 simulated function CreateEffectsSystem()
 {
 	local class<IGEffectsSystemBase> EffectsSystemClass;
-	
+
 	EffectsSystemClass = class'IGEffectsSystemBase'.static.GetEffectsSystemClass();
 	EffectsSystem = new(self, "EffectsSystem", 0) EffectsSystemClass;
     assertWithDescription(EffectsSystem != None,
@@ -379,6 +379,22 @@ simulated function InitializeEffectsSystem()
 }
 #endif
 
+function PlayerReplicationInfo ReplicationInfoFromPlayerID(int PlayerID)
+{
+	local Controller C;
+	local PlayerReplicationInfo PRI;
+
+	for(C = ControllerList; C != None; C = C.NextController)
+	{
+		PRI = C.PlayerReplicationInfo;
+		if(PRI != None && PRI.PlayerID == PlayerID)
+		{
+			return PRI;
+		}
+	}
+
+	return None;
+}
 
 private function CreateAIRepository()
 {
@@ -388,7 +404,7 @@ private function CreateAIRepository()
 		log( "dkaplan: CreateAIRepository() ... Level.IsCOOPServer = "$Level.IsCOOPServer$", NetMode = "$GetEnum(ENetMode, NetMode) );
 
     // if we are not a networked game (NM_Standalone), then spawn the AIRepository
-    if (NetMode == NM_Standalone 
+    if (NetMode == NM_Standalone
 #if IG_SWAT //dkaplan, also create an AIRepo for COOP
         || Level.IsCOOPServer
 #endif
@@ -441,7 +457,7 @@ simulated event FillRenderPrecacheArrays()
 {
 	local Actor A;
 	local class<GameInfo> G;
-	
+
 	if ( NetMode == NM_DedicatedServer )
 		return;
 	if ( Level.Game == None )
@@ -578,7 +594,7 @@ function ThisIsNeverExecuted()
 	P = None;
 }
 
-/* Reset() 
+/* Reset()
 reset actor to initial state - used when restarting level without reloading.
 */
 function Reset()
@@ -613,8 +629,8 @@ replication
 
 #if IG_EFFECTS
 //register for notification that game has started... will get OnGameStarted() call.
-simulated function InternalRegisterNotifyGameStarted(Actor registeree) 
-{ 
+simulated function InternalRegisterNotifyGameStarted(Actor registeree)
+{
 	local int i;
 
 	for (i=0; i<InterestedActorsGameStarted.length; i++)
@@ -632,13 +648,13 @@ simulated function NotifyGameStarted()
 	if (Level.GetEngine().EnableDevTools)
 	log( "LevelInfo::NotifyGameStarted() called on Level '"$Outer.Name$"' that has Label '"$Label$"'");
 
-    if (Outer.Name != 'Entry') 
+    if (Outer.Name != 'Entry')
     {
 #if IG_EFFECTS // Carlos: Moved this from PostBeginPlay so Flushing of queued events happens after the game has started
         Level.InitializeEffectsSystem();
 
 #if !IG_THIS_IS_SHIPPING_VERSION
-        // Warn if, in any official maps, the levelinfo doesn't 
+        // Warn if, in any official maps, the levelinfo doesn't
         // have a reasonable name based on the map. Official maps
         // are the ones starting with MP- or SP-
         if (Outer.Name != Label &&
@@ -659,7 +675,7 @@ simulated function NotifyGameStarted()
 		{
 			if (Level.GetEngine().EnableDevTools)
 				mplog( "LevelInfo Calling OnGameStarted on: "$InterestedActorsGameStarted[i] );
-				
+
 		    InterestedActorsGameStarted[i].OnGameStarted();
 		}
 
@@ -678,21 +694,21 @@ simulated function GuardSlow(String GuardString) { assert(false); }
 
 // NOTE: When an object that has previously registered via any of the following
 // RegisterNotifyXXXX() methods is itself destroyed, it will automatically be
-// UnRegistered for all subsequent notifications. Therefore, while possible, 
+// UnRegistered for all subsequent notifications. Therefore, while possible,
 // it is not necessary for an object to UnRegisterXXX() itself upon destruction.
 
 // WARNING: These methods only guaranteed send notification during normal
-// gameplay. During level transitions all listeners will be un-registered 
-// and no further notifications will be sent to any listeners (unless 
-// they re-register themselves when the next level begins). 
+// gameplay. During level transitions all listeners will be un-registered
+// and no further notifications will be sent to any listeners (unless
+// they re-register themselves when the next level begins).
 //
-// For these reasons, objects should not rely on these notifications for 
+// For these reasons, objects should not rely on these notifications for
 // cleanup during level transitions.
 
-// Register for notification whenever Died() is called on a Pawn, or 
-// PawnDied() is called on the pawn's Controller (whichever happens first). 
+// Register for notification whenever Died() is called on a Pawn, or
+// PawnDied() is called on the pawn's Controller (whichever happens first).
 // See comments in IInterestedPawnDied.uc for additional details.
-// 
+//
 // Note: If ObjectToNotify is itself a pawn, it *will* receive notification of its
 // own death.
 native final function RegisterNotifyPawnDied(IInterestedPawnDied ObjectToNotify);
@@ -701,11 +717,11 @@ native final function UnRegisterNotifyPawnDied(IInterestedPawnDied RegisteredObj
 // Register for notification whenever a Engine.Actor for which bStatic=false
 // is destroyed during gameplay. Static actors will not generate notifications
 // when they are destroyed.
-//  
+//
 // See comments in IInterestedActorDestroyed.uc for additional details.
 //
-// WARNING: Even if ObjectToNotify is itself an Actor, it will NOT be 
-// notified of its own destruction. If it wishes to handle its own 
+// WARNING: Even if ObjectToNotify is itself an Actor, it will NOT be
+// notified of its own destruction. If it wishes to handle its own
 // destruction, it should override Pawn.Destroyed().
 native final function RegisterNotifyActorDestroyed(IInterestedActorDestroyed ObjectToNotify);
 native final function UnRegisterNotifyActorDestroyed(IInterestedActorDestroyed RegisteredObject);
@@ -721,7 +737,7 @@ simulated event PreBeginPlay()
 {
 #if IG_SWAT
     local class<Actor> ServerSettingsClass;
-    
+
 	if (Level.GetEngine().EnableDevTools)
 		log( self$"::PreBeginPlay() ..... " );
 
@@ -729,9 +745,9 @@ simulated event PreBeginPlay()
         IsPlayingCOOP = ( SupportedModes[0] == EMPMode.MPM_COOP );
 
 	AssertWithDescription( !IsPlayingCOOP || SupportedModes.Length == 1, "CO-OP was specified as a supported mode; no other modes may be specified for this map!" );
-    
+
     IsCOOPServer = IsPlayingCOOP && ( NetMode == NM_ListenServer || NetMode == NM_DedicatedServer );
-    
+
     if( NetMode != NM_Client )
     {
         ServerSettingsClass = class<Actor>(DynamicLoadObject("SwatGame.ServerSettings",class'Class'));
@@ -847,7 +863,7 @@ defaultproperties
      Title="Untitled"
     MoveRepSize=+64.0
     MusicVolumeOverride=-1
-    AIRepositoryClassName="Engine.AIRepository" 
+    AIRepositoryClassName="Engine.AIRepository"
 
 //#if IG_SHARED // ckline: set DecalStayScale default to 1, old default of 0 means no ProjectedDecals show up!
     DecalStayScale=1.0
@@ -865,4 +881,3 @@ defaultproperties
     MinTimeMargin=-1.0
 //#endif
 }
-

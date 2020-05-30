@@ -164,6 +164,11 @@ simulated function bool ShouldControlViewport()
     return false;
   }
 
+  if(!Controller.ShouldControlViewport())
+  {
+    return false;
+  }
+
   if(Level.NetMode != NM_Standalone)
   {
     PlayerReplicationInfo = SwatPlayerReplicationInfo(Controller.PlayerReplicationInfo);
@@ -321,6 +326,15 @@ simulated function CycleControllableViewport( optional string SpecificControllab
         if ( !IncrementControllableAndTestValidity() )
             return;
     }
+}
+
+simulated function bool CurrentControllableIs( string SpecificControllableFilter )
+{
+	if(SpecificControllableFilter != "")
+	{
+		return ControllableMatchesFilter(GetCurrentControllable(), SpecificControllableFilter);
+	}
+	return false;
 }
 
 // Update the GUI Component to have the same location and dimensions of this viewport

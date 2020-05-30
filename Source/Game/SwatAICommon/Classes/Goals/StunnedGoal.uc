@@ -15,6 +15,7 @@ var(parameters) vector	StunningDeviceLocation;
 var(parameters) float	StunnedDuration;
 var(parameters) bool	bShouldRunFromStunningDevice;
 var(parameters) bool	bPlayedReaction;
+var(parameters) bool    bComplexFlee;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -30,8 +31,6 @@ overloaded function construct(AI_Resource r, vector inStunningDeviceLocation, fl
 {
 	super.construct(r);
 
-    Assert(inStunnedDuration > 0.0);
-
     StunningDeviceLocation = inStunningDeviceLocation;
 	StunnedDuration        = inStunnedDuration;
 }
@@ -41,4 +40,5 @@ defaultproperties
 {
     priority = 95
 	bShouldRunFromStunningDevice=true
+	bComplexFlee=false
 }

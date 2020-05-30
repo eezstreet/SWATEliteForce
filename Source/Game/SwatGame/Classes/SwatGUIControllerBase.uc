@@ -171,9 +171,10 @@ final function bool CampaignExists(string inCampaign)
     return Campaigns.CampaignExists(inCampaign);
 }
 
-final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath)
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode,
+	optional bool bCustomCareer, optional string CustomCareer)
 {
-    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath);
+    return Campaigns.AddCampaign(inCampaign, campPath, bPlayerPermadeath, bOfficerPermadeath, bHardcoreMode, bCustomCareer, CustomCareer);
 }
 
 final function DeleteCampaign(string inCampaign)
@@ -191,6 +192,10 @@ final function UpdateCampaignDeathInformation(Pawn Pawn) {
   local Campaign theCampaign;
 
   theCampaign = GetCampaign();
+
+  if(Pawn.IsA('SwatPlayer') && theCampaign.HardcoreMode) {
+    theCampaign.HardcoreFailed = true;
+  }
 
   if(Pawn.IsA('SwatPlayer') && theCampaign.PlayerPermadeath) {
     theCampaign.PlayerDied = true;
@@ -477,12 +482,39 @@ function PreLevelChangeCleanup()
     GetHudPage().PreLevelChangeCleanup();
 }
 
+function GivePlayerWeapon(class<SwatWeapon> Weapon, class<SwatAmmo> Ammo)
+{
+	if( SwatGamePlayerController(ViewportOwner.Actor) != None )
+	{
+		SwatGamePlayerController(ViewportOwner.Actor).GivenEquipmentFromMenu(Weapon, Ammo);
+	}
+}
+
+function bool IsUsingMetricSystem()
+{
+    local SwatGuiConfig GC;
+
+    GC = Repo.GuiConfig;
+
+    return GC.ExtraIntOptions[5] == 0;
+}
+
+function bool IsUsingImperialMeasurements()
+{
+    local SwatGuiConfig GC;
+
+    GC = Repo.GuiConfig;
+
+    return GC.ExtraIntOptions[5] == 1;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 // GUI EXECs
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 function DebugServerList(int num);
 function ShowGamePopup( bool bSticky );
+function ShowWeaponCabinet();
 
 function bool CanChat();
 function OpenChat( bool bGlobal );

@@ -16,6 +16,10 @@ var(SWATGui) private EditInline Config GUIButton                MyKeyChoose;
 var(SWATGui) private EditInline Config array<GUIButton>         MyCategoryButtons;
 var(SWATGui) private eCommandCategory LastCategory;
 
+var() config           array<string>   CommandString;
+var() config localized array<string>   LocalizedCommandString;
+var() config array<eCommandCategory>   CommandCategory;
+
 var(Debug) private array<string> RestrictedKeys; //keys which are restricted and cannot be remapped
 
 var(SWATGui) private config int MaxKeysLength; //used to limit the number of keys that may be bound for display purposes
@@ -45,9 +49,7 @@ function InitComponent(GUIComponent MyOwner)
     MyKeyBindingsBox.OnChange=OnListSelectionChanged;
     SelectedIndex=-1;
 
-    RestrictKeys();
-    GC.LocalizedCommandString[GC.LocalizedCommandString.Length] = "Toggle Speech Commands";
-    GC.LocalizedCommandString[GC.LocalizedCommandString.Length] = "Take Screenshot"; // ಠ_ಠ
+    //RestrictKeys();
 }
 
 function SaveSettings()
@@ -66,13 +68,13 @@ private function RestrictKeys()
     local int i;
     local string newRestrictedKeys;
 
-    for( i = 0; i < GC.CommandString.Length; i++ )
+    for( i = 0; i < CommandString.Length; i++ )
     {
         //only load ones in this category
-        if( GC.CommandCategory[i] != COMCAT_Reserved )
+        if( CommandCategory[i] != COMCAT_Reserved )
             continue;
 
-        newRestrictedKeys = PlayerOwner().ConsoleCommand("GETKEYFORBINDING"@GC.CommandString[i]);
+        newRestrictedKeys = PlayerOwner().ConsoleCommand("GETKEYFORBINDING"@CommandString[i]);
 
         while( newRestrictedKeys != "" )
         {
@@ -89,18 +91,18 @@ private function LoadCategory( eCommandCategory Category )
     LastCategory=Category;
     MyKeyBindingsBox.Clear();
 
-    for( i = 0; i < GC.CommandString.Length; i++ )
+    for( i = 0; i < CommandString.Length; i++ )
     {
         //only load ones in this category
-        if( GC.CommandCategory[i] != Category )
+        if( CommandCategory[i] != Category )
             continue;
 
-        boundKeys = PlayerOwner().ConsoleCommand("GETLOCALIZEDKEYFORBINDING"@GC.CommandString[i]);
+        boundKeys = PlayerOwner().ConsoleCommand("GETLOCALIZEDKEYFORBINDING"@CommandString[i]);
 
         if( boundKeys == "" )
             boundKeys = "----";
 
-        MyKeyBindingsBox.AddNewRowElement( "Functions",,GC.LocalizedCommandString[i],i);
+        MyKeyBindingsBox.AddNewRowElement( "Functions",,LocalizedCommandString[i],i);
         MyKeyBindingsBox.AddNewRowElement( "MappedKey",,boundKeys,i);
         MyKeyBindingsBox.PopulateRow( "Functions" );
     }
@@ -110,7 +112,7 @@ private function LoadCategory( eCommandCategory Category )
     MyKeyBindingsBox.SetIndex(SelectedIndex);
     SelectedIndex=-1;
 
-    MyKeyBindingsBox.SetEnabled( Category != COMCAT_Reserved );
+    //MyKeyBindingsBox.SetEnabled( Category != COMCAT_Reserved );
 
     for( i = 0; i < MyCategoryButtons.Length; i++ )
     {
@@ -132,7 +134,7 @@ private function bool IsRestricted( string key )
 
 function OnListSelectionChanged( GUIComponent Sender )
 {
-    MyKeyChoose.SetEnabled( LastCategory != COMCAT_Reserved && MyKeyBindingsBox.GetIndex() >= 0 );
+    MyKeyChoose.SetEnabled( /*LastCategory != COMCAT_Reserved &&*/ MyKeyBindingsBox.GetIndex() >= 0 );
 }
 
 function InternalOnClick( GUIComponent Sender )
@@ -140,7 +142,7 @@ function InternalOnClick( GUIComponent Sender )
     local string LocalizedFunc, Func, Bound;
 
     LocalizedFunc = MyKeyBindingsBox.GetColumn( "Functions" ).GetExtra();
-    Func = GC.CommandString[MyKeyBindingsBox.GetColumn( "Functions" ).GetExtraIntData()];
+    Func = CommandString[MyKeyBindingsBox.GetColumn( "Functions" ).GetExtraIntData()];
     Bound = MyKeyBindingsBox.GetColumn( "MappedKey" ).GetExtra();
 
     if( Func != "" )

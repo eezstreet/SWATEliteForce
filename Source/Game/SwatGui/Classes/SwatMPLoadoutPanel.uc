@@ -10,6 +10,8 @@ class SwatMPLoadoutPanel extends SwatLoadoutPanel
 
 var array<class> ServerDisabledEquipment;
 
+import enum EMPMode from Engine.Repo;
+
 ///////////////////////////
 // Initialization & Page Delegates
 ///////////////////////////
@@ -147,7 +149,8 @@ function bool CheckCampaignValid( class EquipmentClass )
 	CampaignPath = Settings.CampaignCOOP & 65535;
 
 	// Any equipment above the MissionIndex is currently unavailable
-	if(Settings.IsCampaignCOOP() && CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
+	if(Settings.IsCampaignCOOP() && CampaignPath == 0 && !Settings.bIsQMM)
+	{	// We only do this for the original career, not for QMM coop
     	// Check first set of equipment
 		for (i = MissionIndex + 1; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; ++i)
 			if (class'SwatGame.SwatVanillaCareerPath'.default.UnlockedEquipment[i] == EquipmentClass)
@@ -163,26 +166,37 @@ function bool CheckCampaignValid( class EquipmentClass )
 	return true;
 }
 
-function bool CheckWeightBulkValidity() {
-  local float Weight;
-  local float Bulk;
+function bool CheckWeightBulkValidity()
+{
+	local float Weight;
+	local float Bulk;
 
-  Weight = MyCurrentLoadOut.GetTotalWeight();
-  Bulk = MyCurrentLoadOut.GetTotalBulk();
+	Weight = MyCurrentLoadOut.GetTotalWeight();
+	Bulk = MyCurrentLoadOut.GetTotalBulk();
 
-  if(Weight > MyCurrentLoadOut.GetMaximumWeight()) {
-    TooMuchWeightModal();
-    return false;
-  } else if(Bulk > MyCurrentLoadOut.GetMaximumBulk()) {
-    TooMuchBulkModal();
-    return false;
-  }
+	if(Weight > MyCurrentLoadOut.GetMaximumWeight())
+	{
+	    TooMuchWeightModal();
+	    return false;
+	}
+	else if(Bulk > MyCurrentLoadOut.GetMaximumBulk())
+	{
+	    TooMuchBulkModal();
+	    return false;
+	}
+	else if(MyCurrentLoadout.LoadOutSpec[0] == class'SwatEquipment.NoWeapon' &&
+	  			MyCurrentLoadOut.LoadOutSpec[2] == class'SwatEquipment.NoWeapon')
+	{
+		NoWeaponModal();
+		return false;
+	}
 
-  return true;
+	return true;
 }
 
 defaultproperties
 {
   EquipmentOverWeightString="You are equipped with too much weight. Your loadout will be changed to the default if you don't adjust it."
   EquipmentOverBulkString="You are equipped with too much bulk. Your loadout will be changed to the default if you don't adjust it."
+  NoWeaponString="You do not have a weapon. Your loadout will be changed to the default if you don't adjust it."
 }

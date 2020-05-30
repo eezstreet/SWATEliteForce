@@ -83,7 +83,8 @@ latent function MoveToDestination()
 	CurrentMoveToActorGoal.AddRef();
 
 	CurrentMoveToActorGoal.SetRotateTowardsPointsDuringMovement(true);
-	CurrentMoveToActorGoal.SetWalkThreshold(DistanceFromDestinationToStartWalking);
+	CurrentMoveToActorGoal.SetShouldWalkEntireMove(true);
+	//CurrentMoveToActorGoal.SetWalkThreshold(DistanceFromDestinationToStartWalking);
 	CurrentMoveToActorGoal.SetUseNavigationDistanceOnSensor(true);
 	CurrentMoveToActorGoal.SetShouldSucceedWhenDestinationBlocked(true);
 

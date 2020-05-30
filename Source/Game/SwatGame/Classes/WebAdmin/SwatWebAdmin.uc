@@ -305,6 +305,11 @@ function ProcessPostRequest(HTTPMessage InMessage)
 		}
 		return;
 	}
+	else if(InMessage.URL ~= "/raw/send")
+	{
+		WebAdminRaw_Send(InMessage);
+		return;
+	}
 	HTML = HTML $ PageFooter;
 	SendHTML(HTML);
 }
@@ -313,6 +318,7 @@ function ProcessPostRequest(HTTPMessage InMessage)
 function ProcessGetRequest(HTTPMessage InMessage)
 {
 	local string HTML;
+	local string JSON;
 
 	ParseGetData(InMessage);
 
@@ -366,6 +372,18 @@ function ProcessGetRequest(HTTPMessage InMessage)
 	{
 		HTML = HTML $ WebAdminPage_CommandHelp(InMessage);
 	}
+	else if(InMessage.URL ~= "/json/players")
+	{
+		JSON = SwatGameInfo(Level.Game).Admin.GetPlayersJSON();
+		SendJSON(JSON);
+		return;
+	}
+	else if(InMessage.URL ~= "/json/log")
+	{
+		JSON = SwatGameInfo(Level.Game).Admin.GetLogJSON();
+		SendJSON(JSON);
+		return;
+	}
 	else
 	{
 		HTML = HTML $ WebAdminPage_404(InMessage);
@@ -417,6 +435,22 @@ function SendHTML(string HTML)
 	SendHTTPResponse(OutMessage);
 }
 
+// Send some JSON to the client
+function SendJSON(string JSON)
+{
+	local HTTPMessage OutMessage;
+
+	OutMessage.Version = HTTPVersion;
+	OutMessage.Type = "200 OK";
+	OutMessage.ContentType = "application/json";
+	OutMessage.ContentLength = Len(JSON);
+	OutMessage.CacheControl = CacheControl;
+	OutMessage.Pragma = Pragma;
+	OutMessage.Body = JSON;
+
+	SendHTTPResponse(OutMessage);
+}
+
 // Send some XML to the client
 function SendXML(string XML)
 {
@@ -461,7 +495,7 @@ function bool WebAdminMeta_Poll(HTTPMessage InMessage)
 	Alias = GetPostDataKey(InMessage.Params, "u");
 	Password = GetPostDataKey(InMessage.Params, "p");
 	WasGuest = GetPostDataKey(InMessage.Params, "g") ~= "true";
-	return Listener.Polled(self, Cookie, Alias, Password, WasGuest);
+	return Listener.Polled(self, Cookie, Alias, Password, WasGuest, RemoteAddr);
 }
 
 // Sending sends some console command to the server
@@ -530,7 +564,7 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	//}
 
 	// add user to logged in admin list and set cookie
-	Cookie = Listener.LoginUser(Alias, Perms);
+	Cookie = Listener.LoginUser(Alias, Perms, RemoteAddr, PreviouslyGuest);
 
 	// tell the other webadmins that we logged in
 	if(Perms.PermissionSetName == "")
@@ -549,6 +583,39 @@ function bool WebAdminPage_LoginAction(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "<span class=\"sty_statictext\">You have logged in successfully and will enter the WebAdmin panel in 5 seconds.</span><br>";
 	HTML = HTML $ "<span class=\"sty_statictext\">Click <a href=\"/webadmin\">here</a> if your browser does not redirect you.</span>";
 	HTML = HTML $ "<meta http-equiv=\"refresh\" content=\"5; url=/webadmin\">";
+	return true;
+}
+
+function bool WebAdminRaw_Send(HTTPMessage InMessage)
+{
+	local string Alias;
+	local string Password;
+	local string Command;
+	local SwatAdminPermissions Perms;
+	local IPAddr IP;
+
+	Alias = GetPostDataKey(InMessage.Params, "alias");
+	Password = GetPostDataKey(InMessage.Params, "password");
+	Command = GetPostDataKey(InMessage.Params, "cmd");
+
+	if(Alias ~= "")
+	{	// not allowed to send with invalid alias
+		return false;
+	}
+
+	if(Password ~= "")
+	{
+		// Maybe try it as a guest?
+		Perms = SwatGameInfo(Level.Game).Admin.GuestPermissions;
+	}
+	else
+	{
+		Perms = SwatGameInfo(Level.Game).Admin.FindRole(Password);
+	}
+
+	GetLocalIP(IP);
+
+	Listener.SentCommand(self, -1, Command, Alias, Perms, IpAddrToString(IP));
 	return true;
 }
 
@@ -795,7 +862,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 
 	HTML = HTML $ "<span class=\"sty_title\">SWAT: Elite Force WebAdmin</span><br>";
 	HTML = HTML $ "<table class=\"sty_layouttable\">";
-	HTML = HTML $ "<tr><td class=\"sty_statictext\" colspan=\"2\">Logged in as "$Alias;
+	HTML = HTML $ "<tr><td class=\"sty_statictext\" colspan=\"2\"><span id=\"serverinfo\">Unknown</span> - Logged in as "$Alias;
 
 	if(Permissions.PermissionSetName != "")
 	{
@@ -820,6 +887,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ " <option value=\"abortgame\">Abort Round</option>";
 	HTML = HTML $ " <option value=\"nextmap\">Go to Next Map</option>";
 	HTML = HTML $ " <option value=\"lockteams\">Lock/Unlock Teams</option>";
+	HTML = HTML $ " <option value=\"togglevotelock\">Lock/Unlock Voting</option>";
 	HTML = HTML $ " <option value=\"alltoblue\">Send all to Blue</option>";
 	HTML = HTML $ " <option value=\"alltored\">Send all to Red</option>";
 	HTML = HTML $ " <option value=\"startgame\">Start Round</option>";
@@ -836,6 +904,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ " <option value=\"kickban \">Kick-Ban</option>";
 	HTML = HTML $ " <option value=\"kill \">Kill</option>";
 	HTML = HTML $ " <option value=\"lockplayerteam \">Lock/Unlock Player Team</option>";
+	HTML = HTML $ " <option value=\"lockvoter\">Lock/Unlock Voting</option>";
 	HTML = HTML $ " <option value=\"mute \">Mute/Unmute</option>";
 	HTML = HTML $ " <option value=\"promote \">Promote to Leader</option>";
 	HTML = HTML $ "</select> ";
@@ -854,7 +923,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "</form>";
 
 	// nasty javascript here...
-	HTML = HTML $ "<script type=\"text/javascript\">";
+	HTML = HTML $ "<script type=\"text/javascript\">\n";
 
 	// Some global junk here
 	HTML = HTML $ "var previousAlias = '"$PreviousAlias$"';";
@@ -907,6 +976,7 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		var parser = new DOMParser();";
 	HTML = HTML $ "		var xmldoc = parser.parseFromString(textdata, \"text/xml\");";
 	HTML = HTML $ "		var users = xmldoc.getElementsByTagName(\"USER\");";
+	HTML = HTML $ "		var serverdata = xmldoc.getElementsByTagName(\"SERVER\");";
 	HTML = HTML $ "		var admins = xmldoc.getElementsByTagName(\"ADMIN\");";
 	HTML = HTML $ "		var msgs = xmldoc.getElementsByTagName(\"MSG\");";
 	HTML = HTML $ "		var buffer = document.getElementById(\"buffer\");";
@@ -914,7 +984,12 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		var ministring = '';";
 	HTML = HTML $ "		var playerSelect = document.getElementById(\"playerselection\");";
 	HTML = HTML $ "		var previousPlayer = playerSelect.value;";
+	HTML = HTML $ "		var serverstatus = document.getElementById(\"serverinfo\");";
+	HTML = HTML $ "		var servername = serverdata[0].childNodes[0].childNodes[0].nodeValue;";
+	HTML = HTML $ "		var map = serverdata[0].childNodes[1].childNodes[0].nodeValue;";
 	HTML = HTML $ "		var i;";
+	// Update the server data
+	HTML = HTML $ "		serverstatus.innerHTML = servername + \"(\" + map + \")\";";
 	// Iterate through admin list
 	HTML = HTML $ "		userlist.innerHTML = \"<span class='sty_userlisttitle'>WebAdmin Users</span>\";";
 	HTML = HTML $ "		ministring = '<p>';";
@@ -942,11 +1017,20 @@ function bool WebAdminPage_WebAdmin(HTTPMessage InMessage, out string HTML)
 	HTML = HTML $ "		}";
 	HTML = HTML $ "		for(i = 0; i < users.length; i++) {";
 	HTML = HTML $ "			var user = users[i];";
-	HTML = HTML $ "			var username = user.childNodes[0].nodeValue;";
+	HTML = HTML $ "			var username = user.childNodes[0].childNodes[0].nodeValue;";
 	HTML = HTML $ "			var option = document.createElement(\"option\");";
 	HTML = HTML $ "			var minidiv = document.createElement(\"div\");";
-	HTML = HTML $ "			minidiv.innerHTML = username;";
+	HTML = HTML $ "			var team = user.childNodes[1].childNodes[0].nodeValue;";
+	HTML = HTML $ "			var status = user.childNodes[2].childNodes[0].nodeValue;";
+	HTML = HTML $ "			username = username + \" (\" + status + \")\";";
+	HTML = HTML $ "			if(team == \"0\") {";
+	HTML = HTML $ "				username = \"<font color='#3333FF'>\" + username + \"</font>\";";
+	HTML = HTML $ "			} else {";
+	HTML = HTML $ "				username = \"<font color='#FF0000'>\" + username + \"</font>\";";
+	HTML = HTML $ "			}";
 	HTML = HTML $ "			ministring += username + '<br>';";
+	HTML = HTML $ "			username = user.childNodes[0].childNodes[0].innerText || user.childNodes[0].childNodes[0].textContent;";
+	HTML = HTML $ "			minidiv.innerHTML = username;";
 	HTML = HTML $ "			username = minidiv.textContent || minidiv.innerText || '';";
 	HTML = HTML $ "			option.text = username;";
 	HTML = HTML $ "			option.value = username;";
@@ -1016,6 +1100,8 @@ function string WebAdminPage_CommandHelp(HTTPMessage InMessage)
 	HTML = HTML $ "<tr><th>/startgame</th><td>Starts the current round.</td></tr>";
 	HTML = HTML $ "<tr><th>/abortgame</th><td>Aborts the current round.</td></tr>";
 	HTML = HTML $ "<tr><th>/forcell -playername-</th><td>Forces a player to use the less lethal loadout.</td></tr>";
+	HTML = HTML $ "<tr><th>/togglevotelock</th><td>Enables/disables voting globally.</td></tr>";
+	HTML = HTML $ "<tr><th>/lockvoter -playername-</th><td>Enables/disables voting on a specific player.</td></tr>";
 	HTML = HTML $ "</table>";
 
 	return HTML;

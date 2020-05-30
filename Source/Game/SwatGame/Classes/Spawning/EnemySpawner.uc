@@ -6,7 +6,7 @@ class EnemySpawner extends Spawner
 // passed to the Enemy at spawning
 var() editinline nocopy PatrolList EnemyPatrol;
 
-var() bool SpawnAnInvestigator "Setting this to true will spawn investigating Enemies, setting it to false will spawn barricading Enemies";
+var() bool SpawnAnInvestigator "This field is unused, does nothing, and only exists for SNITCH mod compatibility.";
 
 // our overridden Idle Category
 var() name IdleCategoryOverride;

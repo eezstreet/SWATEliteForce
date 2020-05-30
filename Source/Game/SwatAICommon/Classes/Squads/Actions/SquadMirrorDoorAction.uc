@@ -44,22 +44,15 @@ function Pawn GetFirstOfficerWithMirror()
 	local int i;
 	local Pawn Officer;
 
-	if(AreOfficersAlreadyStackedUp())
+	for(i=0; i<OfficersInStackUpOrder.Length; ++i)
 	{
-		bOfficersWerentStacked = false;
-		for(i=0; i<OfficersInStackUpOrder.Length; ++i)
-		{
-			Officer = OfficersInStackUpOrder[i];
+		Officer = OfficersInStackUpOrder[i];
 
-			if(class'Pawn'.static.checkConscious(Officer) &&
-			   (ISwatOfficer(Officer).GetItemAtSlot(Slot_Optiwand) != None))
-			{
-				return Officer;
-			}
+		if(class'Pawn'.static.checkConscious(Officer) &&
+		   (ISwatOfficer(Officer).GetItemAtSlot(Slot_Optiwand) != None))
+		{
+			return Officer;
 		}
-	} else {
-		bOfficersWerentStacked = true;
-		return GetClosestOfficerWithEquipment(TargetDoor.Location, Slot_Optiwand);
 	}
 
 	// it's ok to get here
@@ -81,7 +74,7 @@ latent function MirrorDoor()
 	}
 	else
 	{
-		if (AreOfficersAlreadyStackedUp() && OfficerWithMirror != GetFirstOfficer())
+		if (OfficerWithMirror != GetFirstOfficer())
 		{
 			ISwatOfficer(OfficerWithMirror).GetOfficerSpeechManagerAction().TriggerGenericMoveUpSpeech();
 

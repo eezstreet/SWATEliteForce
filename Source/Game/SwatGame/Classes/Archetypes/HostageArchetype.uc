@@ -17,13 +17,18 @@ protected function Validate()
     //validate HostageArchetype data
 }
 
-function InitializeInstance(ArchetypeInstance inInstance)
+function InitializeInstance(ArchetypeInstance inInstance, 
+    optional CustomScenario CustomScenario, 
+    optional int CustomScenarioAdvancedRosterIndex,
+    optional int CustomScenarioAdvancedArchetypeIndex)
 {
     local HostageArchetypeInstance Instance;
 
     Instance = HostageArchetypeInstance(inInstance);
 
     Super.InitializeInstance(Instance);
+
+    CustomScenario.MutateAdvancedHostageArchetypeInstance(Instance, CustomScenarioAdvancedRosterIndex, CustomScenarioAdvancedArchetypeIndex);
 
     //TMC TODO initialize HostageArchetypeInstance
 }

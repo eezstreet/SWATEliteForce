@@ -37,6 +37,7 @@ var private float			TimeToStopTryingToAttack;
 var private FiredWeapon		OtherWeapon;		// currently unequipped weapon
 
 var private float			StartActionTime;
+var private int             ShotsFired;
 
 // config
 var config float			MaximumTimeToWaitToAttack;
@@ -345,14 +346,13 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
 	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
-	log("I, a mook, am going to wait " $ MandatedWait );
 	if(TimeElapsed < MandatedWait) 
 	{
 		Sleep(MandatedWait - TimeElapsed);
 	}
 
-	log("Now I shall fire");
-  ShootWeaponAt(Target);
+  	ShootWeaponAt(Target);
+  	ShotsFired++;
 }
 
 protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
@@ -370,14 +370,13 @@ protected latent function ShootInAimDirection(FiredWeapon CurrentWeapon)
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;
 	MandatedWait = ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring();
-	log("I, a Wild Gunner, am going to wait " $ MandatedWait );
 	if(TimeElapsed < MandatedWait) 
 	{
 		Sleep(MandatedWait - TimeElapsed);
 	}
-	log("Now I shall fire");
 
 	ShootWeaponAt(Target);	// (actual shooting in aim direction is handled in "GetAimRotation"
+	ShotsFired++;
 }
 
 private function AimAtLastSeenPosition()
@@ -397,11 +396,40 @@ private function bool IsTargetAThreat()
 		TargetPawn.IsA('SwatFlusher') || TargetPawn.IsA('SwatEscaper') ));
 }
 
+private function bool ShouldContinueAttackingWithLessLethal()
+{
+	local FiredWeapon Item;
+
+	if(ISwatAI(TargetPawn).IsCompliant() || ISwatAI(TargetPawn).IsArrested())
+	{
+		return false; // Don't shoot at compliant or arrested people
+	}
+
+	Item = FiredWeapon(m_Pawn.GetActiveItem());
+	if(Item == None || !Item.IsLessLethal() || Item.IsA('Taser')   						|| // Don't tase people, it can kill
+		(Item.IsA('CSBallLauncher') && ISwatAI(target).IsGassed()) 						|| // Pepperball is uselss on already gassed people
+		(Item.IsA('BeanbagShotgunBase') && ShotsFired > 2 && ISwatAI(target).IsStung()) || // Only shoot three times with the beanbag shotgun.
+		(Item.IsA('GrenadeLauncherBase')))                            					   // Don't use the grenade launcher. It's stupid.
+	{
+		return false;
+	}
+
+	return true; // Keep attacking I guess?
+}
+
 private function SetTimeToStopTryingToAttack()
 {
 	assert(Level != None);
 
 	TimeToStopTryingToAttack = Level.TimeSeconds + MaximumTimeToWaitToAttack;
+}
+
+private function LogForOfficer(string logText)
+{
+	if(m_Pawn.IsA('SwatOfficer'))
+	{
+		Log(logText);
+	}
 }
 
 state Running
@@ -410,23 +438,33 @@ state Running
 	if (m_Pawn.logTyrion )
 		log( self.name $ " started " $ Name $ " at time " $ Level.TimeSeconds );
 
+	ShotsFired = 0;
+
+	LogForOfficer("AttackTargetAction: " $m_Pawn.name$" has started action.");
+
 	ActivateTargetSensor();
+
+	LogForOfficer("AttackTargetAction: "$m_Pawn.name$" has activated their target sensor.");
 
 	// we're going to attack, so we might as well have a ready weapon when it comes time.
 	ReadyWeapon();
 
 	// switch to secondary weapon if shooting at a runner and current weapon is lethal
 	if (TargetPawn != None && !FiredWeapon(m_Pawn.GetActiveItem()).IsLessLethal()
-		&& (TargetPawn.IsA('SwatFlusher') || TargetPawn.IsA('SwatEscaper')))
+		&& (ISwatEnemy(TargetPawn) != None && !ISwatEnemy(TargetPawn).IsAThreat()))	// Don't shoot at them with a lethal weapon if they aren't a threat!!
 	{
 		OtherWeapon = GetOtherWeapon();
 		if (Otherweapon != None && OtherWeapon.IsLessLethal() && !OtherWeapon.IsEmpty())
 			SwitchWeapons();
 	}
 
-	while (class'Pawn'.static.checkConscious(m_Pawn) &&
-		   ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)) &&
-		   (! m_Pawn.IsA('SwatOfficer') || IsTargetAThreat()))
+	while (class'Pawn'.static.checkConscious(m_Pawn) &&										// while we are conscious AND
+		   ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)) &&		// the other person is conscious AND
+		   (!m_Pawn.IsA('SwatOfficer') || TargetPawn.IsA('SwatPlayer') ||					// we are not a SWAT officer OR we are targetting the player, OR...
+		   	IsTargetAThreat() || 															// the target is a threat (pointing gun at people, etc) OR
+		   	(FiredWeapon(m_Pawn.GetActiveItem()).IsLessLethal() &&							// we are using a less lethal item
+		   		ShouldContinueAttackingWithLessLethal())									// we should continue using that less lethal item
+		   	))
 	{
 		if ( targetSensor.queryObjectValue() == None )
 		{

@@ -828,8 +828,8 @@ function NetNextRound()
 
     if(SwatGUIControllerBase(GUIController).coopcampaign && SGRI.NextMap == "")
     {
-      // we CANNOT go to a next map until the host has picked a new map!
-      return;
+    	// we CANNOT go to a next map until the host has picked a new map!
+    	return;
     }
 
     log("[dkaplan] >>> NetNextRound()" );
@@ -880,10 +880,64 @@ function FinalizeStats()
 ///////////////////////////////////////////////////////////////////////////////
 // Perform a full SwitchLevel to the next Map
 ///////////////////////////////////////////////////////////////////////////////
+function NetTransitionQMM(int MapIndex)
+{
+	local CustomScenario Scenario;
+	local CustomScenarioPack CustomScenarioPack;
+	local string ScenarioName, ScenarioPack;
+	local ServerSettings ServerSettings;
+	local CustomScenarioCreatorData CustomScenarioCreatorData;
+
+	// A lot of annoying setup is necessary to make this work
+	CustomScenarioCreatorData = new class'CustomScenarioCreatorData';
+    assert(CustomScenarioCreatorData != None);
+    CustomScenarioCreatorData.Init(GuiConfig);
+
+	ServerSettings = ServerSettings(Level.CurrentServerSettings);
+
+	Scenario = new class'CustomScenario';
+	assert(Scenario != None);
+
+	CustomScenarioPack = new class'CustomScenarioPack';
+	assert(CustomScenarioPack != None);
+
+	// Now actually bother to load the scenario data
+	ScenarioName = ServerSettings.QMMScenarioQueue[MapIndex];
+	ScenarioPack = ServerSettings.QMMPackQueue[MapIndex];
+
+	CustomScenarioPack.Reset(ScenarioPack, CustomScenarioCreatorData.ScenariosPath);
+	assert(CustomScenarioPack.HasScenario(ScenarioName));
+
+	CustomScenarioPack.LoadCustomScenarioInPlace(
+		Scenario,
+		ScenarioName,
+		ScenarioPack,
+		CustomScenarioCreatorData.ScenariosPath
+		);
+
+	GuiConfig.SetCustomScenarioPackData(CustomScenarioPack, ScenarioPack, CustomScenarioCreatorData.ScenariosPath);
+	GuiConfig.SetCurrentMission(Scenario.LevelLabel, ScenarioName, Scenario);
+	ServerSettings.SetQMMSettings(Scenario, CustomScenarioPack, false, 0);
+
+	if(Scenario.IsCustomMap)
+	{
+		Level.ServerTravel(Scenario.CustomMapURL, false);
+	}
+	else
+	{
+		Level.ServerTravel(string(Scenario.LevelLabel), false);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Perform a full SwitchLevel to the next Map
+///////////////////////////////////////////////////////////////////////////////
 function NetSwitchLevels( optional bool bAdvanceToNextMap )
 {
     local SwatGameReplicationInfo SGRI;
     local int NextMapIndex;
+	local CustomScenario CustomScen;
+	local int AvailableIndex;
 
     SGRI = GetSGRI();
 
@@ -894,17 +948,23 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
     //don't advance to the next round if the server settings changed and a round was selected
     if(!SwatGuiControllerBase(GUIController).coopcampaign)
     {
-      if( bAdvanceToNextMap )
-      {
-          ServerSettings(Level.CurrentServerSettings).MapIndex++;
-          if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
-              ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
-      }
-      NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
-      if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
-        NextMapIndex = 0;
-      }
-      SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
+	    if( bAdvanceToNextMap )
+	    {
+	        ServerSettings(Level.CurrentServerSettings).MapIndex++;
+	        if( ServerSettings(Level.CurrentServerSettings).MapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps )
+			{
+				ServerSettings(Level.CurrentServerSettings).MapIndex = 0;
+			}
+	    }
+	    NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+	    if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps)
+		{
+	        NextMapIndex = 0;
+	    }
+		if(ServerSettings(Level.CurrentServerSettings).bIsQMM)
+		{
+			SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).QMMScenarioQueue[NextMapIndex];
+		}
     }
 
     ServerSettings(Level.CurrentServerSettings).SaveConfig();
@@ -916,11 +976,50 @@ function NetSwitchLevels( optional bool bAdvanceToNextMap )
 
     if(SwatGuiControllerBase(GUIController).coopcampaign)
     {
-      Level.ServerTravel( SGRI.NextMap, false );
+		if(ServerSettings(Level.CurrentServerSettings).bIsQMM)
+		{	// We gotta save the new QMM settings
+			// Get the current available index
+			AvailableIndex = (ServerSettings(Level.CurrentServerSettings).CampaignCOOP & -65536) >> 16;
+
+			// Load the custom scenario
+			CustomScen = new() class'CustomScenario';
+			GuiConfig.GetCustomScenarioPack().LoadCustomScenarioInPlace(
+				CustomScen,
+				SGRI.NextMap,
+				GuiConfig.GetPakName(),
+				GuiConfig.GetPakExtension()
+				);
+
+			// Feed everything into new server settings
+			ServerSettings(Level.CurrentServerSettings).SetQMMSettings(
+				CustomScen,
+				GuiConfig.GetCustomScenarioPack(),
+				true,
+				AvailableIndex
+				);
+
+			// Actually travel to the level
+			if(CustomScen.IsCustomMap)
+			{	// Use the custom map URL instead of the level label
+				Level.ServerTravel( CustomScen.CustomMapURL, false );
+			}
+			else
+			{
+				Level.ServerTravel( string(CustomScen.LevelLabel), false );
+			}
+		}
+		else
+		{	// is not a QMM
+			Level.ServerTravel( SGRI.NextMap, false );
+		}
     }
-    else
+    else if(ServerSettings(Level.CurrentServerSettings).bIsQMM)
     {
-      Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
+		NetTransitionQMM(ServerSettings(Level.CurrentServerSettings).MapIndex);
+	}
+	else
+	{
+    	Level.ServerTravel( ServerSettings(Level.CurrentServerSettings).Maps[ServerSettings(Level.CurrentServerSettings).MapIndex], false );
     }
 }
 
@@ -1007,11 +1106,19 @@ log("[dkaplan] >>> NetRoundStart()" );
 
     if(!SwatGUIControllerBase(GUIController).coopcampaign)
     {
-      NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
-      if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps) {
-        NextMapIndex = 0;
-      }
-      SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
+		NextMapIndex = ServerSettings(Level.CurrentServerSettings).MapIndex + 1;
+		if(NextMapIndex >= ServerSettings(Level.CurrentServerSettings).NumMaps)
+		{
+        	NextMapIndex = 0;
+		}
+		if(ServerSettings(Level.CurrentServerSettings).bIsQMM)
+		{
+			SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).QMMScenarioQueue[NextMapIndex];
+		}
+		else
+		{
+			SGRI.NextMap = ServerSettings(Level.CurrentServerSettings).Maps[NextMapIndex];
+		}
     }
     else
     {
@@ -1448,6 +1555,26 @@ event bool ShouldShowSubtitles()
     return GuiConfig.bShowSubtitles;
 }
 #endif
+
+// NOTE: these stubs are so that Snitch mod doesn't crash --eez
+function ClearRoundsWon()
+{
+	// do nothing
+	log("WARNING: Deprecated function ClearRoundsWon() called");
+}
+
+function IncrementRoundsWon(int TeamID)
+{
+	// do nothing
+	log("WARNING: Deprecated function IncrementRoundsWon() called");
+}
+
+function UpdateRoundsWon(int TeamID)
+{
+	// do nothing
+	log("WARNING: Deprecated function UpdateRoundsWon() called");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {

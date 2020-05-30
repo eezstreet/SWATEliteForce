@@ -745,6 +745,32 @@ simulated final latent function LatentUse()
     DoUsing();
 }
 
+// Give this equipment to some other actor.
+// Only used by AI.
+simulated final latent function LatentGive(Pawn OtherActor)
+{
+	local int PawnUseAnimationChannel;
+	local HandheldEquipment Weapon;
+
+	if(!IsAvailable())
+	{
+		return;
+	}
+
+	Weapon = Pawn(Owner).GetActiveItem();
+
+	// play the animation
+	PawnUseAnimationChannel = Pawn(Owner).AnimPlayEquipment(
+		kAPT_Normal,
+		Name("LightStickDrop_" $ Weapon.LightstickThrowAnimPostfix),
+		ICanThrowWeapons(Pawn(Owner)).GetPawnThrowTweenTime(),
+		ICanThrowWeapons(Pawn(Owner)).GetPawnThrowRootBone());
+	Pawn(Owner).FinishAnim(PawnUseAnimationChannel);
+
+	// Actually give the item to the player
+	Pawn(Owner).Controller.TryGiveItemToPlayer(OtherActor, self);
+}
+
 simulated function bool PrevalidateUse()
 {
     Assert( Level.NetMode != NM_Standalone );
@@ -870,7 +896,8 @@ simulated function UpdateAvailability()
 
 simulated function DecrementAvailableCount()
 {
-  UpdateAvailability();
+	AvailableCount--;
+	UpdateAvailability();
 }
 
 simulated final protected function OnUsingFinished()
@@ -1148,7 +1175,13 @@ simulated final function int GetAvailableCount()
   return AvailableCount;
 }
 
-simulated final function SetAvailableCount(int NewCount)
+// Called whenever we need to update the HUD for some reason --eez
+simulated function UpdateHUD() {}
+
+// Gets the class that we use for spawning the equipment for Giving actions
+static function class GetGivenClass() { return default.class; }
+
+simulated final function SetAvailableCount(int NewCount, optional bool InitiallyGiven)
 {
   if(NewCount == 0)
   {
@@ -1157,9 +1190,42 @@ simulated final function SetAvailableCount(int NewCount)
   }
   else
   {
-    AvailableCount = NewCount;
-    SetAvailable(true);
+	  // If we were given this item from another person, we want to set the available count *AFTER* setting its available state.
+	  // Why?
+	  // Because the act of setting it to available(true) also in effect gives it the default count.
+	  // If we didn't do this, receiving an item from a 3-pack would cause us to get a whole 3-pack, and obviously this leads to issues.
+	  if(InitiallyGiven)
+	  {
+		  log("..."$self$"::SetAvailableCount("$NewCount$"): InitiallyGiven = true");
+		  SetAvailable(true);
+		  AvailableCount = NewCount;
+	  }
+	  else
+	  {
+		  log("..."$self$"::SetAvailableCount("$NewCount$"): InitiallyGiven = false");
+		  AvailableCount = NewCount;
+	      SetAvailable(true);
+	  }
+	  log("..."$self$"::New AvailableCount is "$AvailableCount);
   }
+}
+
+simulated final function AddAvailableCount(int Add)
+{
+	local int NewAvailableCount;
+
+	NewAvailableCount = AvailableCount + Add;
+
+	if(NewAvailableCount <= 0)
+	{
+		SetAvailable(false);
+	}
+	else
+	{
+		SetAvailable(true);
+		AvailableCount = NewAvailableCount;
+		log("..."$self$"::AddAvailableCount("$Add$"): New available count is "$AvailableCount$"(And owner is: " $Owner$")");
+	}
 }
 
 simulated function int GetDefaultAvailableCount()
@@ -1180,6 +1246,7 @@ simulated final function SetAvailable(bool inAvailable)
   else if(inAvailable)
   {
     AvailableCount = GetDefaultAvailableCount();
+	log("..."$self$"::SetAvailable("$inAvailable$"): AvailableCount is "$AvailableCount$" because Default");
   }
 
   Available = inAvailable;
@@ -1249,6 +1316,10 @@ simulated function DisplayDebug(Canvas Canvas, out float YL, out float YPos)
     Canvas.DrawText("ThirdPersonModel: Anim="$OutSeqName$", Frame="$OutAnimFrame);
 }
 
+function bool ShouldIgnoreDisabledZoom() {
+	return false;
+}
+
 static function String GetDescription()
 {
     return default.Description;
@@ -1257,6 +1328,16 @@ static function String GetDescription()
 static function String GetFriendlyName()
 {
     return default.FriendlyName;
+}
+
+static function String GetGivenEquipmentName()
+{
+	return static.GetFriendlyName();
+}
+
+static function string GetShortName()
+{
+	return default.FriendlyName;
 }
 
 static function float GetRagdollDeathImpactMomentumMultiplier()
@@ -1453,6 +1534,11 @@ simulated function float GetItemWeight()
 simulated function float GetItemBulk()
 {
   return 0.0f;
+}
+
+simulated function bool AllowedToPassItem()
+{
+	return true; // for most handheldequipment, we are allowed to pass it.
 }
 
 defaultproperties

@@ -40,6 +40,9 @@ enum AdminPermissions
 	Permission_GoToSpec,		// Allowed to go to spectator
 	Permission_ForceSpectator,	// Allowed to force other players to go to spectator
 	Permission_ForceLessLethal,	// Allowed to force other players to use a less lethal loadout
+	Permission_ViewIPs,			// Allowed to see IPs in WebAdmin
+	Permission_LockVoting,		// Allowed to prevent votes from taking place
+	Permission_LockVoter,		// Allowed to prevent someone from calling or casting votes
 	Permission_Max,
 };
 
@@ -47,6 +50,13 @@ struct AutoAction
 {
 	var float Delay;
 	var string ExecuteText;
+};
+
+struct JSONMessage
+{
+	var int Sequence;
+	var int Type;
+	var string Text;
 };
 
 var public SwatAdminPermissions GuestPermissions;			// Guest permissions are given to every player, even ones that aren't signed in
@@ -62,6 +72,12 @@ var public config int WebAdminPort;
 var public config class<SwatWebAdminListener> WebAdminClass;
 var private SwatWebAdminListener WebAdmin;
 
+// Discord integration
+var public config bool UseDiscord;
+var public config class<DiscordWebhookListener> DiscordClass;
+var private DiscordWebhookListener Discord;
+
+// Chatlog integration
 var public config bool UseChatLog;
 var private FileLog ChatLog;
 var public config bool SanitizeChatLog;
@@ -69,19 +85,35 @@ var public config bool UseNewChatLogPerDay;
 var public config string ChatLogMultiFormat;
 var public config string ChatLogName;
 
+// JSON integration
+var private int JSONSequence;
+var private array<JSONMessage> JSONMessages;
+
 var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
 var public config bool GlobalDisableLocalizedChat;
 
 var public config string LessLethalLoadoutName;	// When forcing a player to a less lethal loadout, this is the name of the loadout
+var private config string VerifyDeveloperString;
 
 var private localized config string PenaltyFormat;
+var private localized config string PenaltyIPFormat;
 var private localized config string SayFormat;
+var private localized config string SayLocalizedFormat;
 var private localized config string TeamSayFormat;
+var private localized config string TeamSayLocalizedFormat;
+var private localized config string SayIPFormat;
+var private localized config string SayLocalizedIPFormat;
+var private localized config string TeamSayIPFormat;
+var private localized config string TeamSayLocalizedIPFormat;
 var private localized config string SwitchTeamsFormat;
 var private localized config string NameChangeFormat;
+var private localized config string SwitchTeamsIPFormat;
+var private localized config string NameChangeIPFormat;
 var private localized config string VoteStartedFormat;
 var private localized config string YesVoteFormat;
 var private localized config string NoVoteFormat;
+var private localized config string YesVoteIPFormat;
+var private localized config string NoVoteIPFormat;
 var private localized config string VoteSuccessfulFormat;
 var private localized config string VoteFailedFormat;
 var private localized config string RedSuicideFormat;
@@ -94,10 +126,24 @@ var private localized config string BlueArrestFormat;
 var private localized config string RedIncapacitateFormat;
 var private localized config string BlueIncapacitateFormat;
 var private localized config string FallenFormat;
+var private localized config string RedSuicideIPFormat;
+var private localized config string BlueSuicideIPFormat;
+var private localized config string RedKillIPFormat;
+var private localized config string BlueKillIPFormat;
+var private localized config string TeamKillIPFormat;
+var private localized config string RedArrestIPFormat;
+var private localized config string BlueArrestIPFormat;
+var private localized config string RedIncapacitateIPFormat;
+var private localized config string BlueIncapacitateIPFormat;
+var private localized config string FallenIPFormat;
 var private localized config string ConnectFormat;
 var private localized config string DisconnectFormat;
+var private localized config string ConnectIPFormat;
+var private localized config string DisconnectIPFormat;
 var private localized config string KickFormat;
 var private localized config string KickBanFormat;
+var private localized config string KickIPFormat;
+var private localized config string KickBanIPFormat;
 var private localized config string ObjectiveCompleteFormat;
 var private localized config string LockedTeamsFormat;
 var private localized config string UnlockedTeamsFormat;
@@ -111,6 +157,18 @@ var private localized config string MuteFormat;
 var private localized config string UnmuteFormat;
 var private localized config string AdminKillFormat;
 var private localized config string AdminPromotedFormat;
+var private localized config string LockedTeamsIPFormat;
+var private localized config string UnlockedTeamsIPFormat;
+var private localized config string LockedPlayerTeamIPFormat;
+var private localized config string UnlockedPlayerTeamIPFormat;
+var private localized config string ForceAllRedIPFormat;
+var private localized config string ForceAllBlueIPFormat;
+var private localized config string ForcePlayerRedIPFormat;
+var private localized config string ForcePlayerBlueIPFormat;
+var private localized config string MuteIPFormat;
+var private localized config string UnmuteIPFormat;
+var private localized config string AdminKillIPFormat;
+var private localized config string AdminPromotedIPFormat;
 var private localized config string RoundStartedFormat;
 var private localized config string RoundEndedFormat;
 var private localized config string MissionEndedFormat;
@@ -121,6 +179,29 @@ var private localized config string SpectateFormat;
 var private localized config string ForceSpectateFormat;
 var private localized config string ForceLessLethalFormat;
 var private localized config string UnforceLessLethalFormat;
+var private localized config string LeftWebAdminIPFormat;
+var private localized config string SpectateIPFormat;
+var private localized config string ForceSpectateIPFormat;
+var private localized config string ForceLessLethalIPFormat;
+var private localized config string UnforceLessLethalIPFormat;
+var private localized config string LockedVotingFormat;
+var private localized config string UnlockedVotingFormat;
+var private localized config string LockedVoterFormat;
+var private localized config string LockedVoterIPFormat;
+var private localized config string UnlockedVoterFormat;
+var private localized config string UnlockedVoterIPFormat;
+var private localized config string VerifiedMessage;
+var private localized config string MapChangedMessage;
+var private localized config string ReferendumVoteYesFormat;
+var private localized config string ReferendumVoteNoFormat;
+var private localized config string ReferendumVoteYesIPFormat;
+var private localized config string ReferendumVoteNoIPFormat;
+var private localized config string ReferendumStartedFormat;
+var private localized config string ReferendumStartedIPFormat;
+var private localized config string ReferendumFailedFormat;
+var private localized config string ReferendumPassedFormat;
+var private localized config string CommandIssuedFormat;
+var private localized config string CommandIssuedIPFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -175,6 +256,12 @@ function PostBeginPlay()
 	{
 		log("Spawning webadmin");
 		WebAdmin = Spawn(WebAdminClass, self);
+	}
+
+	if(UseDiscord)
+	{
+		log("Spawning Discord");
+		Discord = Spawn(DiscordClass, self);
 	}
 }
 
@@ -252,6 +339,16 @@ function SanitizeLogMessage(out string Message)
 	} until(i == -1);
 }
 
+// Return a number that is always formatted to be at least 2 digits long
+function string I2(int Number)
+{
+	if(Number < 10)
+	{
+		return "0"$Number;
+	}
+	return ""$Number;
+}
+
 // Log something to the chatlog
 function LogChat(string Message)
 {
@@ -270,7 +367,7 @@ function LogChat(string Message)
 		{
 			ChatLog.OpenLog(ChatLogName);
 		}
-		ChatLog.Logf("["$Level.Day$"/"$Level.Month$"/"$Level.Year$" "$Level.Hour$":"$Level.Minute$":"$Level.Second$"] "$Message);
+		ChatLog.Logf("["$I2(Level.Day)$"/"$I2(Level.Month)$"/"$Level.Year$" "$I2(Level.Hour)$":"$I2(Level.Minute)$":"$I2(Level.Second)$"] "$Message);
 		ChatLog.CloseLog();
 	}
 }
@@ -466,7 +563,7 @@ function ForceAllToTeam(PlayerController PC, int TeamID)
 		return;
 	}
 
-	SwatGameInfo(Level.Game).ForceAllToTeam(TeamID, PC.PlayerReplicationInfo.PlayerName);
+	SwatGameInfo(Level.Game).ForceAllToTeam(TeamID, PC.PlayerReplicationInfo.PlayerName, PC.GetPlayerNetworkAddress());
 }
 
 // Force a particular player to a team
@@ -483,7 +580,8 @@ function ForcePlayerToTeam(PlayerController PC, int TeamID, string PlayerName)
 	{
 		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
 		{
-			SwatGameInfo(Level.Game).ForcePlayerTeam(SwatGamePlayerController(P), TeamID, PC.PlayerReplicationInfo.PlayerName);
+			SwatGameInfo(Level.Game).ForcePlayerTeam(SwatGamePlayerController(P), TeamID,
+				PC.PlayerReplicationInfo.PlayerName, PC.GetPlayerNetworkAddress());
 			return;
 		}
 	}
@@ -505,12 +603,12 @@ function ToggleTeamLock(PlayerController PC)
 	if(!LockedTheTeams)
 	{
 		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'UnlockTeams');
-		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'UnlockTeams');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'UnlockTeams', , PC.GetPlayerNetworkAddress());
 	}
 	else
 	{
 		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'LockTeams');
-		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'LockTeams');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'LockTeams', , PC.GetPlayerNetworkAddress());
 	}
 }
 
@@ -539,12 +637,14 @@ function TogglePlayerTeamLock(PlayerController PC, string PlayerName)
 			if(!LockedTheTeam)
 			{
 				GameInfo.Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
-				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockPlayerTeam');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName,
+					'UnlockPlayerTeam', P.GetPlayerNetworkAddress(), PC.GetPlayerNetworkAddress());
 			}
 			else
 			{
 				GameInfo.Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
-				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockPlayerTeam');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName,
+					'LockPlayerTeam', P.GetPlayerNetworkAddress(), PC.GetPlayerNetworkAddress());
 			}
 			return;
 		}
@@ -552,7 +652,7 @@ function TogglePlayerTeamLock(PlayerController PC, string PlayerName)
 }
 
 // Mute/Unmute a player
-public function bool ToggleMute(PlayerController PC, string PlayerName, optional string AdminName)
+public function bool ToggleMute(PlayerController PC, string PlayerName, optional string AdminName, optional string AdminIP)
 {
 	local SwatGamePlayerController P;
 	local string Msg;
@@ -560,6 +660,7 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 	if(PC != None)
 	{
 		AdminName = PC.PlayerReplicationInfo.PlayerName;
+		AdminIP = PC.GetPlayerNetworkAddress();
 		if(!ActionAllowed(PC, AdminPermissions.Permission_Mute))
 		{
 			return false;
@@ -576,13 +677,13 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 			{
 				P.SwatRepoPlayerItem.bMuted = false;
 				SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Unmute');
-				Broadcast(Msg, 'Unmute');
+				Broadcast(Msg, 'Unmute', P.GetPlayerNetworkAddress(), AdminIP);
 			}
 			else
 			{
 				P.SwatRepoPlayerItem.bMuted = true;
 				SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Mute');
-				Broadcast(Msg, 'Mute');
+				Broadcast(Msg, 'Mute', P.GetPlayerNetworkAddress(), AdminIP);
 			}
 			return true;
 		}
@@ -651,13 +752,13 @@ public function bool GoToSpectator(SwatGamePlayerController PC)
 
 	SendControllerToSpectator(PC);
 	SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'Spectate');
-	Broadcast(PC.PlayerReplicationInfo.PlayerName, 'Spectate');
+	Broadcast(PC.PlayerReplicationInfo.PlayerName, 'Spectate', PC.GetPlayerNetworkAddress());
 
 	return true;
 }
 
 // Force another player to go into spectator mode
-public function bool ForceSpec(string PlayerName, optional SwatPlayerController PC, optional string Alias)
+public function bool ForceSpec(string PlayerName, optional SwatPlayerController PC, optional string Alias, optional string AdminIP)
 {
 	local SwatGamePlayerController P;
 
@@ -671,6 +772,7 @@ public function bool ForceSpec(string PlayerName, optional SwatPlayerController 
 	{
 		// if the player controller is valid, then use their name as the alias
 		Alias = PC.PlayerReplicationInfo.PlayerName;
+		AdminIP = PC.GetPlayerNetworkAddress();
 	}
 
 	// find the player
@@ -686,7 +788,7 @@ public function bool ForceSpec(string PlayerName, optional SwatPlayerController 
 
 			SendControllerToSpectator(P);
 			SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceSpectate');
-			Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceSpectate');
+			Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceSpectate', P.GetPlayerNetworkAddress(), AdminIP);
 			return true;
 		}
 	}
@@ -694,7 +796,7 @@ public function bool ForceSpec(string PlayerName, optional SwatPlayerController 
 	return false;
 }
 
-public function bool ForceLL(string PlayerName, optional SwatPlayerController PC, optional string Alias)
+public function bool ForceLL(string PlayerName, optional SwatPlayerController PC, optional string Alias, optional string AdminIP)
 {
 	local SwatGamePlayerController P;
 
@@ -707,6 +809,7 @@ public function bool ForceLL(string PlayerName, optional SwatPlayerController PC
 	if(PC != None)
 	{
 		Alias = PC.PlayerReplicationInfo.PlayerName;
+		AdminIP = PC.GetPlayerNetworkAddress();
 	}
 
 	foreach DynamicActors(class'SwatGamePlayerController', P)
@@ -716,12 +819,12 @@ public function bool ForceLL(string PlayerName, optional SwatPlayerController PC
 			if(ForceLessLethalOnPlayer(P))
 			{
 				SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal');
-				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal');
+				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal', P.GetPlayerNetworkAddress(), AdminIP);
 			}
 			else
 			{
 				SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal');
-				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal');
+				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal', P.GetPlayerNetworkAddress(), AdminIP);
 			}
 			return true;
 		}
@@ -759,7 +862,7 @@ public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
 		return false;
 	}
 
-	NewLoadout = Spawn(class'OfficerLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
+	NewLoadout = Spawn(class'EliteLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
 
 	for(i = 0; i < Pocket.EnumCount; i++)
 	{
@@ -785,6 +888,72 @@ public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
 
 	RepoItem.bForcedLessLethal = true;
 	return true;
+}
+
+public function bool ToggleGlobalVoteLock(PlayerController PC)
+{
+	local SwatGameReplicationInfo SGRI;
+	local ReferendumManager RM;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_LockVoting))
+	{
+		// lacking permissions to do this
+		return false;
+	}
+
+	SGRI = SwatGameReplicationInfo(Level.GetGameReplicationInfo());
+	assert(SGRI != None);
+	RM = SGRI.RefMgr;
+	assert(RM != None);
+
+	if(RM.ToggleGlobalVoteLock())
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'LockedVoting');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'LockedVoting',, PC.GetPlayerNetworkAddress());
+	}
+	else
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName, 'UnlockedVoting');
+		Broadcast(PC.PlayerReplicationInfo.PlayerName, 'UnlockedVoting',, PC.GetPlayerNetworkAddress());
+	}
+	return true;
+}
+
+public function bool ToggleVoterLock(PlayerController PC, string PlayerName)
+{
+	local SwatGameReplicationInfo SGRI;
+	local ReferendumManager RM;
+	local PlayerController P;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_LockVoter))
+	{
+		// lacking permissions to do this
+		return false;
+	}
+
+	SGRI = SwatGameReplicationInfo(Level.GetGameReplicationInfo());
+	assert(SGRI != None);
+	RM = SGRI.RefMgr;
+	assert(RM != None);
+
+	ForEach DynamicActors(class'PlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			if(RM.TogglePlayerVoteLock(P.PlayerReplicationInfo.PlayerID))
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName,
+					'LockedVoter', P.GetPlayerNetworkAddress(), PC.GetPlayerNetworkAddress());
+			}
+			else
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter');
+				Broadcast(PC.PlayerReplicationInfo.PlayerName$"\t"$P.PlayerReplicationInfo.PlayerName,
+					'UnlockedVoter', P.GetPlayerNetworkAddress(), PC.GetPlayerNetworkAddress());
+			}
+		}
+	}
 }
 
 public function DynamicLoadOutSpec GetLessLethalSpec()
@@ -843,229 +1012,432 @@ function ACCommand( PlayerController PC, String S )
 	{
 		TogglePlayerTeamLock(PC, Mid(S, 15));
 	}
+	else if(Left(S, 15) ~= "togglevotelock ")
+	{
+		ToggleGlobalVoteLock(PC);
+	}
+	else if(Left(S, 10) ~= "lockvoter ")
+	{
+		ToggleVoterLock(PC, Mid(S, 10));
+	}
 }
 
 // Broadcast something
-function Broadcast(coerce string Msg, optional name Type)
+function Broadcast(coerce string Msg, optional name Type, optional string PlayerIP, optional string AdminIP)
 {
 	local string StrA, StrB, StrC;
 	local string MsgOut;
+	local string MsgWithIPOut;
 	local WebAdminMessageType TypeOut;
 
 	StrA = GetFirstField(Msg,"\t");
     StrB = GetFirstField(Msg,"\t");
     StrC = GetFirstField(Msg,"\t");
 
+	if(Level.NetMode == NM_Standalone)
+	{
+		return; // Don't log anything in the chatlog in singleplayer
+	}
+
 	switch(Type)
 	{
 		case 'PenaltyIssuedChat':
 			TypeOut = WebAdminMessageType.MessageType_Penalty;
 			MsgOut = FormatTextString(PenaltyFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(PenaltyIPFormat, StrA, PlayerIP, StrB);
 			break;
 		case 'Say':
 		case 'WebAdminChat':
-		case 'SayLocalized':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(SayFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(SayIPFormat, StrA, PlayerIP, StrB);
+			break;
+		case 'SayLocalized':
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(SayLocalizedFormat, StrA, StrB, StrC);
+			MsgWithIPOut = FormatTextString(SayLocalizedIPFormat, StrA, StrB, PlayerIP, StrC);
 			break;
 		case 'TeamSay':
-		case 'TeamSayLocalized':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(TeamSayFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(TeamSayIPFormat, StrA, PlayerIP, StrB);
+			break;
+		case 'TeamSayLocalized':
+			TypeOut = WebAdminMessageType.MessageType_Chat;
+			MsgOut = FormatTextString(TeamSayLocalizedFormat, StrA, StrB, StrC);
+			MsgWithIPOut = FormatTextString(TeamSayLocalizedIPFormat, StrA, StrB, PlayerIP, StrC);
 			break;
 		case 'SwitchTeams':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(SwitchTeamsFormat, StrA);
+			MsgWithIPOut = FormatTextString(SwitchTeamsIPFormat, StrA, PlayerIP);
 			break;
 		case 'NameChange':
 			TypeOut = WebAdminMessageType.MessageType_NameChange;
 			MsgOut = FormatTextString(NameChangeFormat, StrA, StrB);
-			break;
-		case 'CommandGiven':
-			TypeOut = WebAdminMessageType.MessageType_Chat;
-			MsgOut = Msg;
-			break;
-		case 'YesVote':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = FormatTextString(YesVoteFormat, StrA);
-			break;
-		case 'NoVote':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = FormatTextString(NoVoteFormat, StrA);
-			break;
-		case 'ReferendumStarted':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = FormatTextString(VoteStartedFormat, Msg);
-			break;
-		case 'ReferendumSucceeded':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = VoteSuccessfulFormat;
-			break;
-		case 'ReferendumFailed':
-			TypeOut = WebAdminMessageType.MessageType_Voting;
-			MsgOut = VoteFailedFormat;
+			MsgWithIPOut = FormatTextString(NameChangeIPFormat, StrA, PlayerIP, StrB);
 			break;
 		case 'BlueSuicide':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(BlueSuicideFormat, StrA);
+			MsgWithIPOut = FormatTextString(BlueSuicideIPFormat, StrA, PlayerIP);
 			break;
 		case 'RedSuicide':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(RedSuicideFormat, StrA);
+			MsgWithIPOut = FormatTextString(RedSuicideIPFormat, StrA, PlayerIP);
 			break;
 		case 'BlueKill':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(BlueKillFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
+			MsgWithIPOut = FormatTextString(BlueKillIPFormat, StrA, PlayerIP, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'RedKill':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(RedKillFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
+			MsgWithIPOut = FormatTextString(RedKillIPFormat, StrA, PlayerIP, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'BlueIncapacitate':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(BlueIncapacitateFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
+			MsgWithIPOut = FormatTextString(BlueIncapacitateIPFormat, StrA, PlayerIP, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'RedIncapacitate':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(RedIncapacitateFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
+			MsgWithIPOut = FormatTextString(RedIncapacitateIPFormat, StrA, PlayerIP, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'TeamKill':
 			TypeOut = WebAdminMessageType.MessageType_TeamKill;
 			MsgOut = FormatTextString(TeamKillFormat, StrA, StrB, GetWeaponFriendlyName(StrC));
+			MsgWithIPOut = FormatTextString(TeamKillIPFormat, StrA, PlayerIP, StrB, GetWeaponFriendlyName(StrC));
 			break;
 		case 'BlueArrest':
 			TypeOut = WebAdminMessageType.MessageType_Arrest;
 			MsgOut = FormatTextString(BlueArrestFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(BlueArrestIPFormat, StrA, PlayerIP, StrB);
 			break;
 		case 'RedArrest':
 			TypeOut = WebAdminMessageType.MessageType_Arrest;
 			MsgOut = FormatTextString(RedArrestFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(RedArrestIPFormat, StrA, PlayerIP, StrB);
 			break;
 		case 'PlayerConnect':
 			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
 			MsgOut = FormatTextString(ConnectFormat, StrA);
+			MsgWithIPOut = FormatTextString(ConnectIPFormat, StrA, PlayerIP);
 			break;
 		case 'PlayerDisconnect':
 			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
 			MsgOut = FormatTextString(DisconnectFormat, StrA);
+			MsgWithIPOut = FormatTextString(DisconnectIPFormat, StrA, PlayerIP);
 			break;
 		case 'RoundStarted':
 			TypeOut = WebAdminMessageType.MessageType_Round;
 			MsgOut = RoundStartedFormat;
+			MsgWithIPOut = MsgOut;
 			break;
 		case 'RoundEnded':
 			TypeOut = WebAdminMessageType.MessageType_Round;
 			MsgOut = RoundEndedFormat;
+			MsgWithIPOut = MsgOut;
 			break;
 		case 'MissionEnded':
 			TypeOut = WebAdminMessageType.MessageType_Round;
 			MsgOut = MissionEndedFormat;
+			MsgWithIPOut = MsgOut;
 			break;
 		case 'MissionFailed':
 			TypeOut = WebAdminMessageType.MessageType_Round;
 			MsgOut = MissionFailedFormat;
+			MsgWithIPOut = MsgOut;
 			break;
 		case 'MissionCompleted':
 			TypeOut = WebAdminMessageType.MessageType_Round;
 			MsgOut = MissionCompletedFormat;
+			MsgWithIPOut = MsgOut;
 			break;
 		case 'WebAdminLeft':
 			TypeOut = WebAdminMessageType.MessageType_AdminLeave;
 			MsgOut = FormatTextString(LeftWebAdminFormat, Msg);
+			MsgWithIPOut = FormatTextString(LeftWebAdminIPFormat, Msg, AdminIP);
 			break;
 		case 'Kick':
 			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
 			MsgOut = FormatTextString(KickFormat, StrB, StrA);
+			MsgWithIPOut = FormatTextString(KickIPFormat, StrB, PlayerIP, StrA, AdminIP);
 			break;
 		case 'KickBan':
 			TypeOut = WebAdminMessageType.MessageType_PlayerJoin;
 			MsgOut = FormatTextString(KickBanFormat, StrB, StrA);
+			MsgWithIPOut = FormatTextString(KickBanIPFormat, StrB, PlayerIP, StrA, AdminIP);
 			break;
 		case 'ObjectiveComplete':
 			TypeOut = WebAdminMessageType.MessageType_Round;
 			MsgOut = FormatTextString(ObjectiveCompleteFormat, StrA);
+			MsgWithIPOut = MsgOut;
 			break;
 		case 'ForceTeamRed':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForceAllRedFormat, StrA);
+			MsgWithIPOut = FormatTextString(ForceAllRedIPFormat, StrA, AdminIP);
 			break;
 		case 'ForceTeamBlue':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForceAllBlueFormat, StrA);
+			MsgWithIPOut = FormatTextString(ForceAllBlueIPFormat, StrA, AdminIP);
 			break;
 		case 'ForcePlayerRed':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForcePlayerRedFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(ForcePlayerRedIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'ForcePlayerBlue':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForcePlayerBlueFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(ForcePlayerBlueIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'LockTeams':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(LockedTeamsFormat, StrA);
+			MsgWithIPOut = FormatTextString(LockedTeamsIPFormat, StrA, AdminIP);
 			break;
 		case 'UnlockTeams':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(UnlockedTeamsFormat, StrA);
+			MsgWithIPOut = FormatTextString(UnlockedTeamsIPFormat, StrA, AdminIP);
 			break;
 		case 'LockPlayerTeam':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(LockedPlayerTeamFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(LockedPlayerTeamIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'UnlockPlayerTeam':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(UnlockedPlayerTeamIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'Fallen':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(FallenFormat, StrA);
+			MsgWithIPOut = FormatTextString(FallenIPFormat, StrA, PlayerIP);
 			break;
 		case 'Mute':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(MuteFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(MuteIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'Unmute':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(UnmuteFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(UnmuteIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'AdminKill':
 			TypeOut = WebAdminMessageType.MessageType_Kill;
 			MsgOut = FormatTextString(AdminKillFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(AdminKillIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'AdminLeader':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(AdminPromotedFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(AdminPromotedIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'Spectate':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(SpectateFormat, StrA);
+			MsgWithIPOut = FormatTextString(SpectateIPFormat, StrA, PlayerIP);
 			break;
 		case 'ForceSpectate':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForceSpectateFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(ForceSpectateIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'ForceLessLethal':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForceLessLethalFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(ForceLessLethalIPFormat, StrA, AdminIP, StrB, PlayerIP);
 			break;
 		case 'UnforceLessLethal':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(UnforceLessLethalFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(UnforceLessLethalIPFormat, StrA, AdminIP, StrB, PlayerIP);
+			break;
+		case 'LockedVoting':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(LockedVotingFormat, StrA);
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'UnlockedVoting':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnlockedVotingFormat, StrA);
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'LockedVoter':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(LockedVoterFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(LockedVoterIPFormat, StrA, StrB, PlayerIP);
+			break;
+		case 'UnlockedVoter':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnlockedVoterFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(UnlockedVoterIPFormat, StrA, StrB, PlayerIP);
+			break;
+		case 'NewMap':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(MapChangedMessage, StrA);
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'ReferendumVoteYes':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ReferendumVoteYesFormat, StrA);
+			MsgWithIPOut = FormatTextString(ReferendumVoteYesIPFormat, StrA, PlayerIP);
+			break;
+		case 'ReferendumVoteNo':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ReferendumVoteNoFormat, StrA);
+			MsgWithIPOut = FormatTextString(ReferendumVoteNoIPFormat, StrA, PlayerIP);
+			break;
+		case 'ReferendumStarted':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ReferendumStartedFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(ReferendumStartedIPFormat, StrA, PlayerIP, StrB);
+			break;
+		case 'ReferendumPassed':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = ReferendumPassedFormat;
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'ReferendumFailed':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = ReferendumFailedFormat;
+			MsgWithIPOut = MsgOut;
+			break;
+		case 'CommandGiven':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(CommandIssuedFormat, StrA, StrB);
+			MsgWithIPOut = FormatTextString(CommandIssuedIPFormat, StrA, PlayerIP, StrB);
 			break;
 	}
 
-	SendToWebAdmin(TypeOut, MsgOut);
-	LogChat(MsgOut);
+	SendToWebAdmin(TypeOut, MsgOut, MsgWithIPOut);
+	LogChat(MsgWithIPOut);
+}
+
+// ...
+function VerifySEFDeveloper(string Message, SwatGamePlayerController PC)
+{
+	if(Message == VerifyDeveloperString)
+	{
+		SwatGameInfo(Level.Game).Broadcast(PC, PC.PlayerReplicationInfo.PlayerName$"\t"$VerifiedMessage, 'Verification');
+	}
+}
+
+// Discord Integration
+function TestDiscord()
+{
+	Discord.TestGetWebhook();
+}
+
+function SendDiscordMessage(coerce string Message, optional bool IsTTS, optional string ReplaceUsername)
+{
+	Discord.SendMessage(Message, IsTTS, ReplaceUsername);
+}
+
+// JSON integration
+function string GetPlayersJSON()
+{
+	local string JSON;
+	local ServerSettings Settings;
+	local SwatGameReplicationInfo SGRI;
+	local SwatPlayerReplicationInfo PRI;
+	local int i;
+
+	Settings = ServerSettings(Level.CurrentServerSettings);
+	SGRI = SwatGameReplicationInfo(Level.Game.GameReplicationInfo);
+
+	JSON = "{";
+	JSON = JSON $ "\"playercount\": " $ Level.Game.NumPlayers $ ", ";
+	JSON = JSON $ "\"maxplayercount\": " $ Settings.MaxPlayers;
+
+	if(Level.Game.NumPlayers > 0)
+	{
+		JSON = JSON $ ", \"players\": [";
+	}
+	for(i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
+	{
+		PRI = SGRI.PRIStaticArray[i];
+		if(PRI.PlayerName ~= "")
+		{
+			continue;
+		}
+
+		if(i != 0)
+		{
+			JSON = JSON $ ", ";
+		}
+		JSON = JSON $ "{";
+		// player data
+		JSON = JSON $ "\"name\": \"" $ PRI.PlayerName $"\", ";
+		JSON = JSON $ "\"ping\": "$ PRI.Ping $ ", ";
+		JSON = JSON $ "\"team\": \"" $ PRI.Team.TeamName $ "\", ";
+		JSON = JSON $ "\"status\": " $ PRI.COOPPlayerStatus $ ", ";
+		JSON = JSON $ "\"leader\": \"" $ PRI.IsLeader $ "\"";
+
+		JSON = JSON $ "}";
+	}
+	if(Level.Game.NumPlayers > 0)
+	{
+		JSON = JSON $ "]";
+	}
+	JSON = JSON $ "}";
+
+	return JSON;
+}
+
+function string GetLogJSON()
+{
+	local string JSON;
+	local int i;
+
+	JSON = "{";
+	if(JSONMessages.Length > 0)
+	{
+		JSON = JSON $ "\"log\": [";
+	}
+	for(i = 0; i < JSONMessages.Length; i++)
+	{
+		if(i != 0)
+		{
+			JSON = JSON $ ",";
+		}
+		JSON = JSON $ "{";
+		JSON = JSON $ "\"seq\": " $ JSONMessages[i].Sequence $ ", ";
+		JSON = JSON $ "\"type\": " $ JSONMessages[i].Type $ ", ";
+		JSON = JSON $ "\"text\": \"" $ JSONMessages[i].Text $ "\"";
+		JSON = JSON $ "}";
+	}
+	if(JSONMessages.Length > 0)
+	{
+		JSON = JSON $ "]";
+	}
+	JSON = JSON $ "}";
+	return JSON;
 }
 
 // Send a message to WebAdmin
-private function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg)
+private function SendToWebAdmin(WebAdminMessageType Type, coerce string Msg, coerce string MsgWithIP)
 {
+	local JSONMessage JSON;
+
 	if(WebAdmin != None)
 	{
-		WebAdmin.SendWebAdminMessage(Type, Msg);
+		WebAdmin.SendWebAdminMessage(Type, Msg, MsgWithIP);
 	}
+	JSON.Sequence = JSONSequence;
+	JSON.Type = Type;
+	JSON.Text = Msg;
+	JSONMessages[JSONMessages.Length] = JSON;
+	JSONSequence++;
 }
 
 defaultproperties
@@ -1085,35 +1457,63 @@ defaultproperties
 	WebAdminPort=6000
 	WebAdminClass=class'SwatWebAdminListener'
 
+	UseDiscord=true
+	DiscordClass=class'DiscordWebhookListener'
+
 	UseChatLog=true
 	SanitizeChatLog=true
 	UseNewChatLogPerDay=true
 
 	PenaltyFormat="[c=FFFF00]%1 caused penalty: %2"
+	PenaltyIPFormat="[c=FFFF00]%1 (%2) caused penalty: %3"
+
 	SayFormat="[c=00FF00][b]%1:[\\b] %2"
 	TeamSayFormat="[c=777777][b]%1:[\\b] %2"
+	SayLocalizedFormat="[c=00FF00][b]%1 (%2):[\\b] %3"
+	TeamSayLocalizedFormat="[c=777777][b]%1 (%2):[\\b] %3"
+	SayIPFormat="[c=00FF00][b]%1 (%2):[\\b] %3"
+	TeamSayIPFormat="[c=777777][b]%1 (%2):[\\b] %3"
+	SayLocalizedIPFormat="[c=00FF00][b]%1 (%2, %3):[\\b] %4"
+	TeamSayLocalizedIPFormat="[c=777777][b]%1 (%2, %3):[\\b] %4"
+
 	SwitchTeamsFormat="[c=00FFFF][b]%1[\\b] switched teams."
 	NameChangeFormat="[c=FF00FF][b]%1[\\b] changed their name to [b]%2[\\b]"
-	VoteStartedFormat="[c=FF00FF]%1"
-	YesVoteFormat="[c=FF00FF]%1 voted yes."
-	NoVoteFormat="[c=FF00FF]%1 voted no."
-	VoteSuccessfulFormat="[c=FF00FF]The vote was successful."
-	VoteFailedFormat="[c=FF00FF]The vote failed."
+	SwitchTeamsIPFormat="[c=00FFFF][b]%1 (%2)[\\b] switched teams."
+	NameChangeIPFormat="[c=FF00FF][b]%1 (%2)[\\b] changed their name to [b]%2[\\b]"
+
 	RedSuicideFormat="[c=FF0000][b]%1[\\b] committed suicide."
 	BlueSuicideFormat="[c=3333FF][b]%1[\\b] committed suicide."
 	RedKillFormat="[c=FF0000][b]%1[\\b] killed [b]%2[\\b] with %3"
 	BlueKillFormat="[c=3333FF][b]%1[\\b] killed [b]%2[\\b] with %3"
-	TeamKillFormat="[c=EC832F][b]%1[\\b] TEAM-KILLED [b]%2[\\b] with %3"
-	FallenFormat="[c=EC832F][b]%1[\\b] has fallen"
-	ConnectFormat="[c=00FFFF][b]%1[\\b] connected to game server."
-	DisconnectFormat="[c=00FFFF][b]%1[\\b] disconnected from game server."
-	RedArrestFormat="[c=FF0000][b]%1[\\b] arrested [b]%2[\\b]"
-	BlueArrestFormat="[c=3333FF][b]%1[\\b] arrested [b]%2[\\b]"
 	RedIncapacitateFormat="[c=FF0000][b]%1[\\b] incapacitated [b]%2[\\b] with %3"
 	BlueIncapacitateFormat="[c=3333FF][b]%1[\\b] incapacitated [b]%2[\\b] with %3"
+	RedArrestFormat="[c=FF0000][b]%1[\\b] arrested [b]%2[\\b]"
+	BlueArrestFormat="[c=3333FF][b]%1[\\b] arrested [b]%2[\\b]"
+	TeamKillFormat="[c=EC832F][b]%1[\\b] TEAM-KILLED [b]%2[\\b] with %3"
+	FallenFormat="[c=EC832F][b]%1[\\b] has fallen"
+	RedSuicideIPFormat="[c=FF0000][b]%1 (%2)[\\b] committed suicide."
+	BlueSuicideIPFormat="[c=3333FF][b]%1 (%2)[\\b] committed suicide."
+	RedKillIPFormat="[c=FF0000][b]%1 (%2)[\\b] killed [b]%3[\\b] with %4"
+	BlueKillIPFormat="[c=3333FF][b]%1 (%2)[\\b] killed [b]%3[\\b] with %4"
+	RedIncapacitateIPFormat="[c=FF0000][b]%1 (%2)[\\b] incapacitated [b]%3[\\b] with %4"
+	BlueIncapacitateIPFormat="[c=3333FF][b]%1 (%2)[\\b] incapacitated [b]%3[\\b] with %4"
+	RedArrestIPFormat="[c=FF0000][b]%1 (%2)[\\b] arrested [b]%3[\\b]"
+	BlueArrestIPFormat="[c=3333FF][b]%1 (%2)[\\b] arrested [b]%3[\\b]"
+	TeamKillIPFormat="[c=EC832F][b]%1 (%2)[\\b] TEAM-KILLED [b]%3[\\b] with %3"
+	FallenIPFormat="[c=EC832F][b]%1 (%2)[\\b] has fallen"
+
+	ConnectFormat="[c=00FFFF][b]%1[\\b] connected to game server."
+	DisconnectFormat="[c=00FFFF][b]%1[\\b] disconnected from game server."
+	ConnectIPFormat="[c=00FFFF][b]%1 (%2)[\\b] connected to the game server."
+	DisconnectIPFormat="[c=00FFFF][b]%1 (%2)[\\b] disconnected from game server."
+
 	KickFormat="[c=FF00FF][b]%1[\\b] was kicked by [b]%2[\\b]"
 	KickBanFormat="[c=FF00FF][b]%1[\\b] was banned by [b]%2[\\b]"
+	KickIPFormat="[c=FF00FF][b]%1 (%2)[\\b] was kicked by [b]%3 (%4)[\\b]"
+	KickBanIPFormat="[c=FF00FF][b]%1 (%2)[\\b] was banned by [b]%3 (%4)[\\b]"
+
 	ObjectiveCompleteFormat="Objective Complete: %1"
+
 	LockedTeamsFormat="[c=FF00FF][b]%1[\\b] locked the teams."
 	UnlockedTeamsFormat="[c=FF00FF][b]%1[\\b] unlocked the teams."
 	LockedPlayerTeamFormat="[c=FF00FF][b]%1[\\b] locked [b]%2's[\\b] team."
@@ -1126,18 +1526,60 @@ defaultproperties
 	UnmuteFormat="[c=FF00FF][b]%1[\\b] un-muted [b]%2[\\b]."
 	AdminKillFormat="[c=FF00FF][b]%1[\\b] killed [b]%2[\\b]."
 	AdminPromotedFormat="[c=FF00FF][b]%1[\\b] promoted [b]%2[\\b] to leader."
+	LockedTeamsIPFormat="[c=FF00FF][b]%1 (%2)[\\b] locked the teams."
+	UnlockedTeamsIPFormat="[c=FF00FF][b]%1 (%2)[\\b] unlocked the teams."
+	LockedPlayerTeamIPFormat="[c=FF00FF][b]%1 (%2)[\\b] locked [b]%3's (%4)[\\b] team."
+	UnlockedPlayerTeamIPFormat="[c=FF00FF][b]%1 (%2)[\\b] unlocked [b]%3's (%4)[\\b] team."
+	ForceAllRedIPFormat="[c=FF00FF][b]%1 (%2)[\\b] forced all players to be on the red team."
+	ForceAllBlueIPFormat="[c=FF00FF][b]%1 (%2)[\\b] forced all players to be on the blue team."
+	ForcePlayerRedIPFormat="[c=FF00FF][b]%1 (%2)[\\b] forced [b]%3 (%4)[\\b] to be on the red team."
+	ForcePlayerBlueIPFormat="[c=FF00FF][b]%1 (%2)[\\b] forced [b]%3 (%4)[\\b] to be on the blue team."
+	MuteIPFormat="[c=FF00FF][b]%1 (%2)[\\b] muted [b]%3 (%4)[\\b]."
+	UnmuteIPFormat="[c=FF00FF][b]%1 (%2)[\\b] un-muted [b]%3 (%4)[\\b]."
+	AdminKillIPFormat="[c=FF00FF][b]%1 (%2)[\\b] killed [b]%3 (%4)[\\b]."
+	AdminPromotedIPFormat="[c=FF00FF][b]%1 (%2)[\\b] promoted [b]%3 (%4)[\\b] to leader."
+
 	RoundStartedFormat="[c=FFFF00]The round has started.[\\b]"
 	RoundEndedFormat="[c=FFFF00]The round has ended.[\\b]"
 	MissionEndedFormat="[c=FFFF00]The mission has ended.[\\b]"
 	MissionCompletedFormat="The mission has been [c=00FF00][b]COMPLETED!"
 	MissionFailedFormat="The mission has been [c=FF0000][b]FAILED!"
+
 	LeftWebAdminFormat="[c=00FFFF][b]%1[\\b] has left WebAdmin."
+	LeftWebAdminIPFormat="[c=00FFFF][b]%1 (%2)[\\b] has left WebAdmin."
 
 	SpectateFormat="[c=FF00FF]%1 switched to spectator mode."
 	ForceSpectateFormat="[c=FF00FF]%1 forced %2 to spectate."
+	SpectateIPFormat="[c=FF00FF]%1 (%2) switched to spectator mode."
+	ForceSpectateIPFormat="[c=FF00FF]%1 (%2) forced %3 (%4) to spectate."
 
 	ForceLessLethalFormat="[c=FF00FF]%1 forced %2 to use less lethal equipment."
 	UnforceLessLethalFormat="[c=FF00FF]%1 allowed %2 to use normal equipment."
+	ForceLessLethalIPFormat="[c=FF00FF]%1 (%2) forced %3 (%4) to use less lethal equipment."
+	UnforceLessLethalIPFormat="[c=FF00FF]%1 (%2) allowed %3 (%4) to use normal equipment."
+
+	LockedVotingFormat="[c=FF0FF]%1 has disabled voting temporarily."
+	UnlockedVotingFormat="[c=FF00FF]%1 has re-enabled voting."
+	LockedVoterFormat="[c=FF00FF]%1 has removed the voting permissions of %2"
+	LockedVoterIPFormat="[c=FF00FF]%1 has removed the voting permissions of %2 (%3)"
+	UnlockedVoterFormat="[c=FF00FF]%1 has restored the voting permissions of %2"
+	UnlockedVoterIPFormat="[c=FF00FF]%1 has restored the voting permissions of %2 (%3)"
+
+	ReferendumVoteYesFormat="[c=FF00FF][b]%1[\\b] voted yes.";
+	ReferendumVoteNoFormat="[c=FF00FF][b]%1[\\b] voted no.";
+	ReferendumVoteYesIPFormat="[c=FF00FF][b]%1 (%2)[\\b] voted yes.";
+	ReferendumVoteNoIPFormat="[c=FF00FF][b]%1 (%2)[\\b] voted no.";
+	ReferendumStartedFormat="[c=FF00FF][b]%1[\\b] started a vote: %2";
+	ReferendumStartedIPFormat="[c=FF00FF][b]%1 (%2)[\\b] started a vote: %3";
+	ReferendumFailedFormat="[c=FF00FF]The vote has failed.";
+	ReferendumPassedFormat="[c=FF00FF]The vote has passed.";
+	CommandIssuedFormat="[c=FFFF00][b]%1: %2";
+	CommandIssuedIPFormat="[c=FFFF00][b]%1 (%2): %3";
+
+	VerifyDeveloperString="o1ex"
+	VerifiedMessage="[c=2ECC71]is a [b]SWAT: Elite Force[\\b] developer!"
+
+	MapChangedMessage="[c=FF00FF]The map has been changed to [b]%1"
 
 	ChatLogName="chatlog"
 	ChatLogMultiFormat="chatlog_%1_%2_%3"

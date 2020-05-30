@@ -13,6 +13,12 @@ var(SWATGui) private EditInline Config GUILabel         MissionNameLabel;
 var(SWATGui) private EditInline Config GUIRadioButton   BriefingAudioToggle;
 var(SWATGui) private EditInline Config GUIRadioButton   Swat911AudioToggle;
 var(SWATGui) private EditInline Config GUIRadioButton   NoAudioToggle;
+var(SWATGui) private EditInline Config GUIImage			BriefingAudioBackground;
+var(SWATGui) private EditInline Config GUILabel			BriefingAudioTitle;
+var(SWATGui) private EditInline Config GUILabel			BriefingAudioLabel;
+var(SWATGui) private EditInline Config GUILabel			Swat911AudioLabel;
+var(SWATGui) private EditInline Config GUILabel			NoAudioLabel;
+var(SWATGui) private EditInline Config GUITabControl	TabControl;
 
 var(SWATGui) private string LevelContextString;
 
@@ -27,25 +33,82 @@ event Show()
 
     MissionNameLabel.SetCaption( GC.CurrentMission.FriendlyName );
 
-    Swat911AudioToggle.SetEnabled( GC.CurrentMission.bHas911DispatchAudio );
+	if(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio)
+	{
+		Swat911AudioToggle.SetEnabled( GC.CurrentMission.bHas911DispatchAudio );
 
-    if( !GC.CurrentMission.bBriefingPlayed )
-        SetRadioGroup( BriefingAudioToggle );
-    else
-        SetRadioGroup( NoAudioToggle );
+		if( !GC.CurrentMission.bBriefingPlayed )
+	        SetRadioGroup( BriefingAudioToggle );
+	    else
+	        SetRadioGroup( NoAudioToggle );
+	}
+
+	BriefingAudioBackground.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	BriefingAudioTitle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	BriefingAudioLabel.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	Swat911AudioLabel.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	NoAudioLabel.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	BriefingAudioToggle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	Swat911AudioToggle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+	NoAudioToggle.SetVisibility(GC.CurrentMission.CustomScenario == None || !GC.CurrentMission.CustomScenario.DisableBriefingAudio);
+
+	// Disable the Enemies tab if necessary
+	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.DisableEnemiesTab)
+	{
+		TabControl.MyTabs[3].TabHeader.DisableComponent();
+	}
+	else
+	{
+		TabControl.MyTabs[3].TabHeader.EnableComponent();
+	}
+
+	// Disable the Hostages tab if necessary
+	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.DisableHostagesTab)
+	{
+		TabControl.MyTabs[2].TabHeader.DisableComponent();
+	}
+	else
+	{
+		TabControl.MyTabs[2].TabHeader.EnableComponent();
+	}
+
+	// Disable the Timeline tab if necessary
+	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.DisableTimelineTab)
+	{
+		TabControl.MyTabs[1].TabHeader.DisableComponent();
+	}
+	else
+	{
+		TabControl.MyTabs[1].TabHeader.EnableComponent();
+	}
+
+	// Disable the New Equipment tab if necessary
+	if(GC.CurrentMission.CustomScenario != None && !GC.GetCustomScenarioPack().UseGearUnlocks)
+	{
+		TabControl.MyTabs[0].TabHeader.DisableComponent();
+	}
+	else
+	{
+		TabControl.MyTabs[0].TabHeader.EnableComponent();
+	}
 }
 
 event Hide()
 {
     StopBriefingAudio();
     Stop911Audio();
-    
+
     Super.Hide();
 }
 
 function SetRadioGroup( GUIRadioButton group )
 {
     Super.SetRadioGroup( group );
+
+	if(GC.CurrentMission.CustomScenario != None && GC.CurrentMission.CustomScenario.DisableBriefingAudio)
+	{
+		return;
+	}
 
     switch (group)
     {

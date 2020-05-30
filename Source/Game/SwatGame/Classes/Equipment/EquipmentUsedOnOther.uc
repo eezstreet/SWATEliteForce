@@ -6,6 +6,16 @@ class EquipmentUsedOnOther extends QualifiedUseEquipment
 import enum EFocusInterface from SwatGamePlayerController;
 
 var Actor Other;         //what this EquipmentUseOnOther is being UsedOn()
+var localized config string GivenName;
+
+static function string GetGivenEquipmentName()
+{
+	if(default.GivenName == "")
+	{
+		return default.FriendlyName;
+	}
+	return default.GivenName;
+}
 
 //called by the PlayerController when the player instigates Use of this HandheldEquipment
 simulated function OnPlayerUse()

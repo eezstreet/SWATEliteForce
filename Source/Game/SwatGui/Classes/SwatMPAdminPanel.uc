@@ -14,7 +14,9 @@ enum AdminPlayerActions
 	PlayerAction_MakeLeader,
 	PlayerAction_Kill,
 	PlayerAction_ForceSpectator,
-	PlayerAction_ForceLessLethal/*,
+	PlayerAction_ForceLessLethal,
+	PlayerAction_LockVoting,
+	/*,
 	The following are what I intend to implement. Someday.
 	PlayerAction_Respawn,
 	PlayerAction_Freeze,
@@ -30,7 +32,9 @@ enum AdminMapActions
 	MapAction_ForceAllRed,
 	MapAction_ForceAllBlue,
 	MapAction_LockTeams,
-	MapAction_GoToSpectator/*,
+	MapAction_GoToSpectator,
+	MapAction_LockVoting,
+	/*,
 	The following are what I intend to implement. Someday.
 	MapAction_PassVote,
 	MapAction_FailVote,
@@ -80,6 +84,8 @@ private function AdminPermissions MapPlayerActionToPermission(AdminPlayerActions
 			return AdminPermissions.Permission_ForceSpectator;
 		case PlayerAction_ForceLessLethal:
 			return AdminPermissions.Permission_ForceLessLethal;
+		case PlayerAction_LockVoting:
+			return AdminPermissions.Permission_LockVoter;
 	}
 }
 
@@ -101,6 +107,8 @@ private function AdminPermissions MapMapActionToPermission(AdminMapActions e)
 			return AdminPermissions.Permission_ForceAllTeams;
 		case MapAction_GoToSpectator:
 			return AdminPermissions.Permission_GoToSpec;
+		case MapAction_LockVoting:
+			return AdminPermissions.Permission_LockVoting;
 	}
 }
 
@@ -315,6 +323,7 @@ defaultproperties
 	PlayerActionNames[7]="Promote to Leader"
 	PlayerActionNames[8]="Send to Spectator"
 	PlayerActionnames[9]="Force Less Lethal"
+	PlayerActionNames[10]="Toggle Vote Lock"
 	MapActionNames[0]="Go to Next Map"
 	MapActionNames[1]="Start Game"
 	MapActionNames[2]="End Game"
@@ -322,6 +331,7 @@ defaultproperties
 	MapActionNames[4]="Send All to Blue"
 	MapActionNames[5]="Lock Teams"
 	MapActionNames[6]="Go to Spectator"
+	MapActionNames[7]="Toggle Vote Lock"
 	PlayerConsoleCommands[0]="Kick"
 	PlayerConsoleCommands[1]="KickBan"
 	PlayerConsoleCommands[2]="TogglePlayerTeamLock"

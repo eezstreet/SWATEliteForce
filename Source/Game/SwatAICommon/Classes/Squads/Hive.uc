@@ -64,11 +64,11 @@ overloaded function construct()
 native function int GetNumOfficers();
 native function Pawn GetOfficer(int Index);
 
-function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSight)
+function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSight, optional bool bUsePathfindingDistance)
 {
 	assert(Target != None);
 
-	return SwatAIRepo.GetElementSquad().GetClosestOfficerTo(Target, bRequiresLineOfSight);
+	return SwatAIRepo.GetElementSquad().GetClosestOfficerTo(Target, bRequiresLineOfSight, bUsePathfindingDistance);
 }
 
 function Pawn GetClosestOfficerThatCanHit(Actor Target)
@@ -887,8 +887,62 @@ private function bool CanAssignAnyOfficerToTarget(Pawn Target)
 }
 
 // Called whenever we see a Hostage or an Enemy (after they are put on the blackboard)
-
 native function UpdateOfficerAssignments();
+
+// returns true if the character is falling in
+function bool IsFallingIn(Pawn Officer)
+{
+	if(SwatAIRepo.GetElementSquad().IsExecutingCommandGoal())
+	{
+		return SwatAIRepo.GetElementSquad().IsFallingIn();
+	}
+	else if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(Officer))
+	{
+		return SwatAIRepo.GetRedSquad().IsFallingIn();
+	}
+	else
+	{
+		return SwatAIRepo.GetBlueSquad().IsFallingIn();
+	}
+}
+
+// returns true if the character is moving to a destination
+function bool IsMovingTo(Pawn Officer)
+{
+	if(SwatAIRepo.GetElementSquad().IsExecutingCommandGoal())
+	{
+		return SwatAIRepo.GetElementSquad().IsMovingTo();
+	}
+	else if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(Officer))
+	{
+		return SwatAIRepo.GetRedSquad().IsMovingTo();
+	}
+	else
+	{
+		return SwatAIRepo.GetBlueSquad().IsMovingTo();
+	}
+}
+
+function SquadMoveToGoal GetMoveToGoalForOfficer(Pawn Officer)
+{
+	if(SwatAIRepo.GetElementSquad().IsExecutingCommandGoal() && SwatAIRepo.GetElementSquad().IsMovingTo())
+	{
+		return SquadMoveToGoal(SwatAIRepo.GetElementSquad().GetCurrentCommandGoal());
+	}
+	else if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(Officer) &&
+		SwatAIRepo.GetRedSquad().IsExecutingCommandGoal() &&
+		SwatAIRepo.GetRedSquad().IsMovingTo())
+	{
+		return SquadMoveToGoal(SwatAIRepo.GetRedSquad().GetCurrentCommandGoal());
+	}
+	else if(SwatAIRepo.GetBlueSquad().IsOfficerOnTeam(Officer) &&
+		SwatAIRepo.GetBlueSquad().IsExecutingCommandGoal() &&
+		SwatAIRepo.GetBlueSquad().IsMovingTo())
+	{
+		return SquadMoveToGoal(SwatAIRepo.GetBlueSquad().GetCurrentCommandGoal());
+	}
+	return None;
+}
 
 private event AssignOfficer(Pawn Officer, Pawn Assignment)
 {
@@ -899,7 +953,11 @@ private event AssignOfficer(Pawn Officer, Pawn Assignment)
 		log("telling " $ Officer $ " to engage " $ Assignment);
 
 	// kill off any command goals (squad behaviors) that this officer is currently executing
-	ClearCommandGoalsForOfficer(Officer);
+	// (unless they are in a fall in/move to order)
+	if(!IsMovingTo(Officer) && !IsFallingIn(Officer))
+	{
+		ClearCommandGoalsForOfficer(Officer);
+	}
 
 	// save off that this target is assigned
 	Blackboard.AddAssignedTarget(Assignment);

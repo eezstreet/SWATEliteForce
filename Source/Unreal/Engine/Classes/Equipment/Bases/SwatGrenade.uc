@@ -2,6 +2,8 @@ class SwatGrenade extends ThrownWeapon;
 
 var() config vector PlayerViewOffset;
 var() config bool PlayerUsable;
+var() localized config string ShortName;
+var() localized config string GivenName;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -10,6 +12,19 @@ var() config bool PlayerUsable;
 var() public config float Weight;
 var() public config float Bulk;
 var() public config float StartCount;
+
+static function string GetShortName() {
+	return default.ShortName;
+}
+
+static function string GetGivenEquipmentName()
+{
+	if(default.GivenName == "")
+	{
+		return default.FriendlyName;
+	}
+	return default.GivenName;
+}
 
 static function float GetInitialWeight() {
   return default.Weight * default.StartCount;
@@ -40,6 +55,21 @@ simulated function int GetDefaultAvailableCount()
 static function bool IsUsableByPlayer()
 {
 	return default.PlayerUsable;
+}
+
+simulated function bool AllowedToPassItem()
+{
+	return true; // we are allowed to pass all grenades
+}
+
+simulated function FlagForFastUse()
+{
+	// only used for lightsticks
+}
+
+function bool IsInFastUse()
+{
+	return false;
 }
 
 defaultproperties

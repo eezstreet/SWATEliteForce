@@ -39,3 +39,4 @@ System/chatlog_*.txt
 *SwatGuiState.ini
 *User.ini
 *.h
+*/.vs/*

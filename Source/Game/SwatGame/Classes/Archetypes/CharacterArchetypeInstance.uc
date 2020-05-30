@@ -23,6 +23,8 @@ var bool Polite;  // Will I forgo shooting hostages?
 var bool Insane; // Will I kill basically everyone?
 var bool Wandering; // Will I wander instead of patrol?
 
+var bool GasAffectsMe; // Can CS Gas affect me?
+
 var bool DOAConversion; // Whether to convert to DOA some time after being incapacitated
 var bool StaticDOAConversion; // For units that are incapacitated at the start: how long to wait before becoming a DOA
 var float DOAConversionTime; // The amount of time it will take to convert to a DOA

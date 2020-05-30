@@ -37,6 +37,7 @@ var(SwatGUIController) private Editinline EditConst CustomScenarioCoopPage      
 var(DEBUG) editconst editinline CustomScenarioCoopPage CoopQMMPopupMenu;
 var(DEBUG) editconst editinline SwatMPPage MPPopupMenu;
 var(DEBUG) editconst editinline SwatObjectivesPopupMenu SPPopupMenu;
+var(DEBUG) editconst editinline SwatWeaponCabinetMenu WeaponCabinetMenu;
 var(DEBUG) editconst editinline SwatMissionLoadingMenu MissionLoadingMenu;
 var(DEBUG) editconst editinline SwatServerSetupMenu ServerSetupMenu;
 
@@ -262,17 +263,34 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             }
             else if(GuiConfig.SwatGameRole == GAMEROLE_MP_Host && coopcampaign)
             {
-
-
+				log("Game Ended. Campaign was "$Campaign);
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
-                if(Campaign != None) {
-                  Campaign.MissionEnded(GetLevelInfo().Label, GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                if(Campaign != None)
+				{
+					Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
+					if(Settings.bIsQMM)
+					{
+						CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
+						Campaign.MissionEnded(name(CustomMissionLabel),
+							GuiConfig.CurrentDifficulty,
+							!(GuiConfig.CurrentMission.IsMissionFailed()),
+							GetSwatGameInfo().LeadershipStatus(),
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+					}
+					else
+					{
+						Campaign.MissionEnded(GetLevelInfo().Label,
+							GuiConfig.CurrentDifficulty,
+							!(GuiConfig.CurrentMission.IsMissionFailed()),
+							GetSwatGameInfo().LeadershipStatus(),
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+					}
 
-                  Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
 
-                  Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
-                  SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
+
+	                Settings = ServerSettings(ViewportOwner.Actor.Level.PendingServerSettings);
+	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
                 }
                 InternalOpenMenu( MPPopupMenu );
             }
@@ -290,10 +308,16 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
                     AssertWithDescription( CustomMissionLabel != "", "Attempted to save results for a custom mission with no name. This should never happen. Contact a programmer." );
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
+					if(Campaign != None)
+					{
+						Campaign.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty, !(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );
+					}
                 }
 
                 if(Campaign != None && Campaign.PlayerPermadeath && Campaign.PlayerDied) {
                   GameOver();
+                } else if(Campaign != None && Campaign.HardcoreMode && Campaign.HardcoreFailed) {
+                    GameOver();
                 } else {
                   OpenMenu( "SwatGui.SwatDebriefingMenu", "SwatDebriefingMenu" );
                 }
@@ -419,11 +443,17 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'PlayerDisconnect':
         case 'SettingsUpdated':
         case 'ReferendumStarted':
+		case 'ReferendumBlocked':
 		    case 'ReferendumAlreadyActive':
 		    case 'ReferendumStartCooldown':
 		    case 'PlayerImmuneFromReferendum':
 		    case 'ReferendumAgainstAdmin':
 		    case 'ReferendumsDisabled':
+		case 'LockedVoting':
+		case 'UnlockedVoting':
+		case 'LockedVoter':
+		case 'UnlockedVoter':
+		case 'Verification':
 		    case 'LeaderVoteTeamMismatch':
 		    case 'YesVote':
 		    case 'NoVote':
@@ -496,6 +526,16 @@ function bool OnMessageRecieved( String Msg, Name Type )
         case 'Caption':
             SendMessageToChat( Msg, Type );
             break;
+
+		case 'CantGiveAlreadyHasOptiwand':
+		case 'CantGiveTooMuchWeight':
+		case 'CantGiveTooMuchBulk':
+		case 'GaveEquipment':
+		case 'GaveYouEquipment':
+		case 'CantReceiveTooMuchWeight':
+		case 'CantReceiveTooMuchBulk':
+			SendMessageToChat( Msg, Type );
+			break;
 
         case 'SpeechManagerNotification':
             SendMessageToChat( Msg, Type );
@@ -938,6 +978,21 @@ function ShowGamePopup( bool bSticky )
         InternalOpenMenu( PopupPage, "Popup" );
 }
 
+function ShowWeaponCabinet()
+{
+	local SwatWeaponCabinetMenu Page;
+
+	//dont do anything if not in-game, or the hud is not on top
+    if( ( Repo.GuiConfig.SwatGameState != GAMESTATE_PreGame &&
+          Repo.GuiConfig.SwatGameState != GAMESTATE_MidGame ) ||
+        GetHudPage() != TopPage() )
+        return;
+
+	Page = GetWeaponCabinetMenu();
+
+	InternalOpenMenu(Page);
+}
+
 function SwatPopupMenuBase GetCurrentPopupMenu()
 {
     //popup page we're interested in dependent on game role
@@ -959,6 +1014,19 @@ function CustomScenarioCoopPage GetCoopQMMPopupMenu()
     }
     Assert( CoopQMMPopupMenu != None );
     return CoopQMMPopupMenu;
+}
+
+function SwatWeaponCabinetMenu GetWeaponCabinetMenu()
+{
+	if(WeaponCabinetMenu == None)
+	{
+		WeaponCabinetMenu = SwatWeaponCabinetMenu(CreateComponent("SwatGui.SwatWeaponCabinetMenu", "SwatWeaponCabinetMenu"));
+		if(!WeaponCabinetMenu.bInited)
+		{
+			WeaponCabinetMenu.InitComponent(None);
+		}
+	}
+	return WeaponCabinetMenu;
 }
 
 function SwatMPPage GetMPPopupMenu()

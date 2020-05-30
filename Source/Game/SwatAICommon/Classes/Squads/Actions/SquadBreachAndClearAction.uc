@@ -173,8 +173,9 @@ protected function bool CanOfficerBreachWithShotgun(Pawn Officer)
 
 latent function UseBreachingShotgun()
 {
-	log("SquadBreachAndClearAction::UseBreachingShotgun()");
 	assert(Breacher != None);
+
+	log("SquadBreachAndClearAction::UseBreachingShotgun()");
 
 	ISwatDoor(TargetDoor).RegisterInterestedInDoorOpening(self);
 
@@ -328,6 +329,21 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 	SwatDoorTarget = ISwatDoor(TargetDoor);
 	assert(SwatDoorTarget != None);
 
+	// Move up the breacher to the first position
+	if(Breacher != GetFirstOfficer())
+	{
+		if(BreachingMethod == 0 || BreachingMethod == 2 && CanOfficerBreachWithShotgun(Breacher))
+		{
+			ISwatOfficer(Breacher).GetOfficerSpeechManagerAction().TriggerMoveUpBreachSGSpeech();
+		}
+		else if(BreachingMethod == 0 || BreachingMethod == 1 && CanOfficerBreachWithC2(Breacher))
+		{
+			ISwatOfficer(Breacher).GetOfficerSpeechManagerAction().TriggerMoveUpC2Speech();
+		}
+		SwapStackUpPositions(Breacher, GetFirstOfficer());
+	}
+
+	log("SquadBreachAndClearAction: Is door locked? ("$SwatDoorTarget.IsLocked()$")");
 	while ((SwatDoorTarget.IsLocked() || bForceBreachAction)/* && !SwatDoorTarget.IsBroken()*/ && !TargetDoor.IsOpening() && !TargetDoor.IsOpen())
 	{
 		if (BreachingMethod == 0 || BreachingMethod == 2 && CanOfficerBreachWithShotgun(Breacher))
@@ -343,6 +359,8 @@ latent function PrepareToMoveSquad(optional bool bNoZuluCheck)
 		}
 		else
 		{
+			log("...Falling to default. (BreachingMethod = "$BreachingMethod$", CanUseC2 = "$CanOfficerBreachWithC2(Breacher)$", CanUseShotgun = "$CanOfficerBreachWithShotgun(Breacher)$")");
+			log("...NOTE: Breacher was "$Breacher);
 			assert(DoesAnOfficerHaveUsableEquipment(Slot_Toolkit));
 
 			PreTargetDoorBreached();
