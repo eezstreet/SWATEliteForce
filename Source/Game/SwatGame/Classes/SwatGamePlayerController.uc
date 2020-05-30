@@ -308,7 +308,7 @@ replication
         ServerRequestThrowPrep, ServerEndThrow, ServerRequestQualifyInterrupt, /*ServerRequestInteract,*/
         ServerRequestViewportChange, ServerSetAlwaysRun, ServerActivateOfficerViewport,
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
-		    ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
+		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
         ServerHandleViewportFire, ServerHandleViewportReload;
 }
@@ -2742,7 +2742,6 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
     // This just walks the LoadOut and sends the contents of each pocket to
     // the server.
     //mplog( self$"---SGPC::SetMPLoadOut(). LoadOut="$LoadOut );
-
     SetMPLoadOutPocketWeapon( Pocket_PrimaryWeapon, LoadOut.LoadOutSpec[Pocket.Pocket_PrimaryWeapon], LoadOut.LoadOutSpec[Pocket.Pocket_PrimaryAmmo] );
 
     SetMPLoadOutPocketWeapon( Pocket_SecondaryWeapon, LoadOut.LoadOutSpec[Pocket.Pocket_SecondaryWeapon], LoadOut.LoadOutSpec[Pocket.Pocket_SecondaryAmmo] );
@@ -2762,9 +2761,9 @@ simulated function SetMPLoadOut( DynamicLoadOutSpec LoadOut )
 
     ServerSetMPLoadOutSpecComplete();
 
-    //dkaplan - ugly ugly ugly HACK HACK Hack
-    if( self == Level.GetLocalPlayerController() )
-        UpdateVoiceType();
+	//dkaplan - ugly ugly ugly HACK HACK Hack
+	if( self == Level.GetLocalPlayerController() )
+		UpdateVoiceType();
 }
 
 simulated function SetMPLoadOutPrimaryAmmo(int Amount) {
@@ -2816,7 +2815,6 @@ function ServerSetMPLoadOutSecondaryAmmo(int Amount)
 function ServerSetMPLoadOutPocketWeapon( Pocket Pocket, class<actor> WeaponItem, class<actor> AmmoItem )
 {
     //mplog( self$"---SGPC::ServerSetMPLoadOutPocketWeapon(). Pocket="$Pocket$", WeaponItem="$WeaponItem$", AmmoItem="$AmmoItem );
-
     if( WeaponItem == None || AmmoItem == None )
     {
         if (Level.GetEngine().EnableDevTools)
@@ -2855,7 +2853,6 @@ function ServerSetMPLoadOutPocketItem( Pocket Pocket, class<actor> Item )
     //NOTE: None may be valid!!!!!
     //if( Item == None )
     //    return;
-
     assert( Pocket != Pocket_PrimaryWeapon );
     assert( Pocket != Pocket_PrimaryAmmo );
     assert( Pocket != Pocket_SecondaryWeapon );
@@ -6105,7 +6102,6 @@ function ClientSetObjectiveVisibility( string ObjectiveName, bool Visible )
 {
     Repo.SetObjectiveVisibility( name(ObjectiveName), Visible );
 }
-
 
 simulated function ClientReportableReportedToTOC( IAmReportableCharacter ReportableCharacter, string inUniqueID, string PlayerTag, string PlayerName )
 {

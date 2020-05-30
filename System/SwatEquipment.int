@@ -438,7 +438,7 @@ FireModes=Single Fire
 TotalAmmoString=25 cartridges
 
 [Stingray]
-Description=The X2 model is a dual-purpose less-lethal weapon. It possesses both a ranged means of Electro-Muscular Disruption (EMD) and a touch-stun mode. The electrical discharge causes involuntary contraction of the target's muscle tissue, regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. The C2 can fire darts in groups of four or two separate groups of two. It can also be used in touch-stun mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors. The main drawback is the reduced range of the C2 cartridges in comparison to the newer M26C model.
+Description=The X2 model is a dual-purpose less-lethal weapon. It possesses both a ranged means of Electro-Muscular Disruption (EMD) and a touch-stun mode. The electrical discharge causes involuntary contraction of the target's muscle tissue, regardless of an individual's pain tolerance or mental focus.  The effect is painful and demoralizing to even the most aggressive suspects. The X2 can fire darts in groups of four or two separate groups of two. It can also be used in touch-stun mode as a melee weapon. An onboard computer records information on shock intensity and duration, among other factors. The main drawback is the reduced range of the X2 cartridges in comparison to the newer X26P model.
 FriendlyName=X2 Series Stun Gun
 Manufacturer=TASER International
 Caliber=TASER Cartridge

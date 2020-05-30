@@ -132,6 +132,8 @@ var(Categorization) public config WeaponEquipType AllowedSlots               "Wh
 var() public config float Weight;
 var() public config float Bulk;
 
+var() public config bool PlayerUsable;
+
 var config vector DefaultLocationOffset;
 var config Rotator DefaultRotationOffset;
 var config vector IronSightLocationOffset;
@@ -174,6 +176,11 @@ simulated function bool ShouldWalkInIronsights()
 simulated function UpdateAmmoDisplay()
 {
   Ammo.UpdateHUD();
+}
+
+static function bool IsUsableByPlayer()
+{
+	return default.PlayerUsable;
 }
 
 static function string GetManufacturer()

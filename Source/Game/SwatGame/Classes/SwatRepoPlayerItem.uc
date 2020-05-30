@@ -36,6 +36,12 @@ var bool bIsAReconnectingClient;
 // rounds and the player has disconnected and trying to reconnect.
 var bool bConnected;
 
+// true if the player is muted
+var bool bMuted;
+
+// true if the player is forced to a less lethal loadout
+var bool bForcedLessLethal;
+
 var class<actor> RepoLoadOutSpec[Pocket.EnumCount];
 var int RepoLoadOutPrimaryWeaponAmmo;
 var int RepoLoadOutSecondaryWeaponAmmo;
@@ -60,7 +66,7 @@ function SetSecondaryAmmoCount(int amount) {
 function SetPocketItemClass( Pocket Pocket, class<actor> ItemClass )
 {
     //log( self$" in SwatRepoPlayerItem::SetPocketItemClass(). Pocket="$Pocket$", Item="$ItemClass );
-    RepoLoadOutSpec[ Pocket ] = ItemClass;
+	RepoLoadOutSpec[ Pocket ] = ItemClass;
 }
 
 
@@ -74,6 +80,7 @@ function SetPocketItemClassName( Pocket Pocket, string ItemClassName )
     {
         ItemClass = class<HandheldEquipment>(DynamicLoadObject(ItemClassName, class'Class'));
     }
+
     SetPocketItemClass( Pocket, ItemClass );
 }
 

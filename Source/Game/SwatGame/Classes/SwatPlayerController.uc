@@ -33,6 +33,7 @@ replication
 		Kick, KickBan, SAD, Switch, StartGame, AbortGame,
 		ForceAllToTeam, ForcePlayerToTeam, ToggleTeamLock, TogglePlayerTeamLock, ToggleMute,
 		AdminKillPlayer, AdminPromotePlayer,
+		ForceSpec, GoToSpec, ForceLL,
 		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
@@ -499,6 +500,11 @@ exec function ForceSpec(string PlayerName)
 	SwatGameInfo(Level.Game).Admin.ForceSpec(PlayerName, SwatGamePlayerController(self));
 }
 
+exec function ForceLL(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ForceLL(PlayerName, SwatGamePlayerController(self));
+}
+
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
 {
   Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
@@ -523,7 +529,7 @@ function ServerSetSettings( ServerSettings Settings,
                             bool newbNoRespawn,
                             bool newbQuickRoundReset,
                             float newFriendlyFireAmount,
-                            float unused2,
+                            string newDisabledEquipment,
 							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
@@ -545,7 +551,7 @@ function ServerSetSettings( ServerSettings Settings,
                                 newbNoRespawn,
                                 newbQuickRoundReset,
                                 newFriendlyFireAmount,
-                                unused2,
+                                newDisabledEquipment,
 								newCampaignCOOP,
 								newAdditionalRespawnTime,
 								newbNoLeaders,

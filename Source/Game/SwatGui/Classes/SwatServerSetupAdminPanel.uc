@@ -39,6 +39,26 @@ var private SwatAdminPermissions SelectedPermission;
 
 var SwatAdmin AdminData;
 
+// Set some components to be turned off if we are not allowed to alter them.
+function SetSubComponentsEnabled( bool bSetEnabled )
+{
+	MyGuestPermissionSelection.SetEnabled(bSetEnabled);
+	MyAdminPermissionSelection.SetEnabled(bSetEnabled);
+	MyRoleListBox.SetEnabled(bSetEnabled && MyAdminPermissionSelection.bChecked);
+	MyNewRoleButton.SetEnabled(bSetEnabled && MyAdminPermissionSelection.bChecked);
+	MyDeleteRoleButton.SetEnabled(bSetEnabled && MyAdminPermissionSelection.bChecked);
+	MyRoleNameBox.SetEnabled(bSetEnabled && MyAdminPermissionSelection.bChecked);
+	MyRolePasswordBox.SetEnabled(bSetEnabled && MyAdminPermissionSelection.bChecked);
+	AvailableRights.SetEnabled(bSetEnabled);
+	SelectedRights.SetEnabled(bSetEnabled);
+	AddRights.SetEnabled(bSetEnabled);
+	RemoveRights.SetEnabled(bSetEnabled);
+	WebAdminEnabled.SetEnabled(bSetEnabled);
+	WebAdminPort.SetEnabled(bSetEnabled);
+	ChatLoggingEnabled.SetEnabled(bSetEnabled);
+	MultipleChatLogs.SetEnabled(bSetEnabled);
+}
+
 // Triggered upon changing a radio button group
 function SetRadioGroup(GUIRadioButton Group)
 {
@@ -132,6 +152,8 @@ function InternalOnActivate()
 {
 	// change us to be on the Guest role by default I guess
 	MyGuestPermissionSelection.SelectRadioButton();
+
+	SetSubComponentsEnabled( SwatServerSetupMenu.bIsAdmin );
 }
 
 // Called when the panel gets created
@@ -326,20 +348,21 @@ function SaveServerSettings()
 	AdminData.default.WebAdminPort = WebAdminPort.Value;
 	AdminData.default.UseChatLog = ChatLoggingEnabled.bChecked;
 	AdminData.default.UseNewChatLogPerDay = MultipleChatLogs.bChecked;
+	AdminData.default.LessLethalLoadoutName = SwatServerSetupMenu.GetSelectedLessLethalName();
 	AdminData.WebAdminPort = WebAdminPort.Value;
 	AdminData.UseWebAdmin = WebAdminEnabled.bChecked;
 
 	AdminData.PermissionNames.Length = AdminData.Permissions.Length;
 	for(i = 0; i < AdminData.Permissions.Length; i++)
 	{
-		AdminData.PermissionNames[i] = AdminData.Permissions[i].Name;
+		AdminData.default.PermissionNames[i] = AdminData.Permissions[i].Name;
 		AdminData.Permissions[i].SaveConfig();
 	}
 
 	AdminData.default.GuestPermissionName = AdminData.GuestPermissions.Name;
 	AdminData.GuestPermissions.SaveConfig();
 
-	AdminData.SaveConfig();
+	AdminData.StaticSaveConfig();
 }
 
 defaultproperties
@@ -366,6 +389,7 @@ defaultproperties
 	PermissionNames[14]="Promote Players"
 	PermissionNames[15]="Go to Spectator"
 	PermissionNames[16]="Force Player to Spectate"
+	PermissionNames[17]="Force Less Lethal"
 
 	PermissionDescription[0]="Kick players from the server."
 	PermissionDescription[1]="Kick (and ban) players from the server."
@@ -384,4 +408,5 @@ defaultproperties
 	PermissionDescription[14]="Promote players to leaders. This only works when the server has CO-OP leaders enabled."
 	PermissionDescription[15]="Allows a player to go to spectator, a viewing mode where players can fly through walls and other obstacles"
 	PermissionDescription[16]="Kill a player and force them to spectator, a viewing mode where players can fly through walls and other obstacles."
+	PermissionDescription[17]="Force a player to use a less lethal loadout. The loadout can be picked in the Equipment tab."
 }

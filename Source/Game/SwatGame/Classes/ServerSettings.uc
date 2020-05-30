@@ -25,7 +25,7 @@ var(ServerSettings) config bool           bAllowReferendums "If true, allow play
 var(ServerSettings) config bool           bNoRespawn "If true, the server will not respawn players";
 var(ServerSettings) config bool           bQuickRoundReset "If true, the server will perform a quick reset in between rounds on the same map; if false, the server will do a full SwitchLevel between rounds";
 var(ServerSettings) config float          FriendlyFireAmount "The damage modifier for friendly fire [0...1]";
-var(ServerSettings) config float          Unused2 "Not used.";
+var(ServerSettings) config string         DisabledEquipment "Equipment that is disabled on the server";
 var(ServerSettings) config float          CampaignCOOP "Contains Campaign CO-OP settings (bitpacked)";
 var(ServerSettings) config int            AdditionalRespawnTime "Time (in seconds) added to the delay time between respawn waves.";
 var(ServerSettings) config bool           bNoLeaders "If true, new 'leader' functionality in SWAT 4 expansion is disabled.";
@@ -45,6 +45,10 @@ var(ServerSettings) config bool				bForceTeamBalance "If true, the teams cannot 
 var(ServerSettings) config bool				bForceTeamMax "If true, all teams have a forced maximum amount";
 var(ServerSettings) config int				TeamForcedMax "If bForceTeamMax, the maximum number of players that can be on a team.";
 
+// Cached stuff
+var private array<class> CachedDisabledEquipment;
+var private bool CacheBuilt;
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,7 +59,7 @@ replication
 		GameType, Maps, NumMaps, MapIndex, NumRounds,
         MaxPlayers, RoundNumber, bUseRoundStartTimer, PostGameTimeLimit,
         bUseRoundEndTimer, MPMissionReadyTime, bShowTeammateNames, Unused, bAllowReferendums, bNoRespawn,
-        bQuickRoundReset, FriendlyFireAmount, Unused2,
+        bQuickRoundReset, FriendlyFireAmount, DisabledEquipment,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
 		bNoLeaders, bNoKillMessages, bEnableSnipers;
 }
@@ -113,14 +117,14 @@ function SetServerSettings( PlayerController PC,
                             bool newbNoRespawn,
                             bool newbQuickRoundReset,
                             float newFriendlyFireAmount,
-                            float newUnused2,
+                            string newDisabledEquipment,
 							float newCampaignCOOP,
 							int newAdditionalRespawnTime,
 							bool newbNoLeaders,
 							bool newbNoKillMessages,
 							bool newbEnableSnipers)
 {
-log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUseRoundStartTimer="$newbUseRoundStartTimer$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUseRoundEndTimer="$newbUseRoundEndTimer$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused="$newUnused$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newUnused2="$newUnused2$" )" );
+log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameType)$", newMapIndex="$newMapIndex$", newNumRounds="$newNumRounds$", newMaxPlayers="$newMaxPlayers$", newUseRoundStartTimer="$newbUseRoundStartTimer$", newPostGameTimeLimit="$newPostGameTimeLimit$", newUseRoundEndTimer="$newbUseRoundEndTimer$", newMPMissionReadyTime="$newMPMissionReadyTime$", newbShowTeammateNames="$newbShowTeammateNames$", newUnused="$newUnused$", newbAllowReferendums="$newbAllowReferendums$", newbNoRespawn="$newbNoRespawn$", newbQuickRoundReset="$newbQuickRoundReset$", newFriendlyFireAmount="$newFriendlyFireAmount$", newDisabledEquipment="$newDisabledEquipment$" )" );
 
 	if(Level.Game.IsA('SwatGameInfo') && PC != None &&
 		!SwatGameInfo(Level.Game).Admin.ActionAllowed(PC, AdminPermissions.Permission_ChangeSettings))
@@ -138,16 +142,16 @@ log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameTyp
     MPMissionReadyTime = newMPMissionReadyTime;
     bShowTeammateNames = newbShowTeammateNames;
     Unused = newUnused;
-	  bAllowReferendums = newbAllowReferendums;
+	bAllowReferendums = newbAllowReferendums;
     bNoRespawn = newbNoRespawn;
     bQuickRoundReset = newbQuickRoundReset;
     FriendlyFireAmount = newFriendlyFireAmount;
-    Unused2 = newUnused2;
-	  CampaignCOOP = newCampaignCOOP;
-	  AdditionalRespawnTime = newAdditionalRespawnTime;
-	  bNoLeaders = newbNoLeaders;
-	  bNoKillMessages = newbNoKillMessages;
-	  bEnableSnipers = newbEnableSnipers;
+    DisabledEquipment = newDisabledEquipment;
+	CampaignCOOP = newCampaignCOOP;
+	AdditionalRespawnTime = newAdditionalRespawnTime;
+	bNoLeaders = newbNoLeaders;
+	bNoKillMessages = newbNoKillMessages;
+	bEnableSnipers = newbEnableSnipers;
 
     RoundNumber=0;
 
@@ -217,6 +221,7 @@ function SetDirty( PlayerController PC )
 		}
 	}
 
+	CacheBuilt = false;
     bDirty = true;
 }
 
@@ -264,6 +269,39 @@ private function LoadMapListForGameType()
     {
         Maps[i] = MapRotation.Maps[i];
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Cached settings for DisabledEquipment so we aren't running repeated computations
+// DO NOT call this on the client, it has its own means of caching
+
+function bool IsEquipmentDisabled(class EquipmentClass)
+{
+	local int i;
+	local array<string> SplitString;
+
+	if(!CacheBuilt)
+	{
+		CachedDisabledEquipment.Length = 0;
+		Split(DisabledEquipment, ",", SplitString);
+		for(i = 0; i < SplitString.Length; i++)
+		{
+			CachedDisabledEquipment[i] = class<Equipment>(DynamicLoadObject(SplitString[i], class'Class'));
+		}
+	}
+	CacheBuilt = true;
+
+	// iterate through all of the cached disabled equipment
+	for(i = 0; i < CachedDisabledEquipment.Length; i++)
+	{
+		if(CachedDisabledEquipment[i] == EquipmentClass)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

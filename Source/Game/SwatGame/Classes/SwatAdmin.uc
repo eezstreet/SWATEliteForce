@@ -1,6 +1,8 @@
 class SwatAdmin extends Engine.Actor
     config(SwatGuiState);
 
+import enum Pocket from Engine.HandheldEquipment;
+
 enum WebAdminMessageType
 {
 	MessageType_Chat,
@@ -37,6 +39,7 @@ enum AdminPermissions
 	Permission_PromoteLeader,	// Allowed to promote players to leader
 	Permission_GoToSpec,		// Allowed to go to spectator
 	Permission_ForceSpectator,	// Allowed to force other players to go to spectator
+	Permission_ForceLessLethal,	// Allowed to force other players to use a less lethal loadout
 	Permission_Max,
 };
 
@@ -69,7 +72,7 @@ var public config string ChatLogName;
 var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
 var public config bool GlobalDisableLocalizedChat;
 
-var private array<SwatGamePlayerController> MutedPlayers;
+var public config string LessLethalLoadoutName;	// When forcing a player to a less lethal loadout, this is the name of the loadout
 
 var private localized config string PenaltyFormat;
 var private localized config string SayFormat;
@@ -116,6 +119,8 @@ var private localized config string MissionFailedFormat;
 var private localized config string LeftWebAdminFormat;
 var private localized config string SpectateFormat;
 var private localized config string ForceSpectateFormat;
+var private localized config string ForceLessLethalFormat;
+var private localized config string UnforceLessLethalFormat;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -326,12 +331,17 @@ function bool TryLogin( PlayerController PC, String Password )
 			PC.ConsoleMessage("Logged in with role "$Permissions[i].PermissionSetName);
 			PRI.SetPermissions(Permissions[i]);
 			PRI.bIsAdmin = true;
+			SwatGamePlayerController(PC).SwatRepoPlayerItem.LastAdminPassword = Password;
 			return true;
 		}
 	}
 
-	// If we got here, none of the admin passwords worked
+	// If we got here, none of the admin passwords worked.
+	// If we got to this point, it's entirely likely that we got here because we just joined the server and
+	// the server tried to log us in automatically with our previously entered password (which is blank)
+	// So in this case, set the guest permissions here
 	PC.ConsoleMessage("Couldn't login, invalid password");
+	PRI.SetPermissions(GuestPermissions);
 	return false;
 }
 
@@ -545,7 +555,6 @@ function TogglePlayerTeamLock(PlayerController PC, string PlayerName)
 public function bool ToggleMute(PlayerController PC, string PlayerName, optional string AdminName)
 {
 	local SwatGamePlayerController P;
-	local int i;
 	local string Msg;
 
 	if(PC != None)
@@ -563,20 +572,18 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 		{
 			// Got 'em. Find out now whether or not this person has already been muted or not.
 			Msg = AdminName$"\t"$P.PlayerReplicationInfo.PlayerName;
-			for(i = 0; i < MutedPlayers.Length; i++)
+			if(P.SwatRepoPlayerItem.bMuted)
 			{
-				if(MutedPlayers[i] == P)
-				{
-					// Turn off their mute
-					SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Unmute');
-					Broadcast(Msg, 'Unmute');
-					MutedPlayers.Remove(i, 1);
-					return true;
-				}
+				P.SwatRepoPlayerItem.bMuted = false;
+				SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Unmute');
+				Broadcast(Msg, 'Unmute');
 			}
-			SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Mute');
-			Broadcast(Msg, 'Mute');
-			MutedPlayers[MutedPlayers.Length] = P;
+			else
+			{
+				P.SwatRepoPlayerItem.bMuted = true;
+				SwatGameInfo(Level.Game).Broadcast(None, Msg, 'Mute');
+				Broadcast(Msg, 'Mute');
+			}
 			return true;
 		}
 	}
@@ -587,17 +594,7 @@ public function bool ToggleMute(PlayerController PC, string PlayerName, optional
 // Check to see if a player is muted
 public function bool Muted(SwatGamePlayerController PC)
 {
-	local int i;
-
-	for(i = 0; i < MutedPlayers.Length; i++)
-	{
-		if(MutedPlayers[i] == PC)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return PC.SwatRepoPlayerItem.bMuted;
 }
 
 // Returns true if we are allowed to force players to be leaders
@@ -695,6 +692,104 @@ public function bool ForceSpec(string PlayerName, optional SwatPlayerController 
 	}
 
 	return false;
+}
+
+public function bool ForceLL(string PlayerName, optional SwatPlayerController PC, optional string Alias)
+{
+	local SwatGamePlayerController P;
+
+	if(!ActionAllowed(PC, AdminPermissions.Permission_ForceLessLethal))
+	{
+		// lacking permissions to do this
+		return false;
+	}
+
+	if(PC != None)
+	{
+		Alias = PC.PlayerReplicationInfo.PlayerName;
+	}
+
+	foreach DynamicActors(class'SwatGamePlayerController', P)
+	{
+		if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+		{
+			if(ForceLessLethalOnPlayer(P))
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal');
+				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'ForceLessLethal');
+			}
+			else
+			{
+				SwatGameInfo(Level.Game).Broadcast(PC, Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal');
+				Broadcast(Alias$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnforceLessLethal');
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Forces (or unenforces) a player to use a less lethal loadout that is designated by the server.
+// Returns true if the loadout was enforced, returns false if the loadout was unenforced.
+public function bool ForceLessLethalOnPlayer(SwatGamePlayerController PC)
+{
+	local DynamicLoadoutSpec NewSpec;
+	local SwatRepoPlayerItem RepoItem;
+	local int i;
+	local NetPlayer Player;
+	local OfficerLoadout NewLoadout;
+	local DynamicLoadoutSpec OldSpec;
+
+	RepoItem = PC.SwatRepoPlayerItem;
+
+	if(RepoItem.bForcedLessLethal)
+	{
+		RepoItem.bForcedLessLethal = false;
+		return false;
+	}
+
+	Player = NetPlayer(PC.Pawn);
+
+	NewSpec = GetLessLethalSpec();
+	if(NewSpec == None)
+	{
+		SwatGameInfo(Level.Game).Broadcast(None, "Could not find the Less Lethal loadout.", 'DebugMessage');
+		mplog("Could not find the Less Lethal Loadout!");
+		return false;
+	}
+
+	NewLoadout = Spawn(class'OfficerLoadout', Player, 'EmptyMultiplayerOfficerLoadOut');
+
+	for(i = 0; i < Pocket.EnumCount; i++)
+	{
+		RepoItem.RepoLoadOutSpec[i] = NewSpec.LoadOutSpec[i];
+	}
+
+	PC.SetMPLoadOut(NewSpec);
+
+	if(Player != None)
+	{
+		OldSpec = Player.GetLoadoutSpec();
+		for(i = 0; i < Pocket.EnumCount; i++)
+		{
+			Player.SetPocketItemClass(Pocket(i), RepoItem.RepoLoadOutSpec[i]);
+			OldSpec.LoadOutSpec[i] = RepoItem.RepoLoadOutSpec[i];
+		}
+
+		NewLoadout.Initialize(NewSpec, false);
+		Player.ReceiveLoadOut(NewLoadout);
+		Player.InitializeReplicatedCounts();
+		SwatGameInfo(Level.Game).SetPlayerDefaults(Player);
+	}
+
+	RepoItem.bForcedLessLethal = true;
+	return true;
+}
+
+public function DynamicLoadOutSpec GetLessLethalSpec()
+{
+	return Spawn(class'DynamicLoadOutSpec', None, name(LessLethalLoadoutName));
 }
 
 // Execute an AC command based on the text
@@ -922,6 +1017,10 @@ function Broadcast(coerce string Msg, optional name Type)
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(UnlockedPlayerTeamFormat, StrA, StrB);
 			break;
+		case 'Fallen':
+			TypeOut = WebAdminMessageType.MessageType_Kill;
+			MsgOut = FormatTextString(FallenFormat, StrA);
+			break;
 		case 'Mute':
 			TypeOut = WebAdminMessageType.MessageType_Chat;
 			MsgOut = FormatTextString(MuteFormat, StrA, StrB);
@@ -945,6 +1044,14 @@ function Broadcast(coerce string Msg, optional name Type)
 		case 'ForceSpectate':
 			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
 			MsgOut = FormatTextString(ForceSpectateFormat, StrA, StrB);
+			break;
+		case 'ForceLessLethal':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(ForceLessLethalFormat, StrA, StrB);
+			break;
+		case 'UnforceLessLethal':
+			TypeOut = WebAdminMessageType.MessageType_SwitchTeams;
+			MsgOut = FormatTextString(UnforceLessLethalFormat, StrA, StrB);
 			break;
 	}
 
@@ -1029,6 +1136,11 @@ defaultproperties
 	SpectateFormat="[c=FF00FF]%1 switched to spectator mode."
 	ForceSpectateFormat="[c=FF00FF]%1 forced %2 to spectate."
 
+	ForceLessLethalFormat="[c=FF00FF]%1 forced %2 to use less lethal equipment."
+	UnforceLessLethalFormat="[c=FF00FF]%1 allowed %2 to use normal equipment."
+
 	ChatLogName="chatlog"
 	ChatLogMultiFormat="chatlog_%1_%2_%3"
+
+	LessLethalLoadoutName="Pacifier"
 }

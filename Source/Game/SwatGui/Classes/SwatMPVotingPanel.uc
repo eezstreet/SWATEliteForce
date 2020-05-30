@@ -14,6 +14,7 @@ var(SWATGui) private EditInline Config GUIButton MapButton;
 var(SWATGui) private EditInline Config GUIButton NextMapButton;
 var(SWATGui) private EditInline Config GUIButton EndMapButton;
 var(SWATGui) private EditInline Config GUIButton RestartMapButton;
+var(SWATGui) private EditInline Config GUIButton StartMapButton;
 
 var(SWATGui) private EditInline Config GUILabel ReferendumDetails;
 var(SWATGui) private EditInline Config GUIButton VoteYesButton;
@@ -43,9 +44,10 @@ function InitComponent(GUIComponent MyOwner)
 
 	MapButton.OnClick = OnMapButtonClicked;
 
-  NextMapButton.OnClick = OnSimpleReferendumClicked;
-  EndMapButton.OnClick = OnSimpleReferendumClicked;
-  RestartMapButton.OnClick = OnSimpleReferendumClicked;
+	NextMapButton.OnClick = OnSimpleReferendumClicked;
+	EndMapButton.OnClick = OnSimpleReferendumClicked;
+	RestartMapButton.OnClick = OnSimpleReferendumClicked;
+	StartMapButton.OnClick = OnSimpleReferendumClicked;
 
 	VoteYesButton.OnClick = OnVoteYesClicked;
 	VoteNoButton.OnClick = OnVoteNoClicked;
@@ -139,6 +141,9 @@ private function SetVotingEnabled(optional bool bForceRefresh)
         RestartMapButton.SetVisibility(bEnabled);
         RestartMapButton.SetEnabled(bEnabled);
 
+		StartMapButton.SetVisibility(bEnabled);
+		StartMapButton.SetEnabled(bEnabled);
+
 		BackgroundLeft.SetVisibility(bEnabled);
 		BackgroundRight.SetVisibility(bEnabled);
 
@@ -183,11 +188,15 @@ private function InternalOnActivate()
     {
         RestartMapButton.Show();
         RestartMapButton.EnableComponent();
+		StartMapButton.Hide();
+		StartMapButton.DisableComponent();
     }
     else
     {
         RestartMapButton.Hide();
         RestartMapButton.DisableComponent();
+		StartMapButton.Show();
+		StartMapButton.EnableComponent();
     }
 
 	if (SwatGUIController(Controller).coopcampaign)
@@ -332,27 +341,30 @@ private function OnPlayerReferendumClicked(GUIComponent Sender)
 
 private function OnSimpleReferendumClicked(GUIComponent Sender)
 {
-  local class<Voting.Referendum> Referendum;
+	local class<Voting.Referendum> Referendum;
 
-  if(SwatPlayerController(PlayerOwner()) == None)
-    return;
+	if(SwatPlayerController(PlayerOwner()) == None)
+	    return;
 
-  switch(Sender)
-  {
-    case EndMapButton:
-      Referendum = class'SwatGame.EndMapReferendum';
-      break;
-    case NextMapButton:
-      Referendum = class'SwatGame.NextMapReferendum';
-      break;
-    case RestartMapButton:
-      Referendum = class'SwatGame.RestartLevelReferendum';
-      break;
-  }
+	switch(Sender)
+	{
+	    case EndMapButton:
+	      	Referendum = class'SwatGame.EndMapReferendum';
+	      	break;
+	    case NextMapButton:
+	      	Referendum = class'SwatGame.NextMapReferendum';
+	      	break;
+		case RestartMapButton:
+		    Referendum = class'SwatGame.RestartLevelReferendum';
+		    break;
+		case StartMapButton:
+			Referendum = class'SwatGame.StartMapReferendum';
+			break;
+	}
 
-  SwatPlayerController(PlayerOwner()).ServerStartReferendum(PlayerOwner(), Referendum);
+	SwatPlayerController(PlayerOwner()).ServerStartReferendum(PlayerOwner(), Referendum);
 
-  if (SwatMPPage(Controller.TopPage()) != None)
+	if (SwatMPPage(Controller.TopPage()) != None)
 		SwatMPPage(Controller.TopPage()).ResumeGame();
 }
 

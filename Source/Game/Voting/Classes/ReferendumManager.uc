@@ -1,4 +1,4 @@
-class ReferendumManager extends Engine.Actor;
+class ReferendumManager extends Engine.Actor config(SwatGuiState);
 
 var private TeamInfo ReferendumTeam;				// The team of the player that started the referendum
 
@@ -7,11 +7,12 @@ var private int NoVotes;							// The current tally of no votes
 
 var private array<int> Voters;						// A list of PlayerIds that have submitted a vote
 
-var private globalconfig float ReferendumDuration;	// How long the referendum will allow votes to be cast
-var private globalconfig bool TiesWin;							// Whether ties count as a vote succeed
-var private globalconfig bool CallCastVote;					// Whether calling a vote automatically counts as a "yes" vote
-var private globalconfig int MinVoters;							// Minimum number of voters required for a referendum to succeed
-var private globalconfig bool NonVotersAreNo;				// Whether Non-Voters count as "no" votes
+var public globalconfig float ReferendumDuration;	// How long the referendum will allow votes to be cast
+var public globalconfig bool TiesWin;							// Whether ties count as a vote succeed
+var public globalconfig bool CallCastVote;					// Whether calling a vote automatically counts as a "yes" vote
+var public globalconfig int MinVoters;							// Minimum number of voters required for a referendum to succeed
+var public globalconfig bool NonVotersAreNo;				// Whether Non-Voters count as "no" votes
+var public globalconfig array<class<Referendum> > DisabledReferendums;	// What referendum types are disabled
 var private float TimeRemaining;					// How much time remains before the referendum expires
 
 struct CooldownTimer
@@ -128,6 +129,23 @@ private function UpdateCooldownTimers(float Delta)
 		ImmunityCooldownTimers.Remove(0, 1);
 }
 
+static function bool ReferendumTypeAllowed(class<Referendum> ReferendumType)
+{
+	local int i;
+
+	for(i = 0; i < default.DisabledReferendums.Length; i++)
+	{
+		if(default.DisabledReferendums[i] == ReferendumType)
+		{
+			// Disabled, so it's not allowed
+			return false;
+		}
+	}
+
+	// It's not disabled, so it must be allowed
+	return true;
+}
+
 // Returns false if the referendum could not be started
 protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType, optional bool bDontUseTeam)
 {
@@ -146,6 +164,13 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 		//mplog("The referendum has failed to start because the cooldown for player " $ PRI.PlayerName $ " has not yet expired");
 		assert(PlayerController(PRI.Owner) != None);
 		Level.Game.Broadcast(None, "", 'ReferendumStartCooldown', PlayerController(PRI.Owner));
+		return false;
+	}
+
+	if(!ReferendumTypeAllowed(ReferendumType.class))
+	{
+		assert(PlayerController(PRI.Owner) != None);
+		Level.Game.Broadcast(None, "", 'ReferendumTypeNotAllowed', PlayerController(PRI.Owner));
 		return false;
 	}
 

@@ -8,6 +8,8 @@
 class SwatMPLoadoutPanel extends SwatLoadoutPanel
     ;
 
+var array<class> ServerDisabledEquipment;
+
 ///////////////////////////
 // Initialization & Page Delegates
 ///////////////////////////
@@ -15,6 +17,27 @@ function InitComponent(GUIComponent MyOwner)
 {
 	Super.InitComponent(MyOwner);
 	SwatGuiController(Controller).SetMPLoadoutPanel(self);
+}
+
+function EvaluateServerDisabledEquipment()
+{
+	local ServerSettings Settings;
+	local array<string> SplitString;
+	local int i;
+
+	Settings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+
+	ServerDisabledEquipment.Length = 0;
+
+	Split(Settings.DisabledEquipment, ",", SplitString);
+	for(i = 0; i < SplitString.Length; i++)
+	{
+		if(SplitString[i] == "")
+		{
+			continue;
+		}
+		ServerDisabledEquipment[ServerDisabledEquipment.Length] = class<Equipment>(DynamicLoadObject(SplitString[i], class'Class'));
+	}
 }
 
 function LoadMultiPlayerLoadout()
@@ -26,6 +49,7 @@ function LoadMultiPlayerLoadout()
 
 protected function SpawnLoadouts()
 {
+	EvaluateServerDisabledEquipment();
     LoadLoadOut( "CurrentMultiplayerLoadOut", true );
 }
 
@@ -94,9 +118,20 @@ protected function MagazineCountChange(GUIComponent Sender) {
 }
 
 
-function bool CheckValidity( eNetworkValidity type )
+function bool CheckValidity( class EquipmentClass, eNetworkValidity type )
 {
-    return (type == NETVALID_MPOnly) || (Super.CheckValidity( type ));
+	local int i;
+
+	// Check for server disabled equipment
+	for(i = 0; i < ServerDisabledEquipment.Length; i++)
+	{
+		if(EquipmentClass == ServerDisabledEquipment[i])
+		{
+			return false;
+		}
+	}
+
+    return (type == NETVALID_MPOnly) || (Super.CheckValidity( EquipmentClass, type ));
 }
 
 function bool CheckCampaignValid( class EquipmentClass )

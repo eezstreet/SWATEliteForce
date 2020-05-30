@@ -1,6 +1,7 @@
 class SwatGrenade extends ThrownWeapon;
 
 var() config vector PlayerViewOffset;
+var() config bool PlayerUsable;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -34,6 +35,11 @@ simulated function vector GetPlayerViewOffset()
 simulated function int GetDefaultAvailableCount()
 {
   return StartCount;
+}
+
+static function bool IsUsableByPlayer()
+{
+	return default.PlayerUsable;
 }
 
 defaultproperties

@@ -652,6 +652,26 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content)
 			SendMessageToUser(i, msg);
 		}
 	}
+	else if(argv[0] ~= "forcell")
+	{
+		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_ForceLessLethal))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /forcell <player name>";
+			SendMessageToUser(i, msg);
+		}
+		else if(!SwatGameInfo(Level.Game).Admin.ForceLL(ConcatArgs(argv, 1), None, Users[i].Alias$"(WebAdmin)"))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv, 1)$"'";
+			SendMessageToUser(i, msg);
+		}
+	}
 	else if(argv[0] ~= "switch")
 	{
 		if(!Users[i].PermissionSet.GetPermission(AdminPermissions.Permission_Switch))

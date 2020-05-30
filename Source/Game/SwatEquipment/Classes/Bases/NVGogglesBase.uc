@@ -304,6 +304,12 @@ simulated state Deactivating
 	}
 }
 
+static function bool IsUsableByPlayer()
+{
+	// sort of clever hack...allows the night vision goggles to be disabled, but not NVGogglesBase
+	return default.class != class'SwatEquipment.NVGogglesBase';
+}
+
 defaultproperties
 {
 	ProtectedRegion = REGION_Head

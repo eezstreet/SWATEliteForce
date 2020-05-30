@@ -106,7 +106,8 @@ function InitializeReplicatedCounts()
     LoadOutSpecCount = 0;
     for ( i = 0; i < Pocket.EnumCount; ++i )
     {
-		assert(i != Pocket.Pocket_CustomSkin || ReplicatedLoadOutSpec[i] == None);
+		//assert(i != Pocket.Pocket_CustomSkin || ReplicatedLoadOutSpec[i] == None);
+		mplog("---NetPlayer::InitializeReplicatedCounts("$i$") = "$ReplicatedLoadoutSpec[i]);
         if ( ReplicatedLoadOutSpec[i] != None )
             ++LoadOutSpecCount;
     }
@@ -244,6 +245,25 @@ simulated event PostReplication()
 	    mplog( self$" has name: "$GetHumanReadableName() );
 }
 
+event PostNetReceive()
+{
+	local OfficerLoadout NewLoadout;
+
+	if(ReplicatedLoadoutSpec[0] != DynamicLoadoutSpec.LoadOutSpec[0])
+	{
+		// Our loadout got forced to something else by the server. Adjust. Adapt. Overcome.
+		NewLoadOut = Spawn(class'OfficerLoadOut', self, 'EmptyMultiplayerOfficerLoadOut' );
+
+		CopyReplicatedSpecToDynamicSpec();
+
+		NewLoadout.Initialize(DynamicLoadoutSpec, false);
+		ReceiveLoadout(NewLoadout);
+
+		CheckDesiredItemAndEquipIfNeeded();
+
+		SwatGamePlayerController(Controller).EquipNextSlot();
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -630,6 +650,10 @@ simulated function PrintLoadOutSpecToMPLog()
 simulated function SetPocketItemClass( Pocket Pocket, class<actor> Item )
 {
     //mplog( self$"---NetPlayer::SetPocketItemClass(). Pocket="$Pocket$", Item="$Item );
+	if(SwatGamePlayerController(Controller) != None && SwatGamePlayerController(Controller).SwatRepoPlayerItem.bForcedLessLethal)
+	{
+		return;
+	}
     GetLoadoutSpec().LoadOutSpec[ Pocket ] = Item;
     ReplicatedLoadOutSpec[ Pocket ] = Item;
 }
@@ -647,6 +671,10 @@ simulated function SetPocketItemClassName( Pocket Pocket, string ItemClassName )
     local class<actor> ItemClass;
 
     //mplog( self$"---NetPlayer::SetPocketItemClassName(). Pocket="$Pocket$", ItemClassName="$ItemClassName );
+	if(SwatGamePlayerController(Controller) != None && SwatGamePlayerController(Controller).SwatRepoPlayerItem.bForcedLessLethal)
+	{
+		return;
+	}
 
     if ( ItemClassName != "" )
     {
@@ -995,6 +1023,8 @@ defaultproperties
     IdealCuffingDistanceBetweenPawns=50.0
 
     TeamNumber=-1
+
+	bNetNotify=true
 
     bLoadOutInitialized=false
     LoadOutSpecCount=0

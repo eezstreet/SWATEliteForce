@@ -129,7 +129,7 @@ state Expired
 defaultproperties
 {
     StaticMesh=StaticMesh'SwatGear2_sm.GlowstickThrown'
-	ExpiredMesh=StaticMesh'SwatGear2_sm.GlowstickThrown'
+	ExpiredMesh=StaticMesh'gear_sef.lightstick_depleted'
 	Physics=PHYS_Havok
 	bNoDelete=false
 	bAlwaysRelevant=false
@@ -138,13 +138,12 @@ defaultproperties
 	hkMass=0.05
 	hkFriction=0.1
 	hkRestitution=0.3
-	CollisionHeight=5
-	CollisionRadius=5
+	CollisionHeight=8
+	CollisionRadius=8
 
 	GlowBrightness=128
 	GlowHue=90
 	GlowSaturation=128
-	LightOffset=(0, 0, 200)
 	GlowLifetime=300
 	MPGlowLifetimeMultiplier=0.1
 

@@ -308,7 +308,7 @@ function ChangeLoadOut( Pocket thePocket )
     SaveCurrentLoadout();
 }
 
-function bool CheckValidity( eNetworkValidity type )
+function bool CheckValidity( class EquipmentClass, eNetworkValidity type )
 {
     local int CampaignPath;
 
@@ -318,7 +318,7 @@ function bool CheckValidity( eNetworkValidity type )
       return true;
     }
 
-    return (type == NETVALID_SPOnly) || (Super.CheckValidity( type ));
+    return (type == NETVALID_SPOnly) || (Super.CheckValidity( EquipmentClass, type ));
 }
 
 function bool CheckCampaignValid( class EquipmentClass )

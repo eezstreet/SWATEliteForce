@@ -18,9 +18,13 @@ var(SWATGui) EditInline Config GUIButton						MyQuitButton;
 var(SWATGui) EditInline Config SwatServerSetupQuickPanel		QuickSetupPanel;
 var(SWATGui) EditInline Config SwatServerSetupAdvancedPanel		AdvancedSetupPanel;
 var(SWATGui) EditInline Config SwatServerSetupAdminPanel		AdminPanel;
+var(SWATGui) EditInline Config SwatServerSetupVotingPanel		VotingPanel;
+var(SWATGui) EditInline Config SwatServerSetupEquipmentPanel	EquipmentPanel;
 var(SWATGui) EditInline Config GUIButton						QuickSetupButton;
 var(SWATGui) EditInline Config GUIButton						AdvancedSetupButton;
 var(SWATGui) EditInline Config GUIButton						AdminButton;
+var(SWATGui) EditInline Config GUIButton						VotingButton;
+var(SWATGui) EditInline Config GUIButton						EquipmentButton;
 
 var(SWATGui) EditInline Config GUIButton						ProfileButton;
 
@@ -59,11 +63,15 @@ function InitComponent(GUIComponent MyOwner)
 	QuickSetupPanel.SwatServerSetupMenu = self;
 	AdvancedSetupPanel.SwatServerSetupMenu = self;
 	AdminPanel.SwatServerSetupMenu = self;
+	VotingPanel.SwatServerSetupMenu = self;
+	EquipmentPanel.SwatServerSetupMenu = self;
 
 	QuickSetupButton.OnClick = OnQuickSetupButton;
 	AdvancedSetupButton.OnClick = OnAdvancedSetupButton;
 	ProfileButton.OnClick = OnProfileButton;
 	AdminButton.OnClick = OnAdminButton;
+	VotingButton.OnClick = OnVotingButton;
+	EquipmentButton.OnClick = OnEquipmentButton;
 
 	OnActivate = InternalOnActivate;
 }
@@ -76,6 +84,10 @@ function OpenQuickSetup()
 	AdminPanel.DeActivate();
 	QuickSetupPanel.Show();
 	QuickSetupPanel.Activate();
+	VotingPanel.Hide();
+	VotingPanel.DeActivate();
+	EquipmentPanel.Hide();
+	EquipmentPanel.DeActivate();
 }
 
 function OpenAdvancedSetup()
@@ -86,6 +98,10 @@ function OpenAdvancedSetup()
 	AdminPanel.DeActivate();
 	AdvancedSetupPanel.Show();
 	AdvancedSetupPanel.Activate();
+	VotingPanel.Hide();
+	VotingPanel.DeActivate();
+	EquipmentPanel.Hide();
+	EquipmentPanel.DeActivate();
 }
 
 function OpenAdmin()
@@ -96,6 +112,38 @@ function OpenAdmin()
 	AdvancedSetupPanel.DeActivate();
 	AdminPanel.Show();
 	AdminPanel.Activate();
+	VotingPanel.Hide();
+	VotingPanel.DeActivate();
+	EquipmentPanel.Hide();
+	EquipmentPanel.DeActivate();
+}
+
+function OpenVoting()
+{
+	QuickSetupPanel.Hide();
+	QuickSetupPanel.DeActivate();
+	AdvancedSetupPanel.Hide();
+	AdvancedSetupPanel.DeActivate();
+	AdminPanel.Hide();
+	AdminPanel.DeActivate();
+	VotingPanel.Show();
+	VotingPanel.Activate();
+	EquipmentPanel.Hide();
+	EquipmentPanel.DeActivate();
+}
+
+function OpenEquipment()
+{
+	QuickSetupPanel.Hide();
+	QuickSetupPanel.DeActivate();
+	AdvancedSetupPanel.Hide();
+	AdvancedSetupPanel.DeActivate();
+	AdminPanel.Hide();
+	AdminPanel.DeActivate();
+	VotingPanel.Hide();
+	VotingPanel.DeActivate();
+	EquipmentPanel.Show();
+	EquipmentPanel.Activate();
 }
 
 function OnQuickSetupButton(GUIComponent Sender)
@@ -111,6 +159,16 @@ function OnAdvancedSetupButton(GUIComponent Sender)
 function OnAdminButton(GUIComponent Sender)
 {
 	OpenAdmin();
+}
+
+function OnVotingButton(GUIComponent Sender)
+{
+	OpenVoting();
+}
+
+function OnEquipmentButton(GUIComponent Sender)
+{
+	OpenEquipment();
 }
 
 function OnProfileButton(GUIComponent Sender)
@@ -230,6 +288,8 @@ event HandleParameters(string Param1, string Param2, optional int param3)
 	QuickSetupPanel.HandleParameters( Param1, Param2, Param3 );
 	AdvancedSetupPanel.HandleParameters( Param1, Param2, Param3 );
 	AdminPanel.HandleParameters( Param1, Param2, Param3 );
+	VotingPanel.HandleParameters( Param1, Param2, Param3 );
+	EquipmentPanel.HandleParameters( Param1, Param2, Param3 );
 }
 
 function SaveServerSettings()
@@ -243,7 +303,9 @@ function SaveServerSettings()
 
 	QuickSetupPanel.SaveServerSettings();
 	AdvancedSetupPanel.SaveServerSettings();
+	EquipmentPanel.SaveServerSettings();
 	AdminPanel.SaveServerSettings();
+	VotingPanel.SaveServerSettings();
 
     //
     // Set all server settings
@@ -259,16 +321,16 @@ function SaveServerSettings()
                                 AdvancedSetupPanel.MyPreGameTimeLimitBox.Value,
                                 AdvancedSetupPanel.MyShowTeammatesButton.bChecked,
                                 false, // Not used
-								                AdvancedSetupPanel.MyAllowReferendumsButton.bChecked,
+								VotingPanel.MyVotingEnabledBox.bChecked,
                                 QuickSetupPanel.MyNoRespawnButton.bChecked,
                                 QuickSetupPanel.MyQuickResetBox.bChecked,
                                 AdvancedSetupPanel.MyFriendlyFireSlider.GetValue(),
-                                0.0f, // Not used
-								                -1^0,
-								                AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
-								                !AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
-								                !AdvancedSetupPanel.MyEnableKillMessagesCheck.bChecked,
-								                AdvancedSetupPanel.MyEnableSnipers.bChecked);
+                                EquipmentPanel.GetDisabledEquipmentClasses(),
+								-1^0,
+								AdvancedSetupPanel.MyAdditionalRespawnTimeBox.Value,
+								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
+								!AdvancedSetupPanel.MyEnableKillMessagesCheck.bChecked,
+								AdvancedSetupPanel.MyEnableSnipers.bChecked);
 
     GC.SaveConfig();
 }
@@ -362,6 +424,11 @@ function RefreshEnabled()
         MyQuitButton.SetEnabled( bEnableStart );
 
 	QuickSetupPanel.DoRefreshEnabled();
+}
+
+function string GetSelectedLessLethalName()
+{
+	return EquipmentPanel.MyLessLethalBox.GetExtra();
 }
 
 defaultproperties

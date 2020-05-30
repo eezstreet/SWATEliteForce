@@ -1135,11 +1135,22 @@ function AddDefaultInventory(Pawn inPlayerPawn)
 			else
 				theNetPlayer.SetCustomSkinClassName( "SwatGame.DefaultCustomSkin" );
 
-            LoadOutSpec = theNetPlayer.GetLoadoutSpec();
+			if(RepoPlayerItem.bForcedLessLethal)
+			{
+				LoadOutSpec = Admin.GetLessLethalSpec();
+				for(i = 0; i < Pocket.EnumCount; i++)
+				{
+					theNetPlayer.ReplicatedLoadOutSpec[i] = LoadOutSpec.LoadOutSpec[i];
+				}
+			}
+			else
+			{
+				LoadOutSpec = theNetPlayer.GetLoadoutSpec();
 
-            // Alter it *ex post facto* to have the correct ammo counts
-            LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
-            LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
+				// Alter it *ex post facto* to have the correct ammo counts
+	            LoadOutSpec.SetPrimaryAmmoCount(RepoPlayerItem.GetPrimaryAmmoCount());
+	            LoadOutSpec.SetSecondaryAmmoCount(RepoPlayerItem.GetSecondaryAmmoCount());
+			}
         }
 
 		IsSuspect = theNetPlayer.GetTeamNumber() == 1;
@@ -1443,6 +1454,8 @@ event PlayerController Login(string Portal, string Options, out string Error)
 				InTeam = GetAutoJoinTeamID();
 				theSwatRepoPlayerItem.SetTeamID( InTeam );
 			}
+
+			mplog("Already had a repo item, bMuted was "$theSwatRepoPlayerItem.bMuted$", bForcedLessLethal was "$theSwatRepoPlayerItem.bForcedLessLethal);
         }
         theSwatRepoPlayerItem.bConnected = true;
     }
@@ -1479,11 +1492,7 @@ event PlayerController Login(string Portal, string Options, out string Error)
 
     SwatGamePlayerController(NewPlayer).SwatPlayerID = NewSwatPlayerID;
     if ( Level.NetMode != NM_Standalone )
-    SwatGamePlayerController(NewPlayer).SwatRepoPlayerItem = theSwatRepoPlayerItem;
-
-    //auto set the local PC's admin PW to be correct
-    if( Level.GetLocalPlayerController() == NewPlayer )
-        theSwatRepoPlayerItem.LastAdminPassword = SwatRepo(Level.GetRepo()).GuiConfig.AdminPassword;
+    	SwatGamePlayerController(NewPlayer).SwatRepoPlayerItem = theSwatRepoPlayerItem;
 
     // Init player's replication info
     NewPlayer.GameReplicationInfo = GameReplicationInfo;
@@ -1681,13 +1690,6 @@ function PlayerLoggedIn(PlayerController NewPlayer)
 				AdminLog(NewPlayer.PlayerReplicationInfo.PlayerName, 'PlayerConnect');
 			}
 
-		}
-
-		// Set player permissions
-		PRI = SwatPlayerReplicationInfo(PC.PlayerReplicationInfo);
-		if(PRI != None)
-		{
-			PRI.SetPermissions(Admin.GuestPermissions);
 		}
     }
 

@@ -500,9 +500,6 @@ simulated function OfficerLoadOut GetLoadOut()
 simulated function ReceiveLoadOut(OfficerLoadOut inLoadOut)
 {
     //mplog( self$"---SwatPlayer::ReceiveLoadOut(). LoadOut="$inLoadOut );
-
-    AssertWithDescription(LoadOut == None,
-        "[tcohen] Player received LoadOut more than once.");
     LoadOut = inLoadOut;
 
     //log( "------LoadOut.Owner="$LoadOut.Owner );

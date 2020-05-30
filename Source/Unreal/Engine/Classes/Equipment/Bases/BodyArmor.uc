@@ -10,6 +10,7 @@ var(GUI) public localized config string ArmorRating "The rating level, as shown 
 var(GUI) public localized config string ExtraProtection "Extra protection effects, as shown in the GUI (ie, 'Protects against Flashbangs')";
 var private float CurrentMomentumToPenetrate;
 var private float CurrentBulletMtP;
+var() public config bool PlayerUsable;
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -71,17 +72,45 @@ simulated function float GetMtP() {
 }
 
 simulated function OnProtectedRegionHit() {
-  CurrentMomentumToPenetrate -= CurrentBulletMtP;
-  CurrentBulletMtP *= MultiplyPerBullet;
+	local Pawn OwnerPawn;
+	local PlayerController OwnerController;
 
-  if(CurrentBulletMtP < MinBulletMtpReduction) {
-    CurrentBulletMtP = MinBulletMtpReduction;
-  }
+	CurrentMomentumToPenetrate -= CurrentBulletMtP;
+	CurrentBulletMtP *= MultiplyPerBullet;
 
-  if(CurrentMomentumToPenetrate < MinMomentumToPenetrate) {
-    CurrentMomentumToPenetrate = MinMomentumToPenetrate;
-  }
-  log("[SHREDDING] Armor "$self$" now has "$CurrentMomentumToPenetrate$" MtP");
+	if(CurrentBulletMtP < MinBulletMtpReduction) {
+	    CurrentBulletMtP = MinBulletMtpReduction;
+	}
+
+	if(CurrentMomentumToPenetrate < MinMomentumToPenetrate) {
+	    CurrentMomentumToPenetrate = MinMomentumToPenetrate;
+	}
+	log("[SHREDDING] Armor "$self$" now has "$CurrentMomentumToPenetrate$" MtP");
+
+	// Tell the client to update their display in multiplayer
+	if(Level.NetMode != NM_Standalone)
+	{
+		OwnerPawn = Pawn(Owner);
+		if(OwnerPawn == None)
+		{
+			return;
+		}
+
+		OwnerController = PlayerController(OwnerPawn.Controller);
+		if(OwnerController == None)
+		{
+			return;
+		}
+
+		log("Calling ClientNotifyArmorTakeDamage");
+		OwnerController.ClientNotifyArmorTakeDamage(CurrentMomentumToPenetrate);
+	}
+}
+
+function ClientNotifiedOfHit(float NewMTP)
+{
+	CurrentMomentumToPenetrate = NewMTP;
+	log("...CurrentMomentumToPenetrate is "$NewMTP);
 }
 
 function bool IsArmorShreddable() {
@@ -92,12 +121,17 @@ simulated function float GetArmorHealthPercent() {
   return (CurrentMomentumToPenetrate - MinMomentumToPenetrate) / (MaxMomentumToPenetrate - MinMomentumToPenetrate);
 }
 
+static function bool IsUsableByPlayer()
+{
+	return default.PlayerUsable;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Replication info
 
 Replication
 {
-  reliable if (bNetOwner)
+  reliable if (Role == ROLE_Authority)
     CurrentMomentumToPenetrate, CurrentBulletMtP;
 }

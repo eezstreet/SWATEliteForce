@@ -98,10 +98,16 @@ simulated function UsedHook()
     }
 }
 
+// Allow us to mutate the projectile based on some level specific criteria --eezstreet
+function class<actor> MutateProjectile() { return ProjectileClass; }
+
 function Actor SpawnProjectile(vector inLocation, vector inVelocity)
 {
     local Actor Projectile;
     local SwatGrenadeProjectile GrenadeProjectile;
+	local class<actor> ProjectileClass;
+
+	ProjectileClass = MutateProjectile();
 
     Projectile = Owner.Spawn(
             ProjectileClass,

@@ -188,11 +188,18 @@ simulated protected function bool ValidateEquipmentForPocket( Pocket pock, class
     local class<Actor> EquipClass;
     local int NumEquipment;
     local bool Valid;
+	local ServerSettings Settings;
 
     NumEquipment = GC.AvailableEquipmentPockets[pock].EquipmentClassName.Length;
 
     if( CheckClass == None && NumEquipment == 0)
         return true;
+
+	Settings = ServerSettings(Level.CurrentServerSettings);
+	if(Level.NetMode != NM_Standalone && Settings.IsEquipmentDisabled(CheckClass))
+	{
+		return false;
+	}
 
     for( i = 0; i < NumEquipment; i++ )
     {
@@ -284,6 +291,8 @@ simulated protected function SpawnEquipmentForPocket( Pocket i, class<actor> Equ
         return;
 
     PocketEquipment[i] = Owner.Spawn(EquipmentClass, Owner);
+
+	mplog(" ...SpawnEquipmentForPocket("$i$", "$EquipmentClass$") --> "$PocketEquipment[i]);
 
     assertWithDescription(PocketEquipment[i] != None,
         "LoadOut "$name$" failed to spawn PocketEquipment item in pocket "$GetEnum(Pocket,i)$" of class "$EquipmentClass$".");
