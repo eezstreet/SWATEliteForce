@@ -117,7 +117,10 @@ latent function ReadyWeapon()
 
     CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
 	
-	ISwatEnemy(m_Pawn).BecomeAThreat();
+	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 	
 	// if we don't have a weapon equipped, first check and see if an item is being equipped
 //	log(m_Pawn.Name $ " current weapon: " $ CurrentWeapon);
