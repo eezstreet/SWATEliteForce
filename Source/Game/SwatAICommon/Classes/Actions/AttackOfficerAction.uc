@@ -130,6 +130,10 @@ latent function MoveToAttackEnemy()
 
     // post the move to goal
     CurrentMoveToAttackOfficerGoal.postGoal(self);
+	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat() && (m_Pawn.GetActiveItem() != None))
+	{
+		ISwatEnemy(m_Pawn).BecomeAThreat();
+	}
 }
 
 latent function AttackEnemyWithWeapon()
