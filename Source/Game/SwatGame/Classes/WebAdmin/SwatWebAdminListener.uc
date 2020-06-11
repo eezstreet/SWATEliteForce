@@ -576,6 +576,40 @@ function SentCommand(SwatWebAdmin AdminClient, int User, string Content, optiona
 			SendMessageToUser(i, msg);
 		}
 	}
+	else if(argv[0] ~= "lockvotes" || argv[0] ~= "unlockvotes" || 
+		argv[0] ~= "lockvoting" || argv[0] ~= "unlockvoting" ||
+		argv[0] ~= "togglevotelock")
+	{
+		if(!Perms.GetPermission(AdminPermissions.Permission_LockVoting))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else
+		{
+			SwatGameInfo(Level.Game).RemoteLockVoting(IngameName, IPString);
+		}
+	}
+	else if(argv[0] ~= "lockvoter" || argv[0] ~= "unlockvoter" || argv[0] ~= "togglevoterlock")
+	{
+		if(!Perms.GetPermission(AdminPermissions.Permission_LockVoter))
+		{
+			msg.Message = NoPermissionString;
+			SendMessageToUser(i, msg);
+		}
+		else if(argv.length < 2)
+		{
+			msg.Message = NotEnoughArgsString;
+			SendMessageToUser(i, msg);
+			msg.Message = "usage: /"$argv[0]$" <player name>";
+			SendMessageToUser(i, msg);
+		}
+		else if(!SwatGameInfo(Level.Game).RemoteLockVoter(IngameName, ConcatArgs(argv, 1), IPString))
+		{
+			msg.Message = "Couldn't find player '"$ConcatArgs(argv,1)$"'";
+			SendMessageToUser(i, msg);
+		}
+	}
 	else if(argv[0] ~= "lockteams" || argv[0] ~= "unlockteams" || argv[0] ~= "toggleteamlock")
 	{
 		if(!Perms.GetPermission(AdminPermissions.Permission_LockTeams))

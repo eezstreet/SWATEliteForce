@@ -2596,6 +2596,67 @@ function bool ForcePlayerPromotion(SwatGamePlayerController PC, string PlayerNam
 	return false;
 }
 
+// RemoteLockVoting
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteLockVoting(string AdminName, string AdminIP)
+{
+    local SwatGameReplicationInfo SGRI;
+    local ReferendumManager RM;
+
+    SGRI = SwatGameReplicationInfo(Level.GetGameReplicationInfo());
+    assert(SGRI != None);
+    RM = SGRI.RefMgr;
+    assert(RM != None);
+
+    if(RM.ToggleGlobalVoteLock())
+    {
+        Broadcast(None, AdminName, 'LockedVoting');
+        AdminLog(AdminName, 'LockedVoting', , AdminIP);
+        return true;
+    }
+    else
+    {
+        Broadcast(None, AdminName, 'UnlockedVoting');
+        AdminLog(AdminName, 'UnlockedVoting', , AdminIP);
+        return false;
+    }
+    return true;
+}
+
+// RemoteLockVoter
+// FOR USE BY WEBADMIN ONLY!
+function bool RemoteLockVoter(string AdminName, string PlayerName, string AdminIP)
+{
+    local SwatGameReplicationInfo SGRI;
+    local ReferendumManager RM;
+    local PlayerController P;
+
+    SGRI = SwatGameReplicationInfo(Level.GetGameReplicationInfo());
+    assert(SGRI != None);
+    RM = SGRI.RefMgr;
+    assert(RM != None);
+
+    ForEach DynamicActors(class'PlayerController', P)
+    {
+        if(P.PlayerReplicationInfo.PlayerName ~= PlayerName)
+        {
+            if(RM.TogglePlayerVoteLock(P.PlayerReplicationInfo.PlayerID))
+            {
+                Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter');
+                AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter', PC.GetPlayerNetworkAddress(), AdminIP);
+            }
+            else
+            {
+                Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter');
+                AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter', PC.GetPlayerNetworkAddress(), AdminIP);
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // RemoteLockTeams
 // FOR USE BY WEBADMIN ONLY!
 function RemoteLockTeams(string AdminName, string AdminIP)

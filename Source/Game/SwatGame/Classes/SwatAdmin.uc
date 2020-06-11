@@ -88,6 +88,7 @@ var public config string ChatLogName;
 // JSON integration
 var private int JSONSequence;
 var private array<JSONMessage> JSONMessages;
+var public config bool ShowPlayerIPInJSON;
 
 var public config array<string> MapDisabledLocalizedChat;	// These maps have disabled localized chat, due to bugs, etc
 var public config bool GlobalDisableLocalizedChat;
@@ -1351,6 +1352,7 @@ function string GetPlayersJSON()
 	local SwatGameReplicationInfo SGRI;
 	local SwatPlayerReplicationInfo PRI;
 	local int i;
+	local SwatGamePlayerController P;
 
 	Settings = ServerSettings(Level.CurrentServerSettings);
 	SGRI = SwatGameReplicationInfo(Level.Game.GameReplicationInfo);
@@ -1363,9 +1365,9 @@ function string GetPlayersJSON()
 	{
 		JSON = JSON $ ", \"players\": [";
 	}
-	for(i = 0; i < ArrayCount(SGRI.PRIStaticArray); i++)
+	foreach DynamicActors(class'SwatGamePlayerController', P)
 	{
-		PRI = SGRI.PRIStaticArray[i];
+		PRI = SwatPlayerReplicationInfo(P.PlayerReplicationInfo);
 		if(PRI.PlayerName ~= "")
 		{
 			continue;
@@ -1381,6 +1383,12 @@ function string GetPlayersJSON()
 		JSON = JSON $ "\"ping\": "$ PRI.Ping $ ", ";
 		JSON = JSON $ "\"team\": \"" $ PRI.Team.TeamName $ "\", ";
 		JSON = JSON $ "\"status\": " $ PRI.COOPPlayerStatus $ ", ";
+
+		if(ShowPlayerIPInJSON)
+		{	// Can be considered very dangerous since it exposes player's IPs.
+			// Only defense is to change default WebAdmin port.
+			JSON = JSON $ "\"ip\": " $ P.GetPlayerNetworkAddress() $ ", ";
+		}
 		JSON = JSON $ "\"leader\": \"" $ PRI.IsLeader $ "\"";
 
 		JSON = JSON $ "}";
