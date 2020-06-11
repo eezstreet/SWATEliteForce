@@ -1,3 +1,11 @@
+### v7.1
+
+#### ALL CHANGES ####
+
+ - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
+ - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
+ - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
+
 ### v7
  
 #### MAJOR FEATURES ####
