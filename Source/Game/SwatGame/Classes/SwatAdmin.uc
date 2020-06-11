@@ -1030,10 +1030,18 @@ function Broadcast(coerce string Msg, optional name Type, optional string Player
 	local string MsgOut;
 	local string MsgWithIPOut;
 	local WebAdminMessageType TypeOut;
+	local int j;
 
 	StrA = GetFirstField(Msg,"\t");
     StrB = GetFirstField(Msg,"\t");
     StrC = GetFirstField(Msg,"\t");
+
+    // Strip player port if found (new to v7.1)
+    j = InStr(PlayerIP, ":");
+    if(j != -1)
+    {
+    	PlayerIP = Left(PlayerIP, j);
+    }
 
 	if(Level.NetMode == NM_Standalone)
 	{
