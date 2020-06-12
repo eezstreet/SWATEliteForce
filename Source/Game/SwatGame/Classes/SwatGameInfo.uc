@@ -2643,12 +2643,12 @@ function bool RemoteLockVoter(string AdminName, string PlayerName, string AdminI
             if(RM.TogglePlayerVoteLock(P.PlayerReplicationInfo.PlayerID))
             {
                 Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter');
-                AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter', PC.GetPlayerNetworkAddress(), AdminIP);
+                AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'LockedVoter', P.GetPlayerNetworkAddress(), AdminIP);
             }
             else
             {
                 Broadcast(None, AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter');
-                AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter', PC.GetPlayerNetworkAddress(), AdminIP);
+                AdminLog(AdminName$"\t"$P.PlayerReplicationInfo.PlayerName, 'UnlockedVoter', P.GetPlayerNetworkAddress(), AdminIP);
             }
             return true;
         }
