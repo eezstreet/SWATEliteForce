@@ -273,7 +273,7 @@ Caliber=.50 Action Express
 CountryOfOrigin=Israel
 ProductionStart=1995
 FireModes=Semi-Automatic
-MagazineSizeString=8
+MagazineSizeString=7
 TotalAmmoString=10 magazines
 RateOfFire=300 RPM
 
