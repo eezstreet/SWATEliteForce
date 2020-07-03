@@ -532,7 +532,7 @@ Caliber=Subsonic 9x19mm
 CountryOfOrigin=Israel
 ProductionStart=1950
 FireModes=Semi-Automatic, Full-Auto
-MagazineSizeString=25
+MagazineSizeString=32
 TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
