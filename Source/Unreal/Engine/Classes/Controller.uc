@@ -766,6 +766,8 @@ function ClientOnTargetUsed( ICanBeUsed Target, String UniqueID )
 
 event MonitoredPawnAlert();
 
+function TryGiveItemToPlayer(Pawn P, HandheldEquipment EquipmentPiece) {}
+
 function StartMonitoring(Pawn P, float MaxDist)
 {
 	MonitoredPawn = P;

@@ -19,7 +19,7 @@ const maxWeaponDistance = 200.0f;		// max distance a for a dropped weapon to be 
 
 // State Variables
 var private EnemySkill					Skill;
-var private bool                        bIsInvestigator;
+var private bool                        bDontInvestigate;
 var private EnemyState					CurrentState;
 var private bool						bThreat;
 var private bool						bIsSprinting;
@@ -245,7 +245,6 @@ function InitializeFromSpawner(Spawner Spawner)
     AIData.SpawnedFrom = EnemySpawner;
 
     InitializePatrolling(EnemySpawner.EnemyPatrol);
-    InitializeInvestigationFromSpawner(EnemySpawner);
 }
 
 function InitializeFromArchetypeInstance()
@@ -264,7 +263,6 @@ function InitializeFromArchetypeInstance()
 
     // set a few state variables
     Skill           = Instance.Skill;
-    bIsInvestigator = Instance.InvestigatorOverride;
 
 	for (i = 0; i < Instance.Equipment.Length; ++i)
 	{
@@ -290,21 +288,6 @@ private function InitializeWeapons(EnemyArchetypeInstance Instance)
     if (PrimaryWeapon != None)
     {
         PrimaryWeapon.Equip();
-    }
-}
-
-private function InitializeInvestigationFromSpawner(EnemySpawner InEnemySpawner)
-{
-    assert(InEnemySpawner != None);
-
-    // if we are already an investigator, then it was set by the override in the archetype
-    // and we shouldn't change that value.  Typically, whether an AI is an investigator
-    // is set on the Spawner, but the designer can override that value in the archetype,
-    // and that is why we only set the value from the spawner if we aren't already an
-    // investigator.
-    if (! bIsInvestigator)
-    {
-        bIsInvestigator = InEnemySpawner.SpawnAnInvestigator;
     }
 }
 
@@ -616,11 +599,6 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
 ///////////////////////////////////////////////////////////////////////////////
 //
 // ISwatEnemy implementation
-
-function bool IsAnInvestigator()
-{
-	return bIsInvestigator;
-}
 
 function EnemyState GetCurrentState()
 {
@@ -1214,6 +1192,11 @@ protected function NotifyWeaponDischarged()
 	}
 }
 
+function bool IsAnInvestigator()
+{
+	return !bDontInvestigate;
+}
+
 ///////////////////////////////////////
 
 // Provides the effect event name to use when this ai is being reported to
@@ -1278,6 +1261,41 @@ function NotifyClientsToDestroyDroppedWeapon( string theUniqueID )
             current.ClientWeaponFellOutOfWorld( theUniqueID );
         }
     }
+}
+
+function StartInvestigating()
+{
+	bDontInvestigate = false;
+}
+
+function StopInvestigating()
+{
+	bDontInvestigate = true;
+}
+
+function bool RollInvestigate()
+{
+	local EnemyArchetypeInstance Instance;
+
+	if(bDontInvestigate)
+	{	// not allowed to investigate sounds anymore
+		return false;
+	}
+
+	Instance = EnemyArchetypeInstance(ArchetypeInstance);
+	assert(Instance != None);
+
+	return FRand() < Instance.InvestigateChance;
+}
+
+function bool RollBarricade()
+{
+	local EnemyArchetypeInstance Instance;
+
+	Instance = EnemyArchetypeInstance(ArchetypeInstance);
+	assert(Instance != None);
+
+	return FRand() < Instance.BarricadeChance;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

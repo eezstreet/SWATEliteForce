@@ -410,6 +410,41 @@ function Tick( float dTime )
     }
 }
 
+// A door roster locked this door
+simulated function RosterLock()
+{
+	InitialPosition = DoorPosition_Closed;
+	CurrentPosition = DoorPosition_Closed;
+	SetPositionForMove(GetInitialPosition(), MR_Interacted);
+	bIsLocked = true;
+	bWasInitiallyLocked = true;
+	Moved(true);
+	log("RosterLock() on "$self);
+}
+
+// A door roster opened this door to the left
+simulated function RosterOpenLeft()
+{
+	bIsLocked = false;
+	bWasInitiallyLocked = false;
+	bWasInitiallyOpen = true;
+	InitialPosition = DoorPosition_OpenLeft;
+	CurrentPosition = DoorPosition_Closed;    // set the door position to closed in case it was left open when a designer was viewing paths to the left or the right
+    SetPositionForMove( GetInitialPosition(), MR_Interacted );
+    Moved(true); //instantly to initial position
+}
+
+// A door roster opened this door to the right
+simulated function RosterOpenRight()
+{
+	bIsLocked = false;
+	bWasInitiallyLocked = false;
+	bWasInitiallyOpen = true;
+	InitialPosition = DoorPosition_OpenRight;
+	CurrentPosition = DoorPosition_Closed;    // set the door position to closed in case it was left open when a designer was viewing paths to the left or the right
+    SetPositionForMove( GetInitialPosition(), MR_Interacted );
+    Moved(true); //instantly to initial position
+}
 
 simulated function DoorPosition GetInitialPosition()
 {
@@ -578,6 +613,10 @@ simulated function Interact(Pawn Other, optional bool Force)
 			if (Level.GetEngine().EnableDevTools)
 				mplog("Saving locked door knowledge for pawn: "$NetPlayerPawn$", team number: "$NetPlayerPawn.GetTeamNumber());
         }
+		else
+		{
+			LockedKnowledge[0] = 1;
+		}
     }
     else
     {
@@ -672,6 +711,10 @@ simulated function OnUnlocked()
             }
         }
     }
+	else
+	{
+		LockedKnowledge[0] = 0;
+	}
 }
 
 simulated function bool TryDoorLock(SwatGamePlayerController Caller)
@@ -733,6 +776,11 @@ simulated function bool KnowsDoorIsLocked( int TeamNumber )
     assert( Level.NetMode != NM_Standalone );
     assert( TeamNumber < 3 ); // dbeswick: used to be 2, now there are potentially 3 teams in coop
     return LockedKnowledge[TeamNumber] == 1;
+}
+
+simulated function bool KnowsDoorIsUnlocked(int TeamNumber)
+{
+	return LockedKnowledge[TeamNumber] == 0 && !bIsLocked;
 }
 
 //
@@ -1079,6 +1127,42 @@ simulated event bool PointIsOnExternalSide(vector Point)
 	else // ES_RightSide
 	{
 		return (!PointIsToMyLeft(Point));
+	}
+}
+
+simulated event bool PlayerIsOnExternalSide()
+{
+	if(ExternalFacingSide == ES_NeitherSide)
+	{
+		return false;
+	}
+	else if(ExternalFacingSide == ES_LeftSide)
+	{
+		return LocalPlayerIsToMyLeft();
+	}
+	else
+	{	// ES_RightSide
+		return !LocalPlayerIsToMyLeft();
+	}
+}
+
+simulated function bool PlayerCanIssueCommandsFromTheirSide()
+{
+	if(AcceptsCommandsFrom == CD_BothSides)
+	{
+		return true;
+	}
+	else if(AcceptsCommandsFrom == CD_NeitherSide)
+	{
+		return false;
+	}
+	else if(AcceptsCommandsFrom == CD_LeftSide)
+	{
+		return LocalPlayerIsToMyLeft();
+	}
+	else
+	{
+		return !LocalPlayerIsToMyLeft();
 	}
 }
 
@@ -2343,6 +2427,11 @@ simulated function float GetAdditionalGrenadeThrowDistance(vector Origin)
 simulated function bool CanBeLocked()
 {
 	return (bCanBeLocked && IsClosed() && !IsOpening() && !IsBroken() && !IsEmptyDoorway());
+}
+
+simulated function bool IsMissionExit()
+{
+	return bIsMissionExit;
 }
 
 simulated function Lock()

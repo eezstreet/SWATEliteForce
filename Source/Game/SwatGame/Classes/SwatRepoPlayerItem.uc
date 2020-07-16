@@ -112,11 +112,11 @@ simulated function PrintLoadOutSpecToMPLog()
 {
     local int i;
 
-    mplog( "LoadOutSpec contains:" );
+    log( "LoadOutSpec contains:" );
 
     for ( i = 0; i < Pocket.EnumCount; i++ )
     {
-        mplog( "...RepoLoadOutSpec["$GetEnum(Pocket,i)$"]="$RepoLoadOutSpec[i] );
+        log( "...RepoLoadOutSpec["$GetEnum(Pocket,i)$"]="$RepoLoadOutSpec[i] );
     }
 }
 

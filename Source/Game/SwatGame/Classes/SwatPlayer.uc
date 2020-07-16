@@ -25,23 +25,23 @@ var protected OfficerLoadOut LoadOut;
 //the pitch above the camera rotation to throw
 var config int ThrownProjectilePitch;
 
-var config float MinimumLongThrowSpeed;         //if a ThrownWeapon is thrown at a speed less than this, then the 'short' animations are played, otherwise, 'long' animations are used
+// Only valid in non-NM_Standalone
+var HandheldEquipment GivenFlashbangs;
+var HandheldEquipment GivenStinger;
+var HandheldEquipment GivenGas;
+var HandheldEquipment GivenC2;
+var HandheldEquipment GivenWedge;
 
-var config name PreThrowAnimation;
-var config name ThrowShortAnimation;
-var config name ThrowLongAnimation;
+var float ThrowAnimationTweenTime;
 
-var config name	 ThrowAnimationRootBone;
-var config float ThrowAnimationTweenTime;
-
-var config float ThrowSpeedTimeFactor;      //when a ThrownWeapon is thrown, its speed will be this times the time that the throw button is held
-var config Range ThrowSpeedRange;           //clamp the throw speed
+var HandheldEquipment GivenPepperSpray;
+var config Range Unused7;
 
 var private Material SuspectHandsMaterial;
 var private Material VIPHandsMaterial;
 
 // NonLethal Effects
-var config bool bTestingCameraEffects; // allow the player to be hit with nonlethals in standalone
+var config bool Unused8;
 var private Timer StungTimer;
 var private Timer FlashbangedTimer;
 var private Timer GassedTimer;
@@ -86,14 +86,11 @@ var private PerlinNoise PerlinNoiseAxisA;
 var private PerlinNoise PerlinNoiseAxisB;
 var config float StingEffectDropOffTimePercent;
 var config float StingEffectFrequency;
-//maximum angular offset in unreal angle units
-var config Rotator StingViewEffectAmplitude;
-var config float StingInputEffectMagnitude;
 
-//in unreal distance units, the farthest shake distance
-var config float TasedViewEffectAmplitude;
-//how often to recenter
-var config float TasedViewEffectFrequency;
+var config Rotator Unused9;
+var config float Unused10;
+var config float Unused11;
+var config float Unused12;
 
 var bool EquipOtherAfterUsed;                   //if true,
 var EquipmentSlot SlotForReequip;               //if TryToReequipAfterUsed is set, then SlotForReequip records the EquipmentSlot that should be used to try to reequip
@@ -108,12 +105,12 @@ var protected bool bIsUsingOptiwand;
 
 var private DeployedC2ChargeBase DeployedC2Charge;
 
-var config float LowReadyFireTweenTime;
+var config float Unused13;
 
 // Reporting-to-TOC state variables
-var private IAmReportableCharacter CurrentReportableCharacter;
+var public IAmReportableCharacter CurrentReportableCharacter;
 
-var private bool bNotifiedPlayerTheyAreVIP;
+var private int ArmInjuryFlags;
 
 var SwatPlayer LastArrester;
 
@@ -121,13 +118,13 @@ var SwatPlayer LastArrester;
 var private vector OneFrameNudgeDirection;
 const OneFrameNudgeDirectionStrength = 2.0;
 
-var config const private float LimpThreshold;
+var config const private float Unused14;
 var config private float       CurrentLimp;
-var config private float       StandardLimpPenalty;
+var config private float       Unused15;
 var private config localized string YouString;
 
-var private config float PawnModelApparentBaseEyeHeight;        //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
-var private config float PawnModelApparentCrouchEyeHeight;      //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
+var private config float Unused16;        //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
+var private config float Unused17;      //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
 
 var private bool                        bHasBeenReportedToTOC;
 
@@ -151,11 +148,13 @@ replication
         ClientFaceRotation, CurrentLimp,
         ClientStartQualify, ClientFinishQualify, ClientUse,
         DeployedC2Charge,
+        GivenFlashbangs, GivenStinger, GivenGas, GivenC2, GivenWedge, GivenPepperSpray,
         ClientOnFlashbangTimerExpired, ClientOnGassedTimerExpired, ClientOnStungTimerExpired,
         ClientOnPepperSprayedTimerExpired, ClientOnTasedTimerExpired,
         ClientDoFlashbangReaction, ClientDoGassedReaction, ClientDoStungReaction,
         ClientDoPepperSprayedReaction, ClientDoTasedReaction,
-        bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired;
+        bIsUsingOptiwand, bHasBeenReportedToTOC, ClientPlayEmptyFired, ArmInjuryFlags,
+        ClientSetItemAvailableCount;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,7 +162,41 @@ replication
 //
 simulated function int GetTacticalAidAvailableCount(EquipmentSlot Slot)
 {
-  return LoadOut.GetTacticalAidAvailableCount(Slot);
+    if(Level.NetMode != NM_Standalone)
+    {
+        if(Slot == SLOT_Flashbang && GivenFlashbangs != None)
+        {
+            return GivenFlashbangs.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_CSGasGrenade && GivenGas != None)
+        {
+            return GivenGas.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_StingGrenade && GivenStinger != None)
+        {
+            return GivenStinger.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_Breaching && GivenC2 != None)
+        {
+            return GivenC2.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_Wedge && GivenWedge != None)
+        {
+            return GivenWedge.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else if(Slot == SLOT_PepperSpray && GivenPepperSpray != None)
+        {
+            return GivenPepperSpray.GetAvailableCount() + LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+        else
+        {
+            return LoadOut.GetTacticalAidAvailableCount(Slot);
+        }
+    }
+    else
+    {
+        return LoadOut.GetTacticalAidAvailableCount(Slot);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -175,6 +208,14 @@ simulated function float GetTotalWeight() {
 
 simulated function float GetTotalBulk() {
   return LoadOut.GetTotalBulk();
+}
+
+simulated function float GetMaximumWeight() {
+	return LoadOut.GetMaximumWeight();
+}
+
+simulated function float GetMaximumBulk() {
+	return LoadOut.GetMaximumBulk();
 }
 
 simulated function float GetWeightMovementModifier() {
@@ -466,6 +507,7 @@ simulated protected function bool CanPawnUseLowReady()
 {
   local HandheldEquipment Equipment;
   local PlayerController SGPC;
+  local FiredWeapon Weapon;
 
   SGPC = PlayerController(Controller);
   if(SGPC == None)
@@ -477,7 +519,22 @@ simulated protected function bool CanPawnUseLowReady()
   else if(SGPC.WantsZoom && !Equipment.ShouldLowReadyInIronsights())
     return false;
 
+  Weapon = FiredWeapon(Equipment);
+  if(Weapon != None)
+  {
+    if(Weapon.IsFlashlightOn())
+    {
+        // #402 - lowready not allowed when flashlight on
+        return false;
+    }
+  }
+
   return true;
+}
+
+function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
+{
+	return LoadOut.GetItemAtSlot(Slot);
 }
 
 simulated function SetLowReady(bool bEnable, optional name Reason)
@@ -511,9 +568,6 @@ simulated function ReceiveLoadOut(OfficerLoadOut inLoadOut)
 
     DoDefaultEquip(); // Does nothing if NM_Client.
 }
-
-//returns true iff the SwatPlayer has any of the specified HandheldEquipment
-native function bool HasA(name HandheldEquipmentName);
 
 simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
 {
@@ -555,6 +609,11 @@ simulated function bool HasAWeaponOfType(name WeaponType) {
   return PrimaryWeapon.IsA(WeaponType) || BackupWeapon.IsA(WeaponType);
 }
 
+simulated function bool HasA(name Class)
+{
+	return LoadOut.HasA(Class);
+}
+
 simulated function DoDefaultEquip()
 {
     local FiredWeapon PrimaryWeapon, BackupWeapon;
@@ -574,7 +633,7 @@ simulated function DoDefaultEquip()
 
     if  (                                                                   //However,
             Level.IsTraining                                                //  - in Training, or
-        ||  PrimaryWeapon == None                                           //  - if the player has no primary, or
+        ||  PrimaryWeapon == None || PrimaryWeapon.IsA('NoWeapon')          //  - if the player has no primary, or
         ||  (PrimaryWeapon.Ammo.IsEmpty() && !BackupWeapon.Ammo.IsEmpty())  //  - the primary is empty, but the backup is not (VUG bug 219)
         )                                                                   //
         WeaponToEquip = BackupWeapon;                                       //  we prefer the backup weapon.
@@ -593,6 +652,12 @@ simulated function bool ValidateEquipSlot( EquipmentSlot Slot )
     NewItem = GetEquipmentAtSlot( Slot );
     if ( NewItem == None )
         return false;
+
+	if(NewItem.GetPocket() == Pocket_Invalid)
+	{
+		// It's fiiiiine. It's fine. It's just a GivenEquipment in this case.
+		return true;
+	}
 
     return ValidateEquipPocket( NewItem.GetPocket() );
 }
@@ -835,7 +900,7 @@ function ServerRequestEquip( EquipmentSlot Slot )
         }
         else
         {
-            SetDesiredItemPocket( NewEquipment.GetPocket() );
+            SetDesiredItemSlot( NewEquipment.GetSlot() );
 
             // And then do the equipping here on the server.
             CheckDesiredItemAndEquipIfNeeded();
@@ -849,10 +914,15 @@ simulated function OnActiveItemEquipped()
 
     if ( Controller == Level.GetLocalPlayerController() )
     {
-        if (GetActiveItem().ZoomedFOV > 0)
-            PlayerController(Controller).ZoomedFOV = GetActiveItem().ZoomedFOV;
-        else
-            PlayerController(Controller).ZoomedFOV = PlayerController(Controller).BaseFOV;
+		PlayerController(Controller).ZoomedFOV = PlayerController(Controller).BaseFOV;
+
+		if(GetActiveItem().ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
+		{
+			if (GetActiveItem().ZoomedFOV > 0)
+			{
+				PlayerController(Controller).ZoomedFOV = GetActiveItem().ZoomedFOV;
+			}
+		}
     }
 }
 
@@ -881,8 +951,7 @@ function AuthorizedEquipOnServer( EquipmentSlot Slot )
     }
     else
     {
-        NewEquipment = GetEquipmentAtSlot( Slot );
-        SetDesiredItemPocket( NewEquipment.GetPocket() );
+        SetDesiredItemSlot( Slot );
         if ( ValidateEquipSlot( Slot ) )
         {
             CheckDesiredItemAndEquipIfNeeded();
@@ -1378,17 +1447,7 @@ simulated function OnEquippingFinished()
 
 simulated function NotifyPlayerHeIsVIPIfNecessary()
 {
-    if ( Level.NetMode != NM_Standalone )
-    {
-        if ( Controller == Level.GetLocalPlayerController() )
-        {
-            if ( IsTheVIP() && !bNotifiedPlayerTheyAreVIP )
-            {
-                ClientMessage( "", 'YouAreVIP' );
-                bNotifiedPlayerTheyAreVIP = true;
-            }
-        }
-    }
+    return; // not used since SEF is a PvE game
 }
 
 
@@ -1515,49 +1574,45 @@ simulated function OnReloadingFinished()
 //returns true iff it needed to begin equipping something else
 simulated protected function bool CheckDesiredItemAndEquipIfNeeded()
 {
-    local Pocket DesiredItemPocket;
+    local EquipmentSlot DesiredEquipmentSlot;
     local HandheldEquipment ActiveItem;
     local HandheldEquipment NewEquipment;
 
-	if (Level.GetEngine().EnableDevTools)
-		mplog( self$"---SwatPlayer::CheckDesiredItemAndEquipIfNeeded()." );
+	//if (Level.GetEngine().EnableDevTools)
+		log( self$"---SwatPlayer::CheckDesiredItemAndEquipIfNeeded()." );
 
     if ( Level.NetMode != NM_Standalone && LoadOut != None )
     {
-        DesiredItemPocket = GetDesiredItemPocket();
+        DesiredEquipmentSlot = GetDesiredItemSlot();
         ActiveItem = GetActiveItem();
 
         // If the active item is the same as the desired item, do nothing.
-        if ( ActiveItem != None && DesiredItemPocket == ActiveItem.GetPocket() )
+        if ( ActiveItem != None && DesiredEquipmentSlot == ActiveItem.GetSlot() )
         {
-			if (Level.GetEngine().EnableDevTools)
-				mplog( self$"...returning false: Pockets are same="$DesiredItemPocket );
+			//if (Level.GetEngine().EnableDevTools)
+				log( self$"...returning false: Slots are same="$DesiredEquipmentSlot );
 
             return false;
         }
 
-		if (Level.GetEngine().EnableDevTools)
-			mplog( self$"...Pockets differ:" );
+		//if (Level.GetEngine().EnableDevTools)
+			log( self$"...Slots differ:" );
 
 		if (Level.GetEngine().EnableDevTools)
 		{
 			if ( ActiveItem != None )
-				mplog( "...DesiredItemPocket="$DesiredItemPocket$", ActiveItemPocket="$ActiveItem.GetPocket() );
+				log( "...DesiredEquipmentSlot="$DesiredEquipmentSlot$", ActiveEquipmentSlot="$ActiveItem.GetSlot() );
 			else
-				mplog( "...DesiredItemPocket="$DesiredItemPocket$", ActiveItem=None" );
+				log( "...DesiredEquipmentSlot="$DesiredEquipmentSlot$", ActiveEquipmentSlot=None" );
 		}
 
-        if ( ValidateEquipPocket( DesiredItemPocket ))
+        NewEquipment = LoadOut.GetFirstAvailableItemAtSlot(DesiredEquipmentSlot);
+        if(NewEquipment != None)
         {
-            NewEquipment = HandheldEquipment( LoadOut.GetItemAtPocket( DesiredItemPocket ) );
-
-			if (Level.GetEngine().EnableDevTools)
-				mplog( "...LoadOut.GetItemAtPocket( DesiredItemPocket ) = "$NewEquipment );
-
             NewEquipment.Equip();
+            return true;
         }
-
-        return true;
+        return false;
     }
     else
         return false;
@@ -1623,7 +1678,7 @@ simulated function bool ValidateReload()
 simulated function float GetFireTweenTime()
 {
     if (IsLowReady())
-        return LowReadyFireTweenTime;
+        return class'SwatPlayerConfig'.static.GetLowReadyFireTweenTime();
     else
         return 0.0;
 }
@@ -1730,6 +1785,8 @@ simulated function EndThrow( float ThrowHeldTimeFromNetwork )
     GotoState( 'ThrowingFinish' );
 }
 
+function OnTick(){}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
@@ -1762,14 +1819,14 @@ simulated state ThrowingPrep
         ThrowHeldTime = 0;
         DoneThrowing = false;
 
-        assertWithDescription(ThrowSpeedTimeFactor > 0.0,
+        assertWithDescription(class'SwatPlayerConfig'.static.GetThrowSpeedTimeFactor() > 0.0,
             "[tcohen] ThrowSpeedTimeFactor is not specified for the class "$class.name
             $".  Please set it in SwatGame.ini, section [SwatGame."$class.name
             $"].");
 
-        assertWithDescription(ThrowSpeedRange.Min > 0.0,
-            "[tcohen] ThrowSpeedRange.Min is not specified for the class "$class.name
-            $".  Please set it in SwatGame.ini, section [SwatGame."$class.name
+        assertWithDescription(class'SwatPlayerConfig'.static.GetThrowSpeedRange().Min > 0.0,
+            "[tcohen] ThrowSpeedRange.Min is not specified for the class SwatPlayerConfig"
+            $".  Please set it in SwatPawn.ini, section [SwatGame.SwatPlayerConfig"
             $"].");
     }
 
@@ -1829,6 +1886,7 @@ simulated state ThrowingPrep
         Global.Tick(dTime);
 
         AdjustPlayerMovementSpeed();
+        OnTick();
 
         if (!DoneThrowing)
         {
@@ -1909,6 +1967,7 @@ simulated state Throwing
     simulated function Tick(float dTime)
     {
         Global.Tick(dTime);
+        OnTick();
 
         AdjustPlayerMovementSpeed();
 
@@ -1980,7 +2039,6 @@ simulated state Throwing
     }
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 ///
 ///
@@ -2027,13 +2085,13 @@ simulated state ThrowingFinish
         if(ThrownWeapon.IsA('Lightstick'))
         {
           // Lightsticks can be dropped at the feet. Grenades, not so much.
-          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime;
-          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, ThrowSpeedRange.Max));
+          ThrowSpeed = class'SwatPlayerConfig'.static.GetThrowSpeedTimeFactor() * ThrowHeldTime;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, 0.0, class'SwatPlayerConfig'.static.GetThrowSpeedRange().Max));
         }
         else
         {
-          ThrowSpeed = ThrowSpeedTimeFactor * ThrowHeldTime + ThrowSpeedRange.Min;
-          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, ThrowSpeedRange.Min, ThrowSpeedRange.Max));
+          ThrowSpeed = class'SwatPlayerConfig'.static.GetThrowSpeedTimeFactor() * ThrowHeldTime + class'SwatPlayerConfig'.static.GetThrowSpeedRange().Min;
+          ThrownWeapon.SetThrowSpeed(FClamp(ThrowSpeed, class'SwatPlayerConfig'.static.GetThrowSpeedRange().Min, class'SwatPlayerConfig'.static.GetThrowSpeedRange().Max));
         }
     }
 
@@ -2121,6 +2179,7 @@ Begin:
 
 simulated function Tick(float dTime) {
     AdjustPlayerMovementSpeed();
+    OnTick();
 }
 
 
@@ -2143,20 +2202,20 @@ function GetThrownProjectileParams(out vector outLocation, out rotator outRotati
 
 simulated function name GetPreThrowAnimation()
 {
-    return PreThrowAnimation;
+    return class'SwatPlayerConfig'.static.GetPreThrowAnimation();
 }
 
 simulated function name GetThrowAnimation(float ThrowSpeed)
 {
-    if (ThrowSpeed < MinimumLongThrowSpeed)
-        return ThrowShortAnimation;
+    if (ThrowSpeed < class'SwatPlayerConfig'.static.GetMinimumLongThrowSpeed())
+        return class'SwatPlayerConfig'.static.GetThrowShortAnimation();
     else
-        return ThrowLongAnimation;
+        return class'SwatPlayerConfig'.static.GetThrowLongAnimation();
 }
 
 simulated function name GetPawnThrowRootBone()
 {
-	return ThrowAnimationRootBone;
+	return class'SwatPlayerConfig'.static.GetThrowAnimationRootBone();
 }
 
 simulated function float GetPawnThrowTweenTime()
@@ -2365,6 +2424,7 @@ Function ReactToFlashbangGrenade(
 {
     local vector Direction, GrenadeLocation;
     local float Distance;
+    local float DistanceEffect;
     local name Reason;
     local name NewControllerState;
     local name NewPawnState;
@@ -2393,6 +2453,8 @@ Function ReactToFlashbangGrenade(
         GrenadeLocation = Grenade.Location;
     		Direction       = Location - Grenade.Location;
     		Distance        = VSize(Direction);
+			DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+			PlayerFlashbangStunDuration *= DistanceEffect;
     		if (Instigator == None)
     			Instigator = Pawn(Grenade.Owner);
 	  }
@@ -2401,6 +2463,8 @@ Function ReactToFlashbangGrenade(
   		GrenadeLocation = Location; // we were hit by a cheat command without an actual grenade
 		                            // so the hit location is the player's location
   		Distance        = 0;
+		DistanceEffect = 1;
+		PlayerFlashbangStunDuration *= DistanceEffect;
   	}
 
     PlayerController(Controller).PlayerCalcView(ViewTarget, CameraLocation, CameraRotation);
@@ -2413,7 +2477,7 @@ Function ReactToFlashbangGrenade(
 					 GrenadeLocation,
 					 Controller.FOVAngle * DEGREES_TO_RADIANS));
 log("TMC FOVMatters="$FOVMatters$", CanSee="$CanSee);
-    if  (bTestingCameraEffects ||  (Distance <= StunRadius && CanSee))
+    if  (class'SwatPlayerConfig'.static.GetTestingCameraEffects() ||  (Distance <= StunRadius && CanSee))
     {
         if (Level.NetMode != NM_Client)
         {
@@ -2498,6 +2562,11 @@ function ReactToCSGas( Actor GasContainer,
     local name Reason;
     local name NewControllerState;
     local name NewPawnState;
+    local float Distance;
+    local float DistanceEffect;
+
+	Distance = VSize(Location - GasContainer.Location);
+	DistanceEffect = (600 - Distance)/(600);
 
     if ( Level.NetMode == NM_Client )
         return;
@@ -2506,6 +2575,15 @@ function ReactToCSGas( Actor GasContainer,
     {
 		// Protects from the effects of gas, so no sense in doing this
         return;
+    }
+
+	if (DistanceEffect > FRand())
+    {
+        return;
+    }
+	else
+    {
+        Duration *= DistanceEffect;
     }
 
 	if ( GetLoadOut().HasRiotHelmet() )
@@ -2802,6 +2880,7 @@ function ReactToStingGrenade(
 {
     local vector Direction, GrenadeLocation;
     local float Distance;
+    local float DistanceEffect;
 
 	if ( Grenade == None || CantBeDazed() )
 		return;
@@ -2809,6 +2888,10 @@ function ReactToStingGrenade(
 	GrenadeLocation = Grenade.Location;
 	Direction       = Location - Grenade.Location;
 	Distance        = VSize(Direction);
+	DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
+	PlayerStingDuration *= DistanceEffect;
+	HeavilyArmoredPlayerStingDuration *= DistanceEffect;
+	NonArmoredPlayerStingDuration *= DistanceEffect;
 
 	if (Instigator == None)
 		Instigator = Pawn(Grenade.Owner);
@@ -3429,9 +3512,9 @@ simulated function vector GetThirdPersonEyesLocation()
     ThirdPersonEyesLocation = GetViewPoint();
 
     if (bIsCrouched)
-        EyeHeightCompensation = PawnModelApparentCrouchEyeHeight - default.CrouchEyeHeight;
+        EyeHeightCompensation = class'SwatPlayerConfig'.static.GetPawnModelApparentCrouchEyeHeight() - default.CrouchEyeHeight;
     else
-        EyeHeightCompensation = PawnModelApparentBaseEyeHeight - default.BaseEyeHeight;
+        EyeHeightCompensation = class'SwatPlayerConfig'.static.GetPawnModelApparentBaseEyeHeight() - default.BaseEyeHeight;
 
     //compensate for the difference between where the player's camera would be, and where the Pawn model's eyes appear to be
     ThirdPersonEyesLocation.Z += EyeHeightCompensation;
@@ -3510,12 +3593,12 @@ function Rotator GetStungRotationOffset()
         //calculate the ordinate for evaluation of the noise function
         Ordinate = Alpha * StingEffectFrequency;
         //apply noise to the pitch
-        Result.Pitch = ScaleStingEffectAmplitude(StingViewEffectAmplitude.Pitch, Alpha) * PerlinNoiseAxisA.Noise1(Ordinate);
+        Result.Pitch = ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Pitch, Alpha) * PerlinNoiseAxisA.Noise1(Ordinate);
         //calculate the value of the perlin noise function at the RollAndYawOrdinate
         RollAndYawAbcissa = PerlinNoiseAxisB.Noise1(Ordinate);
         //apply noise to the roll and yaw
-        Result.Roll = RollAndYawAbcissa * ScaleStingEffectAmplitude(StingViewEffectAmplitude.Roll, Alpha);
-        Result.Yaw = RollAndYawAbcissa * ScaleStingEffectAmplitude(StingViewEffectAmplitude.Yaw, Alpha);
+        Result.Roll = RollAndYawAbcissa * ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Roll, Alpha);
+        Result.Yaw = RollAndYawAbcissa * ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Yaw, Alpha);
     }
 
     return Result;
@@ -3530,7 +3613,7 @@ simulated event ApplyStungRotationOffset(out Vector Acceleration)
         StungRotation = GetStungRotationOffset();
         StungRotation.Pitch = 0;
 
-        Acceleration = Acceleration << (StungRotation * StingInputEffectMagnitude);
+        Acceleration = Acceleration << (StungRotation * class'SwatPlayerConfig'.static.GetStingInputEffectMagnitude());
     }
 }
 
@@ -3557,8 +3640,8 @@ function vector GetTasedViewLocationOffset(Rotator CameraRotation)
 
         LocalXAxis = vect(0, 1, 0) >> CameraRotation;
 
-        Result = LocalXAxis * TasedViewEffectAmplitude * PerlinNoiseAxisA.Noise1(Alpha * TasedViewEffectFrequency);
-        Result.Z = TasedViewEffectAmplitude * PerlinNoiseAxisB.Noise1(Alpha * TasedViewEffectFrequency);
+        Result = LocalXAxis * class'SwatPlayerConfig'.static.GetTasedViewEffectAmplitude() * PerlinNoiseAxisA.Noise1(Alpha * class'SwatPlayerConfig'.static.GetTasedViewEffectFrequency());
+        Result.Z = class'SwatPlayerConfig'.static.GetTasedViewEffectAmplitude() * PerlinNoiseAxisB.Noise1(Alpha * class'SwatPlayerConfig'.static.GetTasedViewEffectFrequency());
     }
 
     return Result;
@@ -3616,7 +3699,7 @@ simulated function bool HasTheItem()
 
 simulated function bool IsLowerBodyInjured()
 {
-    return CurrentLimp > LimpThreshold;
+    return CurrentLimp > class'SwatPlayerConfig'.static.GetLimpThreshold();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3635,7 +3718,16 @@ simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLoca
         {
             RegionInfo = SkeletalRegionInformation[RegionHit];
 
-            CurrentLimp += StandardLimpPenalty * RandRange(RegionInfo.LimpModifier.Min, RegionInfo.LimpModifier.Max);
+            if(RegionHit == REGION_LeftArm)
+            {
+                ArmInjuryFlags = ArmInjuryFlags | 1;
+            }
+            else if(RegionHit == REGION_RightArm)
+            {
+                ArmInjuryFlags = ArmInjuryFlags | 2;
+            }
+
+            CurrentLimp += class'SwatPlayerConfig'.static.GetStandardLimpPenalty() * RandRange(RegionInfo.LimpModifier.Min, RegionInfo.LimpModifier.Max);
 
             // MCJ: On clients, this will get called in
             // OnCurrentLimpChanged(). This doesn't get called in standalone
@@ -3787,6 +3879,12 @@ simulated event ApplyOneFrameNudgeRotationOffset(out Vector Acceleration)
     }
 }
 
+// Refund a lightstick if it fell out of the world
+function RefundLightstick()
+{
+	Loadout.AddLightstick();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Sound effect event manager for reporting to TOC
@@ -3883,6 +3981,8 @@ simulated function OnEffectStarted(Actor inStartedEffect);
 simulated function OnEffectStopped(Actor inStoppedEffect, bool Completed)
 {
     local name EffectEventName;
+    local IGSoundEffectsSubsystem.SoundInstance StoppedSoundInstance;
+    StoppedSoundInstance = IGSoundEffectsSubsystem.SoundInstance(inStoppedEffect);
 
     if (Completed)
     {
@@ -3971,6 +4071,136 @@ simulated function int GetStartingAmmoCountForWeapon(FiredWeapon in) {
   } else {
     return LoadOut.GetSecondaryAmmoCount();
   }
+}
+
+simulated function OnGivenNewEquipment(HandheldEquipment NewItem) {}
+
+function ClientSetItemAvailableCount(class<HandheldEquipment> Equipment, int NewAvailableCount)
+{
+    log("ClientSetItemAvailableCount("$Equipment$", "$NewAvailableCount$")");
+    if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
+    {
+        GivenFlashbangs.SetAvailableCount(NewAvailableCount);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenGasClass() && GivenGas != None)
+    {
+        GivenGas.SetAvailableCount(NewAvailableCount);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenStingerClass() && GivenStinger != None)
+    {
+        GivenStinger.SetAvailableCount(NewAvailableCount);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenC2Class() && GivenC2 != None)
+    {
+        GivenC2.SetAvailableCount(NewAvailableCount);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenPepperSprayClass() && GivenPepperSpray != None)
+    {
+        GivenPepperSpray.SetAvailableCount(NewAvailableCount);
+    }
+    else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
+    {
+        GivenWedge.SetAvailableCount(NewAvailableCount);
+    }
+    else
+    {
+        log("No equipment matches for ClientSetItemAvailableCount.");
+    }
+}
+
+function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
+{
+    local HandheldEquipment NewItem;
+    local int NewAvailableCount;
+
+    log("" $ self $ "::GivenEquipmentFromPawn: " $ Equipment);
+
+    // we have different behavior depending on whether we're in singleplayer or not.
+    if(Level.NetMode == NM_Standalone)
+    {
+        NewItem = Spawn(Equipment, self, 'GivenEquipment');
+        NewItem.bAlwaysRelevant = true;
+        NewItem.SetAvailableCount(1, true);
+        NewItem.OnGivenToOwner();
+
+        Loadout.GivenEquipmentFromPawn(NewItem);
+        SwatGamePlayerController(controller).theLoadOut.GivenEquipmentFromPawn(NewItem);
+
+        OnGivenNewEquipment(NewItem);
+    }
+    else
+    {
+        if(Equipment == class'SwatPlayerConfig'.static.GetGivenFlashbangClass() && GivenFlashbangs != None)
+        {
+            GivenFlashbangs.AddAvailableCount(1);
+            NewAvailableCount = GivenFlashbangs.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenGasClass() && GivenGas != None)
+        {
+            GivenGas.AddAvailableCount(1);
+            NewAvailableCount = GivenGas.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenStingerClass() && GivenStinger != None)
+        {
+            GivenStinger.AddAvailableCount(1);
+            NewAvailableCount = GivenStinger.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenC2Class() && GivenC2 != None)
+        {
+            GivenC2.AddAvailableCount(1);
+            NewAvailableCount = GivenC2.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenPepperSprayClass() && GivenPepperSpray != None)
+        {
+            GivenPepperSpray.AddAvailableCount(1);
+            NewAvailableCount = GivenPepperSpray.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
+        }
+        else if(Equipment == class'SwatPlayerConfig'.static.GetGivenWedgeClass() && GivenWedge != None)
+        {
+            GivenWedge.AddAvailableCount(1);
+            NewAvailableCount = GivenWedge.GetAvailableCount();
+            ClientSetItemAvailableCount(Equipment, NewAvailableCount);
+        }
+        else
+        {
+            // break?
+        }
+    }
+}
+
+simulated function FlagLightstickFastUse()
+{
+	local SwatGrenade PlayerLightstick;
+
+	PlayerLightstick = SwatGrenade(Loadout.GetItemAtSlot(Slot_Lightstick));
+	if(PlayerLightstick == None)
+	{
+		return;
+	}
+
+	PlayerLightstick.FlagForFastUse();
+}
+
+simulated function int GetNumberOfArmsInjured()
+{
+    local int ArmsInjured;
+
+    ArmsInjured = 0;
+    if((ArmInjuryFlags & 1) != 0)
+    {
+        ArmsInjured++;
+    }
+    if((ArmInjuryFlags & 2) != 0)
+    {
+        ArmsInjured++;
+    }
+
+    return ArmsInjured;
 }
 
 defaultproperties

@@ -46,8 +46,7 @@ var(DEBUG) SwatGameSpyManager SGSM;
 var(DEBUG) bool bUseGameSpy;
 var(DEBUG) bool bInGame;
 var(DEBUG) bool bIsAdmin;
-
-var(SWATGui) EMPMode CurGameType;
+var(DEBUG) bool bQMM;
 
 var() private config localized string CannotUndercutCurrentPlayersFormatString;
 var() private config localized string CannotStartDedicatedServerString;
@@ -311,7 +310,7 @@ function SaveServerSettings()
     // Set all server settings
     //
     SwatPlayerController(PlayerOwner()).ServerSetSettings( Settings,
-                                CurGameType,
+                                EMPMode.MPM_COOP,
                                 QuickSetupPanel.SelectedIndex,
                                 QuickSetupPanel.MyRoundsBox.Value,
                                 AdvancedSetupPanel.MyMaxPlayersBox.Value,
@@ -331,7 +330,11 @@ function SaveServerSettings()
 								!AdvancedSetupPanel.MyEnableLeadersCheck.bChecked,
 								!AdvancedSetupPanel.MyEnableKillMessagesCheck.bChecked,
 								AdvancedSetupPanel.MyEnableSnipers.bChecked);
-
+	SwatPlayerController(PlayerOwner()).ServerSetQMMSettings(Settings,
+		None,
+		None,
+		false,
+		0);
     GC.SaveConfig();
 }
 
@@ -361,11 +364,7 @@ function InternalOnDlgReturned( int Selection, String passback )
             {
                 SGSM.SetShouldCheckClientCDKeys( false );
                 SaveServerSettings();
-
-				        if (CurGameType == MPM_COOPQMM)
-					           LoadSelectedMap();
-				        else
-					           SwatPlayerController(PlayerOwner()).ServerQuickRestart();
+				SwatPlayerController(PlayerOwner()).ServerQuickRestart();
             }
             break;
     }
@@ -382,22 +381,7 @@ private final function LaunchDedicatedServer()
 ///////////////////////////////////////////////////////////////////////////
 private function LoadSelectedMap()
 {
-    local String URL;
-
-	// Load the Coop-QMM lobby map if the game type is Coop-QMM, else load the selected map
-	if (CurGameType == MPM_COOPQMM)
-		URL = "CoopQMMLobby";
-	else
-		URL = QuickSetupPanel.SelectedMaps.List.GetItemAtIndex(QuickSetupPanel.SelectedIndex);
-
-    URL = URL $ "?Name=" $ QuickSetupPanel.MyNameBox.GetText() $ "?listen";
-
-    if (QuickSetupPanel.MyPasswordedButton.bChecked)
-    {
-        URL = URL$"?GamePassword="$QuickSetupPanel.MyPasswordBox.GetText();
-    }
-
-    SwatGUIController(Controller).LoadLevel(URL);
+    QuickSetupPanel.BootUpSelectedMap();
 }
 
 function ResetDefaultsForGameMode( EMPMode NewMode )
@@ -411,7 +395,7 @@ function RefreshEnabled()
     local bool bEnableStart;
 
     bEnableStart = bIsAdmin &&
-        (!QuickSetupPanel.SelectedMaps.IsEmpty() || CurGameType == MPM_COOPQMM) &&
+        !QuickSetupPanel.SelectedMaps.IsEmpty() &&
         QuickSetupPanel.MyNameBox.GetText() != "" &&
         QuickSetupPanel.MyServerNameBox.GetText() != "" &&
         ( QuickSetupPanel.MyPasswordBox.GetText() != "" ||

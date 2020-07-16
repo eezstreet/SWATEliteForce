@@ -1,0 +1,1 @@
+class NoAmmo extends RoundBasedAmmo;

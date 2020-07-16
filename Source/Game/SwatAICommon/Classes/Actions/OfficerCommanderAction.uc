@@ -190,7 +190,7 @@ function OnPawnEncounteredVisionNotification()
 	{
 		assert(VisionSensor.LastPawnLost != none);
 
-		Enemy = VisionSensor.LastPawnSeen;		
+		Enemy = VisionSensor.LastPawnSeen;
 	}
 
 	GetHive().OfficerSawPawn(m_Pawn, Enemy);
@@ -222,7 +222,7 @@ function OnHeardNoise()
 	SoundOrigin   = HearingSensor.LastSoundHeardOrigin;
 
 	if (IsDeadlyNoise(SoundCategory))
-	{	
+	{
 //		log(m_Pawn.Name $ " heard a DeadlyNoise - HeardActor: " $ HeardActor $ " Is a fired weapon: " $ HeardActor.IsA('FiredWeaponModel'));
 
 		if (HeardActor.IsA('FiredWeaponModel'))
@@ -251,9 +251,9 @@ function OnHeardNoise()
 			}
 		}
 	}
-	else if (SoundCategory == 'Footsteps') 
+	else if (SoundCategory == 'Footsteps')
 	{
-		if (!HeardPawn.IsA('SwatPlayer') && ! ISwatAI(HeardPawn).isCompliant() && ! ISwatAI(HeardPawn).isArrested() && 
+		if (!HeardPawn.IsA('SwatPlayer') && ! ISwatAI(HeardPawn).isCompliant() && ! ISwatAI(HeardPawn).isArrested() &&
 		   (HeardPawn.IsA('SwatHostage') || HeardPawn.IsA('SwatEnemy')))
 		{
 			ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(HeardPawn);
@@ -266,7 +266,7 @@ function OnHeardNoise()
 	{
 		LastDoorInteractor = ISwatDoor(HeardActor).GetLastInteractor();
 
-		// if we heard a door, and we have a line of sight to 
+		// if we heard a door, and we have a line of sight to
 		if (LastDoorInteractor.IsA('SwatHostage') || LastDoorInteractor.IsA('SwatEnemy'))
 		{
 			if (HasLineOfSightToDoor(Door(HeardActor)))
@@ -308,6 +308,12 @@ private function RotateToFaceNoise(Actor NoisyActor)
 // if we find a blocked door that is blocked by the player, play some speech
 function NotifyDoorBlocked(Door BlockedDoor)
 {
+	// don't do anything if we've been told to ignore door blocking
+	if(ISwatOfficer(m_Pawn).GetIgnoreDoorBlocking())
+	{
+		return;
+	}
+
 	// we're supposed to call down the chain
 	super.NotifyDoorBlocked(BlockedDoor);
 
@@ -321,6 +327,29 @@ function NotifyDoorBlocked(Door BlockedDoor)
 	}
 }
 
+function NotifyBlockingDoorClose(Door BlockedDoor)
+{
+	// don't do anything if we've been told to ignore door blocking
+	if(ISwatOfficer(m_Pawn).GetIgnoreDoorBlocking())
+	{
+		return;
+	}
+
+	// we're supposed to call down the chain
+	super.NotifyDoorBlocked(BlockedDoor);
+}
+
+function NotifyBlockingDoorOpen(Door BlockedDoor)
+{
+	// don't do anything if we've been told to ignore door blocking
+	if(ISwatOfficer(m_Pawn).GetIgnoreDoorBlocking())
+	{
+		return;
+	}
+
+	// we're supposed to call down the chain
+	super.NotifyDoorBlocked(BlockedDoor);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -413,7 +442,17 @@ private latent function EngageTargetForCompliance(Pawn Target)
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " is going to engage " $ Target.Name $ " for compliance");
 
-	CurrentEngageForComplianceGoal = new class'EngageForComplianceGoal'(characterResource(), Target);
+	if(GetHive().IsMovingTo(self.m_Pawn))
+	{
+		CurrentEngageForComplianceGoal = new class'EngageForComplianceWhileMovingToGoal'(characterResource(), Target, 
+			GetHive().GetMoveToGoalForOfficer(self.m_Pawn).Destination,
+			GetHive().GetMoveToGoalForOfficer(self.m_Pawn).CommandGiver);
+	}
+	else
+	{
+		CurrentEngageForComplianceGoal = new class'EngageForComplianceGoal'(characterResource(), Target);
+	}
+	
 	assert(CurrentEngageForComplianceGoal != None);
 	CurrentEngageForComplianceGoal.AddRef();
 
@@ -423,23 +462,71 @@ private latent function EngageTargetForCompliance(Pawn Target)
 
 private latent function AttackTarget(Pawn Target)
 {
+	local AttackTargetGoal AttackGoal;
+
 	assert(CurrentAttackEnemyGoal == None);
 
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " is going to attack " $ Target.Name);
 
-	CurrentAttackEnemyGoal = new class'AttackEnemyGoal'(characterResource());
-	assert(CurrentAttackEnemyGoal != None);
-	CurrentAttackEnemyGoal.AddRef();
+	// If we're just moving to the destination, just attack.
+	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
+	{
+		log("SwatOfficer: "$self.m_Pawn$" should now be attacking "$Target.name);
+		AttackGoal = new class'AttackTargetGoal'(weaponResource(), Target);
+		assert(AttackGoal != None);
+		AttackGoal.AddRef();
+		AttackGoal.postGoal(self);
+		WaitForGoal(AttackGoal);
+		log("SwatOfficer: "$self.m_Pawn$" has finished attacking "$Target.name);
 
-	CurrentAttackEnemyGoal.postGoal(self);
-	WaitForGoal(CurrentAttackEnemyGoal);
+		AttackGoal.unPostGoal(self);
+		AttackGoal.Release();
+		AttackGoal = None;
+	}
+	else
+	{	// Otherwise, attack. Optionally while falling in.
+		CurrentAttackEnemyGoal = new class'AttackEnemyGoal'(characterResource());
+		assert(CurrentAttackEnemyGoal != None);
+		CurrentAttackEnemyGoal.AddRef();
+
+		CurrentAttackEnemyGoal.postGoal(self);
+		WaitForGoal(CurrentAttackEnemyGoal);
+	}
+	
 }
 
 private function bool ShouldAttackRunner(Pawn target)
 {
 	return (target.IsA('SwatFlusher') || target.IsA('SwatEscaper')) &&
 	  (ISwatOfficer(m_Pawn).GetPrimaryWeapon().IsLessLethal() || (ISwatOfficer(m_Pawn).GetBackupWeapon() != None && ISwatOfficer(m_Pawn).GetBackupWeapon().IsLessLethal()));
+}
+
+private function bool ShouldAttackUsingLessLethal(Pawn target)
+{
+	local FiredWeapon Item;
+
+	if(ISwatAI(target).IsCompliant() || ISwatAI(target).IsArrested() || target.IsA('SwatUndercover'))
+	{
+		return false; // Don't target compliant or arrested people. And leave Carl Jennings alone!
+	}
+
+	Item = FiredWeapon(m_Pawn.GetActiveItem());
+
+	if(Item == None || !Item.IsLessLethal() || Item.IsA('Taser')      || // Don't tase people, it can kill
+		(Item.IsA('CSBallLauncher') && ISwatAI(target).IsGassed())    || // Pepperball is uselss on already gassed people
+		(Item.IsA('BeanbagShotgunBase') && ISwatAI(target).IsStung()) || // Don't keep spamming beanbags at people.
+		(Item.IsA('GrenadeLauncherBase')))                            	 // Don't use the grenade launcher. It's stupid.
+	{
+		return false;
+	}
+
+	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
+	{	// The AI is trained to attack on the move in this state; we don't want them to walk up to people and start beaning them.
+		return true;
+	}
+
+	return false;
 }
 
 private latent function EngageAssignment()
@@ -449,11 +536,15 @@ private latent function EngageAssignment()
 	// we should have an assignment here
 	assert (CurrentAssignment != None);
 
-	if ((CurrentAssignment.IsA('SwatEnemy') && ISwatEnemy(CurrentAssignment).IsAThreat()) ||
-		CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment))
+	log("EngageAssignment() for "$self.m_Pawn.name);
+	if(CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment) ||
+		(CurrentAssignment.IsA('SwatEnemy') && ISwatEnemy(CurrentAssignment).IsAThreat()) ||	// Current assignment is a threat
+		(CurrentAssignment.IsA('SwatEnemy') && !ISwatEnemy(CurrentAssignment).IsAThreat() && ShouldAttackUsingLessLethal(CurrentAssignment))	// Not a threat but we can use less lethal to subdue them
+		)
 	{
+		log(""$self.m_Pawn.name$" should attack assignment "$CurrentAssignment.name$", so let's do that now!");
 		AttackTarget(CurrentAssignment);
-	
+
 		if (CurrentAttackEnemyGoal != None)
 		{
 			bCompletedEngagementGoals = CurrentAttackEnemyGoal.hasCompleted();
@@ -466,7 +557,7 @@ private latent function EngageAssignment()
 	else
 	{
 		EngageTargetForCompliance(CurrentAssignment);
-		
+
 		if (CurrentEngageForComplianceGoal != None)
 		{
 			bCompletedEngagementGoals = CurrentEngageForComplianceGoal.hasCompleted();
@@ -511,7 +602,7 @@ state Running
 			pause();
 	}
 
-	// it is possible for our assignment to be cleared between the time we are paused, 
+	// it is possible for our assignment to be cleared between the time we are paused,
 	// when runAction is called, and when we actually continue executing state code
 	// so in that case we should check again to make sure our assignment hasn't been cleared
 	if (CurrentAssignment != None)

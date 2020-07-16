@@ -185,7 +185,7 @@ function OnTick( float Delta )
 		if (NumTicks > 25/* && Controller.TopPage() == self*/)
 		{
 			if( SwatGUIControllerBase(Controller).GuiConfig.CurrentMission == None ||
-				SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None ||
+				(SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None && !SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario.AllowDispatch) ||
         SwatGUIControllerBase(Controller).GetDispatchDisabled() )
 				FinishStartRoundSequence();
 			else

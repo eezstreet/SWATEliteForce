@@ -506,13 +506,119 @@ static function string ConcatArgs(array<string> Args, optional int Start, option
 	return outStr;
 }
 
-static function String FormatTextString( string Format, optional coerce string Param1, optional coerce string Param2, optional coerce string Param3)
+// Extended this function to take more arguments --eezstreet
+static function String FormatTextString( string Format, optional coerce string Param1,
+	optional coerce string Param2, optional coerce string Param3,
+	optional coerce string Param4, optional coerce string Param5,
+	optional coerce string Param6, optional coerce string Param7)
 {
     Format = ReplaceExpression( Format, "%1", Param1 );
     Format = ReplaceExpression( Format, "%2", Param2 );
     Format = ReplaceExpression( Format, "%3", Param3 );
+	Format = ReplaceExpression( Format, "%4", Param4 );
+	Format = ReplaceExpression( Format, "%5", Param5 );
+	Format = ReplaceExpression( Format, "%6", Param6 );
+	Format = ReplaceExpression( Format, "%7", Param7 );
 
     return Format;
+}
+
+static function bool IsNumber(string Num)
+{
+	if( Num == Chr(48) ) return true; // character '0' etc..
+	if( Num == Chr(49) ) return true;
+	if( Num == Chr(50) ) return true;
+	if( Num == Chr(51) ) return true;
+	if( Num == Chr(52) ) return true;
+	if( Num == Chr(53) ) return true;
+	if( Num == Chr(54) ) return true;
+	if( Num == Chr(55) ) return true;
+	if( Num == Chr(56) ) return true;
+	if( Num == Chr(57) ) return true;
+
+	return false;
+}
+
+static function string StripColors(string MyString)
+{
+	local int EscapePos, RemCount, LenFromEscape;
+
+	EscapePos = InStr(MyString, Chr(3)); // Chr(3) == ^C
+	while(EscapePos != -1)
+	{
+		LenFromEscape = Len(MyString) - (EscapePos + 1); // how far after the escape character the string goes on for
+
+		// Now we have to work out how many characters follow the ^C and should be removed. This is rather unpleasant..!
+
+		RemCount = 1; // strip the ctrl-C regardless
+		if( LenFromEscape >= 1 && IsNumber(Mid(MyString, EscapePos+1, 1)) ) // If a digit follows the ctrl-C, strip that
+		{
+			RemCount = 2; // #
+			if( LenFromEscape >= 3 && Mid(MyString, EscapePos+2, 1) == Chr(44) && IsNumber(Mid(MyString, EscapePos+3, 1)) ) // If we have a comma and another digit, strip those
+			{
+				RemCount = 4; // #,#
+				if( LenFromEscape >= 4 && IsNumber(Mid(MyString, EscapePos+4, 1)) ) // if there is another digit after that, strip it
+					RemCount = 5; // #,##
+			}
+			else if( LenFromEscape >= 2 && IsNumber(Mid(MyString, EscapePos+2, 1)) )// if there is a second digit, strip that
+			{
+				RemCount = 3; // ##
+				if( LenFromEscape >= 4 && Mid(MyString, EscapePos+3, 1) == Chr(44) && IsNumber(Mid(MyString, EscapePos+4, 1)) ) // If we have a comma and another digit, strip those
+				{
+					RemCount = 5; // ##,#
+					if( LenFromEscape >= 5 && IsNumber(Mid(MyString, EscapePos+5, 1)) ) // if there is another digit after that, strip it
+						RemCount = 6; // ##,##
+				}
+			}
+		}
+
+		MyString = Left(MyString, EscapePos)$Mid(MyString, EscapePos+RemCount);
+
+		EscapePos = InStr(MyString, Chr(3));
+	}
+
+	return MyString;
+}
+
+static final function ReplaceText(out string Text, string Replace, string With)
+{
+	local int i;
+	local string Input;
+
+	Input = Text;
+	Text = "";
+	i = InStr(Input, Replace);
+	while(i != -1)
+	{
+		Text = Text $ Left(Input, i) $ With;
+		Input = Mid(Input, i + Len(Replace));
+		i = InStr(Input, Replace);
+	}
+	Text = Text $ Input;
+}
+
+static function string StripHTMLColors(string In)
+{
+	local int i, j;
+
+	ReplaceText(In, "[C=", "[c=");
+	ReplaceText(In, "[\\C]", "");
+	ReplaceText(In, "[\\c]", "");
+
+	do
+	{
+		i = InStr(In, "[c=");
+		if(i != -1)
+		{
+			j = InStrAfter(In, "]", i);
+			if(j != -1)
+			{
+				In = Mid(In, j + 1);
+			}
+		}
+	} until (i == -1);
+
+	return In;
 }
 
 static function string GetFirstField( out string In, string Seperator )

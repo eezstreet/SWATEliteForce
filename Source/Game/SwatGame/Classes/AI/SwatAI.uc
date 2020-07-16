@@ -3129,7 +3129,6 @@ function RestartStunnedActionSpeech(AI_Goal goal)
 
 
 //IEffectObserver implementation
-
 simulated function OnEffectInitialized(Actor inInitializedEffect)
 {
     LatentSound = IGSoundEffectsSubsystem.SoundInstance(inInitializedEffect);
@@ -3150,9 +3149,10 @@ simulated function OnEffectStarted(Actor inStartedEffect)
 simulated function OnEffectStopped(Actor inStoppedEffect, bool Completed)
 {
 	local IGSoundEffectsSubsystem.SoundInstance StoppedSoundInstance;
+    local name EffectEventName;
 	StoppedSoundInstance = IGSoundEffectsSubsystem.SoundInstance(inStoppedEffect);
 
-//	log(Name $ " OnEffectStopped - inStoppedEffect: " $ inStoppedEffect $ " StoppedSoundInstance: " $ StoppedSoundInstance $ " LatentSound: " $ LatentSound);
+	//log(Name $ " OnEffectStopped - inStoppedEffect: " $ StoppedSoundInstance.toString() $ " StoppedSoundInstance: " $ StoppedSoundInstance $ " LatentSound: " $ LatentSound $ ", Completed = " $ Completed);
 
 	// we only care about the current latent sound, other stopped sounds do not matter
 	if (StoppedSoundInstance == LatentSound)

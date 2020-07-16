@@ -1416,7 +1416,7 @@ function BroadcastDeathMessage(Controller Killer, Controller Other, class<Damage
 // %w = Owner's Weapon ItemName
 static native function string ParseKillMessage( string KillerName, string VictimName, string DeathMessage );
 
-function AdminLog(coerce string Message, name Type)
+function AdminLog(coerce string Message, name Type, optional string PlayerIP, optional string AdminIP)
 {
 }
 
@@ -1432,23 +1432,25 @@ function KickBan( Controller Kicker, string Kickee )
 	    Broadcast( Kicker, Kicker.PlayerReplicationInfo.PlayerName$"\t"$Kickee, 'KickBan' );
 }
 
-function bool RemoteKick(string Kicker, string Kickee)
+function bool RemoteKick(string Kicker, string Kickee, string KickerIP)
 {
-	if( AccessControl.Kick(Kickee))
+	local string KickeeIP;
+	if( AccessControl.Kick(Kickee, KickeeIP))
 	{
 		Broadcast(None, Kicker$"\t"$Kickee, 'Kick');
-		AdminLog(Kicker$"\t"$Kickee, 'Kick');
+		AdminLog(Kicker$"\t"$Kickee, 'Kick', KickeeIP, KickerIP);
 		return true;
 	}
 	return false;
 }
 
-function bool RemoteKickBan(string Kicker, string Kickee)
+function bool RemoteKickBan(string Kicker, string Kickee, string KickerIP)
 {
-	if(AccessControl.KickBan(Kickee))
+	local string KickeeIP;
+	if(AccessControl.KickBan(Kickee, KickeeIP))
 	{
 		Broadcast(None, Kicker$"\t"$Kickee, 'KickBan');
-		AdminLog(Kicker$"\t"$Kickee, 'KickBan');
+		AdminLog(Kicker$"\t"$Kickee, 'KickBan', KickeeIP, KickerIP);
 		return true;
 	}
 	return false;

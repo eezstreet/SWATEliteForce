@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // ThrowGrenadeGoal.uc - ThrowGrenadeGoal class
 // this goal causes the AI to throw a grenade at a particular target
-// does not do or cause movement, movement must be done by a prior goal 
+// does not do or cause movement, movement must be done by a prior goal
 //  (possibly by using this goal in concert to throw a grenade)
 
 class ThrowGrenadeGoal extends OfficerCommandGoal;
@@ -42,7 +42,7 @@ overloaded function construct( AI_Resource r, vector inTargetLocation, vector in
 		Priority = kBreachThrowGrenadeGoalPriority;
 
 	super.construct( r, priority );
-	
+
 	TargetLocation    = inTargetLocation;
 	ThrowFromLocation = inThrowFromLocation;
 	GrenadeSlot	      = inGrenadeSlot;

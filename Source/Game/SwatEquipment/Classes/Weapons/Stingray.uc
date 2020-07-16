@@ -24,6 +24,7 @@ simulated function TriggerMeleeReaction(Actor Victim)
 	// Hit something that can be tased
 	if (Victim.IsA('ICanBeTased'))
 	{
+		SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(Pawn(Victim), Owner);
 		ICanBeTased(Victim).ReactToBeingTased(self, PlayerTasedDuration, AITasedDuration);
 	}
 }

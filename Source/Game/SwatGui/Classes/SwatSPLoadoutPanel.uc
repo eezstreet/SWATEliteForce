@@ -311,14 +311,32 @@ function ChangeLoadOut( Pocket thePocket )
 function bool CheckValidity( class EquipmentClass, eNetworkValidity type )
 {
     local int CampaignPath;
+	local int i;
 
-    CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
-    if(CampaignPath == 2)
-    {
-      return true;
-    }
+	// This functions COMPLETELY differently in a QMM campaign, because we are allowed to use any equipment in QMM.
+	if(GC.GetCustomScenarioPack() != None)
+	{
+		// Check for it being in the list of pack disabled equipment
+		for(i = 0; i < GC.GetCustomScenarioPack().DisabledEquipment.Length; i++)
+		{
+			if(EquipmentClass == GC.GetCustomScenarioPack().DisabledEquipment[i])
+			{
+				return false;
+			}
+		}
 
-    return (type == NETVALID_SPOnly) || (Super.CheckValidity( EquipmentClass, type ));
+		return true;
+	}
+	else
+	{
+		CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
+	    if(CampaignPath == 2)
+	    {
+	    	return true;
+	    }
+
+	    return (type == NETVALID_SPOnly) || (Super.CheckValidity( EquipmentClass, type ));
+	}
 }
 
 function bool CheckCampaignValid( class EquipmentClass )
@@ -326,6 +344,7 @@ function bool CheckCampaignValid( class EquipmentClass )
 	local int MissionIndex;
 	local int i;
 	local int CampaignPath;
+	local CustomScenarioPack QMMPak;
 
     if(EquipmentClass == None)
     {
@@ -342,9 +361,33 @@ function bool CheckCampaignValid( class EquipmentClass )
 
 	MissionIndex = SwatGUIControllerBase(Controller).GetCampaign().GetAvailableIndex();
 	CampaignPath = SwatGUIControllerBase(Controller).GetCampaign().CampaignPath;
+	QMMPak = GC.GetCustomScenarioPack();
 
 	// Any equipment above the MissionIndex is currently unavailable
-	if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
+	if(QMMPak != None)
+	{	// QMM
+		// Check for it being on the list of unlocks, if unlocks are enabled.
+		if(QMMPak.UseGearUnlocks)
+		{
+			// Disable everything that is after our current mission index
+			for(i = MissionIndex + 1; i < QMMPak.FirstEquipmentUnlocks.Length; i++)
+			{
+				if(EquipmentClass == QMMPak.FirstEquipmentUnlocks[i])
+				{
+					return false;
+				}
+			}
+
+			for(i = MissionIndex + 1; i < QMMPak.SecondEquipmentUnlocks.Length; i++)
+			{
+				if(EquipmentClass == QMMPak.SecondEquipmentUnlocks[i])
+				{
+					return false;
+				}
+			}
+		}
+	}
+	else if(CampaignPath == 0) { // We only do this for the regular SWAT 4 missions
     // Check first set of equipment
 		for (i = MissionIndex + 1; i < class'SwatGame.SwatVanillaCareerPath'.default.Missions.Length; ++i)
         {
@@ -841,6 +884,12 @@ function TooMuchBulkModal()
     Super.TooMuchBulkModal();
 }
 
+function NoWeaponModal()
+{
+	Controller.TopPage().OnDlgReturned=None;
+    Super.NoWeaponModal();
+}
+
 function bool CheckWeightBulkValidity()
 {
     local int i;
@@ -857,6 +906,12 @@ function bool CheckWeightBulkValidity()
             TooMuchBulkModal();
             return false;
         }
+		else if(MyCurrentLoadOuts[i].LoadoutSpec[0] == class'SwatEquipment.NoWeapon' &&
+			MyCurrentLoadOuts[i].LoadoutSpec[2] == class'SwatEquipment.NoWeapon')
+		{
+			NoWeaponModal();
+			return false;
+		}
     }
     return true;
 }
@@ -958,6 +1013,7 @@ defaultproperties
 
     EquipmentOverWeightString="One of your officers is equipped with too much weight. You need to change their gear before you may continue."
     EquipmentOverBulkString="One of your officers is equipped with too much bulk. You need to change their gear before you may continue."
+	NoWeaponString="One of your officers lacks both a primary and secondary weapon. You need to fix this before you may continue."
 
     MultiApplyStr[0] = "Element"
     MultiApplyStr[1] = "Red Team"

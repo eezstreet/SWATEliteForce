@@ -22,6 +22,7 @@ var(SWATGui) private EditInline Config GUISlider MyBrightnessSlider;
 var(SWATGui) private EditInline Config GUISlider MyContrastSlider;
 var(SWATGui) private EditInline Config GUISlider MyGammaSlider;
 var(SWATGui) private EditInline Config GUISlider MyFOVSlider;
+var(SWATGui) private EditInline Config GUISlider MyFPFOVSlider;
 
 var(SWATGui) private EditInline Config GUIComboBox MyWorldDetailBox;
 
@@ -93,6 +94,7 @@ function InitComponent(GUIComponent MyOwner)
     MyContrastSlider.OnChange=ComboOnChange;
     MyGammaSlider.OnChange=ComboOnChange;
     MyFOVSlider.OnChange=ComboOnChange;
+	MyFPFOVSlider.OnChange=ComboOnChange;
     MyRenderDetailBox.OnChange=RenderDetailOnChange;
 
 	MyVSyncCheck.OnChange=ComboOnChange;
@@ -111,10 +113,11 @@ log("[dkaplan] >>> SaveSettings");
 function LoadSettings()
 {
     local float FOV;
+	local float FPFOV;
 
     FOV = float(PlayerOwner().ConsoleCommand("Get PlayerController BaseFOV"));
+	FPFOV = float(PlayerOwner().ConsoleCommand("Get FOVSettings FPFOV"));
     log("[dkaplan] >>> LoadSettings");
-    log("setting FOV to "$FOV);
 
     PlayerOwner().ConsoleCommand( "RESETCLIENTCONFIG" );
     // reset render config after client config because it modifies some
@@ -125,6 +128,7 @@ function LoadSettings()
     MyContrastSlider.SetValue( float(PlayerOwner().ConsoleCommand( "GETCONTRAST" ) ));
     MyGammaSlider.SetValue( float(PlayerOwner().ConsoleCommand( "GETGAMMA" ) ));
     MyFOVSlider.SetValue( FOV );
+	MyFPFOVSlider.SetValue( FPFOV );
     MyResBox.Find( PlayerOwner().ConsoleCommand( "GETCURRENTRES" ) );
 
     MyResBox.SetEnabled( true );
@@ -284,9 +288,12 @@ log("[dkaplan] >>> ComboOnChange. Sender="$Sender.Name$" bActiveInput="$bActiveI
         case MyFOVSlider:
             ApplySetting("FOV");
             break;
-		    case MyVSyncCheck:
-			      ApplySetting("VSync");
-			      break;
+		case MyFPFOVSlider:
+			ApplySetting("FPFOV");
+			break;
+		case MyVSyncCheck:
+			ApplySetting("VSync");
+			break;
     }
 }
 
@@ -407,6 +414,10 @@ log("dkaplan >>> InternalApplySetting( "$Setting$" )");
             SettingValue = string(MyFOVSlider.Value);
             ConsoleCommand = "FOV";
             break;
+		case "FPFOV":
+			SettingValue = string(MyFPFOVSlider.Value);
+			ConsoleCommand = "FPFOV";
+			break;
     }
 
     if (SettingValue != "" && ConsoleCommand != "")
@@ -508,6 +519,7 @@ log("dkaplan >>> ResetToDefaults()");
     MyContrastSlider.SetValue( DefaultContrast );
     MyGammaSlider.SetValue( DefaultGamma );
     MyFOVSlider.SetValue(DefaultFOV);
+	MyFPFOVSlider.SetValue(DefaultFOV);
 
 	// set resolution, if the default is different from current setting
 	CurrentRes = PlayerOwner().ConsoleCommand( "GETCURRENTRES" );

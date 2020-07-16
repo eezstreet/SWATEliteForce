@@ -9,4 +9,5 @@ class GassedGoal extends StunnedGoal;
 defaultproperties
 {
     goalName = "Gassed"
+    bComplexFlee=false
 }

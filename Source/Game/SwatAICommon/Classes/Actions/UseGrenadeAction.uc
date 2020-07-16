@@ -59,6 +59,28 @@ function cleanup()
 	}
 }
 
+function float selectionHeuristic(AI_Goal Goal)
+{
+	local UseGrenadeGoal TheGoal;
+	local ISwatOfficer Officer;
+
+	// if we don't have a pawn yet, set it
+	if (m_Pawn == None)
+	{
+		m_Pawn = AI_WeaponResource(goal.resource).m_pawn;
+		assert(m_Pawn != None);
+	}
+
+	TheGoal = UseGrenadeGoal(Goal);
+	Officer = ISwatOfficer(m_Pawn);
+
+	if(Officer.HasLauncherWhichFires(TheGoal.GetGrenadeSlot()))
+	{
+		return 0.0; // we use the grenade launcher one instead
+	}
+	return 1.0;	// use this one !
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 function SetContinueToThrowGrenade()
@@ -82,7 +104,7 @@ private function float GetThrowSpeed(float ThrowAngle, vector ThrowOrigin)
 
 	SinValue        = sin(2 * ThrowAngle * (Pi / 180.0));
 	ProjectileSpeed = Sqrt((Distance / SinValue) * Grav);
-	
+
 //	log("ProjectileSpeed:"@ProjectileSpeed@" SinValue:"@SinValue@" Grav:"@Grav@" ThrowAngle:"@ThrowAngle);
 
 	return ProjectileSpeed;
@@ -125,7 +147,7 @@ latent function ThrowGrenade()
 	GrenadeWeapon.LatentUse();
 }
 
-private latent function PlayNodAnimation()
+protected latent function PlayNodAnimation()
 {
 	local int SpecialChannel;
 
@@ -146,8 +168,8 @@ state Running
 	// wait if we're supposed to, we will be notified when to throw the grenade
 	if (bWaitToThrowGrenade)
 	{
-		PlayNodAnimation();	
-	
+		PlayNodAnimation();
+
 		// only pause if we're supposed to
 		if (! bContinueToThrowGrenade)
 			pause();

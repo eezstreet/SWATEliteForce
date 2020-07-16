@@ -12,40 +12,40 @@ import enum EAICoverLocationType from AICoverFinder;
 //
 // Variables
 
-var(parameters) private Pawn Enemy;
-var private AttackTargetGoal			CurrentAttackTargetGoal;
-var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
-var private MoveToOpponentGoal			CurrentMoveToOpponentGoal;
-var private AimAroundGoal				CurrentAimAroundGoal;
+var(parameters) protected Pawn Enemy;
+var protected AttackTargetGoal			CurrentAttackTargetGoal;
+var protected RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
+var protected MoveToOpponentGoal			CurrentMoveToOpponentGoal;
+var protected AimAroundGoal				CurrentAimAroundGoal;
 
-var config private float				SWATAttackWhileTakingCoverChance;
+var config protected float				SWATAttackWhileTakingCoverChance;
 
-var config private float				MinCrouchTime;
-var config private float				MaxCrouchTime;
-var config private float				MinStandTime;
-var config private float				MaxStandTime;
+var config protected float				MinCrouchTime;
+var config protected float				MaxCrouchTime;
+var config protected float				MinStandTime;
+var config protected float				MaxStandTime;
 
-var config private float				MinLeanTime;
-var config private float				MaxLeanTime;
+var config protected float				MinLeanTime;
+var config protected float				MaxLeanTime;
 
-var config private float				SWATMinTakeCoverAndAttackPercentageChance;
-var config private float				SWATMaxTakeCoverAndAttackPercentageChance;
+var config protected float				SWATMinTakeCoverAndAttackPercentageChance;
+var config protected float				SWATMaxTakeCoverAndAttackPercentageChance;
 
-var private Rotator						AttackRotation;
-var private ELeanState					AttackLeanState;
-var private EAICoverLocationType		AttackCoverLocationType;
+var protected Rotator						AttackRotation;
+var protected ELeanState					AttackLeanState;
+var protected EAICoverLocationType		AttackCoverLocationType;
 
-var private array<Pawn>					CachedSeenPawns;
+var protected array<Pawn>					CachedSeenPawns;
 
-var private DistanceSensor				DistanceSensor;
-var config private float				MinDistanceToSuspectsWhileTakingCover;
+var protected DistanceSensor				DistanceSensor;
+var config protected float				MinDistanceToSuspectsWhileTakingCover;
 
-var private float						MoveBrieflyChance;
-var config private float				MoveBrieflyChanceIncrement;
-var config private float				AimAroundInnerFovDegrees;
-var config private float				AimAroundOuterFovDegrees;
-var config private float				AimAroundMinAimTime;
-var config private float				AimAroundMaxAimTime;
+var protected float						MoveBrieflyChance;
+var config protected float				MoveBrieflyChanceIncrement;
+var config protected float				AimAroundInnerFovDegrees;
+var config protected float				AimAroundOuterFovDegrees;
+var config protected float				AimAroundMinAimTime;
+var config protected float				AimAroundMaxAimTime;
 
 const kMoveTowardMinTime = 1.0;
 const kMoveTowardMaxTime = 2.0;
@@ -54,7 +54,7 @@ const kMoveTowardMaxTime = 2.0;
 //
 // Selection Heuristic
 
-private function bool ShouldMoveToCover() {
+protected function bool ShouldMoveToCover() {
 	local SwatAIRepository SwatAIRepo;
 	SwatAIRepo = SwatAIRepository(Level.AIRepo);
 
@@ -62,7 +62,7 @@ private function bool ShouldMoveToCover() {
 	return (!SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
 }
 
-private function bool CanTakeCoverAndAttack()
+protected function bool CanTakeCoverAndAttack()
 {
 	local Hive HiveMind;
 
@@ -78,7 +78,7 @@ private function bool CanTakeCoverAndAttack()
 		!CoverIsInBadPosition());
 }
 
-private function bool CoverIsInBadPosition()
+protected function bool CoverIsInBadPosition()
 {
 	local int i;
 
@@ -236,12 +236,12 @@ function bool ShouldAttackWhileTakingCover()
 }
 
 // easier than writing the accessor to commander
-private function Pawn GetEnemy()
+protected function Pawn GetEnemy()
 {
 	return ISwatOfficer(m_Pawn).GetOfficerCommanderAction().GetCurrentAssignment();
 }
 
-private function StopAttacking()
+protected function StopAttacking()
 {
 	if (CurrentAttackTargetGoal != None)
 	{
@@ -251,7 +251,7 @@ private function StopAttacking()
 	}
 }
 
-private function Attack(Pawn Target, bool bCanSucceedAfterFiring)
+protected function Attack(Pawn Target, bool bCanSucceedAfterFiring)
 {
   if(Target == None) {
     return;
@@ -271,13 +271,13 @@ private function Attack(Pawn Target, bool bCanSucceedAfterFiring)
 //
 // State Code
 
-private function bool IsRotatedToAttackRotation()
+protected function bool IsRotatedToAttackRotation()
 {
 	// note, this requires that the pawn's rotation be the aim rotation
 	return (m_Pawn.Rotation.Yaw == AttackRotation.Yaw);
 }
 
-latent private function RotateToAttackRotation(Pawn Target)
+latent protected function RotateToAttackRotation(Pawn Target)
 {
 	assert(CurrentRotateTowardRotationGoal == None);
 
@@ -296,7 +296,7 @@ latent private function RotateToAttackRotation(Pawn Target)
 	}
 }
 
-private function bool CanLeanAtCoverResult()
+protected function bool CanLeanAtCoverResult()
 {
 	assertWithDescription((CoverResult.coverLocationInfo == kAICLI_InCover), "TakeCoverAndAttackAction::CanLeanAtCoverResult - expected coverLocationInfo to be kAICLI_InCover, got " $ CoverResult.coverLocationInfo) ;
 	assert(CoverResult.coverSide != kAICLS_NotApplicable);
@@ -316,7 +316,7 @@ private function bool CanLeanAtCoverResult()
 }
 
 // tests the current value in the cover result value to determine if a piece of cover is usable
-private function bool CanUseCover()
+protected function bool CanUseCover()
 {
 	// if the cover result says we have cover and it's low cover,
 	// or it's normal cover and we can lean at that point
@@ -437,7 +437,7 @@ protected latent function TakeCover()
 }
 
 
-private latent function MoveTowardEnemyBriefly(Pawn Target)
+protected latent function MoveTowardEnemyBriefly(Pawn Target)
 {
 	CurrentMoveToOpponentGoal = new class'MoveToOpponentGoal'(movementResource(), achievingGoal.priority, Target);
 	assert(CurrentMoveToOpponentGoal != None);
@@ -456,7 +456,7 @@ private latent function MoveTowardEnemyBriefly(Pawn Target)
 	CurrentMoveToOpponentGoal = None;
 }
 
-private latent function AimAroundBriefly()
+protected latent function AimAroundBriefly()
 {
 	CurrentAimAroundGoal = new class'AimAroundGoal'(weaponResource(), CurrentAttackTargetGoal.priority - 1);
 	assert(CurrentAimAroundGoal != None);
@@ -476,7 +476,7 @@ private latent function AimAroundBriefly()
 	CurrentAimAroundGoal = None;
 }
 
-private latent function AttackWhileCrouchingBehindCover(Pawn Target)
+protected latent function AttackWhileCrouchingBehindCover(Pawn Target)
 {
 	// stand up if we can't see our Target and we can't hit them
 	if (! m_Pawn.CanHit(Target))
@@ -509,7 +509,7 @@ private latent function AttackWhileCrouchingBehindCover(Pawn Target)
 	}
 }
 
-private function Lean()
+protected function Lean()
 {
 	if (AttackLeanState == kLeanStateLeft)
 	{
@@ -523,13 +523,13 @@ private function Lean()
 	}
 }
 
-private function StopLeaning()
+protected function StopLeaning()
 {
 	m_Pawn.ShouldLeanLeft(false);
 	m_Pawn.ShouldLeanRight(false);
 }
 
-private latent function ReEvaluateCover()
+protected latent function ReEvaluateCover()
 {
 	if (FindBestCoverToAttackFrom())
 	{
@@ -541,7 +541,7 @@ private latent function ReEvaluateCover()
 	}
 }
 
-private latent function AttackWhileLeaningBehindCover(Pawn Target)
+protected latent function AttackWhileLeaningBehindCover(Pawn Target)
 {
 	local bool bReEvaluateCover;
 

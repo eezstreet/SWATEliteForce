@@ -66,7 +66,7 @@ var config float						CSGrenadeDelayTimeGasMask;
 var protected float						PostGrenadeThrowDelayTime;
 
 var private SwatGrenadeProjectile		Projectile;
-var private SquadDeployLightstickGoal 	LightstickGoal;
+var private SquadDropLightstickGoal 	LightstickGoal;
 
 const kLeaderClearPointIndex      = 1;
 const kFollowerClearPointIndex    = 0;
@@ -184,8 +184,8 @@ function cleanup()
 		FourthOfficerStackUpGoal.Release();
 		FourthOfficerStackUpGoal = None;
 	}
-	
-	if (LightstickGoal != None) 
+
+	if (LightstickGoal != None)
 	{
 		LightstickGoal.Release();
 		LightstickGoal = None;
@@ -487,6 +487,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 {
 	local int i;
 	local Pawn Officer;
+	local FiredWeapon GrenadeLauncher;
 
 	// if the door is an empty doorway, is open, is opening, or is broken, try to use the first officer
 	// otherwise use the second officer
@@ -509,7 +510,15 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 		if (class'Pawn'.static.checkConscious(Officer))
 		{
+			GrenadeLauncher = ISwatOfficer(Officer).GetLauncherWhichFires(ThrownItemSlot);
 			if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+			{
+				if (Officer.logAI)
+					log("Officer to throw is: " $ Officer);
+
+				return Officer;
+			}
+			else if(GrenadeLauncher != None && !GrenadeLauncher.IsEmpty())
 			{
 				if (Officer.logAI)
 					log("Officer to throw is: " $ Officer);
@@ -526,7 +535,13 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 
 	if (class'Pawn'.static.checkConscious(Officer))
 	{
+		GrenadeLauncher = ISwatOfficer(Officer).GetLauncherWhichFires(ThrownItemSlot);
+
 		if (ISwatOfficer(Officer).GetThrownWeapon(ThrownItemSlot) != None)
+		{
+			return Officer;
+		}
+		else if(GrenadeLauncher != None && !GrenadeLauncher.IsEmpty())
 		{
 			return Officer;
 		}
@@ -537,6 +552,7 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 	while(i<OfficersInStackupOrder.Length)
 	{
 		Officer = OfficersInStackupOrder[i];
+		GrenadeLauncher = ISwatOfficer(Officer).GetLauncherWhichFires(ThrownItemSlot);
 
 		if (class'Pawn'.static.checkConscious(Officer))
 		{
@@ -545,6 +561,13 @@ function Pawn GetThrowingOfficer(EquipmentSlot ThrownItemSlot)
 				if (Officer.logAI)
 					log("Officer to throw is: " $ Officer);
 
+				return Officer;
+			}
+			else if(GrenadeLauncher != None && !GrenadeLauncher.IsEmpty())
+			{
+				if (Officer.logAI)
+					log("Officer to throw is: " $ Officer);
+					
 				return Officer;
 			}
 		}
@@ -750,11 +773,11 @@ latent function FinishUpThrowBehavior()
 		PostGrenadeThrowDelayTime = 0;
 
 		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			if(DoAllOfficersHave(Pocket_HeadArmor, 'gasMask'))
+			if(DoAllOfficersHave('gasMask'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
 			}
-			else if(DoAllOfficersHave(Pocket_HeadArmor, 'RiotHelmet'))
+			else if(DoAllOfficersHave('RiotHelmet'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeRiotHelmet;
 			}
@@ -1598,16 +1621,15 @@ function TriggerReportedContinuingClear(Pawn Officer)
 	}
 }
 
-latent function DeployLightstick() 
+latent function DeployLightstick()
 {
-	LightstickGoal = new class'SquadDeployLightstickGoal'(resource, CommandGiver, CommandOrigin );
+	LightstickGoal = new class'SquadDropLightstickGoal'(resource, CommandGiver, CommandOrigin );
 	LightstickGoal.SetPlaySpeech(false);
-	LightstickGoal.AddDropPoint(TargetDoor.Location);
 
 	LightstickGoal.postGoal(self);
 	WaitForGoal(LightstickGoal);
 	LightstickGoal.unPostGoal(self);
-	
+
 	LightstickGoal.Release();
 	LightstickGoal = None;
 }
@@ -1651,7 +1673,7 @@ Begin:
 
 	// wait for everything to cleanup...
 	WaitForAllGoalsInList(MoveAndClearGoals);
-	
+
 	DeployLightstick();
 
 	log("move done");

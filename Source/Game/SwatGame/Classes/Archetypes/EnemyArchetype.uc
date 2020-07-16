@@ -24,9 +24,10 @@ var config array<WeaponClipcountChanceSet> BackupWeapon;
 var array< class<FiredWeapon> > PrimaryWeaponClass;
 var array< class<FiredWeapon> > BackupWeaponClass;
 
-var config bool InvestigatorOverride;
-
 var config class<Actor> ActorClass;
+
+var config float InvestigateChance; // First roll: Investigate a disturbing sound
+var config float BarricadeChance; // Second roll: Barricade when hearing a disturbing sound. If this roll fails, the AI does nothing
 
 function Initialize(Actor inOwner)
 {
@@ -104,7 +105,10 @@ protected function Validate()
 //        "The Enemy could have no weapon.");
 }
 
-function InitializeInstance(ArchetypeInstance inInstance)
+function InitializeInstance(ArchetypeInstance inInstance, 
+    optional CustomScenario CustomScenario, 
+    optional int CustomScenarioAdvancedRosterIndex,
+    optional int CustomScenarioAdvancedArchetypeIndex)
 {
     local EnemyArchetypeInstance Instance;
 
@@ -115,12 +119,17 @@ function InitializeInstance(ArchetypeInstance inInstance)
     // initialize the skill value
     InitializeSkill(Instance);
 
-    // initialize the InvestigatorOverride bool
-    Instance.InvestigatorOverride = InvestigatorOverride;
+	Instance.InvestigateChance = InvestigateChance;
+	Instance.BarricadeChance = BarricadeChance;
 
     //initialize weapons
-    InitializeWeapon(PrimaryWeapon, PrimaryWeaponClass, Instance.SelectedPrimaryWeaponClass, Instance.SelectedPrimaryWeaponAmmoClass, Instance.PrimaryWeapon, Instance);
-    InitializeWeapon(BackupWeapon, BackupWeaponClass, Instance.SelectedBackupWeaponClass, Instance.SelectedBackupWeaponAmmoClass, Instance.BackupWeapon, Instance);
+    InitializeWeapon(PrimaryWeapon, PrimaryWeaponClass, Instance.SelectedPrimaryWeaponClass, Instance);
+    InitializeWeapon(BackupWeapon, BackupWeaponClass, Instance.SelectedBackupWeaponClass, Instance);
+
+    CustomScenario.MutateAdvancedEnemyArchetypeInstance(Instance, CustomScenarioAdvancedRosterIndex, CustomScenarioAdvancedArchetypeIndex);
+
+    SpawnWeapon(Instance.SelectedPrimaryWeaponClass, Instance, Instance.PrimaryWeapon, Instance.SelectedPrimaryWeaponAmmoClass);
+    SpawnWeapon(Instance.SelectedBackupWeaponClass, Instance, Instance.BackupWeapon, Instance.SelectedBackupWeaponAmmoClass);
 }
 
 private function InitializeSkill(EnemyArchetypeInstance inInstance)
@@ -152,8 +161,6 @@ private function InitializeWeapon(
     array<WeaponClipcountChanceSet> Options,
     array< class<FiredWeapon> > OptionClasses,
     out class<FiredWeapon> theSelectedWeaponClass,
-    out class<Ammunition> theSelectedAmmoClass,
-    out FiredWeapon Weapon,
     EnemyArchetypeInstance Instance)
 {
     local int i, TotalChance, RandChance, AccumulatedChance;
@@ -180,18 +187,22 @@ private function InitializeWeapon(
         }
     }
 
-    //spawn the weapon
-    if (WeaponClass != None)
-    {
-        Weapon = Owner.Spawn(WeaponClass, Instance.Owner);    //the equipment's owner = archetype instance's Owner = the character that was spawned
-        Weapon.OnGivenToOwner();
-    }
-
     // The ammo class stuff below has to happen after the call to
     // OnGivenToOwner() above, since that's where we decide what class of ammo
     // to give to the weapon.
     theSelectedWeaponClass = WeaponClass;
-    theSelectedAmmoClass = Weapon.AmmoClass;
+}
+
+private function SpawnWeapon(class<FiredWeapon> WeaponClass, EnemyArchetypeInstance Instance, out FiredWeapon Weapon, out class<Ammunition> AmmoClass
+    )
+{
+    if(WeaponClass != None)
+    {
+        Weapon = Owner.Spawn(WeaponClass, Instance.Owner);
+        Weapon.OnGivenToOwner();
+    }
+
+    AmmoClass = Weapon.AmmoClass;
 }
 
 //implemented from base Archetype
@@ -211,4 +222,7 @@ defaultproperties
     ActorClass=class'SwatEnemy'
 
 	FriendlyName="a Suspect"
+
+	InvestigateChance=0.0000
+	BarricadeChance=100.0000
 }

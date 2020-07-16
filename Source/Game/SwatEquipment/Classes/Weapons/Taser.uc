@@ -805,8 +805,9 @@ simulated function Tick(float dTime)
 					probes[i].DidDamageAlready = true;
 				}
 			}
+
 			// Check for unauthorized tasering
-			if(probes[i].Victim != None && (probes[i].Victim.IsA('SwatOfficer') || probes[i].Victim.IsA('SwatPlayer')) && !probes[0].DidDamageAlready) {
+			if(probes[i].Victim != None && !probes[0].DidDamageAlready) {
 				SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(Pawn(probes[i].Victim), owner);
 				probes[0].DidDamageAlready = true;
 			}

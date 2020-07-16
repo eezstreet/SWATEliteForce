@@ -33,13 +33,14 @@ event Show()
 
     theCampaign = SwatGuiController(Controller).GetCampaign();
 
-
-    if(theCampaign.CampaignPath != 2 && GC.CurrentMission != None && GC.CurrentMission.LoadingImage != None &&
-      (GC.SwatGameRole == GAMEROLE_SP_Campaign || (GC.SwatGameRole == GAMEROLE_SP_Other && GC.CurrentMission.MapName == "SP-Training")))
-    {
-        LoadingText.SetCaption( GC.CurrentMission.LoadingText );
+	if(GC.CurrentMission != None && GC.CurrentMission.LoadingImage != None &&
+		(GC.SwatGameRole == GAMEROLE_SP_Campaign && theCampaign.CampaignPath != 2) ||
+		(GC.SwatGameRole == GAMEROLE_SP_Other && GC.CurrentMission.MapName == "SP-Training") ||
+		(GC.SwatGameRole == GAMEROLE_SP_Custom && !GC.CurrentMission.CustomScenario.IsCustomMap && GC.CurrentMission.CustomScenario.UseCampaignObjectives))
+	{
+		LoadingText.SetCaption( GC.CurrentMission.LoadingText );
         LoadingImage.Image = GC.CurrentMission.LoadingImage;
-    }
+	}
     else if( DefaultImages.Length > 0 )
     {
         i = Rand( DefaultImages.Length );

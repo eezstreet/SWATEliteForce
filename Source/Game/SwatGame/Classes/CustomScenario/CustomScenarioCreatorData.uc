@@ -20,6 +20,12 @@ struct ArchetypePresentation
 var config array<ArchetypePresentation> HostageArchetype;
 var config array<ArchetypePresentation> EnemyArchetype;
 
+struct VoiceTypePresentation
+{
+    var config name                     VoiceType;
+    var config localized string         FriendlyName;
+};
+
 var config array<name>                  PrimaryWeaponCategory;
 var config localized array<string>      PrimaryWeaponCategoryDescription;
 var config array<name>                  BackupWeaponCategory;
@@ -32,6 +38,8 @@ struct WeaponPresentation
 };
 var config array<WeaponPresentation>    PrimaryWeapon;
 var config array<WeaponPresentation>    BackupWeapon;
+var config array<VoiceTypePresentation> VoiceTypes;
+var config array<string>                Helmets;
 
 var config localized string             AnyString;      //the localized word "Any"
 var config localized string             AnyLoadoutString;      //the localized words "Any Loadout"

@@ -1,6 +1,8 @@
 class CustomScenario_MissionTabPanel extends CustomScenarioTabPanel;
 
 var(SWATGui) EditInline Config GUIComboBox                  cbo_mission;
+var(SWATGui) EditInline Config GUICheckBoxButton			enable_custommaps;
+var(SWATGui) EditInline Config GUIListBox					custommap_selector;
 var(SWATGui) private EditInline Config GUICheckBoxButton    chk_campaign_objectives;
 var(SWATGui) EditInline Config GUIDualSelectionLists        dlist_objectives;
 var(SWATGui) private EditInline Config GUILabel             lbl_mission;
@@ -19,6 +21,10 @@ var(SWATGui) private EditInline Config GUILabel             lbl_secondary_detail
 var(SWATGui) private EditInline Config GUINumericEdit       time_limit;
 var(SWATGui) private EditInline Config GUIComboBox          cbo_difficulty;
 
+var(SWATGui) private EditInline Config GUICheckBoxButton 	chk_force_scripts;
+var(SWATGui) private EditInline Config GUICheckBoxButton	chk_allow_dispatch;
+var(SWATGui) private EditInline Config GUICheckBoxButton    chk_allow_traps;
+
 var MissionObjectives CustomMissionObjectives;  //the set of available objectives for custom scenarios
 
 var() private config localized string MissionChangedMessage;
@@ -32,6 +38,8 @@ var() private config localized string SecondarySpawnPointMessage;
 var() private config localized string ObjectiveAddedMessage;
 var() private config localized string ObjectiveRemovedMessage;
 var() private config localized string DifficultyChangedMessage;
+
+var() private config localized string PleaseWaitLoadingMaps;
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -49,6 +57,8 @@ function InitComponent(GUIComponent MyOwner)
 
 	dlist_objectives.OnMoveAB = dlist_objectives_OnMoveAB;
 	dlist_objectives.OnMoveBA = dlist_objectives_OnMoveBA;
+
+	enable_custommaps.OnChange = enable_custommaps_OnChange;
 
 	cbo_difficulty.OnChange = cbo_difficulty_OnChange;
 
@@ -289,6 +299,86 @@ function cbo_difficulty_OnChange(GUIComponent Sender)
 	CustomScenarioPage.SendChangeMessage(DifficultyChangedMessage @ cbo_difficulty.GetText());
 }
 
+function AddCustomMapsToList()
+{
+	local String FileName;
+	local LevelSummary Summary;
+	local int i;
+
+	foreach FileMatchingPattern("*.s4m", FileName)
+	{
+		if(InStr(FileName, "autosave") != -1)
+		{	// Don't allow UnrealEd auto saves
+			continue;
+		}
+
+		if(InStr(FileName, "Autoplay") != -1)
+		{	// Don't allow Unreal autoplay
+			continue;
+		}
+
+		// Remove the extension
+	    if(Right(FileName, 4) ~= ".s4m") {
+	    	FileName = Left(FileName, Len(FileName) - 4);
+	    }
+
+		Summary = Controller.LoadLevelSummary(FileName$".LevelSummary");
+		if(Summary == None)
+		{
+			log("WARNING: No summary for map "$FileName);
+			continue;
+		}
+
+		for(i = 0; i < Summary.SupportedModes.Length; i++)
+		{
+			if(Summary.SupportedModes[i] == MPM_COOP)
+			{
+				custommap_selector.List.Add(Summary.Title, Summary, FileName);
+				break;
+			}
+		}
+	}
+}
+
+function enable_custommaps_OnChange(GUIComponent Sender)
+{
+	local CustomScenario Scenario;
+
+	Scenario = CustomScenarioPage.GetCustomScenario();
+	Scenario.IsCustomMap = enable_custommaps.bChecked;
+	CustomScenarioPage.UsingCustomMap = enable_custommaps.bChecked;
+
+	if(enable_custommaps.bChecked)
+	{
+		// it got checked, try and load the maps
+		custommap_selector.EnableComponent();
+		if(custommap_selector.Num() == 0)
+		{	// load in all the maps
+			Controller.OpenWaitDialog( PleaseWaitLoadingMaps );
+			AddCustomMapsToList();
+			Controller.CloseWaitDialog();
+		}
+
+		cbo_mission.DisableComponent();
+		chk_campaign_objectives.SetChecked(false);
+		chk_campaign_objectives.DisableComponent();
+		lbl_primary_detail.Hide();
+		lbl_secondary_detail.Hide();
+		opt_secondary.EnableComponent();
+		opt_primary.EnableComponent();
+		opt_either.EnableComponent();
+	}
+	else
+	{	// it got unchecked, disable the map list and enable stuff
+		custommap_selector.DisableComponent();
+		cbo_mission.EnableComponent();
+		chk_campaign_objectives.EnableComponent();
+		lbl_primary_detail.Show();
+		lbl_secondary_detail.Show();
+		cbo_mission_OnListIndexChanged(cbo_mission);
+	}
+}
+
 //update the controls on the Enemies and Hostages tabs, including lbl_count, spin_count_min, and spin_count_max
 function UpdateSpawnCounts(CustomScenarioCreatorMissionSpecificData MissionData)
 {
@@ -327,8 +417,8 @@ function UpdateSpawnCounts(CustomScenarioCreatorMissionSpecificData MissionData)
     }
 
     //max'es are the number of spawners
-    CustomScenarioPage.pnl_enemies_spin_count_min.SetMaxValue(MissionData.EnemySpawners);
-    CustomScenarioPage.pnl_enemies_spin_count_max.SetMaxValue(MissionData.EnemySpawners);
+    CustomScenarioPage.pnl_enemies_spin_count_min.SetMaxValue(999);
+    CustomScenarioPage.pnl_enemies_spin_count_max.SetMaxValue(999);
 
     //
     //Hostages
@@ -363,8 +453,8 @@ function UpdateSpawnCounts(CustomScenarioCreatorMissionSpecificData MissionData)
     }
 
     //max'es are the number of spawners
-    CustomScenarioPage.pnl_hostages_spin_count_min.SetMaxValue(MissionData.HostageSpawners);
-    CustomScenarioPage.pnl_hostages_spin_count_max.SetMaxValue(MissionData.HostageSpawners);
+    CustomScenarioPage.pnl_hostages_spin_count_min.SetMaxValue(999);
+    CustomScenarioPage.pnl_hostages_spin_count_max.SetMaxValue(999);
 }
 
 //reset the state of dlist_objectives to present all potential
@@ -404,12 +494,29 @@ function PopulateFieldsFromScenario(bool NewScenario)
     Scenario = CustomScenarioPage.GetCustomScenario();
 
     //mission
-    cbo_mission.List.Find(string(Scenario.LevelLabel), true);   //bExact=true.
+	if(Scenario.IsCustomMap)
+	{
+		enable_custommaps.SetChecked(true);	// this will trigger the map list to build
+		custommap_selector.List.FindExtra(Scenario.CustomMapURL);
+	}
+	else
+	{
+		enable_custommaps.SetChecked(false);
+		cbo_mission.List.Find(string(Scenario.LevelLabel), true);   //bExact=true.
+	}
+
     //note that GUIList::Find() acutally selects the found item
 
     //objectives
     InitializeObjectives();
-    chk_campaign_objectives.SetChecked(Scenario.UseCampaignObjectives);
+	if(Scenario.IsCustomMap)
+	{
+		chk_campaign_objectives.SetChecked(false);
+	}
+	else
+	{
+		chk_campaign_objectives.SetChecked(Scenario.UseCampaignObjectives);
+	}
     for (i=0; i<Scenario.ScenarioObjectives.length; ++i)
     {
         Found = dlist_objectives.ListBoxA.List.Find(string(Scenario.ScenarioObjectives[i]));
@@ -446,6 +553,11 @@ function PopulateFieldsFromScenario(bool NewScenario)
         time_limit.SetValue(Scenario.TimeLimit, true);
     else
         time_limit.SetValue(Data.DefaultTimeLimit, true);
+
+    // new stuff
+    chk_force_scripts.SetChecked(Scenario.ForceScriptedSequences);
+    chk_allow_dispatch.SetChecked(Scenario.AllowDispatch);
+    chk_allow_traps.SetChecked(Scenario.KeepTraps);
 }
 
 function GatherScenarioFromFields()
@@ -454,12 +566,22 @@ function GatherScenarioFromFields()
     local CustomScenario Scenario;
 
     Scenario = CustomScenarioPage.GetCustomScenario();
+	Scenario.IsCustomMap = enable_custommaps.bChecked;
 
     Scenario.LevelLabel = name(cbo_mission.List.Get());
 
     //gather Objectives, including TimeLimit
 
-    Scenario.UseCampaignObjectives = chk_campaign_objectives.bChecked;
+	if(!Scenario.IsCustomMap)
+	{
+		Scenario.UseCampaignObjectives = chk_campaign_objectives.bChecked;
+		Scenario.CustomMapURL = "";
+	}
+    else
+	{	// not allowed to use campaign objectives on custom maps
+		Scenario.UseCampaignObjectives = false;
+		Scenario.CustomMapURL = custommap_selector.List.GetExtra();
+	}
 
     //clear mission objectives
     Scenario.ScenarioObjectives.Remove(0, Scenario.ScenarioObjectives.length);
@@ -477,6 +599,10 @@ function GatherScenarioFromFields()
         Scenario.TimeLimit = 0;
     else
         Scenario.TimeLimit = time_limit.Value;
+
+    Scenario.ForceScriptedSequences = chk_force_scripts.bChecked;
+    Scenario.AllowDispatch = chk_allow_dispatch.bChecked;
+    Scenario.KeepTraps = chk_allow_traps.bChecked;
 }
 
 event Activate()
@@ -485,8 +611,23 @@ event Activate()
     Super.Activate();
 }
 
+function InternalOnActivate()
+{
+	if(CustomScenarioPage.UsingCustomMap)
+	{
+		lbl_primary_detail.Hide();
+		lbl_secondary_detail.Hide();
+	}
+	else
+	{
+		lbl_primary_detail.Show();
+		lbl_secondary_detail.Show();
+	}
+}
+
 defaultproperties
 {
+	OnActivate=InternalOnActivate
 	MissionChangedMessage="Mission changed:"
 	UsingCampaignObjecivesMessage="Using campaign objectives"
 	NotUsingCampaignObjecivesMessage="Not using campaign objectives"
@@ -498,4 +639,5 @@ defaultproperties
 	ObjectiveAddedMessage="Objective added:"
 	ObjectiveRemovedMessage="Objective removed:"
 	DifficultyChangedMessage="Difficulty changed:"
+	PleaseWaitLoadingMaps="Please wait, loading maps from hard drive..."
 }

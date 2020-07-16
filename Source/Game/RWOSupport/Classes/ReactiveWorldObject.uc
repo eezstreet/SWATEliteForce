@@ -29,33 +29,33 @@ var bool IsConseptuallyBroken;  //is this RWO "broken" from a visual/gameplay po
 // Instead, they copy their own properties into a new HavokData instance.
 // This is a workaround for the problem that when you create
 // a new subclass in the class browser any 'class' objects in the parent
-// are not subclassed when deepcopied -- which screws up property 
+// are not subclassed when deepcopied -- which screws up property
 // inheritance in subclasses (modifying the child changes the parent)
 // --------- properties in HavokRigidBody -------------
 var(Havok) bool  bHighDetailOnly    "If true, the object will have physics disabled if the level's physics setting is less than PDL_High, or if running on a dedicated server.";
 var(Havok) bool  bClientOnly        "If true, the object's physics will be disabled when running on a server (i.e., it will only be physical on clients)";
-var(Havok) float hkMass             "The mass of the object.\r\n\r\nWARNING: If mass is set to 0 then the object will be fixed in place, and the hkKeyframed setting will be ignored!"; 
-var(Havok) bool  hkStabilizedInertia "Set this flag to help stabilize the physics of unstable configurations, such as long thin objects. For normal configurations is should be left at the default value of false."; 
-var(Havok) float hkFriction         "Controls how sticky the object is. Minimum value is 0 and maximum is 1"; 
-var(Havok) float hkRestitution      "Controls how bouncy the object is. Minimum value is 0 and maximum is 1"; 
-var(Havok) float hkLinearDamping    "Controls how much damping is applied to linear velocity. Values are usually very small, and 0 means 'no damping'"; 
-var(Havok) float hkAngularDamping   "Controls how much damping is applied to angular velocity. Values are usually very small, and 0 means 'no damping'"; 
+var(Havok) float hkMass             "The mass of the object.\r\n\r\nWARNING: If mass is set to 0 then the object will be fixed in place, and the hkKeyframed setting will be ignored!";
+var(Havok) bool  hkStabilizedInertia "Set this flag to help stabilize the physics of unstable configurations, such as long thin objects. For normal configurations is should be left at the default value of false.";
+var(Havok) float hkFriction         "Controls how sticky the object is. Minimum value is 0 and maximum is 1";
+var(Havok) float hkRestitution      "Controls how bouncy the object is. Minimum value is 0 and maximum is 1";
+var(Havok) float hkLinearDamping    "Controls how much damping is applied to linear velocity. Values are usually very small, and 0 means 'no damping'";
+var(Havok) float hkAngularDamping   "Controls how much damping is applied to angular velocity. Values are usually very small, and 0 means 'no damping'";
 var(Havok) bool	 hkActive           "If true, the object will be 'physical' as soon as the level starts (e.g., it will fall to the ground, etc). If false, it will be inactive until it is activated (i.e., it will float in space something collides with it, etc.)";
-var(Havok) bool	 hkKeyframed        "Only set this to true for objects that should block other physics objects but whose movement is controlled by Unreal instead of physical forces. For example, this should be true for Movers.\r\n\r\nWARNING: this flag is ignored if hkMass is 0!"; 
+var(Havok) bool	 hkKeyframed        "Only set this to true for objects that should block other physics objects but whose movement is controlled by Unreal instead of physical forces. For example, this should be true for Movers.\r\n\r\nWARNING: this flag is ignored if hkMass is 0!";
 var(Havok) vector hkLinearVel       "The initial linear velocity of the object.\r\n\r\nWARNING: this value must be in Unreal units, not meters/second (1 meter = 50 Unreal distance units).";
-var(Havok) vector hkAngularVel      "The initial angular velocity of the object.\r\n\r\nWARNING: this value must be in Unreal units, not radians/second (1 radian = 10430.2192 Unreal angular units)."; 
-var(Havok) float hkForceUprightStrength "Governs how quickly an object bounces back when tilted away from its upright axis. Higher values mean that the object recovers more quickly. Values can range from 0 to 1";  
-var(Havok) float hkForceUprightDamping  "Governs how quickly the oscillation along the vertical axis settles down. Low values create springy behavior, while high values will reduce any oscillations very quickly with the size of the oscillations getting much smaller each time. Values can range from 0 to 1";  
-var(Havok) HavokRigidBody.EOrientationConstraint hkForceUpright "Controls which, if any, of the object's rotational axes are constrained while moving.\r\n\r\nWARNING: this parameter is ignored hkKeyframed is true or hkMass is 0."; 
+var(Havok) vector hkAngularVel      "The initial angular velocity of the object.\r\n\r\nWARNING: this value must be in Unreal units, not radians/second (1 radian = 10430.2192 Unreal angular units).";
+var(Havok) float hkForceUprightStrength "Governs how quickly an object bounces back when tilted away from its upright axis. Higher values mean that the object recovers more quickly. Values can range from 0 to 1";
+var(Havok) float hkForceUprightDamping  "Governs how quickly the oscillation along the vertical axis settles down. Low values create springy behavior, while high values will reduce any oscillations very quickly with the size of the oscillations getting much smaller each time. Values can range from 0 to 1";
+var(Havok) HavokRigidBody.EOrientationConstraint hkForceUpright "Controls which, if any, of the object's rotational axes are constrained while moving.\r\n\r\nWARNING: this parameter is ignored hkKeyframed is true or hkMass is 0.";
 // note: don't expose these to editor, because they aren't generally supported yet in our integration (see havok ticket 619-117889)
 var int hkCollisionLayer;
 var int hkCollisionSystemGroup;
 var int	hkCollisionSubpartID;
 var int	hkCollisionSubpartIgnoreID;
 // --------- properties in HavokSkeletalSystem -------------
-var(Havok) bool useIntrusionDrivenUpdates "If false, the Havok representation of this skeleton's bones will be updated every frame to match the on-screen bone location. If true, they will only be updated when another Havok object enters a volume rougly twice the size of this actor's bounding volume. This is a performance optimization; in most cases you should leave it at the default setting.\r\n\r\nNOTE: This is automatically set to true at runtime for keyframed (animated) skeletal meshes.";  
-var(Havok) name SkeletonPhysicsFile       "File from which to load the Havok ragdoll skeleton (e.g., \"myRagdoll.hke\"). File path is relative to \"ProjectRoot\Content\HavokData\"."; 
-var(Havok) float hkJointFriction          "Friction applied to all ragdoll joints"; 
+var(Havok) bool useIntrusionDrivenUpdates "If false, the Havok representation of this skeleton's bones will be updated every frame to match the on-screen bone location. If true, they will only be updated when another Havok object enters a volume rougly twice the size of this actor's bounding volume. This is a performance optimization; in most cases you should leave it at the default setting.\r\n\r\nNOTE: This is automatically set to true at runtime for keyframed (animated) skeletal meshes.";
+var(Havok) name SkeletonPhysicsFile       "File from which to load the Havok ragdoll skeleton (e.g., \"myRagdoll.hke\"). File path is relative to \"ProjectRoot\Content\HavokData\".";
+var(Havok) float hkJointFriction          "Friction applied to all ragdoll joints";
 // ---------------------------------------------------------
 
 // Should this object destroy itself?
@@ -70,7 +70,7 @@ simulated native function DestroyRWO();
 simulated event PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     //react to being triggered when spawned
     if( ShouldReactToTriggeredOnPostBeginPlayInMP && Level.NetMode != NM_Standalone )
         ReactToTriggered( None );
@@ -166,11 +166,11 @@ simulated event Timer()
 //IReactToFlashbangGrenade implementation
 
 simulated function ReactToFlashbangGrenade(
-        SwatGrenadeProjectile Grenade, 
+        SwatGrenadeProjectile Grenade,
 		Pawn  Instigator,
-        float Damage, 
-        float DamageRadius, 
-        Range KarmaImpulse, 
+        float Damage,
+        float DamageRadius,
+        Range KarmaImpulse,
         float KarmaImpulseRadius,
         float StunRadius,
         float PlayerStunDuration,
@@ -183,11 +183,11 @@ simulated function ReactToFlashbangGrenade(
 //IReactToStingGrenade implementation
 
 simulated function ReactToStingGrenade(
-        SwatProjectile Grenade, 
+        SwatProjectile Grenade,
 		Pawn  Instigator,
-        float Damage, 
-        float DamageRadius, 
-        Range PhysicsImpulse, 
+        float Damage,
+        float DamageRadius,
+        Range PhysicsImpulse,
         float PhysicsImpulseRadius,
         float StingRadius,
         float PlayerStingDuration,
@@ -200,11 +200,11 @@ simulated function ReactToStingGrenade(
 }
 
 simulated function ReactToGrenade(
-        SwatProjectile Grenade, 
+        SwatProjectile Grenade,
 		Pawn  Instigator,
-        float Damage, 
-        float DamageRadius, 
-        Range PhysicsImpulse, 
+        float Damage,
+        float DamageRadius,
+        Range PhysicsImpulse,
         float PhysicsImpulseRadius)
 {
     local vector Direction, GrenadeLocation;
@@ -240,9 +240,9 @@ simulated function ReactToGrenade(
 		    TakeDamage(Damage,      Instigator,             GrenadeLocation,		vect(0,0,0),    class'Engine.GrenadeDamageType' );
     }
 
-    // Any physics impulse should be applied linearly from PhysicsImpulse.Max to 
+    // Any physics impulse should be applied linearly from PhysicsImpulse.Max to
     // PhysicsImpulse.Min over PhysicsImpulseRadius
-    if ((Physics == PHYS_Havok || Physics == PHYS_HavokSkeletal) && 
+    if ((Physics == PHYS_Havok || Physics == PHYS_HavokSkeletal) &&
         Distance <= PhysicsImpulseRadius)
     {
         Magnitude = Lerp(Distance / PhysicsImpulseRadius, PhysicsImpulse.Max, PhysicsImpulse.Min);
@@ -298,22 +298,22 @@ defaultproperties
 	bWorldGeometry=False
 	bAcceptsProjectors=True
 	bWeaponTestsPassThrough=true
-	
+
     UsableNow=true
     TriggerableNow=true
 
 	// RWO objects only are havok if we tell them to be
 	Physics=PHYS_None
 
-    // Placed ReactiveWorldObjects have little effects on networking or the current game session.  
+    // Placed ReactiveWorldObjects have little effects on networking or the current game session.
     // Setting RemoteRole to ROLE_DumProxy makes it so very little information about this object is replicated...
-    
+
     //dkaplan: RWOs no longer replicated
     //RemoteRole=ROLE_DumbProxy
     RemoteRole=ROLE_None
-    
+
     // Optimization: RWO don't receive player shadows.
-    bAcceptsShadowProjectors=false
+    bAcceptsShadowProjectors=true
 
     // -------------------------------------------------------------------------
     // Must manually keep in sync with HavokRigidBody defaultproperties

@@ -550,42 +550,67 @@ function Clear()
 
 function string Get()
 {
-	if ( (Index<0) || (Index>=ItemCount) )
+	return GetAt(Index);
+}
+
+function string GetAt(int AtIndex)
+{
+	if ( (AtIndex<0) || (AtIndex>=ItemCount) )
 		return "";
 	else
-		return Elements[Index].Item;
+		return Elements[AtIndex].Item;
 }
 
 function object GetObject()
 {
-	if ( (Index<0) || (Index>=ItemCount) )
+	return GetObjectAt(Index);
+}
+
+function object GetObjectAt(int AtIndex)
+{
+	if ( (AtIndex<0) || (AtIndex>=ItemCount) )
 		return none;
 	else
-		return Elements[Index].ExtraData;
+		return Elements[AtIndex].ExtraData;
 }
 
 function string GetExtra()
 {
-	if ( (Index<0) || (Index>=ItemCount) )
+	return GetExtraAt(Index);
+}
+
+function string GetExtraAt(int AtIndex)
+{
+	if ( (AtIndex<0) || (AtIndex>=ItemCount) )
 		return "";
 	else
-		return Elements[Index].ExtraStrData;
+		return Elements[AtIndex].ExtraStrData;
 }
 
 function int GetExtraIntData()
 {
-	if ( (Index<0) || (Index>=ItemCount) )
+	return GetExtraIntAt(Index);
+}
+
+function int GetExtraIntAt(int AtIndex)
+{
+	if ( (AtIndex<0) || (AtIndex>=ItemCount) )
 		return 0;
 	else
-		return Elements[Index].ExtraIntData;
+		return Elements[AtIndex].ExtraIntData;
 }
 
 function bool GetExtraBoolData()
 {
-	if ( (Index<0) || (Index>=ItemCount) )
+	return GetExtraBoolAt(Index);
+}
+
+function bool GetExtraBoolAt(int AtIndex)
+{
+	if ( (AtIndex<0) || (AtIndex>=ItemCount) )
 		return false;
 	else
-		return Elements[Index].ExtraBoolData;
+		return Elements[AtIndex].ExtraBoolData;
 }
 
 function int FindElement(GUIListElem theElem)
@@ -686,6 +711,24 @@ function int FindObjectData(object TheObjectToFind, optional bool bDontSetIndex,
     }
   }
   return -1;
+}
+
+// returns the index of the found element
+function int FindExtraBoolData(bool TheBoolToFind, optional bool bDontSetIndex, optional bool bDontReAlign)
+{
+	local int i;
+	for(i = 0; i < ItemCount; i++)
+	{
+		if(TheBoolToFind == Elements[i].ExtraBoolData)
+		{
+			if(!bDontSetIndex)
+			{
+				SetIndex(i, false, bDontReAlign);
+			}
+			return i;
+		}
+	}
+	return -1;
 }
 
 defaultproperties

@@ -50,6 +50,9 @@ var config float				OtherReactionSpeechChance;
 var config float				CrouchAtFleePointChance;
 var config float				AimAtClosestDoorTime;
 
+var config float				MinTimeBeforeClosingDoor;
+var config float				MaxTimeBeforeClosingDoor;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Cleanup
@@ -160,26 +163,36 @@ function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData
 
 private function FindBarricadePoint()
 {
+	local name RoomName;
+
+	RoomName = m_Pawn.GetRoomName();
+
+	if(RoomName == '')
+	{
+		// This can cause errors!
+		return;
+	}
+
 	// find our anchor, and check if it's a flee point
 	m_Pawn.FindAnchor(true);
 
-	if ((m_Pawn.Anchor != None) && m_Pawn.Anchor.IsA('FleePoint') && 
+	if ((m_Pawn.Anchor != None) && m_Pawn.Anchor.IsA('FleePoint') &&
 		((FleePoint(m_Pawn.Anchor).GetFleePointUser() == None) || (FleePoint(m_Pawn.Anchor).GetFleePointUser() == m_Pawn)))
 	{
 		BarricadePoint = Pawn.Anchor;
 	}
 	else
 	{
-		BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindUnclaimedFleePointInRoom(m_Pawn.GetRoomName());
+		BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindUnclaimedFleePointInRoom(RoomName);
 
 		// if we didn't find an unclaimed flee point, just use a random PathNode in the room
 		if (BarricadePoint == None)
 		{
-			BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindRandomPointInRoom(m_Pawn.GetRoomName(), 'PathNode');
+			BarricadePoint = SwatAIRepository(m_Pawn.Level.AIRepo).FindRandomPointInRoom(RoomName, 'PathNode');
 		}
 	}
 
-    AssertWithDescription((BarricadePoint != None), "AI:"@m_Pawn@" has no FleePoints in the room he is in (\""$m_Pawn.GetRoomName()$"\") to barricade himself!  Add Flee Points to this room!");
+    AssertWithDescription((BarricadePoint != None), "AI:"@m_Pawn@" has no FleePoints in the room he is in (\""$RoomName$"\") to barricade himself!  Add Flee Points to this room!");
 
 	// take this point over so nobody else tries to use it
 	if (BarricadePoint.IsA('FleePoint'))
@@ -248,10 +261,18 @@ private function PopulateDoorsInRoom()
 	local int i;
 	local Door IterDoor;
 	local ISwatDoor IterSwatDoor;
+	local Name RoomName;
+
+	RoomName = BarricadePoint.GetRoomName(m_Pawn);
+
+	if(RoomName == '')
+	{
+		return;	// no room ... don't crash!
+	}
 
 	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
 
-	DoorPointsInRoom = SwatAIRepo.GetRoomNavigationPointsOfType(BarricadePoint.GetRoomName(m_Pawn), 'Door');
+	DoorPointsInRoom = SwatAIRepo.GetRoomNavigationPointsOfType(RoomName, 'Door');
 
 	for(i=0; i<DoorPointsInRoom.GetSize(); ++i)
 	{
@@ -259,10 +280,10 @@ private function PopulateDoorsInRoom()
 		assert(IterDoor != None);
 		IterSwatDoor = ISwatDoor(IterDoor);
 		assert(IterSwatDoor != None);
-		
+
 		DoorsInRoom[DoorsInRoom.Length] = IterDoor;
 
-		// if there's a door that isn't broken, isn't locked, and isn't opening, 
+		// if there's a door that isn't broken, isn't locked, and isn't opening,
 		// we consider the door usable
 		if (!IterDoor.IsEmptyDoorWay() && !IterSwatDoor.IsBroken() && !IterDoor.IsOpening() && !IterDoor.IsClosing() && !IterSwatDoor.IsLocked())
 		{
@@ -339,7 +360,7 @@ latent function AimAtClosestDoor()
 	local Door ClosestDoor;
 
 	ClosestDoor = GetClosestDoorToStimuliOrigin();
-	
+
 //	log("ClosestDoor is: " $ ClosestDoor $ " Can hit ClosestDoor: " $ m_Pawn.CanHit(ClosestDoor));
 
 	if ((ClosestDoor != None) && m_Pawn.CanHit(ClosestDoor))
@@ -389,7 +410,7 @@ latent function CloseDoor(Door TargetDoor)
 
 latent function LockDoor(Door TargetDoor)
 {
-	if (ISwatDoor(TargetDoor).CanBeLocked())
+	if (ISwatDoor(TargetDoor).CanBeLocked() && !ISwatDoor(TargetDoor).IsLocked())
 	{
 		CurrentMoveToDoorGoal = new class'MoveToDoorGoal'(movementResource(), TargetDoor);
 		assert(CurrentMoveToDoorGoal != None);
@@ -433,8 +454,11 @@ latent function CloseAndLockDoorsInRoom()
 			CurrentDoor = GetClosestDoorToStimuliOrigin();
 			RemoveDoorFromCloseAndLockList(CurrentDoor);
 
-			CloseDoor(CurrentDoor);
-			LockDoor(CurrentDoor);
+            if(ISwatDoor(CurrentDoor).IsOpen() && !ISwatDoor(CurrentDoor).IsLocked())
+            { // it's possible for another AI to have locked and closed the door in the meantime
+             CloseDoor(CurrentDoor);
+			 LockDoor(CurrentDoor);
+            }
 
 			// check to see the chance we will close and lock subsequent doors (another die roll)
 			if (FRand() > CloseAndLockSubsequentDoorChance)
@@ -499,6 +523,8 @@ latent function ShootAtOpeningDoor()
 	AttackDoorGoal.unPostGoal(self);
 	AttackDoorGoal.Release();
 	AttackDoorGoal = None;
+
+	ISwatEnemy(m_Pawn).UnbecomeAThreat();
 }
 
 private latent function AimAtOpeningDoor()
@@ -521,6 +547,12 @@ private latent function AimAtOpeningDoor()
 	CurrentAimAtTargetGoal = None;
 }
 
+private latent function CloseOpenedDoor()
+{
+	CloseDoor(DoorOpening);
+	LockDoor(DoorOpening);
+}
+
 state Running
 {
 Begin:
@@ -539,7 +571,7 @@ Begin:
 	{
 		sleep(RandRange(MinBarricadeDelayTime, MaxBarricadeDelayTime));
 	}
-	
+
 	CheckWeaponStatus();
 
 	// clear the dummy  movement goal so we can move to close and lock doors,
@@ -553,6 +585,7 @@ Begin:
 		CloseAndLockDoorsInRoom();
 	}
 
+GetInPosition:
     MoveToBarricadePoint();
 
 	useResources(class'AI_Resource'.const.RU_LEGS);
@@ -589,8 +622,13 @@ Begin:
 			AimAtOpeningDoor();
 		}
 
-		// aim around again
-		AimAround();
+		// clear the dummy  movement goal so we can move to close and lock doors,
+		// as well as to move to the flee point in the room
+		ClearDummyMovementGoal();
+
+		CloseOpenedDoor();
+
+		goto 'GetInPosition';
 	}
 }
 

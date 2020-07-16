@@ -250,6 +250,8 @@ event InitializeController()
 	    if (!RegisterStyle(StyleNames[i]))
 				log("Could not create requested style"@StyleNames[i]);
 	}
+	// Register some special styles --eez
+	RegisterStyle("STY_SwatTabSelectedDisable");
 	if( bModAuthor )
 	{
 	    SaveStyle = new( none ) class'GUI.GUIStyles';

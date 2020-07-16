@@ -16,6 +16,8 @@ import enum EUpperBodyAnimBehaviorClientId from UpperBodyAnimBehaviorClients;
 //
 // Variables
 
+var config private float				MinRequiredFleeDistanceFromOfficer;	// the minimum distance between us and the closest officer to be able to flee
+
 // behaviors we use
 var private MoveToActorGoal CurrentMoveToActorGoal;
 
@@ -34,11 +36,14 @@ var(parameters) vector	StunningDeviceLocation;
 var(parameters) float	StunnedDuration;
 var(parameters) bool    bShouldRunFromStunningDevice;
 var(parameters) bool	bPlayedReaction;
+var(parameters) bool    bComplexFlee;
 
 const kRunFromStunningDeviceMinDistSq =   40000.0; //  200.0^2
 const kRunFromStunningDeviceMaxDistSq =  640000.0; //  800.0^2
 
 const kRunFromStunningDevicePriority  = 90;
+
+var private FleePoint					FleeDestination;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -47,6 +52,11 @@ const kRunFromStunningDevicePriority  = 90;
 function initAction(AI_Resource r, AI_Goal goal)
 {
     super.initAction(r, goal);
+
+    if(StunnedDuration <= 0.0)
+    {
+     instantFail(ACT_GENERAL_FAILURE);
+    }
 
 	// disable our senses
 	DisableSenses();
@@ -57,6 +67,17 @@ function initAction(AI_Resource r, AI_Goal goal)
 
 	// affect morale
 	AffectMorale();
+
+	if(bComplexFlee)
+	{
+		ISwatAI(m_Pawn).EnableFavorLowThreatPath();
+		ISwatAICharacter(m_Pawn).ForceUpdateAwareness();
+
+		if (!ISwatAI(m_Pawn).HasUsableWeapon())
+		{
+			ISwatEnemy(m_Pawn).GetEnemyCommanderAction().SetHasFledWithoutUsableWeapon();
+		}
+	}
 
 	// if we're running on an enemy, let the hive know
 	if (m_Pawn.IsA('SwatEnemy'))
@@ -224,6 +245,42 @@ function ExtendBeingStunned(float AdditionalStunnedTime)
 	}
 }
 
+private function bool CanGetOutOfRoomSafely()
+{
+	local SwatAIRepository SwatAIRepo;
+	local NavigationPointList DoorsInRoom;
+	local Door DoorInRoom;
+	local int i;
+	local Hive HiveMind;
+
+	HiveMind = SwatAIRepository(m_Pawn.Level.AIRepo).GetHive();
+
+	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+	DoorsInRoom = SwatAIRepo.GetRoomNavigationPointsOfType(m_Pawn.GetRoomName(), 'SwatDoor');
+
+	for(i=0; i<DoorsInRoom.GetSize(); ++i)
+	{
+		DoorInRoom = Door(DoorsInRoom.GetEntryAt(i));
+
+	    if(ISwatPawn(m_Pawn).DoesBelieveDoorWedged(DoorInRoom)) {
+	      continue; // We can't use this door if we know it's wedged
+	    }
+	    if(ISwatPawn(m_Pawn).DoesBelieveDoorLocked(DoorInRoom)) {
+	      continue; // We can't use this door if we know it's locked
+	    }
+
+		// if there is one door that we can use to get out of here, that isn't close too any player or officer, then we can get out safely
+		if (! HiveMind.IsActorWithinDistanceOfOfficers(DoorInRoom, MinRequiredFleeDistanceFromOfficer))
+		{
+//			log("there is no officer near " $ DoorInRoom $ ", so " $ m_Pawn.Name $ " can get away");
+			return true;
+		}
+	}
+
+//	log("there is no way " $ m_Pawn.Name $ " can get out of " $ m_Pawn.GetRoomName());
+	return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Sub-Behavior Messages
@@ -335,7 +392,7 @@ latent function RunFromStunningDevice()
 			CurrentMoveToActorGoal.SetRotateTowardsFirstPoint(true);
             CurrentMoveToActorGoal.SetRotateTowardsPointsDuringMovement(true);
             CurrentMoveToActorGoal.SetMoveToThreshold(8.0);
-			CurrentMoveToActorGoal.SetWalkThreshold(0.0);
+            CurrentMoveToActorGoal.SetWalkThreshold(0.0);
 
             // post the goal and wait for it to complete
             CurrentMoveToActorGoal.postGoal(self);
@@ -357,6 +414,113 @@ latent function RunFromStunningDevice()
 			useResources(class'AI_Resource'.const.RU_LEGS);
         }
     }
+}
+
+private function FleePoint FindFleePointDestination()
+{
+    local SwatAIRepository SwatAIRepo;
+    local FleePoint Destination, Iter;
+    local NavigationPointList AllFleePoints, ExcludesFleePoints;
+    local int i;
+	local Pawn CurrentEnemy, IterFleePointUser;
+
+	local array<FleePoint> PossibleDestinations;
+
+    SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+
+    // we exclude the flee points that are in the room we're in
+    ExcludesFleePoints = SwatAIRepo.GetRoomNavigationPointsOfType(m_Pawn.GetRoomName(), 'FleePoint');
+    AllFleePoints = SwatAIRepo.FindAllOfNavigationPointClass(class'FleePoint', ExcludesFleePoints);
+
+	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+
+    // go through each point and find the closest
+    for(i=0; i<AllFleePoints.GetSize(); ++i)
+    {
+        Iter = FleePoint(AllFleePoints.GetEntryAt(i));
+
+//		log("Distance to ITer from Enemy is: " $ VSize2D(Iter.Location - CurrentEnemy.Location) $ " Required Distance is: " $ MinRequiredFleeDistanceFromOfficer);
+
+        if ((CurrentEnemy == None) || !CurrentEnemy.IsInRoom(Iter.GetRoomName(CurrentEnemy)))
+        {
+			IterFleePointUser = Iter.GetFleePointUser();
+
+			if ((IterFleePointUser == None) || (IterFleePointUser == m_Pawn))
+			{
+				PossibleDestinations[PossibleDestinations.Length] = Iter;
+			}
+        }
+    }
+
+	// all done with the excludes list
+	SwatAIRepo.ReleaseNavigationPointList(ExcludesFleePoints);
+	SwatAIRepo.ReleaseNavigationPointList(AllFleePoints);
+
+	if (PossibleDestinations.Length > 0)
+		Destination = PossibleDestinations[Rand(PossibleDestinations.Length)];
+
+    return Destination;
+}
+
+latent function Flee()
+{
+	local Pawn CurrentEnemy;
+	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+
+	// trigger the speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();
+
+	if (CurrentEnemy != None)
+	{
+		// let the hive know so officers can "notice" it if they see us
+		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyFleeing(m_Pawn);
+	}
+
+	clearDummyMovementGoal();
+
+	// unlock our aim while we move
+	ISwatAI(m_Pawn).UnlockAim();
+
+	assert(FleeDestination != None);
+
+    CurrentMoveToActorGoal = new class'MoveToActorGoal'(movementResource(), achievingGoal.Priority, FleeDestination);
+    assert(CurrentMoveToActorGoal != None);
+	CurrentMoveToActorGoal.AddRef();
+
+	CurrentMoveToActorGoal.SetRotateTowardsPointsDuringMovement(true);
+
+	// open doors frantically
+	CurrentMoveToActorGoal.SetOpenDoorsFrantically(true);
+
+	// don't close doors behind us, we're stunned remember?
+	CurrentMoveToActorGoal.SetShouldCloseOpenedDoors(false);
+
+	// we want to use cover while moving
+	CurrentMoveToActorGoal.SetUseCoveredPaths();
+
+	// don't use the walk threshold (keep running)
+	CurrentMoveToActorGoal.SetWalkThreshold(0.0);
+
+    // post the move to goal and wait for it to complete
+    CurrentMoveToActorGoal.postGoal(self);
+
+	// trigger the speech
+	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerCallForHelpSpeech();
+
+    WaitForGoal(CurrentMoveToActorGoal);
+
+    // remove the move to goal
+    CurrentMoveToActorGoal.unPostGoal(self);
+	CurrentMoveToActorGoal.Release();
+	CurrentMoveToActorGoal = None;
+}
+
+// returns true if we find a flee destination
+private function bool FindFleeDestination()
+{
+	FleeDestination = FindFleePointDestination();
+
+	return (FleeDestination != None);
 }
 
 // These two have to set an idle rather than using the special animation channel,
@@ -490,7 +654,14 @@ Begin:
 		PlayReactionAnimation();
 		m_Pawn.EnableCollisionAvoidance();
 
-		RunFromStunningDevice();
+		if(FindFleeDestination() && CanGetOutOfRoomSafely() && bComplexFlee && ISwatOfficer(m_Pawn) == None)
+		{
+			Flee();
+		}
+		else
+		{
+			RunFromStunningDevice();
+		}
 	}
 
 	ISwatAICharacter(m_Pawn).BecomeAware();
@@ -542,4 +713,5 @@ Begin:
 defaultproperties
 {
     satisfiesGoal = class'StunnedGoal'
+    MinRequiredFleeDistanceFromOfficer = 200.0
 }

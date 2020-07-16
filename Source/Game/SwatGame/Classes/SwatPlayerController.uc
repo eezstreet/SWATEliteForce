@@ -26,7 +26,7 @@ var int VOIPIgnoreStaticArray[MAX_PLAYERS];	//list of PlayerIDs ignored by this 
 replication
 {
     reliable if( Role<ROLE_Authority )
-        ServerSetSettings, ServerSetAdminSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
+        ServerSetSettings, ServerSetSettingsNoConfigSave, ServerSetAdminSettings, ServerSetQMMSettings, ServerSetDirty, ServerAddMap, ServerClearMaps, ServerQuickRestart, ServerCoopQMMRestart, ServerUpdateCampaignProgression;
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
@@ -34,6 +34,8 @@ replication
 		ForceAllToTeam, ForcePlayerToTeam, ToggleTeamLock, TogglePlayerTeamLock, ToggleMute,
 		AdminKillPlayer, AdminPromotePlayer,
 		ForceSpec, GoToSpec, ForceLL,
+		ToggleVoteLock, ToggleVoterLock,
+		VerifySEFDeveloper,
 		ServerStartReferendum, ServerStartReferendumForPlayer, ServerVoteYes, ServerVoteNo;
 
 	reliable if( Role < ROLE_Authority )
@@ -505,14 +507,74 @@ exec function ForceLL(string PlayerName)
 	SwatGameInfo(Level.Game).Admin.ForceLL(PlayerName, SwatGamePlayerController(self));
 }
 
+exec function ToggleVoteLock()
+{
+	SwatGameInfo(Level.Game).Admin.ToggleGlobalVoteLock(SwatGamePlayerController(self));
+}
+
+exec function ToggleVoterLock(string PlayerName)
+{
+	SwatGameInfo(Level.Game).Admin.ToggleVoterLock(SwatGamePlayerController(self), PlayerName);
+}
+
+exec function VerifySEFDeveloper(string TestString)
+{
+	SwatGameInfo(Level.Game).Admin.VerifySEFDeveloper(TestString, SwatGamePlayerController(self));
+}
+
 function ServerUpdateCampaignProgression(ServerSettings Settings, int CampaignPath, int AvailableIndex)
 {
-  Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
+	Settings.SetCampaignCoopSettings(self, CampaignPath, AvailableIndex);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Set the ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
+
+function ServerSetSettingsNoConfigSave(ServerSettings Settings,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
+                            bool newUseRoundStartTimer,
+                            int newPostGameTimeLimit,
+                            bool newUseRoundEndTimer,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
+                            bool unused,
+							bool newbAllowReferendums,
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
+                            string newDisabledEquipment,
+							float newCampaignCOOP,
+							int newAdditionalRespawnTime,
+							bool newbNoLeaders,
+							bool newbNoKillMessages,
+							bool newbDisableTeamSpecificWeapons)
+{
+	Settings.SetServerSettingsNoConfigSave( self,
+                                newGameType,
+                                newMapIndex,
+                                newNumRounds,
+                                newMaxPlayers,
+                                newUseRoundStartTimer,
+                                newPostGameTimeLimit,
+                                newUseRoundEndTimer,
+                                newMPMissionReadyTime,
+                                newbShowTeammateNames,
+                                unused,
+								newbAllowReferendums,
+                                newbNoRespawn,
+                                newbQuickRoundReset,
+                                newFriendlyFireAmount,
+                                newDisabledEquipment,
+								newCampaignCOOP,
+								newAdditionalRespawnTime,
+								newbNoLeaders,
+								newbNoKillMessages,
+								newbDisableTeamSpecificWeapons );
+}
 
 function ServerSetSettings( ServerSettings Settings,
                             EMPMode newGameType,
@@ -560,6 +622,15 @@ function ServerSetSettings( ServerSettings Settings,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Set the QMM settings on the server
+///////////////////////////////////////////////////////////////////////////////
+
+function ServerSetQMMSettings(ServerSettings Settings, CustomScenario NewScenario, CustomScenarioPack Pack, bool CareerCOOP, int CampaignCOOPIndex)
+{
+	Settings.SetQMMSettings(NewScenario, Pack, CareerCOOP, CampaignCOOPIndex);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Set the Admin ServerSettings on the server
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -580,9 +651,9 @@ function ServerSetAdminSettings( ServerSettings Settings,
 // Set a map at a specific index on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function ServerAddMap( ServerSettings Settings, string MapName )
+function ServerAddMap( ServerSettings Settings, string MapName, optional string QMMPackName )
 {
-    Settings.AddMap( self, MapName );
+    Settings.AddMap( self, MapName, QMMPackName );
 }
 
 function ServerClearMaps( ServerSettings Settings )

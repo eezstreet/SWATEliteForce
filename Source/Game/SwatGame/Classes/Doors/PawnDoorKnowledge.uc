@@ -8,6 +8,7 @@ class PawnDoorKnowledge extends Core.Object
 
 var private bool	bBelievesDoorLocked;
 var private bool	bBelievesDoorWedged;
+var private bool	bBeliefKnown;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,14 +20,16 @@ native function bool DoesBelieveDoorWedged();
 
 function SetBelievesDoorLocked(bool bInBelievesDoorLocked)
 {
+	bBeliefKnown = true;
 	bBelievesDoorLocked = bInBelievesDoorLocked;
 }
-
 
 function SetBelievesDoorWedged(bool bInBelievesDoorWedged)
 {
 	bBelievesDoorWedged = bInBelievesDoorWedged;
 }
+
+function bool BeliefKnown() { return bBeliefKnown; }
 
 cpptext
 {

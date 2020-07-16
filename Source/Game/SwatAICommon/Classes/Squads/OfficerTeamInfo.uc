@@ -41,6 +41,7 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadStackUpAction' );
 	SquadAI.addAbility( new class'SquadStackUpAndTryDoorAction' );
 	SquadAI.addAbility( new class'SquadCheckForTrapsAction' );
+	SquadAI.addAbility( new class'SquadMirrorAllAction' );
 	SquadAI.addAbility( new class'SquadMoveAndClearAction' );
 	SquadAI.addAbility( new class'SquadBangAndClearAction' );
 	SquadAI.addAbility( new class'SquadGasAndClearAction' );
@@ -62,6 +63,7 @@ protected function InitAbilities()
 	SquadAI.addAbility( new class'SquadDeployTaserAction' );
 	SquadAI.addAbility( new class'SquadDeployPepperSprayAction' );
 	SquadAI.addAbility( new class'SquadMoveToAction' );
+	SquadAI.addAbility( new class'SquadShareEquipmentAction' );
 	SquadAI.addAbility( new class'SquadCoverAction' );
 	SquadAI.addAbility( new class'SquadDeployShotgunAction' );
 	SquadAI.addAbility( new class'SquadDeployLessLethalShotgunAction' );
@@ -152,7 +154,7 @@ function Pawn GetSecondOfficer()
 		return None;
 }
 
-function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point)
+function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point, optional bool bUsePathfindingDistance)
 {
 	local int i;
 	local Pawn IterOfficer, ClosestOfficer;
@@ -163,7 +165,7 @@ function Pawn GetClosestOfficerWithEquipmentTo(EquipmentSlot Slot, vector Point)
 
 		if (ISwatOfficer(IterOfficer).GetItemAtSlot(Slot) != None)
 		{
-			if (IterOfficer.FastTrace(Point, IterOfficer.Location))
+			if (!bUsePathfindingDistance && IterOfficer.FastTrace(Point, IterOfficer.Location))
 			{
 				IterDistance = VSize(Point - IterOfficer.Location);
 			}
@@ -218,7 +220,7 @@ function Pawn GetClosestOfficerTo(Actor Target, optional bool bRequiresLineOfSig
 	return Closest;
 }
 
-function Pawn GetClosestOfficerThatCanHit(Actor Target)
+function Pawn GetClosestOfficerThatCanHit(Actor Target, optional bool bUsePathfindingDistance)
 {
 	local int i;
 	local Pawn Iter, Closest;
@@ -230,7 +232,15 @@ function Pawn GetClosestOfficerThatCanHit(Actor Target)
 
 		if (Iter.CanHit(Target))
 		{
-			IterDistance = VSize(Target.Location - Iter.Location);
+			if(bUsePathfindingDistance)
+			{
+				IterDistance = Iter.GetPathfindingDistanceToActor(Target);
+			}
+			
+			if(!bUsePathfindingDistance || (IterDistance == 0.0))
+			{
+				IterDistance = VSize(Target.Location - Iter.Location);
+			}
 
 			if ((Closest == None) || (IterDistance < ClosestDistance))
 			{
@@ -243,7 +253,7 @@ function Pawn GetClosestOfficerThatCanHit(Actor Target)
 	return Closest;
 }
 
-function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot, optional Name EquipmentClassName)
+function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot, optional Name EquipmentClassName, optional bool bUsePathfindingDistance)
 {
 	local int i;
 	local Pawn Iter, Closest;
@@ -262,7 +272,16 @@ function Pawn GetClosestOfficerWithEquipment(vector Location, EquipmentSlot Slot
             // equipment
             if (EquipmentClassName == '' || Equipment.IsA(EquipmentClassName))
             {
-			    IterDistance = VSize(Location - Iter.Location);
+            	if(bUsePathfindingDistance)
+            	{
+            		IterDistance = Iter.GetPathfindingDistanceToPoint(Location);
+            	}
+
+            	if(!bUsePathfindingDistance || IterDistance == 0.0)
+            	{
+            		IterDistance = VSize(Location - Iter.Location);
+            	}
+			    
 
 			    if ((Closest == None) || (IterDistance < ClosestDistance))
 			    {
@@ -376,6 +395,14 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 			    return ((Weapon == None) || !Weapon.IsEmpty());
 		    }
         }
+		else if(Slot == Slot_CSGasGrenade || Slot == Slot_Flashbang || Slot == Slot_StingGrenade)
+		{	// if we have a grenade launcher, then that technically counts
+			Weapon = ISwatOfficer(Officer).GetLauncherWhichFires(Slot);
+			if(Weapon != None && !Weapon.IsEmpty() && (EquipmentClassName == '' || Weapon.IsA(EquipmentClassName)))
+			{
+				return true;
+			}
+		}
 	}
 
 	// no Officer has the equipment
@@ -383,7 +410,7 @@ function bool DoesAnOfficerHaveUsableEquipment(EquipmentSlot Slot, optional Name
 }
 
 // Returns true if all officers have this piece of protective equipment
-function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
+function bool DoAllOfficersHave(Name EquipmentClassName)
 {
 	local int i;
 	local Pawn Officer;
@@ -392,7 +419,7 @@ function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
 	{
 		Officer = pawns[i];
 
-		if(!ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		if(!ISwatOfficer(Officer).HasA(EquipmentClassName))
 		{
 			return false;
 		}
@@ -401,7 +428,7 @@ function bool DoAllOfficersHave(Pocket Slot, optional Name EquipmentClassName)
 }
 
 // Returns true if an officer has this piece of equipment
-function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
+function bool DoesAnOfficerHave(Name EquipmentClassName)
 {
 	local int i;
 	local Pawn Officer;
@@ -410,7 +437,7 @@ function bool DoesAnOfficerHave(Pocket Slot, optional Name EquipmentClassName)
 	{
 		Officer = pawns[i];
 
-		if(ISwatOfficer(Officer).PocketSlotContains(Slot, EquipmentClassName))
+		if(ISwatOfficer(Officer).HasA(EquipmentClassName))
 		{
 			return true;
 		}
@@ -648,10 +675,20 @@ function bool IsExecutingCommandGoal()
 	return ((CurrentSquadCommandGoal != None) && !CurrentSquadCommandGoal.hasCompleted());
 }
 
+function SquadCommandGoal GetCurrentCommandGoal()
+{
+	return CurrentSquadCommandGoal;
+}
+
 // Overridden in ColoredSquadInfo
 function bool IsSubElement()
 {
 	return false;
+}
+
+function bool IsMovingTo()
+{
+	return IsExecutingCommandGoal() && CurrentSquadCommandGoal.IsA('SquadMoveToGoal');
 }
 
 function ColoredSquadInfo GetOtherTeam()
@@ -829,6 +866,29 @@ function bool StackUpAndTryDoorAt(Pawn CommandGiver, vector CommandOrigin, Door 
 
 			PostCommandGoal(SquadStackUpAndTryDoorGoal);
 			return true;	// command issued
+		}
+		else
+		{
+			TriggerOtherTeamDoingBehaviorSpeech();
+		}
+	}
+
+	return false;
+}
+
+function bool MirrorAllAt(Pawn CommandGiver, vector CommandOrigin, Door TargetDoor)
+{
+	local SquadMirrorAllGoal SquadMirrorAllGoal;
+
+	if(CanExecuteCommand())
+	{
+		if(!IsSubElement() || !IsOtherSubElementUsingDoor(TargetDoor))
+		{
+			SquadMirrorAllGoal = new class'SquadMirrorAllGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, TargetDoor);
+			assert(SquadMirrorAllGoal != None);
+
+			PostCommandGoal(SquadMirrorAllGoal);
+			return true; // command issued
 		}
 		else
 		{
@@ -1677,6 +1737,53 @@ function bool SecureEvidence(Pawn CommandGiver, vector CommandOrigin, Actor Evid
 function bool DisableTarget(Pawn CommandGiver, vector CommandOrigin, Actor Target)
 {
 	return Secure(CommandGiver, CommandOrigin, Target);
+}
+
+function bool GiveEquipment(Pawn CommandGiver, vector CommandOrigin, EquipmentSlot Equipment)
+{
+	local SquadShareEquipmentGoal CurrentShareEquipmentGoal;
+
+	if(!DoesAnOfficerHaveUsableEquipment(Equipment))
+	{
+		switch(Equipment)
+		{
+			case Slot_Flashbang:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerFlashbangUnavailableSpeech();
+				break;
+			case Slot_CSGasGrenade:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerGasUnavailableSpeech();
+				break;
+			case Slot_StingGrenade:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerStingUnavailableSpeech();
+				break;
+			case Slot_Wedge:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerWedgeUnavailableSpeech();
+				break;
+			case Slot_Lightstick:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerCantDeployLightstickSpeech();
+				break;
+			case Slot_Optiwand:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerMirrorUnavailableSpeech();
+				break;
+			case Slot_Breaching:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerC2UnavailableSpeech();
+				break;
+			case Slot_PepperSpray:
+				ISwatOfficer(GetFirstOfficer()).GetOfficerSpeechManagerAction().TriggerPepperSprayUnavailableSpeech();
+				break;
+		}
+		return false;
+	}
+
+	if(CanExecuteCommand())
+	{
+		CurrentShareEquipmentGoal = new class'SquadShareEquipmentGoal'(AI_Resource(SquadAI), CommandGiver, CommandOrigin, Equipment);
+		assert(CurrentShareEquipmentGoal != None);
+
+		PostCommandGoal(CurrentShareEquipmentGoal);
+		return true;
+	}
+	return false;
 }
 
 function bool MoveTo(Pawn CommandGiver, vector CommandOrigin, vector TargetLocation)
