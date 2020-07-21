@@ -89,4 +89,4 @@ ID_LogFileExit=E&xit
 [IDDIALOG_CrashBox]
 IDC_Copy=Copy
 IDC_BugReport=Submit Bug Report
-BugReportURL=http://support.sierra.com
+BugReportURL=https://github.com/eezstreet/SWATEliteForce/issues
