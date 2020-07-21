@@ -178,7 +178,6 @@ LevelAuthorString=Author: %1
 LevelTitleString=Map: %1
 LoadingMaplistString=Searching for available maps...
 LANString=LAN
-GAMESPYString=Internet
 
 [SwatMPScoresPanel]
 VIPString=" (VIP)"
