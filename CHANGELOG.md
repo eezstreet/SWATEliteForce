@@ -2,6 +2,7 @@
 
 #### ALL CHANGES ####
 
+ - P90 now has sights (thanks to Beppe for this)
  - Replaced Brettzie's M4A1 models with ones by Beppe.
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
