@@ -13,6 +13,7 @@
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
  - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
  - Fixed SEF bug: Night vision goggles were missing their third person mesh.
+ - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
 
 ### v7
  
