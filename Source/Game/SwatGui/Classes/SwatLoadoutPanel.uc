@@ -161,7 +161,7 @@ function InitComponent(GUIComponent MyOwner)
 			      EquipmentClass = class<Object>(DynamicLoadObject( GC.AvailableEquipmentPockets[i].EquipmentClassName[j], class'Class'));
             WeaponClass = class<SwatWeapon>(EquipmentClass);
 
-            Log("WeaponClass is "$WeaponClass);
+            //Log("WeaponClass is "$WeaponClass);
 
             if( GC.AvailableEquipmentPockets[i].bSelectable[j] == 0)
                 Continue;
