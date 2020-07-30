@@ -383,12 +383,10 @@ To make this process more painless, I've gone ahead and listed each of the mods 
 # KNOWN ISSUES #
 
 Please read the FAQ before looking here! It's entirely possible that what you are seeing is intentional behavior.
-  * TOC won't reply when an AI-controlled officer reports something. There's lots of code that needs to be altered to make this work.
   * Officers sometimes ignore orders, you might have to issue a command two or three times. Problem of the original game.
   * Officers sometimes ignore orders and say something like "I'm busy." This is a problem of the original game; they sometimes can see suspects where the player can't.
-  * Occasionally in an All Missions campaign it will display the wrong equipment icons in the loadout menu for some pieces of equipment.
-  * SWAT officers will stop following you or covering an area when they engage with a suspect. Problem of the original game.
-  * "gui_tex package version mismatch" when joining a server --> Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
+  * Sometimes when you are loading up the game, you can get no sound at all. This is an issue introduced by the Stetchkov Syndicate expansion pack. Sometimes it can be solved by simply restarting the game and not running the game in windowed mode. Sometimes, if you have two detected audio devices (one for output, and one for both input and output), make sure that the one that is responsible for both input and output is DISABLED. The game is bugged and will sometimes pick the wrong audio device.
+  * "gui_tex package version mismatch" when joining a server: Make sure you are running under International language. Sometimes it defaults itself to English or some other language. Search for `Language=eng` or `Language=grm` in SEF/System/Swat4x.ini and make sure it's set to `Language=int`
 
 
 # OTHER MINOR CHANGES #

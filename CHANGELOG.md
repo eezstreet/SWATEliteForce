@@ -1,12 +1,22 @@
-### v7.1
+### v7.1 "The Shield Update"
 
 #### ALL CHANGES ####
 
+ - Added a new "Configuration" feature to the weapons. Instead of selecting a weapon and its attachments from the list of weapons, you can pick the attachments separately.
+ - All suppressed and Aimpoint version of weapons are now different selectable configurations.
+ - Remington 870 Breaching is now a selectable configuration of the Remington 870.
+ - Added Holographic Sight variants for M4A1, UMP, MP5, G36K and M4Super90. (Thanks to Beppe for these models)
+ - Added unsilenced version of the Colt Accurized Rifle.
+ - Added CQB M4A1 variants (Thanks to Beppe for these models)
+ - P90 now has sights (thanks to Beppe for this)
  - Replaced Brettzie's M4A1 models with ones by Beppe.
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
+ - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
+ - Fixed SEF bug: Night vision goggles were missing their third person mesh.
+ - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
 
 ### v7
  

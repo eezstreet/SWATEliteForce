@@ -1,0 +1,1 @@
+class SilencedColtAccurizedRifle extends ColtAccurizedRifle config(SwatEquipment);

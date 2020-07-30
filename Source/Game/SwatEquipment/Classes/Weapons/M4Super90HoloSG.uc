@@ -1,0 +1,1 @@
+class M4Super90HoloSG extends M4Super90SG config(SwatEquipment);

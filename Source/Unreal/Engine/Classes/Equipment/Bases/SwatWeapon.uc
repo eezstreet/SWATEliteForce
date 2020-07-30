@@ -72,7 +72,6 @@ enum WeaponLowReadyAnimationType
 /*
  * Determines what animations the AI-controlled officers should use when idling
  */
-
 enum EIdleWeaponStatus
 {
 	IdleWeaponDoesNotMatter,
@@ -93,7 +92,6 @@ enum EIdleWeaponStatus
 /*
  * Determines what animations the AI-controlled officers should use when ordering compliance
  */
-
 enum EComplianceWeaponAnimation
 {
   Compliance_Machinegun,
@@ -103,7 +101,22 @@ enum EComplianceWeaponAnimation
   Compliance_Handgun
 };
 
+/*
+ *  Starting in v7.1, weapons can have "variants".
+ *  Variants essentially remap the weapon class that is supplied to the loadout while appearing to come from a "base" type.
+ */
+struct WeaponVariant
+{
+  var localized string VariantName;
+  var class<SwatWeapon> VariantClass;
+};
+
 var() localized config string ShortName;
+
+var() localized config string NoVariantName; // The name to use when no variant is selected
+var() config array<WeaponVariant> SelectableVariants;
+var() config bool bIsVariant;   // True if this class is a variant of another weapon (if so, don't show it in the menu)
+var() config class<SwatWeapon> OriginalVariant; // The weapon that this is a variant of
 
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
