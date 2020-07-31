@@ -19,11 +19,13 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
 # TABLE OF CONTENTS #
 
 1. How to Install
-2. Changes, Summarized
-3. Frequently Asked Questions (FAQ)
-4. Mod Compatibility
-5. Known Issues
-6. Other Minor Changes
+2. Building from Source
+ - Contributing to the mod
+3. Changes, Summarized
+4. Frequently Asked Questions (FAQ)
+5. Mod Compatibility
+6. Known Issues
+7. Other Minor Changes
   - TSS Bugs Fixed
   - AI
   - Gameplay
@@ -31,9 +33,9 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
   - Equipment
   - Quick Mission Maker
   - Mission Changes
-7. How to play in Multiplayer
-8. Credits
-9. License
+8. How to play in Multiplayer
+9. Credits
+10. License
 
 
 # HOW TO INSTALL #
@@ -52,6 +54,68 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 
 NOTE: You may run into an issue with the game not saving your settings, or throwing an assertion failure at times in the Settings menu. This is mostly a problem with Windows Vista and up; try giving the folder write permissions or "Total Control". Alternatively you can make your SWAT4x.exe run in administrator mode.
 
+# BUILDING FROM SOURCE #
+
+**ATTENTION!** You *cannot* run the game without having the content. You can find the content for the mod [here](https://1drv.ms/u/s!AnIKDNAshMwbnVml6hksfsABRhyq?e=NaCciJ).
+
+If you are instead trying to build the source code, it is fairly straightforward.
+
+ * Clone the source code into your SWAT 4 folder. Your folder structure ought to look very similar to the installed mod, with SWATEliteForce within your SWAT 4 folder.
+ * Download the assets from the link above. Unzip the contents into your SWATEliteForce/Content folder. *Do not commit these files if you are using Git.*
+ * From here, you can compile the source code with the CompileSource.bat and run the game with the LaunchSEF.bat. The source code will compile to .u files in the System folder.
+ * Edit the source code within /Source/ and any ini files within /System/.
+
+The mod's code is primarily written in UnrealScript. You can find a good resource about UnrealScript [here](wiki.beyondunreal.com). (Note, if you can't access this page, try using the Wayback Machine to access it.)
+
+## Contributing to the mod
+
+The best and most direct way to contribute to the mod's programming is by issuing a pull request. Generally, pull requests are best done by forking the mod's code, committing and pushing to your fork, and then issuing a pull request from your repository. It is not the best idea to use GitHub directly for editing, since if you need to make many edits, it will spam email inboxes.
+
+When it comes to code cleanliness, the code standards appear to have been different between the base Unreal engine, vanilla SWAT 4 and vanilla TSS. Specifically:
+
+ * The base Unreal engine does not support the use of the `#ifdef` keyword; this would appear to be a modified version of the engine which supports it.
+ * The Stetchkov Syndicate uses spaces instead of tabs for indentation.
+
+That being said, I would like to adhere to these standards as much as possible:
+
+ * Use tabs instead of spaces for indentation. Use spaces instead of tabs when aligning comments across multiple lines.
+ * Braces should always be used for `replication`, `while`, `if`/`else`/`else if` (except in replication blocks, where it is illegal), `for`, `defaultproperties`, `state` and any other blocks.
+ * Braces should be on their own line. For example:
+
+```java
+if(something) { // bad
+
+if(something)
+{ // good
+```
+
+ * Class names (and `Object`) should start with a capital letter. (UnrealScript is not case sensitive)
+ * Class properties should start with a capital letter. Local variables can start with either a lowercase or capital letter. Boolean variables should always start with a lowercase "b"
+ * Primitive types (`string`, `int`, etc) should start with a lowercase letter.
+ * Reserved words (`local`, `replication`, `if`, etc) should start with a lowercase letter.
+ * Functions should start with a capital letter and be written as a verb. `Name` is a bad name for a function, but `GetName()` and `SetName()` are good.
+ * Do not use `#ifdef` as support for it is spotty on some text editors which have UnrealScript support.
+ * Use `const` whenever possible.
+ * Only use `out` variables when it is not possible to use a return value.
+ * Use `simulated` on functions that are executed both on the client and server.
+ * Don't write both getter and setter functions for private variables unless there is a side effect involved in doing either. Instead, use a public variable. For example:
+
+```java
+var public bool bMyVariable;
+var private bool bMyBadlyUsedVariable;
+
+function bool GetMyBadlyUsedVariable()
+{
+	return bMyBadlyUsedVariable;
+}
+
+function SetMyBadlyUsedVariable(bool bNewValue)
+{
+	bMyBadlyUsedVariable = bNewValue;
+}
+```
+
+Assets have to be sent to myself personally to integrate into the mod.
 
 # CHANGES, SUMMARIZED #
 
