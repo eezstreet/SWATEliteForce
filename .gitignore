@@ -6,6 +6,7 @@ System/Running.ini
 System/adminlog_*.txt
 System/chatlog_*.txt
 *.bmp
+!System/Logos/StartupLogo.bmp
 *.jpg
 *.png
 *.idb
