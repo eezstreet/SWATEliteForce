@@ -118,6 +118,15 @@ var() config array<WeaponVariant> SelectableVariants;
 var() config bool bIsVariant;   // True if this class is a variant of another weapon (if so, don't show it in the menu)
 var() config class<SwatWeapon> OriginalVariant; // The weapon that this is a variant of
 
+// These fields below are designed to eliminate a lot of the headaches when implementing weapons who only have a difference in sights.
+// If we didn't have them, we would have to add new entries in SoundEffects.ini for all of the new weapons.
+var() config bool bAlterFirstPersonMesh; // If true, the mesh on the first person model will be altered.
+var() config Mesh FirstPersonMesh; // Note, if this is None, the static mesh will be used instead
+var() config StaticMesh FirstPersonStaticMesh;
+var() config bool bAlterThirdPersonMesh;
+var() config Mesh ThirdPersonMesh;
+var() config StaticMesh ThirdPersonStaticMesh;
+
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
 var(Firing) config WeaponAimAnimationType AimAnimation;
@@ -1497,6 +1506,44 @@ function UnRegisterInterestedGrenadeThrowing(IInterestedGrenadeThrowing Client)
 			break;
 		}
 	}
+}
+
+simulated function MutateFPHandheldEquipmentModel(HandheldEquipmentModel Model)
+{
+  Super.MutateFPHandheldEquipmentModel(Model);
+
+  if(bAlterFirstPersonMesh)
+  {
+    if(FirstPersonMesh != None)
+    {
+      Model.SetDrawType(DT_Mesh);
+      Model.Mesh = FirstPersonMesh;
+    }
+    else if(FirstPersonStaticMesh != None)
+    {
+      Model.SetDrawType(DT_StaticMesh);
+      Model.SetStaticMesh(FirstPersonStaticMesh);
+    }
+  }
+}
+
+simulated function MutateTPHandheldEquipmentModel(HandheldEquipmentModel Model)
+{
+  Super.MutateTPHandheldEquipmentModel(Model);
+
+  if(bAlterThirdPersonMesh)
+  {
+    if(ThirdPersonMesh != None)
+    {
+      Model.SetDrawType(DT_Mesh);
+      Model.Mesh = ThirdPersonMesh;
+    }
+    else if(ThirdPersonStaticMesh != None)
+    {
+      Model.SetDrawType(DT_StaticMesh);
+      Model.SetStaticMesh(ThirdPersonStaticMesh);
+    }
+  }
 }
 
 //simulated function UnEquippedHook();  //TMC do we want to blank the HUD's ammo count?
