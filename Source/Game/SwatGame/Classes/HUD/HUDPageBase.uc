@@ -171,7 +171,14 @@ function OnTick( float Delta )
 {
   if(PlayerOwner().GetCrosshairDisabled() || bInCinematic)
   {
-    Reticle.Hide();
+    if(Reticle.CenterPreviewImage != None) // is pointing at a 'hotspot' on a door
+    {
+      Reticle.Show();
+    }
+    else
+    {
+      Reticle.Hide();
+    }
   }
   else
   {
