@@ -12,6 +12,8 @@
  - Replaced Brettzie's M4A1 models with ones by Beppe.
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
+ - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
+ - When crosshairs are disabled, contextual icons such as door mirroring now appear. (thanks to wsevren for this fix)
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
  - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
