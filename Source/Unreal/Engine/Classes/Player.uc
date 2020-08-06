@@ -25,7 +25,7 @@ var transient const float WindowsMouseX;
 var transient const float WindowsMouseY;
 var transient int CurrentVoiceBandwidth;
 var int CurrentNetSpeed;
-var globalconfig int ConfiguredInternetSpeed, ConfiguredLanSpeed;
+var globalconfig int ConfiguredInternetSpeed;
 var byte SelectedCursor;
 
 var transient InteractionMaster InteractionMaster;	// Callback to the IM
