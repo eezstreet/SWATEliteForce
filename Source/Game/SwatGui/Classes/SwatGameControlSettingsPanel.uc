@@ -64,9 +64,6 @@ var() private config localized string GCIOptionS4P3String;
 
 var() private float DefaultMouseSensitivity;
 
-var(MPSettings) config localized array<string> NetworkConnectionChoices "Choices for network connection";
-var(MPSettings) config           array<int>    NetworkConnectionSpeeds "Speeds for network connection";
-
 function InitComponent(GUIComponent MyOwner)
 {
     local int i;
