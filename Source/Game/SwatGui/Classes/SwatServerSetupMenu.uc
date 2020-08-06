@@ -171,9 +171,7 @@ function OnEquipmentButton(GUIComponent Sender)
 }
 
 function OnProfileButton(GUIComponent Sender)
-{
-	Controller.OpenMenu( "SwatGui.SwatGamespyProfilePopup", "SwatGamespyProfilePopup" );
-}
+
 
 function InternalOnClick(GUIComponent Sender)
 {
