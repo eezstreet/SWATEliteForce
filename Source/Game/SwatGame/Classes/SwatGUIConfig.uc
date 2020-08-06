@@ -187,7 +187,6 @@ var() config            array<string>    ExtraStrOptions "Extra (usermod) option
 var() config            array<int>       ExtraIntOptions "Extra (usermod) options for saving, as integers";
 
 
-var(MPSettings) config           int           NetSpeedSelection "Selected speed for network connection";
 
 var(MPSettings) Config float MPPostMissionTime "Time (in seconds) between when the round has been completed and the MPPage is brought up";
 var(MPSettings) Config float MPPollingDelay "Time (in seconds) between information polls in MP";
