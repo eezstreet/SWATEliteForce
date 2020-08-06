@@ -73,11 +73,6 @@ function InitComponent(GUIComponent MyOwner)
     MyMPNameBox.MaxWidth = GC.MPNameLength;
     MyMPNameBox.AllowedCharSet = GC.MPNameAllowableCharSet;
 
-	for( i = 0; i < NetworkConnectionChoices.Length; i++ )
-	{
-    	MyNetSpeedBox.AddItem(NetworkConnectionChoices[i],,,NetworkConnectionSpeeds[i]);
-    }
-    MyNetSpeedBox.SetIndex(0);
 
 	for( i = 0; i < GC.VoiceTypeChoices.Length; i++ )
 	{
