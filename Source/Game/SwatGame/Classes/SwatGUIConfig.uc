@@ -255,9 +255,7 @@ var(HUDSettings) Config bool bUseExitMenu "Exit pad displayed the Graphical Comm
 
 enum eConnectionType
 {
-    CONNECTION_Modem,
-    CONNECTION_Cable,
-    CONNECTION_DSL,
+    CONNECTION_Internet,
     CONNECTION_T1,
     CONNECTION_T3,
     CONNECTION_OC3,
