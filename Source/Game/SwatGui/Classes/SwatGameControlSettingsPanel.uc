@@ -383,12 +383,8 @@ defaultproperties
     GCIOptionS4P2String="Click [k=OpenGraphicCommandInterface | RightMouseAlias] to select"
     GCIOptionS4P3String="Click [k=Fire] to cancel"
 
-    NetworkConnectionChoices[0]="Modem"
-    NetworkConnectionChoices[1]="ISDN"
-    NetworkConnectionChoices[2]="Cable/ADSL"
-    NetworkConnectionChoices[3]="LAN/T1"
-    NetworkConnectionSpeeds[0]=2600
-    NetworkConnectionSpeeds[1]=5000
-    NetworkConnectionSpeeds[2]=10000
-    NetworkConnectionSpeeds[3]=15000
+    NetworkConnectionChoices[0]="Internet"
+    NetworkConnectionChoices[1]="LAN/T1"
+    NetworkConnectionSpeeds[0]=100000
+    NetworkConnectionSpeeds[1]=150000
 }
