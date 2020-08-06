@@ -2104,7 +2104,7 @@ Hint=Check this box to show custom skins in MP games.
 Hint=Uncheck this box to turn off help text.
 
 [SwatMPSettingsPanel_NetSpeedLabel]
-Caption=Connection Speed
+Caption=Connection choice
 
 [SwatGameControlSettingsPanel_VoiceType_ComboB]
 Hint=Select your preferred multiplayer voice type.
@@ -2137,34 +2137,34 @@ Hint=Select your preferred multiplayer voice type.
 Hint=Select your preferred multiplayer voice type.
 
 [SwatMPSettingsPanel_ConnectionSpeed_ComboB]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_EditBox]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox_List]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox_SBar_Grip]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox_SBar_Down]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox_SBar_Up]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox_SBar_SZone]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox_SBar]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed_LBox]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatMPSettingsPanel_ConnectionSpeed]
-Hint=Select the speed of your Internet connection.
+Hint=Select the connection choice.
 
 [SwatGameControlSettingsPanel_NameBox]
 Hint=Enter your player name.
