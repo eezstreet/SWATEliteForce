@@ -2133,9 +2133,6 @@ Hint=Select your preferred multiplayer voice type.
 [SwatGameControlSettingsPanel_VoiceType]
 Hint=Select your preferred multiplayer voice type.
 
-[SwatMPSettingsPanel_ConnectionSpeed_ComboB]
-Hint=Select the connection choice.
-
 [SwatGameControlSettingsPanel_NameBox]
 Hint=Enter your player name.
 
