@@ -384,7 +384,6 @@ defaultproperties
     GCIOptionS4P3String="Click [k=Fire] to cancel"
 
     NetworkConnectionChoices[0]="Internet"
-    NetworkConnectionChoices[1]="LAN/T1"
-    NetworkConnectionSpeeds[0]=100000
-    NetworkConnectionSpeeds[1]=150000
-}
+    NetworkConnectionSpeeds[0]=200000
+    
+ }
