@@ -383,7 +383,4 @@ defaultproperties
     GCIOptionS4P2String="Click [k=OpenGraphicCommandInterface | RightMouseAlias] to select"
     GCIOptionS4P3String="Click [k=Fire] to cancel"
 
-    NetworkConnectionChoices[0]="Internet"
-    NetworkConnectionSpeeds[0]=200000
-    
 }
