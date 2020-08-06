@@ -170,9 +170,6 @@ function OnEquipmentButton(GUIComponent Sender)
 	OpenEquipment();
 }
 
-function OnProfileButton(GUIComponent Sender)
-
-
 function InternalOnClick(GUIComponent Sender)
 {
     local int MaxPlayers, CurrentPlayers;
