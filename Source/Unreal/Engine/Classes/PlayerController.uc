@@ -1956,7 +1956,7 @@ function LongClientAdjustPosition
 		{
 			if ( bDynamicNetSpeed && (OldPing > DynamicPingThreshold * 0.001) && (ExactPing > DynamicPingThreshold * 0.001) )
 			{
-				if ( Player.CurrentNetSpeed > 200000 )
+				if ( Player.CurrentNetSpeed > 0)
 					SetNetSpeed(200000);
 				else if ( Level.MoveRepSize < 80 )
 					Level.MoveRepSize += 8;
