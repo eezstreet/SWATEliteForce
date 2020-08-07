@@ -139,8 +139,7 @@ function SaveSettings()
     class'Player'.default.ConfiguredInternetSpeed = NewNetSpeed;
     class'Player'.static.StaticSaveConfig();
     PlayerOwner().SetNetSpeed( NewNetSpeed );
-    GC.NetSpeedSelection = MyNetSpeedBox.GetIndex();
-
+    
     GC.bShowHelp = MyHelpTextCheck.bChecked;
     GC.bUseExitMenu = MyGCIExitMenuOptionCheck.bChecked;
 
