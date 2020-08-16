@@ -357,7 +357,7 @@ Hint=Go back to Career selection.
 
 [SwatMainMenu_TextQuitButton]
 Caption=QUIT
-Hint=Exit the game and return to Windows.
+Hint=Exit SWAT4.
 
 [SwatCampaignMenu_MainMenuButton]
 Caption=MAIN
@@ -2920,7 +2920,7 @@ Hint=Start the server with the current settings.
 
 [SwatServerSetupMenu_TextQuitButton]
 Caption=QUIT
-Hint=Exit the game and return to Windows.
+Hint=Exit SWAT4.
 
 [SwatServerBrowserMenu_SwatHelpText]
 Caption=Select a server to connect to.
