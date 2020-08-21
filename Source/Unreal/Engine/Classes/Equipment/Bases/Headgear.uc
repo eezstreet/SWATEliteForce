@@ -13,7 +13,7 @@ enum ProtectionLevel
   Level_4             // Stops .308 AP (AKA Nothing yet)
 };
 
-var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI (ie, 'Type II')";
+var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI (ie, 'Level 2')";
 var(GUI) public localized config string ExtraProtection "Extra protection effects, as shown in the GUI (ie, 'Protects against Flashbangs')";
 var() public config bool PlayerUsable;
 
