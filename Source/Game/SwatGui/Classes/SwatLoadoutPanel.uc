@@ -1185,7 +1185,7 @@ defaultproperties
     DefaultPrimaryClass=WeaponClass_AssaultRifle
     DefaultSecondaryClass=WeaponClass_Pistol
 
-    RatingString="NIJ 0101.05 Rating: "
+    RatingString="Ballistic Resistance: "
     WeightString="Weight: "
     SpecialString="Extra Protection: "
 }
