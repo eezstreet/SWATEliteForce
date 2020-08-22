@@ -132,7 +132,7 @@ simulated function OnProtectedRegionHit() {
   }
   
   if(CurrentMomentumToPenetrate < MaxMomentumToPenetrate/2) {
-    ProtectionType -= 3;
+    ProtectionLevel -= 3;
 	}
 
 	if(CurrentMomentumToPenetrate < MinMomentumToPenetrate) {
