@@ -25,7 +25,7 @@ var private float CurrentBulletMtP;
 var() public config bool PlayerUsable;
 
 var(ArmorPenetration) config ProtectionLevel ArmorProtection "What level of armor I represent?";
-var int ProtectionType "Internal measure to know the BulletClass";
+var int ProtectionLevel "Internal measure to know the BulletClass";
 
 
 ////////////////////////////////////////////////////////////////////////////////
