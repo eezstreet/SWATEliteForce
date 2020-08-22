@@ -3168,7 +3168,7 @@ Hint=Toggle VoIP ignore on selected player
 
 [SwatMPScoresPanel_COOPchangeteambutton]
 Caption=CHANGE TEAM
-Hint=Perform administrative duties.
+Hint=Switch to the other team (blue or red).
 
 [SwatMPScoresPanel_deployinfolabel]
 Caption=Blue Team: Primary Entrance. Red Team: Secondary Entrance
@@ -3389,7 +3389,7 @@ Hint=Toggle VoIP ignore on selected player
 
 [SwatMPScoresPanel_SwapTeam]
 Caption=CHANGE TEAM
-Hint=Switch teams
+Hint=Switch to the other team (blue or red).
 
 [SwatCOOPObjectivesPopupMenu_OfficerStatus_mappanelheader]
 Caption=TEAM STATUS
