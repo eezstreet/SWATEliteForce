@@ -29,22 +29,22 @@ FriendlyName=Respirator
 GUIImage=Texture'gui_tex.equip_gasmask'
 
 [HeavyBodyArmor]
-Description=This ceramic plate armor provides Level III protection from ballistic penetrations.  Even when hit with FMJ rounds, it provides exceptional protection from pistols, submachineguns, 7.62 rifles and armor piercing shotgun slugs.  However, the ceramic plates only can reliably stop one impact, after that they start to break, reducing the armor's ballistic protection.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but reduce an officer's mobility and slowdown his actions.
+Description=This ceramic plate armor provides Level 3 protection from ballistic penetrations.  Even when hit with FMJ rounds, it provides exceptional protection from pistols, submachineguns, 7.62 rifles and armor piercing shotgun slugs.  However, the ceramic plates only can reliably stop one impact, after that they start to break, reducing the armor's ballistic protection.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but reduce an officer's mobility and slowdown his actions.
 FriendlyName=Ceramic Armor
 GUIImage=Texture'gui_tex.equip_heavyarmor'
 
 [LightBodyArmor]
-Description=This is the basic and common Level II kevlar body armor worn during normal operations.  Light armor provides protection from pistol hollow point rounds, smaller variants of buckshot and small caliber full metal jacket rounds, but does little to stop rifle caliber rounds, larger variants of buckshot out of long barrels or shotgun slugs.
+Description=This is the basic and common Level 2 kevlar body armor worn during normal operations.  Light armor provides protection from pistol hollow point rounds, smaller variants of buckshot and small caliber full metal jacket rounds, but does little to stop rifle caliber rounds, larger variants of buckshot out of long barrels or shotgun slugs.
 FriendlyName=Kevlar Armor
 GUIImage=Texture'gui_tex.equip_lightarmor'
 
 [EnhancedBodyArmor]
-Description=This armor is laden with ceramic plates rated Level IV protection from ballistic penetrations.  Even when hit with AP rounds, it provides exceptional protection from pistols, submachineguns, rifles and armor piercing shotgun slugs.  However, the ceramic plates only can reliably stop one impact, after that they start to break, reducing the armor's ballistic protection.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but reduce an officer's mobility and slowdown his actions.
+Description=This armor is laden with ceramic plates rated Level 4 protection from ballistic penetrations.  Even when hit with AP rounds, it provides exceptional protection from pistols, submachineguns, rifles and armor piercing shotgun slugs.  However, the ceramic plates only can reliably stop one impact, after that they start to break, reducing the armor's ballistic protection.  The thickness and bulk of the vest reduce the effects of Sting grenades and the less lethal shotgun by half, but reduce an officer's mobility and slowdown his actions.
 FriendlyName=Heavy Ceramic Armor
 GUIImage=Texture'gui_tex.equip_heavyarmor'
 
 [MediumBodyArmor]
-Description=This is a more resistant Level IIIa kevlar body armor worn during high risk operations.  Heavy Kevlar armor provides increased protection compared to standard light armor, including hollow point rounds, most forms of buckshot, shotgun slugs and small caliber full metal jacket rounds. However, it can't stop rifle caliber rounds or armor piercing pistol ammunition.
+Description=This is a more resistant Level 3a kevlar body armor worn during high risk operations.  Heavy Kevlar armor provides increased protection compared to standard light armor, including hollow point rounds, most forms of buckshot, shotgun slugs and small caliber full metal jacket rounds. However, it can't stop rifle caliber rounds or armor piercing pistol ammunition.
 FriendlyName=Heavy Kevlar Armor
 GUIImage=Texture'gui_tex.equip_lightarmor'
 

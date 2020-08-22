@@ -18,14 +18,14 @@ var(ArmorShredding) public config float MaxMomentumToPenetrate "Maximum MtP that
 var(ArmorShredding) public config float FirstBulletMtPReduction "The amount of MtP drained by the first bullet.";
 var(ArmorShredding) public config float MultiplyPerBullet "How much to multiply the MtP drainage per bullet. For example, if the FirstBulletMtPReduction is 100 and this value is 0.5, the second will be 50, the third will be 25, ...";
 var(ArmorShredding) public config float MinBulletMtpReduction "The minimum amount that a bullet must drain MtP by.";
-var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI (ie, 'Type II')";
+var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI ('Level 2')";
 var(GUI) public localized config string ExtraProtection "Extra protection effects, as shown in the GUI (ie, 'Protects against Flashbangs')";
 var private float CurrentMomentumToPenetrate;
 var private float CurrentBulletMtP;
 var() public config bool PlayerUsable;
 
 var(ArmorPenetration) config ProtectionLevel ArmorProtection "What level of armor I represent?";
-var int ProtectionType "Internal measure to know the BulletClass";
+var int ProtectionLevel "Internal measure to know the BulletClass";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,42 +65,36 @@ static function String GetSpecialProtection()
 }
 
 simulated function int GetProtectionLevel() 
-{
-  return ArmorProtection;
-}
-
-simulated function int GetProtectionType() 
-{			
-	switch(ArmorProtection) 
-		{				
+{			 
+						
 		case Level_0:
-			ProtectionType = 1;
+			ProtectionLevel = 1;
 			break;
 		case Level_1:
-			ProtectionType = 2;
+			ProtectionLevel = 2;
 			break;
 		case Level_2a:
-			ProtectionType = 3;
+			ProtectionLevel = 3;
 			break;
 		case Level_2:
-			ProtectionType = 4;
+			ProtectionLevel = 4;
 			break;
 		case Level_3a:
-			ProtectionType = 5;
+			ProtectionLevel = 5;
 			break;
 		case Level_3:
-			ProtectionType = 6;
+			ProtectionLevel = 6;
 			break;
 		case Level_3X:
-			ProtectionType = 7;
+			ProtectionLevel = 7;
 			break;		
 		case Level_4:
-			ProtectionType = 8;
+			ProtectionLevel = 8;
 			break;
 		default:
-			ProtectionType = 1;
+			ProtectionLevel = 1;
 		}
-	return ProtectionType;
+	return ProtectionLevel;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,7 +132,7 @@ simulated function OnProtectedRegionHit() {
   }
   
   if(CurrentMomentumToPenetrate < MaxMomentumToPenetrate/2) {
-    ProtectionType -= 3;
+    ProtectionLevel -= 3;
 	}
 
 	if(CurrentMomentumToPenetrate < MinMomentumToPenetrate) {
