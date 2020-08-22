@@ -65,9 +65,8 @@ static function String GetSpecialProtection()
 }
 
 simulated function int GetProtectionLevel() 
-{			
-	switch(ArmorProtection) 
-		{				
+{			 
+						
 		case Level_0:
 			ProtectionLevel = 1;
 			break;
