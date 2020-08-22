@@ -65,42 +65,37 @@ static function String GetSpecialProtection()
 }
 
 simulated function int GetProtectionLevel() 
-{
-  return ArmorProtection;
-}
-
-simulated function int GetProtectionType() 
 {			
 	switch(ArmorProtection) 
 		{				
 		case Level_0:
-			ProtectionType = 1;
+			ProtectionLevel = 1;
 			break;
 		case Level_1:
-			ProtectionType = 2;
+			ProtectionLevel = 2;
 			break;
 		case Level_2a:
-			ProtectionType = 3;
+			ProtectionLevel = 3;
 			break;
 		case Level_2:
-			ProtectionType = 4;
+			ProtectionLevel = 4;
 			break;
 		case Level_3a:
-			ProtectionType = 5;
+			ProtectionLevel = 5;
 			break;
 		case Level_3:
-			ProtectionType = 6;
+			ProtectionLevel = 6;
 			break;
 		case Level_3X:
-			ProtectionType = 7;
+			ProtectionLevel = 7;
 			break;		
 		case Level_4:
-			ProtectionType = 8;
+			ProtectionLevel = 8;
 			break;
 		default:
-			ProtectionType = 1;
+			ProtectionLevel = 1;
 		}
-	return ProtectionType;
+	return ProtectionLevel;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
