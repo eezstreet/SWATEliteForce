@@ -18,7 +18,7 @@ var(ArmorShredding) public config float MaxMomentumToPenetrate "Maximum MtP that
 var(ArmorShredding) public config float FirstBulletMtPReduction "The amount of MtP drained by the first bullet.";
 var(ArmorShredding) public config float MultiplyPerBullet "How much to multiply the MtP drainage per bullet. For example, if the FirstBulletMtPReduction is 100 and this value is 0.5, the second will be 50, the third will be 25, ...";
 var(ArmorShredding) public config float MinBulletMtpReduction "The minimum amount that a bullet must drain MtP by.";
-var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI (ie, 'Level 2')";
+var(GUI) public localized config string ArmorRating "The rating level, as shown in the GUI ('Level 2')";
 var(GUI) public localized config string ExtraProtection "Extra protection effects, as shown in the GUI (ie, 'Protects against Flashbangs')";
 var private float CurrentMomentumToPenetrate;
 var private float CurrentBulletMtP;
