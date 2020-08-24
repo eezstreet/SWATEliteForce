@@ -387,8 +387,8 @@ defaultproperties
     NetworkConnectionChoices[1]="ISDN"
     NetworkConnectionChoices[2]="Cable/ADSL"
     NetworkConnectionChoices[3]="LAN/T1"
-    NetworkConnectionSpeeds[0]=2600
-    NetworkConnectionSpeeds[1]=5000
-    NetworkConnectionSpeeds[2]=10000
-    NetworkConnectionSpeeds[3]=15000
+    NetworkConnectionSpeeds[0]=5000
+    NetworkConnectionSpeeds[1]=10000
+    NetworkConnectionSpeeds[2]=15000
+    NetworkConnectionSpeeds[3]=20000
 }
