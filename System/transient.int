@@ -546,8 +546,8 @@ Hint=Campaign
 Hint=Campaign
 
 [SwatMainMenu_CreditsButton]
-Caption=CREDITS
-Hint=View the credits.
+Caption=ELITE FORCE CREDITS
+Hint=Open SWAT: Elite Force Credits on GitHub. (This will open a web browser and quit the game.)
 
 [SwatMainMenu_SwatHelpText]
 Caption=Read about the new features of the expansion pack.
