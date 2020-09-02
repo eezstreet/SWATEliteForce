@@ -2917,6 +2917,9 @@ Hint=Start the mission
 Caption=Internet
 Hint=Start the mission
 
+[SwatServerBrowserMenu_GamespyImage]
+Hint=Start the mission
+
 [SwatServerBrowserMenu_backgreyimage]
 Hint=Start the mission
 
@@ -2933,6 +2936,13 @@ Hint=Start the mission
 [SwatServerBrowserMenu_LanLabel]
 Caption=LAN
 Hint=Start the mission
+
+[SwatServerBrowserMenu_Gamespylabel]
+Caption=Internet
+Hint=Start the mission
+
+[SwatServerBrowserMenu_gamespybutton]
+Hint=Check this box to display Internet games.
 
 [SwatServerBrowserMenu_LanButton]
 Hint=Check this box to display LAN games.
