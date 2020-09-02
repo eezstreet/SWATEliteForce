@@ -4573,7 +4573,7 @@ Text=[u][b]FIRING YOUR WEAPON[\b][\u]||[b][k=Fire][\b] - Fire|[b][k=Reload][\b] 
 Text=[u][b]INTERACTING WITH OBJECTS[\b][\u]||[b][k=IssueComplianceOrInteract][\b] or [b]f[\b] - Interact||Whenever you can interact with an object under the crosshair, the hint box will appear.  The hint box tells you what key to press to perform an action associated with the object.||[c=15CC11]Press [b][k=IssueComplianceOrInteract][\b] or [b]f[\b] to open the door.[\c]
 
 [Movement]
-Text=[u][b]MOVEMENT[\b][\u]||Use the mouse to look around.||[b][k=MoveForward][\b] - Forward|[b][k=MoveBackward][\b] - Backward|[b][k=StrafeLeft][\b] - Sidestep left|[b][k=StrafeRight][\b] - Sidestep right|[b][k=Duck][\b] - Crouch|[b][k=LeanLeft][\b] - Lean left|[b][k=LeanRight][\b] - Lean right|[b][k=ToggleRunning 0][\b] - Run Toggle
+Text=[u][b]MOVEMENT[\b][\u]||Use the mouse to look around.||[b][k=MoveForward][\b] - Forward|[b][k=MoveBackward][\b] - Backward|[b][k=StrafeLeft][\b] - Sidestep left|[b][k=StrafeRight][\b] - Sidestep right|[b][k=Duck][\b] - Crouch|[b][k=LeanLeft][\b] - Lean left|[b][k=LeanRight][\b] - Lean right|[b][k=ToggleRunning 0][\b] - Run Toggle || |[b]F - In the cabinet you can change your weapon.[b]
 
 [IncapacitatedPlayer]
 UseFeedbackText=Report Officer Down
