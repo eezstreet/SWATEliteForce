@@ -16,7 +16,6 @@ var(SWATGui) private EditInline Config GUIButton		    MyCustomMissionButton;
 var(SWATGui) private EditInline Config GUIButton		    MyHostButton;
 var(SWATGui) private EditInline Config GUIButton		    MyJoinButton;
 var(SWATGui) private EditInline Config GUIButton		    MyGameSettingsButton;
-var(SWATGui) private EditInline Config GUIButton		    MyCreditsButton;
 var(SWATGui) private EditInline Config GUIButton		    MyQuitButton;
 
 var(SWATGui) private EditInline Config GUILabel				MyModNameLabel;
@@ -41,8 +40,7 @@ function InitComponent(GUIComponent MyOwner)
     MyHostButton.OnClick=InternalOnClick;
     MyJoinButton.OnClick=InternalOnClick;
     MyGameSettingsButton.OnClick=InternalOnClick;
-    MyCreditsButton.OnClick=InternalOnClick;
-
+  
     for( i = 0; i < Controls.Length; i++ )
         Controls[i].ShowPositionDelay = -1.0;
 }
@@ -157,9 +155,6 @@ function InternalOnClick(GUIComponent Sender)
 			break;
 		case MyGameSettingsButton:
 			Controller.OpenMenu("SwatGui.SwatGameSettingsMenu", "SwatGameSettingsMenu");
-			break;
-		case MyCreditsButton:
-			Controller.OpenMenu("SwatGui.SwatCreditsMenu", "SwatCreditsMenu");
 			break;
 		case MyQuitButton:
             Quit();
