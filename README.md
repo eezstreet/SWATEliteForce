@@ -16,16 +16,16 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
 
 
 
-# TABLE OF CONTENTS #
+# TABLE OF CONTENTS # (Links are only for the GitHub website!)
 
-1. How to Install
-2. Building from Source
- - Contributing to the mod
-3. Changes, Summarized
-4. Frequently Asked Questions (FAQ)
-5. Mod Compatibility
-6. Known Issues
-7. Other Minor Changes
+1. How to Install https://github.com/eezstreet/SWATEliteForce#how-to-install
+2. Building from Source https://github.com/eezstreet/SWATEliteForce#building-from-source
+ - Contributing to the mod https://github.com/eezstreet/SWATEliteForce#contributing-to-the-mod
+3. Changes, Summarized https://github.com/eezstreet/SWATEliteForce#changes-summarized
+4. Frequently Asked Questions (FAQ) https://github.com/eezstreet/SWATEliteForce#frequently-asked-questions-faq
+5. Mod Compatibility https://github.com/eezstreet/SWATEliteForce#mod-compatibility
+6. Known Issues https://github.com/eezstreet/SWATEliteForce#known-issues
+7. Other Minor Changes https://github.com/eezstreet/SWATEliteForce#other-minor-changes
   - TSS Bugs Fixed
   - AI
   - Gameplay
@@ -33,9 +33,9 @@ Initially, I envisioned SWAT: Elite Force as a tactical simulator that could be 
   - Equipment
   - Quick Mission Maker
   - Mission Changes
-8. How to play in Multiplayer
-9. Credits
-10. License
+8. How to play in Multiplayer https://github.com/eezstreet/SWATEliteForce#how-to-play-in-multiplayer
+9. Credits https://github.com/eezstreet/SWATEliteForce#creditsthank-yous
+10. License https://github.com/eezstreet/SWATEliteForce#license
 
 
 # HOW TO INSTALL #
