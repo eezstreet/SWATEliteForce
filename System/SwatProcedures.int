@@ -1,5 +1,5 @@
 [Procedure_CompleteMission]
-Description=Mission completed (0-40 points))
+Description=Mission completed (0-40 points)
 
 [Procedure_ArrestUnIncapacitatedSuspects]
 Description=Suspects arrested (0-20 points)
@@ -15,6 +15,9 @@ Description=No suspects neutralized (0-5 points)
 
 [Procedure_NoCiviliansInjured]
 Description=No civilians injured (0-5 points)
+
+[Procedure_AllCiviliansUnharmed]
+Description=All civilians unharmed (0-10 points)
 
 [Procedure_NoOfficersDown]
 Description=No officers down (0-10 points)
