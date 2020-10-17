@@ -506,7 +506,7 @@ Hint=Create a multiplayer game.
 
 [SwatMainMenu_TrainingButton]
 Caption=TRAINING
-Hint=Learn to play SWAT: Elite Force
+Hint=Learn to play SWAT: Elite Force or test weapons (Weapon Cabinet).
 
 [SwatMainMenu_bottomblack]
 Hint=Campaign
@@ -1977,7 +1977,7 @@ Caption=KEY
 Caption=FUNCTION
 
 [SwatGameControlSettingsPanel_PlayerNameLabel]
-Caption=Player Name
+Caption=MP name
 
 [SwatGameControlSettingsPanel_voicetypelabel]
 Caption=Voice Type
@@ -2167,7 +2167,7 @@ Hint=Select the speed of your Internet connection.
 Hint=Select the speed of your Internet connection.
 
 [SwatGameControlSettingsPanel_NameBox]
-Hint=Enter your player name.
+Hint=Enter your Multiplayer name.
 
 [SwatAudioSettingsPanel_VOIPEnabledLabel]
 Caption=Use VoIP Chat
@@ -2691,7 +2691,7 @@ Hint=When checked, eliminates load times between rounds on the same map.
 Caption=Score Limit
 
 [SwatServerSetupQuickPanel_playernamelabel]
-Caption=Player Name
+Caption=MP name
 
 [SwatServerSetupQuickPanel_servernamelabel]
 Caption=Server Name
@@ -2826,7 +2826,7 @@ Hint=Set the number of rounds per map.
 Hint=Set the number of rounds per map.
 
 [SwatServerSetupQuickPanel_NameBox]
-Hint=Enter your player name.
+Hint=Enter your Multiplayer name.
 
 [SwatServerSetupQuickPanel_MapTitle]
 Caption=Map: Riverside Training Facility
@@ -3097,11 +3097,11 @@ Caption=UPDATE
 Hint=Update the Server List.
 
 [SwatServerBrowserMenu_NameLabel]
-Caption=Please Enter Your Name Here:
+Caption=[c=00ff00]Enter your MP name here:
 Hint=Start the mission
 
 [SwatServerBrowserMenu_NameBox]
-Hint=Enter your player name.
+Hint=Enter your Multiplayer name.
 
 [SwatServerBrowserMenu_JoinServerButton]
 Caption=JOIN
@@ -3262,13 +3262,13 @@ Hint=Voice over IP
 
 [SwatMPScoresPanel_otherteamlist_Teamnames_Button]
 Caption=SUSPECT
-Hint=Player Name
+Hint=Multiplayer name
 
 [SwatMPScoresPanel_otherteamlist_Teamnames_List]
-Hint=Player Name
+Hint=Multiplayer name
 
 [SwatMPScoresPanel_otherteamlist_Teamnames]
-Hint=Player Name
+Hint=Multiplayer name
 
 [SwatMPScoresPanel_otherteamlist_Rank_Button]
 Hint=Rank
@@ -3362,13 +3362,13 @@ Hint=Voice over IP
 
 [SwatMPScoresPanel_teamlist_Teamnames_Button]
 Caption=OFFICER
-Hint=Player Name
+Hint=Multiplayer name
 
 [SwatMPScoresPanel_teamlist_Teamnames_List]
-Hint=Player Name
+Hint=Multiplayer name
 
 [SwatMPScoresPanel_teamlist_Teamnames]
-Hint=Player Name
+Hint=Multiplayer name
 
 [SwatMPScoresPanel_teamlist_Rank_Button]
 Hint=Rank
