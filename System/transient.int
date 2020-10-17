@@ -2691,7 +2691,7 @@ Hint=When checked, eliminates load times between rounds on the same map.
 Caption=Score Limit
 
 [SwatServerSetupQuickPanel_playernamelabel]
-Caption=MP name
+Caption=Enter your Multiplayer name here:
 
 [SwatServerSetupQuickPanel_servernamelabel]
 Caption=Server Name
@@ -3098,7 +3098,6 @@ Hint=Update the Server List.
 
 [SwatServerBrowserMenu_NameLabel]
 Caption=[c=00ff00]Enter your MP name here:
-Hint=Start the mission
 
 [SwatServerBrowserMenu_NameBox]
 Hint=Enter your Multiplayer name.
