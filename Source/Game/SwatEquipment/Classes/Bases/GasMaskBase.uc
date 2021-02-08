@@ -8,3 +8,27 @@ function QualifyProtectedRegion()
         $" specifies ProtectedRegion="$GetEnum(ESkeletalRegion, ProtectedRegion)
         $".  ProtectiveEquipment may only protect body regions or Region_None.");
 }
+
+//FUNCTIONS TO ACTIVATE GAS MASKS LOOPING BREATH SOUND
+simulated function PostBeginPlay()
+{
+	local SwatGamePlayerController PC;
+
+	PC = SwatGamePlayerController(Pawn(Owner).Controller);
+	if( PC == Level.GetLocalPlayerController() )
+	{
+		TriggerEffectEvent('ActivatedLoop');
+	}	
+}
+
+
+simulated function PostNetBeginPlay()
+{
+	local SwatGamePlayerController PC;
+
+	PC = SwatGamePlayerController(Pawn(Owner).Controller);
+	if( PC == Level.GetLocalPlayerController() )
+	{
+		TriggerEffectEvent('ActivatedLoop');
+	}	
+}
