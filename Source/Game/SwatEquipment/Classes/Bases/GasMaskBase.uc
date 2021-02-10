@@ -17,6 +17,7 @@ simulated function PostBeginPlay()
 	PC = SwatGamePlayerController(Pawn(Owner).Controller);
 	if( PC == Level.GetLocalPlayerController() )
 	{
+		//log( "Gas mask breathing" );
 		TriggerEffectEvent('ActivatedLoop');
 	}	
 }
@@ -29,6 +30,7 @@ simulated function PostNetBeginPlay()
 	PC = SwatGamePlayerController(Pawn(Owner).Controller);
 	if( PC == Level.GetLocalPlayerController() )
 	{
+		//log( "MP Gas mask breathing" );
 		TriggerEffectEvent('ActivatedLoop');
 	}	
 }
