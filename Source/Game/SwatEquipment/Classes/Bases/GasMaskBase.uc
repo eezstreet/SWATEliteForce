@@ -12,25 +12,14 @@ function QualifyProtectedRegion()
 //FUNCTIONS TO ACTIVATE GAS MASKS LOOPING BREATH SOUND
 simulated function PostBeginPlay()
 {
+	Super.PostBeginPlay();
+	
 	local SwatGamePlayerController PC;
 
 	PC = SwatGamePlayerController(Pawn(Owner).Controller);
 	if( PC == Level.GetLocalPlayerController() )
 	{
 		//log( "Gas mask breathing" );
-		TriggerEffectEvent('ActivatedLoop');
-	}	
-}
-
-
-simulated function PostNetBeginPlay()
-{
-	local SwatGamePlayerController PC;
-
-	PC = SwatGamePlayerController(Pawn(Owner).Controller);
-	if( PC == Level.GetLocalPlayerController() )
-	{
-		//log( "MP Gas mask breathing" );
 		TriggerEffectEvent('ActivatedLoop');
 	}	
 }
