@@ -1,1 +1,0 @@
-class M4A1sdHolo extends M4A1sdMG config(SwatEquipment);
