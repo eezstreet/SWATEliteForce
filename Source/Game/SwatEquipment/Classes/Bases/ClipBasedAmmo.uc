@@ -195,6 +195,13 @@ simulated function OnReloaded()
     NewClip = FullestClip();
     assert(NewClip > -1);   //since we're not empty, there should be a Z+ FullestClip
 
+	//if the weapon is not empty , leave a round in the chamber in the new clip and remove one in the current clip
+	if (ClipRoundsremaining[currentClip] > 0 )
+	{
+		ClipRoundsremaining[currentClip] = ClipRoundsremaining[currentClip] -1;
+		ClipRoundsremaining[NewClip] = ClipRoundsremaining[NewClip] + 1;
+	}	
+	
     CurrentClip = NewClip;
 
     UpdateHUD();
