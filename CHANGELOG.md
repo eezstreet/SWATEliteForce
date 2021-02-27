@@ -15,6 +15,7 @@
  - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
  - When crosshairs are disabled, contextual icons such as door mirroring now appear. (thanks to wsevren for this fix)
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
+ - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
  - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
  - Fixed SEF bug: Night vision goggles were missing their third person mesh.
