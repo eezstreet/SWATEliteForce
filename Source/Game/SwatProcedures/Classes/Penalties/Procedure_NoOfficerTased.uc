@@ -18,6 +18,14 @@ function PostInitHook()
 //interface IInterested_GameEvent_PawnDied implementation
 function OnPawnTased(Pawn Pawn, Actor Taser)
 {
+	//added penalty for tasing a hostage
+	if (Pawn.isA('SwatHostage'))
+	{
+		numInfractions++;
+		TriggerPenaltyMessage(Pawn(Taser));
+		GetGame().CampaignStats_TrackPenaltyIssued();
+	}
+	
     if (!Pawn.IsA('SwatOfficer') && !Pawn.IsA('SwatPlayer')) return;
 	if (!Taser.IsA('SwatPlayer')) return;
 
