@@ -169,6 +169,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * All secondary weapons equippable as primaries, and some primaries now equippable as secondaries.
 
 **Equipment is also much more realistic.**
+ * Many of the existing weapon meshes have been replaced with improved ones.
  * Weapons can be aimed down the sights, for better accuracy, using the zoom key.
  * All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is. You can pack No Weapon/No Equipment in some slots to reduce weight and bulk.
  * You can now share some equipment with other players by pressing the melee key. You can also order your AI officers to give you a piece of equipment as well. Currently this only works for tactical tab items and lightsticks.

@@ -3,13 +3,23 @@
 #### ALL CHANGES ####
 
  - Added a new "Configuration" feature to the weapons. Instead of selecting a weapon and its attachments from the list of weapons, you can pick the attachments separately.
+ - Improved meshes and/or textures on the following items, all of which were made by Beppe:
+  - M4A1 (changed from Brettzie's)
+  - M870 Breacher (is now considered an attachment to the M870)
+  - Nova Pump
+  - Less Lethal Nova
+  - UMP45
+  - Glock 17
+  - P90 (now has proper ironsights)
+  - M4Super90
+  - SCAR-L
+  - MP5
+  - G36K
  - All suppressed and Aimpoint version of weapons are now different selectable configurations.
  - Remington 870 Breaching is now a selectable configuration of the Remington 870.
  - Added Holographic Sight variants for M4A1, UMP, MP5, G36K and M4Super90. (Thanks to Beppe for these models)
  - Added unsilenced version of the Colt Accurized Rifle.
  - Added CQB M4A1 variants (Thanks to Beppe for these models)
- - P90 now has sights (thanks to Beppe for this)
- - Replaced Brettzie's M4A1 models with ones by Beppe.
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
  - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
@@ -19,6 +29,7 @@
   - Suspects incapacitated (max): 13 -> 15
   - Suspects arrested (max): No change; 20 -> 20
  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
+ - Lightsticks never fall through the floor any more.
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
