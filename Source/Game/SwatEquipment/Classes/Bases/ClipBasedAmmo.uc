@@ -77,7 +77,7 @@ simulated function float GetCurrentAmmoWeight() {
 
 	for(i=0; i < StartingClipCount; i++)
 	{
-		if(ClipRoundsRemaining[i] == ClipSize)
+		if(ClipRoundsRemaining[i] >= ClipSize)
 		{
 			weight += WeightPerReloadLoaded;	// Add the weight of a full magazine
 		}
@@ -107,7 +107,7 @@ simulated function bool IsEmpty()
 
 simulated function bool IsFull()
 {
-	return (ClipRoundsRemaining[CurrentClip] == ClipSize);
+	return (ClipRoundsRemaining[CurrentClip] >= ClipSize);
 }
 
 
@@ -149,14 +149,14 @@ simulated function int FullestClip()
 
 simulated function bool NeedsReload()
 {
-    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize);
+    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize + 1);
 
     return (ClipRoundsRemaining[CurrentClip] == 0);
 }
 
 simulated function bool ShouldReload()
 {
-    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize);
+    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize + 1);
 
     return (ClipRoundsRemaining[CurrentClip] <= ClipSize/2);
 }
