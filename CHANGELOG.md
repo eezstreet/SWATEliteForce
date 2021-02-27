@@ -37,6 +37,8 @@
  - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
  - Fixed SEF bug: Night vision goggles were missing their third person mesh.
  - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
+ - Fixed SEF bug: On certain maps, talking with localized messages enabled caused a crash.
+ - Fixed SEF bug: Server crash under certain circumstances
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
 

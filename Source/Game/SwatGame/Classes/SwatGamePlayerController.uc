@@ -4693,7 +4693,7 @@ exec function Say( string Msg )
 
 	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled() && Pawn != None)
 	{
-		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomNameSafe()));
 	}
 	else
 	{
@@ -4720,7 +4720,7 @@ exec function TeamSay( string Msg )
 
 	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled())
 	{
-		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomNameSafe()));
 	}
 	else
 	{
