@@ -2469,7 +2469,7 @@ simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCh
         return;
     }
 
-	if(WantsZoom)
+	if(WantsZoom && !Item.IsA('Cuffs'))
 	    return; // Not allowed while zooming
 
 	// Determine if we are trying to check the lock or if we are trying to punch someone

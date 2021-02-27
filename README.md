@@ -513,6 +513,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * Some custom SWAT 4 (non-expansion) co-op missions used an objective set called "COOPClearTest". TSS removed this objective set and broke those missions. I have restored it. (Thanks to SS for the tip.)
  * Re-enabled Auto Downloads feature.
  * The player could control the officer viewport while reloading, switching weapons, or using an item. This allowed for an exploit where players could move while placing C2, arresting people, or picking a lock.
+ * Players could not melee with handcuffs after pressing zoom (despite zoom doing nothing)
 
 ## AI ##
   * Tons and tons of cut dialogue restored.

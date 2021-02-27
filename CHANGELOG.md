@@ -4,6 +4,7 @@
 
  - Added a new "Configuration" feature to the weapons. Instead of selecting a weapon and its attachments from the list of weapons, you can pick the attachments separately.
  - Improved meshes and/or textures on the following items, all of which were made by Beppe:
+  - Various doors throughout levels
   - M4A1 (changed from Brettzie's)
   - M870 Breacher (is now considered an attachment to the M870)
   - Nova Pump
@@ -37,6 +38,7 @@
  - Fixed SEF bug: Night vision goggles were missing their third person mesh.
  - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
+ - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
 
 ### v7
  
