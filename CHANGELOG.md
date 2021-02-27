@@ -1,4 +1,4 @@
-### v7.1 "The Shield Update"
+### v8.0 "The Shield Update"
 
 #### ALL CHANGES ####
 
@@ -14,12 +14,18 @@
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
  - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
  - When crosshairs are disabled, contextual icons such as door mirroring now appear. (thanks to wsevren for this fix)
+ - The scoring relating to suspects being neutralized has been changed:
+  - Suspects neutralized (max): 4 -> 10
+  - Suspects incapacitated (max): 13 -> 15
+  - Suspects arrested (max): No change; 20 -> 20
+ - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
  - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
  - Fixed SEF bug: Night vision goggles were missing their third person mesh.
  - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
+ - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
 
 ### v7
  

@@ -178,6 +178,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * All equipment has been modified to use real values.
  * Recoil is now affected by arm injuries.
  * Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
+ * A round is kept in the chamber when reloading all magazine-based weapons, except the Python. If you see your magazine going 1 above the maximum count, it isn't a bug, it's realism baby!
 
 **Doors behave more realistically**
  * You can check the lock of a door without opening it by pressing the melee key.
