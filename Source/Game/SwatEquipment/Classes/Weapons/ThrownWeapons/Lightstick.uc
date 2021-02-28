@@ -10,6 +10,8 @@ var config name FastThrowAnimation;
 
 var config class<LightstickProjectile> RedLightstickClass;
 var config class<LightstickProjectile> BlueLightstickClass;
+var config Material RedLightstickMaterial;
+var config Material BlueLightstickMaterial; 
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -132,6 +134,30 @@ simulated function bool ValidateUse( optional bool Prevalidate )
 		return Super.ValidateUse(Prevalidate);
 }
 
+// Lightsticks can change color of third person mesh too.
+simulated function OnGivenToOwner()
+{
+	if(Owner.IsA('OfficerBlueOne') || Owner.IsA('OfficerBlueTwo'))
+	{
+		ThirdPersonModel.Skins[0] = BlueLightstickMaterial;
+	}
+	else if(Owner.IsA('OfficerRedOne') || Owner.IsA('OfficerRedTwo'))
+	{
+		ThirdPersonModel.Skins[0] = RedLightstickMaterial;
+	}
+	else if(Owner.IsA('NetPlayer'))
+	{
+		if(NetPlayer(Owner).GetTeamNumber() == 0)
+		{
+			ThirdPersonModel.Skins[0] = BlueLightstickMaterial;
+		}
+		else
+		{
+			ThirdPersonModel.Skins[0] = RedLightstickMaterial;
+		}
+	}
+}
+
 // Lightsticks can mutate their projectile class based on the person who is throwing them --eez
 function class<actor> MutateProjectile()
 {
@@ -215,4 +241,6 @@ defaultproperties
 
 	RedLightstickClass=class'SwatEquipment.RedLightstickProjectile'
 	BlueLightstickClass=class'SwatEquipment.BlueLightstickProjectile'
+	RedLightstickMaterial=Material'GearTex_SEF.lightstickred_held'
+	BlueLightstickMaterial=Material'GearTex_SEF.lightstickblue_held'
 }
