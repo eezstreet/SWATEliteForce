@@ -31,6 +31,8 @@
   - Suspects arrested (max): No change; 20 -> 20
  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
  - Lightsticks never fall through the floor any more.
+ - Fixed SEF bug: Many ironsights were misaligned.
+ - Fixed SEF bug: Game would crash if exposed to CS gas
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
