@@ -567,10 +567,10 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Grenades and wedges now go back to your last used weapon after using one, instead of switching back to that item.
 
 ## GUI ##
-  * Training mission returns! New Features from the Expansion are gone.
+  * Training mission returns! New Features menu from the Expansion is gone.
   * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
   * "Mouse Smoothing" checkbox in Control Settings enables (default) or disables mouse smoothing.
-  * "Field of Vision" slider in Video Settings lets you change the field of vision.
+  * "Field of Vision" slider in Video Settings lets you change the field of vision. There's also one to control the first person weapon model's field of vision.
   * Mod version, wiki and Discord links are shown in the main menu.
   * Server browser has a button to download the server browser patch.
   * Loadout Menu (SP) has a button to apply current tab to Element, Team, or specific officer
@@ -594,6 +594,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
   * The menu will now show labels on stuff in widescreen resolution
   * You no longer need a CD-key to publish a game to the Internet server browser.
+  * Restored the vanilla SWAT 4 music (the TSS music is just reused from missions..)
 
 
 ## EQUIPMENT ##

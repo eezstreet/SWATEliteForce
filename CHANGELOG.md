@@ -24,6 +24,7 @@
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
  - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
+ - Restored the vanilla SWAT 4 menu music
  - When crosshairs are disabled, contextual icons such as door mirroring now appear. (thanks to wsevren for this fix)
  - The scoring relating to suspects being neutralized has been changed:
   - Suspects neutralized (max): 4 -> 10
@@ -32,7 +33,8 @@
  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
  - Lightsticks never fall through the floor any more.
  - Fixed SEF bug: Many ironsights were misaligned.
- - Fixed SEF bug: Game would crash if exposed to CS gas
+ - Fixed SEF bug: Game would crash if exposed to CS gas.
+ - Fixed SEF bug: Sometimes penalties would trigger when they weren't supposed to.
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
