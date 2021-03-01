@@ -1653,20 +1653,21 @@ simulated final protected function SetDesiredFlashlightState(bool DesireFlashlig
 {
     local FiredWeapon CurrentWeapon;
 
-	if (FlashlightShouldBeOn != DesireFlashlightOn)
+	if (FlashlightShouldBeOn == DesireFlashlightOn)
+		return;
+	
+	// We should only toggle the desired flashlight state if the current
+	// weapon actually has a flashlight. That way you won't unexpectly have
+	// your flashlight turned on when you switch to the MP5 from the (flashlight-less)
+	// Taser if you accidentally had pushed the flashlight toggle button with
+	// the taser equipped.
+	CurrentWeapon = FiredWeapon(GetActiveItem());
+	if (None != CurrentWeapon && CurrentWeapon.HasFlashlight())
 	{
-		// We should only toggle the desired flashlight state if the current
-		// weapon actually has a flashlight. That way you won't unexpectly have
-		// your flashlight turned on when you switch to the MP5 from the (flashlight-less)
-		// Taser if you accidentally had pushed the flashlight toggle button with
-		// the taser equipped.
-		CurrentWeapon = FiredWeapon(GetActiveItem());
-		if (None != CurrentWeapon && CurrentWeapon.HasFlashlight())
-		{
-			FlashlightShouldBeOn = DesireFlashlightOn;
-			UpdateFlashlight();
-		}
+		FlashlightShouldBeOn = DesireFlashlightOn;
+		UpdateFlashlight();
 	}
+	
 }
 
 simulated final protected function SetDesiredNightvisionState(bool DesireOn)
