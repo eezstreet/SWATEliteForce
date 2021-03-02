@@ -722,17 +722,27 @@ private function InternalComboBoxOnSelection(GUIComponent Sender)
         case MyWeaponCategoryBox:
             if(!SwitchedTabs)
             {
+                MyWeaponAttachmentBox.Clear();
                 RepopulateWeaponInformationForNewCategory(WeaponEquipClass(GUIComboBox(Sender).List.GetExtraIntData()));
             }
             break;
 
-        case MyWeaponAttachmentBox: 
+        case MyWeaponAttachmentBox:
+          if(PopulatingWeaponInformation)
+			     {
+				      break;
+			     }
             AttachmentBeingSelected = true;
         case MyWeaponBox: // intentional fallthrough here
 			     if(PopulatingWeaponInformation)
 			     {
 				      break;
 			     }
+
+           if(!AttachmentBeingSelected)
+           {
+             MyWeaponAttachmentBox.Clear();
+           }
 
             SwitchedWeapons = true;
 
@@ -867,6 +877,7 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
 
 
   //log("Easiest thing first: populate ammo box with the ammo choices...");
+  AttachmentBeingSelected = false;
   RepopulateAmmoInformationForNewWeapon(CurrentWeapon);
 
   //log("Then, select the appropriate ammo type as the default...");
@@ -991,7 +1002,10 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
   local int i, j;
   local class<SwatAmmo> Ammo;
 
+  log("RepopulateAmmoInformationForNewWeapon("$TheNewWeapon$")");
+
   if(!AttachmentBeingSelected) {
+    log('clearing attachments');
     MyWeaponAttachmentBox.List.Clear();
 
     if(TheNewWeapon.default.SelectableVariants.length > 0) {
@@ -1002,6 +1016,7 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
       // Populate list of variants
       MyWeaponAttachmentBox.AddItem(TheNewWeapon.default.NoVariantName, None);
       for(i = 0; i < TheNewWeapon.default.SelectableVariants.length; i++) {
+        log("Add attachment: "$TheNewWeapon.default.SelectableVariants[i].VariantClass);
         MyWeaponAttachmentBox.AddItem(TheNewWeapon.default.SelectableVariants[i].VariantName, TheNewWeapon.default.SelectableVariants[i].VariantClass);
       }
 
