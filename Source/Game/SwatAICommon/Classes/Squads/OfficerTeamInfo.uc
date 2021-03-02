@@ -1724,6 +1724,34 @@ function bool Secure(Pawn CommandGiver, vector CommandOrigin, Actor SecureTarget
 	return false;
 }
 
+// Returns true if this team (AND ONLY THIS TEAM) is securing the target.
+function bool IsTeamSecuring(Actor SecureTarget)
+{
+	local SquadSecureGoal CurrentSquadSecureGoal;
+
+	CurrentSquadSecureGoal = SquadSecureGoal(CurrentSquadCommandGoal);
+
+	if(CurrentSquadSecureGoal != None && !CurrentSquadSecureGoal.hasCompleted() && CurrentSquadSecureGoal.IsASecureTarget(SecureTarget))
+	{
+		return true;
+	}
+	return false;
+}
+
+// Returns true if ANY TEAM is securing the target.
+function bool IsBeingSecured(Actor SecureTarget)
+{
+	if(IsTeamSecuring(SecureTarget))
+	{
+		return true;
+	}
+	else if(IsSubElement() && GetOtherTeam().IsTeamSecuring(SecureTarget))
+	{
+		return true;
+	}
+	return false;
+}
+
 function bool Restrain(Pawn CommandGiver, vector CommandOrigin, Pawn TargetPawn)
 {
 	return Secure(CommandGiver, CommandOrigin, TargetPawn);

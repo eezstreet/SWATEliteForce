@@ -641,6 +641,11 @@ function TriggerCoveringTargetSpeech()
 	TriggerSpeech('CoveredCompliedUnrestrained');
 }
 
+function TriggerAskedLeadToRestrainSpeech()
+{
+	TriggerSpeech('AskedLeadToRestrain');
+}
+
 function TriggerElementReportedSpeech()
 {
 	TriggerSpeech('ElementReported');

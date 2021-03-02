@@ -115,7 +115,7 @@ function RemoveSecureTarget(Actor SecureTarget)
 	}
 }
 
-private function bool IsASecureTarget(Actor TestSecureTarget)
+function bool IsASecureTarget(Actor TestSecureTarget)
 {
 	local int i;
 

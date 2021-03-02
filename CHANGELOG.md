@@ -44,6 +44,7 @@
  - Fixed SEF bug: On certain maps, talking with localized messages enabled caused a crash.
  - Fixed SEF bug: Server crash under certain circumstances
  - Fixed SEF bug: Lightsticks are green on the belt and in third person hands, but are blue/red when thrown.
+ - Fixed SEF bug: Officers ask you to "break out the cuffs" if you are holding cuffs or someone else is securing the person in question.
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
 

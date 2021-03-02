@@ -37,6 +37,20 @@ function SetPawn(Pawn inPawn)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// Utilities
+function OfficerTeamInfo GetCurrentTeam()
+{
+	local SwatAIRepository SwatAIRepo;
+
+	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+
+	if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(m_Pawn))
+		return SwatAIRepo.GetRedSquad();
+	return SwatAIRepo.GetBlueSquad();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // Senses
 
 function DisableSenses(optional bool bPermanently)
