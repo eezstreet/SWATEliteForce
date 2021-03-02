@@ -573,11 +573,23 @@ simulated function ReceiveLoadOut(OfficerLoadOut inLoadOut)
 simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
 {
     //mplog( self$"---SwatPlayer::SetPlayerSkins()." );
+    local Hands hands;
+    local Material handsSkin;
 
     Skins[0] = inLoadOut.GetPantsMaterial();
     Skins[1] = inLoadOut.GetFaceMaterial();
     Skins[2] = inLoadOut.GetNameMaterial();
     Skins[3] = inLoadOut.GetVestMaterial();
+
+    hands = GetHands();
+    if(hands != None)
+    {
+        handsSkin = inLoadOut.GetHandsMaterial();
+        if(handsSkin != None)
+        {
+            hands.Skins[0] = handsSkin;
+        }
+    }
 
     //mplog( "...Skins[0]="$Skins[0] );
     //mplog( "...Skins[1]="$Skins[1] );

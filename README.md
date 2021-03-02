@@ -566,6 +566,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Added a new quality: Polite. Any suspect archetype with this quality won't attempt to shoot hostages.
   * Added a new quality: Insane. Any suspect archetype with this quality will shoot hostages *much* faster (basically instantly) and ignores distance checks.
   * Grenades and wedges now go back to your last used weapon after using one, instead of switching back to that item.
+  * Custom player skins can now override the first person hands texture.
 
 ## GUI ##
   * Training mission returns! New Features menu from the Expansion is gone.

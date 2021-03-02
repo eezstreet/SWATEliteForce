@@ -13,6 +13,7 @@ var(CustomSkin) Config Material HeavyPantsMaterial;
 var(CustomSkin) Config Material VestMaterial;
 var(CustomSkin) Config Material HeavyVestMaterial;
 var(CustomSkin) Config Material NoArmorVestMaterial;
+var(CustomSkin) Config Material FirstPersonHandsMaterial;
 
 static function string GetFriendlyName()
 {

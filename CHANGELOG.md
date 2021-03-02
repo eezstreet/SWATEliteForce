@@ -37,6 +37,7 @@
  - The target acquisition mechanics have been altered:
   - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
   - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
+ - Custom skins can now alter the first person hands texture.
  - Fixed SEF bug: Many ironsights were misaligned.
  - Fixed SEF bug: Game would crash if exposed to CS gas.
  - Fixed SEF bug: Sometimes penalties would trigger when they weren't supposed to.

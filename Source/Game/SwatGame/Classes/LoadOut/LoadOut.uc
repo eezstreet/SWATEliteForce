@@ -736,6 +736,18 @@ simulated function Material GetPantsMaterial()
         return GetMaterial(MaterialPocket.MATERIAL_Pants);
 }
 
+simulated function Material GetHandsMaterial()
+{
+    local class<SwatCustomSkin> SkinClass;
+
+    SkinClass = class<SwatCustomSkin>(DynamicLoadObject(CustomSkinSpec, class'Class', true));
+
+    if(SkinClass != None)
+    {
+        return SkinClass.default.FirstPersonHandsMaterial;
+    }
+}
+
 simulated function Material GetCustomMaterial( MaterialPocket pock )
 {
 	local class<SwatCustomSkin> SkinClass;
