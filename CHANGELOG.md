@@ -32,6 +32,7 @@
   - Suspects arrested (max): No change; 20 -> 20
  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
  - Lightsticks never fall through the floor any more.
+ - The toolkit and detonator no longer have weight/bulk, to eliminate discrepencies between the equipment screen and ingame weight.
  - Fixed SEF bug: Many ironsights were misaligned.
  - Fixed SEF bug: Game would crash if exposed to CS gas.
  - Fixed SEF bug: Sometimes penalties would trigger when they weren't supposed to.
