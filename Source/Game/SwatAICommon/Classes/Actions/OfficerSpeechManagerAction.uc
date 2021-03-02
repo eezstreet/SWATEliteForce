@@ -107,8 +107,6 @@ function TriggerSuspectWontComplySpeech(Pawn Suspect)
 // Hostages
 function TriggerHostageSpottedSpeech(Pawn Hostage)
 {
-	assert(Hostage.IsA('SwatHostage'));
-
 	TriggerSpeech('ReportedCivilianSpotted', true);
 }
 

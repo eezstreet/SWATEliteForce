@@ -3,8 +3,11 @@
 #### ALL CHANGES ####
 
  - Added a new "Configuration" feature to the weapons. Instead of selecting a weapon and its attachments from the list of weapons, you can pick the attachments separately.
+ - All suppressed and Aimpoint version of weapons are now different selectable configurations.
+ - Remington 870 Breaching is now a selectable configuration of the Remington 870.
  - Improved meshes and/or textures on the following items, all of which were made by Beppe:
   - Various doors throughout levels
+  - First person hands
   - M4A1 (changed from Brettzie's)
   - M870 Breacher (is now considered an attachment to the M870)
   - Nova Pump
@@ -16,8 +19,6 @@
   - SCAR-L
   - MP5
   - G36K
- - All suppressed and Aimpoint version of weapons are now different selectable configurations.
- - Remington 870 Breaching is now a selectable configuration of the Remington 870.
  - Added Holographic Sight variants for M4A1, UMP, MP5, G36K and M4Super90. (Thanks to Beppe for these models)
  - Added unsilenced version of the Colt Accurized Rifle.
  - Added CQB M4A1 variants (Thanks to Beppe for these models)
@@ -33,6 +34,9 @@
  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
  - Lightsticks never fall through the floor any more.
  - The toolkit and detonator no longer have weight/bulk, to eliminate discrepencies between the equipment screen and ingame weight.
+ - The target acquisition mechanics have been altered:
+  - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
+  - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
  - Fixed SEF bug: Many ironsights were misaligned.
  - Fixed SEF bug: Game would crash if exposed to CS gas.
  - Fixed SEF bug: Sometimes penalties would trigger when they weren't supposed to.

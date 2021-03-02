@@ -135,6 +135,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * Suspects may now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
  * Suspects have new equipment and may equip heavy armor.
  * Civilians may give up easier if they spot a suspect or a civilian being pepper sprayed, hit with beanbags, etc.
+ * Suspects who have no visible weapons will be treated like civilians to SWAT (including in mirror results)
 
 **Smarter Officer AI!**
  * Upon restraining a target, SWAT officers will now report it to TOC automatically!
