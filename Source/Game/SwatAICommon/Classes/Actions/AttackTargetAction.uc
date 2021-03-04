@@ -344,7 +344,15 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 
+	// suspects don't care if they need to acquire a target perfectly
+	if(m_Pawn.IsA('SwatEnemy'))
+	{
+		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
+	}
+	else
+	{	// SWAT need perfect aim!
 		LatentAimAtActor(Target);
+	}
 
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;

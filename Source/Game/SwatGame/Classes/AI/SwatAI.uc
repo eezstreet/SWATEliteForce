@@ -2067,60 +2067,65 @@ simulated function SEFDebugSensor()
   bDebugSensor = !bDebugSensor;
 }
 
+simulated function bool CanHitEx(Actor Target, optional bool IgnoreStaticMeshes)
+{
+	local FiredWeapon TheWeapon;
+	local bool Value;
+	local vector MuzzleLocation, EndTrace, StartTrace;
+	local rotator MuzzleDirection;
+
+	TheWeapon = FiredWeapon(GetActiveItem());
+
+	/*
+	// The below code seems to be janky, but what the game actually tends to use for aiming at things.
+	// Maybe we should be using stuff like GetAimOrigin() to get the actual position?
+	if (CurrentWeaponTarget != None)
+	{
+		EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
+	}
+	else if(!TheWeapon.bIsLessLethal)
+	{
+		EndTrace = CurrentWeaponTargetLocation;
+	}
+	else
+	{
+		EndTrace = Target.Location;
+	}
+	*/
+
+	EndTrace = Target.Location;
+
+	if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
+	{
+		Value = false;
+	}
+	else
+	{
+		Value = true;
+	}
+
+	if(bDebugSensor)
+	{
+		TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+		StartTrace = GetEyeLocation();
+		EndTrace = Pawn(Target).GetChestLocation();
+
+		if(Value)
+		{
+		Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+		}
+		else
+		{
+		Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+		}
+	}
+
+	return Value;
+}
+
 event bool CanHit(Actor Target)
 {
-  local FiredWeapon TheWeapon;
-  local bool Value;
-  local vector MuzzleLocation, EndTrace, StartTrace;
-  local rotator MuzzleDirection;
-
-  TheWeapon = FiredWeapon(GetActiveItem());
-
-  /*
-  // The below code seems to be janky, but what the game actually tends to use for aiming at things.
-  // Maybe we should be using stuff like GetAimOrigin() to get the actual position?
-  if (CurrentWeaponTarget != None)
-  {
-      EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
-  }
-  else if(!TheWeapon.bIsLessLethal)
-  {
-      EndTrace = CurrentWeaponTargetLocation;
-  }
-  else
-  {
-    EndTrace = Target.Location;
-  }
-  */
-
-  EndTrace = Target.Location;
-
-  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
-  {
-    Value = false;
-  }
-  else
-  {
-    Value = true;
-  }
-
-  if(bDebugSensor)
-  {
-    TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
-	StartTrace = GetEyeLocation();
-    EndTrace = Pawn(Target).GetChestLocation();
-
-    if(Value)
-    {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
-    }
-    else
-    {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
-    }
-  }
-
-  return Value;
+  return CanHitEx(Target, false);
 }
 
 function bool HasUsableWeapon()
@@ -2311,7 +2316,7 @@ simulated private function bool CanHitCurrentTarget()
 {
 	if (CurrentWeaponTarget != None)
 	{
-		return CanHit(CurrentWeaponTarget);
+		return CanHitEx(CurrentWeaponTarget, true);
 	}
 	else
 	{

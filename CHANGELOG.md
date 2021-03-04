@@ -1,4 +1,4 @@
-### v8.0 "The Shield Update"
+### v7.1
 
 #### ALL CHANGES ####
 
@@ -51,6 +51,8 @@
  - Fixed SEF bug: Server crash under certain circumstances
  - Fixed SEF bug: Lightsticks are green on the belt and in third person hands, but are blue/red when thrown.
  - Fixed SEF bug: Officers ask you to "break out the cuffs" if you are holding cuffs or someone else is securing the person in question.
+ - Fixed SEF bug: Suspects wouldn't shoot at doors when barricaded (thanks to sandman332 for the fix)
+ - Fixed SEF bug: You could juke suspects (especially low skill ones) by moving in zigzags etc. Now, they will always fire after a period of time, even if their target is not perfectly acquired.
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
 
