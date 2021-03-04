@@ -515,6 +515,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * Re-enabled Auto Downloads feature.
  * The player could control the officer viewport while reloading, switching weapons, or using an item. This allowed for an exploit where players could move while placing C2, arresting people, or picking a lock.
  * Players could not melee with handcuffs after pressing zoom (despite zoom doing nothing)
+ * Players on the red team using the default skin looked like suspects
 
 ## AI ##
   * Tons and tons of cut dialogue restored.

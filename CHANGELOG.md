@@ -57,6 +57,7 @@
  - Fixed SEF bug: You could juke suspects (especially low skill ones) by moving in zigzags etc. Now, they will always fire after a period of time, even if their target is not perfectly acquired.
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
+ - Fixed TSS bug: Players on the red team look like suspects with the default skin
 
 ### v7
  
