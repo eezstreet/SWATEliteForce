@@ -31,12 +31,14 @@
   - Suspects neutralized (max): 4 -> 10
   - Suspects incapacitated (max): 13 -> 15
   - Suspects arrested (max): No change; 20 -> 20
+ - Toolkit interactions have been made slower to encourage breaching:
+  - Lockpick (base): 4 seconds -> 20 seconds
+  - Bomb Defuse (base): 4 seconds -> 10 seconds
  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
  - Lightsticks never fall through the floor any more.
  - The toolkit and detonator no longer have weight/bulk, to eliminate discrepencies between the equipment screen and ingame weight.
- - The target acquisition mechanics have been altered:
-  - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
-  - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
+ - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
+ - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
  - Custom skins can now alter the first person hands texture.
  - Fixed SEF bug: Many ironsights were misaligned.
  - Fixed SEF bug: Game would crash if exposed to CS gas.
