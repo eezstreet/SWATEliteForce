@@ -36,12 +36,12 @@ var config float						MediumSkillMaxTimeToFireFullAuto;
 var config float						HighSkillMinTimeToFireFullAuto;
 var config float						HighSkillMaxTimeToFireFullAuto;
 
-const            LowSkillMinTimeBeforeShooting = 0.65;
-const            LowSkillMaxTimeBeforeShooting = 0.9;
-const            MediumSkillMinTimeBeforeShooting = 0.5;
-const            MediumSkillMaxTimeBeforeShooting = 0.65;
-const            HighSkillMinTimeBeforeShooting = 0.3;
-const            HighSkillMaxTimeBeforeShooting = 0.45;
+const            LowSkillMinTimeBeforeShooting = 0.8;
+const            LowSkillMaxTimeBeforeShooting = 1.3;
+const            MediumSkillMinTimeBeforeShooting = 0.7;
+const            MediumSkillMaxTimeBeforeShooting = 1.0;
+const            HighSkillMinTimeBeforeShooting = 0.4;
+const            HighSkillMaxTimeBeforeShooting = 0.8;
 
 var config float						MinDistanceToAffectMoraleOfOtherEnemiesUponDeath;
 
