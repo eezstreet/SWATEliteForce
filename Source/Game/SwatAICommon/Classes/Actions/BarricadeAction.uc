@@ -504,6 +504,7 @@ latent function ShootAtOpeningDoor()
 	AttackDoorGoal = new class'AttackTargetGoal'(weaponResource(), DoorOpening);
 	assert(AttackDoorGoal != None);
 	AttackDoorGoal.AddRef();
+	AttackDoorGoal.SetSuppressiveFire(true);
 
 	AttackDoorGoal.postGoal(self);
 	// do some speech

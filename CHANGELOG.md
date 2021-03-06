@@ -58,6 +58,7 @@
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
  - Fixed TSS bug: Players on the red team look like suspects with the default skin
+ - Fixed TSS bug: Contextual HUD reticles (lockpick, wedge, etc) would stretch massively in widescreen resolutions and look ugly.
 
 ### v7
  
