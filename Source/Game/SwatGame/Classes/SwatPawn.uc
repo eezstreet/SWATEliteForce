@@ -183,6 +183,7 @@ var private const transient Map<Name, PawnDoorKnowledge> DoorKnowledgeMap;
 // Flashlight state
 var private bool FlashlightShouldBeOn; // Does the pawn want its flashlights on or off?
 var private bool NightvisionShouldBeOn;
+var private bool FlashlightIsOn; //actual state of the flashlight
 
 // Low ready state variables
 var protected bool                  bIsLowReady;
@@ -1602,6 +1603,11 @@ simulated final event bool GetDesiredFlashlightState()
     return FlashlightShouldBeOn;
 }
 
+simulated final event bool GetFlashlightState() //return the actual flashlight state of the pawn
+{
+	return FlashlightIsOn;
+}
+
 simulated function float GetDelayBeforeFlashlightShutoff()
 {
     if (isIncapacitated() || isDead())
@@ -1666,6 +1672,11 @@ simulated final protected function SetDesiredFlashlightState(bool DesireFlashlig
 	{
 		FlashlightShouldBeOn = DesireFlashlightOn;
 		UpdateFlashlight();
+		FlashlightIsOn=true;
+	}
+	else
+	{
+		FlashlightIsOn=false;
 	}
 	
 }
@@ -2162,6 +2173,7 @@ defaultproperties
     // Flashlights off by default
     FlashlightShouldBeOn=false
     NightvisionShouldBeOn=false
+    FlashlightIsOn=false
 
     // Shadows
     ShadowLightDistance			= 200
