@@ -449,7 +449,7 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 			RandomChance = 1.0 - FRand();
 			
 			//if the ComplianceIssuer Officer has flashlight on with a weapon equipped 
-			if ( ComplierIssuer.isA('SwatOfficer') &&  SwatPawn(ComplianceIssuer).GetDesiredFlashlightState() && SwatPawn(ComplianceIssuer).hasFiredWeaponEquipped() )
+			if ( ComplierIssuer.isA('SwatOfficer') &&  SwatPawn(ComplianceIssuer).GetFlashlightState() && SwatPawn(ComplianceIssuer).hasFiredWeaponEquipped() )
 			{
 				RandomChance = RandomChance + FlashlightOnChanceModifier;
 			}
