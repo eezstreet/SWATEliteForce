@@ -74,6 +74,7 @@ var config float						MinReactToGunshotDistance;
 
 const kMoveAwayFromLocationGoalPriority = 94;
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Initialization
@@ -428,6 +429,7 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 {
 	local bool bWillComply;
 	local float RandomChance;
+        local float FlashlightOnChanceModifier = 0.2;
 
 	if (m_Pawn.logAI)
 		log("Compliance issued from: "$ComplianceIssuer.Name$" to: "$m_Pawn.name);
@@ -445,7 +447,13 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 			// if the percentage chance (1 - Frand()) is greater than the current morale, we will comply
 			// otherwise we do nothing
 			RandomChance = 1.0 - FRand();
-
+			
+			//if the ComplianceIssuer Officer has flashlight on with a weapon equipped 
+			if ( ComplierIssuer.isA('SwatOfficer') &&  SwatPawn(ComplianceIssuer).GetDesiredFlashlightState() && SwatPawn(ComplianceIssuer).hasFiredWeaponEquipped() )
+			{
+				RandomChance = RandomChance + FlashlightOnChanceModifier;
+			}
+			
 			if (RandomChance >= GetCurrentMorale())
 			{
 				if (m_Pawn.logAI)
