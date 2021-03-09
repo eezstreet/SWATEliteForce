@@ -29,22 +29,25 @@ var config float						LowSkillAdditionalBaseAimError;
 var config float						MediumSkillAdditionalBaseAimError;
 var config float						HighSkillAdditionalBaseAimError;
 
+/*
 var config float						LowSkillMinTimeToFireFullAuto;
 var config float						LowSkillMaxTimeToFireFullAuto;
 var config float						MediumSkillMinTimeToFireFullAuto;
 var config float						MediumSkillMaxTimeToFireFullAuto;
 var config float						HighSkillMinTimeToFireFullAuto;
 var config float						HighSkillMaxTimeToFireFullAuto;
+*/
+var float unused1;
+var float unused2;
+var float unused3;
+var float unused4;
+var float unused5;
+var float unused6;
 
-const            LowSkillMinTimeBeforeShooting = 1.0;
-const            LowSkillMaxTimeBeforeShooting = 1.7;
-const            MediumSkillMinTimeBeforeShooting = 0.9;
-const            MediumSkillMaxTimeBeforeShooting = 1.3;
-const            HighSkillMinTimeBeforeShooting = 0.6;
-const            HighSkillMaxTimeBeforeShooting = 1.0;
+//var config float						MinDistanceToAffectMoraleOfOtherEnemiesUponDeath;
+var float unused7;
 
-var config float						MinDistanceToAffectMoraleOfOtherEnemiesUponDeath;
-
+/*
 var config array<name>					ThrowWeaponDownAnimationsHG;
 var config array<name>					ThrowWeaponDownAnimationsMG;
 var config array<name>					ThrowWeaponDownAnimationsSMG;
@@ -53,12 +56,15 @@ var config array<name>					ThrowWeaponDownAnimationsSG;
 var config float						LowSkillFullBodyHitChance;
 var config float						MediumSkillFullBodyHitChance;
 var config float						HighSkillFullBodyHitChance;
+*/
+var array<name> unused8;
+var array<name> unused9;
+var array<name> unused10;
+var array<name> unused11;
 
-//can't run game with these vars compiled in; throws a
-//'native class size does not match scripted class size' error -K.F.
-//var config float						LowSkillComplyInstantDropChance;
-//var config float						MediumSkillComplyInstantDropChance;
-//var config float						HighSkillComplyInstantDropChance;
+var float unused12;
+var float unused13;
+var float unused14;
 
 var bool								bEnteredFleeSafeguard;
 
@@ -372,15 +378,15 @@ function bool ShouldPlayFullBodyHitAnimation()
 	switch(Skill)
 	{
 		case EnemySkill_High:
-			Chance = HighSkillFullBodyHitChance;
+			Chance = class'SwatEnemyConfig'.default.HighSkillFullBodyHitChance;
 			break;
 
 		case EnemySkill_Medium:
-			Chance = MediumSkillFullBodyHitChance;
+			Chance = class'SwatEnemyConfig'.default.MediumSkillFullBodyHitChance;
 			break;
 
 		case EnemySkill_Low:
-			Chance = LowSkillFullBodyHitChance;
+			Chance = class'SwatEnemyConfig'.default.LowSkillFullBodyHitChance;
 			break;
 	}
 
@@ -577,7 +583,7 @@ simulated function NotifyNearbyEnemiesOfDeath(Pawn Killer)
 	{
 		if ((Iter != self) && Iter.IsA('SwatEnemy') && SwatEnemy(Iter).IsConscious())
 		{
-			if ((VSize2D(Iter.Location - Location) < MinDistanceToAffectMoraleOfOtherEnemiesUponDeath) &&
+			if ((VSize2D(Iter.Location - Location) < class'SwatEnemyConfig'.default.MinDistanceToAffectMoraleOfOtherEnemiesUponDeath) &&
 				LineOfSightTo(Iter))
 			{
         if(Killer.IsA('SwatOfficer') || Killer.IsA('SwatPlayer') || Killer.IsA('NetPlayer'))
@@ -1007,21 +1013,21 @@ simulated private function name GetThrowWeaponDownAnimation()
 {
 	if (GetActiveItem().IsA('Handgun'))
 	{
-		return ThrowWeaponDownAnimationsHG[Rand(ThrowWeaponDownAnimationsHG.Length)];
+		return class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsHG[Rand(class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsHG.Length)];
 	}
 	else if (GetActiveItem().IsA('MachineGun'))
 	{
-		return ThrowWeaponDownAnimationsMG[Rand(ThrowWeaponDownAnimationsMG.Length)];
+		return class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsMG[Rand(class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsMG.Length)];
 	}
 	else if (GetActiveItem().IsA('SubMachineGun'))
 	{
-		return ThrowWeaponDownAnimationsSMG[Rand(ThrowWeaponDownAnimationsSMG.Length)];
+		return class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsSMG[Rand(class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsSMG.Length)];
 	}
 	else
 	{
 		assert(GetActiveItem().IsA('Shotgun'));
 
-		return ThrowWeaponDownAnimationsSG[Rand(ThrowWeaponDownAnimationsSG.Length)];
+		return class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsSG[Rand(class'SwatEnemyConfig'.default.ThrowWeaponDownAnimationsSG.Length)];
 	}
 }
 
@@ -1061,13 +1067,13 @@ function bool ShouldDropWeaponInstantly()
 		//FullyBodyHitChance vars as a temporary hack
 		case EnemySkill_High:
 			//Chance = HighSkillComplyInstantDropChance;
-			Chance = HighSkillFullBodyHitChance;
+			Chance = class'SwatEnemyConfig'.default.HighSkillFullBodyHitChance;
 		case EnemySkill_Medium:
 			//Chance = MediumSkillComplyInstantDropChance;
-			Chance = MediumSkillFullBodyHitChance;
+			Chance = class'SwatEnemyConfig'.default.MediumSkillFullBodyHitChance;
 		case EnemySkill_Low:
 			//Chance = LowSkillComplyInstantDropChance;
-			Chance = LowSkillFullBodyHitChance;
+			Chance = class'SwatEnemyConfig'.default.LowSkillFullBodyHitChance;
 	}
 	return (FRand() < Chance);
 }
@@ -1100,7 +1106,7 @@ function UnbecomeAThreat() //Not imaginative name, I know -J21C
 		bThreat = false;
 
 		// notify the hive that we've become a threat (so Officers deal with us appropriately)
-		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyBecameThreat(self);
+		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyUnbecameThreat(self);
 	}
 }
 
@@ -1159,11 +1165,11 @@ function float GetTimeToWaitBeforeFiring()
   switch(Skill)
   {
     case EnemySkill_High:
-      return RandRange(HighSkillMinTimeBeforeShooting, HighSkillMaxTimeBeforeShooting);
+      return RandRange(class'SwatEnemyConfig'.default.HighSkillMinTimeBeforeShooting, class'SwatEnemyConfig'.default.HighSkillMaxTimeBeforeShooting);
     case EnemySkill_Medium:
-      return RandRange(MediumSkillMinTimeBeforeShooting, MediumSkillMaxTimeBeforeShooting);
+      return RandRange(class'SwatEnemyConfig'.default.MediumSkillMinTimeBeforeShooting, class'SwatEnemyConfig'.default.MediumSkillMaxTimeBeforeShooting);
     case EnemySkill_Low:
-      return RandRange(LowSkillMinTimeBeforeShooting, LowSkillMaxTimeBeforeShooting);
+      return RandRange(class'SwatEnemyConfig'.default.LowSkillMinTimeBeforeShooting, class'SwatEnemyConfig'.default.LowSkillMaxTimeBeforeShooting);
   }
 }
 
@@ -1173,13 +1179,13 @@ protected function float GetLengthOfTimeToFireFullAuto()
 	switch(Skill)
 	{
 		case EnemySkill_High:
-			return RandRange(HighSkillMinTimeToFireFullAuto, HighSkillMaxTimeToFireFullAuto);
+			return RandRange(class'SwatEnemyConfig'.default.HighSkillMinTimeToFireFullAuto, class'SwatEnemyConfig'.default.HighSkillMaxTimeToFireFullAuto);
 
 		case EnemySkill_Medium:
-			return RandRange(MediumSkillMinTimeToFireFullAuto, MediumSkillMaxTimeToFireFullAuto);
+			return RandRange(class'SwatEnemyConfig'.default.MediumSkillMinTimeToFireFullAuto, class'SwatEnemyConfig'.default.MediumSkillMaxTimeToFireFullAuto);
 
 		case EnemySkill_Low:
-			return RandRange(LowSkillMinTimeToFireFullAuto, LowSkillMaxTimeToFireFullAuto);
+			return RandRange(class'SwatEnemyConfig'.default.LowSkillMinTimeToFireFullAuto, class'SwatEnemyConfig'.default.LowSkillMaxTimeToFireFullAuto);
 	}
 }
 
