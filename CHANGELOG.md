@@ -20,7 +20,7 @@
   - MP5
   - G36K
  - Added Holographic Sight variants for M4A1, UMP, MP5, G36K and M4Super90. (Thanks to Beppe for these models)
- - Added unsilenced version of the Colt Accurized Rifle.
+ - Added unsilenced version of the Colt Accurized Rifle. (Thanks to Beppe for this)
  - Added CQB M4A1 variants (Thanks to Beppe for these models)
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
@@ -34,8 +34,9 @@
  - Toolkit interactions have been made slower to encourage breaching:
   - Lockpick (base): 4 seconds -> 20 seconds
   - Bomb Defuse (base): 4 seconds -> 10 seconds
- - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 21/20. This is intentional, not a bug. Thanks to beppe for the fix.)
- - Lightsticks never fall through the floor any more.
+ - Added a threat cooldown. If a suspect was just firing at you and the suspect surrenders/was stunned/flees (if not Insane), there is a small window of time that you are legally allowed to shoot.
+ - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 20 + 1/20. This is intentional, not a bug. Thanks to beppe for the idea.)
+ - Lightsticks never fall through the floor any more. (thanks to Beppe for the fix)
  - The toolkit and detonator no longer have weight/bulk, to eliminate discrepencies between the equipment screen and ingame weight.
  - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
  - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.

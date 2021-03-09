@@ -45,7 +45,7 @@ var float unused5;
 var float unused6;
 
 //var config float						MinDistanceToAffectMoraleOfOtherEnemiesUponDeath;
-var float unused7;
+var protected Timer ThreatTimer;
 
 /*
 var config array<name>					ThrowWeaponDownAnimationsHG;
@@ -1084,6 +1084,7 @@ function bool ShouldDropWeaponInstantly()
 
 function BecomeAThreat()
 {
+	ThreatTimer.StopTimer(); // don't unbecome a threat if we just became a threat
 	if (! bThreat)
 	{
 //		if (logTyrion)
@@ -1096,18 +1097,31 @@ function BecomeAThreat()
 	}
 }
 
-function UnbecomeAThreat() //Not imaginative name, I know -J21C
+function UnbecomeAThreat(optional bool bAfterTime, optional float Delay) //Not imaginative name, I know -J21C
 {
 	if (bThreat)
 	{
-//		if (logTyrion)
-			log(Name $ " is not a Threat anymore!");
-
-		bThreat = false;
-
-		// notify the hive that we've become a threat (so Officers deal with us appropriately)
-		SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyUnbecameThreat(self);
+		if(bAfterTime)
+		{
+			if(ThreatTimer == None)
+			{
+				ThreatTimer = new class'Timer';
+				ThreatTimer.TimerDelegate = FinishedThreatTimer;
+			}
+			ThreatTimer.StartTimer(Delay, false);
+		}
+		else
+		{
+			FinishedThreatTimer();
+		}
 	}
+}
+
+simulated function FinishedThreatTimer()
+{
+	log(Name $ " is not a Threat anymore!");
+	bThreat = false;
+	SwatAIRepository(Level.AIRepo).GetHive().NotifyEnemyUnbecameThreat(self);
 }
 
 function bool IAmThreat()

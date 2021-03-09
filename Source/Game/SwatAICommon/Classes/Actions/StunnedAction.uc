@@ -17,6 +17,7 @@ import enum EUpperBodyAnimBehaviorClientId from UpperBodyAnimBehaviorClients;
 // Variables
 
 var config private float				MinRequiredFleeDistanceFromOfficer;	// the minimum distance between us and the closest officer to be able to flee
+var config private float                ThreatCooldown;
 
 // behaviors we use
 var private MoveToActorGoal CurrentMoveToActorGoal;
@@ -86,7 +87,7 @@ function initAction(AI_Resource r, AI_Goal goal)
 	}
 	if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
 	{
-		ISwatEnemy(m_Pawn).UnbecomeAThreat();
+		ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
 	}
 	// if we're running on an hostage, let the hive know -J21C
 	if (m_Pawn.IsA('SwatHostage'))
@@ -714,4 +715,5 @@ defaultproperties
 {
     satisfiesGoal = class'StunnedGoal'
     MinRequiredFleeDistanceFromOfficer = 200.0
+	ThreatCooldown = 2.0
 }

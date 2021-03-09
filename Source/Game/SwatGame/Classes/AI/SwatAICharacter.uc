@@ -251,7 +251,7 @@ protected function bool ShouldReactToNonLethals()
 
 ///////////////////////////////////////
 
-function UnbecomeAThreat();
+function UnbecomeAThreat(optional bool UseCooldown, optional float CooldownDuration);
 
 ///////////////////////////////////////////////////////////////////////////////
 

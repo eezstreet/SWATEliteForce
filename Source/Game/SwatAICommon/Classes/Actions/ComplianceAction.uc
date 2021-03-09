@@ -38,6 +38,8 @@ var private bool		bJustComplied;
 
 const kPostComplianceGoalPriority = 91;	// lower than being stunned or shot
 
+var config float        ThreatCooldown;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Init / Cleanup
@@ -197,7 +199,7 @@ latent final function Comply()
 		// make sure we are not a threat anymore
 		if (m_Pawn.IsA('SwatEnemy') && ISwatEnemy(m_Pawn).IsAThreat())
 		{
-			Enemy.UnbecomeAThreat();
+			Enemy.UnbecomeAThreat(true, ThreatCooldown);
 		}
 	}
 }
@@ -244,4 +246,5 @@ state Running
 defaultproperties
 {
 	satisfiesGoal=class'ComplianceGoal'
+	ThreatCooldown=2.0
 }
