@@ -68,7 +68,7 @@ function GrenadeGotDetonated(Pawn PawnThrower, EquipmentSlot ThrownItemSlot) {
 		PostGrenadeThrowDelayTime = 0;
 
 		if (ThrownItemSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			if(DoAllOfficersHave('gasMask'))
+			if(DoAllOfficersHave('gasMask') || DoAllOfficersHave('helmetgasMask'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
 			}
@@ -80,6 +80,13 @@ function GrenadeGotDetonated(Pawn PawnThrower, EquipmentSlot ThrownItemSlot) {
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
 			}
+			
+			if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_Flashbang)
+				PostGrenadeThrowDelayTime=FlashbangDelayTime;
+			
+			if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_StingGrenade)
+				PostGrenadeThrowDelayTime=StingerDelayTime;
+			
 		}
 
 		grenadeThrown = true;
