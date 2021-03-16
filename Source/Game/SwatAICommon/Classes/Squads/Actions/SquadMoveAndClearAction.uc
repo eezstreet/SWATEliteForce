@@ -62,8 +62,13 @@ var config float						DoorOpenedFromSideDelayTime;
 var config float						CSGrenadeDelayTime;
 var config float						CSGrenadeDelayTimeRiotHelmet;
 var config float						CSGrenadeDelayTimeGasMask;
+var config float						FlashbangDelayTime;
+var config float						NinebangDelayTime;
+var config float						StingerDelayTime;
 
-var protected float						PostGrenadeThrowDelayTime;
+
+var config float						PostGrenadeThrowDelayTime; //general delay after throw
+
 
 var private SwatGrenadeProjectile		Projectile;
 var private SquadDropLightstickGoal 	LightstickGoal;
@@ -773,7 +778,7 @@ latent function FinishUpThrowBehavior()
 		PostGrenadeThrowDelayTime = 0;
 
 		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			if(DoAllOfficersHave('gasMask'))
+			if(DoAllOfficersHave('gasMask') || DoAllOfficersHave('helmetGasMask') )
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
 			}
@@ -785,6 +790,13 @@ latent function FinishUpThrowBehavior()
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTime;
 			}
+		
+		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_Flashbang)
+			PostGrenadeThrowDelayTime=FlashbangDelayTime;
+			
+		if (CurrentThrowGrenadeGoal.GrenadeSlot == EquipmentSlot.Slot_StingGrenade)
+			PostGrenadeThrowDelayTime=StingerDelayTime;
+			
 		}
 
 		while (! CurrentThrowGrenadeGoal.hasCompleted() && class'Pawn'.static.checkConscious(Thrower))
@@ -1690,4 +1702,5 @@ Begin:
 defaultproperties
 {
 	satisfiesGoal = class'SquadMoveAndClearGoal'
+	PostGrenadeThrowDelayTime = 0
 }
