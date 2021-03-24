@@ -60,6 +60,7 @@
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
  - Fixed TSS bug: Players on the red team look like suspects with the default skin
  - Fixed TSS bug: Contextual HUD reticles (lockpick, wedge, etc) would stretch massively in widescreen resolutions and look ugly.
+ - Enabled the following npcs so that they can be used in custom missions: Lian Niu, Evil Waiter (shows up as Male, Asian Chef), Allen Kruse, Simon Gowan, Jewel Thief from the Diamond Robbery Mission, and the hosptial terrorist from the hopstial mission
 
 ### v7
  
