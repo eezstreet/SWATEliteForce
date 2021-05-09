@@ -13,6 +13,21 @@ function ClientAddItemToGivenEquipment(Actor newItem)
 	GivenEquipment[GivenEquipment.Length] = newItem;
 }
 
+simulated function RemoveGivenEquipment(HandHeldEquipment Equipment)
+{
+	local int i;
+	local HandheldEquipment Item;
+
+	for(i = 0; i < GivenEquipment.Length; i++)
+	{
+		Item = HandheldEquipment(GivenEquipment[i]);
+		if(Item == Equipment)
+		{
+			GivenEquipment.Remove(i, 1);
+		}
+	}
+}
+
 simulated function HandHeldEquipment FindGivenItemForSlot(EquipmentSlot Slot)
 {
 	local int i;

@@ -559,6 +559,8 @@ simulated function HandHeldEquipment GetFirstAvailableItemAtSlot(EquipmentSlot S
     return Candidate;
 }
 
+simulated function RemoveGivenEquipment(HandHeldEquipment Equipment) {}
+
 // Returns the first handheld equipment corresponding to the given slot
 simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 {

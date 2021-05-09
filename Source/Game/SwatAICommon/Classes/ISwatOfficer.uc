@@ -40,6 +40,8 @@ function FiredWeapon		GetPrimaryWeapon();
 function FiredWeapon		GetBackupWeapon();
 function bool HasA(name EquipmentClass);
 
+function RemoveGivenEquipment(HandheldEquipment Equipment);
+
 function ReEquipFiredWeapon();
 function InstantReEquipFiredWeapon();
 

@@ -2446,10 +2446,13 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     if ( PendingItem != None && PendingItem.GetSlot() == Slot)
         return;     //already in the process of equipping that
 
-    // If the player has none of the requested item then
-    //  show a message on the HUD
-    if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None )
+    // If the player has none of the requested item then show a message on the HUD.
+    // When we send a message that we cannot equip, we return as well to avoid equipping anyways.
+    if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None || (!SwatPlayer.GetEquipmentAtSlot(Slot).IsAvailable()) )
+    {
         ClientMessage(string(int(Slot)), 'EquipNotAvailable');
+        return;
+    }
 
     if ( SwatPlayer.ValidateEquipSlot( Slot ))
     {
