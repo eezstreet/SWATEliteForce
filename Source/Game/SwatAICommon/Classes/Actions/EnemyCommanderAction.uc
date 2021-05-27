@@ -1512,9 +1512,13 @@ function FinishedMovingEngageBehavior()
 latent function DecideToStayCompliant()
 {
 	local HandHeldEquipmentModel FoundWeaponModel;
-	local bool bFoundNearbyWeapon;
-	local float fGainedMorale;
-
+    
+	// EFdee - Fix for Suspects not picking up nearby weapons
+	// Before, suspects wouldn't pick up weapons
+	// Instead, they would flee and barricade if possible
+	// This makes suspects flee and/or pick up nearby weapons 
+	// This may vary between archetypes
+	
 	if(m_Pawn.IsA('SwatGuard') || m_Pawn.IsA('SwatUndercover'))
 	{
 		// Don't let guards or Jennings become uncompliant again, this is just dumb
@@ -1536,41 +1540,17 @@ latent function DecideToStayCompliant()
 		{
 			break;
 		}
-
+		
 		// Sleep for a random amount of time for this "tick"
 		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
 		Sleep(FRand() * 2.0);
 
-		if (GetCurrentMorale() >= LeaveCompliantStateMoraleThreshold)
-		{
-			FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
-			if(FoundWeaponModel != None)
-			{
-				bFoundNearbyWeapon = true;
-			}
-			else if(bFoundNearbyWeapon)
-			{
-				// If there was a nearby weapon in the last tick and the player picked it up, lose all gained morale
-				ChangeMorale( -fGainedMorale, "Unobserved Compliance" );
-				bFoundNearbyWeapon = false;
-			}
-		}
-
 		// Increase moral when not being guarded (unobserved)
 		if (ISwatAI(m_Pawn).IsUnobservedByOfficers())
-		{
-			if(bFoundNearbyWeapon)
-			{
-				ChangeMorale( GetUnobservedComplianceMoraleModification() * 2, "Unobserved Compliance" );
-				fGainedMorale += GetUnobservedComplianceMoraleModification() * 2;
-			}
-			else
-			{
-				ChangeMorale( GetUnobservedComplianceMoraleModification(), "Unobserved Compliance" );
-				fGainedMorale += GetUnobservedComplianceMoraleModification();
-			}
-		}
+			ChangeMorale( GetUnobservedComplianceMoraleModification(), "Unobserved Compliance" );
 
+		if (GetCurrentMorale() >= LeaveCompliantStateMoraleThreshold)
+			FoundWeaponModel = ISwatEnemy(m_Pawn).FindNearbyWeaponModel();
 
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
@@ -1631,7 +1611,6 @@ latent function DecideToStayCompliant()
 		}
 	}
 }
-
 state Running
 {
  Begin:
