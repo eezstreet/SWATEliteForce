@@ -57,3 +57,5 @@ function bool WasDoorInitiallyOpen();
 function PlacedThrowPoint GetPlacedThrowPoint(vector Origin);
 function float GetAdditionalGrenadeThrowDistance(vector Origin);
 function array<Actor> GetDoorModels();
+function bool IsActivelyTrapped();
+function Actor GetTrapOnDoor();
