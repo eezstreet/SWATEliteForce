@@ -1529,6 +1529,35 @@ exec function SetWeaponFlashlightRotation(rotator Rotation)
 	}
 }
 
+exec function SetWeaponFlashlightPos3p(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting flashlight to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightPosition_3rdPerson = offset;
+	}
+}
+
+exec function SetWeaponFlashlightRotation3p(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting weapon flashlight rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightRotation_3rdPerson = Rotation;
+	}
+}
+
+
 exec function SetWeaponViewOffset(vector offset)
 {
 	local HandheldEquipment ActiveItem;
