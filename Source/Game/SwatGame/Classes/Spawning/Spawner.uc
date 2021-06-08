@@ -135,7 +135,7 @@ function actor SpawnArchetype(
                     $".Location=("$Spawned.Location
                     $")");
 
-        if (CustomScenario == None)
+        if (CustomScenario == None || CustomScenario.ForceScriptedSequences)
             DisableAntiSlaves();
 
             log("[SPAWNING] ... ... Spawner "$name$" (SpawnerGroup "$SpawnerGroup$") is calling Archetype "$Archetype.name$" to InitializeSpawned "$Spawned.name);
@@ -201,8 +201,8 @@ function actor SpawnFromLocalProperties(optional bool bTesting)
 
 function ValidateSpawningFromLocalProperties(bool bTesting)
 {
-    assertWithDescription(bTesting || SwatGameInfo(Level.Game).GetCustomScenario() == None,
-            "[tcohen] in Spawner::ValidateSpawningFromLocalProperties(), we seem to have a custom scenario.  (We don't expect to use local spawner properties in custom scenarios.)");
+    //assertWithDescription(bTesting || SwatGameInfo(Level.Game).GetCustomScenario() == None,
+    //        "[tcohen] in Spawner::ValidateSpawningFromLocalProperties(), we seem to have a custom scenario.  (We don't expect to use local spawner properties in custom scenarios.)");
 }
 
 function name GetSpawnerGroup()

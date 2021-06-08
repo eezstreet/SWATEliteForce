@@ -83,7 +83,6 @@ simulated function OnUsingFinishedHook()
 	{
 		Used = false;
 	}
-	ThrowingFast = false;
 }
 
 function UpdateHUD()
@@ -228,6 +227,32 @@ function bool IsInFastUse()
 	}
 
 	return ThrowingFast;
+}
+
+simulated function EquipmentSlot GetSlotForReequip()
+{
+	local SwatGame.SwatGamePlayerController LPC;
+
+	if(ThrowingFast)
+	{
+		ThrowingFast = false;
+
+		LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+		if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
+
+		if(LPC.bSecondaryWeaponLast)
+			return Slot_SecondaryWeapon;
+		return Slot_PrimaryWeapon;
+	}
+
+	return super.GetSlotForReequip();
+}
+
+Replication
+{
+	reliable if(Role == Role_Authority)
+		ThrowingFast, Used;
 }
 
 defaultproperties
