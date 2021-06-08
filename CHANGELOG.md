@@ -42,8 +42,11 @@
  - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
  - SWAT AI will no longer open a door whose trap they are assigned to remove.
  - Custom skins can now alter the first person hands texture.
+ - Enabled the following npcs so that they can be used in custom missions: Lian Niu, Evil Waiter (shows up as Male, Asian Chef), Allen Kruse, Simon Gowan, Jewel Thief from the Diamond Robbery Mission, and the hosptial terrorist from the hopstial mission. Thanks to Warzaid for this.
+ - FN FAL now has the correct kind of ammo for it. Thanks to beppe for this.
+ - Shotguns have a tighter choke, and are a more appealing option because of it. (Edit made by EFdee)
  - Fixed SEF bug: Many ironsights were misaligned.
- - Fixed SEF bug: Game would crash if exposed to CS gas.
+ - Fixed SEF bug: Game would crash if exposed to CS gas. Thanks to beppe for this.
  - Fixed SEF bug: Sometimes penalties would trigger when they weren't supposed to.
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
  - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
@@ -57,11 +60,13 @@
  - Fixed SEF bug: Officers ask you to "break out the cuffs" if you are holding cuffs or someone else is securing the person in question.
  - Fixed SEF bug: Suspects wouldn't shoot at doors when barricaded (thanks to sandman332 for the fix)
  - Fixed SEF bug: You could juke suspects (especially low skill ones) by moving in zigzags etc. Now, they will always fire after a period of time, even if their target is not perfectly acquired.
+ - Fixed SEF bug: Suspects wouldn't pick up weapons, they would just flee. (thanks to EFdee for this)
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
  - Fixed TSS bug: Players on the red team look like suspects with the default skin
  - Fixed TSS bug: Contextual HUD reticles (lockpick, wedge, etc) would stretch massively in widescreen resolutions and look ugly.
  - Fixed TSS bug: Local spawners (such as the DOA spawners on St. Micheal's Medical Center) would not work in QMM.
+ - Fixed TSS bug: Gamma would be wrong in SwatEd. Thanks to Masterscape for this.
 
 ### v7
  
