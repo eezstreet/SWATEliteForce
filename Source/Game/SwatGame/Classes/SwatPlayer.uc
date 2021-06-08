@@ -2581,6 +2581,10 @@ function ReactToCSGas( Actor GasContainer,
 	Distance = VSize(Location - GasContainer.Location);
 	DistanceEffect = (600 - Distance)/(600);
 
+	//added a minum distance effect to avoid effect crash 
+	if (DistanceEffect < 0.2 )
+	           DistanceEffect = 0.2; 
+
     if ( Level.NetMode == NM_Client )
         return;
 
