@@ -465,7 +465,7 @@ Caliber=9x19mm
 CountryOfOrigin=United States
 ProductionStart=1982
 FireModes=Semi-Automatic, Full-Auto
-MagazineSizeString=30
+MagazineSizeString=32
 TotalAmmoString=10 magazines
 RateOfFire=800 RPM
 
