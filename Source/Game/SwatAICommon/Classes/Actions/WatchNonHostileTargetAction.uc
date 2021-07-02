@@ -192,6 +192,7 @@ function AimAtWatchTarget()
 	}
 	else
 	{
+		log("AimAtWatchTarget() posted a RotateTowardActorGoal at "$CurrentWatchTarget);
 		CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), achievingGoal.priority, CurrentWatchTarget);
 		assert(CurrentRotateTowardActorGoal != None);
 		CurrentRotateTowardActorGoal.AddRef();

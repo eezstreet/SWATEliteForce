@@ -1245,6 +1245,7 @@ protected function RotateToFace(Actor Target, int BehaviorPriority)
 		CurrentRotateTowardActorGoal = None;
 	}
 
+	log("RotateToFace() posted a RotateTowardActorGoal at "$Target);
 	CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), BehaviorPriority, Target);
 	assert(CurrentRotateTowardActorGoal != None);
 	CurrentRotateTowardActorGoal.AddRef();
