@@ -265,7 +265,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
 Please read the How to Install section of this README. :)
 
 ## HOW DO I USE THE SPEECH RECOGNITION?
-First, you will need to ensure that your operating system supports Speech Recognition. What you'll need is the Microsoft Speech Recognition API, which is available here: https://www.microsoft.com/en-us/download/details.aspx?id=27224
+First, you will need to ensure that your operating system supports Speech Recognition. What you'll need is the Microsoft Speech Recognition API, which Microsoft no longer provides. There is a public download of it available [here.](https://www.dropbox.com/s/a3y68suledr90n5/MSSpeech_SR_en-US_TELE.msi?dl=0)
 If your system meets the requirements, the 'Use Speech Recognition' checkbox will be available.
 You can also bind a key to toggle the functionality ingame, which is good when you're speaking for a Let's Play, for example.
 A list of trigger words is provided, starting with Patch 5.1. See SpeechCommands.md for more information.
