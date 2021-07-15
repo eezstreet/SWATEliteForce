@@ -61,6 +61,7 @@
  - Fixed SEF bug: Suspects wouldn't shoot at doors when barricaded (thanks to sandman332 for the fix)
  - Fixed SEF bug: You could juke suspects (especially low skill ones) by moving in zigzags etc. Now, they will always fire after a period of time, even if their target is not perfectly acquired.
  - Fixed SEF bug: Suspects wouldn't pick up weapons, they would just flee. (thanks to EFdee for this)
+ - Fixed SEF bug: The M4Super90 and M1Super90 did not have breaching contexts on doors (thanks to EFdee for this)
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
  - Fixed TSS bug: Players on the red team look like suspects with the default skin

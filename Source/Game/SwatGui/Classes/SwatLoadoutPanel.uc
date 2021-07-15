@@ -158,6 +158,7 @@ function InitComponent(GUIComponent MyOwner)
 
         for( j = 0; j < GC.AvailableEquipmentPockets[i].EquipmentClassName.Length; j++ )
         {
+            //log("DLO(0): "$GC.AvailableEquipmentPockets[i].EquipmentClassName[j]);
 			      EquipmentClass = class<Object>(DynamicLoadObject( GC.AvailableEquipmentPockets[i].EquipmentClassName[j], class'Class'));
             WeaponClass = class<SwatWeapon>(EquipmentClass);
 
@@ -190,6 +191,7 @@ function InitComponent(GUIComponent MyOwner)
         }
     }
 
+    log("InitComponent() finished for SwatLoadoutPanel");
     PopulateAllWeapons();
 
     ActiveTab = 0;
@@ -222,10 +224,12 @@ function PopulateAllWeapons()
   local class<SwatWeapon> WeaponClass;
   local class<SwatAmmo> AmmoClass;
 
+  log("PopulateAllWeapons()");
   AllAmmo.Length = 0;
   AllAmmoNames.Length = 0;
   AllWeapons.Length = 0;
   for(i = 0; i < GC.AvailableEquipmentPockets[0].EquipmentClassName.Length - 1; i++) {
+    //log("DLO(1): "$GC.AvailableEquipmentPockets[0].EquipmentClassName[i]);
     LoadedClass = class(DynamicLoadObject( GC.AvailableEquipmentPockets[0].EquipmentClassName[i], class'Class'));
     WeaponClass = class<SwatWeapon>(LoadedClass);
     AllWeapons[AllWeapons.Length] = WeaponClass;
@@ -233,6 +237,7 @@ function PopulateAllWeapons()
     // Load the ammo as well
     for(j = 0; j < WeaponClass.default.PlayerAmmoOption.Length; j++) {
       AllAmmoNames[AllAmmoNames.Length] = WeaponClass.default.PlayerAmmoOption[j];
+      //log("DLO(2): "$AllAmmoNames[AllAmmoNames.Length-1]);
       LoadedClass = class(DynamicLoadObject(AllAmmoNames[AllAmmoNames.Length-1], class'Class'));
       AmmoClass = class<SwatAmmo>(LoadedClass);
       AllAmmo[AllAmmo.Length] = AmmoClass;
@@ -465,7 +470,7 @@ function ChangeLoadOut( Pocket thePocket )
     }
 
     MyCurrentLoadOut.LoadOutSpec[thePocket] = theItem;
-    log("LoadoutChange("$thePocket$") - "$theItem);
+    //log("LoadoutChange("$thePocket$") - "$theItem);
 
     //load out updated with selection from equipment list
     switch (thePocket)
@@ -1002,10 +1007,10 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
   local int i, j;
   local class<SwatAmmo> Ammo;
 
-  log("RepopulateAmmoInformationForNewWeapon("$TheNewWeapon$")");
+  //log("RepopulateAmmoInformationForNewWeapon("$TheNewWeapon$")");
 
   if(!AttachmentBeingSelected) {
-    log('clearing attachments');
+    //log('clearing attachments');
     MyWeaponAttachmentBox.List.Clear();
 
     if(TheNewWeapon.default.SelectableVariants.length > 0) {
@@ -1016,7 +1021,7 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
       // Populate list of variants
       MyWeaponAttachmentBox.AddItem(TheNewWeapon.default.NoVariantName, None);
       for(i = 0; i < TheNewWeapon.default.SelectableVariants.length; i++) {
-        log("Add attachment: "$TheNewWeapon.default.SelectableVariants[i].VariantClass);
+        //log("Add attachment: "$TheNewWeapon.default.SelectableVariants[i].VariantClass);
         MyWeaponAttachmentBox.AddItem(TheNewWeapon.default.SelectableVariants[i].VariantName, TheNewWeapon.default.SelectableVariants[i].VariantClass);
       }
 
