@@ -63,6 +63,8 @@
  - Fixed SEF bug: Suspects wouldn't pick up weapons, they would just flee. (thanks to EFdee for this)
  - Fixed SEF bug: The M4Super90 and M1Super90 did not have breaching contexts on doors (thanks to EFdee for this)
  - Fixed SEF bug: The Uzi did not have correct weapon sounds in third person (thanks to beppe for this)
+ - Fixed SEF bug: The optiwand would not transfer correctly in singleplayer (thanks to Severn for this)
+ - Fixed SEF bug: FPS issues in multiplayer with movement (thanks to beppe for this)
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
  - Fixed TSS bug: Players on the red team look like suspects with the default skin
