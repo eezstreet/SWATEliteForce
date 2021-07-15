@@ -89,7 +89,7 @@ var config float StingEffectFrequency;
 // if we change these two config variables, all kinds of chaos on the native code occurs
 var config Rotator StingViewEffectAmplitude;
 var config float StingInputEffectAmplitude;
-// end revert
+// end revertu
 var config float Unused8;
 var config float Unused9;
 
@@ -1715,24 +1715,13 @@ simulated function AdjustPlayerMovementSpeed() {
   ModdedBck = OriginalBck;
   ModdedSde = OriginalSde;
 
-  //ModdedFwd *= LoadOut.GetWeightMovementModifier();
-  //ModdedBck *= LoadOut.GetWeightMovementModifier();
-  //ModdedSde *= LoadOut.GetWeightMovementModifier();
-
-	if( IsLowReady() ) //little more speed when low ready
-	{
-		AnimSet.AnimSpeedForward = ModdedFwd + (ModdedFwd/3);
-		AnimSet.AnimSpeedSidestep = ModdedSde + (ModdedSde/3);
-		AnimSet.AnimSpeedBackward = ModdedBck + (ModdedBck/3);
-	}
-	else
-	{
+  
 		WeightMovMod=LoadOut.GetWeightMovementModifier();
 		
 		AnimSet.AnimSpeedForward = ModdedFwd * WeightMovMod;
 		AnimSet.AnimSpeedBackward = ModdedBck * WeightMovMod;
 		AnimSet.AnimSpeedSidestep = ModdedSde * WeightMovMod;
-	}
+
 
 }
 
