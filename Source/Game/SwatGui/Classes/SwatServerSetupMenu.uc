@@ -170,11 +170,6 @@ function OnEquipmentButton(GUIComponent Sender)
 	OpenEquipment();
 }
 
-function OnProfileButton(GUIComponent Sender)
-{
-	Controller.OpenMenu( "SwatGui.SwatGamespyProfilePopup", "SwatGamespyProfilePopup" );
-}
-
 function InternalOnClick(GUIComponent Sender)
 {
     local int MaxPlayers, CurrentPlayers;
