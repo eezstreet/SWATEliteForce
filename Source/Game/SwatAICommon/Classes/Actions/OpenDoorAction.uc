@@ -92,7 +92,7 @@ private function UpdateDoorKnowledge()
 	}
 
 	// complete if it's wedged or locked and we can't open it
-	if (SwatDoorTarget.IsWedged() || (SwatDoorTarget.IsLocked() && ! ISwatAI(m_Pawn).ShouldForceOpenLockedDoors()))
+	if (SwatDoorTarget.IsWedged() || (SwatDoorTarget.IsLocked() && (!ISwatAI(m_Pawn).ShouldForceOpenLockedDoors() || !SwatDoorTarget.CanBeOpenedBySuspectsAndCivilians())))
 	{
 		instantSucceed();
 	}
