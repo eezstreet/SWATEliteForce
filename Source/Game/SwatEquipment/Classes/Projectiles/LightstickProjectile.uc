@@ -194,10 +194,10 @@ defaultproperties
 	CollisionHeight=2
 	CollisionRadius=2
 
-	GlowBrightness=128
+	GlowBrightness=192
 	GlowHue=90
-	GlowSaturation=128
-	GlowLifetime=300
+	GlowSaturation=192
+	GlowLifetime=3600
 	MPGlowLifetimeMultiplier=0.1
 
 	RemoteRole = ROLE_SimulatedProxy
