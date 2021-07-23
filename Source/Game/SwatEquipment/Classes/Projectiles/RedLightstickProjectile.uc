@@ -7,5 +7,5 @@ defaultproperties
 	ExpiredMesh=StaticMesh'gear_sef.lightstickred_depleted'
 	GlowBrightness=192
 	GlowHue=0
-	GlowSaturation=80
+	GlowSaturation=192
 }

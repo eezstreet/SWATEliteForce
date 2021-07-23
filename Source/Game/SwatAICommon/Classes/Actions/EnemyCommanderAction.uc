@@ -1611,7 +1611,6 @@ latent function DecideToStayCompliant()
 		}
 	}
 }
-
 state Running
 {
  Begin:
