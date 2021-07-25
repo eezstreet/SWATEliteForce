@@ -362,7 +362,7 @@ simulated function PlayUnequip()
         }
         else
         {
-			if(HandheldEquipment.IsA('SwatGrenade') && SwatGrenade(HandheldEquipment).IsInFastUse())
+			/*if(HandheldEquipment.IsA('SwatGrenade') && SwatGrenade(HandheldEquipment).IsInFastUse())
 			{
 				Owner.PlayAnim(
 	                'GlowstickUnequip',
@@ -370,12 +370,12 @@ simulated function PlayUnequip()
 	                0.5);   //tween time
 			}
 			else
-			{
+			{*/
 				Owner.PlayAnim(
 	                HolderUnequipAnimationForContext,
 	                UnequipRate,
 	                0.5);   //tween time
-			}
+			//}
             HolderUnEquipAnimationChannel = 0;
         }
     }
@@ -403,14 +403,15 @@ simulated private function Name GetHolderUnequipAnimationForContext()
 {
     local Pawn PawnOwner;
     local name HolderUnequipAnimationForContext;
-    local HandheldEquipment PendingItem;
+    local HandheldEquipment PendingItem, ActiveItem;
+
+    PawnOwner = Pawn(Owner);
 
     // Special case: if we're unequipping because this is a multiplayer game
     // and we're about to be handcuffed, use the special animation for that
     // context.
     if (Level.NetMode != NM_Standalone)
     {
-        PawnOwner = Pawn(Owner);
         if (PawnOwner != None)
         {
             PendingItem = PawnOwner.GetPendingItem();
@@ -418,6 +419,16 @@ simulated private function Name GetHolderUnequipAnimationForContext()
             {
                 HolderUnequipAnimationForContext = HolderUnequipFromMPCuffedAnimation;
             }
+        }
+    }
+
+    if(PawnOwner != None)
+    {
+        ActiveItem = PawnOwner.GetActiveItem();
+        if(ActiveItem != None && SwatGrenade(ActiveItem) != None && SwatGrenade(ActiveItem).IsInFastUse())
+        {
+            log("We should be playing GlowStickUnEquip here.");
+            return 'GlowStickUnEquip';
         }
     }
 

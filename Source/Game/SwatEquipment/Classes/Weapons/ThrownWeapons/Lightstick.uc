@@ -235,8 +235,6 @@ simulated function EquipmentSlot GetSlotForReequip()
 
 	if(ThrowingFast)
 	{
-		ThrowingFast = false;
-
 		LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
 
 		if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
@@ -247,6 +245,12 @@ simulated function EquipmentSlot GetSlotForReequip()
 	}
 
 	return super.GetSlotForReequip();
+}
+
+simulated function UnequippedHook()
+{
+	ThrowingFast = false;
+	Super.UnequippedHook();
 }
 
 Replication
