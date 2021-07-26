@@ -66,6 +66,7 @@
  - Fixed SEF bug: The optiwand would not transfer correctly in singleplayer (thanks to Severn for this)
  - Fixed SEF bug: FPS issues in multiplayer with movement (thanks to beppe for this)
  - Fixed SEF bug: Suspects can no longer proceed through doors that you have locked (they can however, go through doors that they have locked or are locked at the start of the game..)
+ - Fixed SEF bug: "Drop lightstick" now plays the correct animations in first person
  - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
  - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
  - Fixed TSS bug: Players on the red team look like suspects with the default skin
