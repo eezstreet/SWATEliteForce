@@ -142,7 +142,7 @@ replication
 {
 	// replicated functions sent to server by owning client
 	reliable if( Role < ROLE_Authority )
-        ServerRequestQualify, ServerRequestUse, ServerSetIsUsingOptiwand, ServerSetForceCrouchWhileOptiwanding;
+        ServerRequestQualify, ServerRequestUse, ServerSetIsUsingOptiwand, ServerSetForceCrouchWhileOptiwanding, ServerThrowLightstick;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -919,6 +919,13 @@ function ServerRequestEquip( EquipmentSlot Slot )
             CheckDesiredItemAndEquipIfNeeded();
         }
     }
+}
+
+function ServerThrowLightstick( )
+{
+    mplog("ServerThrowLightstick()");
+	// Flag the lightstick as being in a "fast use" state.
+	FlagLightstickFastUse();
 }
 
 simulated function OnActiveItemEquipped()

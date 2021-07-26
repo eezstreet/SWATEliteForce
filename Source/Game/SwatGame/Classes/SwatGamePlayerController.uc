@@ -1704,7 +1704,8 @@ exec function ThrowLightstick()
 	}
 
 	// Flag the lightstick as being in a "fast use" state.
-	SwatPlayer.FlagLightstickFastUse();
+	SwatPlayer.ServerThrowLightstick();
+    SwatPlayer.FlagLightstickFastUse();
 
 	// Equip slot 14, which will drop the lightstick instantly just like vanilla TSS
 	EquipSlot(14);

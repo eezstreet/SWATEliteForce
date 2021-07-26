@@ -78,6 +78,11 @@ simulated function OnUsingFinishedHook()
 		{
 			SwatPlayer(Owner).DoDefaultEquip();
 		}
+
+		if(Level.NetMode != NM_Client && Level.NetMode != NM_Standalone)
+		{
+			ThrowingFast = false;
+		}
 	}
 	else
 	{
@@ -249,6 +254,7 @@ simulated function EquipmentSlot GetSlotForReequip()
 
 simulated function UnequippedHook()
 {
+	mplog("UnequippedHook()");
 	ThrowingFast = false;
 	Super.UnequippedHook();
 }
