@@ -241,8 +241,8 @@ TotalAmmoString=50 shells
 RateOfFire=150 RPM
 
 [M1Super90SG]
-Description=The M1 Super 90 is a semi-automatic 12 gauge combat shotgun with a five round magazine capacity and it accepts multiple types of 2.75" shot shells. With a tritium "glow in the dark" front sight, a fourteen-inch chrome plated barrel, a high impact polymer buttstock and a mounted flashlight, the Benelli M1 Super 90 might old, but it is a mainstay in law enforcement.
-FriendlyName=M1 Super 90 Defense
+Description=The M1 Super 90 is a semi-automatic 12 gauge combat shotgun with a seven round magazine capacity and it accepts multiple types of 2.75" shot shells. With a tritium "glow in the dark" front sight, a eighteen-inch chrome plated barrel, a high impact polymer buttstock and a mounted flashlight, the Benelli M1 Super 90 might old, but it is a mainstay in law enforcement.
+FriendlyName=M1 Super 90 Tactical
 ShortName=M1 Super 90
 Manufacturer=Benelli
 Caliber=12 Gauge
@@ -270,7 +270,7 @@ FriendlyName=M4 Super 90 with Holographic Sight
 ShortName=M4 Super 90 Holographic
 
 [NovaPumpSG]
-Description=A relatively new design from Benelli, the Nova Tactical is the top of the line in pump action shotguns.   While firing a bit slower than the semi-automatic M4 Super 90, the attached magazine extender allows the Nova pump to hold up to 7 shells at one time.
+Description=A relatively new design from Benelli, the Nova Tactical is the top of the line in pump action shotguns. It features a eighteen-inch barrel, 4 round tube magazine and it is made out of high tech polymers which make the Nova a particularly light shotgun. It can be loaded with different types of shotgun shells, making it a more than appealling choice for law enforcement officers. 
 FriendlyName=Nova Tactical
 ShortName=Nova Tactical
 Manufacturer=Benelli
