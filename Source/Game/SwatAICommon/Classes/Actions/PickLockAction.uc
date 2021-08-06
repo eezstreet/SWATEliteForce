@@ -294,8 +294,11 @@ state Running
 
 		MoveToPostPickLockLocation();
 		RotateToPostPickLockRotation();
+		
+		pause(); 	// So officers wont get in idle after picking
+		
 	}
-
+	
 	succeed();
 }
 
