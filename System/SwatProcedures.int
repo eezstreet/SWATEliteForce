@@ -47,15 +47,15 @@ ChatMessage=[c=ffff00]Killed Hostage (-50)[\c]
 
 [Procedure_NoOfficerIncapacitated]
 Description=Incapacitated a fellow officer
-ChatMessage=[c=ffff00]Incapacitated Officer (-25)[\c]
+ChatMessage=[c=ffff00]Incapacitated Officer (-50)[\c]
 
 [Procedure_NoOfficerInjured]
 Description=Injured a fellow officer
-ChatMessage=[c=ffff00]Injured Officer (-10)[\c]
+ChatMessage=[c=ffff00]Injured Officer (-15)[\c]
 
 [Procedure_NoOfficerTased]
 Description=Tased a fellow officer
-ChatMessage=[c=ffff00]Tased Officer (-5)[\c]
+ChatMessage=[c=ffff00]Tased Officer (-15)[\c]
 
 [Procedure_NoUnauthorizedUseOfDeadlyForce]
 Description=Unauthorized use of deadly force
