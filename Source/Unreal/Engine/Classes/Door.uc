@@ -44,6 +44,9 @@ simulated native function bool IsBroken();
 simulated native function bool IsLocked();
 simulated native function bool IsWedged();
 
+simulated function bool IsBoobyTrapped();
+simulated function bool IsActivelyTrapped();
+simulated function Actor GetTrapOnDoor();
 simulated function bool CanBeLocked();
 simulated function bool BelievesDoorLocked(Pawn p);
 

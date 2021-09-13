@@ -1529,6 +1529,35 @@ exec function SetWeaponFlashlightRotation(rotator Rotation)
 	}
 }
 
+exec function SetWeaponFlashlightPos3p(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting flashlight to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightPosition_3rdPerson = offset;
+	}
+}
+
+exec function SetWeaponFlashlightRotation3p(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting weapon flashlight rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightRotation_3rdPerson = Rotation;
+	}
+}
+
+
 exec function SetWeaponViewOffset(vector offset)
 {
 	local HandheldEquipment ActiveItem;
@@ -1675,7 +1704,8 @@ exec function ThrowLightstick()
 	}
 
 	// Flag the lightstick as being in a "fast use" state.
-	SwatPlayer.FlagLightstickFastUse();
+	SwatPlayer.ServerThrowLightstick();
+    SwatPlayer.FlagLightstickFastUse();
 
 	// Equip slot 14, which will drop the lightstick instantly just like vanilla TSS
 	EquipSlot(14);
@@ -2417,10 +2447,13 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     if ( PendingItem != None && PendingItem.GetSlot() == Slot)
         return;     //already in the process of equipping that
 
-    // If the player has none of the requested item then
-    //  show a message on the HUD
-    if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None )
+    // If the player has none of the requested item then show a message on the HUD.
+    // When we send a message that we cannot equip, we return as well to avoid equipping anyways.
+    if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None || (!SwatPlayer.GetEquipmentAtSlot(Slot).IsAvailable()) )
+    {
         ClientMessage(string(int(Slot)), 'EquipNotAvailable');
+        return;
+    }
 
     if ( SwatPlayer.ValidateEquipSlot( Slot ))
     {
@@ -2469,7 +2502,7 @@ simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCh
         return;
     }
 
-	if(WantsZoom)
+	if(WantsZoom && !Item.IsA('Cuffs'))
 	    return; // Not allowed while zooming
 
 	// Determine if we are trying to check the lock or if we are trying to punch someone
@@ -4693,7 +4726,7 @@ exec function Say( string Msg )
 
 	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled() && Pawn != None)
 	{
-		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomNameSafe()));
 	}
 	else
 	{
@@ -4720,7 +4753,7 @@ exec function TeamSay( string Msg )
 
 	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled())
 	{
-		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomNameSafe()));
 	}
 	else
 	{

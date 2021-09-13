@@ -11,8 +11,8 @@ simulated function int GetTeamNumber()
 defaultproperties
 {
     TeamNumber = 1
-    Skins[0] = Material'mp_OfficerTex.mpBad_BDU_odgrnShader'
-    Skins[1] = Material'mp_OfficerTex.mpBad_FaceAshader'
+    Skins[0] = Material'mp_OfficerTex.mpSWAT_BDU_CamoShader'
+    Skins[1] = Material'mp_OfficerTex.mpSWATelementLeadShader'
     Skins[2] = Material'mp_OfficerTex.NameTagRedShader'
-    Skins[3] = Material'mp_OfficerTex.mpBad_Vest_DefaultShader'
+    Skins[3] = Material'mp_OfficerTex.mpSWAT_vest_defaultShader'
 }

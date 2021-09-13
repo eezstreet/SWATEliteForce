@@ -135,6 +135,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * Suspects may now employ a "random patrol", "wander" strategy and don't stick to their assigned rooms as often.
  * Suspects have new equipment and may equip heavy armor.
  * Civilians may give up easier if they spot a suspect or a civilian being pepper sprayed, hit with beanbags, etc.
+ * Suspects who have no visible weapons will be treated like civilians to SWAT (including in mirror results)
 
 **Smarter Officer AI!**
  * Upon restraining a target, SWAT officers will now report it to TOC automatically!
@@ -169,6 +170,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * All secondary weapons equippable as primaries, and some primaries now equippable as secondaries.
 
 **Equipment is also much more realistic.**
+ * Many of the existing weapon meshes have been replaced with improved ones.
  * Weapons can be aimed down the sights, for better accuracy, using the zoom key.
  * All of your equipment factors into two meters: WEIGHT and BULK. Weight dictates your speed and is a measure of how heavy your equipment is. Bulk affects interaction speed (C2 placing/wedging door/toolkit use, but NOT restraining) and measures how big your equipment is. You can pack No Weapon/No Equipment in some slots to reduce weight and bulk.
  * You can now share some equipment with other players by pressing the melee key. You can also order your AI officers to give you a piece of equipment as well. Currently this only works for tactical tab items and lightsticks.
@@ -178,6 +180,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
  * All equipment has been modified to use real values.
  * Recoil is now affected by arm injuries.
  * Lightsticks can be thrown or dropped on the ground, just like grenades can. Everyone gets double the lightsticks!
+ * A round is kept in the chamber when reloading all magazine-based weapons, except the Python. If you see your magazine going 1 above the maximum count, it isn't a bug, it's realism baby!
 
 **Doors behave more realistically**
  * You can check the lock of a door without opening it by pressing the melee key.
@@ -262,7 +265,7 @@ The Stetchkov Syndicate and base game missions are compressed into one campaign.
 Please read the How to Install section of this README. :)
 
 ## HOW DO I USE THE SPEECH RECOGNITION?
-First, you will need to ensure that your operating system supports Speech Recognition. What you'll need is the Microsoft Speech Recognition API, which is available here: https://www.microsoft.com/en-us/download/details.aspx?id=27224
+First, you will need to ensure that your operating system supports Speech Recognition. What you'll need is the Microsoft Speech Recognition API, which Microsoft no longer provides. There is a public download of it available [here.](https://www.dropbox.com/s/a3y68suledr90n5/MSSpeech_SR_en-US_TELE.msi?dl=0)
 If your system meets the requirements, the 'Use Speech Recognition' checkbox will be available.
 You can also bind a key to toggle the functionality ingame, which is good when you're speaking for a Let's Play, for example.
 A list of trigger words is provided, starting with Patch 5.1. See SpeechCommands.md for more information.
@@ -511,6 +514,8 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
  * Some custom SWAT 4 (non-expansion) co-op missions used an objective set called "COOPClearTest". TSS removed this objective set and broke those missions. I have restored it. (Thanks to SS for the tip.)
  * Re-enabled Auto Downloads feature.
  * The player could control the officer viewport while reloading, switching weapons, or using an item. This allowed for an exploit where players could move while placing C2, arresting people, or picking a lock.
+ * Players could not melee with handcuffs after pressing zoom (despite zoom doing nothing)
+ * Players on the red team using the default skin looked like suspects
 
 ## AI ##
   * Tons and tons of cut dialogue restored.
@@ -562,12 +567,13 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Added a new quality: Polite. Any suspect archetype with this quality won't attempt to shoot hostages.
   * Added a new quality: Insane. Any suspect archetype with this quality will shoot hostages *much* faster (basically instantly) and ignores distance checks.
   * Grenades and wedges now go back to your last used weapon after using one, instead of switching back to that item.
+  * Custom player skins can now override the first person hands texture.
 
 ## GUI ##
-  * Training mission returns! New Features from the Expansion are gone.
+  * Training mission returns! New Features menu from the Expansion is gone.
   * "Disable Initial Dispatch" option in Audio Settings lets you skip the initial dispatches.
   * "Mouse Smoothing" checkbox in Control Settings enables (default) or disables mouse smoothing.
-  * "Field of Vision" slider in Video Settings lets you change the field of vision.
+  * "Field of Vision" slider in Video Settings lets you change the field of vision. There's also one to control the first person weapon model's field of vision.
   * Mod version, wiki and Discord links are shown in the main menu.
   * Server browser has a button to download the server browser patch.
   * Loadout Menu (SP) has a button to apply current tab to Element, Team, or specific officer
@@ -591,6 +597,7 @@ Please read the FAQ before looking here! It's entirely possible that what you ar
   * Support in the menu for 5x as many resolutions, including many widescreen resolutions
   * The menu will now show labels on stuff in widescreen resolution
   * You no longer need a CD-key to publish a game to the Internet server browser.
+  * Restored the vanilla SWAT 4 music (the TSS music is just reused from missions..)
 
 
 ## EQUIPMENT ##

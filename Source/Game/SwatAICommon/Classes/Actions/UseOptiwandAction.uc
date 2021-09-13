@@ -78,12 +78,12 @@ function ReportSeeingPawns()
 	{
 		SeenPawnIter = SeenPawns[i];
 
-		if (SeenPawnIter.IsA('SwatEnemy'))
-		{
+		if (SeenPawnIter.IsA('SwatEnemy') && ISwatAI(SeenPawnIter) != None && ISwatAI(SeenPawnIter).HasFiredWeaponEquipped())
+		{	// enemies are only seen as armed targets if they have a usable weapon and actively have it equipped
 			NumEnemies++;
 		}
-		else if (SeenPawnIter.IsA('SwatHostage'))
-		{
+		else if (SeenPawnIter.IsA('SwatHostage') || SeenPawnIter.IsA('SwatEnemy'))
+		{	// otherwise, if they're a hostage or an enemy, they're marked as an unarmed target
 			NumHostages++;
 		}
 

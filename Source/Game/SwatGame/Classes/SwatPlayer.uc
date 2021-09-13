@@ -25,23 +25,22 @@ var protected OfficerLoadOut LoadOut;
 //the pitch above the camera rotation to throw
 var config int ThrownProjectilePitch;
 
-// Only valid in non-NM_Standalone
-var HandheldEquipment GivenFlashbangs;
-var HandheldEquipment GivenStinger;
-var HandheldEquipment GivenGas;
-var HandheldEquipment GivenC2;
-var HandheldEquipment GivenWedge;
+var HandheldEquipment GivenPepperSpray;
+var config name Unused1;
+var config name Unused2;
+var config name Unused3;
+var config name	 Unused4;
 
 var float ThrowAnimationTweenTime;
 
-var HandheldEquipment GivenPepperSpray;
-var config Range Unused7;
+var config float Unused5;
+var config Range Unused6;
 
 var private Material SuspectHandsMaterial;
 var private Material VIPHandsMaterial;
 
 // NonLethal Effects
-var config bool Unused8;
+var config bool Unused7;
 var private Timer StungTimer;
 var private Timer FlashbangedTimer;
 var private Timer GassedTimer;
@@ -86,11 +85,13 @@ var private PerlinNoise PerlinNoiseAxisA;
 var private PerlinNoise PerlinNoiseAxisB;
 var config float StingEffectDropOffTimePercent;
 var config float StingEffectFrequency;
-
-var config Rotator Unused9;
-var config float Unused10;
-var config float Unused11;
-var config float Unused12;
+// revert 003fbf68f6d4ea3a7f4b0dd5e7d926a282ff7736.
+// if we change these two config variables, all kinds of chaos on the native code occurs
+var config Rotator StingViewEffectAmplitude;
+var config float StingInputEffectAmplitude;
+// end revertu
+var config float Unused8;
+var config float Unused9;
 
 var bool EquipOtherAfterUsed;                   //if true,
 var EquipmentSlot SlotForReequip;               //if TryToReequipAfterUsed is set, then SlotForReequip records the EquipmentSlot that should be used to try to reequip
@@ -105,7 +106,7 @@ var protected bool bIsUsingOptiwand;
 
 var private DeployedC2ChargeBase DeployedC2Charge;
 
-var config float Unused13;
+var HandheldEquipment GivenFlashbangs;
 
 // Reporting-to-TOC state variables
 var public IAmReportableCharacter CurrentReportableCharacter;
@@ -118,13 +119,13 @@ var SwatPlayer LastArrester;
 var private vector OneFrameNudgeDirection;
 const OneFrameNudgeDirectionStrength = 2.0;
 
-var config const private float Unused14;
+var HandheldEquipment GivenStinger;
 var config private float       CurrentLimp;
-var config private float       Unused15;
+var HandheldEquipment GivenGas;
 var private config localized string YouString;
 
-var private config float Unused16;        //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
-var private config float Unused17;      //the apparent Z distance between the pawn's origin and the eyes of the 3rd person model when standing
+var HandheldEquipment GivenC2;
+var HandheldEquipment GivenWedge;
 
 var private bool                        bHasBeenReportedToTOC;
 
@@ -141,7 +142,7 @@ replication
 {
 	// replicated functions sent to server by owning client
 	reliable if( Role < ROLE_Authority )
-        ServerRequestQualify, ServerRequestUse, ServerSetIsUsingOptiwand, ServerSetForceCrouchWhileOptiwanding;
+        ServerRequestQualify, ServerRequestUse, ServerSetIsUsingOptiwand, ServerSetForceCrouchWhileOptiwanding, ServerThrowLightstick;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -572,11 +573,23 @@ simulated function ReceiveLoadOut(OfficerLoadOut inLoadOut)
 simulated function SetPlayerSkins( OfficerLoadOut inLoadOut )
 {
     //mplog( self$"---SwatPlayer::SetPlayerSkins()." );
+    local Hands hands;
+    local Material handsSkin;
 
     Skins[0] = inLoadOut.GetPantsMaterial();
     Skins[1] = inLoadOut.GetFaceMaterial();
     Skins[2] = inLoadOut.GetNameMaterial();
     Skins[3] = inLoadOut.GetVestMaterial();
+
+    hands = GetHands();
+    if(hands != None)
+    {
+        handsSkin = inLoadOut.GetHandsMaterial();
+        if(handsSkin != None)
+        {
+            hands.Skins[0] = handsSkin;
+        }
+    }
 
     //mplog( "...Skins[0]="$Skins[0] );
     //mplog( "...Skins[1]="$Skins[1] );
@@ -906,6 +919,13 @@ function ServerRequestEquip( EquipmentSlot Slot )
             CheckDesiredItemAndEquipIfNeeded();
         }
     }
+}
+
+function ServerThrowLightstick( )
+{
+    mplog("ServerThrowLightstick()");
+	// Flag the lightstick as being in a "fast use" state.
+	FlagLightstickFastUse();
 }
 
 simulated function OnActiveItemEquipped()
@@ -1686,10 +1706,10 @@ simulated function float GetFireTweenTime()
 simulated function AdjustPlayerMovementSpeed() {
   local float OriginalFwd, OriginalBck, OriginalSde;
   local float ModdedFwd, ModdedBck, ModdedSde;
-  local float TotalWeight;
+  local float WeightMovMod;
 
   local AnimationSetManager AnimationSetManager;
-  local AnimationSet setObject;
+  local AnimationSet setObject;  
 
   AnimationSetManager = SwatRepo(Level.GetRepo()).GetAnimationSetManager();
   setObject = AnimationSetManager.GetAnimationSet(GetMovementAnimSet());
@@ -1702,15 +1722,14 @@ simulated function AdjustPlayerMovementSpeed() {
   ModdedBck = OriginalBck;
   ModdedSde = OriginalSde;
 
-  ModdedFwd *= LoadOut.GetWeightMovementModifier();
-  ModdedBck *= LoadOut.GetWeightMovementModifier();
-  ModdedSde *= LoadOut.GetWeightMovementModifier();
+  
+		WeightMovMod=LoadOut.GetWeightMovementModifier();
+		
+		AnimSet.AnimSpeedForward = ModdedFwd * WeightMovMod;
+		AnimSet.AnimSpeedBackward = ModdedBck * WeightMovMod;
+		AnimSet.AnimSpeedSidestep = ModdedSde * WeightMovMod;
 
-  AnimSet.AnimSpeedForward = ModdedFwd;
-  AnimSet.AnimSpeedBackward = ModdedBck;
-  AnimSet.AnimSpeedSidestep = ModdedSde;
 
-  TotalWeight = LoadOut.GetTotalWeight();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2567,6 +2586,10 @@ function ReactToCSGas( Actor GasContainer,
 
 	Distance = VSize(Location - GasContainer.Location);
 	DistanceEffect = (600 - Distance)/(600);
+
+	//added a minum distance effect to avoid effect crash 
+	if (DistanceEffect < 0.2 )
+	           DistanceEffect = 0.2; 
 
     if ( Level.NetMode == NM_Client )
         return;
@@ -3593,12 +3616,12 @@ function Rotator GetStungRotationOffset()
         //calculate the ordinate for evaluation of the noise function
         Ordinate = Alpha * StingEffectFrequency;
         //apply noise to the pitch
-        Result.Pitch = ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Pitch, Alpha) * PerlinNoiseAxisA.Noise1(Ordinate);
+        Result.Pitch = ScaleStingEffectAmplitude(StingViewEffectAmplitude.Pitch, Alpha) * PerlinNoiseAxisA.Noise1(Ordinate);
         //calculate the value of the perlin noise function at the RollAndYawOrdinate
         RollAndYawAbcissa = PerlinNoiseAxisB.Noise1(Ordinate);
         //apply noise to the roll and yaw
-        Result.Roll = RollAndYawAbcissa * ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Roll, Alpha);
-        Result.Yaw = RollAndYawAbcissa * ScaleStingEffectAmplitude(class'SwatPlayerConfig'.static.GetStingViewEffectAmplitude().Yaw, Alpha);
+        Result.Roll = RollAndYawAbcissa * ScaleStingEffectAmplitude(StingViewEffectAmplitude.Roll, Alpha);
+        Result.Yaw = RollAndYawAbcissa * ScaleStingEffectAmplitude(StingViewEffectAmplitude.Yaw, Alpha);
     }
 
     return Result;
@@ -3613,7 +3636,7 @@ simulated event ApplyStungRotationOffset(out Vector Acceleration)
         StungRotation = GetStungRotationOffset();
         StungRotation.Pitch = 0;
 
-        Acceleration = Acceleration << (StungRotation * class'SwatPlayerConfig'.static.GetStingInputEffectMagnitude());
+        Acceleration = Acceleration << (StungRotation * StingInputEffectAmplitude);
     }
 }
 

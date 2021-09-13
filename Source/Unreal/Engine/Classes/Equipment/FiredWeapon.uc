@@ -355,7 +355,7 @@ simulated function TraceFire()
 
 // Used by the AI - whether firing this weapon will hit its intended target
 // (and not, for example, an actor or levelinfo that is in between our target)
-simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace)
+simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace, optional bool IgnoreStaticMeshes)
 {
     local vector PerfectFireStartLocation, HitLocation, StartTrace, ExitLocation, PreviousExitLocation;
     local vector HitNormal, ExitNormal;
@@ -415,12 +415,12 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
             // Our bullet type doesn't penetrate and we didn't hit our target..
             return false;
         }
-        else if(Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
+        else if(!IgnoreStaticMeshes && Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
         {
             // This might be redundant, but it doesn't seem to work otherwise.
             return false;
         }
-        else if(Victim.DrawType == DT_StaticMesh)
+        else if(!IgnoreStaticMeshes && Victim.DrawType == DT_StaticMesh)
         {
             // The bullet hits a static mesh.
             Momentum -= MtP;

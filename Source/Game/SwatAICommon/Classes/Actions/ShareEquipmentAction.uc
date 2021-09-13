@@ -73,7 +73,15 @@ latent function GiveEquipment()
 	}
 
 	EquipmentPiece.LatentGive(Destination);
-
+	
+	// Remove the optiwand from the officers "GivenEquipment"
+	// or else we wont be able to give the officer the item again
+	// since it will still be in the equipment array.
+	if(EquipmentPiece.IsA('Optiwand'))
+	{
+		ISwatOfficer(m_Pawn).RemoveGivenEquipment(EquipmentPiece);
+	}
+    
 	ISwatAI(m_Pawn).UnlockAim();
 }
 

@@ -611,7 +611,11 @@ static function string StripHTMLColors(string In)
 		if(i != -1)
 		{
 			j = InStrAfter(In, "]", i);
-			if(j != -1)
+			if(j == -1)
+			{
+				i = -1;
+			}
+			else
 			{
 				In = Mid(In, j + 1);
 			}

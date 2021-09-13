@@ -14,9 +14,6 @@ var config Range ThrowSpeedRange;           //clamp the throw speed
 
 // NonLethal Effects
 var config bool bTestingCameraEffects; // allow the player to be hit with nonlethals in standalone
-//maximum angular offset in unreal angle units
-var config Rotator StingViewEffectAmplitude;
-var config float StingInputEffectMagnitude;
 
 //in unreal distance units, the farthest shake distance
 var config float TasedViewEffectAmplitude;
@@ -76,16 +73,6 @@ static function Range GetThrowSpeedRange()
 static function bool GetTestingCameraEffects()
 {
 	return default.bTestingCameraEffects;
-}
-
-static function Rotator GetStingViewEffectAmplitude()
-{
-	return default.StingViewEffectAmplitude;
-}
-
-static function float GetStingInputEffectMagnitude()
-{
-	return default.StingInputEffectMagnitude;
 }
 
 static function float GetTasedViewEffectAmplitude()

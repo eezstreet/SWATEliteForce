@@ -1694,6 +1694,18 @@ function WeaponAICreated();
 native function bool IsInRoom(name RoomName);
 native function name GetRoomName();
 
+/**
+ * Won't crash if there aren't any navigation points in a room, unlike GetRoomName().
+ */
+function name GetRoomNameSafe()
+{
+	FindAnchor(true);
+	if(Anchor == None) {
+		return 'Unknown';
+	}
+	return GetRoomName();
+}
+
 native function float GetPathfindingDistanceToActor(Actor Destination, optional bool bAcceptNearbyPath);
 native function float GetPathfindingDistanceToPoint(vector Point, optional bool bAcceptNearbyPath);
 

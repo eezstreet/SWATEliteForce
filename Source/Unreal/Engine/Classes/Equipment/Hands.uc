@@ -276,6 +276,9 @@ simulated function IdleHoldingEquipment()
     if ( theActiveItem == None )
         return;
 
+    if(TheActiveItem.IsA('SwatGrenade') && SwatGrenade(TheActiveItem).IsInFastUse())
+      return; // never idle
+
 	//if the player is zooming, don't play the idle animation unless it changes our lowReady state
 	OwnerPawn = Pawn(Owner);
 	//if SavedTweenTime is 0, this is a generic idle animation, not a lowReady transitioning
@@ -299,10 +302,10 @@ simulated function IdleHoldingEquipment()
         else
             PlayNewAnim(Model.HolderLowReadyIdleAnimation, 0.0, 0.2);
     }
-	else if(TheActiveItem.IsA('SwatGrenade') && SwatGrenade(TheActiveItem).IsInFastUse())
+	/*else if(TheActiveItem.IsA('SwatGrenade') && SwatGrenade(TheActiveItem).IsInFastUse())
 	{
 		PlayNewAnim('GlowIdle', 0.0, 0.2);
-	}
+	}*/
     else
     {
         if (Model.HolderIdleAnimations.length == 0)

@@ -92,7 +92,7 @@ private function UpdateDoorKnowledge()
 	}
 
 	// complete if it's wedged or locked and we can't open it
-	if (SwatDoorTarget.IsWedged() || (SwatDoorTarget.IsLocked() && ! ISwatAI(m_Pawn).ShouldForceOpenLockedDoors()))
+	if (SwatDoorTarget.IsWedged() || (SwatDoorTarget.IsLocked() && (!ISwatAI(m_Pawn).ShouldForceOpenLockedDoors() || !SwatDoorTarget.CanBeOpenedBySuspectsAndCivilians())))
 	{
 		instantSucceed();
 	}
@@ -110,9 +110,39 @@ latent function OpenDoor()
 {
 	local name OpenAnimName;
 	local int OpenDoorAnimChannel;
+	local SquadCommandGoal CommandGoal;
+	local SwatAIRepository SwatAIRepo;
+
+	SwatAIRepo = SwatAIRepository(Level.AIRepo);
 
 	if (m_Pawn.logAI)
 		log(m_Pawn.Name $ " is preparing to open door " $ TargetDoor.Name);
+
+	// if the door has a trap on it and we are ordered to disarm the trap, do not open the door!
+	if(m_Pawn.IsA('SwatOfficer'))
+	{
+		if(SwatAIRepo.GetElementSquad().IsExecutingCommandGoal())
+		{
+			CommandGoal = SwatAIRepo.GetElementSquad().GetCurrentCommandGoal();
+		}
+		else if(SwatAIRepo.GetRedSquad().IsExecutingCommandGoal() && ISwatOfficer(m_Pawn).IsRedTeam())
+		{
+			CommandGoal = SwatAIRepo.GetRedSquad().GetCurrentCommandGoal();
+		}
+		else if(SwatAIRepo.GetBlueSquad().IsExecutingCommandGoal() && ISwatOfficer(m_Pawn).IsBlueTeam())
+		{
+			CommandGoal = SwatAIRepo.GetBlueSquad().GetCurrentCommandGoal();
+		}
+
+		if(CommandGoal != None)
+		{
+			if(SquadSecureGoal(CommandGoal) != None && SquadSecureGoal(CommandGoal).IsASecureTarget(SwatDoorTarget.GetTrapOnDoor()) && SwatDoorTarget.IsActivelyTrapped())
+			{
+				fail(ACT_CANT_REACH_DESTINATION);
+				return;
+			}
+		}
+	}
 
 	// only try and open closed doors
 	if (ShouldContinueToOpenDoor())

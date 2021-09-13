@@ -10,6 +10,8 @@ var config name FastThrowAnimation;
 
 var config class<LightstickProjectile> RedLightstickClass;
 var config class<LightstickProjectile> BlueLightstickClass;
+var config Material RedLightstickMaterial;
+var config Material BlueLightstickMaterial; 
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -76,12 +78,16 @@ simulated function OnUsingFinishedHook()
 		{
 			SwatPlayer(Owner).DoDefaultEquip();
 		}
+
+		if(Level.NetMode != NM_Client && Level.NetMode != NM_Standalone)
+		{
+			ThrowingFast = false;
+		}
 	}
 	else
 	{
 		Used = false;
 	}
-	ThrowingFast = false;
 }
 
 function UpdateHUD()
@@ -130,6 +136,30 @@ simulated function bool ValidateUse( optional bool Prevalidate )
 		return true;
 	else
 		return Super.ValidateUse(Prevalidate);
+}
+
+// Lightsticks can change color of third person mesh too.
+simulated function OnGivenToOwner()
+{
+	if(Owner.IsA('OfficerBlueOne') || Owner.IsA('OfficerBlueTwo'))
+	{
+		ThirdPersonModel.Skins[0] = BlueLightstickMaterial;
+	}
+	else if(Owner.IsA('OfficerRedOne') || Owner.IsA('OfficerRedTwo'))
+	{
+		ThirdPersonModel.Skins[0] = RedLightstickMaterial;
+	}
+	else if(Owner.IsA('NetPlayer'))
+	{
+		if(NetPlayer(Owner).GetTeamNumber() == 0)
+		{
+			ThirdPersonModel.Skins[0] = BlueLightstickMaterial;
+		}
+		else
+		{
+			ThirdPersonModel.Skins[0] = RedLightstickMaterial;
+		}
+	}
 }
 
 // Lightsticks can mutate their projectile class based on the person who is throwing them --eez
@@ -204,6 +234,37 @@ function bool IsInFastUse()
 	return ThrowingFast;
 }
 
+simulated function EquipmentSlot GetSlotForReequip()
+{
+	local SwatGame.SwatGamePlayerController LPC;
+
+	if(ThrowingFast)
+	{
+		LPC = SwatGamePlayerController(Level.GetLocalPlayerController());
+
+		if (Pawn(Owner).Controller != LPC) return Slot_PrimaryWeapon; //the player doesn't own this ammo
+
+		if(LPC.bSecondaryWeaponLast)
+			return Slot_SecondaryWeapon;
+		return Slot_PrimaryWeapon;
+	}
+
+	return super.GetSlotForReequip();
+}
+
+simulated function UnequippedHook()
+{
+	mplog("UnequippedHook()");
+	ThrowingFast = false;
+	Super.UnequippedHook();
+}
+
+Replication
+{
+	reliable if(Role == Role_Authority)
+		ThrowingFast, Used;
+}
+
 defaultproperties
 {
     Slot=Slot_Lightstick
@@ -215,4 +276,6 @@ defaultproperties
 
 	RedLightstickClass=class'SwatEquipment.RedLightstickProjectile'
 	BlueLightstickClass=class'SwatEquipment.BlueLightstickProjectile'
+	RedLightstickMaterial=Material'GearTex_SEF.lightstickred_held'
+	BlueLightstickMaterial=Material'GearTex_SEF.lightstickblue_held'
 }

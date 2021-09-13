@@ -55,7 +55,7 @@ function EnemySpeechManagerAction	GetEnemySpeechManagerAction();
 function bool		IsAThreat();
 function bool		IAmThreat();
 function			BecomeAThreat();
-function			UnbecomeAThreat();
+function			UnbecomeAThreat(optional bool UseCooldown, optional float CooldownDuration);
 
 ///////////////////////////////////////////////////////////////////////////////
 //

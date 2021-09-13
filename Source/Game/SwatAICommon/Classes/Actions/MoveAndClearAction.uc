@@ -174,6 +174,7 @@ function RotateToFacePausingCharacter(Pawn PausingCharacter)
 {
 	RemoveRotateToFacePausingCharacterGoal();	
 
+	log("RotateToFacePausingCharacter() posted a RotateTowardActorGoal at "$PausingCharacter);
 	CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), achievingGoal.priority, PausingCharacter);
 	assert(CurrentRotateTowardActorGoal != None);
 	CurrentRotateTowardActorGoal.AddRef();

@@ -30,6 +30,7 @@ var config private float				MaxAggressiveFleePercentageChance;
 
 var private DistanceToOfficersSensor	DistanceToOfficersSensor;
 var private bool						bUseDistanceToOfficersSensor;
+var config private float                ThreatCooldown;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -363,7 +364,7 @@ latent function Flee()
 	local Pawn CurrentEnemy;
 	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
 
-	ISwatEnemy(m_Pawn).UnbecomeAThreat();
+	ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
 
 	// trigger the speech
 	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();
@@ -443,4 +444,5 @@ Begin:
 defaultproperties
 {
     satisfiesGoal = class'EngageOfficerGoal'
+	ThreatCooldown = 2.0
 }

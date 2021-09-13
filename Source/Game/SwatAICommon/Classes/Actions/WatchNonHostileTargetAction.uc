@@ -27,6 +27,8 @@ var config float					MaxDeltaTimeBetweenSpeakingToTarget;
 var private Pawn					LastSpokenToWatchTarget;
 var private float					NextSpokenToWatchTargetTime;
 
+var config float                    AskLeadForRestrainChance;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Init / cleanup
@@ -190,6 +192,7 @@ function AimAtWatchTarget()
 	}
 	else
 	{
+		log("AimAtWatchTarget() posted a RotateTowardActorGoal at "$CurrentWatchTarget);
 		CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), achievingGoal.priority, CurrentWatchTarget);
 		assert(CurrentRotateTowardActorGoal != None);
 		CurrentRotateTowardActorGoal.AddRef();
@@ -200,10 +203,22 @@ function AimAtWatchTarget()
 
 private function SpeakToCompliantTarget()
 {
+	local HandheldEquipment CurrentPlayerItem;
+
 	LastSpokenToWatchTarget     = CurrentWatchTarget;
 	NextSpokenToWatchTargetTime = Level.TimeSeconds + RandRange(MinDeltaTimeBetweenSpeakingToTarget, MaxDeltaTimeBetweenSpeakingToTarget);
 
-	ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerCoveringTargetSpeech();
+	// If the player does not have cuffs equipped and there is not a goal on this target to restrain them, then there is a 25% chance to ask the player to cuff them.
+	// Otherwise, we always do the CoveringTarget speech.
+	CurrentPlayerItem = ISwatPawn(Level.GetLocalPlayerController().Pawn).GetActiveItem();
+	if(FRand() <= AskLeadForRestrainChance && (CurrentPlayerItem == None || CurrentPlayerItem.IsA('Cuffs') == false) && !GetCurrentTeam().IsBeingSecured(CurrentWatchTarget))
+	{
+		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerAskedLeadToRestrainSpeech();
+	}
+	else
+	{
+		ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerCoveringTargetSpeech();
+	}
 }
 
 state Running
@@ -248,4 +263,5 @@ state Running
 defaultproperties
 {
 	satisfiesGoal=class'WatchNonHostileTargetGoal'
+	AskLeadForRestrainChance=0.25
 }

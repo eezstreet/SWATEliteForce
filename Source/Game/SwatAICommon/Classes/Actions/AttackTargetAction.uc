@@ -27,6 +27,7 @@ var(Parameters) float		ChanceToSucceedAfterFiring;
 var(Parameters) bool		bHavePerfectAim;
 var(Parameters) bool		bOrderedToAttackTarget;
 var(Parameters) float		WaitTimeBeforeFiring;
+var(Parameters) bool        bSuppressiveFire;
 
 // sensor we use to determine if we can hit the target
 var private   TargetSensor	TargetSensor;
@@ -185,7 +186,7 @@ private function bool ShouldSucceed()
 
 latent function AttackTarget()
 {
-  local FiredWeapon CurrentWeapon;
+  	local FiredWeapon CurrentWeapon;
 
 	if(Target == None) {
 		instantFail(ACT_INSUFFICIENT_RESOURCES_AVAILABLE); // Possibly fixes a bug (?)
@@ -195,20 +196,20 @@ latent function AttackTarget()
 
 	ReadyWeapon();
 
-  CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
+  	CurrentWeapon = FiredWeapon(m_Pawn.GetActiveItem());
 
-		// we should have a weapon before we continue
+	// we should have a weapon before we continue
 	if (CurrentWeapon == None)
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
 
 	if (m_Pawn.LogTyrion)
 		log(m_Pawn.Name $ " AttackTargetAction::AttackTarget - CurrentWeapon: " $ CurrentWeapon.Name $ " NeedsReload: " $ CurrentWeapon.NeedsReload() $ " CanReload: " $ CurrentWeapon.CanReload());
 
-  // if our current weapon is empty, and can reload, reload
-  if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
-  {
+  	// if our current weapon is empty, and can reload, reload
+  	if (CurrentWeapon.NeedsReload() && CurrentWeapon.CanReload())
+  	{
 		CurrentWeapon.LatentReload();
-  }
+  	}
 	else if (CurrentWeapon.IsEmpty())
 	{
 		instantFail(ACT_NO_WEAPONS_AVAILABLE);
@@ -225,14 +226,14 @@ latent function AttackTarget()
 		CurrentWeapon.AIInterrupt();
 	}
 
-  // wait until we can hit the target (make sure the target is still conscious too!)
-  while(! m_Pawn.CanHit(Target) && ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)))
-  {
+  	// wait until we can hit the target (make sure the target is still conscious too!)
+  	while(!bSuppressiveFire && !m_Pawn.CanHit(Target) && ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)))
+  	{
 		if (m_Pawn.logTyrion)
 			log(m_Pawn.Name $ " is waiting to be able to hit target " $ TargetPawn);
 
-    yield();
-  }
+    	yield();
+  	}
 
   // if we can aim at the target
   if (ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Target))
@@ -344,7 +345,15 @@ protected latent function AimAndFireAtTarget(FiredWeapon CurrentWeapon)
 	if (WaitTimeBeforeFiring > 0)
 		Sleep(WaitTimeBeforeFiring);
 
+	// suspects don't care if they need to acquire a target perfectly
+	if(m_Pawn.IsA('SwatEnemy'))
+	{
+		LatentAimAtActor(Target, ISwatAI(m_Pawn).GetTimeToWaitBeforeFiring());
+	}
+	else
+	{	// SWAT need perfect aim!
 		LatentAimAtActor(Target);
+	}
 
 	// Make sure we wait a minimum of MandatedWait before firing, so shooting isn't instant
 	TimeElapsed = Level.TimeSeconds - StartActionTime;

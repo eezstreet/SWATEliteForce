@@ -1,24 +1,79 @@
-### v7.1 "The Shield Update"
+### v7.1
 
 #### ALL CHANGES ####
 
  - Added a new "Configuration" feature to the weapons. Instead of selecting a weapon and its attachments from the list of weapons, you can pick the attachments separately.
  - All suppressed and Aimpoint version of weapons are now different selectable configurations.
  - Remington 870 Breaching is now a selectable configuration of the Remington 870.
+ - Improved meshes and/or textures on the following items, all of which were made by Beppe:
+  - Various doors throughout levels
+  - First person hands
+  - M4A1 (changed from Brettzie's)
+  - M870 Breacher (is now considered an attachment to the M870)
+  - Nova Pump
+  - Less Lethal Nova
+  - UMP45
+  - Glock 17
+  - P90 (now has proper ironsights)
+  - M4Super90
+  - SCAR-L
+  - MP5
+  - G36K
  - Added Holographic Sight variants for M4A1, UMP, MP5, G36K and M4Super90. (Thanks to Beppe for these models)
- - Added unsilenced version of the Colt Accurized Rifle.
+ - Added unsilenced version of the Colt Accurized Rifle. (Thanks to Beppe for this)
  - Added CQB M4A1 variants (Thanks to Beppe for these models)
- - P90 now has sights (thanks to Beppe for this)
- - Replaced Brettzie's M4A1 models with ones by Beppe.
  - Removed player ports from admin broadcast messages (unnecessary noise, player port is always same as server port)
  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
  - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
+ - Restored the vanilla SWAT 4 menu music
  - When crosshairs are disabled, contextual icons such as door mirroring now appear. (thanks to wsevren for this fix)
+ - The scoring relating to suspects being neutralized has been changed:
+  - Suspects neutralized (max): 4 -> 10
+  - Suspects incapacitated (max): 13 -> 15
+  - Suspects arrested (max): No change; 20 -> 20
+ - Toolkit interactions have been made slower to encourage breaching:
+  - Lockpick (base): 4 seconds -> 10 seconds
+  - Bomb Defuse (base): 4 seconds -> 10 seconds
+ - Added a threat cooldown. If a suspect was just firing at you and the suspect surrenders/was stunned/flees (if not Insane), there is a small window of time that you are legally allowed to shoot.
+ - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 20 + 1/20. This is intentional, not a bug. Thanks to beppe for the idea.)
+ - Lightsticks never fall through the floor any more. (thanks to Beppe for the fix)
+ - The toolkit and detonator no longer have weight/bulk, to eliminate discrepencies between the equipment screen and ingame weight.
+ - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
+ - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
+ - SWAT AI will no longer open a door whose trap they are assigned to remove.
+ - Custom skins can now alter the first person hands texture.
+ - Enabled the following npcs so that they can be used in custom missions: Lian Niu, Evil Waiter (shows up as Male, Asian Chef), Allen Kruse, Simon Gowan, Jewel Thief from the Diamond Robbery Mission, and the hosptial terrorist from the hopstial mission. Thanks to Warzaid for this.
+ - FN FAL now has the correct kind of ammo for it. Thanks to beppe for this.
+ - Shotguns have a tighter choke, and are a more appealing option because of it. (Edit made by EFdee)
+ - Fixed SEF bug: Many ironsights were misaligned.
+ - Fixed SEF bug: Game would crash if exposed to CS gas. Thanks to beppe for this.
+ - Fixed SEF bug: Sometimes penalties would trigger when they weren't supposed to.
  - Fixed SEF bug: MP5SD6 wouldn't come back up after low-readying.
+ - Fixed SEF bug: P226 had no texturing in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
  - Fixed SEF bug: Vote locking (for players or globally) would not work in WebAdmin.
  - Fixed SEF bug: Icons wouldn't appear correctly on the Equipment panel for some weapons (M249 SAW, etc)
  - Fixed SEF bug: Night vision goggles were missing their third person mesh.
  - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
+ - Fixed SEF bug: On certain maps, talking with localized messages enabled caused a crash.
+ - Fixed SEF bug: Server crash under certain circumstances
+ - Fixed SEF bug: Lightsticks are green on the belt and in third person hands, but are blue/red when thrown.
+ - Fixed SEF bug: Officers ask you to "break out the cuffs" if you are holding cuffs or someone else is securing the person in question.
+ - Fixed SEF bug: Suspects wouldn't shoot at doors when barricaded (thanks to sandman332 for the fix)
+ - Fixed SEF bug: You could juke suspects (especially low skill ones) by moving in zigzags etc. Now, they will always fire after a period of time, even if their target is not perfectly acquired.
+ - Fixed SEF bug: Suspects wouldn't pick up weapons, they would just flee. (thanks to EFdee for this)
+ - Fixed SEF bug: The M4Super90 and M1Super90 did not have breaching contexts on doors (thanks to EFdee for this)
+ - Fixed SEF bug: The Uzi did not have correct weapon sounds in third person (thanks to beppe for this)
+ - Fixed SEF bug: The optiwand would not transfer correctly in singleplayer (thanks to Severn for this)
+ - Fixed SEF bug: FPS issues in multiplayer with movement (thanks to beppe for this)
+ - Fixed SEF bug: Suspects can no longer proceed through doors that you have locked (they can however, go through doors that they have locked or are locked at the start of the game..)
+ - Fixed SEF bug: "Drop lightstick" now plays the correct animations in first person
+ - Fixed SEF bug: "Drop lightstick" was bugged in multiplayer
+ - Fixed TSS/SEF bug: Weapons clipped a lot in first person (thanks to Beppe for this)
+ - Fixed TSS bug: Unable to punch after pressing zoom key on handcuffs
+ - Fixed TSS bug: Players on the red team look like suspects with the default skin
+ - Fixed TSS bug: Contextual HUD reticles (lockpick, wedge, etc) would stretch massively in widescreen resolutions and look ugly.
+ - Fixed TSS bug: Local spawners (such as the DOA spawners on St. Micheal's Medical Center) would not work in QMM.
+ - Fixed TSS bug: Gamma would be wrong in SwatEd. Thanks to Masterscape for this.
 
 ### v7
  

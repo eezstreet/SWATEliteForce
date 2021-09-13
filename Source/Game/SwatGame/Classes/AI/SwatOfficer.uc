@@ -760,6 +760,11 @@ function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 	return LoadOut.GetItemAtSlot(Slot);
 }
 
+function RemoveGivenEquipment(HandheldEquipment Equipment)
+{
+    LoadOut.RemoveGivenEquipment(Equipment);
+}
+
 // overridden from ISwatAI
 function float GetTimeToWaitBeforeFiring()
 {
@@ -1216,6 +1221,10 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
     Distance = VSize(Location - GasContainer.Location);
     DistanceEffect = (600 - Distance)/(600);
 
+    //added a minum distance effect to avoid effect crash 
+    if (DistanceEffect < 0.2 )
+	  DistanceEffect = 0.2; 
+	
     if ( HasProtection( 'IProtectFromCSGas' ) )
     {
         return;

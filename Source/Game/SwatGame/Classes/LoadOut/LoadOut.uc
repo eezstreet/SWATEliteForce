@@ -559,6 +559,8 @@ simulated function HandHeldEquipment GetFirstAvailableItemAtSlot(EquipmentSlot S
     return Candidate;
 }
 
+simulated function RemoveGivenEquipment(HandHeldEquipment Equipment) {}
+
 // Returns the first handheld equipment corresponding to the given slot
 simulated function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 {
@@ -734,6 +736,18 @@ simulated function Material GetPantsMaterial()
         return GetMaterial(MaterialPocket.MATERIAL_HeavyPants);
     else
         return GetMaterial(MaterialPocket.MATERIAL_Pants);
+}
+
+simulated function Material GetHandsMaterial()
+{
+    local class<SwatCustomSkin> SkinClass;
+
+    SkinClass = class<SwatCustomSkin>(DynamicLoadObject(CustomSkinSpec, class'Class', true));
+
+    if(SkinClass != None)
+    {
+        return SkinClass.default.FirstPersonHandsMaterial;
+    }
 }
 
 simulated function Material GetCustomMaterial( MaterialPocket pock )

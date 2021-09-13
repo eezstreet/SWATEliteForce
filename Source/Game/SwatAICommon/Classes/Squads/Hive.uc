@@ -702,7 +702,15 @@ private function OfficerSawEnemy(Pawn OfficerViewer, Pawn SeenEnemy)
 		! Blackboard.IsAnAssignedTarget(SeenEnemy))
 	{
 		// trigger a sound for the viewer to say
-		ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectSpottedSpeech();
+		// If the enemy does not have a weapon equipped, use the hostage speech instead
+		if(ISwatAI(SeenEnemy).HasFiredWeaponEquipped())
+		{
+			ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerSuspectSpottedSpeech();
+		}
+		else
+		{
+			ISwatOfficer(OfficerViewer).GetOfficerSpeechManagerAction().TriggerHostageSpottedSpeech(SeenEnemy);
+		}
 	}
 	Blackboard.UpdateEnemy(SeenEnemy);
 	

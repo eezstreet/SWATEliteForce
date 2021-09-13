@@ -194,7 +194,41 @@ var private config float			MoveAndClearPauseThreshold;
 var DoorBufferVolume                DoorBufferVolume;
 var StaticMesh                      DoorBufferVolumeCollisionMesh;
 
-var string DeployedWedgeClassName;
+//var string DeployedWedgeClassName;
+var private bool bLockedBySwat;
+var private bool bUnused1;
+var private bool bUnused2;
+var private bool bUnused3;
+var private bool bUnused4;
+var private bool bUnused5;
+var private bool bUnused6;
+var private bool bUnused7;
+var private bool bUnused8;
+var private bool bUnused9;
+var private bool bUnused10;
+var private bool bUnused11;
+var private bool bUnused12;
+var private bool bUnused13;
+var private bool bUnused14;
+var private bool bUnused15;
+var private bool bUnused16;
+var private bool bUnused17;
+var private bool bUnused18;
+var private bool bUnused19;
+var private bool bUnused20;
+var private bool bUnused21;
+var private bool bUnused22;
+var private bool bUnused23;
+var private bool bUnused24;
+var private bool bUnused25;
+var private bool bUnused26;
+var private bool bUnused27;
+var private bool bUnused28;
+var private bool bUnused29;
+var private bool bUnused30;
+var private bool bUnused31;
+var private bool bUnused32;
+var Actor UnusedActor;
 var class<Actor> DeployedWedgeClass;
 
 var string DeployedC2ChargeClassName;
@@ -335,7 +369,7 @@ simulated function PreBeginPlay()
 
     //load the DeployedWedgeClass and DeployedC2ChargeClass because they are
     // created by designers
-    DeployedWedgeClass    = class<Actor>(DynamicLoadObject(DeployedWedgeClassName,class'Class'));
+    DeployedWedgeClass    = class<Actor>(DynamicLoadObject("SwatDesignerClasses.DeployedWedge",class'Class'));
     DeployedC2ChargeClass = class<Actor>(DynamicLoadObject(DeployedC2ChargeClassName,class'Class'));
 
     // Spawn the deployed wedge and c2 objects for this door
@@ -456,6 +490,24 @@ simulated function bool IsBoobyTrapped()
     return bIsBoobyTrapped;
 }
 
+// is there a trap active on this door?
+simulated function bool IsActivelyTrapped()
+{
+	local BoobyTrap_Door Trap;
+
+	if(!IsBoobyTrapped())
+	{
+		return false;
+	}
+
+	Trap = BoobyTrap_Door(BoobyTrap);
+	assert(Trap != None);
+
+	return Trap.bActive && !bBoobyTrapTripped;
+}
+
+
+
 simulated function bool TrapIsDisabledByC2()
 {
 	local BoobyTrap_Door Trap;
@@ -503,6 +555,16 @@ simulated function bool IsBoobyTrapTriggered()
 	return bBoobyTrapTripped;
 }
 
+simulated function Actor GetTrapOnDoor()
+{	
+	local BoobyTrap_Door Trap;
+	if(!IsBoobyTrapped())
+	{
+		return None;
+
+		return BoobyTrap;
+	}
+}
 
 //
 // Registering for Door Opening
@@ -762,6 +824,7 @@ simulated function OnDoorLockedByOperator() {
 	}
 
 	bIsLocked = true;
+	bLockedBySwat = true;
 	TriggerEffectEvent('Unlocked');
 
 	UpdateOfficerDoorKnowledge(true);
@@ -2443,6 +2506,11 @@ simulated function Lock()
         bIsLocked = true;
 }
 
+simulated function bool CanBeOpenedBySuspectsAndCivilians()
+{
+	return !bLockedBySwat;
+}
+
 simulated function float GetMoveAndClearPauseThreshold()
 {
 	return MoveAndClearPauseThreshold;
@@ -2462,7 +2530,7 @@ function SpawnDeployedWedge()
     DeployedWedge = DeployedWedgeBase(Spawn(DeployedWedgeClass));
 
     assertWithDescription(DeployedWedge != None,
-        "[tcohen] SwatDoor couldn't Spawn a DeployedWedge.  DeployedWedgeClassName="$DeployedWedgeClassName
+        "[tcohen] SwatDoor couldn't Spawn a DeployedWedge.  DeployedWedgeClassName=SwatDesignerClasses.DeployedWedge"
         $", which resolves to DeployedWedgeClass="$DeployedWedgeClass
         $".");
 
