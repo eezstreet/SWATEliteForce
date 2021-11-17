@@ -443,11 +443,13 @@ function CommonOnClick(GUIComponent Sender)
 	{
 		case MyStartButton:
             if(!bPressedReady) {
+		MyMPLoadoutPanel.Activate();
               if(MyMPLoadoutPanel.CheckWeightBulkValidity()) {
                 SwatGuiController(Controller).SetPlayerReady();
                 bPressedReady = true;
                 MyStartButton.SetCaption(UnreadyString);
               }
+	       MyMPLoadoutPanel.Deactivate();
             } else {
               SwatGuiController(Controller).SetPlayerNotReady();
               bPressedReady = false;
