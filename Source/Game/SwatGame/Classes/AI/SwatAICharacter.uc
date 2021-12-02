@@ -136,7 +136,7 @@ simulated event PostNetBeginPlay()
 		{
 			for(i = 0; i <= 3; i++)
 			{
-				ReplicatedSkins[i] = class'SwatGame.SwatAICharacterConfig'.default.OfficerHeavyDefaultMaterial[0];
+				ReplicatedSkins[i] = class'SwatGame.SwatAICharacterConfig'.default.OfficerHeavyDefaultMaterial[i];
 			}
 		}
 	}
