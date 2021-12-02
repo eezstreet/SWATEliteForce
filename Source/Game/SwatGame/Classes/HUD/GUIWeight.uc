@@ -13,6 +13,6 @@ private function string WeightStringText(float Weight) {
 	}
   	else
   	{
-  		return "" $ (Weight * 0.453592) $ " lb";
+  		return "" $ (Weight / 0.453592) $ " lb";
   	}
 }
