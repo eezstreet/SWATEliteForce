@@ -367,7 +367,7 @@ function UpdateWeights() {
   }
   else if(SwatGUIControllerBase(Controller).IsUsingImperialMeasurements())
   {
-    MyEquipmentWeightLabel.Caption = ""$(MyCurrentLoadOut.GetTotalWeight() * 0.453592)$" lb";
+    MyEquipmentWeightLabel.Caption = ""$(MyCurrentLoadOut.GetTotalWeight() / 0.453592)$" lb";
   }
   
   MyEquipmentBulkLabel.Caption =""$bulkDisplay$"%";
