@@ -99,3 +99,8 @@ function int GetCurrentValue()
 
     return PenaltyPerDownedOfficer * ReportableDownedOfficers;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

@@ -89,7 +89,7 @@ function UpdateProcedures()
             MyLeadershipBonusBox.AddNewRowElement( "Description",, theProcedures.Procedures[i].Description );    
             MyLeadershipBonusBox.AddNewRowElement( "Calculation",, SGRI.ProcedureCalculations[i] );  
             if( !bInGame )
-                MyLeadershipBonusBox.AddNewRowElement( "Score",,, curValue );    
+                MyLeadershipBonusBox.AddNewRowElement( "Score",, curValue$"/"$SGRI.ProcedurePossible[i] );    
 			MyLeadershipBonusBox.PopulateRow();
     
             bonusScore += curValue;

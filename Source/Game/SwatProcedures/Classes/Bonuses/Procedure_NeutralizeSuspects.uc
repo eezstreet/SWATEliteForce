@@ -57,3 +57,8 @@ function int AdditionalBonus()
 {
     return 0;
 }
+
+function int GetPossible()
+{
+	return int(TotalBonus * PerEnemyBonusFraction);
+}

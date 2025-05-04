@@ -53,3 +53,8 @@ function int GetCurrentValue()
         return 0;
     }
 }
+
+function int GetPossible()
+{
+	return Bonus;
+}

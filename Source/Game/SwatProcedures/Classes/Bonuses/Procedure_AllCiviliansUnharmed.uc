@@ -65,3 +65,8 @@ function string Status()
 }
 
 ///////////////////////////////////////
+
+function int GetPossible()
+{
+	return Bonus;
+}

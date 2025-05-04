@@ -53,6 +53,11 @@ function int GetCurrentValue()
     return total;
 }
 
+function int GetPossible()
+{
+	return Bonus;
+}
+
 ///////////////////////////////////////
 
 function string Status()

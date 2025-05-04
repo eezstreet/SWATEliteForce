@@ -30,3 +30,8 @@ function int GetCurrentValue()
 
     return CurrentValue;
 }
+
+function int GetPossible()
+{
+	return Bonus;
+}

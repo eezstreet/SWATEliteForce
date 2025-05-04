@@ -86,3 +86,8 @@ function int GetCurrentValue()
 
     return PenaltyPerDownedHostage * ReportableDownedHostages;
 }
+
+function int GetPossible()
+{
+	return 0;
+}
