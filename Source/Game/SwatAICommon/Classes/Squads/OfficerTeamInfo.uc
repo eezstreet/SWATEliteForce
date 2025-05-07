@@ -2014,6 +2014,45 @@ function bool DropLightstick(Pawn CommandGiver, vector CommandOrigin)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Command_ReportIn
+
+// Each AI officer reports in to the player.
+function bool ReportIn(Pawn CommandGiver, vector CommandOrigin)
+{
+	// only post the goal if we are allowed
+	if (CanExecuteCommand())
+	{
+	    GotoState('ReportInState');
+	    return true;
+	}
+	return false;
+}
+
+state ReportInState
+{
+Begin:
+	LatentReportIn();
+}
+
+latent function LatentReportIn()
+{
+	local int i;
+	local Pawn OfficerIter;
+
+	for(i=0; i<pawns.length; ++i)
+	{
+		OfficerIter = pawns[i];
+		TriggerStatusReportSpeech(OfficerIter);
+		sleep(RandRange(0.85, 0.95));
+    }
+}
+
+function TriggerStatusReportSpeech(Pawn Officer)
+{
+	ISwatOfficer(Officer).GetOfficerSpeechManagerAction().TriggerStatusReportSpeech();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Engine.ICareAboutGrenadesGoingOff implementation
 
 simulated function OnFlashbangWentOff(Pawn Thrower) {

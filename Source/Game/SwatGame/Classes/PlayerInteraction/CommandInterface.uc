@@ -180,7 +180,7 @@ enum ECommand
     Command_MirrorCorner,
 
     //DEPLOY Menu
-	  Command_CheckForTraps,
+    Command_CheckForTraps,
 
     Command_Deploy_Wedge,
     Command_Deploy_BreachingShotgun,
@@ -193,19 +193,19 @@ enum ECommand
     Command_Deploy_PepperSpray,
     Command_Deploy_C2Charge,
     Command_Deploy_CSBallLauncher,
-	  Command_Deploy_Lightstick,
+    Command_Deploy_Lightstick,
 
     //
     // All Static Commands have their ECommand set to Command_Static
     //
 
-	  Command_Open,
-	  Command_Breach,
-	  Command_Investigate,
+    Command_Open,
+    Command_Breach,
+    Command_Investigate,
     Command_Move,
-	  Command_Response_PosNegPage,	// MP only
-	  Command_Response_MovingPage,	// MP only
-	  Command_Response_Mirror,	// MP only
+    Command_Response_PosNegPage,	// MP only
+    Command_Response_MovingPage,	// MP only
+    Command_Response_Mirror,	// MP only
 
     Command_StackUpMP,        // MP only - because "Stack Up" was renamed "Try Lock"
     Command_Preferences,
@@ -247,9 +247,10 @@ enum ECommand
     // v6
     //
     Command_CleanSweep,   // Secure literally everything on the map
-    Command_RestrainAll,        // Restrain all targets in the same room as target
-    Command_SecureAll,          // Secure all evidence in the same room as target
-    Command_DisableAll,         // Disable all targets in the same room
+    Command_RestrainAll,  // Restrain all targets in the same room as target
+    Command_SecureAll,    // Secure all evidence in the same room as target
+    Command_DisableAll,   // Disable all targets in the same room
+    Command_ReportIn,
 
     Command_Static,
 };
@@ -868,7 +869,7 @@ simulated function SetCommandStatus(Command Command, optional bool TeamChanged)
 
     // This needs to be cleaned up badly --eez
     // Special hacky conditions, since TeamCanExecuteCommand is a bit of a hack in and of itself
-    if (Command.Command == Command_Preferences) {
+    if (Command.Command == Command_Preferences || Command.Command == Command_ReportIn) {
       // Makes sense in every context
       Status = Pad_Normal;
     } else if (Level.NetMode == NM_Standalone && CommandUsesGas(Command) && !CurrentCommandTeam.DoesAnOfficerHaveUsableEquipment(Slot_CSGasGrenade)) {
@@ -2379,6 +2380,11 @@ simulated function SendCommandToOfficers()
 
         case Command_Drop_Lightstick:
           bCommandIssued = PendingCommandTeam.DropLightstick(
+                Level.GetLocalPlayerController().Pawn,
+                PendingCommandOrigin);
+          break;
+        case Command_ReportIn:
+           bCommandIssued = PendingCommandTeam.ReportIn(
                 Level.GetLocalPlayerController().Pawn,
                 PendingCommandOrigin);
           break;

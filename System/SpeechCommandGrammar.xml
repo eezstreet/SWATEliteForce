@@ -205,6 +205,10 @@ NOTES:
 			<PHRASE VALSTR="Command_SecureAll">Grab all ...</PHRASE>
 			<PHRASE VALSTR="Command_DisableAll">Disable all ...</PHRASE>
 			<PHRASE VALSTR="Command_DisableAll">Disarm all ...</PHRASE>
+
+			<PHRASE VALSTR="Command_ReportIn">Report in.</PHRASE>
+			<PHRASE VALSTR="Command_ReportIn">... status report.</PHRASE>
+			<PHRASE VALSTR="Command_ReportIn">Sound off.</PHRASE>
 		</LIST>
 	</RULE>
 

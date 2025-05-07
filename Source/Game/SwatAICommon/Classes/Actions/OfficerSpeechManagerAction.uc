@@ -656,6 +656,11 @@ function TriggerBlueTeamReportedSpeech()
 	TriggerSpeech('BlueTeamReported');
 }
 
+function TriggerStatusReportSpeech()
+{
+	TriggerSpeech('StatusReport');
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
