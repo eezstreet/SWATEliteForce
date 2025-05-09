@@ -1136,7 +1136,10 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 		}
 	}
 
-	if (CurrentStungGoal == None)
+	// We don't apply the "Stung" goal if this was a beanbag shot and we are already playing
+	// the "React to Being Shot" goal. Prevents wacky double-reaction animation, and looks/feels
+	// so much more realistic. Beanbag is no longer a god-tier weapon.
+	if (CurrentStungGoal == None && (Grenade != None || CurrentReactToBeingShotGoal == None))
 	{
 		CurrentStungGoal = new class'StungGoal'(characterResource(), Grenade, StungGrenadeLocation, StunnedDuration);
 		assert(CurrentStungGoal != None);
