@@ -1118,7 +1118,10 @@ function NotifyStunnedByC2Detonation(vector C2ChargeLocation, float StunnedDurat
 }
 
 // if grenade is none, then we got hit by the bean bag
-function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDuration)
+// Returns `true` if the Stung Goal was applied (or an existing Strung Action was updated),
+// returns `false` if the Stung Goal was not applied (because this AI was hit with a beanbag
+// and is already playing the "React to Being Shot" goal)
+function bool NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDuration)
 {
 	// create the reaction behavior
 	if (CurrentStungGoal != None)
@@ -1133,12 +1136,13 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 		{
 			assert(StungAction(CurrentStungGoal.achievingAction) != None);
 			StungAction(CurrentStungGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
+			return true;
 		}
 	}
 
 	// We don't apply the "Stung" goal if this was a beanbag shot and we are already playing
 	// the "React to Being Shot" goal. Prevents wacky double-reaction animation, and looks/feels
-	// so much more realistic. Beanbag is no longer a god-tier weapon.
+	// so much more realistic. Beanbag is no longer a god-tier weapon. - K.F. 2025
 	if (CurrentStungGoal == None && (Grenade != None || CurrentReactToBeingShotGoal == None))
 	{
 		CurrentStungGoal = new class'StungGoal'(characterResource(), Grenade, StungGrenadeLocation, StunnedDuration);
@@ -1147,7 +1151,12 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 
         CurrentStungGoal.bShouldRunFromStunningDevice = ShouldRunWhenStung();
 		CurrentStungGoal.postGoal(self);
+		return true;
 	}
+
+	// We didn't actually apply the StungGoal, because we were hit with a beanbag and
+	// already have a ReactToBeingShotGoal. -K.F. 2025
+	return false;
 }
 
 // subclasses should override

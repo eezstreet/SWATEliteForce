@@ -709,10 +709,33 @@ private function bool CantBeDazed()
 
 private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation, float AIStingDuration)
 {
+    local CommanderAction commanderAction;
+    local bool stungApplied;
+
+    commanderAction = GetCommanderAction();
+
 	LastTimeStung = Level.TimeSeconds;
 	StungDuration = AIStingDuration;
 
-	GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
+	stungApplied = GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
+
+    // Fix for a bug caused by my change to NotifyStung (which makes it so that the
+    // Stung Goal is not applied if we are already playing the "React to Being Shot"
+    // Goal). The bug caused compliant suspects to play the wrong upper body animation
+    // when they look at a nearby officer as part of the "Look At Officers" action;
+    // the suspect would play an "aim weapon at" animation as if they were still armed.
+
+    // If StungDuration is greater than 0 at the end of this function, IsStung() will
+    // return true until the StungDuration has passed. There's no explanation for this
+    // in the UC scripts, so maybe it has something to do with native code.
+
+    // Anyway, if IsStung() returns true, the animation kAnimationSetCompliantLookAt
+    // doesn't get loaded, which causes the bug described above. Setting the
+    // StungDuration to 0 here fixes the bug. -K.F. 2025
+    if (!stungApplied)
+    {
+        StungDuration = 0.0;
+    }
 }
 
 private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
