@@ -170,10 +170,19 @@ simulated function UpdateHandsForRendering()
     {
         NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 
+        // Apply inertia (reducing weapon's movement speed).
         if (ViewInertia > 0) {
             Change = NewLocation - Location;
-            Change *= (deltaTime / 0.016667);
+            // Scale for framerate. We interp halfway back to 1 because this gives more consistent results
+            // across different framerates.
+            Change *= 0.5 + (deltaTime / 0.016667) * 0.5;
             NewLocation = Location + Change;
+        }
+
+        // Smoothing.
+        if (ViewInertia > 0) {
+            NewLocation = (NewLocation + (TargetLocation - EquippedItem.GetHandsOffsetLastFrame())) / 2.0;
+            EquippedItem.SetHandsOffsetLastFrame(TargetLocation - NewLocation);
         }
 
         // Cap the maximum distance we can be away from the target location.

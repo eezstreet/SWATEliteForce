@@ -197,7 +197,7 @@ var config float MaxInertiaOffset;
 
 //a bit of a hack since we can't add vars to Hands.uc - K.F.
 var float IronSightAnimationProgress;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
-var array<vector> AnimationSplinePoints;
+var vector HandsOffsetLastFrame;
 
 var bool bPenetratesDoors;
 
@@ -1379,18 +1379,13 @@ simulated function SetIronSightAnimationProgress(float value)
 	IronSightAnimationProgress = value;
 }
 
-simulated function array<vector> GetAnimationSplinePoints()
+simulated function vector GetHandsOffsetLastFrame()
 {
-	return AnimationSplinePoints;
+  return HandsOffsetLastFrame;
 }
-simulated function AddAnimationSplinePoint(vector value)
-{
-	AnimationSplinePoints.Insert(AnimationSplinePoints.Length, 1);
-	AnimationSplinePoints[AnimationSplinePoints.Length - 1] = value;
-	if (AnimationSplinePoints.Length > 4)
-	{
-		AnimationSplinePoints.Remove(0, 1);
-	}
+
+simulated function SetHandsOffsetLastFrame(vector value) {
+  HandsOffsetLastFrame = value;
 }
 
 simulated function float GetBaseAimError()
