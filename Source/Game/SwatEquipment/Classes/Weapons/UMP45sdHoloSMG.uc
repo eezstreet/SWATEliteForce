@@ -1,1 +1,0 @@
-class UMP45sdHoloSMG extends UMP45sdSMG config(SwatEquipment);
