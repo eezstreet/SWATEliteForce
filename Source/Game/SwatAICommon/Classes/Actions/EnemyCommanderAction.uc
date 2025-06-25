@@ -1540,6 +1540,10 @@ latent function DecideToStayCompliant()
 		{
 			break;
 		}
+		else if (ISwatAI(m_Pawn).IsBeingArrestedNow())
+		{
+			break;
+		}
 		
 		// Sleep for a random amount of time for this "tick"
 		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
@@ -1554,6 +1558,11 @@ latent function DecideToStayCompliant()
 
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
+	}
+
+	if (ISwatAI(m_Pawn).IsBeingArrestedNow())
+	{
+		return;
 	}
 
 	if (FoundWeaponModel != None)
