@@ -305,6 +305,8 @@ var globalconfig float MinTimeMargin;
 
 #if IG_ADCLIENT_INTEGRATION // dbeswick: Massive AdClient integration
 var(Massive)	string	MassiveZoneName			"Name of the Massive zone for this level.";
+#else
+var string Unused1;	
 #endif
 
 //-----------------------------------------------------------------------------

@@ -4,10 +4,13 @@
 
 Features:
 
-Other Changes:
+  - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
+  - SWAT AI can now use NVGs (CHECK IF DONE!)
 
+Other Changes:
+  - Removed portions of MassiveAd code (Thanks to beppegoodoldrebel)
   - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
-  - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!)
+  - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!) (Thanks to beppegoodoldrebel)
   - Documentation (.md files) have been cleaned up.
 
 ## v7.1
