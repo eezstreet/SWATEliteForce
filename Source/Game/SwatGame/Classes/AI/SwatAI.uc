@@ -2057,7 +2057,7 @@ function SetAimUrgency(bool Fast)
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
 
 //
-//native event bool CanHit(Actor Target);
+native event bool CanHit(Actor Target);
 //
 // Whatever Irrational did with this function, we don't know because it's native...
 // However, it's not correct because SWAT will very frequently not hit their target.
@@ -2123,10 +2123,12 @@ simulated function bool CanHitEx(Actor Target, optional bool IgnoreStaticMeshes)
 	return Value;
 }
 
+/*
 event bool CanHit(Actor Target)
 {
   return CanHitEx(Target, false);
 }
+*/
 
 function bool HasUsableWeapon()
 {
