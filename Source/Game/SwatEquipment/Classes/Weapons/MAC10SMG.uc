@@ -1,0 +1,1 @@
+class MAC10SMG extends SubMachineGun config(SwatEquipment);

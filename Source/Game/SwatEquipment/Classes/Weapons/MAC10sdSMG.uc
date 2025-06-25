@@ -1,0 +1,1 @@
+class MAC10sdSMG extends MAC10SMG config(SwatEquipment);
