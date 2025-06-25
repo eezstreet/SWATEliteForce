@@ -37,7 +37,11 @@ function InitComponent(GUIComponent MyOwner)
 
 event HandleParameters(string Param1, string Param2, optional int param3)
 {
-    if( Param1 == "ConnectionFailed" )
+    if( Left(Param2, 6) == "CUSTOM" )
+    {
+        MyErrorLabel.SetCaption(Right(Param2, Len(Param2)-7));
+    }
+    else if( Param1 == "ConnectionFailed" )
     {
         // First check for specific failure reasons.
         if( Param2 == "CDKeyFailed" )

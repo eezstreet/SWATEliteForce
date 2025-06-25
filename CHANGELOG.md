@@ -6,6 +6,7 @@ Features:
 
 Other Changes:
 
+  - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
   - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!)
   - Documentation (.md files) have been cleaned up.
 
