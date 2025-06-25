@@ -363,7 +363,7 @@ latent function AimAtClosestDoor()
 
 //	log("ClosestDoor is: " $ ClosestDoor $ " Can hit ClosestDoor: " $ m_Pawn.CanHit(ClosestDoor));
 
-	if ((ClosestDoor != None) && m_Pawn.CanHit(ClosestDoor))
+	if ((ClosestDoor != None) && m_Pawn.CanHitTarget(ClosestDoor))
 	{
 		RemoveAimAroundGoal();
 
@@ -516,7 +516,7 @@ latent function ShootAtOpeningDoor()
 
 	EndShootingTime = Level.TimeSeconds + RandRange(MinShootingAtDoorsTime, MaxShootingAtDoorsTime);
 
-	while ((Level.TimeSeconds < EndShootingTime) && m_Pawn.CanHit(DoorOpening))
+	while ((Level.TimeSeconds < EndShootingTime) && m_Pawn.CanHitTarget(DoorOpening))
 	{
 		yield();
 	}
@@ -609,7 +609,7 @@ GetInPosition:
 	// wait for a door to start opening, if that ever happens
 	pause();
 
-	if (m_Pawn.CanHit(DoorOpening))
+	if (m_Pawn.CanHitTarget(DoorOpening))
 	{
 		RemoveAimAroundGoal();
 

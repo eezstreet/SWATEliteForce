@@ -855,7 +855,8 @@ private event bool CanAssignOfficerToTarget(Pawn Officer, Pawn Target)
 			return true;
 		}
 
-		if(Officer.CanHit(Target) || Officer.LineOfSightTo(Target))
+		//if(Officer.CanHit(Target) || Officer.LineOfSightTo(Target))
+		if (Officer.LineOfSightTo(Target))
 		{ // DO assign us if we can hit the target or they are within LOS
 			return true;
 		}

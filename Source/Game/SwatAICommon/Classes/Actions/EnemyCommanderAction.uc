@@ -1068,7 +1068,7 @@ private function bool ShouldEncounterNewEnemy(Pawn NewEnemy)
 		DistanceToNewEnemy     = VSize(NewEnemy.Location - m_Pawn.Location);
 
 		if (((DistanceToNewEnemy < DistanceToCurrentEnemy) && (DistanceToNewEnemy < DeltaDistanceToSwitchEnemies)) ||
-			(! m_Pawn.CanHit(CurrentEnemy) && m_Pawn.CanHit(NewEnemy)))
+			(! m_Pawn.LineOfSightTo(CurrentEnemy) && m_Pawn.LineOfSightTo(NewEnemy)))
 		{
 			return true;
 		}
@@ -1456,7 +1456,7 @@ function FindBetterEnemy()
 	local Pawn NewEnemy;
 	if (CurrentEnemy != None)
 	{
-		if (! m_Pawn.CanHit(CurrentEnemy))
+		if (! m_Pawn.LineOfSightTo(CurrentEnemy))
 		{
 			NewEnemy = VisionSensor.GetVisibleConsciousPawnClosestTo(m_Pawn.Location);
 

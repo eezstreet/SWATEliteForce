@@ -281,7 +281,7 @@ latent protected function RotateToAttackRotation(Pawn Target)
 {
 	assert(CurrentRotateTowardRotationGoal == None);
 
-	if ((Target != None) && !IsRotatedToAttackRotation() && !m_Pawn.CanHit(Target))
+	if ((Target != None) && !IsRotatedToAttackRotation() && !m_Pawn.CanHitTarget(Target))
 	{
 		CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, AttackRotation);
 		assert(CurrentRotateTowardRotationGoal != None);

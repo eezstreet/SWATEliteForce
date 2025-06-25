@@ -216,7 +216,8 @@ latent function AttackTarget()
 	}
 
     ISwatAI(m_pawn).UnLockAim();
-	AimAtActor(Target);
+	LatentAimAtActor(Target);
+	//AimAtActor(Target);
     // @HACK: See comments in ISwatAI::LockAim for more info.
     ISwatAI(m_pawn).LockAim();
 
@@ -227,7 +228,7 @@ latent function AttackTarget()
 	}
 
   	// wait until we can hit the target (make sure the target is still conscious too!)
-  	while(!bSuppressiveFire && !m_Pawn.CanHit(Target) && ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)))
+  	while(!bSuppressiveFire && !m_Pawn.CanHitTarget(Target) && ((TargetPawn == None) || class'Pawn'.static.checkConscious(TargetPawn)))
   	{
 		if (m_Pawn.logTyrion)
 			log(m_Pawn.Name $ " is waiting to be able to hit target " $ TargetPawn);
