@@ -6,6 +6,7 @@ Features:
 
 Other Changes:
 
+  - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!)
   - Documentation (.md files) have been cleaned up.
 
 ## v7.1

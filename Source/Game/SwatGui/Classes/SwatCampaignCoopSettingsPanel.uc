@@ -188,15 +188,26 @@ function PopulateCustomUnlocks()
 function PopulateCampaignUnlocks()
 {
     local Campaign theCampaign;
-    local int i;
+    local int i, CampaignPath;
     local class<ICanBeSelectedInTheGUI> Item;
+    local ServerSettings ServerSettings;
 
     // Clear it first
     MyUnlockedEquipmentBox.List.Clear();
 
-    theCampaign = SwatGUIController(Controller).GetCampaign();
+    if (PlayerOwner().Level.NetMode == NM_Client)
+    {
+        // Get it from the server and deal with it (beppe_goodoldrebel)
+        ServerSettings = ServerSettings(PlayerOwner().Level.CurrentServerSettings);
+        CampaignPath = ServerSettings.CampaignCOOP & 65335;
+    }
+    else
+    {
+        theCampaign = SwatGUIController(Controller).GetCampaign();
+        CampaignPath = theCampaign.CampaignPath;
+    }
 
-    if(theCampaign.CampaignPath != 0)
+    if(CampaignPath != 0)
     {
         return;
     }
