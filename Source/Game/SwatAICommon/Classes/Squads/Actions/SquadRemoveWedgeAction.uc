@@ -55,7 +55,7 @@ Begin:
 
 	RemoveWedge(GetFirstOfficer());
 
-	StackUpOfficer(GetFirstOfficer(), StackUpPoints[0]);
+	StackUpSquad(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
