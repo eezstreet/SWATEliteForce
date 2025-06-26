@@ -4,12 +4,13 @@
 
 This patch is primarily focused on bug fixes and minor improvements:
 
-  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley), as well as the Less Lethal Nova (thanks to modotte)
+  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley)
   - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
   - SWAT AI can now use NVGs (CHECK IF DONE!)
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
   - Fixed incorrect kilogram-to-pound conversion formula for Imperial measurements (thanks to modotte)
+  - Fixed incorrect MP5K suppressor attachment linkage in the menu (thanks to modotte)
   - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
   - Restored original game CanHit function (need to test what the implications are...)
   - Removed portions of MassiveAd code (Thanks to beppegoodoldrebel)
