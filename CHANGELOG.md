@@ -8,6 +8,8 @@ Features:
   - SWAT AI can now use NVGs (CHECK IF DONE!)
 
 Other Changes:
+  - Greatly improved Weapon Inertia (thanks to kevinfoley)
+  - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
   - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
   - Restored original game CanHit function (need to test what the implications are...)
   - Removed portions of MassiveAd code (Thanks to beppegoodoldrebel)
