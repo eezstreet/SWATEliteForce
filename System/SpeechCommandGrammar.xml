@@ -215,6 +215,10 @@ NOTES:
 			<PHRASE VALSTR="Command_DisableAll">Disable all ...</PHRASE>
 			<PHRASE VALSTR="Command_DisableAll">Disarm all ...</PHRASE>
 
+			<PHRASE VALSTR="Command_ReportIn">Report in.</PHRASE>
+			<PHRASE VALSTR="Command_ReportIn">... status report.</PHRASE>
+			<PHRASE VALSTR="Command_ReportIn">Sound off.</PHRASE>
+			
 			<PHRASE VALSTR="Command_Request_Flashbang">I need ... ?flash bang ...</PHRASE>
 			<PHRASE VALSTR="Command_Request_Flashbang">Requesting ... ?flash bang ...</PHRASE>
 			<PHRASE VALSTR="Command_Request_Flashbang">Request ... ?flash bang ...</PHRASE>
