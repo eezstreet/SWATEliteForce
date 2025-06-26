@@ -4,7 +4,7 @@
 
 This patch is primarily focused on bug fixes and minor improvements:
 
-  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley)
+  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley), as well as the Less Lethal Nova (thanks to modotte)
   - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
   - SWAT AI can now use NVGs (CHECK IF DONE!)
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
