@@ -11,7 +11,7 @@ Also big thanks to SS for providing lots of server resources, including official
 Here are a list of contributors and their credits:
 
  - jose21crisis
- - beppe_goodoldrebel
+ - beppegoodoldrebel
  - Kevin Foley
  - Sandman332 (++ Patreon Support)
  - SS
@@ -29,6 +29,7 @@ Here are a list of contributors and their credits:
  - Dc247
  - Yasuntei
  - RUNEPATRIARCH
+ - modotte
  - Evan Derickson (++ Patreon Support)
  - Mad Max (++ Patreon Support)
  - Jordan Harrison (++ Patreon Support)
