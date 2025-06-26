@@ -15,11 +15,21 @@ import enum AIDoorUsageSide from ISwatAI;
 var(parameters) Door				TargetDoor;
 
 // behaviors we use
-var private MoveToDoorGoal			CurrentMoveToDoorGoal;
+var private MoveToLocationGoal			CurrentMoveToLocationGoal;
+var private RotateTowardRotationGoal	CurrentRotateTowardRotationGoal;
+var private UseOptiwandGoal				CurrentUseOptiwandGoal;
 
-// door usage side
-var private	AIDoorUsageSide			TryDoorUsageSide;
-var private rotator					TryDoorUsageRotation;
+// how we're mirroring
+var private bool						bCrouchWhileMirroring;
+var private bool						bMirrorAroundCorner;
+
+// what we're mirroring
+var private ISwatDoor					SwatTargetDoor;
+
+// where and what direction we mirror in
+var private rotator						MirroringRotation;
+var private vector						MirroringFromPoint;
+var private rotator						MirroringFromRotation;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -29,19 +39,25 @@ function cleanup()
 {
 	super.cleanup();
 
-	if (CurrentMoveToDoorGoal != None)
+	if (CurrentMoveToLocationGoal != None)
 	{
-		CurrentMoveToDoorGoal.Release();
-		CurrentMoveToDoorGoal = None;
+		CurrentMoveToLocationGoal.Release();
+		CurrentMoveToLocationGoal = None;
 	}
 
-	// stop animating
-	ISwatAI(m_Pawn).AnimStopSpecial();
+	if (CurrentRotateTowardRotationGoal != None)
+	{
+		CurrentRotateTowardRotationGoal.Release();
+		CurrentRotateTowardRotationGoal = None;
+	}
 
-	// unlock our aim (if it isn't already)
-	ISwatAI(m_Pawn).UnlockAim();
+	if (CurrentUseOptiwandGoal != None)
+	{
+		CurrentUseOptiwandGoal.Release();
+		CurrentUseOptiwandGoal = None;
+	}
 
-	// make sure we re-enable collision avoidance
+	// re-enable collision avoidance (if it isn't already)
 	m_Pawn.EnableCollisionAvoidance();
 }
 
@@ -64,108 +80,131 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 //
 //
 
-private function ReportResultsToTeam()
-{
-	local SwatAIRepository SwatAIRepo;
-
-	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
-	assert(SwatAIRepo != None);
-
-	TriggerReportResultsSpeech();
-}
-
-private function TriggerReportResultsSpeech()
-{
-	local ISwatDoor SwatTargetDoor;
-
-	SwatTargetDoor = ISwatDoor(TargetDoor);
-	assert(SwatTargetDoor != None);
-
-  if(SwatTargetDoor.IsBoobyTrapTriggered()) {
-    ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerExaminedAfterTrapWentOffSpeech();
-  } else if(SwatTargetDoor.IsBoobyTrapped()) {
-    ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerExaminedFoundTrapSpeech();
-  } else {
-    ISwatOfficer(m_Pawn).GetOfficerSpeechManagerAction().TriggerExaminedFoundNoTrapSpeech();
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // State Code
 
-latent function MoveToTryDoor()
+function SetMirroringType()
 {
-	CurrentMoveToDoorGoal = new class'MoveToDoorGoal'(movementResource(), achievingGoal.priority, TargetDoor);
-	assert(CurrentMoveToDoorGoal != None);
-	CurrentMoveToDoorGoal.AddRef();
+	if (!TargetDoor.IsEmptyDoorway() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() /*&& !TargetDoor.IsBroken()*/)
+	{
+		bMirrorAroundCorner   = false;
+		bCrouchWhileMirroring = true;
+	}
+	else
+	{
+		bCrouchWhileMirroring = false;
+		bMirrorAroundCorner   = true;
+	}
+}
+function SetMirroringOrientation()
+{
+	local vector CenterOpenPoint;
+	local rotator CenterOpenRotation;
 
-	CurrentMoveToDoorGoal.SetRotateTowardsPointsDuringMovement(true);
-	CurrentMoveToDoorGoal.SetShouldWalkEntireMove(false);
-	CurrentMoveToDoorGoal.SetPreferSides();
+	// get the center mirroring point no matter what
+	SwatTargetDoor.GetOpenPositions(m_Pawn, false, CenterOpenPoint, CenterOpenRotation);
 
-	CurrentMoveToDoorGoal.postGoal(self);
-	WaitForGoal(CurrentMoveToDoorGoal);
-
-	// save the side of the door we're going to try from
-	TryDoorUsageSide     = CurrentMoveToDoorGoal.DoorUsageSide;
-	TryDoorUsageRotation = CurrentMoveToDoorGoal.DoorUsageRotation;
-
-	CurrentMoveToDoorGoal.unPostGoal(self);
-
-	CurrentMoveToDoorGoal.Release();
-	CurrentMoveToDoorGoal = None;
+	MirroringFromPoint    = CenterOpenPoint;
+	MirroringFromRotation = CenterOpenRotation;
+	MirroringRotation     = CenterOpenRotation;
 }
 
-latent function TryDoor()
+latent function MoveToMirroringPosition()
 {
-	local int AnimSpecialChannel;
-	local name AnimName;
-	local ISwatDoor SwatDoorTarget;
+	CurrentMoveToLocationGoal = new class'MoveToLocationGoal'(movementResource(), achievingGoal.priority, MirroringFromPoint);
+	assert(CurrentMoveToLocationGoal != None);
+	CurrentMoveToLocationGoal.AddRef();
 
-	SwatDoorTarget = ISwatDoor(TargetDoor);
-	assert(SwatDoorTarget != None);
+	CurrentMoveToLocationGoal.SetRotateTowardsPointsDuringMovement(true);
 
-	AnimName		   = SwatDoorTarget.GetTryDoorAnimation(m_Pawn, TryDoorUsageSide);
-	AnimSpecialChannel = m_Pawn.AnimPlaySpecial(AnimName);
+	CurrentMoveToLocationGoal.postGoal(self);
+	WaitForGoal(CurrentMoveToLocationGoal);
+	CurrentMoveToLocationGoal.unPostGoal(self);
 
-	m_Pawn.FinishAnim(AnimSpecialChannel);
+	CurrentMoveToLocationGoal.Release();
+	CurrentMoveToLocationGoal = None;
 }
 
-private function bool CanInteractWithTargetDoor()
+latent function RotateToMirroringRotation()
 {
-	return (! TargetDoor.IsEmptyDoorWay() && TargetDoor.IsClosed() && !TargetDoor.IsOpening() /*&& !ISwatDoor(TargetDoor).IsBroken()*/);
+	assert(CurrentRotateTowardRotationGoal == None);
+
+	CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, MirroringFromRotation);
+	assert(CurrentRotateTowardRotationGoal != None);
+	CurrentRotateTowardRotationGoal.AddRef();
+
+	CurrentRotateTowardRotationGoal.postGoal(self);
+	WaitForGoal(CurrentRotateTowardRotationGoal);
+	CurrentRotateTowardRotationGoal.unPostGoal(self);
+
+	CurrentRotateTowardRotationGoal.Release();
+	CurrentRotateTowardRotationGoal = None;
+}
+
+function vector GetMirrorViewOrigin()
+{
+	if (SwatTargetDoor.ActorIsToMyLeft(m_Pawn))
+	{
+		return TargetDoor.GetBoneCoords('OptiwandRIGHT', true).Origin;
+	}
+	else
+	{
+		return TargetDoor.GetBoneCoords('OptiwandLEFT', true).Origin;
+	}
+}
+
+latent function UseMirror(ISwatDoor Target)
+{
+	assert(CurrentUseOptiwandGoal == None);
+
+	CurrentUseOptiwandGoal = new class'UseOptiwandGoal'(weaponResource(), vector(MirroringRotation), true, Target);
+	assert(CurrentUseOptiwandGoal != None);
+	CurrentUseOptiwandGoal.AddRef();
+
+	CurrentUseOptiwandGoal.SetOverloadedViewOrigin(GetMirrorViewOrigin());
+
+	if (bMirrorAroundCorner)
+		CurrentUseOptiwandGoal.SetMirrorAroundCorner();
+
+	CurrentUseOptiwandGoal.postGoal(self);
+	WaitForGoal(CurrentUseOptiwandGoal);
+	CurrentUseOptiwandGoal.unPostGoal(self);
+
+	CurrentUseOptiwandGoal.Release();
+	CurrentUseOptiwandGoal = None;
+}
+
+latent function MirrorDoor()
+{
+	useResources(class'AI_Resource'.const.RU_ARMS);
+
+	SwatTargetDoor = ISwatDoor(TargetDoor);
+	assert(SwatTargetDoor != None);
+
+	SetMirroringType();
+	SetMirroringOrientation();
+
+	MoveToMirroringPosition();
+
+	// disable collision avoidance while we are mirroring
+	m_Pawn.DisableCollisionAvoidance();
+
+	RotateToMirroringRotation();
+
+	useResources(class'AI_Resource'.const.RU_LEGS);
+	clearDummyWeaponGoal();
+
+	UseMirror(SwatTargetDoor);
+
+	// re-enable collision avoidance now that we're done mirroring
+	m_Pawn.EnableCollisionAvoidance();
 }
 
 state Running
 {
 Begin:
-	useResources(class'AI_Resource'.const.RU_ARMS);
-
-	// test to see if we can interact with this door first
-	if (CanInteractWithTargetDoor())
-	{
-		MoveToTryDoor();
-
-		useResources(class'AI_Resource'.const.RU_LEGS);
-
-		// test again to see if we can interact with this door
-		if (CanInteractWithTargetDoor())
-		{
-			// keep us facing the correct direction
-			ISwatAI(m_Pawn).AimToRotation(TryDoorUsageRotation);
-			ISwatAI(m_Pawn).LockAim();
-			ISwatAI(m_Pawn).AnimSnapBaseToAim();
-
-			TryDoor();
-
-			ISwatAI(m_Pawn).UnlockAim();
-
-			// re-enable collision avoidance
-			m_Pawn.EnableCollisionAvoidance();
-			ReportResultsToTeam();
-		}
-	}
+	MirrorDoor();
 
 	succeed();
 }

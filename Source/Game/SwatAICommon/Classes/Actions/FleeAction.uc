@@ -30,6 +30,7 @@ var config private float				MaxAggressiveFleePercentageChance;
 
 var private DistanceToOfficersSensor	DistanceToOfficersSensor;
 var private bool						bUseDistanceToOfficersSensor;
+var config private float                ThreatCooldown;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -248,7 +249,7 @@ function bool ShouldAttackWhileFleeing()
 	    return false; // We should not be able to target SniperPawns
 	}
 
-	if(!m_Pawn.CanHit(CurrentEnemy))
+	if(!m_Pawn.CanHitTarget(CurrentEnemy))
 	{
 		return false; // Don't attack if we can't hit them
 	}
@@ -268,18 +269,20 @@ function bool ShouldAttackWhileFleeing()
 
 function AttackWhileFleeing()
 {
-  local Pawn Enemy;
+  	local Pawn Enemy;
 
-  Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
-  if(Enemy == None) {
-    return;
-  }
+	Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+	if(Enemy == None) {
+	    return;
+	}
 
 	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
     assert(CurrentAttackTargetGoal != None);
 	CurrentAttackTargetGoal.AddRef();
 
 	CurrentAttackTargetGoal.postGoal(self);
+
+	ISwatEnemy(m_Pawn).BecomeAThreat();
 }
 
 
@@ -361,6 +364,8 @@ latent function Flee()
 	local Pawn CurrentEnemy;
 	CurrentEnemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
 
+	ISwatEnemy(m_Pawn).UnbecomeAThreat(true, ThreatCooldown);
+
 	// trigger the speech
 	ISwatEnemy(m_Pawn).GetEnemySpeechManagerAction().TriggerFleeSpeech();
 
@@ -439,4 +444,5 @@ Begin:
 defaultproperties
 {
     satisfiesGoal = class'EngageOfficerGoal'
+	ThreatCooldown = 2.0
 }

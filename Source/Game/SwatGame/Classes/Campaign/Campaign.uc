@@ -10,7 +10,7 @@ var config localized string StringName;
 var config array<Name> MissionResultNames;
 var array<MissionResults> MissionResults;
 var config private int availableIndex;  //the index of the highest mission that is unlocked in the Campaign
-var config private bool HACK_HasPlayedCreditsOnCampaignCompletion;
+var config public bool HACK_HasPlayedCreditsOnCampaignCompletion;
 
 // SEF additions
 var config int CampaignPath;  // Which campaign path we're on (0 = SWAT 4 + TSS, 1 = Extra Missions, 2 = All Missions)
@@ -21,7 +21,12 @@ var config bool RedOneDead; // Whether Red One is dead.
 var config bool RedTwoDead; // Whether Red Two is dead.
 var config bool BlueOneDead; // Whether Blue One is dead.
 var config bool BlueTwoDead; // Whether Blue Two is dead.
+var config bool CustomCareerPath; // Whether this career is a Quick Mission Maker career
+var config string CustomCareer; // The pack associated with this Quick Mission Maker career
+var config bool HardcoreMode; // New in v7: Hardcore mode doesn't allow failure of any kind. (Player permadeath is implied)
+var config bool HardcoreFailed; // Hardcore only - true if the campaign was failed
 
+// Stats
 var(Stats) config int MissionsCompleted; // The number of missions that have been successfully completed
 var(Stats) config int TimesIncapacitated; // Number of times that you have been incapacitated in this campaign
 var(Stats) config int TimesInjured; // Number of times that you have been injured in this campaign
@@ -140,12 +145,16 @@ function PreDelete()
     StringName = "";
 	CampaignPath = 0;
 	PlayerPermadeath = false;
+    HardcoreMode = false;
+    HardcoreFailed = false;
 	PlayerDied = false;
 	OfficerPermadeath = false;
 	RedOneDead = false;
 	RedTwoDead = false;
 	BlueOneDead = false;
 	BlueTwoDead = false;
+	CustomCareerPath = false;
+	CustomCareer = "";
 	MissionsCompleted = 0;
 	TimesIncapacitated = 0;
 	TimesInjured = 0;

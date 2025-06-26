@@ -17,12 +17,12 @@ defaultproperties
     priority   = 30
     goalName   = "IdleAimAround"
 
-	ExtraDoorWeight   = 0.333
+	ExtraDoorWeight   = 0.5
 	bUseUpperBodyProcedurally = false
     UpperBodyAnimBehaviorClientId = kUBABCI_IdleAimAround
 	bAimOnlyIfCharacterResourcesAvailable = true
 
 	bInitialDelay=true
-	MinInitialDelayTime=2.0
-	MaxInitialDelayTime=10.0
+	MinInitialDelayTime=1.0
+	MaxInitialDelayTime=3.0
 }

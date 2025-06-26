@@ -68,11 +68,11 @@ function GrenadeGotDetonated(Pawn PawnThrower, EquipmentSlot ThrownItemSlot) {
 		PostGrenadeThrowDelayTime = 0;
 
 		if (ThrownItemSlot == EquipmentSlot.Slot_CSGasGrenade) {
-			if(DoAllOfficersHave(Pocket_HeadArmor, 'gasMask'))
+			if(DoAllOfficersHave('gasMask'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeGasMask;
 			}
-			else if(DoAllOfficersHave(Pocket_HeadArmor, 'RiotHelmet'))
+			else if(DoAllOfficersHave('RiotHelmet'))
 			{
 				PostGrenadeThrowDelayTime = CSGrenadeDelayTimeRiotHelmet;
 			}

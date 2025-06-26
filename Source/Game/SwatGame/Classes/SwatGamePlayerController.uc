@@ -96,6 +96,7 @@ var private float RecoilForeDuration;
 var private float RecoilMagnitude;
 var private float LastRecoilFunctionValue;
 var bool DebugShouldRecoil;
+var bool SpecialInteractionsDisabled;
 
 //
 //interaction
@@ -219,7 +220,7 @@ const HALF_PI = 1.5707963268;
 
 /////////////////////////////////////
 // Loadout
-var private OfficerLoadOut  theLoadOut;
+var public OfficerLoadOut  theLoadOut;
 
 // This value is assigned to the player by the server in a network game. When
 // switching levels, the clients have to disconnect and then reconnect.
@@ -283,7 +284,7 @@ replication
 {
     // Things the server should send to the client
     reliable if ( bNetOwner && bNetDirty && (Role == ROLE_Authority) )
-        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked;
+        SwatPlayer, DoorCannotBeLocked, DoorIsLocked, DoorIsNotLocked, SpecialInteractionsNotification;
 
     // replicated functions sent to client by server
     reliable if( Role == ROLE_Authority )
@@ -296,6 +297,7 @@ replication
 		ClientPreQuickRoundRestart,
 		ClientStartConversation, ClientSetTrainingText, ClientTriggerDynamicMusic,
         ClientReceiveCommand, /*ClientOnTargetUsed,*/
+		ClientSentOrReceivedEquipment,
         ClientAITriggerEffectEvent, ClientAIDroppedAllWeapons, ClientAIDroppedActiveWeapon, ClientAIDroppedAllEvidence,
         ClientInterruptAndGotoState, ClientInterruptState, ClientSetObjectiveVisibility, ClientReportableReportedToTOC,
         ClientAddPrecacheableMaterial, ClientAddPrecacheableMesh, ClientAddPrecacheableStaticMesh, ClientPrecacheAll,
@@ -310,7 +312,9 @@ replication
         ServerGiveCommand, ServerIssueCompliance, ServerOnEffectStopped, ServerSetVoiceType,
 		ServerRetryStatsAuth, ServerSetMPLoadOutPrimaryAmmo, ServerSetMPLoadOutSecondaryAmmo,
         ServerViewportActivate, ServerViewportDeactivate,
-        ServerHandleViewportFire, ServerHandleViewportReload;
+        ServerHandleViewportFire, ServerHandleViewportReload,
+		ServerDisableSpecialInteractions, ServerMPCommandIssued,
+		ServerDiscordTest, ServerDiscordTest2, ServerGiveItem;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -730,6 +734,9 @@ simulated function UpdateFocus()
     local HandheldEquipment ActiveItem;
     local array<byte> FocusInterfaceWantsUpdate;    //used as an array<bool>, but that doesn't work
     local int ct;
+	local bool HitTransparent;
+
+	HitTransparent = false;
 
     // MCJ: I'm putting this here for now. In an MP game, while sitting at the
     // Debriefing screen, we don't yet have a Pawn. I'll talk to Dan about not
@@ -867,8 +874,17 @@ simulated function UpdateFocus()
                     HitNormal,
                     HitMaterial,
                     SkeletalRegionHit,
-                    Transparent );
+                    Transparent,
+					HitTransparent );
         }
+
+		// HitTransparent will be true *after* hitting something which is transparent.
+		// That way, we can differentiate between looking through glass and focusing on glass
+		if(Transparent)
+		{
+			HitTransparent = true;
+		}
+
     }
 
     for ( ct = 0; ct < FocusInterfaces.Length; ct++ )
@@ -1101,6 +1117,16 @@ simulated event ActivateViewport(IControllableViewport inNewViewport)
     }
 }
 
+// Returns true if we are allowed to control viewports
+simulated function bool ShouldControlViewport()
+{
+    local HandheldEquipment Item;
+
+    Item = Pawn.GetActiveItem();
+
+    return Item.IsIdle();
+}
+
 exec function EnableMirrors( bool bInEnabledMirrors )
 {
     class'Mirror'.Static.SetMirrorsEnabled( bInEnabledMirrors );
@@ -1109,6 +1135,16 @@ exec function EnableMirrors( bool bInEnabledMirrors )
 exec function Echo(string s)
 {
 	Player.Console.Message(s, 0);
+}
+
+exec function ServerDiscordTest()
+{
+	SwatGameInfo(Level.Game).SendDiscordMessage("One small step for man...one giant leap for SWAT-kind.");
+}
+
+exec function ServerDiscordTest2()
+{
+	SwatGameInfo(Level.Game).TestDiscord();
 }
 
 // Called when the player is holding down the button to Control the viewport.
@@ -1493,6 +1529,35 @@ exec function SetWeaponFlashlightRotation(rotator Rotation)
 	}
 }
 
+exec function SetWeaponFlashlightPos3p(vector offset)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting flashlight to "$offset);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightPosition_3rdPerson = offset;
+	}
+}
+
+exec function SetWeaponFlashlightRotation3p(rotator Rotation)
+{
+	local HandheldEquipment ActiveItem;
+	local SwatWeapon ActiveWeapon;
+
+	log("Setting weapon flashlight rotation to "$Rotation);
+
+    ActiveItem = Pawn.GetActiveItem();
+	ActiveWeapon = SwatWeapon(ActiveItem);
+	if (ActiveWeapon != None) {
+		ActiveWeapon.FlashlightRotation_3rdPerson = Rotation;
+	}
+}
+
+
 exec function SetWeaponViewOffset(vector offset)
 {
 	local HandheldEquipment ActiveItem;
@@ -1593,6 +1658,57 @@ simulated function ServerHandleViewportFire(vector CameraLocation, rotator Camer
 simulated function ServerHandleViewportReload()
 {
   ActiveViewport.HandleReload();
+}
+
+// special interactions thingie
+simulated function ServerDisableSpecialInteractions()
+{
+	SpecialInteractionsDisabled = !SpecialInteractionsDisabled;
+	SpecialInteractionsNotification(SpecialInteractionsDisabled);
+}
+
+simulated function ServerMPCommandIssued(string CommandText)
+{
+	Level.Game.AdminLog(CommandText,
+		'CommandGiven',
+		GetPlayerNetworkAddress());
+}
+
+exec function ToggleSpecialInteractions()
+{
+	ServerDisableSpecialInteractions();
+}
+
+simulated function SpecialInteractionsNotification(bool NewInteractions)
+{
+	// all this does is print a message to the chat
+	if(NewInteractions)
+	{
+		ClientMessage("[c=FFFFFF]Special melee interactions are now disabled.", 'SpeechManagerNotification');
+	}
+	else
+	{
+		ClientMessage("[c=FFFFFF]Special melee interactions are now enabled.", 'SpeechManagerNotification');
+	}
+}
+
+exec function ThrowLightstick()
+{
+	local HandheldEquipment ActiveItem;
+
+	ActiveItem = SwatPlayer.GetActiveItem();
+	if(ActiveItem.IsA('Lightstick'))
+	{
+		// Don't allow us to drop a lightstick while we have it equipped
+		return;
+	}
+
+	// Flag the lightstick as being in a "fast use" state.
+	SwatPlayer.ServerThrowLightstick();
+    SwatPlayer.FlagLightstickFastUse();
+
+	// Equip slot 14, which will drop the lightstick instantly just like vanilla TSS
+	EquipSlot(14);
 }
 
 // State ControllingViewport takes the player's control away from the playerpawn and onto the active
@@ -2131,8 +2247,11 @@ exec function ShowViewport(string ViewportType)
     {
         if ( ViewportManager.HasOfficers( ViewportType ) )
         {
-            if ( ViewportType ~= "sniper" )
+            if ( ViewportType ~= "sniper" && !(ViewportManager.GetFilter() ~= "sniper") )
+			{	// SEF: only go to the sniper viewport if we don't have the sniper filter up
                 SpecificOfficer = SniperAlertFilter;
+			}
+
 
             GetHUDPage().ExternalViewport.Show();
             ViewportManager.ShowViewport(ViewportType, SpecificOfficer);
@@ -2328,10 +2447,13 @@ simulated private function InternalEquipSlot(coerce EquipmentSlot Slot)
     if ( PendingItem != None && PendingItem.GetSlot() == Slot)
         return;     //already in the process of equipping that
 
-    // If the player has none of the requested item then
-    //  show a message on the HUD
-    if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None )
+    // If the player has none of the requested item then show a message on the HUD.
+    // When we send a message that we cannot equip, we return as well to avoid equipping anyways.
+    if ( SwatPlayer.GetEquipmentAtSlot(Slot) == None || (!SwatPlayer.GetEquipmentAtSlot(Slot).IsAvailable()) )
+    {
         ClientMessage(string(int(Slot)), 'EquipNotAvailable');
+        return;
+    }
 
     if ( SwatPlayer.ValidateEquipSlot( Slot ))
     {
@@ -2349,7 +2471,7 @@ simulated function bool CheckDoorLock(SwatDoor Door)
   return Door.TryDoorLock(self);
 }
 
-simulated function InternalMelee()
+simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCheckLockOnly, optional bool UseGiveItemOnly)
 {
 	local HandheldEquipment Item;
   local HandheldEquipment PendingItem;
@@ -2372,43 +2494,56 @@ simulated function InternalMelee()
         return;
 
 	Item = Pawn.GetActiveItem();
-  PendingItem = SwatPlayer.GetPendingItem();
+	PendingItem = SwatPlayer.GetPendingItem();
 
-  // TSS bugfix: don't allow us to melee while changing weapons --eez
-  if(PendingItem != None && PendingItem != Item)
-  {
-    return;
-  }
-
-  // Determine if we are trying to check the lock or if we are trying to punch someone
-  CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
-  TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
-  foreach TraceActors(
-    class'Actor',
-    Candidate,
-    HitLocation,
-    HitNormal,
-    HitMaterial,
-    TraceEnd,
-    CameraLocation
-    )
-  {
-    if(Candidate.IsA('SwatPawn'))
+    // Don't allow meleeing while in a firing animation, changing weapons, or already meleeing... --eez
+    if(!Item.IsIdle())
     {
-      break; // We intend to melee.
-    }
-    else if(Candidate.IsA('SwatDoor'))
-    {
-      if(CheckDoorLock(SwatDoor(Candidate)))
         return;
     }
-  }
+
+	if(WantsZoom && !Item.IsA('Cuffs'))
+	    return; // Not allowed while zooming
+
+	// Determine if we are trying to check the lock or if we are trying to punch someone
+	CalcViewForFocus(Candidate, CameraLocation, CameraRotation);
+	TraceEnd = CameraLocation + vector(CameraRotation) * (Item.MeleeRange / 2.0);
+	foreach TraceActors(
+	    class'Actor',
+	    Candidate,
+	    HitLocation,
+	    HitNormal,
+	    HitMaterial,
+	    TraceEnd,
+	    CameraLocation
+	    )
+	{
+		if(((!UseMeleeOnly && !UseCheckLockOnly) || !SpecialInteractionsDisabled) &&
+			(Candidate.IsA('SwatPlayer') || Candidate.IsA('SwatOfficer')))
+		{
+			if(TryGiveItem(SwatPawn(Candidate)))
+			{
+				return;
+			}
+		}
+	    else if(((!UseMeleeOnly && !UseGiveItemOnly) || !SpecialInteractionsDisabled) &&
+			Candidate.IsA('SwatPawn'))
+	    {
+	    	break; // We intend to melee.
+	    }
+	    else if(!SpecialInteractionsDisabled &&
+			Candidate.IsA('DoorModel'))
+	    {
+	      if(CheckDoorLock(DoorModel(Candidate).Door))
+	        return;
+	    }
+	}
+
+	if(UseCheckLockOnly || UseGiveItemOnly)
+		return; // we were actually using the Check Lock or Give Item dedicated commands
 
 	if (!Item.bAbleToMelee)
 		return;
-
-  if(WantsZoom)
-    return; // Not allowed while zooming
 
 	if ( SwatPlayer.ValidateMelee() )
 	{
@@ -2417,6 +2552,120 @@ simulated function InternalMelee()
 
 		SwatPlayer.ServerRequestMelee( SwatPlayer.GetActiveItem().GetSlot() );
 	}
+}
+
+// We just received a new piece of equipment. Deal with it!
+function ClientSentOrReceivedEquipment()
+{
+	GetHUDPage().UpdateWeight();
+	SwatPlayer.GetActiveItem().UpdateHUD();
+}
+
+// Tries to give the currently equipped item to a SwatOfficer/SwatPlayer.
+// Returns true if we should halt the melee trace
+simulated function bool TryGiveItem(SwatPawn Other)
+{
+	local HandheldEquipment ActiveItem;
+	
+	local float AddedWeight;
+	local float AddedBulk;
+
+	ActiveItem = SwatPlayer.GetActiveItem();
+
+	// If we aren't allowed to pass the item, continue with the trace
+	if(!ActiveItem.AllowedToPassItem())
+	{
+		log("Tried to give "$ActiveItem$" to "$Other$" but failed because NotAllowedToPassItem");
+		return false;
+	}
+
+	// If the target is unconscious, continue with the trace
+	if(!class'Pawn'.static.checkConscious(Other))
+	{
+		return false;
+	}
+
+	AssertWithDescription(Other != SwatPlayer, "Somehow, you tried to give the item '"$ActiveItem$"' to yourself. How did you do this?");
+	if(Other == SwatPlayer)
+	{
+		// just die I guess
+		return false;
+	}
+	// From this point on, we will --always-- block the trace
+
+	AddedWeight = ActiveItem.GetWeight();
+	AddedBulk = ActiveItem.GetBulk();
+	if(AddedWeight + Other.GetTotalWeight() > Other.GetMaximumWeight())
+	{
+		// this item adds too much weight, tell the client but still block the trace
+		ClientMessage(Other.GetHumanReadableName()$"\t"$ActiveItem.GetFriendlyName(), 'CantGiveTooMuchWeight');
+		return true;
+	}
+	else if(AddedBulk + Other.GetTotalBulk() > Other.GetMaximumBulk())
+	{
+		// this item adds too much bulk, tell the client but still block the trace
+		ClientMessage(Other.GetHumanReadableName()$"\t"$ActiveItem.GetFriendlyName(), 'CantGiveTooMuchBulk');
+		return true;
+	}
+
+	/////////////////////////////////////////////////////////////////
+	//
+	//	Give the other person the equipment
+	//	When we give the other person equipment, it does not get assigned to a pocket.
+	//	This is because it is only temporarily in our inventory.
+
+	// Don't give the other person an optiwand if they already have one
+	if(ActiveItem.IsA('Optiwand'))
+	{
+		if((SwatPlayer(Other) != None && SwatPlayer(Other).GetEquipmentAtSlot(Slot_Optiwand) != None) ||
+			(SwatOfficer(Other) != None && SwatOfficer(Other).GetItemAtSlot(Slot_Optiwand) != None))
+		{
+			// the other player has an optiwand already, don't give it to them
+			ClientMessage("", 'CantGiveAlreadyHasOptiwand');
+			return true;
+		}
+
+	}
+
+	ServerGiveItem(Other);
+	return true;
+}
+
+function ServerGiveItem(SwatPawn Other)
+{
+    local HandheldEquipment NewItem;
+    local HandheldEquipment ActiveItem;
+
+    ActiveItem = SwatPlayer.GetActiveItem();
+
+    mplog("Given item was "$ActiveItem);
+
+    // Spawn in the actual equipment and give it to the other player
+    Other.GivenEquipmentFromPawn(class<HandheldEquipment>(ActiveItem.static.GetGivenClass()));
+
+    /////////////////////////////////////////////////////////////////
+    //
+    //  Remove the equipment from our inventory
+    //  All we need to do is reduce the available count by 1
+    ActiveItem.DecrementAvailableCount();
+    if(!ActiveItem.IsAvailable())
+    {
+        // Switch to another weapon
+        EquipNextSlot();
+        ActiveItem.UnequippedHook();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //
+    //  Tell the client we gave our equipment away
+    ClientMessage(ActiveItem.GetGivenEquipmentName()$"\t1\t"$Other.GetHumanReadableName(), 'GaveEquipment');
+    if(Other.IsA('SwatPlayer'))
+    {
+        SwatGamePlayerController(Other.Controller).ClientMessage(
+            ActiveItem.GetGivenEquipmentName()$"\t1\t"$SwatPlayer.GetHumanReadableName(), 'GaveYouEquipment');
+        SwatGamePlayerController(Other.Controller).ClientSentOrReceivedEquipment();
+    }
+    ClientSentOrReceivedEquipment();
 }
 
 // Overridden from PlayerController::Reload().
@@ -4477,14 +4726,14 @@ exec function Say( string Msg )
 
 	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled() && Pawn != None)
 	{
-		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomName()));
+		Level.Game.BroadcastLocation(self, Msg, 'Say', None, string(Pawn.GetRoomNameSafe()));
 	}
 	else
 	{
 		Level.Game.Broadcast(self, Msg, 'Say');
 	}
 
-	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'Say');
+	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'Say', GetPlayerNetworkAddress());
 }
 
 exec function TeamSay( string Msg )
@@ -4504,14 +4753,14 @@ exec function TeamSay( string Msg )
 
 	if(!SwatGameInfo(Level.Game).LocalizedChatIsDisabled())
 	{
-		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomName()));
+		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator , self, Msg ), 'TeamSay', string(Pawn.GetRoomNameSafe()));
 	}
 	else
 	{
 		Level.Game.BroadcastTeam( self, Level.Game.ParseMessageString( Level.Game.BaseMutator, self, Msg), 'TeamSay', "");
 	}
 
-	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'TeamSay');
+	Level.Game.AdminLog(PlayerReplicationInfo.PlayerName$"\t"$Msg, 'TeamSay', GetPlayerNetworkAddress());
 }
 
 event ClientMessage( coerce string S, optional Name Type )
@@ -4596,7 +4845,7 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type, optiona
     		}
     }
 
-	SwatGameInfo(Level.Game).AdminLog(S, Type);
+	SwatGameInfo(Level.Game).AdminLog(S, Type, GetPlayerNetworkAddress());
     Player.Console.Message(S, 6.0);
 }
 
@@ -5484,6 +5733,12 @@ exec function ToggleFlashlight()
     SwatPawn(Pawn).ToggleDesiredFlashlightState();
 }
 
+// Toggle the player's NVG
+exec function ToggleNVG()
+{
+    SwatPawn(Pawn).ToggleDesiredNVGState();
+}
+
 // modifier to hold the next command was pressed
 exec function HoldCommand(bool bPressed)
 {
@@ -5575,21 +5830,33 @@ function ServerIssueCompliance( optional string VoiceTag )
         {
             Pawn.BroadcastEffectEvent('AnnouncedComplyWithGun',,,,,,,,name(VoiceTag));
         }
-        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage))
+        else if(!SwatPawn(Pawn).ShouldIssueTaunt(CameraLocation, vector(CameraRotation), FocusTestDistance, TargetIsSuspect, TargetIsAggressiveHostage, Candidate))
 		{
           Pawn.BroadcastEffectEvent('AnnouncedComply',,,,,,,,name(VoiceTag));
         }
         else if(TargetIsSuspect == 1)
 		{
           Pawn.BroadcastEffectEvent('ArrestedSuspect',,,,,,,,name(VoiceTag));
+          if(FRand() < 0.1)
+          {
+            ISwatAI(Candidate).GetSpeechManagerAction().TriggerRestrainedSpeech();
+          }
         }
         else if((TargetIsSuspect == 0) && (TargetIsAggressiveHostage == 1))
 		{
           Pawn.BroadcastEffectEvent('ReassuredAggressiveHostage',,,,,,,,name(VoiceTag));
+          if(FRand() < 0.1)
+          {
+            ISwatAI(Candidate).GetSpeechManagerAction().TriggerRestrainedSpeech();
+          }
         }
         else
 		{
           Pawn.BroadcastEffectEvent('ReassuredPassiveHostage',,,,,,,,name(VoiceTag));
+          if(FRand() < 0.1)
+          {
+            ISwatAI(Candidate).GetSpeechManagerAction().TriggerRestrainedSpeech();
+          }
         }
       } else
 	  {
@@ -5919,6 +6186,15 @@ simulated function SwatPlayer GetSwatPlayer()
     return Player;
 }
 
+simulated function bool HasAWeaponEquipped()
+{
+	local HandheldEquipment Equipment;
+
+	Equipment = Pawn.GetActiveItem();
+
+	return Equipment.IsA('FiredWeapon') && !Equipment.IsA('PepperSpray');
+}
+
 simulated function bool IsLocationFrozen()
 {
     local SwatPlayer thePlayer;
@@ -6138,6 +6414,15 @@ exec function GUICloseMenu()
     SwatGUIControllerBase(Repo.GUIController).ShowGamePopup( true );
 }
 
+// open the swap weapon page
+exec function SwapWeapon()
+{
+	if(Level.NetMode == NM_Standalone)
+	{
+		SwatGUIControllerBase(Repo.GUIController).ShowWeaponCabinet();
+	}
+}
+
 exec function OpenHudChat(bool bGlobal)
 {
     SwatGUIControllerBase(Repo.GUIController).OpenChat( bGlobal );
@@ -6176,6 +6461,25 @@ exec function ScrollChatToEnd()
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+function GivenEquipmentFromMenu(class<SwatWeapon> Weapon, class<SwatAmmo> Ammo)
+{
+	local HandheldEquipment ActiveItem;
+	local HandheldEquipment NewItem;
+	local SwatWeapon WeaponItem;
+
+	ActiveItem = SwatPlayer.GetActiveItem();
+
+	NewItem = Spawn(Weapon, SwatPlayer);
+	WeaponItem = SwatWeapon(NewItem);
+	WeaponItem.AmmoClass = Ammo;
+	NewItem.SetAvailable(true);
+	WeaponItem.OnGivenToOwner();
+	NewItem.Pickup = None;
+	NewItem.Equip();
+
+	SwatPlayer.OnPickedUp(NewItem);
+}
 
 simulated function ClientAddPrecacheableMaterial( string MaterialName )
 {
@@ -6257,6 +6561,23 @@ simulated event RenderOverlays( canvas Canvas )
 				512);				// Extend to the bottom-right corner of the 512x512 texture
 		}
    }
+
+   //RenderDebugInfo(Canvas);
+}
+
+simulated function RenderDebugInfo(Canvas Canvas)
+{
+    local float YP;
+
+    YP = 40;
+
+    Canvas.SetDrawColor(255, 255, 255, 255);
+
+    Canvas.SetPos(10, YP);
+    Canvas.DrawText("GivenFlashbangs: " $ SwatPlayer(Pawn).GivenFlashbangs);
+    YP += 16;
+    Canvas.SetPos(10, YP);
+    Canvas.DrawText("GivenFlashbangs AvailableCount: " $ SwatPlayer(Pawn).GivenFlashbangs.GetAvailableCount());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -172,6 +172,51 @@ function UpdateReticlePreviewAlpha(
     HUD.Reticle.CenterPreviewAlpha = byte(Alpha);
 }
 
+// Fire interface has a few extra considerations with regards to context
+function bool ContextMatches(SwatPlayer Player, Actor Target, PlayerInterfaceContext Context, float Distance, bool Transparent)
+{
+	local FireInterfaceContext FireContext;
+	local IAmUsedByToolkit ToolkitObject;
+	local SwatPawn PawnObject;
+	FireContext = FireInterfaceContext(Context);
+
+	if(FireContext.CaresAboutCanBeArrestedNow)
+	{
+		PawnObject = SwatPawn(Target);
+		if(PawnObject == None || PawnObject.CanBeArrestedNow() ^^ FireContext.CanBeArrestedNow)
+		{
+			return false;
+		}
+	}
+
+	if(FireContext.CaresAboutCanBeUsedByToolkitNow)
+	{
+		ToolkitObject = IAmUsedByToolkit(Target);
+		if(ToolkitObject == None || ToolkitObject.CanBeUsedByToolkitNow() ^^ FireContext.CanBeUsedByToolkitNow)
+		{
+			return false;
+		}
+	}
+
+	return Super.ContextMatches(Player, Target, Context, Distance, Transparent);
+}
+
+function bool DoorRelatedContextMatches(SwatPlayer Player, SwatDoor Door, PlayerInterfaceDoorRelatedContext Context,
+	float Distance, bool Transparent, bool HitTransparent, DoorPart CandidateDoorPart, ESkeletalRegion CandidateSkeletalRegion)
+{
+	local FireInterfaceDoorRelatedContext FireContext;
+	FireContext = FireInterfaceDoorRelatedContext(Context);
+
+	if(FireContext.CaresAboutC2ChargeOnPlayersSide)
+	{
+		if(Door.IsC2ChargeOnPlayersSide() ^^ FireContext.IsC2ChargeOnPlayersSide)
+		{
+			return false;
+		}
+	}
+
+	return Super.DoorRelatedContextMatches(Player, Door, Context, Distance, Transparent, HitTransparent, CandidateDoorPart, CandidateSkeletalRegion);
+}
 
 cpptext
 {

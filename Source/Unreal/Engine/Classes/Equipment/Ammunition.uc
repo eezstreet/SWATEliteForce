@@ -74,6 +74,11 @@ static function String GetFriendlyName()
     return default.FriendlyName;
 }
 
+static function string GetShortName()
+{
+	return GetFriendlyName();
+}
+
 static function Material GetGUIImage()
 {
     return default.GUIImage;
@@ -104,6 +109,10 @@ simulated function bool CanRicochet(Actor Victim, vector HitLocation, vector Hit
 simulated function float GetRicochetMomentumModifier();
 simulated function float GetDrag();
 simulated function float GetMinimumMomentum() { assert(false); return 0; } // subclasses must implement
+simulated function int GetAmmoType();
+simulated function int GetBulletType();
+simulated function int GetPenetrationLevel();
+simulated function int GetPenetrationType();
 
 defaultproperties
 {

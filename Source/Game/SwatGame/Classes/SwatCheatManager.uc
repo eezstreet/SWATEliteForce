@@ -769,13 +769,7 @@ exec function GetTased()
 // for debugging the PepperSpray effect.
 exec function GetSprayed()
 {
-	local Bool  bTestingEffects;
-	bTestingEffects = SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects;
-	SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects = true;
-
     SwatPlayer(Level.GetLocalPlayerController().Pawn).ReactToBeingPepperSprayed(None, 10.0, 4, 0, 0);// player/AI react for 10/4 seconds regardless of protective equipment
-
-	SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects = bTestingEffects;
 }
 
 // for debugging the CS Gas effect.
@@ -784,7 +778,6 @@ exec function GetGassed()
 	local SwatGrenadeProjectile Gasser;
 	local Class<SwatGrenadeProjectile> GrenadeClass;
 	local Vector Offset;
-	local Bool   bTestingEffects;
 
 	Offset.X = 10;
 	Offset.Y = 0;
@@ -803,12 +796,7 @@ exec function GetGassed()
         "[henry] Could not create class CSGasGrenadeProjectile in GetGassed().");
     Gasser.bHidden = true;
 
-	bTestingEffects = SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects;
-	SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects = true;
-
     SwatPlayer(Level.GetLocalPlayerController().Pawn).ReactToCSGas(Gasser, 10.0, 0, 0); // react for 10 seconds regardless of protective equipment
-
-	SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects = bTestingEffects;
 
     Gasser.Destroy();
 
@@ -885,12 +873,8 @@ exec function GetStung()
 exec function GetFlashBanged()
 {
 	local Range ImpulseRange;
-	local Bool  bTestingEffects;
 	ImpulseRange.Min = 0;
 	ImpulseRange.Max = 1;
-
-	bTestingEffects = SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects;
-	SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects = true;
 
     SwatPlayer(Level.GetLocalPlayerController().Pawn).
 		ReactToFlashbangGrenade(None,
@@ -903,8 +887,6 @@ exec function GetFlashBanged()
 								10,					  // Duration
 								4,					  // AI Duration
 								0);                   // morale
-
-	SwatPlayer(Level.GetLocalPlayerController().Pawn).bTestingCameraEffects = bTestingEffects;
 }
 
 exec function DebugEffectEvent(name EffectEvent)

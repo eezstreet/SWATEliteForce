@@ -13,7 +13,7 @@ function InitComponent(GUIComponent MyOwner)
 	Super.InitComponent(MyOwner);
 
 	HelpText = GUILabel(AddComponent("GUI.GUILabel",self.Name$"_SwatHelpText",true));
-    
+
     OnKeyEvent=InternalOnKeyEvent;
 }
 
@@ -58,20 +58,20 @@ log( "Quit: Confirmed" );
 final function PerformQuitToWindows()
 {
     //may need to add saving info routines here
-	SwatGUIController(Controller).Quit(); 
+	SwatGUIController(Controller).Quit();
 }
 
 //may be overridden in subclasses to do alternate behavior
 function PerformClose()
 {
-    Assert( self == Controller.TopPage() );
+    //Assert( self == Controller.TopPage() );
     Controller.CloseMenu();
 }
 
 function GameStart()
 {
     //start of game hook
-	SwatGUIController(Controller).GameStart(); 
+	SwatGUIController(Controller).GameStart();
 }
 
 function GameAbort()
@@ -84,7 +84,7 @@ function GameRestart()
 {
     //end of game hook
 	SwatGUIController(Controller).GameAbort();
-	SwatGUIController(Controller).GameStart(); 
+	SwatGUIController(Controller).GameStart();
 }
 
 protected function bool ShouldSetSplashCameraPosition()
@@ -118,7 +118,7 @@ protected function bool HandleKeyEvent( out byte Key, out byte State, float delt
         PerformClose();
         return true;
     }
-    
+
     return false;
 }
 
@@ -130,7 +130,7 @@ function OpenPopup( string ClassName, string ObjName )
 ////////////////////////////////////////////////////////////////////////////////////
 // Component Cleanup
 ////////////////////////////////////////////////////////////////////////////////////
-event Free( optional bool bForce ) 			
+event Free( optional bool bForce )
 {
     GC=None;
 
@@ -149,7 +149,7 @@ defaultproperties
 	bIsOverlay=false
 	StyleName="STY_DefaultMenu"
 	QuitPrompt="Quit to Windows?"
-	
+
 	//swat gui pages do not trigger normal effect events
 	bNeverTriggerEffectEvents=true
 }

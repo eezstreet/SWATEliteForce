@@ -107,8 +107,6 @@ function TriggerSuspectWontComplySpeech(Pawn Suspect)
 // Hostages
 function TriggerHostageSpottedSpeech(Pawn Hostage)
 {
-	assert(Hostage.IsA('SwatHostage'));
-
 	TriggerSpeech('ReportedCivilianSpotted', true);
 }
 
@@ -639,6 +637,11 @@ function TriggerOtherTeamOnItSpeech()
 function TriggerCoveringTargetSpeech()
 {
 	TriggerSpeech('CoveredCompliedUnrestrained');
+}
+
+function TriggerAskedLeadToRestrainSpeech()
+{
+	TriggerSpeech('AskedLeadToRestrain');
 }
 
 function TriggerElementReportedSpeech()

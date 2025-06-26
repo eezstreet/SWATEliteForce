@@ -21,6 +21,21 @@ final function array<Campaign> GetCampaigns()
     return Campaigns;
 }
 
+final function bool HasCompletedCampaignAtLeastOnce()
+{
+    local int i;
+
+    for(i = 0; i < Campaigns.length; i++)
+    {
+        if(Campaigns[i].HACK_HasPlayedCreditsOnCampaignCompletion && Campaigns[i].CampaignPath == 0 && !Campaigns[i].CustomCareerPath)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 final function Campaign GetCampaign(string inCampaign)
 {
     local int i;
@@ -55,7 +70,8 @@ final function bool CampaignExists(string inCampaign)
 //call CampaignExists() first to find out.
 //note that more than one string may map to the same name.
 //returns the newly added Campaign
-final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath)
+final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode,
+	optional bool bUseCustom, optional string CustomCampaign)
 {
     local name CampaignName;
     local int i;
@@ -78,6 +94,9 @@ final function Campaign AddCampaign(string inCampaign, int campPath, bool bPlaye
 	  Campaigns[i].CampaignPath = campPath;
     Campaigns[i].PlayerPermadeath = bPlayerPermadeath;
     Campaigns[i].OfficerPermadeath = bOfficerPermadeath;
+	Campaigns[i].CustomCareerPath = bUseCustom;
+	Campaigns[i].CustomCareer = CustomCampaign;
+    Campaigns[i].HardcoreMode = bHardcoreMode;
 
     SaveConfig();
     Campaigns[i].SaveConfig();

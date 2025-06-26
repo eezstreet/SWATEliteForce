@@ -114,6 +114,7 @@ private function bool ShouldFaceTargetOfficer()
 
 private latent function FaceTargetOfficer()
 {
+	log("FaceTargetOfficer() posted a RotateTowardActorGoal at "$GetOfficerTarget());
 	CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), achievingGoal.priority, GetOfficerTarget());
 	assert(CurrentRotateTowardActorGoal != None);
 	CurrentRotateTowardActorGoal.AddRef();

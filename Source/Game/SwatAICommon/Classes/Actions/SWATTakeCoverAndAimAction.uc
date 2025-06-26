@@ -261,7 +261,7 @@ latent private function RotateToAimingRotation(Pawn Opponent)
 {
 	assert(CurrentRotateTowardRotationGoal == None);
 
-	if ((Opponent != None) && !IsRotatedToAimingRotation() && !m_Pawn.CanHit(Opponent))
+	if ((Opponent != None) && !IsRotatedToAimingRotation() && !m_Pawn.CanHitTarget(Opponent))
 	{
 		CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, AimingRotation);
 		assert(CurrentRotateTowardRotationGoal != None);

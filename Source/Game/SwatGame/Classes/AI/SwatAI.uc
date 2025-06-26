@@ -1990,17 +1990,17 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 	return PaintballAimRotation;
 }
 
-//simulated native function vector GetAimOrigin();
+simulated native function vector GetAimOrigin();
 //
 //This function is supposed to get the Aim Origin for the weapons so that pawns
 //can aim correctly. However, there is something wrong in it because it crashes
 //at times. And we can't check what Irrational did because it is native. So I'm
 //rewriting this to make it work.
 
-simulated function vector GetAimOrigin()
-{
-	return Location + EyePosition();
-}
+//simulated function vector GetAimOrigin()
+//{
+//	return Location + EyePosition();
+//}
 
 simulated function vector EyePosition()
 {
@@ -2057,71 +2057,83 @@ function SetAimUrgency(bool Fast)
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
 
 //
-//native event bool CanHit(Actor Target);
+native event bool CanHit(Actor Target);
 //
 // Whatever Irrational did with this function, we don't know because it's native...
 // However, it's not correct because SWAT will very frequently not hit their target.
+
+event bool CanHitTarget(Actor Target)
+{
+	return FiredWeapon(GetActiveItem()) != None && CanHit(Target);
+}
 
 simulated function SEFDebugSensor()
 {
   bDebugSensor = !bDebugSensor;
 }
 
+simulated function bool CanHitEx(Actor Target, optional bool IgnoreStaticMeshes)
+{
+	local FiredWeapon TheWeapon;
+	local bool Value;
+	local vector MuzzleLocation, EndTrace, StartTrace;
+	local rotator MuzzleDirection;
+
+	TheWeapon = FiredWeapon(GetActiveItem());
+
+	/*
+	// The below code seems to be janky, but what the game actually tends to use for aiming at things.
+	// Maybe we should be using stuff like GetAimOrigin() to get the actual position?
+	if (CurrentWeaponTarget != None)
+	{
+		EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
+	}
+	else if(!TheWeapon.bIsLessLethal)
+	{
+		EndTrace = CurrentWeaponTargetLocation;
+	}
+	else
+	{
+		EndTrace = Target.Location;
+	}
+	*/
+
+	EndTrace = Target.Location;
+
+	if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
+	{
+		Value = false;
+	}
+	else
+	{
+		Value = true;
+	}
+
+	if(bDebugSensor)
+	{
+		TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
+		StartTrace = GetEyeLocation();
+		EndTrace = Pawn(Target).GetChestLocation();
+
+		if(Value)
+		{
+		Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
+		}
+		else
+		{
+		Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
+		}
+	}
+
+	return Value;
+}
+
+/*
 event bool CanHit(Actor Target)
 {
-  local FiredWeapon TheWeapon;
-  local bool Value;
-  local vector MuzzleLocation, EndTrace, StartTrace;
-  local rotator MuzzleDirection;
-
-  TheWeapon = FiredWeapon(GetActiveItem());
-
-  /*
-  // The below code seems to be janky, but what the game actually tends to use for aiming at things.
-  // Maybe we should be using stuff like GetAimOrigin() to get the actual position?
-  if (CurrentWeaponTarget != None)
-  {
-      EndTrace = CurrentWeaponTarget.GetFireLocation(TheWeapon);
-  }
-  else if(!TheWeapon.bIsLessLethal)
-  {
-      EndTrace = CurrentWeaponTargetLocation;
-  }
-  else
-  {
-    EndTrace = Target.Location;
-  }
-  */
-
-  EndTrace = Target.Location;
-
-  if(TheWeapon == None || !TheWeapon.WillHitIntendedTarget(Target, !TheWeapon.bIsLessLethal, EndTrace))
-  {
-    Value = false;
-  }
-  else
-  {
-    Value = true;
-  }
-
-  if(bDebugSensor)
-  {
-    TheWeapon.GetPerfectFireStart(MuzzleLocation, MuzzleDirection);
-	StartTrace = GetEyeLocation();
-    EndTrace = Pawn(Target).GetChestLocation();
-
-    if(Value)
-    {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(0,255,0), 3.0f);
-    }
-    else
-    {
-      Level.GetLocalPlayerController().myHUD.AddDebugLine(StartTrace, EndTrace, class'Engine.Canvas'.Static.MakeColor(255,0,0), 3.0f);
-    }
-  }
-
-  return Value;
+  return CanHitEx(Target, false);
 }
+*/
 
 function bool HasUsableWeapon()
 {
@@ -2311,7 +2323,7 @@ simulated private function bool CanHitCurrentTarget()
 {
 	if (CurrentWeaponTarget != None)
 	{
-		return CanHit(CurrentWeaponTarget);
+		return CanHitEx(CurrentWeaponTarget, true);
 	}
 	else
 	{
@@ -3129,7 +3141,6 @@ function RestartStunnedActionSpeech(AI_Goal goal)
 
 
 //IEffectObserver implementation
-
 simulated function OnEffectInitialized(Actor inInitializedEffect)
 {
     LatentSound = IGSoundEffectsSubsystem.SoundInstance(inInitializedEffect);
@@ -3150,9 +3161,10 @@ simulated function OnEffectStarted(Actor inStartedEffect)
 simulated function OnEffectStopped(Actor inStoppedEffect, bool Completed)
 {
 	local IGSoundEffectsSubsystem.SoundInstance StoppedSoundInstance;
+    local name EffectEventName;
 	StoppedSoundInstance = IGSoundEffectsSubsystem.SoundInstance(inStoppedEffect);
 
-//	log(Name $ " OnEffectStopped - inStoppedEffect: " $ inStoppedEffect $ " StoppedSoundInstance: " $ StoppedSoundInstance $ " LatentSound: " $ LatentSound);
+	//log(Name $ " OnEffectStopped - inStoppedEffect: " $ StoppedSoundInstance.toString() $ " StoppedSoundInstance: " $ StoppedSoundInstance $ " LatentSound: " $ LatentSound $ ", Completed = " $ Completed);
 
 	// we only care about the current latent sound, other stopped sounds do not matter
 	if (StoppedSoundInstance == LatentSound)

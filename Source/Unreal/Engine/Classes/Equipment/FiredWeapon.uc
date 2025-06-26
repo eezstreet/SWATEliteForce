@@ -147,7 +147,7 @@ var private int AutoFireShotIndex;                          //while firing in Fi
 
 var private bool PerfectAimNextShot;                        //for special purposes, we want to be able to take a shot with perfect aim, ie. Officers with shotguns
 
-var(Damage) private config float OverrideArmDamageModifier;
+var(Damage) public config float OverrideArmDamageModifier;
 
 var(AI) config bool OfficerWontEquipAsPrimary					"If true Officer will use secondary weapon unless ordered otherwise";
 
@@ -156,10 +156,6 @@ var(AI) config bool OfficerWontEquipAsPrimary					"If true Officer will use seco
 simulated function PreBeginPlay()
 {
     Super.PreBeginPlay();
-
-    AssertWithDescription(MuzzleVelocity > 0,
-        "[tcohen] MuzzleVelocity for the FiredWeapon "$class.name
-        $" is not set.  Please set it in Content/System/SwatEquipment.ini.");
 
     if (AvailableFireMode.length > 0)
     {
@@ -278,6 +274,16 @@ simulated function bool ShouldReload()
 }
 simulated function float GetChoke();
 
+simulated function float GetAutoRecoilMagnitude()
+{
+    return AutoFireRecoilMagnitudeIncrement;
+}
+
+simulated function float GetPerBurstRecoilMagnitude()
+{
+    return RecoilMagnitude;
+}
+
 //this is the base FiredWeapon's implementation of firing a single shot.
 //note that some FiredWeapon subclasses override this and implement firing
 //  a single shot in a completely different way.
@@ -323,15 +329,15 @@ simulated function TraceFire()
 
     if (Pawn(Owner).Controller == LocalPlayerController)    //I'm the one firing
     {
-        Magnitude = RecoilMagnitude;
+        Magnitude = GetPerBurstRecoilMagnitude();
         Shot = 0;
         AutoMagnitude = 0.0;
         ForeDuration = RecoilForeDuration;
         BackDuration = RecoilBackDuration;
 
-        if(CurrentFireMode == FireMode_Auto)
+        if(CurrentFireMode == FireMode_Auto || CurrentFireMode == FireMode_Burst)
         {
-            AutoMagnitude = AutoFireRecoilMagnitudeIncrement;
+            AutoMagnitude = GetAutoRecoilMagnitude();
             Shot = AutoFireShotIndex;
         }
 
@@ -349,7 +355,7 @@ simulated function TraceFire()
 
 // Used by the AI - whether firing this weapon will hit its intended target
 // (and not, for example, an actor or levelinfo that is in between our target)
-simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace)
+simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters, vector EndTrace, optional bool IgnoreStaticMeshes)
 {
     local vector PerfectFireStartLocation, HitLocation, StartTrace, ExitLocation, PreviousExitLocation;
     local vector HitNormal, ExitNormal;
@@ -409,12 +415,12 @@ simulated function bool WillHitIntendedTarget(Actor Target, bool MomentumMatters
             // Our bullet type doesn't penetrate and we didn't hit our target..
             return false;
         }
-        else if(Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
+        else if(!IgnoreStaticMeshes && Victim.DrawType == DT_StaticMesh && Ammo.RoundsNeverPenetrate)
         {
             // This might be redundant, but it doesn't seem to work otherwise.
             return false;
         }
-        else if(Victim.DrawType == DT_StaticMesh)
+        else if(!IgnoreStaticMeshes && Victim.DrawType == DT_StaticMesh)
         {
             // The bullet hits a static mesh.
             Momentum -= MtP;
@@ -518,6 +524,8 @@ simulated function bool HandleBallisticImpact(
     Material HitMaterial,
     ESkeletalRegion HitRegion,
     out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
     vector ExitLocation,
     vector ExitNormal,
     Material ExitMaterial
@@ -525,7 +533,7 @@ simulated function bool HandleBallisticImpact(
 
 // Handles bullet ricochet.
 // For right now, all this does is fire the bullet in a perfect mirror.
-simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, int BounceCount)
+simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, float KillEnergy, int BulletType, int BounceCount)
 {
   local vector MirroredAngle, EndTrace;
   local vector NewHitLocation, NewHitNormal, NewExitLocation, NewExitNormal;
@@ -537,6 +545,7 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
   BounceCount = BounceCount + 1;
   MirroredAngle = BulletDirection - 2 * (BulletDirection dot Normal(HitNormal)) * Normal(HitNormal);
   Momentum *= Ammo.GetRicochetMomentumModifier();
+  KillEnergy = 0;
   EndTrace = HitLocation + MirroredAngle * Range;
 
   // Play an effect when it hits the first surface
@@ -587,10 +596,10 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 
       if(Ammo.CanRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount)) {
         // the bullet ricocheted from the material
-        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount);
+        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, KillEnergy, BulletType, BounceCount);
         break;
       } else if(!HandleBallisticImpact(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial,
-                  NewHitRegion, Momentum, NewExitLocation, NewExitNormal, NewExitMaterial)) {
+                  NewHitRegion, Momentum, KillEnergy, BulletType, NewExitLocation, NewExitNormal, NewExitMaterial)) {
         // the bullet embedded itself into the material
         break;
       }
@@ -614,9 +623,14 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 	local actor Victim;
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
+    local float KillEnergy;
+    local int BulletType;
     local ESkeletalRegion HitRegion;
 
     Momentum = MuzzleVelocity * Ammo.Mass;
+    BulletType = Ammo.GetBulletType();
+	//This is redefined somewhere else
+    KillEnergy = 0;
 
     Ammo.BallisticsLog("BallisticFire(): Weapon "$name
         $", shot by "$Owner.name
@@ -660,12 +674,13 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         }
 
         //handle each ballistic impact until the bullet runs out of momentum and does not penetrate
-        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0)) {
+        if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0))
+		{
           // the bullet ricocheted
-          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0);
+          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, KillEnergy, BulletType, 0);
           break;
         }
-        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
+        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, KillEnergy, BulletType, ExitLocation, ExitNormal, ExitMaterial))
             break; // the bullet embedded itself in the target
 
         // the bullet passed through the target
@@ -702,6 +717,8 @@ simulated function bool HandleBallisticImpact(
     Material HitMaterial,
     ESkeletalRegion HitRegion,
     out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
     vector ExitLocation,
     vector ExitNormal,
     Material ExitMaterial
@@ -714,11 +731,17 @@ simulated function bool HandleBallisticImpact(
     local int Damage;
     local SkeletalRegionInformation SkeletalRegionInformation;
     local ProtectiveEquipment Protection;
+    local int ArmorLevel;
+    local int BulletLevel;
     local float DamageModifier, ExternalDamageModifier;
     local float LimbInjuryAimErrorPenalty;
     local IHaveSkeletalRegions SkelVictim;
     local Pawn  PawnVictim;
 	local PlayerController OwnerPC;
+
+    BulletType = Ammo.GetBulletType();
+    ArmorLevel = Protection.GetProtectionType();
+    BulletLevel = Ammo.GetPenetrationType();
 
     // You shouldn't be able to hit hidden actors that block zero-extent
     // traces (i.e., projectors, blocking volumes). However, the 'Victim'
@@ -787,7 +810,11 @@ simulated function bool HandleBallisticImpact(
                                 HitLocation,
                                 HitNormal,
                                 NormalizedBulletDirection,
-                                Momentum))
+                                Momentum,
+                                KillEnergy,
+                                BulletType,
+								ArmorLevel,
+								BulletLevel))
                         return false;   //blocked by ProtectiveEquipment
                 }
             }
@@ -1021,7 +1048,11 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     vector HitLocation,
     vector HitNormal,
     vector NormalizedBulletDirection,
-    out float Momentum)
+    out float Momentum,
+    out float KillEnergy,
+    out int BulletType,
+    int ArmorLevel,
+    int BulletLevel)
 {
     local bool PenetratesProtection;
     local vector MomentumVector;
@@ -1029,6 +1060,9 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float MomentumLostToProtection;
     local Object.Range DamageModifierRange;
     local float DamageModifier, ExternalDamageModifier;
+
+    ArmorLevel = Protection.GetProtectionType();
+    BulletLevel = Ammo.GetPenetrationType();
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
     PenetratesProtection = (Protection.GetMtP() < Momentum);
@@ -1546,10 +1580,10 @@ simulated latent private function Fire()
     local HandheldEquipmentModel EffectsSource;
     local Pawn OtherForEffectEvents;
     local float TweenTime;
-    local Pawn PawnOwner;
-    local PlayerController PlayerController;
+	local Pawn PawnOwner;
+	local PlayerController PlayerController;
     local Name EffectSubsystemToIgnore; // initialized by default to ''
-    local float Modifier;
+	local float Modifier;
 
     // We want to play the effects for whichever model is visible to the local
     //  player.  This would be the FirstPersonModel if the gun belongs to the player's
@@ -1811,29 +1845,29 @@ simulated function AddAimError(AimPenaltyType Penalty, optional float Modifier)
 {
     Modifier = 1.0 - Modifier;
 
-    switch (Penalty)
-    {
-        case AimPenalty_Equip:
+     switch (Penalty)
+     {
+         case AimPenalty_Equip:
             PendingAimErrorPenalty += EquippedAimErrorPenalty * Modifier;
-            break;
+             break;
 
-        case AimPenalty_StandToWalk:
+         case AimPenalty_StandToWalk:
             PendingAimErrorPenalty += StandToWalkAimErrorPenalty * Modifier;
-            break;
+             break;
 
-        case AimPenalty_WalkToRun:
+         case AimPenalty_WalkToRun:
             PendingAimErrorPenalty += WalkToRunAimErrorPenalty * Modifier;
-            break;
+             break;
 
-        case AimPenalty_TakeDamage:
+         case AimPenalty_TakeDamage:
             PendingAimErrorPenalty += DamagedAimErrorPenalty * Modifier;
-            break;
+             break;
 
-        case AimPenalty_Fire:
+         case AimPenalty_Fire:
             PendingAimErrorPenalty += FiredAimErrorPenalty * Modifier;
-            break;
+             break;
 
-        default:
+         default:
             assert(false);  //unexpected AimPenaltyType
     }
 }
@@ -1925,6 +1959,12 @@ simulated final function bool HasFlashlight()
 // Is the flashlight on?
 native final function bool IsFlashlightOn();
 
+// Get the flashlight texture index
+function int GetFlashlightTextureIndex()
+{
+	return FLASHLIGHT_TEXTURE_INDEX;
+}
+
 // This is called when the holder of the weapon changes its desired flashlight
 // state.
 simulated function OnHolderDesiredFlashlightStateChanged()
@@ -1933,6 +1973,9 @@ simulated function OnHolderDesiredFlashlightStateChanged()
 	local Name EventName;
 	local String FlashlightTextureName;
 	local Material FlashlightMaterial;
+	local int Index;
+
+	Index = GetFlashlightTextureIndex();
 
     if (HasAttachedFlashlight)
     {
@@ -1958,7 +2001,7 @@ simulated function OnHolderDesiredFlashlightStateChanged()
                 true);      //PlayOnOther
 
 	    // change texture on 3rd person model
-	    if (! InFirstPersonView())
+	    if (! InFirstPersonView() && Index != -1)
 	    {
 			if (PawnWantsFlashlightOn) // turn on the glow texture on the flashlight bulb
 			{
@@ -1969,12 +2012,12 @@ simulated function OnHolderDesiredFlashlightStateChanged()
 			{
 				// hack.. force the skin to None so that GetCurrentMaterial will pull from
 				// the default materials array instead of the skin
-				ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = None;
+				ThirdPersonModel.Skins[Index] = None;
 
-				FlashlightMaterial = ThirdPersonModel.GetCurrentMaterial(FLASHLIGHT_TEXTURE_INDEX);
+				FlashlightMaterial = ThirdPersonModel.GetCurrentMaterial(Index);
 			}
 
-			ThirdPersonModel.Skins[FLASHLIGHT_TEXTURE_INDEX] = FlashlightMaterial;
+			ThirdPersonModel.Skins[Index] = FlashlightMaterial;
 	    }
 
 	    UpdateFlashlightState();
@@ -2492,6 +2535,13 @@ simulated function ApplyPolarOffset(out rotator outDirection, float Rho, float T
 
     //outDirection.Pitch += Rho * Sin(Theta * DEGREES_TO_RADIANS) * DEGREES_TO_TWOBYTE;
     //outDirection.Yaw += Rho * Cos(Theta * DEGREES_TO_RADIANS) * DEGREES_TO_TWOBYTE;
+}
+
+// Retrieves what kind of grenades we are currently firing out of this weapon.
+// If it returns Slot_Invalid then this weapon does not fire any kind of grenade
+function EquipmentSlot GetFiredGrenadeEquipmentSlot()
+{
+	return Slot_Invalid;
 }
 
 cpptext

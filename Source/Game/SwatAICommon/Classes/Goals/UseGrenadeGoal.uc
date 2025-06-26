@@ -75,6 +75,11 @@ function NotifyThrowGrenade()
 	}
 }
 
+function EquipmentSlot GetGrenadeSlot()
+{
+	return GrenadeSlot;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {

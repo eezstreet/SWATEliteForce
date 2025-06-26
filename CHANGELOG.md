@@ -1,4 +1,320 @@
-#### v6.4
+# CHANGELOG.md
+
+## v7.2
+
+This patch is primarily focused on bug fixes and minor improvements:
+
+  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley)
+  - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
+  - SWAT AI can now use NVGs (CHECK IF DONE!)
+  - Fixed the beanbag shotgun applying both the ReactToBeingShot action and the Stung action, which lead to huge morale loss and a visual glitch. (thanks to kevinfoley)
+  - Fixed a TSS bug where if a suspect was stung and then became compliant, they would randomly play an "aim gun at" animation. (thanks to kevinfoley)
+  - Greatly improved Weapon Inertia (thanks to kevinfoley)
+  - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
+  - Fixed suspects having incorrect textures when wearing heavy armor (thanks to beppegoodoldrebel)
+  - Fixed incorrect kilogram-to-pound conversion formula for Imperial measurements (thanks to modotte)
+  - Fixed incorrect MP5K suppressor attachment linkage in the menu (thanks to modotte)
+  - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
+  - Restored original game CanHit function (need to test what the implications are...)
+  - Removed portions of MassiveAd code (Thanks to beppegoodoldrebel)
+  - Fixed an issue in CO-OP where you could ready up (and be over the weight limit) in situations where you shouldn't be able to. (Thanks to beppegoodoldrebel)
+  - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
+  - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!) (Thanks to beppegoodoldrebel)
+  - Documentation (.md files) have been cleaned up.
+
+## v7.1
+
+Features:
+
+  - Added a new "Configuration" feature to the weapons. Instead of selecting a weapon and its attachments from the list of weapons, you can pick the attachments separately.
+  - All suppressed and Aimpoint version of weapons are now different selectable configurations.
+  - Remington 870 Breaching is now a selectable configuration of the Remington 870.
+  - Improved meshes and/or textures on the following items, all of which were made by Beppe: various doors throughout levels, first person hands, M4A1 (changed from Brettzie's), M870 Breacher (is now considered an attachment to the M870), Nova Pump, Less Lethal Nova, UMP45, Glock 17, P90 (now has proper ironsights), M4Super90, SCAR-L, MP5, G36K
+  - Added Holographic Sight variants for M4A1, UMP, MP5, G36K and M4Super90. (Thanks to Beppe for these models)
+  - Added unsilenced version of the Colt Accurized Rifle. (Thanks to Beppe for this)
+  - Added CQB M4A1 variants (Thanks to Beppe for these models)
+  - Removed player ports from admin broadcast messages as this is unncessary noise
+  - Added 'ShowPlayerIPInJSON' option to SwatGame.SwatAdmin (default: OFF) to expose player IPs to JSON.
+  - Added a 'Report Bug' button to the main menu (thanks to wsevren for this)
+  - Restored the vanilla SWAT 4 menu music
+  - When crosshairs are disabled, contextual icons such as door mirroring now appear. (thanks to wsevren for this fix)
+  - The scoring relating to suspects being neutralized has been changed:
+    - Suspects neutralized (max): 4 -> 10
+    - Suspects incapacitated (max): 13 -> 15
+    - Suspects arrested (max): No change; 20 -> 20
+  - Toolkit interactions have been made slower to encourage breaching:
+    - Lockpick (base): 4 seconds -> 10 seconds
+    - Bomb Defuse (base): 4 seconds -> 10 seconds
+  - Added a threat cooldown. If a suspect was just firing at you and the suspect surrenders/was stunned/flees (if not Insane), there is a small window of time that you are legally allowed to shoot.
+  - Rounds are chambered in between reloads. (If you have 19 rounds in a 20 round magazine and reload to a full magazine, it will display 20 + 1/20. Thanks to beppe for the idea.)
+  - Lightsticks never fall through the floor any more. (thanks to Beppe for the fix)
+  - The toolkit and detonator no longer have weight/bulk, to eliminate discrepencies between the equipment screen and ingame weight.
+  - SWAT AI will spot suspects without visible weapons as "unarmed individuals" when mirroring.
+  - SWAI AI will announce that they've spotted an unarmed target when seeing a suspect without a weapon.
+  - SWAT AI will no longer open a door whose trap they are assigned to remove.
+  - Custom skins can now alter the first person hands texture.
+  - Enabled the following npcs so that they can be used in custom missions: Lian Niu, Evil Waiter (shows up as Male, Asian Chef), Allen Kruse, Simon Gowan, Jewel Thief from the Diamond Robbery Mission, and the hosptial terrorist from the hopstial mission. Thanks to Warzaid for this.
+  - Shotguns have a tighter choke, and are a more appealing option because of it. (Edit made by EFdee)
+
+SEF Bugs Fixed:
+
+  - FN FAL now has the correct kind of ammo for it. Thanks to beppe for this.
+  - Fixed many ironsight misalignments.
+  - Fixed game crashing when exposed to CS gas. Thanks to beppe for this.
+  - Fixed sometimes penalties triggering when they weren't supposed to.
+  - Fixed MP5SD6 not coming back up after low-readying.
+  - Fixed P226 having no textures in Low video settings. (thanks to TheSuggester for finding the bug, Beppe for finding the fix, and thanks to wsevren for performing the fix)
+  - Fixed vote locking (for players or globally) not working in WebAdmin.
+  - Fixed icons not appearing correctly on the Equipment panel for some weapons (M249 SAW, etc)
+  - Fixed night vision goggles missing their third person mesh.
+  - Fixed SEF bug: XDM third person position was too far forward (thanks to Beppe for this)
+  - Fixed SEF bug: On certain maps, talking with localized messages enabled caused a crash.
+  - Fixed SEF bug: Server crash under certain circumstances
+  - Fixed SEF bug: Lightsticks are green on the belt and in third person hands, but are blue/red when thrown.
+  - Fixed SEF bug: Officers ask you to "break out the cuffs" if you are holding cuffs or someone else is securing the person in question.
+  - Fixed SEF bug: Suspects wouldn't shoot at doors when barricaded (thanks to sandman332 for the fix)
+  - Fixed SEF bug: You could juke suspects (especially low skill ones) by moving in zigzags etc. Now, they will always fire after a period of time, even if their target is not perfectly acquired.
+  - Fixed SEF bug: Suspects wouldn't pick up weapons, they would just flee. (thanks to EFdee for this)
+  - Fixed SEF bug: The M4Super90 and M1Super90 did not have breaching contexts on doors (thanks to EFdee for this)
+  - Fixed SEF bug: The Uzi did not have correct weapon sounds in third person (thanks to beppe for this)
+  - Fixed SEF bug: The optiwand would not transfer correctly in singleplayer (thanks to Severn for this)
+  - Fixed SEF bug: FPS issues in multiplayer with movement (thanks to beppe for this)
+  - Fixed SEF bug: Suspects can no longer proceed through doors that you have locked (they can however, go through doors that they have locked or are locked at the start of the game..)
+  - Fixed SEF bug: "Drop lightstick" now plays the correct animations in first person
+  - Fixed SEF bug: "Drop lightstick" was bugged in multiplayer
+
+TSS Bugs Fixed:
+
+  - Fixed weapons clipping a lot in first person (thanks to Beppe for this)
+  - Fixed being unable to punch after pressing zoom key on handcuffs
+  - Fixed players on the red team look like suspects with the default skin
+  - Fixed contextual HUD reticles (lockpick, wedge, etc) stretching massively in widescreen resolutions and looking ugly.
+  - Fixed local spawners (such as the DOA spawners on St. Micheal's Medical Center) not working in QMM.
+  - Fixed wrong gamma in SwatEd. Thanks to Masterscape for this.
+
+## v7
+ 
+Major Features:
+
+- New and altered equipment!
+  - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+suppressed), Colt 9mm SMG (+suppressed), Glock 18 and Glock 19.
+  - Added Brettzie's M4A1 as a replacement for the original M4A1! It also has suppressed and Aimpoint variants, for a total of 4 varieties of M4A1.
+  - Added two new armor variants.
+  - Added the ability to take no weapon!
+  - Weapons have received visual tweaks: G36K, MP5 (silenced), UMP (silenced), Desert Eagle
+  - Gas and pepperballs are now less effective.
+- New commands: Sharing is caring!
+  - You can now order your AI-controlled officers to share a piece of equipment with you. These are located in a new submenu, called SHARE >>
+  - You can now give your teammate a piece of tactical equipment (lightstick/grenade/wedge/optiwand/pepper spray) by pressing melee at your teammate while you have that item equipped.
+  - The INVESTIGATE menu has been spruced up. You can now order your team to either MIRROR FOR TRAPS (replaces CHECK FOR TRAPS), MIRROR FOR CONTACTS, or MIRROR FOR ALL, which combines the two commands, but is slower.
+- New AI behavior!
+  - SWAT AI can now be affected by less lethals! There's now a very clear reason why you want to grab a gas mask over helmets for your AI.
+  - SWAT AI can now use grenade launcher! When issuing any order which uses grenades, they will use the grenade launcher instead, if it has ammo.
+  - SWAT AI, when deploying a wedge, will no longer move out of the way when bumped by a door.
+  - SWAT AI will better cover each others' backs when moving to locations (or falling in) and will continue movement actions when distracted by civilians or suspects.
+  - SWAT AI will utilize the pepperball gun and beanbag shotguns automatically against uncompliant, running suspects (only while following a FALL IN or MOVE TO order)
+  - Suspects will now try to escape when they are compliant, and the player is not watching. Now it's not only weapons that you need to worry about...
+  - Suspects now have a random chance to either investigate or barricade, instead of it being based solely on where the suspect spawns.
+- Upgraded Quick Mission Maker!
+  - Have you ever wanted to create your own campaign path? Perhaps with custom levels? Now you can!
+  - You can now use custom maps and write your own briefings for the Quick Mission Maker.
+  - The Quick Mission Maker now has finer control over suspects and hostages through an ADVANCED MODE.
+  - Additionally, you can create a progression and unlock system for your custom campaign.
+  - Refer to the section titled QUICK MISSION MAKER CHANGES for more details.
+
+
+New Features (All):
+
+ - Added new weapons: SCAR-H (+3 variants), AKs-74u, MP5K PDW (+suppressed), Glock 18, Glock 19, No Weapon, Colt 9mm SMG (+suppressed)
+ - Implemented Brettzie's M4A1.
+ - Implemented new Desert Eagle model
+ - Added 2 new armor pieces: Heavy Kevlar Armor (Level IIIA) and Heavy Ceramic Armor (Level IV).
+ - Added Hardcore Mode. Unlocked when the SWAT 4 + Expansion campaign has been completed at least once.
+ - You can now order your officers to give you a grenade, lightstick, C2, optiwand, pepper spray or wedge.
+ - SWAT AI now uses grenade launchers correctly.
+ - SWAT AI can no longer do direct impact damage with grenade launchers.
+ - SWAT AI no longer moves out of the way when bumped by a door, if they are deploying a wedge. Note, if they are moving into position to deploy the wedge, they will still move out of the way.
+ - SWAT AI no longer run when they are issued a MOVE TO command.
+ - SWAT AI better "slice the pie" while moving for a MOVE TO or FALL IN command.
+ - SWAT AI will not stop to engage targets when issued a MOVE TO or FALL IN command.
+ - SWAT AI will further distance themselves from uncompliant suspects/hostages when executing the move & clear command.
+ - Optimized SWAT AI pathfinding for Close Door, Deploy Pepper Spray, Deploy Taser, and Mark With Lightstick commands.
+ - You can now issue a DEPLOY WEDGE command on an open door. When used, officers will close the door and then deploy the wedge, instead of having to issue two separate commands. (note, it was possible to have officers wedge doors open when using the Speech Command Interface. This has been fixed.)
+ - TOC now responds to SWAT AI reports.
+ - CHECK FOR TRAPS has been renamed to MIRROR FOR TRAPS and requires an optiwand to be equipped on an officer to use.
+ - MIRROR/SCAN DOOR has been renamed to MIRROR FOR CONTACTS
+ - Both MIRROR FOR TRAPS and MIRROR FOR CONTACTS have had their speed increased by about 20%.
+ - Added a new command: MIRROR FOR ALL. This command combines MIRROR FOR TRAPS and MIRROR FOR CONTACTS, but takes about twice as long.
+ - Suspects will attempt to escape when compliant and not being watched. 
+ - Suspect archetypes now dictate the investigate/barricade chance instead of it being dictated by spawn point.
+ - Suspects will remain in a barricaded state, even after firing upon a door.
+ - Suspects will close doors after firing upon them while in a barricaded state. The time it takes to do this is random.
+ - Removed the weapon pickups at the beginning of the Training mission
+ - Added two new Weapon Cabinet objects to the beginning of the Training mission. When you use them, you can exchange your weapon for something else. Good for testing all of the weapons easily!
+ - Lightsticks will now correct their position when they fall through the geometry. 99% of the time, they won't fall through the floor.
+ - After checking a lock, the default command context option will be "Open and Clear"
+ - When aiming at an uncompliant civilian or suspect, the default command will change to a DEPLOY command which suits the situation.
+ - Added a first person viewmodel FOV slider to Video Settings
+ - When opening/clearing or moving/clearing, officers drop lightsticks at their feet instead of at the doorway.
+ - Maps have the ability to randomly open or lock doors which were ordinarily closed.
+ - In multiplayer, you can modify the amount of suspects and hostages that spawn (check the Advanced tab on Host Game)
+ - Added new admin permission, "View IPs". When a role has this permission, it can see player IPs in the WebAdmin interface.
+ - Added new admin permission, "Toggle Voting". When this is used, voting can be temporarily disabled.
+ - Added new admin permission, "Toggle Player Voting". When this is used, a player's voting rights can be temporarily taken away.
+ - When a person logs in as a guest on WebAdmin, their name shows up as "Name (WebGuest)" instead of "Name (WebAdmin)" to better differentiate between admins and guests.
+ - Player names show up according to the color of their team in WebAdmin
+ - WebAdmin now shows player status (Ready/Not Ready/Not Available/Injured/Healthy/Incapacitated) and shows who is the leader.
+ - WebAdmin now shows the current map and server name on the main interface.
+ - WebAdmin now displays voting messages, as well as commands that are issued (e.g, "FALL IN") in order to minimize abuse.
+ - You can now pull JSON data from WebAdmin. For more information, see the section titled Admin System in the README.md.
+ - The MP5 now has beefer sound effects when firing in semi-automatic mode.
+ - Added the option to disable Ironsights zooming
+ - Added a new Controls category, "Multiplayer"
+ - Renamed "Zoom" in Controls to "Aim Down Sights/Zoom"
+ - Renamed "Melee" in Controls to "Melee/Check Lock/Give Item".
+ - Added an entrance selection box to the debriefing menu, so you don't have to sit through an extra loading screen to change the entrance.
+ - Added ability for actors to be hidden based on system time/date. Currently only used in one place (there is a Jack-o-Lantern in the Training mission that shows up on Halloween)
+ - Added console command: "swapweapon" which opens the weapon cabinet screen
+ - All reserved keys are now editable. The "RESERVED" category has been renamed to "NUMBER ROW"
+ - Added new keybind, "Melee" (only does melee, won't check locks or give items)
+ - Added new keybind, "Check Lock"
+ - Added new keybind, "Give Item"
+ - Added new keybind, "Drop Lightstick". Added by popular request, it lets you drop lightsticks like the original game did (instead of throwing)
+ - Renamed keybind "Use" to "Shout For Compliance/Interact"
+ - Added new keybind, "Shout For Compliance" (only shouts, doesn't interact with things)
+ - Added new keybind, "Interact" (only interacts, doesn't shout)
+ - Added 21:9 resolution options to the menus (2560x1080, 3440x1440, 3840x1600)
+ - Removed "Instant Action" from the main menu.
+ - Removed "Play Quick Mission" from the main menu.
+ - Added option to make a Quick Mission Maker career in the Career menu.
+ - Removed gametype selector on Host Game menu. Replaced it with a selector for Quick Mission Maker missions or Missions.
+ - Removed CO-OP QMM gamemode (you can still play Quick Missions in CO-OP but the interface makes much more sense and doesn't use a separate gamemode)
+ - The chatlog now uses a minimum of 2 digits when showing the day, month, hour, minute, and second.
+ - The effects of each grenade are now based on the distance to the affected individual.
+ - The suspects loadouts and equipment for each mission has been revised and updated to be more in line with the descriptions of the briefing, as well as featuring some of the new weapons.
+ - CS Gas now has a somewhat random effect. Sometimes it might fail to gas someone immediately if they are right next to the grenade. Generally, it works better as the grenade is closer to the person.
+ - Pepperball gas cloud radius reduced by 50%. You need to aim closer to the face to get an effect.
+ - Pepperball gas cloud update rate changed from 0.6s to 1.0s, so there is sometimes some random lag in the effect occurring.
+ - Pepperball effect is random. Sometimes it will take multiple shots to affect someone.
+ - Pepperspray cone reduced by 50%, you need to aim closer to people's faces now.
+ - Recoil is now affected by arm injuries.
+ - Added a unique GUI icon for the Less Lethal M870
+ - Auto-Downloads are now enabled by default.
+
+
+Fixed SEF Bugs:
+
+ - Taunts sometimes not eliciting a response, now they do it at a consistent 10% rate.
+ - Shooting a bomb trap now causes it to detonate, instead of silently becoming disarmed. It will trigger the "Tripped Trap" penalty when you do so.
+ - SHOTGUN AND CLEAR and associated actions now work better, and lead to less bumping and fighting at entrances.
+ - Fixed melee not punching people when next to a door, instead it was checking locks. (you now must always aim at a door in order to trigger the check lock dialogue)
+ - Fixed wrong textures for G36K, Suppressed G36K, Silenced MP5, and Silenced UMP
+ - Fixed MP5SD6 not having an animation for firing in full auto or reloading from empty
+ - Fixed some voting types (ie voting for map) using the team count instead of the total client count
+ - Fixed all admins having the same name in WebAdmin (it now shows the correct alias)
+ - Fixed in WebAdmin, when room names are turned on, the chat color turned white
+ - Fixed flashbang grenade launcher rounds doing less direct damage than other round types
+ - Fixed officers looking away from the door when ordered to Mirror Under Door.
+ - Fixed typo in AP ammo description
+ - Fixed wrong tooltip on entry selection on All Missions campaign
+ - Fixed frequent crashes when using the mod in conjunction with the Frosty's Playhouse Snitch mod
+ - Fixed a bug where tasing officers with the Cobra Stun Gun melee did not trigger "Tased a fellow officer" penalty.
+ - Fixed the Server Setup panel, when used to restart the game, setting the game to be Barricaded Suspects.
+ - Fixed lowready triggering when the flashlight was on (the vanilla game disables this)
+ - Fixed M4super90 and Nova Pump having wrong ironsight positions
+ - Fixed a bug where sometimes the player can be seen wearing a gas mask and M4A1 carbine that they don't have.
+ - Fixed a bug where if the Graphic Command Interface is used, and the EXIT MENU button is disabled, and aiming at a door, nothing would be highlighted (the menu would be broken). This is triggered by bad logic in TSS code but only visible if SEF or another mod is used.
+
+Fixed TSS/vanilla bugs:
+
+ - Fixed some buttons and other things having missing text in 1600x900 resolution
+ - Fixed a bug where the gunshots that play on Northside Vending and Amusements from the laundromat wouldn't play. (They worked in the vanilla game, broken in the expansion)
+ - Fixed a bug where the gunshots that play on the A-Bomb Nightclub near the entrance wouldn't play. (They worked in the vanilla game, broken in the expansion)
+ - Fixed a bug where Grenade launchers would do maximum damage at all times, even when fired across long distances, as long as it didn't bounce. It uses new mechanics now to determine the damage.
+ - Fixed a bug where you couldn't swap between sniper viewports after a sniper has reported a contact (If "Press Page Up to view sniper viewport" appears). Now there is a cooldown.
+ - Fixed a bug where the map list, map name, and map author on the Host Game and Server Setup menus did not display HTML color codes properly.
+ - Fixed a bug where Highground volumes now work correctly on Victory Imports Auto Center and Meat Barn Restaurant. (code bug not map bug)
+ - Fixed a bug where the pepperspray cone was reduced when standing still, which made you *less* likely to hit your target. It's now a constant amount.
+ - Fixed typos referring to the nationality of Alex Jimenez on Food Wall as "Columbian" and not "Colombian" (thanks to JalapenoPepsi for pointing this out)
+ - Fixed some custom maps in the SWAT 4 base game (non-expansion) did not have objectives in TSS (thanks to SS for the fix)
+ - Fixed the player being able to melee people while spraying with pepper spray or firing.
+ - Fixed an exploit where the player could control the officer viewport while reloading, switching weapons, or using an item, allowing them to move while placing C2, arresting people, or picking a lock.
+
+
+Map Changes:
+
+ - **Fairfax Residence:**
+   - The front door/garage door may be randomly locked or unlocked.
+   - Various doors around the house can be randomly locked/unlocked/open.
+ - **Food Wall Restaurant:**
+   - Fixed the suspect spawn point in the closet (it was not configured correctly)
+   - The back door may be randomly locked or open.
+   - The bathrooms and kitchen area door may be randomly locked or open.
+ - **Victory Imports Auto Garage:**
+   - Fixed highground not working on the roof
+ - **Red Library Offices:**
+   - Fixed TSS visual glitch where sometimes enemies would wear sunglasses and a gas mask at the same time
+   - Suspects can now wear hats like the loading screen suggests they're able to
+ - **Our Sisters of Mercy Hostel:**
+   - Restored objective: Rescue Lionel McArthur
+ - **Northside Vending and Amusements:**
+   - More enemies spawn on Hard and Elite difficulties.
+   - Some doors may be randomly locked or opened.
+ - **Sellers St. Auditorium:**
+   - Restored a cut 911 call that present, but could not be played due to a designer error
+   - Fixed bag of drugs that was spawning through the couch.
+   - Restored objective: Neutralize Andrew Norman
+ - **Department of Agriculture:**
+   - Restored objective: Rescue Rita Winston
+ - **DuPlessis Diamonds:**
+   - Fixed double doors that were able to be locked
+ - **Children of Taronne Tenement:**
+   - Now unlocks Glock 18
+ - **Drug Lab:**
+   - Fixed some of the patrol paths, including one that had a suspect able to kill the player immediately at the start of the level
+ - **Fresnal St. Station:**
+   - Restored objective: Neutralize Anton Georgiev
+ - **Old Granite Hotel:**
+   - More suspects and civilians spawn on the first floor.
+   - Spawning areas are split up.
+ - **Meat Barn Restaurant:**
+   - Fixed high ground not working on the entrances
+ - **Brewer County Courthouse:**
+   - More enemy spawn points (so as to be less predictable)
+   - More enemies spawn on Hard and Elite difficulties.
+   - Suspects are more likely to wear heavy armor on Hard and Elite difficulties.
+
+Quick Mission Maker Changes:
+
+**IMPORTANT NOTICE:** Quick Mission Maker missions are no longer played through the special menu. Instead, you need to make a new career for them, through the Career menu. This means that you can use the Permadeath, Career CO-OP and stat tracking features present for regular campaigns!
+
+ - Quick Missions are now saved in SEF/Content/Scenarios. You can share them with your friends!
+ - You can now rearrange the order of the missions within a Quick Mission Maker pack.
+ - You can now choose to have missions unlocked one-at-a-time for a Quick Mission Maker pack, or have them all unlocked at the start. (Enable Progression)
+ - You can now assign an unlocks system within a Quick Mission Maker pack. (If unlocks are not available for the pack, the New Equipment tab will be disabled)
+ - You can now use custom maps in a Quick Mission Maker pack. Custom maps force you to use a custom briefing, and all "Use Campaign Settings" options are disabled, as well as the briefing audio.
+ - You can now disable equipment in a pack. For instance, you can have a pack of missions which only has non-lethal weapons.
+ - You can now disable the mission briefing audio in a Quick Mission.
+ - You can now write custom briefing text for Quick Missions.
+ - You can now force level scripts to function like they would in a campaign (note, this may cause instability)
+ - You can now allow traps to spawn in the level.
+ - You can now allow dispatch audio to work in a Quick Mission.
+ - The hostages and suspects that spawn on a level can be more finely controlled through an "Advanced Mode" that allows editing details such as individual character morale, weapons used, and even what voice they have.
+ - Removed the per-map limits on suspect/civilian counts. (You can now have up to 999 suspects and/or civilians on a map)
+ - Added a new objective type: "Rescue as many civilians as possible." This is similar to Rescue All Civilians, but if a suspect downs a hostage, it does not fail the mission.
+ - In the Host Game menu, you can now choose to create a Quick Mission Maker rotation as opposed to a regular Mission rotation.
+  - NOTE: Any pack-specific properties (progression, unlocks, disabled equipment) do not function unless used in a Career CO-OP game.
+ - Notes entry field size increased from 500 to 4000.
+ - NOTES tab renamed to TEXT.
+ - You can now choose to disable the Timeline, Suspects, and Hostages tabs on the briefing.
+ - The level loading screenshot and text will display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the briefing will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the timeline will no longer display if you have "Use Campaign Objectives" marked.
+ - The INVALID stamp over the Civilians and Suspects portion will no longer display if you have "Use Campaign Settings" for Hostages or Suspects, respectively, checked.
+
+
+
+## v6.4
  - Added the option to go without helmet/armor/tactical items, for keeping weight and bulk low. (You must still pack both weapons)
  - Nerfed flashbang damage and damage radius (stun properties unaffected)
  - DuPlessi's civilians now bleed out on a 15-25 minute timer, instead of a 10-15 minute timer.
@@ -16,35 +332,45 @@
  - Voting settings are now stored in SwatGuiState.ini (instead of Swat4x/Swat4xDedicatedServer.ini)
  - Tweaked the collision of lightsticks a little bit
  - Restored a cut TSS feature where lightsticks would lose their glow and become "faded" in appearance.
+
+Admin System Changes
  - Ingame admin logins now persist across level changes
  - Player mute status now persists across level changes
  - Added a new type of voting: Start Map
  - New admin permission: Force player to Spectator
  - New admin permission: Go to Spectator
  - New admin permission: Force Less Lethal loadout
- - WebAdmin: Now has an option to select players or map actions, in addition to performing them via command.
- - WebAdmin: Now displays tags ([b], etc) correctly.
- - WebAdmin: Now has messages colored in a similar way to how they are ingame.
- - WebAdmin: Now shows the friendly name of the weapon that killed/incapacitated someone, instead of the class name (ie, "HK33" instead of "SwatEquipment.HK33MG")
- - WebAdmin: When entering a command wrong, it lists the usage of the command instead of silently failing.
- - WebAdmin: Added commands /forcespec, /switch, /nextmap, /startgame, and /abortgame, /forcell.
- - WebAdmin: Minor look/feel changes
- - Fixed SEF bug: When a player dies, it lists the killer instead of the person who died as "fallen"
- - Fixed SEF bug: When a target is incapacitated with a taser or a C2 explosion, it states "None.None" as the damage type.
- - Fixed SEF bug: When a target is incapacitated or killed with beanbags, direct grenade impacts, or triple baton rounds, the damage type was blank.
- - Fixed SEF bug: When a player triggers a trap, the penalty message does not show their name.
- - Fixed SEF bug: Bulk amount could go negative on the display
- - Fixed SEF bug: The admin panel player list would reset which player was selected constantly
- - Fixed SEF bug: Sometimes your equipment would change back to being an AKM/Browning Hi-Power in Multiplayer.
- - Fixed SEF bug: Wedges weighed less than they were supposed to.
- - Fixed SEF bug: Heavies would not show their skin properly in multiplayer games.
- - Fixed SEF bug: Server crash on GetRoomName
- - Fixed SEF bug: Typo in the X2 Stun Gun description
- - Fixed SEF bug: Heavy Armor health amount was stuck at 100% in multiplayer
- - Fixed SEF bug: Some stuff was not greyed out in the Admin panel when a player viewed the "Server Setup" tab like it should have been
- - Fixed TSS bug: In CO-OP, suspect skins were visible but not usable (now, all skins can be used in co-op)
+ - WebAdmin now has an option to select players or map actions, in addition to performing them via command.
+ - WebAdmin now displays tags ([b], etc) correctly.
+ - WebAdmin now has messages colored in a similar way to how they are ingame.
+ - WebAdmin now shows the friendly name of the weapon that killed/incapacitated someone, instead of the class name (ie, "HK33" instead of "SwatEquipment.HK33MG")
+ - In WebAdmin, when entering a command wrong, it lists the usage of the command instead of silently failing.
+ - Added WebAdmin commands: /forcespec, /switch, /nextmap, /startgame, and /abortgame, /forcell.
+ - Other minor look/feel changes to WebAdmin
 
-#### v6.3
+SEF Bugs Fixed:
+
+ - When a player dies, it no longer lists the killer instead of the person who died as "fallen"
+ - When a target is incapacitated with a taser or a C2 explosion, it no longer states "None.None" as the damage type.
+ - When a target is incapacitated or killed with beanbags, direct grenade impacts, or triple baton rounds, the damage type is no longer blank.
+ - When a player triggers a trap, the penalty message now shows their name.
+ - Fixed bulk amount going negative on the display
+ - Fixed the admin panel player list resetting which player was selected constantly
+ - Fixed your equipment sometimes changing back to being an AKM/Browning Hi-Power in Multiplayer.
+ - Fixed wedges weighing less than they were supposed to.
+ - Fixed heavies not showing their skin properly in multiplayer games.
+ - Fixed server crash on GetRoomName
+ - Fixed a typo in the X2 Stun Gun description
+ - Fixed Heavy Armor health amount being stuck at 100% in multiplayer
+ - Fixed some stuff not being greyed out in the Admin panel when a player viewed the "Server Setup" tab like it should have been
+
+TSS Bugs Fixed:
+
+ - In CO-OP, suspect skins were visible but not usable (now, all skins can be used in co-op)
+
+
+
+## v6.3
  - Added a new weapon: Suppressed P90
  - The Uzi, TEC-9 and AKM have flashlights now. (The TEC-9 always did, and does not have a modified model)
  - Tweaked the position of the P90 flashlight
@@ -65,7 +391,7 @@
  - Adjusted a lot of the training mission text to better integrate TSS and SEF features.
  - The LaunchSEF.bat script will now check to make sure that the mod is installed correctly before launching. If it is not, it will give a detailed explanation as to how to fix the problem.
 
-#### v6.2
+## v6.2
 This is a quick fix patch to address some bugs.
 
  - Slight optimizations and tweaks
@@ -75,7 +401,9 @@ This is a quick fix patch to address some bugs.
  - Fixed TSS bug: The password dialog box (on Admin Login) didn't support all characters
 
 
-#### v6.1
+## v6.1
+
+New Features:
 
  - The accuracy system has been overhauled entirely. Weapons are easier to aim in general now.
  - Added an admin system to the game, featuring customizable roles and an MOTD system. For more information, check out the "Admin System" section of "HOW TO PLAY IN MULTIPLAYER."
@@ -102,29 +430,35 @@ This is a quick fix patch to address some bugs.
  - Suspects are no longer a threat when cowering
  - Reduced the amount of sway on the sniper scope
  - Added a little blurb of text on the Campaign menu to better explain what each career path does
+
+SEF Bug Fixes:
+
  - Fixed P90 flashlight
  - Fixed M4Super90 iron sights position
  - Fixed ambient sounds and scripted conversations on Meat Barn Restaurant
  - Fixed multiplayer spawn points on Brewer County Courthouse
- - Fixed SEF bug: Wild Gunner delay not working (fixed for real this time)
- - Fixed SEF bug: Breaching ammo would never breach the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
- - Fixed SEF bug: Some Sovereign Citizen lines did not play correctly
- - Fixed SEF bug: Magazine count display on equipment panels only showed 2 digits (so pepperball only displayed as "20")
- - Fixed SEF bug: A suspect or civilian who was cuffed and then reported, then incapacitated or killed, would count as "failed to report downed suspect" even though they were already reported.
- - Fixed SEF bug: Using the "say" command in the dedicated server or MarkMods WebAdmin panel would crash the server
- - Fixed SEF bug: Deleting a campaign wouldn't wipe its stats or permadeath status, so creating another one of the same name would result in bugs
- - Fixed SEF bug: M4A1 Suppressed in third person had a glowing silencer
- - Fixed SEF bug: HK33 had wrong model in third person
- - Fixed SEF bug: MP5SSD6 had fingers covering the iron sights
- - Fixed SEF bug: Creating a QMM with no civilians lead to a maximum score of 90/100 due to a bug in the way All Civilians Unharmed score was calculated
- - Fixed TSS bug: Spoken lines by TOC on TSS missions would cut off if the player used the shout button
- - Fixed TSS bug: Some incorrect subtitles
- - Fixed TSS bug: Using the Bulgarian Drug Worker as a suspect in QMM will no longer cause sound bugs
+ - Fixed Wild Gunner delay not working (fixed for real this time)
+ - Fixed breaching ammo never breaching the door. (It now has a 50% chance to breach a metal door, and 75% chance to breach a wooden door, unless a Breaching Shotgun is used)
+ - Fixed some Sovereign Citizen lines not playing correctly
+ - Fixed Magazine count display on equipment panels only showing 2 digits (so pepperball only displayed as "20" instead of "200")
+ - Fixed a bug where if a suspect or civilian was cuffed and then reported, then incapacitated or killed, would count as "failed to report downed suspect" even though they were already reported.
+ - Fixed a bug where using the "say" command in the dedicated server or MarkMods WebAdmin panel would crash the server
+ - Fixed a bug where deleting a campaign wouldn't wipe its stats or permadeath status, so creating another one of the same name would result in bugs
+ - Fixed a bug where the M4A1 Suppressed in third person had a glowing silencer
+ - Fixed the HK33 having a wrong model in third person
+ - Fixed the MP5SSD6 having fingers covering the iron sights
+ - Fixed a bug where creating a QMM with no civilians lead to a maximum score of 90/100 due to a bug in the way All Civilians Unharmed score was calculated
+
+TSS Bugs Fixed:
+
+ - Spoken lines by TOC on TSS missions are not longer cut off if the player used the shout button
+ - Fixed some incorrect subtitles
+ - Fixed a bug where using the Bulgarian Drug Worker as a suspect in QMM would cause sound bugs
 
 
-### v6 ###
+## v6
 
-#### MAJOR FEATURES ####
+Major Feature Overview:
 
 - First person improvements!
   * By hitting the zoom key, you will transition into (fully 3D) Iron Sights! While in Iron Sights, you suffer less recoil and firing your weapon affects your accuracy less. The visual representation of iron sights can be disabled in favor of the old behavior in the Game Options menu, if you prefer.
@@ -153,7 +487,10 @@ This is a quick fix patch to address some bugs.
   * The Join Game menu now won't show duplicate servers, the player sorting is better, and there is a link to download the server browser plugin.
   * The main menu now has a link to Discord and the Wiki and shows the mod version.
 
-### ALL CHANGES ###
+
+New Features:
+
+
 - Added Brewer County Courthouse mission, with new, fully voiced enemy types, new music, scripted sequences, and more.
 - Added ironsights to most weapons; several weapons have had their first person weapon model tweaked to have right-side faces and other improvements.
 - Added broad-secure commands (SEARCH AND SECURE, SECURE ALL, RESTRAIN ALL, DISABLE ALL)
@@ -208,33 +545,39 @@ This is a quick fix patch to address some bugs.
 - Added a console command to change the position of the weapon in first person.
 - Externalized the position of the weapon in first person and in iron sights.
 - LaunchSEF.exe now works correctly on Windows XP.
-- Cut Content Restored: M1Super90 Defense shotgun added
-- Cut Content Restored: Enemies will now use the unused "ReportedBarricading" lines.
-- Fixed SEF bug: AI-controlled officers would try and take cover when an enemy was at point-blank range, instead of firing at them.
-- Fixed SEF bug: Wedges not depleting weight when used
-- Fixed SEF bug: AI-controlled officers were more focused on falling in than engaging suspects at times.
-- Fixed SEF bug: Beanbag shotguns tended to not work correctly.
-- Fixed SEF bug: New shotgun ammo types (0 buck, 1 buck, 4 buck) didn't have correct drag values.
-- Fixed SEF bug: Suspects would shoot at you while fleeing even if they couldn't hit you.
-- Fixed SEF bug: Reynolds couldn't have Optiwand equipped if it wasn't in his fifth tactical slot.
-- Fixed SEF bug: Picking an All Missions Campaign and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing your campaign again.
-- Fixed SEF bug: Picking Career CO-OP and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing Career CO-OP again.
-- Fixed SEF bug: Lots of equipment was missing from selection in Quick Missions.
-- Fixed SEF bug: Quick Missions which had locked loadouts still let you pick which weapon to use.
-- Fixed TSS bug: Can't order Secure Evidence/Restrain at the same time as a disable command.
-- Fixed TSS bug: Duplicate servers in the server browser
-- Fixed TSS bug: Weird player count sorting in the server browser
-- Fixed TSS bug: Lightsticks don't drop if the player is wearing heavy armor
-- Fixed TSS bug: If a suspect unlocks a door, it will still be "known" as a locked door.
-- Fixed TSS bug: Pathing error with Jackson on Fairfax Residence, videotape room
-- Fixed TSS bug: The enemy "CallForHelp" speech was rarely/if at all triggering.
-- Fixed TSS bug: The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
-- Fixed TSS bug: Applying a loadout to the whole team while in a Quick Mission which has locked loadouts no longer works; it will prevent it from applying to locked officers.
-- Fixed TSS bug: Enemies could (rarely) spawn in an unreachable spot in The Wolcott Projects
-- Fixed TSS bug: Hostages that spawn on the train platform (in Fresnal St. Station) could scream endlessly after a suspect escaped.
-- Fixed TSS bug: Unreachable mirror point near the train platform in Fresnal St. Station (removed)
+- M1Super90 Defense shotgun added (cut content)
+- Enemies will now use the cut "ReportedBarricading" lines.
 
-### v5.3 ###
+SEF Bugs Fixed:
+
+- AI-controlled officers no longer try and take cover when an enemy was at point-blank range, instead of firing at them.
+- Wedges now deplete weight when used
+- Fixed AI-controlled officers focusing on falling in than engaging suspects at times.
+- Beanbag shotguns now work correctly.
+- Fixed new shotgun ammo types (0 buck, 1 buck, 4 buck) not having correct drag values.
+- Fixed suspects shooting at you while fleeing even if they couldn't hit you.
+- Reynolds can now have Optiwand equipped if it isn't in his fifth tactical slot.
+- Fixed a bug where picking an All Missions Campaign and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing your campaign again.
+- Fixed a bug where picking Career CO-OP and then going to the Play Quick Mission menu resulted in the UI thinking that you were playing Career CO-OP again.
+- Fixed lots of equipment missing from selection in Quick Missions.
+- Fixed a bug where Quick Missions which had locked loadouts still let you pick which weapon to use.
+- You can now order Secure Evidence/Restrain at the same time as a disable command.
+
+TSS Bugs Fixed:
+
+- Fixed duplicate servers in the server browser
+- Fixed weird player count sorting in the server browser
+- Fixed lightsticks not dropping if the player is wearing heavy armor
+- Fixed a bug where if a suspect unlocks a door, it will still be "known" as a locked door.
+- Fixed a pathing error with Jackson on Fairfax Residence, videotape room
+- Fixed a bug where the enemy "CallForHelp" speech was rarely/if at all triggering.
+- The enemy "AnnouncedSpottedOfficerSurprised" speech now plays.
+- Fixed a bug where applying a loadout to the whole team while in a Quick Mission which has locked loadouts no longer works; it will prevent it from applying to locked officers.
+- Fixed a bug where enemies could (rarely) spawn in an unreachable spot in The Wolcott Projects
+- Fixed a bug on Fresnal St. Station where hostages that spawn on the train platform could scream endlessly after a suspect escaped.
+- Removed an unreachable mirror point near the train platform in Fresnal St. Station where you could order your officers to mirror at
+
+## v5.3
 Special thanks to kevinfoley, who made a lot of changes here. His contributions are marked with [kf]
 
 - Rewrote SpeechCommands grammar file from scratch (see SpeechCommands.md for changes) (kevinfoley helped with this)
@@ -262,22 +605,23 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Fixed SEF bug: Some commands missing from the main command menu in Multiplayer
 - Fixed SEF bug: Some commands being greyed out in the main command menu in Multiplayer
 - Fixed TSS bugs: The AI target sensor got rewritten from scratch, fixing the following TSS bugs:
-	- SWAT AI unable to hit things at very close distances
-	- SWAT AI not taking range into account when firing pepper spray, taser, etc
-	- SWAT AI could sometimes shoot hostages/suspects who were in the way of their target
+  - SWAT AI unable to hit things at very close distances
+  - SWAT AI not taking range into account when firing pepper spray, taser, etc
+  - SWAT AI could sometimes shoot hostages/suspects who were in the way of their target
 - Fixed TSS bug: Doors broken with shotgun by AI would have a delay before they appeared broken to the player - this is fixed. [kf]
 - Fixed TSS bug: Officers don't reply when ordered to cover an area, they just do it
 - Fixed TSS bug: Wrong caption on QUICK OPTIONS/ADVANCED OPTIONS tabs in the Host Game menu
 
-### v5.2 ###
+## v5.2
 - Fixed a very frequent crash in multiplayer that was introduced in 5.1
 - Corrected glitches in the grenade animations which appeared at high FOVs
 - Tweaked the speed of the surrender animation so it plays slower (thanks to kevinfoley for this change)
 
 
-### v5.1 ###
+## v5.1
 
-#### MAIN CHANGES
+Main Changes:
+
 - Some additional improvements to speech commands (thanks to kevinfoley for these changes):
   * You can now report things to TOC using your voice!
   * Improved the speech commands with CS gas
@@ -303,33 +647,36 @@ Special thanks to kevinfoley, who made a lot of changes here. His contributions 
 - Fixed TSS bug: Punching while changing weapons (or when finishing an arrest) would cause weird bugs, including turning your weapon invisible and going into a T-pose
 - Fixed TSS bug: Compliant/arrested "Wild Gunner" AIs (the kind with M249 SAWs) would be sweeping back and forth still, which looked odd (they still do this while they are stunned, but it'll require some reorganization of the code to fix this properly)
 
-#### WEAPON CHANGES
+Weapon Changes:
+
 All weapons have been adjusted again, to reflect more realistically their weight. The general changes for the weapons are:
--Pistols: Increased recovery speed.
--SMGs: Increased recovery speed, with some exceptions:
-	-Suppressed UZI: Reduced recovery speed.
-	-MP5SD6: Reduced recovery speed.
-	-Suppressed MP5K: Adjusted accuracy, recoil and recovery stats.
-	-Suppressed MP5A4: Reduced recovery speed.
-	-UMP: Reduced recovery speed.
--Rifles: Increased recovery speed, with some exceptions.
-	-M16A1 and Suppressed M16A1: Reduced recovery speed.
-	-HK33A2: Reduced recovery speed.
-	-Scoped HK33A2: Reduced recovery speed. Increased zoom.
-	-Suppressed Accurized: Reduced recovery speed.
--Shotguns: Reduced recovery speed, with some exceptions.
-	-Remington M870, Less Lethal and Breaching Variants: Increased recovery speed.
--Grenade Launchers:
-	-HK69: Reduced recovery speed.
-	-ARWEN 37: Increased recovery speed.
--Other weapons:
-	-M249 SAW: Reduced recovery speed.
-	-Pepperball Launcher: Increased recovery speed.
-	-Taser X26P and X2: Increased recovery speed.
 
-### v5 ###
+ * **Pistols:** Increased recovery speed.
+ * **SMGs:** Increased recovery speed, with some exceptions:
+   - Suppressed UZI: Reduced recovery speed
+   - MP5SD6: Reduced recovery speed
+   - Suppressed MP5K: Adjusted accuracy, recoil and recovery stats.
+   - Suppressed MP5A4: Reduced recovery speed
+   - UMP: Reduced recovery speed.
+ * **Rifles:** Increased recovery speed, with some exceptions:
+   - M16A1 and Supressed M16A1: Reduced recovery speed.
+   - HK33A2: Reduced recovery speed.
+   - Scoped HK33A2: Reduced recovery speed. Increased zoom.
+   - Suppressed Accurized Rifle: Reduced recovery speed.
+ * **Shotguns:** Reduced recovery speed, with the exception of:
+   - Remington M870, Less Lethal and Breaching Variants: Increased recovery speed.
+ * **Grenade Launchers:**
+   - HK69: Reduced recovery speed.
+   - ARWEN 37: Increased recovery speed.
+ * **Other weapons:**
+   - M249 SAW: Reduced recovery speed
+   - Pepperball Launcher: Increased recovery speed.
+   - Taser X26P and X2: Increased recovery speed.
 
-#### MAJOR FEATURES ####
+## v5
+
+Major Features:
+
 - Campaign Co-op!
   * You can now play any campaign in multiplayer. Beating missions in campaign co-op advances your singleplayer career. You will need to unlock equipment, just like in singleplayer, and there is a score requirement to win.
   * Simply select a previously created campaign from the menu and hit the CAREER CO-OP button to begin.
@@ -360,7 +707,8 @@ All weapons have been adjusted again, to reflect more realistically their weight
   * Allowing hostages to become DOA may reduce your score.
   * This is an incentive to complete the mission quickly.
 
-#### MINOR/ALL CHANGES ####
+Other Changes:
+
 - Publishing Multiplayer games to Internet no longer requires a CD-key.
 - Added campaign co-op
 - Added SAS weapons
@@ -427,7 +775,8 @@ All weapons have been adjusted again, to reflect more realistically their weight
 - Fixed TSS bug: Officers weren't animating correctly with the Colt Accurized Rifle or the P90
 - Fixed TSS bug: AKM ammo types simply listed as "FMJ" or "JHP" instead of listing the caliber
 
-#### SAS WEAPONS ####
+SAS Weapons:
+
 The following weapons have been added from the SAS mod. All of them have a tactical flashlight.
 
 - Browning Hi-Power
@@ -456,8 +805,9 @@ The following weapons have been added from the SAS mod. All of them have a tacti
 - Remington 870
   * Lightweight, pump action shotgun. Wider spread than other shotguns.
 
-### v4.1 ###
+## v4.1
 This is a hotfix patch to address some common issues that have been raised.
+
 - The taunt feature has been improved significantly. You now have to be aiming at the target in order to taunt at them.
 - The FOV slider no longer freezes the game, and resolution options should now save correctly. (Review the updated installation instructions if it does not work.) Navigating away from the Video Options menu will bring up a "Please Wait..." dialogue as it saves settings.
 - Widescreen improvements; the GUI has been tweaked so that certain widescreen resolutions (mostly 16:9 ones) won't have disappearing elements in the GUI. Ultrawide is still unsupported at the moment and there might be a few issues I missed.
@@ -473,9 +823,10 @@ This is a hotfix patch to address some common issues that have been raised.
 - Fixed chat in multiplayer pregame having the wrong number of lines (thanks to KevinL and Sokol for this fix)
 - Updated wedge description to explain the difference between using a wedge and locking a door.
 
-### v4 ###
+## v4
 
-#### MAJOR FEATURES ####
+### Main Features
+
 - Introducing, Extra Missions! These are a second, Irrational-quality campaign of missions for you to explore.
   * You will need to create a second campaign (in the menu) and select Extra Missions from the dropdown box (SWAT4 + TSS are selected by default)
   * The first one, Meat Barn Restaurant, is an altered version of the multiplayer-exclusive Meat Barn Restaurant. Major changes were made to the layout to make it easier in Singleplayer and CO-OP.
@@ -500,7 +851,8 @@ This is a hotfix patch to address some common issues that have been raised.
 - Completely redid all of the campaign progression/unlocks.
 - You can now lock doors using the toolkit.
 
-#### MINOR FEATURES / FULL CHANGES ####
+### Full Changes
+
 - Added Meat Barn Restaurant extra mission
 - Fixed CO-OP and tested. It works now, honest! Although it will see some improvements.
 - AI improvements: SWAT officers no longer stare down noncompliant civilians for days
@@ -560,7 +912,8 @@ This is a hotfix patch to address some common issues that have been raised.
 - Console upgrades: The console will show a log of commands used and show the output of commands
 - Console upgrades: New console command "history"
 
-## COMPLIANCE CHANGES ##
+### Compliance Changes
+
 The compliance system has been changed slightly. Civilians are not nearly as noncompliant as before, but all of the changes required their own section.
 
 - Greatly increased the effectiveness of Stinger grenades against Hostage and Suspect morale. They're as good as Tasers now.
@@ -572,58 +925,59 @@ The compliance system has been changed slightly. Civilians are not nearly as non
 - Removed a slight (< 1 second) delay from AI being affected by Stinger and Flashbangs. (it still exists for CS gas)
 - Reduced duration of effect of Pepperball gun by 50%
 
-## SCORING SYSTEM ##
+### Scoring System Changes
+
 The scoring system has been altered:
 
 #### BONUSES ####
 - Mission Completed: Awarded when all of the mission objectives are completed. 
- * Points: 45
+  * Points: 45
 - Suspects Arrested: Bonus based on the amount of suspects secured. 
- * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
+  * Points: (Number of suspects arrested)/(Total Number of suspects) x 20.
 - Suspects Incapacitated: Bonus based on the amount of suspects incapacitated and secured. 
- * Points: (Number of suspects incapacitated)/(Total Number of suspects) x 13 (65% of 20).
+  * Points: (Number of suspects incapacitated)/(Total Number of suspects) x 13 (65% of 20).
 - Suspects Neutralized: Bonus based on the amount of suspects neutralized. 
- * Points: (Number of suspects neutralized)/(Total Number of suspects) x 4 (20% of 20).
+  * Points: (Number of suspects neutralized)/(Total Number of suspects) x 4 (20% of 20).
 - No Civilians Injured: Awarded when no civilians suffer injuries, be it gunfire, less-lethal weapons or aids. 
- * Points: 5
+  * Points: 5
 - No Officers Downed: Bonus based on the amount of incapacitated officers. 
- * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
+  * Points: 10 - ((Number of downed officers)/(Total Number of officers) x 10).
 - Player Uninjured: Bonus based on the amount of players that sustained no injuries during a mission. 
- * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
+  * Points: 5 - ((Number of injured players)/(Total Number of players) x 5).
 - Report Status to TOC: Bonus based on the amount of reports to TOC. 
- * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
+  * Points: (Number of reports made)/(Total Number of reportable characters) x 10.
 - All Evidence Secured: Bonus based on the amount of evidence collected. 
- * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
+  * Points: (Number of evidence collected)/(Total Number of evidence) x 5.
 
 #### PENALTIES: ####
 - Unauthorized use of Force: Given when the team incapacitates a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
- * Points: -5 per suspect.
+  * Points: -5 per suspect.
 - Unauthorized use of Deadly Force: Given when the team kills a suspect, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
- * Points: -20 per suspect.
+  * Points: -20 per suspect.
 - Incapacitated a Hostage: Given when the team incapacitates a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. 
- * Points: -20 per hostage.
+  * Points: -20 per hostage.
 - Killed a Hostage: Given when the team kills a hostage, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. The death of a hostage results in failure of the mission. 
- * Points: -50 per hostage.
+  * Points: -50 per hostage.
 - Injured a fellow officer: Given when an officer wounds another officer, be it by gunfire or sniper fire. 
- * Points: -10 per officer.
+  * Points: -10 per officer.
 - Incapacitated a fellow officer: Given when an officer incapacitates another officer, be it by gunfire, sniper fire, less-lethal weapons or aids or breaching charges. Other officers may turn on the incapacitator. 
- * Points: -25 per officer.
+  * Points: -25 per officer.
 - Tased a fellow officer: Given when an officer uses a taser another officer. 
- * Points: -5 per infraction.
+  * Points: -5 per infraction.
 - Triggered a Trap: Given when an officer opens a door with an alarm or booby trap attached to it. 
- * Points: -10 per trap.
+  * Points: -10 per trap.
 - Failed to apprehend fleeing suspect: Given when a suspect escapes the perimeter of the mission area. 
- * Points: -5 per suspect.
+  * Points: -5 per suspect.
 - Failed to report a downed officer: Given when a downed officer is not reported to TOC: 
- * Points: -5 per downed officer
+  * Points: -5 per downed officer
 - Failed to report a downed suspect: Given when a downed suspect is not reported to TOC: 
- * Points: -5 per downed suspect
+  * Points: -5 per downed suspect
 - Failed to report a downed hostage: Given when a downed hostage is not reported to TOC: 
- * Points: -5 per downed hostage
+  * Points: -5 per downed hostage
 
-## PER-MAP CHANGES ##
+### Per-Map Changes
 
-!!!! WARNING !!!! From here down, there are possible spoilers if you have not played the TSS and SWAT 4 campaigns.
+**WARNING: From here down, there are possible spoilers if you have not played the TSS and SWAT 4 campaigns.**
 
 * Fairfax Residence
   - Lawrence Fairfax: Max Morale (0.75 -> 1.0)
@@ -692,54 +1046,77 @@ The scoring system has been altered:
   * Fixed TSS bug: Snipers in wrong positions (for real this time)
   * Fixed TSS bug: Missing lights on floor 6
 
-#### NITTY GRITTY/TYPOS AND STATS ####
+#### Nitty Gritty/Typos and Stats
 * NOTE: some very (microscopically) tiny changes to stats aren't mentioned. For instance, the Nova Pump had its muzzle velocity raised by 2 units - not noteworthy at all and hardly noticeable.
 * HUGE thanks to Jose21Crisis for crunching a lot of these numbers for me.
 * NOTE: This section may not be completely accurate as some of the stats were changed in developments
 
-Weapon Stats
-- Colt Accurized Rifle: Muzzle Velocity (61261 -> 47838)
-- M4Super90: Muzzle Velocity (21384 -> 20386)
-- Colt M4A1 Carbine: Muzzle Velocity (58344 -> 44609)
-- Colt M4A1 Carbine: Firing Speed (1.5 -> 1.333)
-- Colt M4A1 Carbine: Single Fire Speed (1.00 -> 2.00)
-- AK-47 Assault Rifle: Muzzle Velocity (47404 -> 36080)
-- AK-47 Assault Rifle: Single Fire Speed (1.00 -> 2.00)
-- AK-47 Assault Rifle: Auto Fire Speed (1.00 -> 1.666667)
-- H&K G36C: Muzzle Velocity (56355 -> 40370)
-- H&K G36C: Single Fire Speed (1.0 -> 2.0)
-- M249 SAW: Muzzle Velocity (48037 -> 46173)
-- M249 SAW: Firing Speed (1.75 -> 2.44445)
-- M249 SAW: Single Fire Speed (1.00 -> 1.8333333)
-- FN P90 PDW: Muzzle Velocity (25185 -> 36131)
-- FN P90 PDW: Firing Speed (1.75 -> 1.25)
-- FN P90 PDW: Single Fire Speed (1.0 -> 0.833333)
-- IMI Uzi: Muzzle Velocity (19508 -> 17106)
-- IMI Uzi: Firing Speed (1.25 -> 0.6777)
-- IMI Uzi: Single Fire Speed (1.00 -> 2.00)
-- H&K MP5A4: Muzzle Velocity (26520 -> 20185)
-- H&K MP5A4SD: Muzzle Velocity (18895 -> 14381)
-- H&K MP5: Both versions firing speed (1.3300 -> 1.1111)
-- H&K MP5: Both versions single fire speed (1.00 -> 2.00)
-- H&K UMP45: Muzzle Velocity (12693 -> 13120)
-- H&K UMP45: Firing Speed (0.55 -> 1.00)
-- H&K UMP45: Single Fire Speed (1.00 -> 2.00)
-- Glock 9mm: Muzzle Velocity (18170 -> 16148)
-- Glock 9mm: Single Fire Speed (1.00 -> 2.00)
-- Colt M1911: Single Fire Speed (1.00 -> 2.00)
-- Desert Eagle: Muzzle Velocity (24675 -> 19983)
-- Desert Eagle: Firing Speed (1.0 -> 2.0)
-- TEC-DC9: Muzzle Velocity (16170 -> 18166)
-- TEC-DC9: Firing Speed (1.75 -> 2.00)
-- TEC-DC9: Single Fire Speed (1.00 -> 2.00)
-- M9 (suspect weapon): Muzzle Velocity (18924 -> 17863)
-- MAC-10 (suspect weapon): Muzzle Velocity (14123 -> 15391)
-- G3KA4 (suspect weapon): Muzzle Velocity (42893 -> 40370)
-- AK74 (suspect weapon): Muzzle Velocity (37093 -> 45416)
-- Colt Python: Fire Speed (1.00 -> 1.03)
-- Nova Pump: Fire Speed (1.00 -> 1.166667)
+**Weapon Stats**
 
-Other Hostages Not Listed
+* **Colt Accurized Rifle:**
+  - Muzzle Velocity (61261 -> 47838)
+* **Colt M4A1 Carbine:**
+  - Muzzle Velocity (58344 -> 44609)
+  - Firing Speed (1.5 -> 1.333)
+  - Single Fire Speed (1.00 -> 2.00)
+* **AK-47 Assault Rifle:**
+  - Muzzle Velocity (47404 -> 36080)
+  - Single Fire Speed (1.00 -> 2.00)
+  - Auto Fire Speed (1.00 -> 1.666667)
+* **H&K G36C:**
+  - Muzzle Velocity (56355 -> 40370)
+  - Single Fire Speed (1.0 -> 2.0)
+* **M249 SAW:**
+  - Muzzle Velocity (48037 -> 46173)
+  - Firing Speed (1.75 -> 2.44445)
+  - Single Fire Speed (1.00 -> 1.8333333)
+* **FN P90 PDW:**
+  - Muzzle Velocity (25185 -> 36131)
+  - Firing Speed (1.75 -> 1.25)
+  - Single Fire Speed (1.0 -> 0.833333)
+* **IMI Uzi:**
+  - Muzzle Velocity (19508 -> 17106)
+  - Firing Speed (1.25 -> 0.6777)
+  - Single Fire Speed (1.00 -> 2.00)
+* **H&K MP5A4:**
+  - Muzzle Velocity (26520 -> 20185)
+  - Firing speed (1.3300 -> 1.1111)
+  - Single fire speed (1.00 -> 2.00)
+* **H&K MP5A4SD:**
+  - Muzzle Velocity (18895 -> 14381)
+  - Firing speed (1.3300 -> 1.1111)
+  - Single fire speed (1.00 -> 2.00)
+* **H&K UMP45:**
+  - Muzzle Velocity (12693 -> 13120)
+  - Firing Speed (0.55 -> 1.00)
+  - Single Fire Speed (1.00 -> 2.00)
+* **Glock 9mm:**
+  - Muzzle Velocity (18170 -> 16148)
+  - Single Fire Speed (1.00 -> 2.00)
+* **Colt M1911:**
+  - Single Fire Speed (1.00 -> 2.00)
+* **Desert Eagle:**
+  - Muzzle Velocity (24675 -> 19983)
+  - Firing Speed (1.0 -> 2.0)
+* **TEC-DC9:**
+  - Muzzle Velocity (16170 -> 18166)
+  - Firing Speed (1.75 -> 2.00)
+  - Single Fire Speed (1.00 -> 2.00)
+* **M9 (Suspect Weapon):**
+  - Muzzle Velocity (18924 -> 17863)
+* **MAC-10 (Suspect Weapon):**
+  - Muzzle Velocity (14123 -> 15391)
+* **G3KA4 (Suspect Weapon):**
+  - Muzzle Velocity (42893 -> 40370)
+* **AK74 (Suspect Weapon):**
+  - Muzzle Velocity (37093 -> 45416)
+* **Colt Python:**
+  - Fire Speed (1.00 -> 1.03)
+* **Nova Pump:**
+  - Fire Speed (1.00 -> 1.166667)
+
+**Other Hostages Not Listed**
+
 - Warehouse Civilians: Max Morale (1.2 -> 0.9)
 - Wolcott Homeless: Min Morale (0.5 -> 0.3)
 - Wolcott Homeless: Max Morale (1.33 -> 1.1)
@@ -755,7 +1132,8 @@ Other Hostages Not Listed
 - Taronne Civilian: Min Morale (0.8 -> 0.0)
 - Female Taronne Civilians max morale (1.33) now matches Male civilians (1.2)
 
-Other Suspects Not Listed
+**Other Suspects Not Listed**
+
 - Kiril Stetchkov: Max Morale (2.0 -> 1.5)
 - Kiril Stetchkov: Taser Death Chance (0.35 -> 0.5)
 - Alex Jimenez: Max Morale (0.6 -> 0.8)
@@ -764,7 +1142,7 @@ Other Suspects Not Listed
 - Andrew Taronne: Min Morale (0.7 -> 0.4)
 - Hologen Terrorists: Max Morale (9.0 -> 1.2) [good lord]
 
-#### PROGRESSION ####
+#### Progression
 The progression has been modified. There is now a piece of equipment unlocked on every mission.
 - Fairfax Residence (---)
 - Food Wall (yellow Taser)
@@ -787,8 +1165,10 @@ The progression has been modified. There is now a piece of equipment unlocked on
 - Old Granite Hotel (AK-47)
 - Mt. Threshold Research Center (M249 SAW)
 
-### v3 ###
-MAJOR FEATURES
+## v3
+
+Major Changes:
+
 - Multiplayer fixed. You can now play in CO-OP again.
 - MOVE menu disabled, all MOVE commands moved to OPEN submenu (there seems to be some hardcoded trickery going on...)
 - Fixed bad shotgun aiming mechanics. Instead of shotguns firing in a spread determined by crosshair, shotguns fire in a fixed spread that chooses a point determined by crosshair.
@@ -812,7 +1192,7 @@ MINOR FEATURES / FULL CHANGES
 - Added missing texture: gui_tex2.audio_Processing (related to speech recognition)
 - Included startup.ini because I am bad
 
-### v2 ###
+## v2
 - New Feature: Speech Recognition. Enable it in Audio Options
 - New Feature: Disable initial dispatch. Enable it in Audio Options
 - You can now pick up guns through restrained suspects, and all hostages (except live, unrestrained ones)
@@ -829,5 +1209,5 @@ MINOR FEATURES / FULL CHANGES
 - Fixed: Missing drug rosters on Stetchkov Drug Lab
 - 'Show Subtitles' moved to Audio Options
 
-### v1 ###
+## v1
 - First release

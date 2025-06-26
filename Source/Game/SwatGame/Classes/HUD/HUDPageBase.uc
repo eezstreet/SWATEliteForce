@@ -171,7 +171,14 @@ function OnTick( float Delta )
 {
   if(PlayerOwner().GetCrosshairDisabled() || bInCinematic)
   {
-    Reticle.Hide();
+    if(Reticle.CenterPreviewImage != None) // is pointing at a 'hotspot' on a door
+    {
+      Reticle.Show();
+    }
+    else
+    {
+      Reticle.Hide();
+    }
   }
   else
   {
@@ -185,7 +192,7 @@ function OnTick( float Delta )
 		if (NumTicks > 25/* && Controller.TopPage() == self*/)
 		{
 			if( SwatGUIControllerBase(Controller).GuiConfig.CurrentMission == None ||
-				SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None ||
+				(SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario != None && !SwatGUIControllerBase(Controller).GuiConfig.CurrentMission.CustomScenario.AllowDispatch) ||
         SwatGUIControllerBase(Controller).GetDispatchDisabled() )
 				FinishStartRoundSequence();
 			else

@@ -19,6 +19,17 @@ function OfficerSpeechManagerAction	GetOfficerSpeechManagerAction();
 
 function PlayTurnAwayAnimation();
 
+function bool IsRedTeam();
+function bool IsBlueTeam();
+function bool IsOfficerOne();
+function bool IsOfficerTwo();
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//	Doors
+function SetIgnoreDoorBlocking(bool NewDoorBlocking);
+function bool GetIgnoreDoorBlocking();
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Equipment
@@ -27,12 +38,16 @@ function ThrownWeapon		GetThrownWeapon(EquipmentSlot Slot);
 function HandheldEquipment	GetItemAtSlot(EquipmentSlot Slot);
 function FiredWeapon		GetPrimaryWeapon();
 function FiredWeapon		GetBackupWeapon();
-function bool PocketSlotContains(Pocket Slot, Name Equipment);
+function bool HasA(name EquipmentClass);
+
+function RemoveGivenEquipment(HandheldEquipment Equipment);
 
 function ReEquipFiredWeapon();
 function InstantReEquipFiredWeapon();
 
 function bool HasTaser();
+function bool HasLauncherWhichFires(EquipmentSlot Slot);
+function FiredWeapon GetLauncherWhichFires(EquipmentSlot Slot);
 
 function SetDoorToBlowC2On(Door TargetDoor);
 

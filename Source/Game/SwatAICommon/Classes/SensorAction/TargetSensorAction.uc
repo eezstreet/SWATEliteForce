@@ -40,9 +40,7 @@ function TestCanHitTarget()
 {
 	local bool bCanHitTarget;
 
-	log("TargetSensorAction::TestCanHitTarget");
-
-	bCanHitTarget = m_Pawn.CanHit(TargetSensor.Target);
+	bCanHitTarget = m_Pawn.CanHitTarget(TargetSensor.Target);
 
 	if (TargetSensor.bCanHitTarget && !bCanHitTarget)
 	{

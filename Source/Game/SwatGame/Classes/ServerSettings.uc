@@ -49,6 +49,14 @@ var(ServerSettings) config int				TeamForcedMax "If bForceTeamMax, the maximum n
 var private array<class> CachedDisabledEquipment;
 var private bool CacheBuilt;
 
+// v7
+var(ServerSettings) config bool						bIsQMM;
+var(ServerSettings) config CustomScenario			QMMScenario;
+var(ServerSettings) config bool						QMMUseCustomBriefing;
+var(ServerSettings) config string					QMMCustomBriefing;
+var(ServerSettings) config string					QMMScenarioQueue[MAX_MAPS];
+var(ServerSettings) config string					QMMPackQueue[MAX_MAPS];
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,7 +69,8 @@ replication
         bUseRoundEndTimer, MPMissionReadyTime, bShowTeammateNames, Unused, bAllowReferendums, bNoRespawn,
         bQuickRoundReset, FriendlyFireAmount, DisabledEquipment,
         ServerName, Password, bPassworded, bLAN, AdditionalRespawnTime, CampaignCOOP,
-		bNoLeaders, bNoKillMessages, bEnableSnipers;
+		bNoLeaders, bNoKillMessages, bEnableSnipers,
+		bIsQMM, QMMUseCustomBriefing, QMMCustomBriefing, QMMScenario;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,6 +111,103 @@ log( self$"::SetAdminServerSettings( "$PC$", ServerName="$newServerName$", Passw
     bLAN = newbLAN;
 }
 
+function SetQMMSettings(CustomScenario NewScenario, CustomScenarioPack Pack, bool IsCampaignCOOP, int CampaignCOOPIndex)
+{
+	local int i;
+
+	log("SetQMMSettings: DisabledEquipment was "$DisabledEquipment);
+
+	QMMScenario = NewScenario;
+	if(QMMScenario != None && Pack != None)
+	{
+		// We need to append some things to the list of disabled equipment
+		bIsQMM = true;
+
+		// First, disable the equipment that is in the pack
+		if(IsCampaignCOOP)
+		{
+			for(i = 0; i < Pack.DisabledEquipment.Length; i++)
+			{
+				DisabledEquipment = DisabledEquipment $ string(Pack.DisabledEquipment[i]) $ ",";
+			}
+
+			// Then disable the equipment that is locked
+			for(i = CampaignCOOPIndex + 1; i < Pack.FirstEquipmentUnlocks.Length; i++)
+			{
+				if(Pack.FirstEquipmentUnlocks[i] != None)
+				{
+					DisabledEquipment = DisabledEquipment $ string(Pack.FirstEquipmentUnlocks[i]) $ ",";
+				}
+			}
+
+			for(i = CampaignCOOPIndex + 1; i < Pack.SecondEquipmentUnlocks.Length; i++)
+			{
+				if(Pack.SecondEquipmentUnlocks[i] != None)
+				{
+					DisabledEquipment = DisabledEquipment $ string(Pack.SecondEquipmentUnlocks[i]) $ ",";
+				}
+			}
+		}
+
+		QMMUseCustomBriefing = QMMScenario.UseCustomBriefing;
+		QMMCustomBriefing = QMMScenario.GetCustomScenarioBriefing();
+	}
+	else
+	{
+		bIsQMM = false;
+	}
+
+	log("SetQMMSettings: New DisabledEquipment is '"$DisabledEquipment$"'");
+	log("SetQMMSettings: New bIsQMM is "$bIsQMM);
+	SaveConfig();
+}
+
+function SetServerSettingsNoConfigSave(PlayerController PC,
+                            EMPMode newGameType,
+                            int newMapIndex,
+                            int newNumRounds,
+                            int newMaxPlayers,
+                            bool newbUseRoundStartTimer,
+                            int newPostGameTimeLimit,
+                            bool newbUseRoundEndTimer,
+                            int newMPMissionReadyTime,
+                            bool newbShowTeammateNames,
+                            bool newUnused,
+							bool newbAllowReferendums,
+                            bool newbNoRespawn,
+                            bool newbQuickRoundReset,
+                            float newFriendlyFireAmount,
+                            string newDisabledEquipment,
+							float newCampaignCOOP,
+							int newAdditionalRespawnTime,
+							bool newbNoLeaders,
+							bool newbNoKillMessages,
+							bool newbEnableSnipers)
+{
+	GameType = newGameType;
+    MapIndex = newMapIndex;
+    NumRounds = newNumRounds;
+    MaxPlayers = newMaxPlayers;
+    bUseRoundStartTimer = newbUseRoundStartTimer;
+    PostGameTimeLimit = newPostGameTimeLimit;
+    bUseRoundEndTimer = newbUseRoundEndTimer;
+    MPMissionReadyTime = newMPMissionReadyTime;
+    bShowTeammateNames = newbShowTeammateNames;
+    Unused = newUnused;
+	bAllowReferendums = newbAllowReferendums;
+    bNoRespawn = newbNoRespawn;
+    bQuickRoundReset = newbQuickRoundReset;
+    FriendlyFireAmount = newFriendlyFireAmount;
+    DisabledEquipment = newDisabledEquipment;
+	CampaignCOOP = newCampaignCOOP;
+	AdditionalRespawnTime = newAdditionalRespawnTime;
+	bNoLeaders = newbNoLeaders;
+	bNoKillMessages = newbNoKillMessages;
+	bEnableSnipers = newbEnableSnipers;
+
+    RoundNumber=0;
+}
+
 function SetServerSettings( PlayerController PC,
                             EMPMode newGameType,
                             int newMapIndex,
@@ -132,28 +238,10 @@ log( self$"::SetServerSettings( "$PC$", newGameType="$GetEnum(EMPMode,newGameTyp
 		return;
 	}
 
-    GameType = newGameType;
-    MapIndex = newMapIndex;
-    NumRounds = newNumRounds;
-    MaxPlayers = newMaxPlayers;
-    bUseRoundStartTimer = newbUseRoundStartTimer;
-    PostGameTimeLimit = newPostGameTimeLimit;
-    bUseRoundEndTimer = newbUseRoundEndTimer;
-    MPMissionReadyTime = newMPMissionReadyTime;
-    bShowTeammateNames = newbShowTeammateNames;
-    Unused = newUnused;
-	bAllowReferendums = newbAllowReferendums;
-    bNoRespawn = newbNoRespawn;
-    bQuickRoundReset = newbQuickRoundReset;
-    FriendlyFireAmount = newFriendlyFireAmount;
-    DisabledEquipment = newDisabledEquipment;
-	CampaignCOOP = newCampaignCOOP;
-	AdditionalRespawnTime = newAdditionalRespawnTime;
-	bNoLeaders = newbNoLeaders;
-	bNoKillMessages = newbNoKillMessages;
-	bEnableSnipers = newbEnableSnipers;
-
-    RoundNumber=0;
+	SetServerSettingsNoConfigSave(PC, newGameType, newMapIndex, newNumRounds, newMaxPlayers, newbUseRoundStartTimer,
+		newPostGameTimeLimit, newbUseRoundEndTimer, newMPMissionReadyTime, newbShowTeammateNames, newUnused, newbAllowReferendums,
+		newbNoRespawn, newbQuickRoundReset, newFriendlyFireAmount, newDisabledEquipment, newCampaignCOOP, newAdditionalRespawnTime,
+		newbNoLeaders, newbNoKillMessages, newbEnableSnipers);
 
 log( self$"::SetServerSettings(...) ... saving config" );
     SaveMapListForGameType();
@@ -169,7 +257,7 @@ log( self$"::SetServerSettings(...) ... saving config" );
 // Set a map at a specific index on the server
 ///////////////////////////////////////////////////////////////////////////////
 
-function AddMap( PlayerController PC, string MapName )
+function AddMap( PlayerController PC, string MapName, optional string QMMPackName )
 {
 	if(Level.Game.IsA('SwatGameInfo'))
 	{
@@ -182,7 +270,16 @@ function AddMap( PlayerController PC, string MapName )
     if( NumMaps >= MAX_MAPS )
         return;
 
-    Maps[NumMaps] = MapName;
+	if(bIsQMM)
+	{
+		QMMScenarioQueue[NumMaps] = MapName;
+		QMMPackQueue[NumMaps] = QMMPackName;
+	}
+	else
+	{
+		Maps[NumMaps] = MapName;
+	}
+
 
     NumMaps++;
 }
@@ -202,6 +299,7 @@ function ClearMaps( PlayerController PC )
     for( i = 0; i < MAX_MAPS; i++ )
     {
         Maps[i] = "";
+		QMMScenarioQueue[i] = "";
     }
 
     NumMaps=0;

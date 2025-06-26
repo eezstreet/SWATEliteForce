@@ -16,6 +16,7 @@ var(Parameters) float	ChanceToSucceedAfterFiring;
 var(Parameters) bool	bHavePerfectAim;
 var(Parameters) bool	bOrderedToAttackTarget;
 var(Parameters) float	WaitTimeBeforeFiring;
+var(Parameters) bool    bSuppressiveFire;
 
 ///////////////////////////////////////////////////////////////////////////////
 // 
@@ -72,6 +73,11 @@ function SetWaitTimeBeforeFiring(float inWaitTime)
 	WaitTimeBeforeFiring = inWaitTime;
 }
 
+function SetSuppressiveFire(bool suppressiveFire)
+{
+	bSuppressiveFire = suppressiveFire;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
@@ -79,5 +85,6 @@ defaultproperties
     GoalName = "AttackTarget"
 
 	WaitTimeBeforeFiring = 0
+	bSuppressiveFire = false
 }
 

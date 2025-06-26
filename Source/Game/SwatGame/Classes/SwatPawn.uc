@@ -272,7 +272,7 @@ replication
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
-        ServerToggleDesiredFlashlightState, ServerSetLowReadyStatus;
+        ServerToggleDesiredFlashlightState, ServerToggleDesiredNVGState, ServerSetLowReadyStatus;
 
     reliable if ( Role == ROLE_Authority )
         AnimFlags, FlashlightShouldBeOn, NightvisionShouldBeOn, bShouldBeAtLowReady, ReasonForShouldBeAtLowReady, bArrested, BeingArrested;
@@ -1508,6 +1508,14 @@ function SetDoorLockedBelief(Door inDoor, bool bBelievesDoorLocked)
 	GetDoorKnowledge(inDoor).SetBelievesDoorLocked(bBelievesDoorLocked);
 }
 
+function bool GetDoorBelief(Door inDoor)
+{
+	local PawnDoorKnowledge Knowledge;
+
+	Knowledge = GetDoorKnowledge(inDoor);
+	return Knowledge.BeliefKnown();
+}
+
 function SetDoorWedgedBelief(Door inDoor, bool bBelievesDoorWedged)
 {
 	assert(inDoor != None);
@@ -1602,6 +1610,25 @@ simulated function float GetDelayBeforeFlashlightShutoff()
         return 0;
 }
 
+// Switches the desired NVG state on/off (default state is OFF)
+simulated function ToggleDesiredNVGState()
+{
+    ServerToggleDesiredNVGState();
+}
+
+// Executes only on the server (and in standalone).
+function ServerToggleDesiredNVGState()
+{
+    local IVisionEnhancement CurrentVision;
+
+    // If we are wearing vision, toggle it. Otherwise don't?
+    CurrentVision = IVisionEnhancement(GetSkeletalRegionProtection(REGION_Head));
+    if (CurrentVision != None)
+    {
+        SetDesiredNightvisionState(!NightvisionShouldBeOn);
+    }
+}
+
 // Switches the desired flashlight state on/off (default state is OFF).
 simulated function ToggleDesiredFlashlightState()
 {
@@ -1611,18 +1638,7 @@ simulated function ToggleDesiredFlashlightState()
 // Executes only on the server (and in standalone).
 function ServerToggleDesiredFlashlightState()
 {
-	local IVisionEnhancement CurrentVision;
-
-	// If we are wearing nightvision...
-	CurrentVision = IVisionEnhancement(GetSkeletalRegionProtection(REGION_Head));
-	if (CurrentVision != None)
-	{
-		SetDesiredNightvisionState(!NightvisionShouldBeOn);
-	}
-	else
-	{
-		SetDesiredFlashlightState(!GetDesiredFlashlightState());
-	}
+    SetDesiredFlashlightState(!GetDesiredFlashlightState());
 }
 
 simulated event FlashlightShouldBeOnChanged()
@@ -1760,10 +1776,12 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 	SwatCharacterResource(TargetPawn.characterAI).CommonSensorAction.GetComplySensor().NotifyComply(self);
 }
 
+function RefundLightstick() {}
+
 // returns true if we should issue a taunt to the subject
 // returns false otherwise
 // out bool says if it's a suspect
-simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect, out int bIsAggressiveHostage)
+simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRotation, float TraceDistance, out int bIsSuspect, out int bIsAggressiveHostage, out Actor TargetActor)
 {
   local Actor TraceActor;
   local Actor CandidateActor;
@@ -1818,6 +1836,7 @@ simulated function bool ShouldIssueTaunt(vector CameraLocation, vector CameraRot
       bIsAggressiveHostage = 0;
     }
 
+    TargetActor = CandidateActor;
     if(SwatPawn(CandidateActor).bArrested) {
       return true; // They're already handcuffed
     }
@@ -2086,6 +2105,15 @@ event bool HavokCharacterCollision(HavokCharacterObjectInteractionEvent data, ou
 
 	return true;
 }
+
+/////////////////
+// Meant to be defined by subclasses
+simulated function float GetTotalWeight() { return 0.0; }
+simulated function float GetTotalBulk() { return 0.0; }
+simulated function float GetMaximumWeight() { return 0.0; }
+simulated function float GetMaximumBulk() { return 0.0; }
+simulated function bool HasA(name Class) { return false; }
+simulated function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment) {}
 
 ///////////////////////////////////////////////////////////////////////////////
 

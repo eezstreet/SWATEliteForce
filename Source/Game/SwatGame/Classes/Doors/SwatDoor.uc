@@ -194,7 +194,41 @@ var private config float			MoveAndClearPauseThreshold;
 var DoorBufferVolume                DoorBufferVolume;
 var StaticMesh                      DoorBufferVolumeCollisionMesh;
 
-var string DeployedWedgeClassName;
+//var string DeployedWedgeClassName;
+var private bool bLockedBySwat;
+var private bool bUnused1;
+var private bool bUnused2;
+var private bool bUnused3;
+var private bool bUnused4;
+var private bool bUnused5;
+var private bool bUnused6;
+var private bool bUnused7;
+var private bool bUnused8;
+var private bool bUnused9;
+var private bool bUnused10;
+var private bool bUnused11;
+var private bool bUnused12;
+var private bool bUnused13;
+var private bool bUnused14;
+var private bool bUnused15;
+var private bool bUnused16;
+var private bool bUnused17;
+var private bool bUnused18;
+var private bool bUnused19;
+var private bool bUnused20;
+var private bool bUnused21;
+var private bool bUnused22;
+var private bool bUnused23;
+var private bool bUnused24;
+var private bool bUnused25;
+var private bool bUnused26;
+var private bool bUnused27;
+var private bool bUnused28;
+var private bool bUnused29;
+var private bool bUnused30;
+var private bool bUnused31;
+var private bool bUnused32;
+var Actor UnusedActor;
 var class<Actor> DeployedWedgeClass;
 
 var string DeployedC2ChargeClassName;
@@ -335,7 +369,7 @@ simulated function PreBeginPlay()
 
     //load the DeployedWedgeClass and DeployedC2ChargeClass because they are
     // created by designers
-    DeployedWedgeClass    = class<Actor>(DynamicLoadObject(DeployedWedgeClassName,class'Class'));
+    DeployedWedgeClass    = class<Actor>(DynamicLoadObject("SwatDesignerClasses.DeployedWedge",class'Class'));
     DeployedC2ChargeClass = class<Actor>(DynamicLoadObject(DeployedC2ChargeClassName,class'Class'));
 
     // Spawn the deployed wedge and c2 objects for this door
@@ -410,6 +444,41 @@ function Tick( float dTime )
     }
 }
 
+// A door roster locked this door
+simulated function RosterLock()
+{
+	InitialPosition = DoorPosition_Closed;
+	CurrentPosition = DoorPosition_Closed;
+	SetPositionForMove(GetInitialPosition(), MR_Interacted);
+	bIsLocked = true;
+	bWasInitiallyLocked = true;
+	Moved(true);
+	log("RosterLock() on "$self);
+}
+
+// A door roster opened this door to the left
+simulated function RosterOpenLeft()
+{
+	bIsLocked = false;
+	bWasInitiallyLocked = false;
+	bWasInitiallyOpen = true;
+	InitialPosition = DoorPosition_OpenLeft;
+	CurrentPosition = DoorPosition_Closed;    // set the door position to closed in case it was left open when a designer was viewing paths to the left or the right
+    SetPositionForMove( GetInitialPosition(), MR_Interacted );
+    Moved(true); //instantly to initial position
+}
+
+// A door roster opened this door to the right
+simulated function RosterOpenRight()
+{
+	bIsLocked = false;
+	bWasInitiallyLocked = false;
+	bWasInitiallyOpen = true;
+	InitialPosition = DoorPosition_OpenRight;
+	CurrentPosition = DoorPosition_Closed;    // set the door position to closed in case it was left open when a designer was viewing paths to the left or the right
+    SetPositionForMove( GetInitialPosition(), MR_Interacted );
+    Moved(true); //instantly to initial position
+}
 
 simulated function DoorPosition GetInitialPosition()
 {
@@ -420,6 +489,24 @@ simulated function bool IsBoobyTrapped()
 {
     return bIsBoobyTrapped;
 }
+
+// is there a trap active on this door?
+simulated function bool IsActivelyTrapped()
+{
+	local BoobyTrap_Door Trap;
+
+	if(!IsBoobyTrapped())
+	{
+		return false;
+	}
+
+	Trap = BoobyTrap_Door(BoobyTrap);
+	assert(Trap != None);
+
+	return Trap.bActive && !bBoobyTrapTripped;
+}
+
+
 
 simulated function bool TrapIsDisabledByC2()
 {
@@ -468,6 +555,16 @@ simulated function bool IsBoobyTrapTriggered()
 	return bBoobyTrapTripped;
 }
 
+simulated function Actor GetTrapOnDoor()
+{	
+	local BoobyTrap_Door Trap;
+	if(!IsBoobyTrapped())
+	{
+		return None;
+
+		return BoobyTrap;
+	}
+}
 
 //
 // Registering for Door Opening
@@ -578,6 +675,10 @@ simulated function Interact(Pawn Other, optional bool Force)
 			if (Level.GetEngine().EnableDevTools)
 				mplog("Saving locked door knowledge for pawn: "$NetPlayerPawn$", team number: "$NetPlayerPawn.GetTeamNumber());
         }
+		else
+		{
+			LockedKnowledge[0] = 1;
+		}
     }
     else
     {
@@ -672,6 +773,10 @@ simulated function OnUnlocked()
             }
         }
     }
+	else
+	{
+		LockedKnowledge[0] = 0;
+	}
 }
 
 simulated function bool TryDoorLock(SwatGamePlayerController Caller)
@@ -719,6 +824,7 @@ simulated function OnDoorLockedByOperator() {
 	}
 
 	bIsLocked = true;
+	bLockedBySwat = true;
 	TriggerEffectEvent('Unlocked');
 
 	UpdateOfficerDoorKnowledge(true);
@@ -733,6 +839,11 @@ simulated function bool KnowsDoorIsLocked( int TeamNumber )
     assert( Level.NetMode != NM_Standalone );
     assert( TeamNumber < 3 ); // dbeswick: used to be 2, now there are potentially 3 teams in coop
     return LockedKnowledge[TeamNumber] == 1;
+}
+
+simulated function bool KnowsDoorIsUnlocked(int TeamNumber)
+{
+	return LockedKnowledge[TeamNumber] == 0 && !bIsLocked;
 }
 
 //
@@ -1079,6 +1190,42 @@ simulated event bool PointIsOnExternalSide(vector Point)
 	else // ES_RightSide
 	{
 		return (!PointIsToMyLeft(Point));
+	}
+}
+
+simulated event bool PlayerIsOnExternalSide()
+{
+	if(ExternalFacingSide == ES_NeitherSide)
+	{
+		return false;
+	}
+	else if(ExternalFacingSide == ES_LeftSide)
+	{
+		return LocalPlayerIsToMyLeft();
+	}
+	else
+	{	// ES_RightSide
+		return !LocalPlayerIsToMyLeft();
+	}
+}
+
+simulated function bool PlayerCanIssueCommandsFromTheirSide()
+{
+	if(AcceptsCommandsFrom == CD_BothSides)
+	{
+		return true;
+	}
+	else if(AcceptsCommandsFrom == CD_NeitherSide)
+	{
+		return false;
+	}
+	else if(AcceptsCommandsFrom == CD_LeftSide)
+	{
+		return LocalPlayerIsToMyLeft();
+	}
+	else
+	{
+		return !LocalPlayerIsToMyLeft();
 	}
 }
 
@@ -2345,6 +2492,11 @@ simulated function bool CanBeLocked()
 	return (bCanBeLocked && IsClosed() && !IsOpening() && !IsBroken() && !IsEmptyDoorway());
 }
 
+simulated function bool IsMissionExit()
+{
+	return bIsMissionExit;
+}
+
 simulated function Lock()
 {
 	assertWithDescription(CanBeLocked(), "SwatDoor::Lock - CanBeLocked return false!");
@@ -2352,6 +2504,11 @@ simulated function Lock()
     // Clients get their value replicated from the server.
     if ( Level.NetMode != NM_Client )
         bIsLocked = true;
+}
+
+simulated function bool CanBeOpenedBySuspectsAndCivilians()
+{
+	return !bLockedBySwat;
 }
 
 simulated function float GetMoveAndClearPauseThreshold()
@@ -2373,7 +2530,7 @@ function SpawnDeployedWedge()
     DeployedWedge = DeployedWedgeBase(Spawn(DeployedWedgeClass));
 
     assertWithDescription(DeployedWedge != None,
-        "[tcohen] SwatDoor couldn't Spawn a DeployedWedge.  DeployedWedgeClassName="$DeployedWedgeClassName
+        "[tcohen] SwatDoor couldn't Spawn a DeployedWedge.  DeployedWedgeClassName=SwatDesignerClasses.DeployedWedge"
         $", which resolves to DeployedWedgeClass="$DeployedWedgeClass
         $".");
 

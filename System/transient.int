@@ -352,8 +352,8 @@ Caption=START
 Hint=Start the selected mission.
 
 [SwatMissionSetupMenu_BackButton]
-Caption=CUSTOM
-Hint=Go back to Career/Pack selection.
+Caption=CAREER
+Hint=Go back to Career selection.
 
 [SwatMainMenu_TextQuitButton]
 Caption=QUIT
@@ -572,13 +572,13 @@ Caption=Newline = '|'
 Caption=KEY:
 
 [CSC_pnl_notes_notesheaderlabel]
-Caption=NOTES
+Caption=MISSION TEXT
 
 [CSC_pnl_notes_LBL_NOTES]
-Caption=NOTES
+Caption=TEXT
 
 [CSC_pnl_notes_TXT_NOTES]
-Hint=Enter a note about the custom mission.
+Hint=Edit the currently selected text.
 
 [CSC_pnl_enemies_suspectsheaderlabel]
 Caption=SUSPECTS
@@ -1251,8 +1251,8 @@ Hint=Select a pack or create a new pack.
 Hint=Enter a name for this scenario.
 
 [CustomScenarioCoop_tab_notes]
-Caption=NOTES
-Hint=Add custom notes to the scenario.
+Caption=TEXT
+Hint=Modify the briefing and notes for the scenario.
 
 [CustomScenarioCoop_tab_enemies]
 Caption=SUSPECTS
@@ -1951,8 +1951,8 @@ Caption=RESET DEFAULTS
 Hint=Click to reset the key settings to their defaults.
 
 [SwatKeyControlSettingsPanel_ReservedSelectButton]
-Caption=RESERVED
-Hint=Display the reserved keys configuration.
+Caption=NUMBER ROW
+Hint=Display the number row keys configuration.
 
 [SwatKeyControlSettingsPanel_ChatSelectButton]
 Caption=COMMAND
@@ -3168,7 +3168,7 @@ Hint=Toggle VoIP ignore on selected player
 
 [SwatMPScoresPanel_COOPchangeteambutton]
 Caption=CHANGE TEAM
-Hint=Perform administrative duties.
+Hint=Switch to the other team (blue or red).
 
 [SwatMPScoresPanel_deployinfolabel]
 Caption=Blue Team: Primary Entrance. Red Team: Secondary Entrance
@@ -3389,7 +3389,7 @@ Hint=Toggle VoIP ignore on selected player
 
 [SwatMPScoresPanel_SwapTeam]
 Caption=CHANGE TEAM
-Hint=Switch teams
+Hint=Switch to the other team (blue or red).
 
 [SwatCOOPObjectivesPopupMenu_OfficerStatus_mappanelheader]
 Caption=TEAM STATUS
@@ -3463,13 +3463,13 @@ Caption=Newline = '|'
 Caption=KEY:
 
 [CustomScenario_pnl_notes_notesheaderlabel]
-Caption=NOTES
+Caption=MISSION TEXT
 
 [CustomScenario_pnl_notes_LBL_NOTES]
-Caption=NOTES
+Caption=ENTER TEXT
 
 [CustomScenario_pnl_notes_TXT_NOTES]
-Hint=Enter a note about the custom mission.
+Hint=Modify the selected text.
 
 [CustomScenario_pnl_enemies_suspectsheaderlabel]
 Caption=SUSPECTS
@@ -4274,8 +4274,8 @@ Hint=Select a pack or create a new pack.
 Hint=Enter a name for this scenario.
 
 [CustomScenario_tab_notes]
-Caption=NOTES
-Hint=Add custom notes to the scenario.
+Caption=TEXT
+Hint=Edit the mission briefing and add custom notes to the scenario.
 
 [CustomScenario_tab_enemies]
 Caption=SUSPECTS
@@ -4435,7 +4435,7 @@ Caption=SELECT CUSTOM MISSION PACK
 Caption=CUSTOM
 
 [SwatCustomMenu_custombuttongreyed]
-Caption=CUSTOM
+Caption=CAREER
 
 [SwatCampaignMenu_startButtonGreyed]
 Caption=START
@@ -4573,7 +4573,7 @@ Text=[u][b]FIRING YOUR WEAPON[\b][\u]||[b][k=Fire][\b] - Fire|[b][k=Reload][\b] 
 Text=[u][b]INTERACTING WITH OBJECTS[\b][\u]||[b][k=IssueComplianceOrInteract][\b] or [b]f[\b] - Interact||Whenever you can interact with an object under the crosshair, the hint box will appear.  The hint box tells you what key to press to perform an action associated with the object.||[c=15CC11]Press [b][k=IssueComplianceOrInteract][\b] or [b]f[\b] to open the door.[\c]
 
 [Movement]
-Text=[u][b]MOVEMENT[\b][\u]||Use the mouse to look around.||[b][k=MoveForward][\b] - Forward|[b][k=MoveBackward][\b] - Backward|[b][k=StrafeLeft][\b] - Sidestep left|[b][k=StrafeRight][\b] - Sidestep right|[b][k=Duck][\b] - Crouch|[b][k=LeanLeft][\b] - Lean left|[b][k=LeanRight][\b] - Lean right|[b][k=ToggleRunning 0][\b] - Run Toggle
+Text=[u][b]MOVEMENT[\b][\u]||Use the mouse to look around.||[b][k=MoveForward][\b] - Forward|[b][k=MoveBackward][\b] - Backward|[b][k=StrafeLeft][\b] - Sidestep left|[b][k=StrafeRight][\b] - Sidestep right|[b][k=Duck][\b] - Crouch|[b][k=LeanLeft][\b] - Lean left|[b][k=LeanRight][\b] - Lean right|[b][k=ToggleRunning 0][\b] - Run Toggle || |[b]F - In the cabinet you can change your weapon.[b]
 
 [IncapacitatedPlayer]
 UseFeedbackText=Report Officer Down
@@ -4616,6 +4616,9 @@ UseFeedbackText=Report Officer Down
 
 [Evidence]
 UseFeedbackText=Secure Evidence
+
+[WeaponCabinet]
+UseFeedbackText=Exchange Weapon
 
 [OpenDoor]
 UseFeedbackText=Close Door
@@ -4735,7 +4738,10 @@ Text=MOVE >>
 Text=MIRROR CORNER
 
 [Command_MirrorUnderDoor]
-Text=MIRROR/SCAN DOOR
+Text=MIRROR FOR CONTACTS
+
+[Command_TrapsAndMirror]
+Text=MIRROR FOR ALL
 
 [Command_PosNegPage]
 Text=AFFIRM/DENY >>
@@ -4825,7 +4831,106 @@ Text=PICK LOCK
 Text=TRY LOCK
 
 [Command_CheckForTraps]
-Text=CHECK FOR TRAPS
+Text=MIRROR FOR TRAPS
+
+[Command_Request]
+Text=REQUEST >>
+
+[Command_Request_Flashbang]
+Text=REQUEST FLASHBANG
+
+[Command_Request_CSGas]
+Text=REQUEST CS GAS
+
+[Command_Request_Stinger]
+Text=REQUEST STINGER
+
+[Command_Request_Pepperspray]
+Text=REQUEST PEPPER SPRAY
+
+[Command_Request_Optiwand]
+Text=REQUEST OPTIWAND
+
+[Command_Request_Wedge]
+Text=REQUEST WEDGE
+
+[Command_Request_Lightstick]
+Text=REQUEST LIGHTSTICK
+
+[Command_Request_C2]
+Text=REQUEST C2
+
+[Command_CleanSweep]
+Text=SEARCH AND SECURE
+
+[Command_RestrainAll]
+Text=RESTRAIN ALL
+
+[Command_SecureAll]
+Text=SECURE ALL
+
+[Command_DisableAll]
+Text=DISABLE ALL
+
+[Command_C2AndClear]
+Text=C2 AND CLEAR
+
+[Command_C2BangAndClear]
+Text=C2, BANG, & CLEAR
+
+[Command_C2GasAndClear]
+Text=C2, GAS, & CLEAR
+
+[Command_C2StingAndClear]
+Text=C2, STING, & CLEAR
+
+[Command_C2LeaderThrowAndClear]
+Text=C2, LEADER, & CLEAR
+
+[Command_C2AndMakeEntry]
+Text=C2 AND MAKE ENTRY
+
+[Command_C2BangAndMakeEntry]
+Text=C2, BANG, & MAKE ENTRY
+
+[Command_C2GasAndMakeEntry]
+Text=C2, GAS, & MAKE ENTRY
+
+[Command_C2StingAndMakeEntry]
+Text=C2, STING, & MAKE ENTRY
+
+[Command_C2LeaderThrowAndMakeEntry]
+Text=C2, LEADER, & MAKE ENTRY
+
+[Command_ShotgunAndClear]
+Text=SHOTGUN AND CLEAR
+
+[Command_ShotgunBangAndClear]
+Text=SHOTGUN, BANG, & CLEAR
+
+[Command_ShotgunGasAndClear]
+Text=SHOTGUN, GAS, & CLEAR
+
+[Command_ShotgunStingAndClear]
+Text=SHOTGUN, STING, & CLEAR
+
+[Command_ShotgunLeaderThrowAndClear]
+Text=SHOTGUN, LEADER, & CLEAR
+
+[Command_ShotgunAndMakeEntry]
+Text=SHOTGUN AND MAKE ENTRY
+
+[Command_ShotgunBangAndMakeEntry]
+Text=SHOTGUN, BANG, & MAKE ENTRY
+
+[Command_ShotgunGasAndMakeEntry]
+Text=SHOTGUN, GAS, & MAKE ENTRY
+
+[Command_ShotgunStingAndMakeEntry]
+Text=SHOTGUN, STING, & MAKE ENTRY
+
+[Command_ShotgunLeaderThrowAndMakeEntry]
+Text=SHOTGUN, LEADER, & MAKE ENTRY
 
 [Command_OpenGasAndMakeEntry]
 Text=OPEN, GAS, & MAKE ENTRY
@@ -4993,7 +5098,7 @@ CampaignObjectiveEnemySpawn=("Lawrence Fairfax")
 CampaignObjectiveHostageSpawn=("Melinda Kline")
 MissionDescription=("High Risk Warrant / Hostage Rescue","25 Glendive Lane","October 23 - 04:43")
 BriefingText=("Get ready, men, this is a tough one.  Our target Lawrence Fairfax is the number one suspect in a string of grisly homicides.  A bit of review: over the last year and a half, seven women, all of them studying at the state university, disappeared.  Their remains, showing signs of torture and dismemberment, reappeared anywhere from a week to three weeks later.  The killer was careful; the task force forensic team was unable to get a useful DNA match from any of the bodies.","|That changed with the most recent find.  Another victim was located earlier this morning by a local laborer.  Some of the DNA scrapings from her nails match one of the men being investigated by the task force: Lawrence Fairfax.","|There's a complication: another student, Melinda Kline, went missing sometime around 2000 on October 18th.  That was six days ago.  If Fairfax has her, and if he's following the profile, chances are good she's still alive.  Rescuing her is your first priority, which is why we're going in with no warning.","|About our suspect.  Fairfax is employed as a temporary carpenter and works off and on at the University.  No police record, but court records show a pair of expired restraining orders against him.  He's been suspended from a recent jobsite for stealing supplies.  Fairfax's coworkers don't say much about him; he keeps to himself.  He's been at the law library multiple times, most notably on the days before the disappearance of three of our victims, including Melinda Kline.  A police interview with him was inconclusive; but the detective responsible did acquire a DNA sample from a used tissue. ","|Fairfax was seeing a psychiatrist when he was laid off; we've been unable to access his records.  The psych warned us that Fairfax may have fortified his living areas.  Be alert for traps, especially in spaces only Fairfax uses. He lives with his mother, Gladys Fairfax.   She's a recluse, and due to health problems rarely leaves the house.    We don't have reason to believe she's involved, but stay on your toes.","|Fellas, seconds may be the difference between life and death for Melinda Kline.  Study the layout, choose your gear, get moving.")
-LocationInfoText=("25 Glendive Lane","|This house is a 2 bedroom, 1 bath, split level residence.  Many of the houses in this neighborhood are of this same type.  Our layout is based on neighboring houses of the same style and should be accurate for level 1.  The basement level of these houses are usually customized and may or may not be finished.  Information is speculative regarding the basement.")
+LocationInfoText=("25 Glendive Lane","|This house is a 2 bedroom, 1 bath, split level residence.  Many of the houses in this neighborhood are of this same type.  Our layout is based on neighboring houses of the same style and should be accurate for level 1.  The basement level of these houses are usually customized and may or may not be finished.  Information is speculative regarding the basement.||Sierra One is covering a bedroom on Side Two, Level 1. Highground is watching the entrances.")
 HostageName=("Melinda Kline","Gladys Fairfax")
 HostageVitals=("Sex: Female|Descent: Caucasian|Height: 5' 5''|Weight: 125|Hair: Black|Eyes: Brown|DOB: 02/04/1988|Age: 20","Sex: Female|Descent: Caucasian|Height: 5' 3''|Weight: 165|Hair: Grey|Eyes: Brown|DOB: 05/29/1940|Age: 68")
 HostageDescription=("Melinda Kline is a second year law student at City College.  She was reported missing 18 Oct; last known sighting was after her last class let out at 19:45 on 17 Oct.  Her disappearence is both unexplained and out of character, according to friends and family.","Gladys Fairfax is the owner on record of 25 Glendive Lane.  She receives a disability pension from Social Security and is in generally bad health.")
@@ -5012,14 +5117,14 @@ LoadingText=25 Glendive Lane, Fairfax Residence
 PrimarySpawnPoint=Corner of Alley
 CampaignObjectiveEnemySpawn=("Alex Jimenez","Lian Niu")
 MissionDescription=("High Risk Warrant Service","1572 Norman St.","October 8 - 20:24")
-BriefingText=("Okay guys, listen up.  OCID (Organized Crime Investigation Division) has spent a lot of time setting this one up, and they've asked for our help serving the arrest warrant.   For the last two weeks, the Food Wall Restaurant has been under close surveillance.  We believe the owner, one Lian Niu, an experienced gunsmith, deals in the illegal modification of firearms, in this case, fabricating custom high-volume magazines.  Niu maintains a residence above the restaurant, and does his business there.  He's been questioned about illegal arms before, but walked.    ","|Ten minutes ago, Detective Sheary sighted Alex Jimenez entering the restaurant.  Look at your files; Alex Jimenez, also known as 'The Knife', is a hit man with Columbian connections.  He's a key suspect in multiple homicides over the last year and half.  Jimenez should be considered armed and dangerous.","|Sheary believes that Jimenez is presently inside the business, having modifications made to a MAC-10 submachine gun used in a recent homicide.  We want the evidence intact, so we can't give Jimenez and Niu any warning.  The restaurant's patrons and employees will still be in the building when you go in.  As always, target ID.","|Your first priority is, of course, to avoid any civilian injuries; but after that, secure the gun in Jimenez's possession.  OCID is looking forward to having a long talk with both Jimenez and Niu - and that gun is just the thing to make them chatty.  So take a careful look at the floorplans, plan your entry and gear up.")
-LocationInfoText=("1572 Norman Street, Food Wall Restaurant","|The main door from the street leads into the seating area.  There is also a back door into the kitchen area off of the alley. Both are accessible from the entry point.  The first floor is devoted to the Food Wall Restaurant, with seating in the front and the kitchen in the back.  A hall with bathrooms connects the seating area and the kitchen. A set of stairs should lead from the back area of the restaurant to Niu's apartment. We believe the entire second floor is a single apartment.  There is a bedroom on S3 L2 over the kitchen.")
+BriefingText=("Okay guys, listen up.  OCID (Organized Crime Investigation Division) has spent a lot of time setting this one up, and they've asked for our help serving the arrest warrant.   For the last two weeks, the Food Wall Restaurant has been under close surveillance.  We believe the owner, one Lian Niu, an experienced gunsmith, deals in the illegal modification of firearms, in this case, fabricating custom high-volume magazines.  Niu maintains a residence above the restaurant, and does his business there.  He's been questioned about illegal arms before, but walked.    ","|Ten minutes ago, Detective Sheary sighted Alex Jimenez entering the restaurant.  Look at your files; Alex Jimenez, also known as 'The Knife', is a hit man with Colombian connections.  He's a key suspect in multiple homicides over the last year and half.  Jimenez should be considered armed and dangerous.","|Sheary believes that Jimenez is presently inside the business, having modifications made to a MAC-10 submachine gun used in a recent homicide.  We want the evidence intact, so we can't give Jimenez and Niu any warning.  The restaurant's patrons and employees will still be in the building when you go in.  As always, target ID.","|Your first priority is, of course, to avoid any civilian injuries; but after that, secure the gun in Jimenez's possession.  OCID is looking forward to having a long talk with both Jimenez and Niu - and that gun is just the thing to make them chatty.  So take a careful look at the floorplans, plan your entry and gear up.")
+LocationInfoText=("1572 Norman Street, Food Wall Restaurant","|The main door from the street leads into the seating area.  There is also a back door into the kitchen area off of the alley. Both are accessible from the entry point.  The first floor is devoted to the Food Wall Restaurant, with seating in the front and the kitchen in the back.  A hall with bathrooms connects the seating area and the kitchen. A set of stairs should lead from the back area of the restaurant to Niu's apartment. We believe the entire second floor is a single apartment.  There is a bedroom on S3 L2 over the kitchen.||Sierra One is covering the second floor bedroom. Highground spotters are covering the alleyway.")
 HostageName=("Unknown")
 HostageVitals=("Information unavailable")
 HostageDescription=("")
 SuspectName=("Alex Jimenez","Lian Niu")
 SuspectVitals=("Sex: Male|Descent: Hispanic|Height: 5' 11''|Weight: 190|Hair: Brown|Eyes: Brown|DOB: 09/04/1977|Age: 31","Sex: Male|Descent: Asian|Height: 5' 7''|Weight: 160|Hair: Black|Eyes: Brown|DOB: 10/14/1974|Age: 34")
-SuspectDescription=("Alex Jimenez aka 'The Knife'. Jimenez is wanted for multiple homicides. He has connections to Columbian drug runners, although his current employers' identity is unknown.","Lian Niu owns the Food Wall restaurant, although he pays a manager to run it.  Recently, he has come under suspicion of dealing and modifying illegal firearms, possibly using the restaurant to launder his profits.")
+SuspectDescription=("Alex Jimenez aka 'The Knife'. Jimenez is wanted for multiple homicides. He has connections to Colombian drug runners, although his current employers' identity is unknown.","Lian Niu owns the Food Wall restaurant, although he pays a manager to run it.  Recently, he has come under suspicion of dealing and modifying illegal firearms, possibly using the restaurant to launder his profits.")
 EntryOptionTitle=("Side 1, Level 1")
 EntryDescription=("Corner of alley")
 TimeLinePlot=(0,80,86,100)
@@ -5034,7 +5139,7 @@ CampaignObjectiveEnemySpawn=("Alice Jenkins")
 CampaignObjectiveHostageSpawn=("Willis Fillinger","Heidi Rosenstein","Kim Dong Yin")
 MissionDescription=("Barricaded Suspects","3721 Pitkin Avenue","November 18 - 07:15")
 BriefingText=("We're looking at a barricade/hostage situation, with at least three hostages.  Dispatch received a 911 call at around 0600.  A commuter pulled in to get gas and pulled out again when she noticed an armed woman coming out the front door.  She called 911 on her cell phone.  The first officers on the scene observed multiple gunmen, number unclear, and at least one unarmed civilian inside.  When the gunmen threatened the civilian, they backed off and set up a perimeter.","|So far we have one likely ID: Alice Jenkins. She's been in rehab for oxycodone addiction.  Oxycodone is an opiate similar to heroin, equally addictive.  It's prescribed legally as a Schedule II drug, making it possible for any idiot with a falsely obtained prescription to turn dealer.  It sells for up to eighty dollars a pop on the street.","|Knowing Jenkins, this is probably a bungled robbery for drug money, possibly related to a rash of recent convenience store hits.  She and her cronies didn't intend to take any hostages, and they don't know what to do with them.   That makes them more dangerous, since we can't predict what they might do, and they've stopped talking to the negotiator.  Given their erratic behavior, at least some of the suspects may be high.  They are armed with handguns, and we have visual confirmation of three suspects so far.  There may be more. ","|As far as the hostages go, we believe there are three: Kim Dong Yin, Heidi Rosenstein, and Willis Fischer, employees at the station.  There might be additional customers, but it's unlikely.  Be extremely careful when you go in.    You will have high ground support at your two entry options.  Given the recent spate of gunfire, we can't wait any longer; it's time for a tactical solution.  Study the situation, gear up, and let's move.")
-LocationInfoText=("3721 Pitkin Avenue, Qwik Fuel","|The front entry opens to the store, but is too dangerous to access directly for entry. There appears to be an office behind the counter, which we believe leads to storage areas. There are two entrances that can be accessed from the entry location. There is a side door leading to the storage areas and the loading dock, as well as the back door on side 3 as well.","|High ground has coverage in two locations: Sierra 1 is covering Side 1 Level 1, with a view of the front store area. Sierra 2 is covering your approach on Side 3 Level 1, along the back door.")
+LocationInfoText=("3721 Pitkin Avenue, Qwik Fuel","|The front entry opens to the store, but is too dangerous to access directly for entry. There appears to be an office behind the counter, which we believe leads to storage areas. There are two entrances that can be accessed from the entry location. There is a side door leading to the storage areas and the loading dock, as well as the back door on side 3 as well.","|Sierra 1 is covering Side 1 Level 1, with a view of the front store area. Sierra 2 is covering your approach on Side 3 Level 1, along the back door. Highground spotters are covering your approach in the alleyway.")
 HostageName=("Heidi Rosenstein","Willis Fischer","Kim Dong Yin")
 HostageVitals=("Sex: Female|Descent: Caucasian|Height: 5'7''|Weight: Unknown|Hair:Brown|Eyes: Brown|DOB: Unknown|Age: Unknown","Sex: Male|Descent: Caucasian|Height: 5'11''|Weight: Unknown|Hair: Brown|Eyes: Brown|DOB: Unknown|Age: Unknown","Sex: Male|Descent: Asian|Height: Unknown|Weight: Unknown|Hair: Brown|Eyes: Brown|DOB: Unknown|Age: Unknown")
 HostageDescription=("Heidi Rosenstein is the day shift clerk, on duty from 06:00 to 14:00.","Day manager; left for work at approximately 05:30; expected to arrive before 06:00.","Night shift clerk at the QwikFuel. He is believed to still be in the building, although he has not been seen.")
@@ -5118,7 +5223,7 @@ PrimarySpawnPoint=Front Entrance
 SecondarySpawnPoint=Service Entrance
 MissionDescription=("Rapid Deployment","1536 Adelaide Avenue","December 12 - 23:42")
 BriefingText=("We're being called up for a rapid deployment at an ongoing shots fired situation at the A-Bomb nightclub.  At least four gunmen, likely more, are exchanging shots with each other.  They don't appear to be actively attacking civilians, or attempting to hold hostages, although we have reports that there are multiple wounded victims from crossfire.  Witness reports are confused, and in some cases conflicting.","|We have both Caucasian and Hispanic shooters, shooting along racial lines.  All of them appear to be young adult males.","|We have two possible entries: the front door, past the ticket booth, and a back alley loading zone.  We have a rough sketch of the layout from an off-duty bartender; give it a once over, but don't trust it too much.","|Most of the patrons made it out; however, there are still civilians holed up in there.   We know some of them are wounded from witness reports. The perimeter is still reporting sporadic gunfire inside, and the paramedics won't go in until we've cleared the building.  You need to get in there and bring order to chaos by locating and arresting the gunmen.  In addition, you need to locate and secure for evacuation all remaining civilians, especially the wounded.  Review the information, choose your entry, and get your gear together.  It's time to go to work.")
-LocationInfoText=("1536 Adelaide Avenue","There is both a main and a secondary stage on the first floor, and both stages have an attached bar area. There is a second floor with a manager's office and an additional lounge. The map is sketchy at best, but it is the only information about layout available. ")
+LocationInfoText=("1536 Adelaide Avenue","There is both a main and a secondary stage on the first floor, and both stages have an attached bar area. There is a second floor with a manager's office and an additional lounge. The map is sketchy at best, but it is the only information about layout available.||High ground is covering your approach, while Sierra One is covering a storage room.")
 HostageName=("Unknown")
 HostageVitals=("Information Unavailable")
 HostageDescription=("")
@@ -5598,6 +5703,9 @@ Description=Neutralize Hadeon Koshka
 
 [Rescue_All_Hostages]
 Description=Rescue all of the civilians
+
+[Rescue_Hostages]
+Description=Rescue as many civilians as possible
 
 [Neutralize_All_Enemies]
 Description=Bring order to chaos

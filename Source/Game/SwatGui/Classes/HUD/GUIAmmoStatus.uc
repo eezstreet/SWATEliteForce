@@ -127,13 +127,18 @@ private function SetRoundBasedWeaponStatus( RoundBasedAmmo Ammo )
 
 private function SetClipBasedWeaponStatus( ClipBasedAmmo Ammo )
 {
-    local int i, clipCount, currentClip, magazineSize;
+    local int i, clipCount, currentClip, magazineSize, amountInClip;
 
     clipCount = Ammo.GetClipCount();
     magazineSize = Ammo.GetMagazineSize();
     currentClip = Ammo.GetCurrentClip();
+    amountInClip = Ammo.GetClip(CurrentClip);
 
-    LoadedAmmoLabel.SetCaption( string(Ammo.GetClip(currentClip)) );
+    if(amountInClip == MagazineSize + 1) {
+        LoadedAmmoLabel.SetCaption(string(amountInClip - 1)$"+1");
+    } else {
+        LoadedAmmoLabel.SetCaption(string(amountInClip));
+    }
     LoadedAmmoLabel.Show();
 
     MagazineSizeLabel.SetCaption( "/" $ string(magazineSize) );

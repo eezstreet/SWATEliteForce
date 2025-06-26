@@ -15,10 +15,62 @@ var protected float ElapsedTime;
 var protected vector LightOffset;
 var protected DynamicLightEffect Light;
 
+var int FallCount;
+
 replication
 {
 	reliable if (Role == ROLE_Authority && bNetInitial)
 		ElapsedTime, CurrentVelocity, CurrentAngular, GlowLifetime;
+}
+
+simulated event FellOutOfWorld(eKillZType KillType)
+{
+	local Vector NewLocation;
+	local Vector NewVelocity;
+
+	log("---LightstickProjectile "$self$" fell out of world. Its owner was "$Owner);
+	if(FallCount >= 6)
+	{
+		// If we've managed to fall out of the world ten times, then you're one lucky duck and deserve to be dead
+		if(Owner.IsA('SwatPawn'))
+		{
+			log("...refunded a lightstick!");
+			SwatPawn(Owner).RefundLightstick();
+		}
+		Super.FellOutOfWorld(KillType);
+	}
+
+	// Try giving it a nudge upwards in a random direction depending on the current FallCount and set its havok velocity to 0
+	NewLocation = Location;
+
+	if(FallCount == 0)
+	{
+		NewLocation.Z = Location.Z + 2.0;
+	}
+	else if(FallCount == 1)
+	{
+		NewLocation.Z = Location.Z - 2.0;
+	}
+	else if(FallCount == 2)
+	{
+		NewLocation.X = Location.X + 2.0;
+	}
+	else if(FallCount == 3)
+	{
+		NewLocation.X = Location.X - 2.0;
+	}
+	else if(FallCount == 4)
+	{
+		NewLocation.Y = Location.Y + 2.0;
+	}
+	else if(FallCount == 5)
+	{
+		NewLocation.Y = Location.Y - 2.0;
+	}
+
+	SetLocation(NewLocation);
+	SetInitialVelocity(NewVelocity);
+	FallCount++;
 }
 
 simulated function PostBeginPlay()
@@ -138,8 +190,9 @@ defaultproperties
 	hkMass=0.05
 	hkFriction=0.1
 	hkRestitution=0.3
-	CollisionHeight=8
-	CollisionRadius=8
+	hkStabilizedInertia=true
+	CollisionHeight=2
+	CollisionRadius=2
 
 	GlowBrightness=128
 	GlowHue=90

@@ -7,6 +7,7 @@ var config float CloudDuration;
 var config float AIGassedDuration;
 var config float PlayerGassedDuration;
 var config float UpdatePeriod;
+var config float SuccessChance;
 
 // When a Player (non-AI) being gassed has protective 
 // equipment that protects him from gas, then the duration of 
@@ -137,10 +138,18 @@ simulated state Hit
         local Material HitMaterial;
 //      local SwatDoor HitDoor;
         local bool PawnShouldBeAffected;
+        local float Success;
 
 #if DEBUG_CSBALLBASETIMER
 log("TMC CSBallBase::Timer()");
 #endif
+        Success = FRand();
+        if(Success > SuccessChance)
+        {
+            // pepperball always fails 20% of the time in SEF
+            return;
+        }
+
         //update victims
         for (Pawn = Level.pawnList; Pawn != None; Pawn = Pawn.nextPawn)
         {
@@ -304,4 +313,5 @@ defaultproperties
     MPPlayerProtectiveEquipmentDurationScaleFactor=0
     bBlockActors=false
     bBlockPlayers=false
+    SuccessChance=0.8
 }

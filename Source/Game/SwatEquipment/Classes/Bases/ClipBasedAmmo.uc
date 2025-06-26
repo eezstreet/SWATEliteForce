@@ -2,6 +2,7 @@ class ClipBasedAmmo extends Engine.SwatAmmo;
 
 var(Ammo) config int ClipSize "The number of bullets in a clip";
 var(Ammo) config int DefaultEnemyClipCount "The number of clips of this ammunition that a suspect will carry (by default)";
+var(Ammo) config bool Speedloader "If this is true, it is a speedloader and doesn't support round-in-the-chamber.";
 
 // Dynamic arrays don't replicate, so I'm converting this to a static array.
 //var array<int> ClipRoundsRemaining;
@@ -76,7 +77,7 @@ simulated function float GetCurrentAmmoWeight() {
 
 	for(i=0; i < StartingClipCount; i++)
 	{
-		if(ClipRoundsRemaining[i] == ClipSize)
+		if(ClipRoundsRemaining[i] >= ClipSize)
 		{
 			weight += WeightPerReloadLoaded;	// Add the weight of a full magazine
 		}
@@ -106,7 +107,7 @@ simulated function bool IsEmpty()
 
 simulated function bool IsFull()
 {
-	return (ClipRoundsRemaining[CurrentClip] == ClipSize);
+	return (ClipRoundsRemaining[CurrentClip] >= ClipSize);
 }
 
 
@@ -148,14 +149,14 @@ simulated function int FullestClip()
 
 simulated function bool NeedsReload()
 {
-    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize);
+    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize + 1);
 
     return (ClipRoundsRemaining[CurrentClip] == 0);
 }
 
 simulated function bool ShouldReload()
 {
-    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize);
+    assert(ClipRoundsRemaining[CurrentClip] >= 0 && ClipRoundsRemaining[CurrentClip] <= ClipSize + 1);
 
     return (ClipRoundsRemaining[CurrentClip] <= ClipSize/2);
 }
@@ -195,6 +196,13 @@ simulated function OnReloaded()
     NewClip = FullestClip();
     assert(NewClip > -1);   //since we're not empty, there should be a Z+ FullestClip
 
+	//if the weapon is not empty , leave a round in the chamber in the new clip and remove one in the current clip
+	if (ClipRoundsremaining[currentClip] > 0 && Speedloader == false)
+	{
+		ClipRoundsremaining[currentClip] = ClipRoundsremaining[currentClip] -1;
+		ClipRoundsremaining[NewClip] = ClipRoundsremaining[NewClip] + 1;
+	}	
+	
     CurrentClip = NewClip;
 
     UpdateHUD();

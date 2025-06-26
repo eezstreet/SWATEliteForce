@@ -397,10 +397,18 @@ function DisplayGameInfo()
 
         // display briefing
         displayString = "";
-        for( i = 0; i < GC.CurrentMission.BriefingText.Length; i++ )
-        {
-            displayString = displayString $ GC.CurrentMission.BriefingText[i] $ "|";
-        }
+		if(Settings.bIsQMM && Settings.QMMUseCustomBriefing)
+		{
+			displayString = displayString $ Settings.QMMCustomBriefing;
+		}
+		else
+		{
+			for( i = 0; i < GC.CurrentMission.BriefingText.Length; i++ )
+	        {
+	            displayString = displayString $ GC.CurrentMission.BriefingText[i] $ "|";
+	        }
+		}
+
 
         MyServerInfoBox.SetContent( displayString );
 
@@ -435,6 +443,7 @@ function CommonOnClick(GUIComponent Sender)
 	{
 		case MyStartButton:
             if(!bPressedReady) {
+		MyMPLoadoutPanel.Activate();
               if(MyMPLoadoutPanel.CheckWeightBulkValidity()) {
                 SwatGuiController(Controller).SetPlayerReady();
                 bPressedReady = true;

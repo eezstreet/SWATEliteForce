@@ -28,6 +28,8 @@ var(SWATGui) protected EditInline Config GUILabel          MyAmmoMagazineCountLa
 var(SWATGui) protected EditInline Config GUIComboBox       MyWeaponCategoryBox;
 var(SWATGui) protected EditInline Config GUIComboBox       MyWeaponBox;
 var(SWATGui) protected EditInline Config GUIComboBox       MyAmmoBox;
+var(SWATGui) protected EditInline Config GUIComboBox       MyWeaponAttachmentBox;
+var(SWATGui) protected EditInline Config GUILabel          MyWeaponAttachmentLabel;
 
 // Advanced Information panel
 // tabs
@@ -57,6 +59,7 @@ var(SWATGui) protected EditInline Config GUILabel          MyEquipmentBulkName;
 
 var(SWATGui) Config Localized String EquipmentOverWeightString;
 var(SWATGui) Config Localized String EquipmentOverBulkString;
+var(SWATGui) Config Localized String NoWeaponString;
 var(SWATGui) Config Localized array<String> EquipmentCategoryNames;
 
 
@@ -112,6 +115,7 @@ var private bool    SwitchedTabs;
 var private bool    SwitchedWeapons;
 var private bool    PopulatingAmmoInformation;
 var private bool	PopulatingWeaponInformation;
+var private bool  AttachmentBeingSelected;
 
 ///////////////////////////
 // Initialization & Page Delegates
@@ -122,6 +126,7 @@ function InitComponent(GUIComponent MyOwner)
     local string PocketName;
     local Pocket PocketID;
     local class<object> EquipmentClass;
+    local class<SwatWeapon> WeaponClass;
 
 	Super.InitComponent(MyOwner);
 
@@ -132,6 +137,7 @@ function InitComponent(GUIComponent MyOwner)
     MyWeaponBox.OnChange=InternalComboBoxOnSelection;
     MyWeaponCategoryBox.OnChange=InternalComboBoxOnSelection;
     MyAmmoBox.OnChange=InternalComboBoxOnSelection;
+    MyWeaponAttachmentBox.OnChange=InternalComboBoxOnSelection;
 
     //equipment lists
 	for( i = 0; i < Pocket.EnumCount; i++ )
@@ -152,13 +158,16 @@ function InitComponent(GUIComponent MyOwner)
 
         for( j = 0; j < GC.AvailableEquipmentPockets[i].EquipmentClassName.Length; j++ )
         {
-			EquipmentClass = class<Object>(DynamicLoadObject( GC.AvailableEquipmentPockets[i].EquipmentClassName[j], class'Class'));
+            //log("DLO(0): "$GC.AvailableEquipmentPockets[i].EquipmentClassName[j]);
+			      EquipmentClass = class<Object>(DynamicLoadObject( GC.AvailableEquipmentPockets[i].EquipmentClassName[j], class'Class'));
+            WeaponClass = class<SwatWeapon>(EquipmentClass);
 
-            if( GC.AvailableEquipmentPockets[i].bSelectable[j] == 0 ||
-                !CheckValidity( EquipmentClass, GC.AvailableEquipmentPockets[i].Validity[j] ) )
+            //Log("WeaponClass is "$WeaponClass);
+
+            if( GC.AvailableEquipmentPockets[i].bSelectable[j] == 0)
                 Continue;
 
-			EquipmentList[i].Add( string(EquipmentClass.Name), EquipmentClass );
+	          EquipmentList[i].Add( string(EquipmentClass.Name), EquipmentClass );
         }
 	}
 
@@ -182,6 +191,7 @@ function InitComponent(GUIComponent MyOwner)
         }
     }
 
+    log("InitComponent() finished for SwatLoadoutPanel");
     PopulateAllWeapons();
 
     ActiveTab = 0;
@@ -214,10 +224,12 @@ function PopulateAllWeapons()
   local class<SwatWeapon> WeaponClass;
   local class<SwatAmmo> AmmoClass;
 
+  log("PopulateAllWeapons()");
   AllAmmo.Length = 0;
   AllAmmoNames.Length = 0;
   AllWeapons.Length = 0;
   for(i = 0; i < GC.AvailableEquipmentPockets[0].EquipmentClassName.Length - 1; i++) {
+    //log("DLO(1): "$GC.AvailableEquipmentPockets[0].EquipmentClassName[i]);
     LoadedClass = class(DynamicLoadObject( GC.AvailableEquipmentPockets[0].EquipmentClassName[i], class'Class'));
     WeaponClass = class<SwatWeapon>(LoadedClass);
     AllWeapons[AllWeapons.Length] = WeaponClass;
@@ -225,6 +237,7 @@ function PopulateAllWeapons()
     // Load the ammo as well
     for(j = 0; j < WeaponClass.default.PlayerAmmoOption.Length; j++) {
       AllAmmoNames[AllAmmoNames.Length] = WeaponClass.default.PlayerAmmoOption[j];
+      //log("DLO(2): "$AllAmmoNames[AllAmmoNames.Length-1]);
       LoadedClass = class(DynamicLoadObject(AllAmmoNames[AllAmmoNames.Length-1], class'Class'));
       AmmoClass = class<SwatAmmo>(LoadedClass);
       AllAmmo[AllAmmo.Length] = AmmoClass;
@@ -240,7 +253,7 @@ function PopulateUnlockedEquipment()
   UnlockedWeapons.Length = 0;
   for(i = 0; i < AllWeapons.Length; i++) {
     Weapon = AllWeapons[i];
-    if(CheckCampaignValid(Weapon) && CheckValidity( Weapon, GC.AvailableEquipmentPockets[0].Validity[i] ))
+    if(CheckCampaignValid(Weapon) && CheckValidity( Weapon, GC.AvailableEquipmentPockets[0].Validity[i] ) && !Weapon.default.bIsVariant)
       UnlockedWeapons[UnlockedWeapons.Length] = Weapon;
   }
 }
@@ -278,6 +291,10 @@ function TooMuchWeightModal() {
 
 function TooMuchBulkModal() {
   Controller.TopPage().OpenDlg( EquipmentOverBulkString, QBTN_Ok, "TooMuchBulk" );
+}
+
+function NoWeaponModal() {
+	Controller.TopPage().OpenDlg( NoWeaponString, QBTN_Ok, "NoWeapon");
 }
 
 function bool CheckWeightBulkValidity() {
@@ -344,7 +361,15 @@ function UpdateWeights() {
 	  bulkDisplay = 0.0;
   }
 
-  MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
+  if(SwatGUIControllerBase(Controller).IsUsingMetricSystem())
+  {
+    MyEquipmentWeightLabel.Caption = ""$MyCurrentLoadOut.GetTotalWeight()$"kg";
+  }
+  else if(SwatGUIControllerBase(Controller).IsUsingImperialMeasurements())
+  {
+    MyEquipmentWeightLabel.Caption = ""$(MyCurrentLoadOut.GetTotalWeight() / 0.453592)$" lb";
+  }
+  
   MyEquipmentBulkLabel.Caption =""$bulkDisplay$"%";
 }
 
@@ -420,9 +445,20 @@ function LoadAmmoForWeapon( Pocket thePocket, class<FiredWeapon> WeaponClass )
 function ChangeLoadOut( Pocket thePocket )
 {
     local class<actor> theItem;
+    local class<SwatWeapon> theWeapon, theWeaponAttachment;
 
     if(thePocket == Pocket_PrimaryWeapon || thePocket == Pocket_SecondaryWeapon) {
       theItem = class<actor>(MyWeaponBox.GetObject());
+      theWeapon = class<SwatWeapon>(theItem);
+
+      if(theWeapon != None && theWeapon.default.SelectableVariants.length > 0) {
+        // More than one selectable variant = use the attachment
+        theWeaponAttachment = class<SwatWeapon>(MyWeaponAttachmentBox.GetObject());
+        if(theWeaponAttachment != None) {
+          theWeapon = theWeaponAttachment;
+          theItem = theWeapon;
+        }
+      }
     } else if(thePocket == Pocket_PrimaryAmmo || thePocket == Pocket_SecondaryAmmo) {
       theItem = class<actor>(MyAmmoBox.GetObject());
     } else {
@@ -434,7 +470,7 @@ function ChangeLoadOut( Pocket thePocket )
     }
 
     MyCurrentLoadOut.LoadOutSpec[thePocket] = theItem;
-    log("LoadoutChange("$thePocket$") - "$theItem);
+    //log("LoadoutChange("$thePocket$") - "$theItem);
 
     //load out updated with selection from equipment list
     switch (thePocket)
@@ -454,6 +490,10 @@ function DisplayEquipment( Pocket thePocket )
     local class<ProtectiveEquipment> HeadgearClass;
     local class<ProtectiveEquipment> BodyArmorClass;
 
+    // Variants:
+    // If the weapon has no variants and is not a variant, the attachment select is hidden.
+    // If the weapon is a variant, the weapon combo box is set to the original weapon and the attachment is set to this attachment.
+    // If the weapon is not a variant, the weapon combo box is set to this weapon and the attachment is set to the null option (0)
 
     if( EquipmentList[thePocket] == None )
         return;
@@ -463,12 +503,7 @@ function DisplayEquipment( Pocket thePocket )
     EquipmentLabel[thePocket].SetCaption( Equipment.static.GetFriendlyName() );
 
     if( EquipmentSelectionButton[thePocket] != None )
-        EquipmentSelectionButton[thePocket].SetCaption( Equipment.static.GetFriendlyName() );
-
-
-    //dont update anything on the panel if this is not on the active panel
-    if( !IsPocketDisplayedInActiveTab( thePocket ) )
-        return;
+        EquipmentSelectionButton[thePocket].SetCaption( Equipment.static.GetShortName() );
 
     //handle displaying the info for this pocket in the panel
     switch(thePocket)
@@ -572,7 +607,7 @@ function Scrolled( Pocket thePocket, bool bLeftUsed )
 
     //if the item that would be selected is invalid given other items in the loadout and the players team, select the next item
     if( !MyCurrentLoadOut.ValidForLoadoutSpec( class<actor>(EquipmentList[thePocket].GetObject()), thePocket ) ||
-		!CheckValidity(class<actor>(EquipmentList[thePocket].GetObject()), NETVALID_All) || 
+		!CheckValidity(class<actor>(EquipmentList[thePocket].GetObject()), NETVALID_All) ||
 		!CheckCampaignValid( class<actor>(EquipmentList[thePocket].GetObject()) ) )
     {
         if( FailedToValidate >= 0 )
@@ -614,6 +649,7 @@ function UpdateIndex( Pocket thePocket )
     if( thePocket == Pocket.Pocket_PrimaryWeapon ||
         thePocket == Pocket.Pocket_SecondaryWeapon )
     {
+
         LoadAmmoForWeapon( thePocket, class<FiredWeapon>(EquipmentList[thePocket].GetObject()) );
     }
 }
@@ -691,15 +727,27 @@ private function InternalComboBoxOnSelection(GUIComponent Sender)
         case MyWeaponCategoryBox:
             if(!SwitchedTabs)
             {
+                MyWeaponAttachmentBox.Clear();
                 RepopulateWeaponInformationForNewCategory(WeaponEquipClass(GUIComboBox(Sender).List.GetExtraIntData()));
             }
             break;
 
-        case MyWeaponBox:
-			if(PopulatingWeaponInformation)
-			{
-				break;
-			}
+        case MyWeaponAttachmentBox:
+          if(PopulatingWeaponInformation)
+			     {
+				      break;
+			     }
+            AttachmentBeingSelected = true;
+        case MyWeaponBox: // intentional fallthrough here
+			     if(PopulatingWeaponInformation)
+			     {
+				      break;
+			     }
+
+           if(!AttachmentBeingSelected)
+           {
+             MyWeaponAttachmentBox.Clear();
+           }
 
             SwitchedWeapons = true;
 
@@ -803,6 +851,7 @@ private function InternalTabButtonOnClick(GUIComponent Sender)
 protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
   local class<SwatWeapon> CurrentWeapon;
   local class<SwatAmmo> CurrentAmmo;
+  local class<SwatWeapon> VariantWeapon;
   local WeaponEquipClass CurrentWeaponEquipClass;
   local int i, j;
   local int CategoryNum, WeaponNum;
@@ -815,14 +864,25 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
     CurrentWeapon = class<SwatWeapon>(MyCurrentLoadout.LoadoutSpec[2]);
     CurrentAmmo = class<SwatAmmo>(MyCurrentLoadout.LoadoutSpec[3]);
   }
+
+  if(CurrentWeapon.default.bIsVariant) {
+    // CurrentWeapon should be the variant type
+    VariantWeapon = CurrentWeapon;
+    CurrentWeapon = CurrentWeapon.default.OriginalVariant;
+  }
+  
   CurrentWeaponEquipClass = CurrentWeapon.default.WeaponCategory;
 
   //log("Clear all of the combobox lists...");
   MyAmmoBox.Clear();
   MyWeaponCategoryBox.Clear();
   MyWeaponBox.Clear();
+  MyWeaponAttachmentBox.Clear();
+
+
 
   //log("Easiest thing first: populate ammo box with the ammo choices...");
+  AttachmentBeingSelected = false;
   RepopulateAmmoInformationForNewWeapon(CurrentWeapon);
 
   //log("Then, select the appropriate ammo type as the default...");
@@ -893,6 +953,10 @@ protected function UpdateCategorizationInfo(bool bPrimaryWeapon) {
 
   WeaponNum = MyWeaponBox.List.FindObjectData(CurrentWeapon, false, true);
 
+  if(VariantWeapon != None) {
+    MyWeaponAttachmentBox.List.FindObjectData(VariantWeapon);
+  }
+
   if(CategoryNum == -1 || WeaponNum == -1) {
     // The equipment failed to validate. Try again.
     log("!! Equipment could not be found (categorynum is "$CategoryNum$", weaponnum is "$WeaponNum$"), resetting to default !!");
@@ -927,7 +991,7 @@ protected function RepopulateWeaponInformationForNewCategory(WeaponEquipClass Ne
 	    	continue;
 	    }
 
-	    MyWeaponBox.AddItem(Weapon.static.GetFriendlyName(), Weapon);
+	    MyWeaponBox.AddItem(Weapon.static.GetShortName(), Weapon);
 	}
 
 	MyWeaponBox.List.Sort();
@@ -943,6 +1007,34 @@ protected function RepopulateAmmoInformationForNewWeapon(class<SwatWeapon> TheNe
   local int i, j;
   local class<SwatAmmo> Ammo;
 
+  //log("RepopulateAmmoInformationForNewWeapon("$TheNewWeapon$")");
+
+  if(!AttachmentBeingSelected) {
+    //log('clearing attachments');
+    MyWeaponAttachmentBox.List.Clear();
+
+    if(TheNewWeapon.default.SelectableVariants.length > 0) {
+      // Show the variant selection and set variant to 0
+      MyWeaponAttachmentBox.SetVisibility(true);
+      MyWeaponAttachmentLabel.SetVisibility(true);
+
+      // Populate list of variants
+      MyWeaponAttachmentBox.AddItem(TheNewWeapon.default.NoVariantName, None);
+      for(i = 0; i < TheNewWeapon.default.SelectableVariants.length; i++) {
+        //log("Add attachment: "$TheNewWeapon.default.SelectableVariants[i].VariantClass);
+        MyWeaponAttachmentBox.AddItem(TheNewWeapon.default.SelectableVariants[i].VariantName, TheNewWeapon.default.SelectableVariants[i].VariantClass);
+      }
+
+      // Set attachment box to null attachment
+      MyWeaponAttachmentBox.List.FindObjectData(None);
+    } else {
+      // Hide the variant selection
+      MyWeaponAttachmentBox.SetVisibility(false);
+      MyWeaponAttachmentLabel.SetVisibility(false);
+    }
+  }
+
+  AttachmentBeingSelected = false;
   PopulatingAmmoInformation = true;
 
   MyAmmoBox.Clear();
@@ -987,6 +1079,8 @@ private function DisplayTab(int tabNum)
             MyAmmoBox.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
             MyWeaponBox.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
             MyWeaponCategoryBox.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyWeaponAttachmentBox.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
+            MyWeaponAttachmentLabel.SetVisibility(ActiveAmmoPocket != Pocket.Pocket_Invalid);
             MyEquipmentNameLabel.SetVisibility(ActiveAmmoPocket == Pocket_Invalid);
             MyScrollLeftButton.SetVisibility(ActiveAmmoPocket == Pocket_Invalid);
             MyScrollRightButton.SetVisibility(ActiveAmmoPocket == Pocket_Invalid);

@@ -18,6 +18,12 @@ var(SWATGui) private EditInline  array<GUILabel> MyEntrySelectors;
 var(SWATGui) private EditInline  array<GUIScrollTextBox> MyEntryDescriptors;
 var(SWATGui) private EditInline  array<GUIRadioButton> MyEntryChecks;
 
+// Default when using a custom map
+var() localized config string PrimaryEntranceString;
+var() localized config string SecondaryEntranceString;
+var() localized config string PrimaryEntranceDesc;
+var() localized config string SecondaryEntranceDesc;
+
 function OnConstruct(GUIController MyController)
 {
     local int i;
@@ -60,10 +66,10 @@ function InternalOnShow()
     MyLocationInfoText.SetContent( Content );
 
     MyLocationImage.Image = GC.CurrentMission.Floorplans;
-    
+
     AssertWithDescription( GC.CurrentMission.EntryOptionTitle.Length > 0, "There must be at least one entry option specified for mission \""$GC.CurrentMission.FriendlyName$"\" in SwatMissions.ini" );
     AssertWithDescription( GC.CurrentMission.EntryOptionTitle.Length <= 2, "There cannot be more than two entry options specified for mission \""$GC.CurrentMission.FriendlyName$"\" in SwatMissions.ini" );
-    AssertWithDescription( GC.CurrentMission.EntryOptionTitle.Length == GC.CurrentMission.EntryImage.Length && 
+    AssertWithDescription( GC.CurrentMission.EntryOptionTitle.Length == GC.CurrentMission.EntryImage.Length &&
                            GC.CurrentMission.EntryOptionTitle.Length == GC.CurrentMission.EntryDescription.Length, "The number of EntryOptionTitles, EntryDescriptions, and EntryImages must be the same for mission \""$GC.CurrentMission.FriendlyName$"\" in SwatMissions.ini" );
 
     for( i = 0; i < GC.CurrentMission.EntryOptionTitle.Length; i++ )
@@ -100,7 +106,7 @@ function InternalOnActivate()
         MyEntryChecks[1].SelectRadioButton();
     else
         MyEntryChecks[0].SelectRadioButton();
-    
+
     //hide the second entry option if it is not valid
     if( GC.CurrentMission.EntryOptionTitle.Length < 2 )
     {
@@ -110,15 +116,15 @@ function InternalOnActivate()
         MyEntryChecks[1].Hide();
         MyEntryChecks[1].DeActivate();
         MyEntryChecks[1].DisableComponent();
-    }    
+    }
 }
 
 event Free( optional bool bForce )
 {
     local int i;
-    
+
     Super.Free( bForce );
-    
+
     for( i = 0; i < MyEntryImages.Length; i++ )
     {
         RemoveComponent(MyEntryImages[i]);
@@ -126,7 +132,7 @@ event Free( optional bool bForce )
         RemoveComponent(MyEntryDescriptors[i]);
         RemoveComponent(MyEntryChecks[i]);
     }
-       
+
     MyEntryImages.Remove( 0, MyEntryImages.Length );
     MyEntrySelectors.Remove( 0, MyEntrySelectors.Length );
     MyEntryDescriptors.Remove( 0, MyEntryDescriptors.Length );
@@ -137,12 +143,12 @@ function SetRadioGroup( GUIRadioButton group )
 {
     if( MyEntryChecks[0] != group && MyEntryChecks[1] != group)
         return;
-        
+
     if( GC.CurrentMission.EntryOptionTitle.Length < 2 )
     {
         group = MyEntryChecks[0];
     }
-    
+
     Super.SetRadioGroup( group );
 
     if( MyEntryChecks[1] == group )
@@ -155,7 +161,12 @@ defaultproperties
 {
     OnShow=InternalOnShow
     OnActivate=InternalOnActivate
-    
+
+	PrimaryEntranceString="PRIMARY"
+	SecondaryEntranceString="SECONDARY"
+	PrimaryEntranceDesc="Primary Entrance"
+	SecondaryEntranceDesc="Secondary Entrance"
+
     WinLeft=0.05
     WinTop=0.21333
     WinHeight=0.66666

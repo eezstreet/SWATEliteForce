@@ -1,0 +1,1 @@
+class G36kHoloMG extends G36kMG config(SwatEquipment);

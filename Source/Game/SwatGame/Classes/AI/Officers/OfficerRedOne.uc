@@ -2,9 +2,8 @@
 //
 // OfficerRedOne.uc - the OfficerRedOne class
 
-class OfficerRedOne extends SwatOfficer;
+class OfficerRedOne extends OfficerPersonality;
 
-var private IAmReportableCharacter CurrentReportableCharacter;
 ///////////////////////////////////////////////////////////////////////////////
 
 function PreBeginPlay()
@@ -46,22 +45,6 @@ protected function RemoveFromSquads()
 simulated function name GetEffectEventForReportingToTOCWhenIncapacitated()  { return 'ReportedR1DownToTOC'; }
 
 //////////////////////////////////////
-
-function ReportToTOC(name EffectEventName, name ReplyEventName, Actor other, SwatGamePlayerController controller)
-{
-  log("ReportToTOC("$EffectEventName$", "$ReplyEventName$", "$other$", "$controller$")");
-  TriggerEffectEvent( EffectEventName, other, , , , , , IEffectObserver(controller), 'OfficerRedOne' );
-}
-
-function IAmReportableCharacter GetCurrentReportableCharacter()
-{
-  return CurrentReportableCharacter;
-}
-
-function SetCurrentReportableCharacter(IAmReportableCharacter InChar)
-{
-  CurrentReportableCharacter = InChar;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties

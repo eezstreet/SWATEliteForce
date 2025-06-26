@@ -20,6 +20,9 @@ var(parameters) Door				TargetDoor;
 var private MoveToDoorGoal			CurrentMoveToDoorGoal;
 var private RotateTowardPointGoal	CurrentRotateTowardPointGoal;
 
+// other
+var private bool					bPlacingWedge;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Cleanup
@@ -60,6 +63,9 @@ function cleanup()
 		m_Pawn.ShouldCrouch(false);
 	}
 
+	// tell the pawn to care about being hit by doors again
+	ISwatOfficer(m_Pawn).SetIgnoreDoorBlocking(false);
+
 	// unregister that we're interested that the door is opening
 	ISwatDoor(TargetDoor).UnRegisterInterestedInDoorOpening(self);
 
@@ -73,6 +79,16 @@ function cleanup()
 
 function NotifyDoorOpening(Door TargetDoor)
 {
+    local Pawn LastInteractor;
+
+    // if we are kneeling down to place a wedge, we don't care
+	// unless it is a player who opened the door
+    LastInteractor = ISwatDoor(TargetDoor).GetLastInteractor();
+    if(!LastInteractor.IsA('SwatPlayer') && bPlacingWedge)
+	{
+		return;
+	}
+
 	// door is opening, can't wedge it
 	instantSucceed();
 }
@@ -143,6 +159,8 @@ latent function MoveToPlaceWedge()
 
 latent function PlaceWedge()
 {
+	bPlacingWedge = true;
+
 	assert(TargetDoor != None);
 
 	Wedge = ISwatOfficer(m_Pawn).GetItemAtSlot(SLOT_Wedge);
@@ -155,6 +173,8 @@ latent function PlaceWedge()
 	m_Pawn.ShouldCrouch(false);
 
 	ISwatOfficer(m_Pawn).ReEquipFiredWeapon();
+
+	bPlacingWedge = false;
 }
 
 state Running
@@ -174,7 +194,15 @@ Begin:
 
 		useResources(class'AI_Resource'.const.RU_LEGS);
 
+		// ignore being hit by doors
+		ISwatOfficer(m_Pawn).SetIgnoreDoorBlocking(true);
+		log("#0 Pawn ("$m_Pawn$") door blocking is now: "$ISwatOfficer(m_Pawn).GetIgnoreDoorBlocking());
+
 		PlaceWedge();
+
+		// care about being hit by doors again
+		ISwatOfficer(m_Pawn).SetIgnoreDoorBlocking(false);
+		log("0# Pawn's door blocking is now: "$ISwatOfficer(m_Pawn).GetIgnoreDoorBlocking());
 
 		m_Pawn.EnableCollisionAvoidance();
 

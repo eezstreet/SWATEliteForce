@@ -349,7 +349,7 @@ struct HavokRigidBodyState
 // Scriptable.
 var const PointRegion     Region;        // Region this actor is in.
 var				float       TimerRate;		// Timer event, 0=no timer.
-var(Display) const mesh		Mesh;			// Mesh if DrawType=DT_Mesh.
+var(Display) mesh		Mesh;			// Mesh if DrawType=DT_Mesh.
 var transient float		LastRenderTime;	// last time this actor was rendered.
 var(Events) name			Tag;			// Actor's tag name.
 var transient array<int>  Leaves;		 // BSP leaves this actor is in.
@@ -2088,23 +2088,6 @@ function String GetItemName( string FullName )
 simulated function String GetHumanReadableName()
 {
 	return GetItemName(string(class));
-}
-
-final function ReplaceText(out string Text, string Replace, string With)
-{
-	local int i;
-	local string Input;
-
-	Input = Text;
-	Text = "";
-	i = InStr(Input, Replace);
-	while(i != -1)
-	{
-		Text = Text $ Left(Input, i) $ With;
-		Input = Mid(Input, i + Len(Replace));
-		i = InStr(Input, Replace);
-	}
-	Text = Text $ Input;
 }
 
 // Set the display properties of an actor.  By setting them through this function, it allows

@@ -16,6 +16,11 @@ simulated function UsedHook()
     IAmUsedByToolkit(Other).OnUsedByToolkit(Pawn(Owner));
 }
 
+simulated function bool AllowedToPassItem()
+{
+	// we are not allowed to pass Cuffs, Detonator, or the Toolkit
+	return false;
+}
 
 simulated function OnInterrupted()
 {

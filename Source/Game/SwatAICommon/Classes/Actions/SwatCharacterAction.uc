@@ -37,6 +37,20 @@ function SetPawn(Pawn inPawn)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// Utilities
+function OfficerTeamInfo GetCurrentTeam()
+{
+	local SwatAIRepository SwatAIRepo;
+
+	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+
+	if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(m_Pawn))
+		return SwatAIRepo.GetRedSquad();
+	return SwatAIRepo.GetBlueSquad();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // Senses
 
 function DisableSenses(optional bool bPermanently)
@@ -101,5 +115,47 @@ latent function WaitForZulu()
 	while (team.IsHoldingCommandGoal() || SwatAIRepo.GetElementSquad().IsHoldingCommandGoal())
 	{
 		yield();
+	}
+}
+
+// returns true if the character is falling in
+function bool IsFallingIn()
+{
+	local SwatAIRepository SwatAIRepo;
+
+	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+
+	if(SwatAIRepo.GetElementSquad().IsExecutingCommandGoal())
+	{
+		return SwatAIRepo.GetElementSquad().IsFallingIn();
+	}
+	else if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(m_Pawn))
+	{
+		return SwatAIRepo.GetRedSquad().IsFallingIn();
+	}
+	else
+	{
+		return SwatAIRepo.GetBlueSquad().IsFallingIn();
+	}
+}
+
+// returns true if the character is moving to a destination
+function bool IsMovingTo()
+{
+	local SwatAIRepository SwatAIRepo;
+
+	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+
+	if(SwatAIRepo.GetElementSquad().IsExecutingCommandGoal())
+	{
+		return SwatAIRepo.GetElementSquad().IsMovingTo();
+	}
+	else if(SwatAIRepo.GetRedSquad().IsOfficerOnTeam(m_Pawn))
+	{
+		return SwatAIRepo.GetRedSquad().IsMovingTo();
+	}
+	else
+	{
+		return SwatAIRepo.GetBlueSquad().IsMovingTo();
 	}
 }

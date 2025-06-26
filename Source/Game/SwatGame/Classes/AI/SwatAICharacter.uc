@@ -47,6 +47,7 @@ var config float			  IncapacitatedHealthAmount;
 
 var private bool bIsAggressive; // whether this AI is aggressive
 var private bool bTaserKillsMe;
+var private bool bGasAffectsMe;
 var private bool bPepperKillsMe;
 
 // Each character AI has its own instance of an awareness object, held as an
@@ -135,7 +136,7 @@ simulated event PostNetBeginPlay()
 		{
 			for(i = 0; i <= 3; i++)
 			{
-				ReplicatedSkins[i] = class'SwatGame.SwatAICharacterConfig'.default.OfficerHeavyDefaultMaterial[0];
+				ReplicatedSkins[i] = class'SwatGame.SwatAICharacterConfig'.default.OfficerHeavyDefaultMaterial[i];
 			}
 		}
 	}
@@ -250,7 +251,7 @@ protected function bool ShouldReactToNonLethals()
 
 ///////////////////////////////////////
 
-function UnbecomeAThreat();
+function UnbecomeAThreat(optional bool UseCooldown, optional float CooldownDuration);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -457,6 +458,7 @@ function InitializeFromArchetypeInstance()
 	InitialMorale = Instance.Morale;
 	bTaserKillsMe = Instance.TaserKillsMe;
 	bPepperKillsMe = Instance.PepperKillsMe;
+	bGasAffectsMe = Instance.GasAffectsMe;
 
 	SetVoiceType(Instance);
 
@@ -559,6 +561,9 @@ function bool PepperKillsMe() {
 	return bPepperKillsMe;
 }
 
+function bool GasAffectsMe() {
+	return bGasAffectsMe;
+}
 simulated function bool IsFearless()
 {
   local CharacterArchetypeInstance OurArchetypeInstance;
@@ -709,10 +714,33 @@ private function bool CantBeDazed()
 
 private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation, float AIStingDuration)
 {
+    local CommanderAction commanderAction;
+    local bool stungApplied;
+
+    commanderAction = GetCommanderAction();
+
 	LastTimeStung = Level.TimeSeconds;
 	StungDuration = AIStingDuration;
 
-	GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
+	stungApplied = GetCommanderAction().NotifyStung(Grenade, SourceLocation, StungDuration);
+
+    // Fix for a bug caused by my change to NotifyStung (which makes it so that the
+    // Stung Goal is not applied if we are already playing the "React to Being Shot"
+    // Goal). The bug caused compliant suspects to play the wrong upper body animation
+    // when they look at a nearby officer as part of the "Look At Officers" action;
+    // the suspect would play an "aim weapon at" animation as if they were still armed.
+
+    // If StungDuration is greater than 0 at the end of this function, IsStung() will
+    // return true until the StungDuration has passed. There's no explanation for this
+    // in the UC scripts, so maybe it has something to do with native code.
+
+    // Anyway, if IsStung() returns true, the animation kAnimationSetCompliantLookAt
+    // doesn't get loaded, which causes the bug described above. Setting the
+    // StungDuration to 0 here fixes the bug. -K.F. 2025
+    if (!stungApplied)
+    {
+        StungDuration = 0.0;
+    }
 }
 
 private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
@@ -827,6 +855,7 @@ function ReactToFlashbangGrenade(
 {
     local vector Direction, GrenadeLocation;
     local float Distance;
+    local float DistanceEffect;
     local float Magnitude;
 
     if ( HasProtection( 'IProtectFromFlashbang' ) )
@@ -841,6 +870,8 @@ function ReactToFlashbangGrenade(
 			GrenadeLocation = Grenade.Location;
 			Direction       = Location - Grenade.Location;
 			Distance        = VSize(Direction);
+			DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+			AIStunDuration *= DistanceEffect;
 			if (Instigator == None)
 				Instigator = Pawn(Grenade.Owner);
 		}
@@ -849,6 +880,8 @@ function ReactToFlashbangGrenade(
 			// Handle cheat commands and unexpecteed pathological cases
 			GrenadeLocation = Location;
 			Distance = 0;
+			DistanceEffect = 1;
+			AIStunDuration *= DistanceEffect;
 			if (Instigator != None)
 				Direction = Location - Instigator.Location;
 			else
@@ -898,12 +931,25 @@ function ReactToFlashbangGrenade(
 
 function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
+    local float Distance;
+    local float DistanceEffect;
+	
+	Distance = VSize(Location - GasContainer.Location);
+	DistanceEffect = (800 - Distance)/(600);
+	
     if ( HasProtection( 'IProtectFromCSGas' ) )
     {
         return;
     }
+	
+    if(DistanceEffect > 1.0)
+    {
+        DistanceEffect = 1.0;
+    }
+    DistanceEffect *= FRand();
+    Duration *= DistanceEffect;
 
-	if (IsConscious())
+	if (IsConscious() && Duration > 0.5)
 	{
 		LastTimeGassed = Level.TimeSeconds;
 		GassedDuration = Duration;
@@ -931,11 +977,13 @@ function ReactToStingGrenade(
     float MoraleModifier)
 {
     local float Distance;
+    local float DistanceEffect;
 
     if ( Grenade == None || CantBeDazed() )
         return;
 
 	Distance = VSize(Location - Grenade.Location);
+	DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
 
 	//damage - Damage should be applied constantly over DamageRadius
 	if ( Distance <= DamageRadius )
@@ -947,7 +995,21 @@ function ReactToStingGrenade(
 	}
 
 	if ( Distance <= StingRadius )
+	{
+		if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		{
+			HeavilyArmoredPlayerStingDuration *= DistanceEffect;
+			ApplyDazedEffect(Grenade, Grenade.Location, HeavilyArmoredPlayerStingDuration);
+		}
+		else if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerMesh())
+		{
+			PlayerStingDuration *= DistanceEffect;
+			ApplyDazedEffect(Grenade, Grenade.Location, PlayerStingDuration);
+		}
+		else
+		AIStingDuration *= DistanceEffect;
 		ApplyDazedEffect(Grenade, Grenade.Location, AIStingDuration);
+	}
 }
 
 //
@@ -976,7 +1038,7 @@ function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, floa
 
 function ReactToBeingTased(Actor Taser, float PlayerDuration, float AIDuration)
 {
-	if (IsConscious())
+	if (IsConscious() && IsVulnerableToTaser())
 	{
 	    LastTimeTased = Level.TimeSeconds;
 		TasedDuration = AIDuration;
@@ -988,7 +1050,13 @@ function ReactToBeingTased(Actor Taser, float PlayerDuration, float AIDuration)
 //returns false if the ICanBeTased has some inherent protection from Taser, ie. HeavyArmor
 simulated function bool IsVulnerableToTaser()
 {
-    return true;    //AICharacters can't be protected from Taser
+	if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+		{
+			return false;
+		}
+	else
+		return true;
+//    return true;    //AICharacters can't be protected from Taser
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1201,7 +1269,7 @@ function OnIncapacitated(Actor Incapacitator, class<DamageType> damageType)
 		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
 
 		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
-		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType);
+		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType, PlayerController(Player.Controller).GetPlayerNetworkAddress());
 	}
 }
 
@@ -1229,7 +1297,7 @@ function OnKilled(Actor Killer, class<DamageType> damageType)
 		Msg = Player.GetHumanReadableName() $ "\t" $ GetHumanReadableName() $ "\t" $ WeaponName;
 
 		SwatGameInfo(Level.Game).Broadcast(self, Msg, MsgType);
-		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType);
+		SwatGameInfo(Level.Game).AdminLog(Msg, MsgType, PlayerController(Player.Controller).GetPlayerNetworkAddress());
 	}
 }
 

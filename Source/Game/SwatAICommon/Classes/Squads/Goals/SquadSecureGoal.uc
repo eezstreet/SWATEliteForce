@@ -57,7 +57,10 @@ private function AddTargetToList(Actor SecureTarget)
 
 function AddSecureTarget(Actor SecureTarget)
 {
-	assert(SecureTarget != None);
+	if(SecureTarget == None)
+	{
+		return;
+	}
 
 	if (!IsASecureTarget(SecureTarget))	// Don't add this if it's already in the list
 	{
@@ -103,7 +106,11 @@ function Actor GetSecureTarget(int SecureTargetIndex)
 function RemoveSecureTarget(Actor SecureTarget)
 {
 	local int i;
-	assert(SecureTarget != None);
+
+	if(SecureTarget == None)
+	{
+		return;
+	}
 
 	for(i=0; i<SecureTargets.Length; ++i)
 	{
@@ -115,11 +122,14 @@ function RemoveSecureTarget(Actor SecureTarget)
 	}
 }
 
-private function bool IsASecureTarget(Actor TestSecureTarget)
+function bool IsASecureTarget(Actor TestSecureTarget)
 {
 	local int i;
 
-	assert(TestSecureTarget != None);
+	if(TestSecureTarget == None)
+	{
+		return false;
+	}
 
 	for(i=0; i<SecureTargets.Length; ++i)
 	{

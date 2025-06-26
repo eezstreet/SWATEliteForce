@@ -6,6 +6,18 @@ FriendlyName=FMJ
 Description=Jacketed hollow point ammunition is characterized by its hollow tip which initiates uniform expansion of the bullet tip to the depth of the hollow point.  This expansion causes severe internal damage to the target with less penetration.  JHP ammo is best used against unarmored targets since it causes maximum damage with less chance of penetration which could cause unwanted targets to be hit.
 FriendlyName=JHP
 
+[ArmorPiercing]
+Description=Armor piercing ammuntion consists of a hard bullet made from steel or tungsten alloys in a pointed shape typically covered by a thin layer of lead and/or a copper/brass jacket. The lead and jacket are intended to prevent barrel wear from the hard core materials. AP rounds are slightly worse on unarmored targets than FMJ. This is due to the hard AP projectiles' tendency to not deform or reliably tumble/yaw.
+FriendlyName=AP
+
+[JacketedSoftPoint]
+Description=Jacketed Soft Point ammuntion is a variation of the FMJ design where the jacket did not cover the nose of the bullet. The soft lead nose was found to still expand in flesh while the remaining jacket still prevented lead fouling in the barrel. JSP is roughly splitting the difference between FMJ and JHP. It gives more penetration than JHP but has more stopping power against unarmored targets than the FMJ.
+FriendlyName=JSP
+
+[BreachingShotgunAmmo]
+Description=Frangible breaching rounds are commonly used when breaching doors. The dimpled slug design allows the round to cut uniform holes in surfaces without overpenetrating. And, unlike buckshot, it won't ricochet on hard metal surfaces. While it can be used as a replacement for buckshot or sabot slugs, it is relatively ill-equipped to do so.
+FriendlyName=12 Gauge Frangible
+
 [000ShotgunAmmo]
 Description=000 buck is an increasingly common grade of shotgun shell among law enforcement agencies. These rounds contain 5 buckshot pellets, all 000 gauge in diameter. The pellets spread out after being fired and can inflict massive damage to unarmored targets. While the pellets are large in diameter and better at penetrating armor, 000 shells disperse fewer pellets for less overall damage.
 FriendlyName=000 Buck

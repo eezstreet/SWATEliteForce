@@ -2,8 +2,11 @@
 class SwatOfficer extends SwatAI
     implements  SwatAICommon.ISwatOfficer,
                 IControllableThroughViewport,
+                IReactToFlashbangGrenade,
+                IReactToStingGrenade,
+                IReactToDazingWeapon,
                 Engine.ICanBePepperSprayed,
-                Engine.IReactToCSGas,
+                IReactToCSGas,
                 Engine.ICanBeTased,
                 Engine.IAmAffectedByWeight,
                 Engine.ICarryGuns,
@@ -26,9 +29,14 @@ var private Formation CurrentFormation;
 
 var private SwatDoor  DoorToBlowC2On;
 
+var private bool bIgnoreDoorBlocking;
+
 // config
-var private config float	 MinTimeToFireFullAuto;
-var private config float	 MaxTimeToFireFullAuto;
+// Moved to SwatAICharacterConfig.
+//var private config float	 MinTimeToFireFullAuto;
+//var private config float	 MaxTimeToFireFullAuto;
+
+var private config float NotUsed;	// slack space --eez
 
 var private config Material  ViewportOverlayMaterial;
 
@@ -86,6 +94,14 @@ simulated function float GetTotalWeight() {
   return LoadOut.GetTotalWeight();
 }
 
+simulated function float GetMaximumWeight() {
+	return LoadOut.GetMaximumWeight();
+}
+
+simulated function float GetMaximumBulk() {
+	return LoadOut.GetMaximumBulk();
+}
+
 simulated function float GetWeightMovementModifier() {
   return LoadOut.GetWeightMovementModifier();
 }
@@ -96,6 +112,17 @@ simulated function float GetBulkQualifyModifier() {
 
 simulated function float GetBulkSpeedModifier() {
 	return LoadOut.GetBulkSpeedModifier();
+}
+
+simulated function bool HasA(name Class)
+{
+	return LoadOut.HasA(Class);
+}
+
+// Refund lightsticks
+function RefundLightstick()
+{
+	LoadOut.AddLightstick();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -154,8 +181,15 @@ function EnteredZone(ZoneInfo Zone)
     // don't toggle flashlight when dead/incapacitated
     if (IsConscious())
     {
-		// set our flashlight state to whatever the zone says
-		SetDesiredFlashlightState(Zone.bUseFlashlight);
+        // set our flashlight/NVG state to whatever the zone says
+        if (HasA('NVGogglesBase'))
+        {
+            SetDesiredNightvisionState(Zone.bUseFlashlight);
+        }
+		else
+        {
+            SetDesiredFlashlightState(Zone.bUseFlashlight);
+        }
 	}
 }
 
@@ -219,13 +253,16 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.PickLockAction');
 	characterResource.addAbility(new class'SwatAICommon.TryDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.StackUpAction');
-  characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
+	characterResource.addAbility(new class'SwatAICommon.CheckTrapsAction');
+	characterResource.addAbility(new class'SwatAICommon.MirrorAllAction');
 	characterResource.addAbility(new class'SwatAICommon.MoveAndClearAction');
 	characterResource.addAbility(new class'SwatAICommon.FallInAction');
 	characterResource.addAbility(new class'SwatAICommon.ThrowGrenadeAction');
 	characterResource.addAbility(new class'SwatAICommon.UseBreachingChargeAction');
 	characterResource.addAbility(new class'SwatAICommon.UseBreachingShotgunAction');
 	characterResource.addAbility(new class'SwatAICommon.EngageForComplianceAction');
+    characterResource.addAbility(new class'SwatAICommon.EngageForComplianceWhileFallingInAction');
+    characterResource.addAbility(new class'SwatAICommon.EngageForComplianceWhileMovingToAction');
 	characterResource.addAbility(new class'SwatAICommon.AttackEnemyAction');
 	characterResource.addAbility(new class'SwatAICommon.RestrainAndReportAction');
 	characterResource.addAbility(new class'SwatAICommon.SecureEvidenceAction');
@@ -241,12 +278,29 @@ protected function ConstructCharacterAI()
 	characterResource.addAbility(new class'SwatAICommon.WatchNonHostileTargetAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorDoorAction');
 	characterResource.addAbility(new class'SwatAICommon.MirrorCornerAction');
-  characterResource.addAbility(new class'SwatAICommon.ReportAction');
-  characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
-  characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
+    characterResource.addAbility(new class'SwatAICommon.ReportAction');
+    characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAttackAction');
+    characterResource.addAbility(new class'SwatAICommon.SWATTakeCoverAndAimAction');
+    characterResource.addAbility(new class'SwatAICommon.ShareEquipmentAction');
+
+    if (ShouldReactToNonLethals()) {
+        characterResource.addAbility(new class'SwatAICommon.PepperSprayedAction');
+        characterResource.addAbility(new class'SwatAICommon.GassedAction');
+        characterResource.addAbility(new class'SwatAICommon.FlashbangedAction');
+        characterResource.addAbility(new class'SwatAICommon.TasedAction');
+        characterResource.addAbility(new class'SwatAICommon.StunnedByC2Action');
+        characterResource.addAbility(new class'SwatAICommon.InitialReactionAction');
+        characterResource.addAbility(new class'SwatAICommon.StungAction');
+        characterResource.addAbility(new class'SwatAICommon.AvoidLocationAction');
+    }
 
 	// call down the chain
 	Super.ConstructCharacterAI();
+}
+
+protected function bool ShouldReactToNonLethals()
+{
+    return true;
 }
 
 protected function ConstructMovementAI()
@@ -271,6 +325,7 @@ protected function ConstructWeaponAI()
 
 	weaponResource.addAbility(new class'SwatAICommon.UseOptiwandAction');
 	weaponResource.addAbility(new class'SwatAICommon.UseGrenadeAction');
+	weaponResource.addAbility(new class'SwatAICommon.LaunchGrenadeAction');
 	weaponResource.addAbility(new class'SwatAICommon.OrderComplianceAction');
 	weaponResource.addAbility(new class'SwatAICommon.ReloadAction');
 
@@ -369,7 +424,7 @@ event NotifyStartedMoving()
         NotifyStoppedMovingTimer.StopTimer();
     }
 
-    SetUpperBodyAnimBehavior(kUBAB_LowReady, kUBABCI_AvoidCollisions);
+    SetUpperBodyAnimBehavior(kUBAB_AimWeapon, kUBABCI_AvoidCollisions);
 }
 
 event NotifyStoppedMoving()
@@ -527,7 +582,7 @@ private function InitLoadOut( String LoadOutName )
     local DynamicLoadOutSpec LoadOutSpec;
     local CustomScenario CustomScen;
 
-	LoadOut = Spawn(class'OfficerLoadOut', self, name("Default"$LoadOutName));
+	LoadOut = Spawn(class'EliteLoadout', self, name("Default"$LoadOutName));
 	assert(LoadOut != None);
 
     if( Level.IsTraining )
@@ -586,11 +641,11 @@ private function ReceiveLoadOut()
     Skins[2] = LoadOut.GetNameMaterial();
     Skins[3] = LoadOut.GetVestMaterial();
 
-    if ( LoadOut.GetPrimaryWeapon() != None && !LoadOut.GetPrimaryWeapon().OfficerWontEquipAsPrimary )
+    if ( LoadOut.GetPrimaryWeapon() != None && !LoadOut.GetPrimaryWeapon().IsA('NoWeapon') && !LoadOut.GetPrimaryWeapon().OfficerWontEquipAsPrimary )
     {
         LoadOut.GetPrimaryWeapon().Equip();
     }
-    else if (LoadOut.GetBackupWeapon() != None)
+    else if (LoadOut.GetBackupWeapon() != None && !LoadOut.GetBackupWeapon().IsA('NoWeapon'))
     {
         LoadOut.GetBackupWeapon().Equip();
     }
@@ -686,9 +741,7 @@ function bool ShouldPlayFullBodyHitAnimation()
 // Only allow low-ready if the officer is not aiming at a staircase aim point
 protected function bool CanPawnUseLowReady()
 {
-    local StaircaseAimPoint StaircaseAimPoint;
-    StaircaseAimPoint = StaircaseAimPoint(AnimAimActor);
-    return StaircaseAimPoint == None;
+    return true;
 }
 
 simulated function EAnimationSet GetStandingInjuredAnimSet()    { return kAnimationSetOfficerInjuredStanding; }
@@ -697,7 +750,7 @@ simulated function EAnimationSet GetCrouchingInjuredAnimSet()   { return kAnimat
 function EUpperBodyAnimBehavior GetMovementUpperBodyAimBehavior()
 {
 	// by default we use low ready when moving
-	return kUBAB_LowReady;
+	return kUBAB_AimWeapon;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -714,21 +767,48 @@ function HandheldEquipment GetItemAtSlot(EquipmentSlot Slot)
 	return LoadOut.GetItemAtSlot(Slot);
 }
 
+function RemoveGivenEquipment(HandheldEquipment Equipment)
+{
+    LoadOut.RemoveGivenEquipment(Equipment);
+}
+
 // overridden from ISwatAI
 function float GetTimeToWaitBeforeFiring()
 {
-	return RandRange(0.05, 0.1);
+	return RandRange(class'SwatAICharacterConfig'.default.OfficerMinTimeToWaitBeforeFiring,
+		class'SwatAICharacterConfig'.default.OfficerMaxTimeToWaitBeforeFiring);
 }
 
 // overridden from SwatAI
 protected function float GetLengthOfTimeToFireFullAuto()
 {
-	return RandRange(MinTimeToFireFullAuto, MaxTimeToFireFullAuto);
+	return RandRange(class'SwatAICharacterConfig'.default.OfficerMinTimeToFireFullAuto,
+		class'SwatAICharacterConfig'.default.OfficerMaxTimeToFireFullAuto);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // ISwatOfficer implementation
+
+function bool IsBlueTeam()
+{
+    return self.IsA('OfficerBlueOne') || self.IsA('OfficerBlueTwo');
+}
+
+function bool IsRedTeam()
+{
+    return self.IsA('OfficerRedOne') || self.IsA('OfficerRedTwo');
+}
+
+function bool IsOfficerOne()
+{
+    return self.IsA('OfficerRedOne') || self.IsA('OfficerBlueOne');
+}
+
+function bool IsOfficerTwo()
+{
+    return self.IsA('OfficerRedTwo') || self.IsA('OfficerBlueTwo');
+}
 
 function FiredWeapon GetPrimaryWeapon()
 {
@@ -738,10 +818,6 @@ function FiredWeapon GetPrimaryWeapon()
 function FiredWeapon GetBackupWeapon()
 {
     return LoadOut.GetBackupWeapon();
-}
-
-function bool PocketSlotContains(Pocket Slot, Name Equipment) {
-  return LoadOut.GetItemAtPocket(Slot).IsA(Equipment);
 }
 
 function bool HasUsableWeapon()
@@ -835,15 +911,35 @@ function InstantReEquipFiredWeapon()
 
 function bool HasTaser()
 {
-    local HandheldEquipment Equipment;
+	return HasA('Taser');
+}
 
-    Equipment = GetItemAtSlot(Slot_SecondaryWeapon);
-    if (Equipment != None)
-    {
-        return Equipment.IsA('Taser');
-    }
+function bool HasLauncherWhichFires(EquipmentSlot Slot)
+{
+	return (GetLauncherWhichFires(Slot) != None);
+}
 
-    return false;
+function FiredWeapon GetLauncherWhichFires(EquipmentSlot Slot)
+{
+	local FiredWeapon PrimaryWeapon;
+	local FiredWeapon SecondaryWeapon;
+
+	PrimaryWeapon = GetPrimaryWeapon();
+	if(PrimaryWeapon == None || !PrimaryWeapon.IsA('GrenadeLauncherBase') ||
+		PrimaryWeapon.IsEmpty() || PrimaryWeapon.GetFiredGrenadeEquipmentSlot() != Slot)
+	{
+		SecondaryWeapon = GetBackupWeapon();
+
+		if(SecondaryWeapon == None || !SecondaryWeapon.IsA('GrenadeLauncherBase') ||
+			SecondaryWeapon.IsEmpty() || SecondaryWeapon.GetFiredGrenadeEquipmentSlot() != Slot)
+		{
+			return None;
+		}
+
+		return SecondaryWeapon;
+	}
+
+	return PrimaryWeapon;
 }
 
 function SetDoorToBlowC2On(Door TargetDoor)
@@ -875,35 +971,32 @@ simulated function name GetEffectEventForReportResponseFromTOCWhenNotIncapacitat
 
 // IIInterested_GameEvent_ReportableReportedToTOC implementation
 
-function ReportToTOC(name EffectEventName, name ReplyEventName, Actor other, SwatGamePlayerController controller);
-function IAmReportableCharacter GetCurrentReportableCharacter();
-function SetCurrentReportableCharacter(IAmReportableCharacter InChar);
+function ReportToTOC(name EffectEventName, name ReplyEventName, Actor other, SwatPlayer player);
 
 function OnReportableReportedToTOC(IAmReportableCharacter ReportableCharacter, Pawn Reporter) {
-  local Controller i;
-  local SwatGamePlayerController current;
-  local name EffectEventName;
-  local name ReplyEventName;
+	local Controller i;
+	local SwatGamePlayerController current;
+	local name EffectEventName;
+	local name ReplyEventName;
 
-  if(Reporter != Self) {
-    return;
-  }
+	if(Reporter != Self) {
+	    return;
+	}
 
-  EffectEventName = ReportableCharacter.GetEffectEventForReportingToTOC();
-  ReplyEventName = ReportableCharacter.GetEffectEventForReportResponseFromTOC();
-  SetCurrentReportableCharacter(ReportableCharacter);
+	EffectEventName = ReportableCharacter.GetEffectEventForReportingToTOC();
+	ReplyEventName = ReportableCharacter.GetEffectEventForReportResponseFromTOC();
 
-  log("Officer "$Reporter$" is reporting "$ReportableCharacter);
+	log("Officer "$Reporter$" is reporting "$ReportableCharacter);
 
-  // Walk the controller list here to notify all clients
-  for ( i = Level.ControllerList; i != None; i = i.NextController )
-  {
-      current = SwatGamePlayerController( i );
-      if ( current != None )
-      {
-          ReportToTOC(EffectEventName, ReplyEventName, Actor(ReportableCharacter), current);
-      }
-  }
+	// Walk the controller list here to notify all clients
+	for ( i = Level.ControllerList; i != None; i = i.NextController )
+	{
+	    current = SwatGamePlayerController( i );
+	    if ( current != None )
+	    {
+	        ReportToTOC(EffectEventName, ReplyEventName, Actor(ReportableCharacter), SwatPlayer(current.pawn));
+	    }
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -928,10 +1021,117 @@ private function TriggerHarmlessShotSpeech()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Dazing
+
+private function bool CantBeDazed()
+{
+    return HasProtection('IProtectFromSting') || !IsConscious();
+}
+
+private function ApplyDazedEffect(SwatProjectile Grenade, Vector SourceLocation, float AIStingDuration)
+{
+    GetCommanderAction().NotifyStung(Grenade, SourceLocation, AIStingDuration);
+}
+
+private function DirectHitByGrenade(Pawn Instigator, float Damage, float AIStingDuration, class<DamageType> DamageType)
+{
+    if ( CantBeDazed() )
+        return;
+
+    if (Damage > 0.0) {
+        TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), DamageType);
+  }
+
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+     ApplyDazedEffect(None, Location, AIStingDuration);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IReactToDazingWeapon implementation
+
+function ReactToLessLeathalShotgun(
+    Pawn Instigator,
+    float Damage,
+    Vector MomentumVector,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    class<DamageType> DamageType)
+{
+    if ( CantBeDazed() )
+        return;
+
+        if (Damage > 0.0)
+        {
+            // event Actor::TakeDamage()
+            TakeDamage( Damage,                               // int Damage
+                        Instigator,                           // Pawn EventInstigator
+                        Location,                             // vector HitLocation
+                        MomentumVector,                          // vector Momentum
+                        DamageType );
+        }
+
+  // Don't apply the dazed effect if the previous strike killed us and we were a threat
+  if(Health > GetIncapacitatedDamageAmount() || !IsAThreat())
+       ApplyDazedEffect(None, Location, AIStingDuration);
+}
+
+// Triple baton rounds are launched from the grenade launcher but are handle differently than a direct hit from a launched grenade
+function ReactToGLTripleBaton(
+    Pawn  Instigator,
+    float Damage,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    class<DamageType> DamageType)
+{
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
+}
+
+// React to a direct hit from a grenade launched from the grenade launcher
+function ReactToGLDirectGrenadeHit(
+    Pawn  Instigator,
+    float Damage,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    class<DamageType> DamageType)
+{
+    DirectHitByGrenade(Instigator, Damage, AIStingDuration, DamageType);
+}
+
+function ReactToMeleeAttack(
+    class<DamageType> MeleeDamageType,
+    Pawn  Instigator,
+    float Damage,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration)
+{
+    if ( CantBeDazed() )
+        return;
+
+    // Only apply damage if the damage wont kill the target. You can't kill someone with the melee attack.
+    if (Damage > 0.0 && Damage < Health) {
+        TakeDamage(Damage, Instigator, Location, vect(0.0, 0.0, 0.0), MeleeDamageType);
+    }
+
+    ApplyDazedEffect(None, Location, AIStingDuration);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // IReactToFlashbangGrenade implementation
-/*function ReactToFlashbangGrenade(
+function ReactToFlashbangGrenade(
     SwatGrenadeProjectile Grenade,
 	Pawn  Instigator,
     float Damage, float DamageRadius,
@@ -942,13 +1142,79 @@ private function TriggerHarmlessShotSpeech()
     float AIStunDuration,
     float MoraleModifier)
 {
-	if(HasProtection( 'IProtectFromFlashbang' ) )) {
-		return;
-	}
+	local vector Direction, GrenadeLocation;
+    local float Distance;
+    local float DistanceEffect;
+    local float Magnitude;
 
-	if (class'Pawn'.static.CheckDead( self ))  //Can't hurt me if I'm dead
+    if ( HasProtection( 'IProtectFromFlashbang' ) )
+    {
         return;
-}*/
+    }
+
+    if(Instigator.IsA('SwatOfficer'))
+    {
+        return; // SWAT officers can't flashbang each other --eez
+    }
+
+    if (IsConscious())
+    {
+        if (Grenade != None)
+        {
+            GrenadeLocation = Grenade.Location;
+            Direction       = Location - Grenade.Location;
+            Distance        = VSize(Direction);
+            DistanceEffect = ((StunRadius + (StunRadius/4)) - Distance)/(StunRadius);
+            AIStunDuration *= DistanceEffect;
+            if (Instigator == None)
+                Instigator = Pawn(Grenade.Owner);
+        }
+        else
+        {
+            // Handle cheat commands and unexpecteed pathological cases
+            GrenadeLocation = Location;
+            Distance = 0;
+            DistanceEffect = 1;
+            AIStunDuration *= DistanceEffect;
+            if (Instigator != None)
+                Direction = Location - Instigator.Location;
+            else
+                Direction = Location; // just for completeness, this should never
+                                      // be reached in practice, except for during debug testing
+        }
+
+        //damage - Damage should be applied constantly over DamageRadius
+        if (Distance <= DamageRadius)
+        {
+            //event Actor::
+            //  TakeDamage(int Damage,  Pawn EventInstigator,   vector HitLocation, vector Momentum,    class<DamageType> DamageType    );
+                TakeDamage(Damage,      Instigator,             GrenadeLocation,    vect(0,0,0),        class'Engine.GrenadeDamageType' );
+        }
+
+        //apply karma impulse to ragdolls
+        if (!isConscious())
+        {
+            //karma impulse - Karma impulse should be applied linearly from KarmaImpulse.Max to KarmaImpulse.Min over KarmaImpulseRadius
+            if (Distance <= KarmaImpulseRadius)
+            {
+                Magnitude = Lerp(Distance / KarmaImpulseRadius, KarmaImpulse.Max, KarmaImpulse.Min);
+
+                //native final function Actor::
+                //  KAddImpulse(vector Impulse, vector Position, optional name BoneName );
+#if WITH_KARMA
+                    KAddImpulse(Direction, Normal(Direction) * Magnitude);
+#endif
+            }
+        }
+
+        if (Distance <= StunRadius)
+        {
+            assert(AIStunDuration > 0.0);
+
+            GetCommanderAction().NotifyFlashbanged(GrenadeLocation, AIStunDuration);
+        }
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -956,11 +1222,95 @@ private function TriggerHarmlessShotSpeech()
 
 function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
-	if (GasContainer.IsA('CSBallBase'))
-	{
-		TriggerHarmlessShotSpeech();
-	}
+	local float Distance;
+    local float DistanceEffect;
 
+    Distance = VSize(Location - GasContainer.Location);
+    DistanceEffect = (600 - Distance)/(600);
+
+    //added a minum distance effect to avoid effect crash 
+    if (DistanceEffect < 0.2 )
+	  DistanceEffect = 0.2; 
+	
+    if ( HasProtection( 'IProtectFromCSGas' ) )
+    {
+        return;
+    }
+
+    if (DistanceEffect > FRand())
+    {
+        return;
+    }
+    else
+    {
+        Duration *= DistanceEffect;
+    }
+
+    if (IsConscious() && Duration > 0.0)
+    {
+        GetCommanderAction().NotifyGassed(GasContainer.Location, Duration);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// IReactToStingGrenade implementation
+
+function ReactToStingGrenade(
+    SwatProjectile Grenade,
+    Pawn  Instigator,
+    float Damage,
+    float DamageRadius,
+    Range KarmaImpulse,
+    float KarmaImpulseRadius,
+    float StingRadius,
+    float PlayerStingDuration,
+    float HeavilyArmoredPlayerStingDuration,
+    float NonArmoredPlayerStingDuration,
+    float AIStingDuration,
+    float MoraleModifier)
+{
+    local float Distance;
+    local float DistanceEffect;
+
+    if ( Grenade == None || CantBeDazed() )
+        return;
+
+    if(Instigator.IsA('SwatOfficer'))
+    {
+        return; // SWAT officers can't sting each other --eez
+    }
+
+    Distance = VSize(Location - Grenade.Location);
+    DistanceEffect = ((StingRadius + (StingRadius/4)) - Distance)/(StingRadius);
+
+    //damage - Damage should be applied constantly over DamageRadius
+    if ( Distance <= DamageRadius )
+    {
+        if ( Instigator == None )
+            Instigator = Pawn(Grenade.Owner);
+
+        TakeDamage(Damage, Instigator, Grenade.Location, vect(0.0, 0.0, 0.0), class'Engine.GrenadeDamageType');
+    }
+
+    if ( Distance <= StingRadius )
+    {
+        if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerHeavyMesh())
+        {
+            HeavilyArmoredPlayerStingDuration *= DistanceEffect;
+            ApplyDazedEffect(Grenade, Grenade.Location, HeavilyArmoredPlayerStingDuration);
+        }
+        else if (Mesh == class'SwatGame.SwatAICharacterConfig'.static.GetOfficerMesh())
+        {
+            PlayerStingDuration *= DistanceEffect;
+            ApplyDazedEffect(Grenade, Grenade.Location, PlayerStingDuration);
+        }
+        else
+        {
+            AIStingDuration *= DistanceEffect;
+            ApplyDazedEffect(Grenade, Grenade.Location, AIStingDuration);
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -970,7 +1320,15 @@ function ReactToCSGas(Actor GasContainer, float Duration, float SPPlayerProtecti
 
 function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, float AIDuration, float SPPlayerProtectiveEquipmentDurationScaleFactor, float MPPlayerProtectiveEquipmentDurationScaleFactor)
 {
-	TriggerHarmlessShotSpeech();
+	if ( HasProtection( 'IProtectFromPepperSpray' ) )
+    {
+        return;
+    }
+
+    if (IsConscious())
+    {
+        GetCommanderAction().NotifyPepperSprayed(PepperSpray.Location, AIDuration);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -980,6 +1338,11 @@ function ReactToBeingPepperSprayed(Actor PepperSpray, float PlayerDuration, floa
 function ReactToBeingTased( Actor Taser, float PlayerDuration, float AIDuration )
 {
   SwatGameInfo(Level.Game).GameEvents.PawnTased.Triggered(self, Taser);
+
+  if (IsConscious() && IsVulnerableToTaser())
+    {
+        GetCommanderAction().NotifyTased(Taser.Location, AIDuration);
+    }
 }
 
 simulated function bool IsVulnerableToTaser()
@@ -1084,10 +1447,31 @@ simulated function Tick(float dTime) {
   AdjustOfficerMovementSpeed();
 }
 
+simulated function GivenEquipmentFromPawn(class<HandheldEquipment> Equipment)
+{
+    local HandheldEquipment NewItem;
+    NewItem = Spawn(Equipment, self, 'GivenEquipment');
+    NewItem.SetAvailableCount(1, true);
+    NewItem.OnGivenToOwner();
+
+	Loadout.GivenEquipmentFromPawn(NewItem);
+}
+
+// Ignore door blocking, SEF addition
+function SetIgnoreDoorBlocking(bool NewDoorBlocking)
+{
+	bIgnoreDoorBlocking = NewDoorBlocking;
+}
+
+function bool GetIgnoreDoorBlocking()
+{
+	return bIgnoreDoorBlocking;
+}
+
 defaultproperties
 {
 	AnimRotationUrgency = kARU_VeryFast
-	
+
 	CollisionRadius             =  24.0
     CollisionHeight             =  68.0
 

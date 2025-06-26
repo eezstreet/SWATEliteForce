@@ -231,7 +231,7 @@ var(ForceFeedback) globalconfig bool bEnableDamageForceFeedback;
 var(ForceFeedback) globalconfig bool bEnableGUIForceFeedback;
 var(ForceFeedback) bool bForceFeedbackSupported;  // true if a device is detected
 
-var float FOVBias;
+var globalconfig float FOVBias;
 
 #if IG_SWAT //tcohen: maintain the last delta time
 var float LastDeltaTime;
@@ -1247,6 +1247,24 @@ exec function FOV(float F)
 	}
 }
 
+exec function FPFOV(float F)
+{
+	local float fFOV;
+
+	if( (F >= 70.0) )
+	{
+		fFOV = FClamp(F, 70, 120);
+		class'FOVSettings'.default.FPFOV = fFOV;
+	}
+}
+
+exec function SetFOVBias(float F)
+{
+	local float fFOV;
+
+	FOVBias = F;
+}
+
 exec function SetFOVTemporary(float F)
 {
 	if(F >= 70.0)
@@ -1346,12 +1364,27 @@ exec function Melee()
 	InternalMelee();
 }
 
+exec function MeleeDedicated()
+{
+	InternalMelee(true);
+}
+
+exec function GiveItemDedicated()
+{
+	InternalMelee(, , true);
+}
+
+exec function CheckLockDedicated()
+{
+	InternalMelee(, true);
+}
+
 exec function Reload()
 {
     InternalReload();
 }
 
-simulated private function InternalMelee();
+simulated function InternalMelee(optional bool UseMeleeOnly, optional bool UseCheckLockOnly, optional bool UseGiveItemOnly);
 
 // Overridden for Swat players in SwatGamePlayerController.
 simulated private function InternalReload()

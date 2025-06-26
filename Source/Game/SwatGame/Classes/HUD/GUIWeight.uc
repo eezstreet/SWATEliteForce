@@ -7,5 +7,12 @@ function SetWeightText(float Weight) {
 }
 
 private function string WeightStringText(float Weight) {
-  return "" $ Weight $ "kg";
+	if(SwatGUIControllerBase(Controller).IsUsingMetricSystem())
+	{
+		return "" $ Weight $ "kg";
+	}
+  	else
+  	{
+  		return "" $ (Weight / 0.453592) $ " lb";
+  	}
 }

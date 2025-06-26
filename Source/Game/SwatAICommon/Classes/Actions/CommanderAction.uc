@@ -954,12 +954,12 @@ protected function PlayFlinch()
 //
 // Stunned functions
 
-function float GetFlashbangedMoraleModification()			{ assert(false); return 0.0; } // subclasses override
-function float GetGassedMoraleModification()				{ assert(false); return 0.0; } // subclasses override
-function float GetPepperSprayedMoraleModification()			{ assert(false); return 0.0; } // subclasses override
-function float GetStungMoraleModification()					{ assert(false); return 0.0; } // subclasses override
-function float GetTasedMoraleModification()					{ assert(false); return 0.0; } // subclasses override
-function float GetStunnedByC2DetonationMoraleModification()	{ assert(false); return 0.0; } // subclasses override
+function float GetFlashbangedMoraleModification()			{ return 0.0; }
+function float GetGassedMoraleModification()				{ return 0.0; }
+function float GetPepperSprayedMoraleModification()			{ return 0.0; }
+function float GetStungMoraleModification()					{ return 0.0; }
+function float GetTasedMoraleModification()					{ return 0.0; }
+function float GetStunnedByC2DetonationMoraleModification()	{ return 0.0; }
 function float GetUnobservedComplianceMoraleModification()	{ return 0.0; }
 
 function bool ShouldRunWhenFlashBanged()    { return true;  }
@@ -1118,7 +1118,10 @@ function NotifyStunnedByC2Detonation(vector C2ChargeLocation, float StunnedDurat
 }
 
 // if grenade is none, then we got hit by the bean bag
-function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDuration)
+// Returns `true` if the Stung Goal was applied (or an existing Strung Action was updated),
+// returns `false` if the Stung Goal was not applied (because this AI was hit with a beanbag
+// and is already playing the "React to Being Shot" goal)
+function bool NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDuration)
 {
 	// create the reaction behavior
 	if (CurrentStungGoal != None)
@@ -1133,10 +1136,14 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 		{
 			assert(StungAction(CurrentStungGoal.achievingAction) != None);
 			StungAction(CurrentStungGoal.achievingAction).ExtendBeingStunned(StunnedDuration);
+			return true;
 		}
 	}
 
-	if (CurrentStungGoal == None)
+	// We don't apply the "Stung" goal if this was a beanbag shot and we are already playing
+	// the "React to Being Shot" goal. Prevents wacky double-reaction animation, and looks/feels
+	// so much more realistic. Beanbag is no longer a god-tier weapon. - K.F. 2025
+	if (CurrentStungGoal == None && (Grenade != None || CurrentReactToBeingShotGoal == None))
 	{
 		CurrentStungGoal = new class'StungGoal'(characterResource(), Grenade, StungGrenadeLocation, StunnedDuration);
 		assert(CurrentStungGoal != None);
@@ -1144,7 +1151,12 @@ function NotifyStung(Actor Grenade, vector StungGrenadeLocation, float StunnedDu
 
         CurrentStungGoal.bShouldRunFromStunningDevice = ShouldRunWhenStung();
 		CurrentStungGoal.postGoal(self);
+		return true;
 	}
+
+	// We didn't actually apply the StungGoal, because we were hit with a beanbag and
+	// already have a ReactToBeingShotGoal. -K.F. 2025
+	return false;
 }
 
 // subclasses should override
@@ -1245,6 +1257,7 @@ protected function RotateToFace(Actor Target, int BehaviorPriority)
 		CurrentRotateTowardActorGoal = None;
 	}
 
+	log("RotateToFace() posted a RotateTowardActorGoal at "$Target);
 	CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), BehaviorPriority, Target);
 	assert(CurrentRotateTowardActorGoal != None);
 	CurrentRotateTowardActorGoal.AddRef();

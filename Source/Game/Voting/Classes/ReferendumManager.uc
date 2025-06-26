@@ -14,6 +14,7 @@ var public globalconfig int MinVoters;							// Minimum number of voters require
 var public globalconfig bool NonVotersAreNo;				// Whether Non-Voters count as "no" votes
 var public globalconfig array<class<Referendum> > DisabledReferendums;	// What referendum types are disabled
 var private float TimeRemaining;					// How much time remains before the referendum expires
+var private bool TemporarilyDisabled;				// Whether voting is temporarily disabled by admin action
 
 struct CooldownTimer
 {
@@ -27,6 +28,9 @@ var private float StartReferendumCooldown;
 // VoterCooldownTimers tracks the amount of time each previous referendum starter has before they may start another referendum
 // If a PlayerId is in this array they may not start a referendum
 var private array<CooldownTimer> VoterCooldownTimers;
+
+// These people are blacklisted from using the voting system
+var private array<int> VotersBlacklisted;
 
 // Each PlayerId can only have a referendum started against them every ReferendumImmunityCooldown seconds
 var private float ReferendumImmunityCooldown;
@@ -42,6 +46,38 @@ replication
 {
 	reliable if (bNetDirty && (Role == ROLE_Authority))
 		ReferendumTeam, YesVotes, NoVotes, TimeRemaining, CurrentReferendum;
+}
+
+function bool ToggleGlobalVoteLock()
+{
+	if(TemporarilyDisabled)
+	{
+		TemporarilyDisabled = false;
+		return false;
+	}
+	else
+	{
+		TemporarilyDisabled = true;
+		return true;
+	}
+}
+
+function bool TogglePlayerVoteLock(int PlayerID)
+{
+	local int i;
+
+	// Look through the cooldown timers if they exist
+	for(i = 0; i < VotersBlacklisted.Length; i++)
+	{
+		if(VotersBlacklisted[i] == PlayerID)
+		{
+			VotersBlacklisted.Remove(i, 1);
+			return false;
+		}
+	}
+
+	VotersBlacklisted[VotersBlacklisted.Length] = PlayerID;
+	return true;
 }
 
 simulated function TeamInfo GetTeam()
@@ -146,15 +182,46 @@ static function bool ReferendumTypeAllowed(class<Referendum> ReferendumType)
 	return true;
 }
 
-// Returns false if the referendum could not be started
-protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType, optional bool bDontUseTeam)
+function bool ReferendumNotAllowedByAdmins(int PlayerID)
 {
+	local int i;
+
+	if(TemporarilyDisabled)
+	{
+		return true;
+	}
+
+	for(i = 0; i < VotersBlacklisted.Length; i++)
+	{
+		if(VotersBlacklisted[i] == PlayerID)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Returns false if the referendum could not be started
+protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum ReferendumType)
+{
+	local bool bUseTeam;
+
+	bUseTeam = ReferendumType.bUseTeam;
+
 	// Only one referendum can be active at any one time
 	if (ReferendumActive())
 	{
 		//mplog("The referendum has failed to start because a referendum is already in progress");
 		assert(PlayerController(PRI.Owner) != None);
 		Level.Game.Broadcast(None, "", 'ReferendumAlreadyActive', PlayerController(PRI.Owner));
+		return false;
+	}
+
+	// Check to see if the admins disabled it for some reason or another
+	if(ReferendumNotAllowedByAdmins(PRI.PlayerID))
+	{
+		Level.Game.Broadcast(None, "", 'ReferendumBlocked', PlayerController(PRI.Owner));
 		return false;
 	}
 
@@ -174,10 +241,10 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 		return false;
 	}
 
-	if (bDontUseTeam)
-		ReferendumTeam = None;
-	else
+	if (bUseTeam)
 		ReferendumTeam = PRI.Team;
+	else
+		ReferendumTeam = None;
 
 	// No one has voted yet
 	Voters.Length = 0;
@@ -195,6 +262,8 @@ protected function bool StartReferendum(PlayerReplicationInfo PRI, Referendum Re
 	AddVoterToCooldownList(PRI.PlayerId);
 
 	Level.Game.Broadcast(None, CurrentReferendum.ReferendumDescription(), 'ReferendumStarted');
+	Level.Game.AdminLog(PRI.PlayerName$"\t"$CurrentReferendum.ReferendumDescription(), 'ReferendumStarted',
+		PlayerController(PRI.Owner).GetPlayerNetworkAddress());
 
 	return true;
 }
@@ -219,7 +288,7 @@ function bool StartNewReferendum(PlayerController PC, class<Referendum> Referend
 		return false; // Do whatever logic in the referendum to determine whether it can be called on the target
 	}
 
-	if(StartReferendum(PC.PlayerReplicationInfo, Referendum, ReferendumClass.default.bUseTeam))
+	if(StartReferendum(PC.PlayerReplicationInfo, Referendum))
 	{
 		if(Target != None && !ReferendumClass.default.bNoImmunity)
 		{
@@ -237,10 +306,19 @@ function bool StartNewReferendum(PlayerController PC, class<Referendum> Referend
 
 function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 {
+	local PlayerReplicationInfo PRI;
+
 	// Can't vote if a referendum is not active
 	if (!ReferendumActive())
 	{
 		mplog("Player " $ PlayerId $ " tried to vote yes, but there was no active referendum");
+		return false;
+	}
+
+	// Can't vote if not allowed
+	if(ReferendumNotAllowedByAdmins(PlayerId))
+	{
+		mplog("Player "$ PlayerID $" tried to vote yes, but they do not have voting rights.");
 		return false;
 	}
 
@@ -258,6 +336,10 @@ function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 		return false;
 	}
 
+	PRI = Level.ReplicationInfoFromPlayerID(PlayerId);
+
+	Level.Game.AdminLog(PRI.PlayerName, 'ReferendumVoteYes',
+		PlayerController(PRI.Owner).GetPlayerNetworkAddress());
 	Voters[Voters.Length] = PlayerId;
 
 	++YesVotes;
@@ -267,10 +349,19 @@ function bool SubmitYesVote(int PlayerId, TeamInfo Team)
 
 function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 {
+	local PlayerReplicationInfo PRI;
+
 	// Can't vote if a referendum is not active
 	if (!ReferendumActive())
 	{
 		mplog("Player " $ PlayerId $ " tried to vote no, but there was no active referendum");
+		return false;
+	}
+
+	// Can't vote if not allowed
+	if(ReferendumNotAllowedByAdmins(PlayerId))
+	{
+		mplog("Player "$ PlayerID $" tried to vote no, but they do not have voting rights.");
 		return false;
 	}
 
@@ -288,6 +379,10 @@ function bool SubmitNoVote(int PlayerId, TeamInfo Team)
 		return false;
 	}
 
+	PRI = Level.ReplicationInfoFromPlayerID(PlayerId);
+
+	Level.Game.AdminLog(PRI.PlayerName, 'ReferendumVoteNo',
+		PlayerController(PRI.Owner).GetPlayerNetworkAddress());
 	Voters[Voters.Length] = PlayerId;
 
 	++NoVotes;
@@ -326,6 +421,14 @@ private function EndReferendum()
 
 private function ReferendumDecided()
 {
+	if(YesVotesWin())
+	{
+		Level.Game.AdminLog("", 'ReferendumPassed');
+	}
+	else
+	{
+		Level.Game.AdminLog("", 'ReferendumFailed');
+	}
 	CurrentReferendum.ReferendumDecided(YesVotesWin());
 	CurrentReferendum = None;
 }

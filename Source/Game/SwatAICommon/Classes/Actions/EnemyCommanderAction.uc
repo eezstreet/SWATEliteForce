@@ -774,7 +774,8 @@ function OnHeardNoise()
 
 private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bOnlyBarricade)
 {
-	local bool bIsAnInvestigator;
+	local bool bInvestigate;
+	local bool bBarricade;
 
 	if (ISwatEnemy(m_Pawn).GetCurrentState() < EnemyState_Suspicious)
 	{
@@ -785,16 +786,18 @@ private function BecomeSuspicious(vector SuspiciousEventOrigin, optional bool bO
 	// if we're not actively engaging, investigate or barricade
 	if (! isRunning())
 	{
-		bIsAnInvestigator = ISwatEnemy(m_Pawn).IsAnInvestigator();
+		bInvestigate = ISwatEnemy(m_Pawn).RollInvestigate();
+		bBarricade = ISwatEnemy(m_Pawn).RollBarricade();
 
 		// if we're not investigating or barricading, do that
 		// if we're already invesgigating or barricading, and can fast trace to the point specified, look at the point
-		if (bIsAnInvestigator && !bOnlyBarricade && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
+		if (bInvestigate && !bOnlyBarricade && ((CurrentInvestigateGoal == None) || CurrentInvestigateGoal.hasCompleted()))
 		{
 			CreateInvestigateGoal(SuspiciousEventOrigin);
 		}
-		else if ((bOnlyBarricade || ! bIsAnInvestigator) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()))
+		else if ((bOnlyBarricade || bBarricade) && ((CurrentBarricadeGoal == None) || CurrentBarricadeGoal.hasCompleted()))
 		{
+			ISwatEnemy(m_Pawn).StopInvestigating();	// don't investigate after we've already concluded that SWAT is here
 			CreateBarricadeGoal(SuspiciousEventOrigin, true, true);
 		}
 		else if (m_Pawn.FastTrace(SuspiciousEventOrigin, m_Pawn.Location))
@@ -1065,7 +1068,7 @@ private function bool ShouldEncounterNewEnemy(Pawn NewEnemy)
 		DistanceToNewEnemy     = VSize(NewEnemy.Location - m_Pawn.Location);
 
 		if (((DistanceToNewEnemy < DistanceToCurrentEnemy) && (DistanceToNewEnemy < DeltaDistanceToSwitchEnemies)) ||
-			(! m_Pawn.CanHit(CurrentEnemy) && m_Pawn.CanHit(NewEnemy)))
+			(! m_Pawn.LineOfSightTo(CurrentEnemy) && m_Pawn.LineOfSightTo(NewEnemy)))
 		{
 			return true;
 		}
@@ -1108,6 +1111,7 @@ function EncounterEnemy(Pawn NewEnemy)
 
 		// we are now aware
         ISwatEnemy(m_Pawn).SetCurrentState(EnemyState_Aware);
+		ISwatEnemy(m_Pawn).StopInvestigating(); // Don't investigate sounds after we've encountered an enemy
 
 		// update knowledge about our current enemy
 		ISwatAI(m_pawn).GetKnowledge().UpdateKnowledgeAboutPawn(CurrentEnemy);
@@ -1227,7 +1231,13 @@ latent function ReactInitiallyToEnemy()
 
 latent function EngageCurrentEnemy()
 {
-	assert(CurrentEngageOfficerGoal == None);
+	// If we had an engagement goal, drop it
+	if(CurrentEngageOfficerGoal != None)
+	{
+		CurrentEngageOfficerGoal.unPostGoal(self);
+		CurrentEngageOfficerGoal.Release();
+		CurrentEngageOfficerGoal = None;
+	}
 
 	if ((CurrentEnemy != None) || bIgnoreCurrentEnemy)
 	{
@@ -1446,7 +1456,7 @@ function FindBetterEnemy()
 	local Pawn NewEnemy;
 	if (CurrentEnemy != None)
 	{
-		if (! m_Pawn.CanHit(CurrentEnemy))
+		if (! m_Pawn.LineOfSightTo(CurrentEnemy))
 		{
 			NewEnemy = VisionSensor.GetVisibleConsciousPawnClosestTo(m_Pawn.Location);
 
@@ -1502,11 +1512,42 @@ function FinishedMovingEngageBehavior()
 latent function DecideToStayCompliant()
 {
 	local HandHeldEquipmentModel FoundWeaponModel;
-
-	while (class'Pawn'.static.checkConscious(m_Pawn) &&
-			(GetCurrentMorale() < LeaveCompliantStateMoraleThreshold || FoundWeaponModel == None))
+    
+	// EFdee - Fix for Suspects not picking up nearby weapons
+	// Before, suspects wouldn't pick up weapons
+	// Instead, they would flee and barricade if possible
+	// This makes suspects flee and/or pick up nearby weapons 
+	// This may vary between archetypes
+	
+	if(m_Pawn.IsA('SwatGuard') || m_Pawn.IsA('SwatUndercover'))
 	{
-		Sleep(0.8f);
+		// Don't let guards or Jennings become uncompliant again, this is just dumb
+		return;
+	}
+
+	while (class'Pawn'.static.checkConscious(m_Pawn))
+	{
+		if(FoundWeaponModel != None)
+		{
+			// If we found a weapon model, then our morale gain is 2x but our leave compliance threshold is also 2x.
+			// This is so that gunfights are a little more engaging for the player to deal with.
+			if(GetCurrentMorale() >= (LeaveCompliantStateMoraleThreshold*2))
+			{
+				break;
+			}
+		}
+		else if(GetCurrentMorale() >= LeaveCompliantStateMoraleThreshold)
+		{
+			break;
+		}
+		else if (ISwatAI(m_Pawn).IsBeingArrestedNow())
+		{
+			break;
+		}
+		
+		// Sleep for a random amount of time for this "tick"
+		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
+		Sleep(FRand() * 2.0);
 
 		// Increase moral when not being guarded (unobserved)
 		if (ISwatAI(m_Pawn).IsUnobservedByOfficers())
@@ -1517,6 +1558,11 @@ latent function DecideToStayCompliant()
 
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
+	}
+
+	if (ISwatAI(m_Pawn).IsBeingArrestedNow())
+	{
+		return;
 	}
 
 	if (FoundWeaponModel != None)
@@ -1546,6 +1592,31 @@ latent function DecideToStayCompliant()
 			if (CurrentPickUpWeaponGoal != None)
 				WaitForGoal(CurrentPickUpWeaponGoal);
 			//ISwatEnemy(m_Pawn).GetCommanderAction().CreateBarricadeGoal(???, false, false);
+		}
+	}
+	else
+	{
+		// AI stopped being compliant
+		ISwatAI(m_Pawn).SetIsCompliant(false);
+		RemoveComplianceGoal();
+		ISwatAICharacter(m_Pawn).SetCanBeArrested(false);
+
+		// Reset AI (stop animating)
+		m_pawn.ShouldCrouch(false);
+		m_Pawn.ChangeAnimation();				// will swap in anim set
+		ISwatAI(m_Pawn).SetIdleCategory('');	// remove compliance idles
+
+		// try engaging again
+		if (CurrentEngageOfficerGoal == None)
+		{
+			bHasFledWithoutUsableWeapon = false;	// don't cower except very rarely
+
+			CurrentEngageOfficerGoal = new class'EngageOfficerGoal'(AI_Resource(m_Pawn.characterAI), 90);
+			assert(CurrentEngageOfficerGoal != None);
+			CurrentEngageOfficerGoal.AddRef();
+
+			CurrentEngageOfficerGoal.postGoal(self);
+			WaitForGoal(CurrentEngageOfficerGoal);
 		}
 	}
 }
@@ -1599,18 +1670,6 @@ state Running
 //
 // Debug
 
-private function string GetStimuliResponseTypeName()
-{
-    if (ISwatEnemy(m_Pawn).IsAnInvestigator())
-    {
-        return "Investigator";
-    }
-    else
-    {
-        return "Barricader";
-    }
-}
-
 private function string GetEnemyStateName()
 {
     local EnemyState CurrentEnemyState;
@@ -1658,7 +1717,6 @@ function SetSpecificDebugInfo()
 {
     m_Pawn.AddDebugMessage(" ");
 
-    m_Pawn.AddDebugMessage("Enemy Responds As a:"@GetStimuliResponseTypeName(), class'Canvas'.Static.MakeColor(255,255,128));
 	m_Pawn.AddDebugMessage("Is A Threat:        "@ISwatEnemy(m_Pawn).IsAThreat(), class'Canvas'.Static.MakeColor(255,255,128));
     m_Pawn.AddDebugMessage("Enemy State:        "@GetEnemyStateName(), class'Canvas'.Static.MakeColor(255,255,128));
     m_Pawn.AddDebugMessage("Enemy Skill:        "@GetEnemySkillName(), class'Canvas'.Static.MakeColor(255,255,128));
