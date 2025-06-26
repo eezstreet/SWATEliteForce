@@ -475,8 +475,8 @@ FriendlyName=Suppressed Colt 635
 ShortName=Sup. Colt 635
 
 [SCARHMG]
-Description=A truly next-generation assault rifle, the SCAR, short for ''Special operations forces Combat Assault Rifle'' is the latest offering from FN Herstal in full-sized assault rifles. The H designation indicates that this particular model fires in 7.62x51mm rounds. While firing slower and having a smaller magazine size than the M4, it fires a much larger round to compensate.
-FriendlyName=SCAR-H
+Description=A truly next-generation assault rifle, the SCAR, short for ''Special operations forces Combat Assault Rifle'' is the latest offering from FN Herstal in full-sized assault rifles. The H designation indicates that this particular model fires in 7.62x51mm rounds. Compared to the M4A1, the smaller magazine capacity and lower rate of fire are offset by increased stopping power.
+FriendlyName=SCAR-H CQC
 ShortName=SCAR-H
 Manufacturer=FN Herstal
 Caliber=7.62x51mm
