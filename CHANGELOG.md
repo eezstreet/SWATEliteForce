@@ -15,6 +15,7 @@ This patch is primarily focused on bug fixes and minor improvements:
   - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
   - Restored original game CanHit function (need to test what the implications are...)
   - Removed portions of MassiveAd code (Thanks to beppegoodoldrebel)
+  - Fixed an issue in CO-OP where you could ready up (and be over the weight limit) in situations where you shouldn't be able to. (Thanks to beppegoodoldrebel)
   - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
   - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!) (Thanks to beppegoodoldrebel)
   - Documentation (.md files) have been cleaned up.
