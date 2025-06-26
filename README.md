@@ -68,10 +68,11 @@ The mod can be removed by deleting the SEF folder from your hard drive.
 
 If you are instead trying to build the source code, it is fairly straightforward.
 
- * Clone the source code into your SWAT 4 folder. Your folder structure ought to look very similar to the installed mod, with SWATEliteForce within your SWAT 4 folder.
- * Download the assets from the link above. Unzip the contents into your SWATEliteForce/Content folder. *Do not commit these files if you are using Git.*
- * From here, you can compile the source code with the CompileSource.bat and run the game with the LaunchSEF.bat. The source code will compile to .u files in the System folder.
- * Edit the source code within /Source/ and any ini files within /System/.
+ * Clone the source code into your SWAT 4 folder. Your folder structure ought to look very similar to the installed mod, with `SWATEliteForce` within your `SWAT 4` folder.
+ * Download the assets from the link above. Unzip the contents into your `SWATEliteForce/Content` folder. *Do not commit these files if you are using Git.*
+ * Edit the source code within `/Source/` and any ini files within `/System/`.
+ * From here, you can compile the source code with the `CompileSource.bat` and run the game with the `LaunchSEF.bat. The source code will compile to `.u` files in the `System` folder.
+ * When you're ready to distribute your mod, run the `GenerateMD5.bat`, which will output checksums for your mod. *This is required for multiplayer to work properly with your mod.*
 
 The mod's code is primarily written in UnrealScript. You can find a good resource about UnrealScript [here](wiki.beyondunreal.com). (Note, if you can't access this page, try using the Wayback Machine to access it.)
 
