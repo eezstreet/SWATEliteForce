@@ -750,9 +750,9 @@ function OnHeardNoise()
 
 			// if the other actor isn't a threat to us, ignore the door sound
 			// yes this is cheating...  so sue me.
-			if (ISwatAI(m_Pawn).IsOtherActorAThreat(LastDoorInteractor) && HasLineOfSightToDoor(Door(HeardActor)))
+			if (ISwatAI(m_Pawn).IsOtherActorAThreat(LastDoorInteractor))
 			{
-				if (ISwatEnemy(m_Pawn).GetCurrentState() == EnemyState_Aware)
+				if (ISwatEnemy(m_Pawn).GetCurrentState() == EnemyState_Aware && HasLineOfSightToDoor(Door(HeardActor)))
 				{
 					EncounterEnemy(LastDoorInteractor);
 				}
