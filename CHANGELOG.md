@@ -2,12 +2,11 @@
 
 ## v7.2
 
-Features:
+This patch is primarily focused on bug fixes and minor improvements:
 
+  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley)
   - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
   - SWAT AI can now use NVGs (CHECK IF DONE!)
-
-Other Changes:
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
   - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
