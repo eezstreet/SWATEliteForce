@@ -9,6 +9,7 @@ This patch is primarily focused on bug fixes and minor improvements:
   - SWAT AI can now use NVGs (CHECK IF DONE!)
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
+  - Fixed suspects having incorrect textures when wearing heavy armor (thanks to beppegoodoldrebel)
   - Fixed incorrect kilogram-to-pound conversion formula for Imperial measurements (thanks to modotte)
   - Fixed incorrect MP5K suppressor attachment linkage in the menu (thanks to modotte)
   - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
