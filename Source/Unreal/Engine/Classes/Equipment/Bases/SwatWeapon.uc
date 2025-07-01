@@ -207,7 +207,9 @@ var array<IInterestedGrenadeThrowing> InterestedGrenadeRegistrants;
 
 static function string GetShortName() { return default.ShortName; }
 
-// Get the amount of recoil that exists per shot (auto fire only)
+// Get the amount of cumulative recoil added per bullet fired
+// while firing in burst or full-auto fire. This makes recoil
+// increasingly severe the longer that we hold down the trigger.
 simulated function float GetAutoRecoilMagnitude()
 {
   local float RecoilModifier;
@@ -240,7 +242,8 @@ simulated function float GetAutoRecoilMagnitude()
   return RecoilBase * RecoilModifier;
 }
 
-// Get the amount of recoil that exists when we fire (single fire only)
+// Get the amount of recoil from an individual bullet,
+// taking the current firing mode into account.
 simulated function float GetPerBurstRecoilMagnitude()
 {
   local float RecoilModifier;
