@@ -21,6 +21,7 @@ This patch is primarily focused on bug fixes and minor improvements:
   - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
   - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!) (Thanks to beppegoodoldrebel)
   - Documentation (.md files) have been cleaned up.
+  - You can no longer take limb damage when in god mode (cheat)
 
 ## v7.1
 

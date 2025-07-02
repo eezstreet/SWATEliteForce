@@ -60,6 +60,7 @@ This file attempts to document all of the changes made in the mod, although it m
  * The player could control the officer viewport while reloading, switching weapons, or using an item. This allowed for an exploit where players could move while placing C2, arresting people, or picking a lock.
  * Players could not melee with handcuffs after pressing zoom (despite zoom doing nothing)
  * Players on the red team using the default skin looked like suspects
+ * You no longer take limb damage when in God Mode (cheat)
 
 ## AI ##
   * Tons and tons of cut dialogue restored.
