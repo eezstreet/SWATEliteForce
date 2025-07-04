@@ -120,68 +120,72 @@ simulated function UpdateHandsForRendering()
 
     NewRotation = OwnerPawn.GetViewRotation();
 
-    //Location of the weapon if it stayed at our hip without any inertia or ADS effects
+    // Location of the weapon if it stayed at our hip without any inertia or ADS effects.
     TargetLocation =
     	OwnerPawn.Location +
     	OwnerPawn.CalcDrawOffset() +
     	OwnerPawn.ViewLocationOffset(NewRotation);
 
+    // Range 0 - 1, where 0 is default view (hip fire) and 1 is ADS view.
     AnimationProgress = EquippedItem.GetIronSightAnimationProgress();
-    //ViewInertia controls how much weapon sways when we move
+    // ViewInertia controls how much weapon sways when we move.
     ViewInertia = EquippedItem.GetViewInertia();
-    //MaxInertiaOffset limits how far the weapon can sway from center
+    // MaxInertiaOffset limits how far the weapon can sway from center.
     MaxInertiaOffset = EquippedItem.GetMaxInertiaOffset();
-    //ADSInertia controls how fast we aim down sight. We set it by scaling the ViewInertia.
-    ADSInertia = 1 - ((1 - ViewInertia) / 2.5);
+    // ADSInertia controls how fast we aim down sight. We set it by scaling the ViewInertia.
+    ADSInertia = (1 - ViewInertia) * 8;
 
-    //if the player is zooming, add the iron sight offset to the new location
+    // Update animation progress, interpolating towards default view or ADS view as applicable.
     if (OwnerController != None && OwnerController.WantsZoom && !OwnerController.GetIronsightsDisabled()) {
-    	AnimationProgress = (AnimationProgress * ADSInertia + 1 * (1 - ADSInertia));
-    	//NewRotation += EquippedItem.GetIronsightsRotationOffset();
+    	AnimationProgress = AnimationProgress + ADSInertia * deltaTime;
     } else {
-    	AnimationProgress = (AnimationProgress * ADSInertia + 0 * (1 - ADSInertia));
-    	//HACK: offset when the player isn't using iron sights, to fix the ******* P90 -K.F.
-    	//NewRotation += EquippedItem.GetDefaultRotationOffset();
-    	Offset = EquippedItem.GetDefaultLocationOffset();
+    	AnimationProgress = AnimationProgress - ADSInertia * deltaTime;
     }
+    if (AnimationProgress > 1.0) AnimationProgress = 1.0;
+    if (AnimationProgress < 0) AnimationProgress = 0;
+    EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
 
-	//look-down-scope animation for marksman (scoped) weapons
-     Weapon = SwatWeapon(EquippedItem);
-     if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
-         EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
-		 		bHidden = (AnimationProgress >= 0.99);
-     }
-
-    //scale animation position change based on framerate
-    AnimationProgressChange = AnimationProgress - EquippedItem.GetIronSightAnimationProgress();
-    AnimationProgressChange = AnimationProgressChange * (deltaTime / 0.016667); //scale relative to 60fps
-    AnimationProgress = EquippedItem.GetIronSightAnimationProgress() + AnimationProgressChange;
-
+    // Update pose based on AnimationProgress.
     NewRotation = NewRotation
     	+ EquippedItem.GetDefaultRotationOffset() * (1 - AnimationProgress)
     	+ EquippedItem.GetIronsightsRotationOffset() * AnimationProgress;
 
-    EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
-    //apply progress of iron sight animation
-    Offset += (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress);
+    Offset = (EquippedItem.GetDefaultLocationOffset() * (1 - AnimationProgress)
+           + (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress));
 
-    //this converts local offset to world coordinates
+    // Look-down-scope animation for marksman (scoped) weapons.
+    Weapon = SwatWeapon(EquippedItem);
+    if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
+        EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
+            bHidden = (AnimationProgress >= 0.99);
+    }
+
+    // This converts local offset to world coordinates.
     Offset = Offset >> NewRotation;
     TargetLocation = TargetLocation + Offset;
 
-    //interpolate towards our target location. inertia controls how quickly the weapon
-    //visually responds to our movements
+    // Interpolate towards our target location. Inertia controls how quickly the weapon
+    // visually responds to our movements.
     if(!OwnerController.GetInertiaDisabled())
     {
         NewLocation = (Location * ViewInertia) + (TargetLocation * (1 - ViewInertia));
 
+        // Apply inertia (reducing weapon's movement speed).
         if (ViewInertia > 0) {
             Change = NewLocation - Location;
-            Change *= (deltaTime / 0.016667);
+            // Scale for framerate. We interp halfway back to 1 because this gives more consistent results
+            // across different framerates.
+            Change *= 0.5 + (deltaTime / 0.016667) * 0.5;
             NewLocation = Location + Change;
         }
 
-        // Cap the maximum distance we can be away from the target location
+        // Smoothing.
+        if (ViewInertia > 0) {
+            NewLocation = (NewLocation + (TargetLocation - EquippedItem.GetHandsOffsetLastFrame())) / 2.0;
+            EquippedItem.SetHandsOffsetLastFrame(TargetLocation - NewLocation);
+        }
+
+        // Cap the maximum distance we can be away from the target location.
         Change = NewLocation - TargetLocation;
         if(Change.x > MaxInertiaOffset) Change.x = MaxInertiaOffset;
         else if(Change.x < -MaxInertiaOffset) Change.x = -MaxInertiaOffset;
