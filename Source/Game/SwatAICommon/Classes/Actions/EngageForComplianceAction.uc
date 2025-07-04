@@ -16,6 +16,11 @@ var(parameters) Pawn					TargetPawn;
 //var private SWATTakeCoverAndAimGoal		CurrentSWATTakeCoverAndAimGoal;
 var private OrderComplianceGoal			CurrentOrderComplianceGoal;
 var protected MoveOfficerToEngageGoal   CurrentMoveOfficerToEngageGoal;
+var private bool        				bTriedAlternatives;
+var private DeployTaserGoal 			CurrentDeployTaserGoal;
+var private DeployPepperBallGoal 		CurrentDeployPepperBallGoal;
+var private DeployPepperSprayGoal 		CurrentDeployPepperSprayGoal;
+var private DeployLessLethalShotgunGoal CurrentDeployLessLethalShotgunGoal;
 
 // config variables
 var config float						MinComplianceOrderSleepTime;
@@ -51,17 +56,35 @@ function cleanup()
 		CurrentOrderComplianceGoal.Release();
 		CurrentOrderComplianceGoal = None;
 	}
-
-//	if (CurrentSWATTakeCoverAndAimGoal != None)
-//	{
-//		CurrentSWATTakeCoverAndAimGoal.Release();
-//		CurrentSWATTakeCoverAndAimGoal = None;
-//	}
 	
 	if (CurrentMoveOfficerToEngageGoal != None)
 	{
 		CurrentMoveOfficerToEngageGoal.Release();
 		CurrentMoveOfficerToEngageGoal = None;
+	}
+
+	if (CurrentDeployTaserGoal != None)
+	{
+		CurrentDeployTaserGoal.Release();
+		CurrentDeployTaserGoal = None;
+	}
+
+	if (CurrentDeployPepperBallGoal != None)
+	{
+		CurrentDeployPepperBallGoal.Release();
+		CurrentDeployPepperBallGoal = None;
+	}
+
+	if (CurrentDeployPepperSprayGoal != None)
+	{
+		CurrentDeployPepperSprayGoal.Release();
+		CurrentDeployPepperSprayGoal = None;
+	}
+
+	if (CurrentDeployLessLethalShotgunGoal != None)
+	{
+		CurrentDeployLessLethalShotgunGoal.Release();
+		CurrentDeployLessLethalShotgunGoal = None;
 	}
 }
 
@@ -73,13 +96,72 @@ function goalNotAchievedCB( AI_Goal goal, AI_Action child, ACT_ErrorCodes errorC
 {
 	super.goalNotAchievedCB(goal, child, errorCode);
 
-//	if ((goal == CurrentOrderComplianceGoal) || (goal == CurrentMoveOfficerToEngageGoal) || (goal == CurrentSWATTakeCoverGoal))
-	if ((goal == CurrentOrderComplianceGoal) || (goal == CurrentMoveOfficerToEngageGoal))
+	log(name$"...goalNotAchievedCB");
+
+	if (goal == CurrentOrderComplianceGoal || goal == CurrentMoveOfficerToEngageGoal)
 	{
 		// if ordering compliance or movement fails, we succeed so we don't get reposted, 
-		// the OfficerCommanderAction will figure out what to do
-		InstantSucceed();
+		// the OfficerCommanderAction will figure out what to do.
+		// The one exception to this logic is if the Order Compliance goal fails,
+		// in which case, we will want to pursue other means
+		if (goal != CurrentOrderComplianceGoal || errorCode != ACT_TIME_LIMIT_EXCEEDED)
+		{
+			InstantSucceed();
+		}
 	}
+}
+
+private function bool ShouldTaserAsFollowUp()
+{
+	local FiredWeapon MainWeapon, BackupWeapon;
+
+	MainWeapon = ISwatOfficer(m_Pawn).GetPrimaryWeapon();
+	BackupWeapon = ISwatOfficer(m_Pawn).GetBackupWeapon();
+
+	return (MainWeapon.IsA('Taser') && MainWeapon.ShouldOfficerUseAgainst(TargetPawn, 0)) ||
+		(BackupWeapon.IsA('Taser') && BackupWeapon.ShouldOfficerUseAgainst(TargetPawn, 0));
+}
+
+private function bool ShouldPepperSprayAsFollowUp()
+{
+	local HandheldEquipment Equipment;
+
+	if (TargetPawn.IsA('SwatEnemy'))
+	{
+		// too dicey honestly
+		return false;
+	}
+
+	Equipment = ISwatOfficer(m_Pawn).GetItemAtSlot(Slot_PepperSpray);
+	return Equipment != None && Equipment.IsA('PepperSpray') && VSize(m_Pawn.Location - TargetPawn.Location) < 512.0f;
+}
+
+private function bool ShouldPepperBallAsFollowUp()
+{
+	local FiredWeapon MainWeapon, BackupWeapon;
+
+	MainWeapon = ISwatOfficer(m_Pawn).GetPrimaryWeapon();
+	BackupWeapon = ISwatOfficer(m_Pawn).GetBackupWeapon();
+
+	return (MainWeapon.IsA('CSBallLauncher') && MainWeapon.ShouldOfficerUseAgainst(TargetPawn, 0)) ||
+		(BackupWeapon.IsA('CSBallLauncher') && BackupWeapon.ShouldOfficerUseAgainst(TargetPawn, 0));
+}
+
+private function bool ShouldBeanbagAsFollowUp()
+{
+	local FiredWeapon MainWeapon, BackupWeapon;
+
+	if (TargetPawn.IsA('SwatHostage'))
+	{
+		// too dicey honestly
+		return false;
+	}
+
+	MainWeapon = ISwatOfficer(m_Pawn).GetPrimaryWeapon();
+	BackupWeapon = ISwatOfficer(m_Pawn).GetBackupWeapon();
+
+	return (MainWeapon.IsA('BeanbagShotgunBase') && MainWeapon.ShouldOfficerUseAgainst(TargetPawn, 0)) ||
+		(BackupWeapon.IsA('BeanbagShotgunBase') && BackupWeapon.ShouldOfficerUseAgainst(TargetPawn, 0));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,16 +180,6 @@ private function bool ShouldMoveTowardsComplianceTarget()
 	return (! SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
 }
 
-//private function bool ShouldTakeCover()
-//{
-//	local SwatAIRepository SwatAIRepo;
-//	SwatAIRepo = SwatAIRepository(Level.AIRepo);
-//
-//	// test to see if we're moving and clearing
-//	return (! SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn));
-//
-//}
-
 private function MoveTowardsComplianceTarget()
 {
 	if (m_Pawn.logAI)
@@ -125,21 +197,6 @@ private function MoveTowardsComplianceTarget()
 	CurrentMoveOfficerToEngageGoal.postGoal(self);
 }
 
-//private function TakeCoverRelativeToTarget()
-//{
-//	if (m_Pawn.logAI)
-//		log(m_Pawn.Name $ " will move to engage the target for compliance");
-
-//	assert(CurrentSWATTakeCoverAndAimGoal == None);
-
-//	CurrentSWATTakeCoverAndAimGoal = new class'SWATTakeCoverAndAimGoal'(movementResource(), achievingGoal.Priority, TargetPawn);
-//	assert(CurrentSWATTakeCoverAndAimGoal != None);
-//	CurrentSWATTakeCoverAndAimGoal.AddRef();
-
-	// post the move to goal and wait for it to complete
-//	CurrentSWATTakeCoverAndAimGoal.postGoal(self);
-//}
-
 private function OrderTargetToComply()
 {
 	assert(CurrentOrderComplianceGoal == None);
@@ -154,6 +211,7 @@ private function OrderTargetToComply()
 state Running
 {
  Begin:
+	log(Name$"....started running");
 	OrderTargetToComply();
 	
 	while (! CurrentOrderComplianceGoal.hasCompleted())
@@ -162,12 +220,85 @@ state Running
 		{
 			MoveTowardsComplianceTarget();
 		}
-//		if ((CurrentSWATTakeCoverAndAimGoal == None) && ShouldTakeCover())
-//		{
-//			TakeCoverRelativeToTarget();
-//		}
 
 		sleep(RandRange(kMinComplianceUpdateTime, kMaxComplianceUpdateTime));
+	}
+
+	log("...broke out of main loop bcause it was completed");
+
+	if (class'Pawn'.static.checkConscious(TargetPawn) && !ISwatAI(TargetPawn).IsCompliant() && !ISwatAI(TargetPawn).IsDisabled())
+	{
+		// Failed to order compliance. Try...alternative...methods...
+		if (CurrentOrderComplianceGoal != None)
+		{
+			CurrentOrderComplianceGoal.Release();
+			CurrentOrderComplianceGoal = None;
+		}
+
+		log(Name$"...Starting to pursue alternatives...");
+		if (ShouldTaserAsFollowUp())
+		{
+			log(Name$"... should taser as follow up");
+			CurrentDeployTaserGoal = new class'DeployTaserGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
+			assert(CurrentDeployTaserGoal != None);
+			CurrentDeployTaserGoal.AddRef();
+			CurrentDeployTaserGoal.postGoal(self);
+			WaitForGoal(CurrentDeployTaserGoal);
+			CurrentDeployTaserGoal.unPostGoal(self);
+
+			CurrentDeployTaserGoal.Release();
+			CurrentDeployTaserGoal = None;
+		}
+		else if (ShouldPepperSprayAsFollowUp())
+		{
+			log(Name$"... should pepper spray as follow up");
+			CurrentDeployPepperSprayGoal = new class'DeployPepperSprayGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
+			assert(CurrentDeployPepperSprayGoal != None);
+			CurrentDeployPepperSprayGoal.AddRef();
+			CurrentDeployPepperSprayGoal.postGoal(self);
+			WaitForGoal(CurrentDeployPepperSprayGoal);
+			CurrentDeployPepperSprayGoal.unPostGoal(self);
+
+			CurrentDeployPepperSprayGoal.Release();
+			CurrentDeployPepperSprayGoal = None;
+		}
+		else if (ShouldPepperBallAsFollowUp())
+		{
+			log(Name$"... should pepperball as follow up");
+			CurrentDeployPepperBallGoal = new class'DeployPepperBallGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
+			assert(CurrentDeployPepperBallGoal != None);
+			CurrentDeployPepperBallGoal.AddRef();
+			CurrentDeployPepperBallGoal.postGoal(self);
+			WaitForGoal(CurrentDeployPepperBallGoal);
+			CurrentDeployPepperBallGoal.unPostGoal(self);
+
+			CurrentDeployPepperBallGoal.Release();
+			CurrentDeployPepperBallGoal = None;
+		}
+		else if (ShouldBeanbagAsFollowUp())
+		{
+			log(Name$"... should beanbag as follow up");
+			CurrentDeployLessLethalShotgunGoal = new class'DeployLessLethalShotgunGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
+			assert(CurrentDeployLessLethalShotgunGoal != None);
+			CurrentDeployLessLethalShotgunGoal.AddRef();
+			CurrentDeployLessLethalShotgunGoal.postGoal(self);
+			WaitForGoal(CurrentDeployLessLethalShotgunGoal);
+			CurrentDeployLessLethalShotgunGoal.unPostGoal(self);
+
+			CurrentDeployLessLethalShotgunGoal.Release();
+			CurrentDeployLessLethalShotgunGoal = None;
+		}
+		else
+		{
+			log(Name$"... no follow up available");
+			succeed();
+		}
+
+		OrderTargetToComply();
+		while (! CurrentOrderComplianceGoal.hasCompleted())
+		{
+			sleep(RandRange(kMinComplianceUpdateTime, kMaxComplianceUpdateTime));
+		}
 	}
 
 	succeed();

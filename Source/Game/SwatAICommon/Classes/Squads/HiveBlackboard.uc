@@ -199,6 +199,21 @@ function bool AreAnyAssignedTargetsThreatening()
 	return false;
 }
 
+function bool AreAnyAssignedTargetsSuspects()
+{
+	local int i;
+
+	for (i = 0; i < AssignedTargets.Length; i++)
+	{
+		if (AssignedTargets[i].IsA('SwatEnemy'))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function RemoveAssignedTarget(Pawn AI)
 {
 	local int i;

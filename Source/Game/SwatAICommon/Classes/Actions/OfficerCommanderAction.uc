@@ -365,7 +365,11 @@ private function bool ShouldEngageTarget(Pawn Target)
 	if (m_Pawn.logTyrion)
 		log("ShouldEngageTarget - CurrentAssignment: " $ CurrentAssignment $ " Target: " $ Target $ " CurrentAttackEnemyGoal: " $CurrentAttackEnemyGoal);
 
-	if (CurrentAssignment != Target)
+	if (!class'Pawn'.static.checkConscious(Target))
+	{
+		return false;
+	}
+	else if (CurrentAssignment != Target)
 	{
 		// if we're not currently assigned to this target, take him down!
 		return true;

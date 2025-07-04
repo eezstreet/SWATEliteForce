@@ -23,7 +23,6 @@ var private AimAroundGoal							CurrentAimAroundGoal;
 // internal move
 var private array<NavigationPoint>					ClearRoute;
 var private int										CurrentClearRouteIndex;
-var private bool									bPauseMovement;
 
 // internal hold
 var private float									EndHoldClearPositionTime;
@@ -94,92 +93,10 @@ function cleanup()
 function resourceStolenCB( AI_goal goal, AI_Resource stolenResource )
 {
 	// if we have a current assignment, and this is one of the dummy behaviors, ignore the fact that it was interrupted
-	if (!HasCurrentAssignment() || (!goal.IsA('AI_DummyWeaponGoal') && !goal.IsA('AI_DummyMovementGoal')))
-	{
-		super.resourceStolenCB(goal, stolenResource);
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Sensor
-
-private function SetupDistanceToUncomplaintCharactersSensor()
-{
-	DistanceToUncomplaintCharactersSensor = DistanceToUncomplaintCharactersSensor(class'AI_Sensor'.static.activateSensor(self, class'DistanceToUncomplaintCharactersSensor', characterResource(), 0, 1000000));
-	assert(DistanceToUncomplaintCharactersSensor != None);
-	DistanceToUncomplaintCharactersSensor.SetParameters(DistanceToStopMovingWithUncompliantCharacter);
-}
-
-function OnSensorMessage( AI_Sensor sensor, AI_SensorData value, Object userData )
-{
-	if (m_Pawn.logTyrion)
-		log("MoveAndClearAction received sensor message from " $ sensor.name $ " value is "$ value.integerData);
-
-	// we only (currently) get messages from a distance sensor
-	assert(sensor == DistanceToUncomplaintCharactersSensor);
-
-	if (value.objectData != None)
-	{
-//		log(m_Pawn.Name $ " is too close while moving and clearing.  stopping movement!");
-		assert(value.objectData.IsA('Pawn'));
-
-		PauseMovement(Pawn(value.objectData));
-	}
-	else if (value.objectData == None)
-	{
-//		log(m_Pawn.Name $ " has room to move and clear.  continuing movement!");
-
-		// if we're paused, continue
-		if (bPauseMovement)
-		{
-			UnPauseMovement();
-		}
-	}
-}
-
-private function PauseMovement(Pawn PausingCharacter)
-{
-	bPauseMovement = true;
-
-	if ((CurrentMoveToActorGoal != None) && (CurrentMoveToActorGoal.achievingAction != None))
-	{
-		CurrentMoveToActorGoal.achievingAction.instantSucceed();
-	}
-
-	RotateToFacePausingCharacter(PausingCharacter);
-}
-
-private function UnPauseMovement()
-{
-	bPauseMovement = false;
-
-	RemoveRotateToFacePausingCharacterGoal();
-
-	if (isIdle())
-		runAction();
-}
-
-private function RemoveRotateToFacePausingCharacterGoal()
-{
-	if (CurrentRotateTowardActorGoal != None)
-	{
-		CurrentRotateTowardActorGoal.unPostGoal(self);
-		CurrentRotateTowardActorGoal.Release();
-		CurrentRotateTowardActorGoal = None;
-	}
-}
-
-function RotateToFacePausingCharacter(Pawn PausingCharacter)
-{
-	RemoveRotateToFacePausingCharacterGoal();	
-
-	log("RotateToFacePausingCharacter() posted a RotateTowardActorGoal at "$PausingCharacter);
-	CurrentRotateTowardActorGoal = new class'RotateTowardActorGoal'(movementResource(), achievingGoal.priority, PausingCharacter);
-	assert(CurrentRotateTowardActorGoal != None);
-	CurrentRotateTowardActorGoal.AddRef();
-
-	CurrentRotateTowardActorGoal.postGoal(self);
+	//if (!HasCurrentAssignment() || (!goal.IsA('AI_DummyWeaponGoal') && !goal.IsA('AI_DummyMovementGoal')))
+	//{
+	//	super.resourceStolenCB(goal, stolenResource);
+	//}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -285,25 +202,13 @@ latent function MoveToClearRoutePoints()
 	// build the route we will take when we move
 	BuildClearRoute();
 
-	// setup the sensor to uncompliant characters
-	SetupDistanceToUncomplaintCharactersSensor();
-
 	CurrentClearRouteIndex = 0;
 
 	while (CurrentClearRouteIndex < ClearRoute.Length)
 	{
-		// in case we're set to pause movement before the movement behavior starts
-		if (! bPauseMovement)
-			MoveToNextClearRoutePoint();
+		MoveToNextClearRoutePoint();
 
-		if (bPauseMovement)
-		{
-			pause();
-		}
-		else
-		{
-			++CurrentClearRouteIndex;
-		}
+		++CurrentClearRouteIndex;
 	}
 }
 
