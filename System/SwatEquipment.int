@@ -282,9 +282,22 @@ TotalAmmoString=50 shells
 RateOfFire=100 RPM
 
 [ColtM1911HG]
-Description=The Colt M1911 Handgun has been a mainstay in law enforcement for decades.  This weapon, chambered in .45 ACP, packs a powerful punch and is the most common backup weapon for SWAT officers.  This semi-automatic weapon has an 8 round magazine and can fire both full metal jacket and jacketed hollow point ammunition.
+Description=The Colt M1911 Handgun has been a mainstay in law enforcement for decades.  This weapon, chambered in .45 ACP, packs a powerful punch and is the most common backup weapon for SWAT officers.  This semi-automatic weapon has a 7-round magazine and can fire both full metal jacket and jacketed hollow point ammunition.
 FriendlyName=M1911
 ShortName=M1911
+Manufacturer=Colt
+Caliber=.45 ACP
+CountryOfOrigin=United States
+ProductionStart=1911
+FireModes=Semi-Automatic
+MagazineSizeString=8
+TotalAmmoString=10 magazines
+RateOfFire=390 RPM
+
+[Kimber1911HG]
+Description=The Kimber Custom II is a modern 1911 derivative. This particular version of the Custom II was produced specifically for the Los Angles Police Department SWAT unit in 2001. Like the original M1911, the Custom II is chambered in .45 ACP with a magazine that holds 7 rounds. Its size, weight, and handling are comparable to the M1911.
+FriendlyName=Kimber Custom II LAPD
+ShortName=Custom II
 Manufacturer=Colt
 Caliber=.45 ACP
 CountryOfOrigin=United States
