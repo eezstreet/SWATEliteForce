@@ -123,9 +123,12 @@ var() config class<SwatWeapon> OriginalVariant; // The weapon that this is a var
 var() config bool bAlterFirstPersonMesh; // If true, the mesh on the first person model will be altered.
 var() config Mesh FirstPersonMesh; // Note, if this is None, the static mesh will be used instead
 var() config StaticMesh FirstPersonStaticMesh;
+var() config array<Material> FPSkins; // Replacement skins for first-person mesh
 var() config bool bAlterThirdPersonMesh;
 var() config Mesh ThirdPersonMesh;
 var() config StaticMesh ThirdPersonStaticMesh;
+var() config array<Material> TPSkins; // Replacement skins for third-person mesh
+
 
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
@@ -1513,7 +1516,17 @@ function UnRegisterInterestedGrenadeThrowing(IInterestedGrenadeThrowing Client)
 
 simulated function MutateFPHandheldEquipmentModel(HandheldEquipmentModel Model)
 {
+  local int i;
+
   Super.MutateFPHandheldEquipmentModel(Model);
+
+  if (FPSkins.Length > 0)
+  {
+
+    for(i=0; i<FPSkins.Length; ++i) {
+      Model.Skins[i] = FPSkins[i];
+    }
+  }
 
   if(bAlterFirstPersonMesh)
   {
@@ -1532,7 +1545,17 @@ simulated function MutateFPHandheldEquipmentModel(HandheldEquipmentModel Model)
 
 simulated function MutateTPHandheldEquipmentModel(HandheldEquipmentModel Model)
 {
+  local int i;
+
   Super.MutateTPHandheldEquipmentModel(Model);
+
+  if (TPSkins.Length > 0)
+  {
+
+    for(i=0; i<TPSkins.Length; ++i) {
+      Model.Skins[i] = TPSkins[i];
+    }
+  }
 
   if(bAlterThirdPersonMesh)
   {
