@@ -49,6 +49,7 @@ var config float         FadeDuration;      // time to fade out the wires and pr
 var config float         ProbeVisualSpeed;   //in units per second, how fast do the probes *appear* to fly.  Note that the target point has *already been determined*.
 var config float         ProbeRecoilTime;   // seconds for probes to recoil back to their maximum extention if they hit nothing
 var config float         ProbeFinalRecoilSpeed;   // seconds for probes to recoil back to their maximum extention if they hit nothing
+var config float         AiMaxUseRange;
 
 // configurable parameters for the taser wire animated models
 var config class<TaserWire>      TaserWireClass;
@@ -1019,6 +1020,24 @@ simulated latent function PostRoundUsed()
         Sleep(0);
 }
 
+simulated function bool ShouldOfficerUseAgainst(Pawn OtherActor, int ShotsFired)
+{
+	local SwatPawn SwatPawn;
+
+	SwatPawn = SwatPawn(OtherActor);
+	if (SwatPawn == None)
+	{
+		return false;
+	}
+
+	if (SwatPawn.TaserMightKillMe())
+	{	// Don't use it if the taser might kill them (as defined by their archetype?)
+		return false;
+	}
+
+	return super.ShouldOfficerUseAgainst(OtherActor, ShotsFired);
+}
+
 defaultproperties
 {
     Slot=Slot_Invalid
@@ -1063,4 +1082,6 @@ defaultproperties
 
 	bIsLessLethal=true
 	bPenetratesDoors=false
+
+	AiMaxUseRange=512.0
 }

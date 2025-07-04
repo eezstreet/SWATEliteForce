@@ -7,8 +7,12 @@ This patch is primarily focused on bug fixes and minor improvements:
   - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley)
   - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
   - SWAT AI can now use NVGs (CHECK IF DONE!)
+  - Suspects now fire upon doors much more reliably when barricading.
+  - Suspects shoot faster and more consistently at SWAT and are more dangerous in general.
+  - Fixed a TSS bug where AIs (SWAT + suspects) used wrong angles when determining if they could take cover (specifically, if the cover involves leaning)
   - Fixed the beanbag shotgun applying both the ReactToBeingShot action and the Stung action, which lead to huge morale loss and a visual glitch. (thanks to kevinfoley)
-  - Fixed a TSS bug where if a suspect was stung and then became compliant, they would randomly play an "aim gun at" animation. (thanks to kevinfoley)
+  - Fixed a TSS bug where if a suspect was stung and then became compliant, they would randomly stand up and play an "aim gun at" animation. (thanks to kevinfoley)
+  - SWAT will no longer automatically deploy taser weapons against suspects that can die from them. (This only really applied to drug flushers on FunTime Amusements)
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
   - Fixed suspects having incorrect textures when wearing heavy armor (thanks to beppegoodoldrebel)

@@ -1307,6 +1307,15 @@ protected function AimAtTarget(Actor Target, int BehaviorPriority, bool bAimWeap
 	CurrentAimAtTargetGoal.postGoal(self);
 }
 
+function FiredWeapon GetBackupWeapon();
+function FiredWeapon GetPrimaryWeapon();
+
+function bool AllowedToUseWeaponAgainst(FiredWeapon Weapon, Pawn Target, int ShotsFired)
+{
+	// Meant to be overridden
+	return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Doors

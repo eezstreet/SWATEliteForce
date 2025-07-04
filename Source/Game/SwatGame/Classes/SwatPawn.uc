@@ -1778,6 +1778,11 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 
 function RefundLightstick() {}
 
+simulated function bool TaserMightKillMe()
+{
+    return false; // Handled by subclasses
+}
+
 // returns true if we should issue a taunt to the subject
 // returns false otherwise
 // out bool says if it's a suspect

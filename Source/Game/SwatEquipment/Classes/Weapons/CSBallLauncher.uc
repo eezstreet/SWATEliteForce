@@ -2,6 +2,8 @@ class CSBallLauncher extends RoundBasedWeapon;
 
 var config class<CSBallBase> CSBallClass;
 
+var config int OfficerMaxShotsWhenGassed;
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -32,8 +34,27 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
     Ball.Velocity = ShotVector * MuzzleVelocity;
 }
 
+simulated function bool ShouldOfficerUseAgainst(Pawn OtherActor, int ShotsFired)
+{
+    local SwatPawn SwatPawn;
+
+    SwatPawn = SwatPawn(OtherActor);
+    if (SwatPawn == None)
+    {
+        return false;
+    }
+
+    if (SwatPawn.IsGassed() && ShotsFired >= OfficerMaxShotsWhenGassed)
+    {   // If they're gassed then this weapon is useless, anything extra is flair
+        return false;
+    }
+
+    return super.ShouldOfficerUseAgainst(OtherActor, ShotsFired);
+}
+
 defaultproperties
 {
 	bIsLessLethal=true
 	bPenetratesDoors=false
+    OfficerMaxShotsWhenGassed=5
 }

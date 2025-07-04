@@ -330,6 +330,7 @@ protected function bool FindBestCoverToAimingFrom()
 	CachedSeenPawns = SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns;
 	AimingCoverLocationType = kAICLT_NearestFront;
     CoverResult = AICoverFinder.FindCover(CachedSeenPawns, AimingCoverLocationType);
+    AimingRotation.Yaw = CoverResult.coverYaw;
 
 	if (m_Pawn.logAI)
 		log("CoverResult.coverLocationInfo is: "$CoverResult.coverLocationInfo$"  CoverResult.coverActor is: " $CoverResult.coverActor);
@@ -348,6 +349,7 @@ protected function bool FindBestCoverToAimingFrom()
 
 		AimingCoverLocationType = kAICLT_NearFrontCorner;
 		CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AimingCoverLocationType);
+    	AimingRotation.Yaw = CoverResult.coverYaw;
 
 	    // Unexpected. This happens so infrequently, we should notify in non-
         // shipping builds, but fail gracefully and not hard-assert.
@@ -363,6 +365,7 @@ protected function bool FindBestCoverToAimingFrom()
 		{
 			AimingCoverLocationType = kAICLT_FarFrontCorner;
 			CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AimingCoverLocationType);
+    		AimingRotation.Yaw = CoverResult.coverYaw;
 			return CanUseCover();
 		}
 		else
@@ -567,7 +570,6 @@ protected latent function AimingFromBehindCover()
 		Aim(Opponent, true);
 
 		// rotate to the attack orientation
-		AimingRotation.Yaw = CoverResult.coverYaw;
 		RotateToAimingRotation(Opponent);
 
 		if (CoverResult.coverLocationInfo == kAICLI_InLowCover)

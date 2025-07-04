@@ -83,6 +83,19 @@ function UpdateInstancePrecachables()
 	    SGI.SetLevelHasFemaleCharacters();
 }
 
+function bool TaserMightKillMe()
+{
+  // Only determines if the taser MAY kill this character, not if this instance DOES kill it.
+  local CharacterArchetype CharacterArchetype;
+
+  CharacterArchetype = CharacterArchetype(Archetype);
+  if (CharacterArchetype == None)
+  {
+    return false;
+  }
+  return CharacterArchetype.TaserDeathChance > 0.001f; // FIXME: Epsilon...?
+}
+
 //basically ripped from SwatAICharacter.uc
 function bool IsFemale()
 {

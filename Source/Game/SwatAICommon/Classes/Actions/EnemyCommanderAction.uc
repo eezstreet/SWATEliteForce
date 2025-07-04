@@ -1280,6 +1280,21 @@ function InterruptCurrentEngagement()
 	}
 }
 
+function FiredWeapon GetBackupWeapon()
+{
+	return ISwatEnemy(m_Pawn).GetBackupWeapon();
+}
+
+function FiredWeapon GetPrimaryWeapon()
+{
+	return ISwatEnemy(m_Pawn).GetPrimaryWeapon();
+}
+
+function bool AllowedToUseWeaponAgainst(FiredWeapon Weapon, Pawn TargetPawn, int ShotsFired)
+{
+	return Weapon.ShouldSuspectUseAgainst(TargetPawn, ShotsFired);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Investigation / Barricading
