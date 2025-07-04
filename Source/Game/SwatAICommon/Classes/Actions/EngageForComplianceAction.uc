@@ -17,10 +17,6 @@ var(parameters) Pawn					TargetPawn;
 var private OrderComplianceGoal			CurrentOrderComplianceGoal;
 var protected MoveOfficerToEngageGoal   CurrentMoveOfficerToEngageGoal;
 var private bool        				bTriedAlternatives;
-var private DeployTaserGoal 			CurrentDeployTaserGoal;
-var private DeployPepperBallGoal 		CurrentDeployPepperBallGoal;
-var private DeployPepperSprayGoal 		CurrentDeployPepperSprayGoal;
-var private DeployLessLethalShotgunGoal CurrentDeployLessLethalShotgunGoal;
 
 // config variables
 var config float						MinComplianceOrderSleepTime;
@@ -61,30 +57,6 @@ function cleanup()
 	{
 		CurrentMoveOfficerToEngageGoal.Release();
 		CurrentMoveOfficerToEngageGoal = None;
-	}
-
-	if (CurrentDeployTaserGoal != None)
-	{
-		CurrentDeployTaserGoal.Release();
-		CurrentDeployTaserGoal = None;
-	}
-
-	if (CurrentDeployPepperBallGoal != None)
-	{
-		CurrentDeployPepperBallGoal.Release();
-		CurrentDeployPepperBallGoal = None;
-	}
-
-	if (CurrentDeployPepperSprayGoal != None)
-	{
-		CurrentDeployPepperSprayGoal.Release();
-		CurrentDeployPepperSprayGoal = None;
-	}
-
-	if (CurrentDeployLessLethalShotgunGoal != None)
-	{
-		CurrentDeployLessLethalShotgunGoal.Release();
-		CurrentDeployLessLethalShotgunGoal = None;
 	}
 }
 
@@ -222,83 +194,6 @@ state Running
 		}
 
 		sleep(RandRange(kMinComplianceUpdateTime, kMaxComplianceUpdateTime));
-	}
-
-	log("...broke out of main loop bcause it was completed");
-
-	if (class'Pawn'.static.checkConscious(TargetPawn) && !ISwatAI(TargetPawn).IsCompliant() && !ISwatAI(TargetPawn).IsDisabled())
-	{
-		// Failed to order compliance. Try...alternative...methods...
-		if (CurrentOrderComplianceGoal != None)
-		{
-			CurrentOrderComplianceGoal.Release();
-			CurrentOrderComplianceGoal = None;
-		}
-
-		log(Name$"...Starting to pursue alternatives...");
-		if (ShouldTaserAsFollowUp())
-		{
-			log(Name$"... should taser as follow up");
-			CurrentDeployTaserGoal = new class'DeployTaserGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
-			assert(CurrentDeployTaserGoal != None);
-			CurrentDeployTaserGoal.AddRef();
-			CurrentDeployTaserGoal.postGoal(self);
-			WaitForGoal(CurrentDeployTaserGoal);
-			CurrentDeployTaserGoal.unPostGoal(self);
-
-			CurrentDeployTaserGoal.Release();
-			CurrentDeployTaserGoal = None;
-		}
-		else if (ShouldPepperSprayAsFollowUp())
-		{
-			log(Name$"... should pepper spray as follow up");
-			CurrentDeployPepperSprayGoal = new class'DeployPepperSprayGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
-			assert(CurrentDeployPepperSprayGoal != None);
-			CurrentDeployPepperSprayGoal.AddRef();
-			CurrentDeployPepperSprayGoal.postGoal(self);
-			WaitForGoal(CurrentDeployPepperSprayGoal);
-			CurrentDeployPepperSprayGoal.unPostGoal(self);
-
-			CurrentDeployPepperSprayGoal.Release();
-			CurrentDeployPepperSprayGoal = None;
-		}
-		else if (ShouldPepperBallAsFollowUp())
-		{
-			log(Name$"... should pepperball as follow up");
-			CurrentDeployPepperBallGoal = new class'DeployPepperBallGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
-			assert(CurrentDeployPepperBallGoal != None);
-			CurrentDeployPepperBallGoal.AddRef();
-			CurrentDeployPepperBallGoal.postGoal(self);
-			WaitForGoal(CurrentDeployPepperBallGoal);
-			CurrentDeployPepperBallGoal.unPostGoal(self);
-
-			CurrentDeployPepperBallGoal.Release();
-			CurrentDeployPepperBallGoal = None;
-		}
-		else if (ShouldBeanbagAsFollowUp())
-		{
-			log(Name$"... should beanbag as follow up");
-			CurrentDeployLessLethalShotgunGoal = new class'DeployLessLethalShotgunGoal'(AI_Resource(m_Pawn.CharacterAI), TargetPawn);
-			assert(CurrentDeployLessLethalShotgunGoal != None);
-			CurrentDeployLessLethalShotgunGoal.AddRef();
-			CurrentDeployLessLethalShotgunGoal.postGoal(self);
-			WaitForGoal(CurrentDeployLessLethalShotgunGoal);
-			CurrentDeployLessLethalShotgunGoal.unPostGoal(self);
-
-			CurrentDeployLessLethalShotgunGoal.Release();
-			CurrentDeployLessLethalShotgunGoal = None;
-		}
-		else
-		{
-			log(Name$"... no follow up available");
-			succeed();
-		}
-
-		OrderTargetToComply();
-		while (! CurrentOrderComplianceGoal.hasCompleted())
-		{
-			sleep(RandRange(kMinComplianceUpdateTime, kMaxComplianceUpdateTime));
-		}
 	}
 
 	succeed();

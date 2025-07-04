@@ -567,11 +567,7 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 		// if the officer doesn't have a current assignment
 		// we only want to engage Seen if they aren't compliant, restrained, or incapacitated, 
 		// if they are a threat or not ignoring us, and we can assign any officer to them
-		if (! ISwatAI(Seen).IsCompliant() && 
-			! ISwatAI(Seen).IsArrested() && 
-			! Seen.IsIncapacitated() &&
-			(Seen.IsAThreat() || !ISwatAI(Seen).GetCommanderAction().IsIgnoringComplianceOrders()) &&
-			CanAssignAnyOfficerToTarget(Seen))
+		if (ShouldEngageSeenAI(Seen))
 		{
 			// this may need to be moved because this will be called every time we see a Enemy or Hostage 
 			// (then it will be called too often I think)
