@@ -108,22 +108,32 @@ protected latent function MoveToTakeCover(vector Destination)
 	CurrentMoveToLocationGoal = None;
 }
 
-protected latent function TakeCover()
+// What pawns are we trying to take cover against?
+protected function array<Pawn> GetCoveredPawns()
 {
-    m_tookCover = false;
-
 	assert(m_Pawn != None);
 	assert(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction != None);
 	assert(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor() != None);
+	
+	return SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns;
+}
 
-    CoverResult = AICoverFinder.FindCover(SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns,
-        kAICLT_NearestSide);
+protected latent function TakeCover()
+{
+	//if (m_Pawn.logAI)
+		log(m_Pawn.Name $ " Starting to TakeCover...");
+
+    m_tookCover = false;
+
+	assert(m_Pawn != None);
+
+    CoverResult = AICoverFinder.FindCover(GetCoveredPawns(), kAICLT_NearestSide);
     if (CoverResult.coverLocationInfo != kAICLI_NotInCover)
     {
 		// notification
 		NotifyFoundCover();
 
-		if (m_Pawn.logAI)
+	//	if (m_Pawn.logAI)
 	        log("Taking cover at: "$CoverResult.coverLocation);
 		
 		MoveToTakeCover(CoverResult.coverLocation);
@@ -137,6 +147,12 @@ protected latent function TakeCover()
         }
 
 		m_tookCover = true;
+    }
+    else 
+    {
+//    	if (m_Pawn.logAI)
+    		log(m_Pawn.Name $ "....couldn't find any cover, failing");
+    	instantFail(ACT_NO_COVER_FOUND);
     }
 }
 

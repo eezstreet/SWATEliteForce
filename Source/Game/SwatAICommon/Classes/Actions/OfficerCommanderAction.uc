@@ -355,12 +355,21 @@ function NotifyBlockingDoorOpen(Door BlockedDoor)
 //
 // Hive Interface
 
+private function bool ShouldAttackRunner(Pawn Target)
+{
+	return Target.IsA('SwatFlusher') || Target.IsA('SwatEscaper');
+}
+
 private function bool ShouldEngageTarget(Pawn Target)
 {
 	if (m_Pawn.logTyrion)
 		log("ShouldEngageTarget - CurrentAssignment: " $ CurrentAssignment $ " Target: " $ Target $ " CurrentAttackEnemyGoal: " $CurrentAttackEnemyGoal);
 
-	if (CurrentAssignment != Target)
+	if (!class'Pawn'.static.checkConscious(Target))
+	{
+		return false;
+	}
+	else if (CurrentAssignment != Target)
 	{
 		// if we're not currently assigned to this target, take him down!
 		return true;
@@ -493,55 +502,48 @@ private latent function AttackTarget(Pawn Target)
 		CurrentAttackEnemyGoal.postGoal(self);
 		WaitForGoal(CurrentAttackEnemyGoal);
 	}
-	
 }
 
-private function bool ShouldAttackRunner(Pawn target)
+function FiredWeapon GetBackupWeapon()
 {
-	return (target.IsA('SwatFlusher') || target.IsA('SwatEscaper')) &&
-	  (ISwatOfficer(m_Pawn).GetPrimaryWeapon().IsLessLethal() || (ISwatOfficer(m_Pawn).GetBackupWeapon() != None && ISwatOfficer(m_Pawn).GetBackupWeapon().IsLessLethal()));
+	return ISwatOfficer(m_Pawn).GetBackupWeapon();
 }
 
-private function bool ShouldAttackUsingLessLethal(Pawn target)
+function FiredWeapon GetPrimaryWeapon()
 {
-	local FiredWeapon Item;
+	return ISwatOfficer(m_Pawn).GetPrimaryWeapon();
+}
 
-	if(ISwatAI(target).IsCompliant() || ISwatAI(target).IsArrested() || target.IsA('SwatUndercover'))
-	{
-		return false; // Don't target compliant or arrested people. And leave Carl Jennings alone!
-	}
+function bool AllowedToUseWeaponAgainst(FiredWeapon Weapon, Pawn TargetPawn, int ShotsFired)
+{
+	local ISwatEnemy ISwatEnemy;
 
-	Item = FiredWeapon(m_Pawn.GetActiveItem());
-
-	if(Item == None || !Item.IsLessLethal() || Item.IsA('Taser')      || // Don't tase people, it can kill
-		(Item.IsA('CSBallLauncher') && ISwatAI(target).IsGassed())    || // Pepperball is uselss on already gassed people
-		(Item.IsA('BeanbagShotgunBase') && ISwatAI(target).IsStung()) || // Don't keep spamming beanbags at people.
-		(Item.IsA('GrenadeLauncherBase')))                            	 // Don't use the grenade launcher. It's stupid.
+	if (Weapon == None)
 	{
 		return false;
 	}
 
-	if(GetHive().IsMovingTo(self.m_Pawn) || GetHive().IsFallingIn(self.m_Pawn))
-	{	// The AI is trained to attack on the move in this state; we don't want them to walk up to people and start beaning them.
-		return true;
+	ISwatEnemy = ISwatEnemy(TargetPawn);
+	if (ISwatEnemy != None && !Weapon.IsLessLethal() && !ISwatEnemy.IsAThreat())
+	{
+		return false;
 	}
-
-	return false;
+	return Weapon.ShouldOfficerUseAgainst(TargetPawn, ShotsFired);
 }
 
 private latent function EngageAssignment()
 {
 	local bool bCompletedEngagementGoals;
+	local bool bCanUseAWeapon;
 
 	// we should have an assignment here
 	assert (CurrentAssignment != None);
 
-	log("EngageAssignment() for "$self.m_Pawn.name);
-	if(CurrentAssignment.IsA('SwatPlayer') || ShouldAttackRunner(CurrentAssignment) ||
-		(CurrentAssignment.IsA('SwatEnemy') && ISwatEnemy(CurrentAssignment).IsAThreat()) ||	// Current assignment is a threat
-		(CurrentAssignment.IsA('SwatEnemy') && !ISwatEnemy(CurrentAssignment).IsAThreat() && ShouldAttackUsingLessLethal(CurrentAssignment))	// Not a threat but we can use less lethal to subdue them
-		)
-	{
+	bCanUseAWeapon = AllowedToUseWeaponAgainst(GetBackupWeapon(), CurrentAssignment, 0) || 
+		AllowedToUseWeaponAgainst(GetPrimaryWeapon(), CurrentAssignment, 0);
+
+	if((CurrentAssignment.IsA('SwatPlayer') || ISwatEnemy(CurrentAssignment).IsAThreat() || ShouldAttackRunner(CurrentAssignment)) && bCanUseAWeapon)
+	{	// If the person is a threat or is a player, we should always shoot them.
 		log(""$self.m_Pawn.name$" should attack assignment "$CurrentAssignment.name$", so let's do that now!");
 		AttackTarget(CurrentAssignment);
 

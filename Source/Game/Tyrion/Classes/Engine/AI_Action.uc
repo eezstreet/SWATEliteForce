@@ -76,7 +76,7 @@ event instantFail( ACT_ErrorCodes errorCode, optional bool bRemoveGoal )
 	if ( bRemoveGoal )
 		achievingGoal.bTryOnlyOnce = true;
 
-	//log( "1." @ name @ "instantFail called with code" @ errorcode );
+	log( "1." @ name @ "instantFail called with code" @ errorcode );
 
 	achievingGoal.markGoalAsFailed();
 
@@ -85,7 +85,7 @@ event instantFail( ACT_ErrorCodes errorCode, optional bool bRemoveGoal )
 
 	achievingGoal.handleGoalFailure();
 
-	//log( "2." @ name @ "being removed by instantFail" );
+	log( "2." @ name @ "being removed by instantFail" );
 	removeAction();		// references achievingGoal
 
 	achievingGoal.Release();				// balances AddRef done in initAction

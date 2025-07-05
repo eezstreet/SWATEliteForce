@@ -281,7 +281,7 @@ latent protected function RotateToAttackRotation(Pawn Target)
 {
 	assert(CurrentRotateTowardRotationGoal == None);
 
-	if ((Target != None) && !IsRotatedToAttackRotation() && !m_Pawn.CanHit(Target))
+	if ((Target != None) && !IsRotatedToAttackRotation() && !m_Pawn.CanHitTarget(Target))
 	{
 		CurrentRotateTowardRotationGoal = new class'RotateTowardRotationGoal'(movementResource(), achievingGoal.priority, AttackRotation);
 		assert(CurrentRotateTowardRotationGoal != None);
@@ -350,6 +350,7 @@ protected function bool FindBestCoverToAttackFrom()
 	CachedSeenPawns = SwatCharacterResource(m_Pawn.characterAI).CommonSensorAction.GetVisionSensor().Pawns;
 	AttackCoverLocationType = kAICLT_NearestFront;
     CoverResult = AICoverFinder.FindCover(CachedSeenPawns, AttackCoverLocationType);
+	AttackRotation.Yaw = CoverResult.coverYaw;
 
 	if (m_Pawn.logAI)
 		log("CoverResult.coverLocationInfo is: "$CoverResult.coverLocationInfo$"  CoverResult.coverActor is: " $CoverResult.coverActor);
@@ -368,6 +369,7 @@ protected function bool FindBestCoverToAttackFrom()
 
 		AttackCoverLocationType = kAICLT_NearFrontCorner;
 		CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AttackCoverLocationType);
+		AttackRotation.Yaw = CoverResult.coverYaw;
 
 	    // Unexpected. This happens so infrequently, we should notify in non-
         // shipping builds, but fail gracefully and not hard-assert.
@@ -383,6 +385,7 @@ protected function bool FindBestCoverToAttackFrom()
 		{
 			AttackCoverLocationType = kAICLT_FarFrontCorner;
 			CoverResult = AICoverFinder.FindCoverBehindActor(CachedSeenPawns, CoverResult.coverActor, AttackCoverLocationType);
+			AttackRotation.Yaw = CoverResult.coverYaw;
 			return CanUseCover();
 		}
 		else
@@ -595,7 +598,6 @@ protected latent function AttackFromBehindCover()
 		Attack(Target, true);
 
 		// rotate to the attack orientation
-		AttackRotation.Yaw = CoverResult.coverYaw;
 		RotateToAttackRotation(Target);
 
 		if (CoverResult.coverLocationInfo == kAICLI_InLowCover)

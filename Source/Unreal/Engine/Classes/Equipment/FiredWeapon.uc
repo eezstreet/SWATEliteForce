@@ -2082,6 +2082,18 @@ simulated function SetFlashlightCone(float cone)
 	}
 }
 
+simulated function bool ShouldSuspectUseAgainst(Pawn OtherActor, int ShotsFired)
+{
+    // Should suspects use this weapon against another pawn? (regardless of reload)
+    return !IsEmpty();
+}
+
+simulated function bool ShouldOfficerUseAgainst(Pawn OtherActor, int ShotsFired)
+{
+    // Should AIs use this weapon against another pawn? (regardless of reload)
+    return !IsEmpty();
+}
+
 simulated private function UpdateFlashlightLighting(optional float dTime)
 {
 #if ENABLE_FLASHLIGHT_PROJECTION_VISIBILITY_TESTING

@@ -533,6 +533,7 @@ native function bool CanSee(Actor Other);
 // Overridden in SwatAI
 event bool CanHitTargetAt(Actor Target, vector AILocation)	{ return false; }
 event bool CanHit(Actor Target)								{ return false; }
+event bool CanHitTarget(Actor Target)                       { return false; }
 #endif
 
 // Return true if you want to change the default output as given in res, based on the input data.
