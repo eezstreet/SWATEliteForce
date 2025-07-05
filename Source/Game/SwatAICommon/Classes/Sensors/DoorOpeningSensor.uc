@@ -20,11 +20,7 @@ function cleanup()
 {
 	super.cleanup();
 	
-	while (TargetDoors.Length > 0)
-	{
-		ISwatDoor(TargetDoors[0]).UnRegisterInterestedInDoorOpening(self);
-		TargetDoors.Remove(0, 1);
-	}
+	ClearDoors();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,6 +48,15 @@ function AddDoor(Door inTargetDoor)
 	// register with the door to find out when it openes
 	TargetDoors[TargetDoors.Length] = inTargetDoor;
 	ISwatDoor(inTargetDoor).RegisterInterestedInDoorOpening(self);
+}
+
+function ClearDoors()
+{
+	while (TargetDoors.Length > 0)
+	{
+		ISwatDoor(TargetDoors[0]).UnRegisterInterestedInDoorOpening(self);
+		TargetDoors.Remove(0, 1);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

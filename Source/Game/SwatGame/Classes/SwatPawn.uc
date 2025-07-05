@@ -272,7 +272,7 @@ replication
 
     // replicated functions sent to server by owning client
     reliable if( Role < ROLE_Authority )
-        ServerToggleDesiredFlashlightState, ServerSetLowReadyStatus;
+        ServerToggleDesiredFlashlightState, ServerToggleDesiredNVGState, ServerSetLowReadyStatus;
 
     reliable if ( Role == ROLE_Authority )
         AnimFlags, FlashlightShouldBeOn, NightvisionShouldBeOn, bShouldBeAtLowReady, ReasonForShouldBeAtLowReady, bArrested, BeingArrested;
@@ -1610,6 +1610,25 @@ simulated function float GetDelayBeforeFlashlightShutoff()
         return 0;
 }
 
+// Switches the desired NVG state on/off (default state is OFF)
+simulated function ToggleDesiredNVGState()
+{
+    ServerToggleDesiredNVGState();
+}
+
+// Executes only on the server (and in standalone).
+function ServerToggleDesiredNVGState()
+{
+    local IVisionEnhancement CurrentVision;
+
+    // If we are wearing vision, toggle it. Otherwise don't?
+    CurrentVision = IVisionEnhancement(GetSkeletalRegionProtection(REGION_Head));
+    if (CurrentVision != None)
+    {
+        SetDesiredNightvisionState(!NightvisionShouldBeOn);
+    }
+}
+
 // Switches the desired flashlight state on/off (default state is OFF).
 simulated function ToggleDesiredFlashlightState()
 {
@@ -1619,18 +1638,7 @@ simulated function ToggleDesiredFlashlightState()
 // Executes only on the server (and in standalone).
 function ServerToggleDesiredFlashlightState()
 {
-	local IVisionEnhancement CurrentVision;
-
-	// If we are wearing nightvision...
-	CurrentVision = IVisionEnhancement(GetSkeletalRegionProtection(REGION_Head));
-	if (CurrentVision != None)
-	{
-		SetDesiredNightvisionState(!NightvisionShouldBeOn);
-	}
-	else
-	{
-		SetDesiredFlashlightState(!GetDesiredFlashlightState());
-	}
+    SetDesiredFlashlightState(!GetDesiredFlashlightState());
 }
 
 simulated event FlashlightShouldBeOnChanged()
@@ -1769,6 +1777,11 @@ simulated function IssueComplianceTo(Pawn TargetPawn)
 }
 
 function RefundLightstick() {}
+
+simulated function bool TaserMightKillMe()
+{
+    return false; // Handled by subclasses
+}
 
 // returns true if we should issue a taunt to the subject
 // returns false otherwise

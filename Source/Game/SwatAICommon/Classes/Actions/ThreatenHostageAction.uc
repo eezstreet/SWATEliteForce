@@ -286,7 +286,7 @@ function bool CanAimAtHostage()
 		return false;
 	}
 
-	return ((CurrentWeapon != None) && m_Pawn.CanHit(Hostage) && ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Hostage));
+	return ((CurrentWeapon != None) && m_Pawn.CanHitTarget(Hostage) && ISwatAI(m_pawn).AnimCanAimAtDesiredActor(Hostage));
 }
 
 

@@ -129,6 +129,7 @@ function bool CanBeUsedNow();
 
 function bool IsCompliant();
 function bool IsArrested();
+function bool IsBeingArrestedNow();
 function bool IsOtherActorAThreat(Actor otherActor);
 function bool IsAggressive();
 

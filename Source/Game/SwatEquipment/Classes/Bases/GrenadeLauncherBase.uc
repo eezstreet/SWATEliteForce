@@ -1,5 +1,10 @@
 class GrenadeLauncherBase extends RoundBasedWeapon;
 
+var config float OfficerUseRangeMin;
+var config float OfficerUseRangeMax;
+var config int OfficerUseMaxShotsWhenStung;
+var config int OfficerUseTargetMinHealth;
+
 function BallisticFire(vector StartTrace, vector EndTrace)
 {
     local vector ShotVector;
@@ -62,7 +67,56 @@ function EquipmentSlot GetFiredGrenadeEquipmentSlot()
 	}
 }
 
+simulated function bool ShouldOfficerUseAgainst(Pawn OtherActor, int ShotsFired)
+{
+	local SwatPawn SwatPawn;
+	local float Distance;
+
+	SwatPawn = SwatPawn(OtherActor);
+	if (SwatPawn == None)
+	{
+		return false;
+	}
+
+	// Do not use this -at all- against hostages
+	if (SwatPawn.IsA('SwatHostage'))
+	{
+		return false;
+	}
+
+	// Only allow the use of the triple baton ammo
+	if (!Ammo.IsA('HK69GL_TripleBatonAmmo'))
+	{
+		return false;
+	}
+
+	// Don't shoot the target if lower than X health
+	if (SwatPawn.Health < OfficerUseTargetMinHealth)
+	{
+		return false;
+	}
+
+	// Don't more than X times if the target is stunned already
+	if (SwatPawn.IsStung() && ShotsFired >= OfficerUseMaxShotsWhenStung)
+	{
+		return false;
+	}
+
+	Distance = VSize(Owner.Location - OtherActor.Location);
+	if (Distance < OfficerUseRangeMin || Distance > OfficerUseRangeMax)
+	{
+		// Outside of the range
+		return false;
+	}
+	
+	return super.ShouldOfficerUseAgainst(OtherActor, ShotsFired);
+}
+
 defaultproperties
 {
-  bPenetratesDoors=false
+	bPenetratesDoors=false
+	OfficerUseRangeMin=256
+	OfficerUseRangeMax=1024
+	OfficerUseMaxShotsWhenStung=1
+	OfficerUseTargetMinHealth=50
 }

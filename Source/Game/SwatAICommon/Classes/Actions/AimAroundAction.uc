@@ -669,7 +669,7 @@ function FindBestPointToAimAt()
 	{
 		// if we don't find a point, or we can't hit the point,
 		// go low ready if possible, otherwise go full body
-		if ((BestAimPoint == None) || (CurrentWeapon == None) || ! m_Pawn.CanHit(BestAimPoint))
+		if ((BestAimPoint == None) || (CurrentWeapon == None) || ! m_Pawn.CanSee(BestAimPoint))
 		{
 			if ((CurrentWeapon != None) && ISwatAI(m_Pawn).CanPawnUseLowReady())
 			{

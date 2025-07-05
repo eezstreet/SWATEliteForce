@@ -489,6 +489,50 @@ native function NavigationPoint FindEngagingPointForOfficerInRoom(Pawn Officer, 
 //
 // Vision
 
+function bool ShouldEngageSeenAI(Pawn Seen)
+{
+	if (ISwatAI(Seen).IsCompliant())
+	{	// Don't engage compliant on seen
+		return false;
+	}
+
+	if (ISwatAI(Seen).IsArrested())
+	{	// Don't engage arrested on seen
+		return false;
+	}
+
+	if (Seen.IsIncapacitated())
+	{	// Don't engage incapacitated
+		return false;
+	}
+
+	if (!CanAssignAnyOfficerToTarget(Seen))
+	{	// Don't engage them if officers can't be assigned to them
+		return false;
+	}
+
+	if (Seen.IsAThreat())
+	{	// yeah for sure engage threats
+		return true;
+	}
+
+	if (ISwatAI(Seen).GetCommanderAction().IsIgnoringComplianceOrders())
+	{	// If they are not ignoring compliance orders:
+		if (Seen.IsA('SwatHostage'))
+		{
+			// Definitely ignore them if they're a hostage
+			return false;
+		}
+
+		// Otherwise, DEFINITELY focus on them because they could be dangerous
+		return true;
+	}
+	
+	// We have not determined yet if they are ignoring compliance orders or not
+	// Only assign it to SWAT if it's a suspect or there are no suspects assigned
+	return Blackboard.AreAnyAssignedTargetsSuspects() || !Seen.IsA('SwatHostage');
+}
+
 function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 {
 	assert(OfficerViewer != None);
@@ -523,11 +567,7 @@ function OfficerSawPawn(Pawn OfficerViewer, Pawn Seen)
 		// if the officer doesn't have a current assignment
 		// we only want to engage Seen if they aren't compliant, restrained, or incapacitated, 
 		// if they are a threat or not ignoring us, and we can assign any officer to them
-		if (! ISwatAI(Seen).IsCompliant() && 
-			! ISwatAI(Seen).IsArrested() && 
-			! Seen.IsIncapacitated() &&
-			(Seen.IsAThreat() || ! ISwatAI(Seen).GetCommanderAction().IsIgnoringComplianceOrders()) &&
-			CanAssignAnyOfficerToTarget(Seen))
+		if (ShouldEngageSeenAI(Seen))
 		{
 			// this may need to be moved because this will be called every time we see a Enemy or Hostage 
 			// (then it will be called too often I think)
@@ -855,7 +895,8 @@ private event bool CanAssignOfficerToTarget(Pawn Officer, Pawn Target)
 			return true;
 		}
 
-		if(Officer.CanHit(Target) || Officer.LineOfSightTo(Target))
+		//if(Officer.CanHit(Target) || Officer.LineOfSightTo(Target))
+		if (Officer.LineOfSightTo(Target) || bIsTargetAThreat)
 		{ // DO assign us if we can hit the target or they are within LOS
 			return true;
 		}

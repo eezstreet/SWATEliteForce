@@ -195,7 +195,7 @@ Begin:
     AimAround(45.0, 60.0, true);
     MoveToInvestigationDestination();
 
-	UseResources(class'AI_Resource'.const.RU_ARMS);
+	//UseResources(class'AI_Resource'.const.RU_ARMS);
 
 	// poll. grrr.
 	while (! CanLookAtInvestigateLocation())

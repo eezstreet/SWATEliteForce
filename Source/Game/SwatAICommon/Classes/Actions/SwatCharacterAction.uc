@@ -159,3 +159,13 @@ function bool IsMovingTo()
 		return SwatAIRepo.GetBlueSquad().IsMovingTo();
 	}
 }
+
+// returns true if the character is moving and clearing
+function bool IsMovingAndClearing()
+{
+	local SwatAIRepository SwatAIRepo;
+
+	SwatAIRepo = SwatAIRepository(m_Pawn.Level.AIRepo);
+
+	return SwatAIRepo.IsOfficerMovingAndClearing(m_Pawn);
+}

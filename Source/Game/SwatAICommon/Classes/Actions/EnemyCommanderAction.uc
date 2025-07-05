@@ -750,9 +750,9 @@ function OnHeardNoise()
 
 			// if the other actor isn't a threat to us, ignore the door sound
 			// yes this is cheating...  so sue me.
-			if (ISwatAI(m_Pawn).IsOtherActorAThreat(LastDoorInteractor) && HasLineOfSightToDoor(Door(HeardActor)))
+			if (ISwatAI(m_Pawn).IsOtherActorAThreat(LastDoorInteractor))
 			{
-				if (ISwatEnemy(m_Pawn).GetCurrentState() == EnemyState_Aware)
+				if (ISwatEnemy(m_Pawn).GetCurrentState() == EnemyState_Aware && HasLineOfSightToDoor(Door(HeardActor)))
 				{
 					EncounterEnemy(LastDoorInteractor);
 				}
@@ -1068,7 +1068,7 @@ private function bool ShouldEncounterNewEnemy(Pawn NewEnemy)
 		DistanceToNewEnemy     = VSize(NewEnemy.Location - m_Pawn.Location);
 
 		if (((DistanceToNewEnemy < DistanceToCurrentEnemy) && (DistanceToNewEnemy < DeltaDistanceToSwitchEnemies)) ||
-			(! m_Pawn.CanHit(CurrentEnemy) && m_Pawn.CanHit(NewEnemy)))
+			(! m_Pawn.LineOfSightTo(CurrentEnemy) && m_Pawn.LineOfSightTo(NewEnemy)))
 		{
 			return true;
 		}
@@ -1280,6 +1280,21 @@ function InterruptCurrentEngagement()
 	}
 }
 
+function FiredWeapon GetBackupWeapon()
+{
+	return ISwatEnemy(m_Pawn).GetBackupWeapon();
+}
+
+function FiredWeapon GetPrimaryWeapon()
+{
+	return ISwatEnemy(m_Pawn).GetPrimaryWeapon();
+}
+
+function bool AllowedToUseWeaponAgainst(FiredWeapon Weapon, Pawn TargetPawn, int ShotsFired)
+{
+	return Weapon.ShouldSuspectUseAgainst(TargetPawn, ShotsFired);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Investigation / Barricading
@@ -1456,7 +1471,7 @@ function FindBetterEnemy()
 	local Pawn NewEnemy;
 	if (CurrentEnemy != None)
 	{
-		if (! m_Pawn.CanHit(CurrentEnemy))
+		if (! m_Pawn.LineOfSightTo(CurrentEnemy))
 		{
 			NewEnemy = VisionSensor.GetVisibleConsciousPawnClosestTo(m_Pawn.Location);
 
@@ -1540,6 +1555,10 @@ latent function DecideToStayCompliant()
 		{
 			break;
 		}
+		else if (ISwatAI(m_Pawn).IsBeingArrestedNow())
+		{
+			break;
+		}
 		
 		// Sleep for a random amount of time for this "tick"
 		// This might seem high, but keep in mind that half the values are going to be below this and the effect can stack.
@@ -1554,6 +1573,11 @@ latent function DecideToStayCompliant()
 
 		if (m_pawn.logTyrion)
 			log(name @ "DecideToStayCompliant: morale now:" @ GetCurrentMorale());
+	}
+
+	if (ISwatAI(m_Pawn).IsBeingArrestedNow())
+	{
+		return;
 	}
 
 	if (FoundWeaponModel != None)

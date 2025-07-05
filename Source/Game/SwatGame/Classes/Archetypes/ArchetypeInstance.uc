@@ -3,3 +3,4 @@ class ArchetypeInstance extends Core.Object
     abstract;
 
 var Actor Owner;
+var Archetype Archetype;

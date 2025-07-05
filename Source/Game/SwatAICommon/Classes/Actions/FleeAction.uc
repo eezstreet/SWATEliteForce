@@ -249,7 +249,7 @@ function bool ShouldAttackWhileFleeing()
 	    return false; // We should not be able to target SniperPawns
 	}
 
-	if(!m_Pawn.CanHit(CurrentEnemy))
+	if(!m_Pawn.CanHitTarget(CurrentEnemy))
 	{
 		return false; // Don't attack if we can't hit them
 	}
@@ -281,8 +281,6 @@ function AttackWhileFleeing()
 	CurrentAttackTargetGoal.AddRef();
 
 	CurrentAttackTargetGoal.postGoal(self);
-
-	ISwatEnemy(m_Pawn).BecomeAThreat();
 }
 
 
