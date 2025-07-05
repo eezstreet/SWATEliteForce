@@ -31,7 +31,7 @@ enum HandAnimationPass
 };
 
 var protected array<vector> HandsPass;
-var protected int NotUsed;
+var protected RedDot redDot;
 
 var config float PreThrowTweenTime;
 var config float PreThrowRootBone;
@@ -55,6 +55,9 @@ simulated function PreBeginPlay()
                           "[ckline] The Hands' mesh wasn't correctly loaded(2). Mesh == None." );
 
     SetCollision(false,false,false);
+
+    redDot = Spawn(class'RedDot', self);
+    redDot.SetDrawScale(0.0018);
 }
 
 simulated event PostNetBeginPlay()
@@ -100,6 +103,7 @@ simulated function UpdateHandsForRendering()
     local vector Velocity, Acceleration;
 	local float MaxInertiaOffset;
 	local SwatWeapon Weapon;
+    local bool showRedDot;
 
     OwnerPawn = Pawn(Owner);
     OwnerController = PlayerController(OwnerPawn.Controller);
@@ -116,6 +120,13 @@ simulated function UpdateHandsForRendering()
         {
             EquippedFirstPersonModel.bOwnerNoSee = bOwnerNoSee;
         }
+    }
+
+    Weapon = SwatWeapon(EquippedItem);
+    if (Weapon != None) {
+        showRedDot = weapon.GetUsesRedDotSight();
+    } else {
+        showRedDot = false;
     }
 
     NewRotation = OwnerPawn.GetViewRotation();
@@ -138,12 +149,32 @@ simulated function UpdateHandsForRendering()
     // Update animation progress, interpolating towards default view or ADS view as applicable.
     if (OwnerController != None && OwnerController.WantsZoom && !OwnerController.GetIronsightsDisabled()) {
     	AnimationProgress = AnimationProgress + ADSInertia * deltaTime;
+
+        //Enable or disable Red Dot reticle as appropriate
+        if (showRedDot) {
+            // HACK: only show red dot when sight is near center of screen. -Kevin
+            if (AnimationProgress > 0.72) {
+                if (RedDot.bHidden) RedDot.Show();
+            } else {
+                showRedDot = false;
+            }
+        }
+
     } else {
     	AnimationProgress = AnimationProgress - ADSInertia * deltaTime;
+        showRedDot = false;
     }
+
     if (AnimationProgress > 1.0) AnimationProgress = 1.0;
     if (AnimationProgress < 0) AnimationProgress = 0;
     EquippedItem.SetIronSightAnimationProgress(AnimationProgress);
+
+    // Update Red Dot reticle.
+    if (!showRedDot && !RedDot.bHidden)  RedDot.Hide();
+    if (!RedDot.bHidden) {
+        // Dead-center screen, exactly where crosshair would be.
+        RedDot.SetLocation(OwnerPawn.GetAimOrigin() + vector(NewRotation) * 10.0);
+    }
 
     // Update pose based on AnimationProgress.
     NewRotation = NewRotation
@@ -154,7 +185,6 @@ simulated function UpdateHandsForRendering()
            + (EquippedItem.GetIronsightsLocationOffset() * AnimationProgress));
 
     // Look-down-scope animation for marksman (scoped) weapons.
-    Weapon = SwatWeapon(EquippedItem);
     if (Weapon != None && Weapon.WeaponCategory == WeaponClass_MarksmanRifle && !bOwnerNoSee) {
         EquippedFirstPersonModel.bOwnerNoSee = (AnimationProgress >= 0.99);
             bHidden = (AnimationProgress >= 0.99);
@@ -192,7 +222,15 @@ simulated function UpdateHandsForRendering()
         if(Change.y > MaxInertiaOffset) Change.y = MaxInertiaOffset;
         else if(Change.y < -MaxInertiaOffset) Change.y = -MaxInertiaOffset;
         if(Change.z > MaxInertiaOffset) Change.z = MaxInertiaOffset;
-        else if(Change.z < -MaxInertiaOffset) Change.z = -MaxInertiaOffset;
+        else if (Change.z < -MaxInertiaOffset) Change.z = -MaxInertiaOffset;
+
+        // HACK. Disable Red Dot reticle if weapon is displaced enough that the reticle
+        // would fall outside the sight. -Kevin
+        if (!RedDot.bHidden) {
+            if (abs(Change.x) > 0.9 || abs(Change.y) > 0.9 || abs(Change.z) > 0.9) {
+                RedDot.Hide();
+            }
+        }
 
         NewLocation = TargetLocation + Change;
     }
@@ -215,6 +253,15 @@ simulated function UpdateHandsForRendering()
 
     SetLocation(NewLocation);
     SetRotation(NewRotation);
+}
+
+function RenderRedDot(Canvas canvas) {
+    if (redDot != None && !redDot.bHidden) {
+        // Draw the Red Dot in PostRender; this renders it on top of our hands and weapon.
+        // Can't figure out a way to render it at the same time as hands so that it is properly
+        // depth sorted relative to our weapon. -Kevin
+        canvas.DrawActor(redDot, false, true);
+    }
 }
 
 simulated function OnEquipKeyFrame()
@@ -423,6 +470,13 @@ simulated function SetMaterialForHands( Material NewMaterial )
 {
     assert( Level.NetMode != NM_Standalone );
     Skins[0] = NewMaterial;
+}
+
+event Destroyed() {
+    if (redDot != None) {
+        redDot.Destroy();
+    }
+    super.Destroyed();
 }
 
 cpptext
