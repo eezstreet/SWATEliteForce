@@ -536,7 +536,7 @@ private latent function AimAroundBriefly()
 private latent function AttackWhileCrouchingBehindCover(Pawn Enemy)
 {
 	// stand up if we can't see our enemy and we can't hit them
-	if (! m_Pawn.CanHit(Enemy))
+	if (Enemy != None && !m_Pawn.CanHit(Enemy))
 	{
 		// stop crouching
 		m_pawn.ShouldCrouch(false);
@@ -603,7 +603,7 @@ private latent function AttackWhileLeaningBehindCover(Pawn Enemy)
 	local bool bReEvaluateCover;
 
 	// lean out if we can't hit our enemy
-	if (! m_Pawn.CanHit(Enemy))
+	if (Enemy != None && !m_Pawn.CanHit(Enemy))
 	{
 		// start leaning
 		Lean();
