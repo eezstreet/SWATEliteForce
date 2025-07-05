@@ -246,8 +246,12 @@ simulated event PostRender( canvas Canvas )
 
 	if ( !PlayerOwner.bBehindView )
 	{
-		if (P != None)  //TMC changed ( (P != None) && (Item != None) )
+		if (P != None)  {//TMC changed ( (P != None) && (Item != None) )
 			P.RenderOverlays(Canvas);
+			if (P.GetHands() != None) {
+				P.GetHands().RenderRedDot(Canvas);
+			}
+		}
 	}
 
 //FIXMEJOE

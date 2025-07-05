@@ -128,7 +128,7 @@ var() config bool bAlterThirdPersonMesh;
 var() config Mesh ThirdPersonMesh;
 var() config StaticMesh ThirdPersonStaticMesh;
 var() config array<Material> TPSkins; // Replacement skins for third-person mesh
-
+var() config bool bUsesRedDotSight; // If true, we'll enable the special reticle for this weapon. TODO: may eventually want an enum if we have other types of reflex sights.
 
 var(Firing) config int MagazineSize;
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
@@ -336,6 +336,10 @@ simulated function float GetDc1()
 simulated function float GetDc2()
 {
   return Dc2;
+}
+
+simulated function bool GetUsesRedDotSight() {
+  return bUsesRedDotSight;
 }
 
 simulated function bool ShouldHideCrosshairsInIronsights()
