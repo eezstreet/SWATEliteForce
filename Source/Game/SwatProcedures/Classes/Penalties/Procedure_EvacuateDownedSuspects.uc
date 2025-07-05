@@ -1,12 +1,14 @@
 class Procedure_EvacuateDownedSuspects extends SwatGame.Procedure
     implements  IInterested_GameEvent_PawnIncapacitated,
                 IInterested_GameEvent_PawnDied,
+                IInterested_GameEvent_PawnArrested,
                 IInterested_GameEvent_ReportableReportedToTOC;
 
 var config int PenaltyPerDownedSuspect;
 
 var array<SwatPawn> UnevacuatedDownedSuspects;
 var array<SwatPawn> ReportedDownedSuspects;
+var array<SwatPawn> ArrestedSuspects;
 
 function PostInitHook()
 {
@@ -15,7 +17,16 @@ function PostInitHook()
     //register for notifications that interest me
     GetGame().GameEvents.PawnIncapacitated.Register(self);
     GetGame().GameEvents.PawnDied.Register(self);
+    GetGame().GameEvents.PawnArrested.Register(self);
     GetGame().GameEvents.ReportableReportedToTOC.Register(self);
+}
+
+//IInterested_GameEvent_PawnArrested Implementation
+function OnPawnArrested( Pawn Pawn, Pawn Arrester )
+{
+    if (!Pawn.IsA('SwatEnemy')) return;   //we don't care
+
+    Add( Pawn, ArrestedSuspects );
 }
 
 function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
@@ -23,7 +34,7 @@ function OnPawnIncapacitated(Pawn Pawn, Actor Incapacitator, bool WasAThreat)
     if( !Pawn.IsA('SwatEnemy') )
         return;   //we only care about Suspects
 
-	if(IsInArray(Pawn, ReportedDownedSuspects))
+	if(IsInArray(Pawn, ReportedDownedSuspects) || IsInArray(Pawn, ArrestedSuspects))
 	{
 		return;
 	}
@@ -41,6 +52,9 @@ function OnPawnDied(Pawn Pawn, Actor Killer, bool WasAThreat)
         return;
 
     if(IsInArray(Pawn, ReportedDownedSuspects))
+        return;
+
+    if (IsInArray(Pawn, ArrestedSuspects))
         return;
 
     Add( Pawn, UnevacuatedDownedSuspects );
