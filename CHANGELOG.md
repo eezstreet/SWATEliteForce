@@ -2,33 +2,266 @@
 
 ## v7.2
 
-This patch is primarily focused on bug fixes and minor improvements:
+**NOTE:** This patch is not available as an upgrade to v7.1 and has to be installed as a whole version.
 
-  - Fixed ironsight positions for the Colt Model 635, AKS-74U, Glock 17, Glock 19, Sig P226, and Sig P226-SD (thanks to kevinfoley)
-  - Added separate keybind for NVGs and flashlights. (CHECK IF DONE!)
-  - SWAT AI can now use NVGs (CHECK IF DONE!)
+This patch is primarily focused on fixing problems as opposed to adding new content.
+
+The bulk of this update is a large AI update and major changes to the weapons to make them fit in better, which are the two main complaints of v7.1.
+
+### General
+
+  - Many weapons have been reskinned, remodelled, or both, from previous SEF iterations to fit the vanilla game's aesthetics better. (BIG thanks to kevinfoley)
+  - Removed holographic sight option from weapons.
+  - Added MAC-10 machine pistol as a selectable weapon for SWAT in All Missions, Quick Mission Maker and Multiplayer. (thanks to kevinfoley)
+  - Added Kimber skin option to M1911. (thanks to beppegoodoldrebel and kevinfoley)
+  - Added black-and-orange skin option to Less Lethal Nova. (thanks to kevinfoley)
+  - Numerous other changes to weapons; see full list below.
+  - Restored the original vanilla behavior for determining if suspects/SWAT can hit their target. Fixes crashes and assorted issues with AI.
   - Suspects now fire upon doors much more reliably when barricading.
   - Suspects shoot faster and more consistently at SWAT and are more dangerous in general.
-  - Suspects will now shoot at SWAT when moving to barricade
+  - Suspects will now shoot at SWAT when moving to barricade.
   - Fixed a TSS bug where AIs (SWAT + suspects) used wrong angles when determining if they could take cover (specifically, if the cover involves leaning)
-  - Fixed the beanbag shotgun applying both the ReactToBeingShot action and the Stung action, which lead to huge morale loss and a visual glitch. (thanks to kevinfoley)
+  - Fixed beanbag shotguns applying both the ReactToBeingShot action and the Stung action, which lead to huge morale loss and a visual glitch. (thanks to kevinfoley)
   - Fixed a TSS bug where if a suspect was stung and then became compliant, they would randomly stand up and play an "aim gun at" animation. (thanks to kevinfoley)
   - SWAT will no longer automatically deploy taser weapons against suspects that can die from them. (This only really applied to drug flushers on FunTime Amusements)
   - SWAT will no longer pause moving/clearing to order civilians to comply.
   - SWAT will no longer prioritize uncompliant civilians over unthreatening suspects
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
+  - Added separate keybind for NVGs and flashlights. (thanks to beppegoodoldrebel)
+  - SWAT AI can now use NVGs. (thanks to beppegoodoldrebel)
   - Fixed suspects having incorrect textures when wearing heavy armor (thanks to beppegoodoldrebel)
   - Fixed incorrect kilogram-to-pound conversion formula for Imperial measurements (thanks to modotte)
-  - Fixed incorrect MP5K suppressor attachment linkage in the menu (thanks to modotte)
   - Possibly fixed: bug where suspects would stand up after being arrested (Thanks to beppe for tips)
-  - Restored original game CanHit function (need to test what the implications are...)
   - Removed portions of MassiveAd code (Thanks to beppegoodoldrebel)
   - Fixed an issue in CO-OP where you could ready up (and be over the weight limit) in situations where you shouldn't be able to. (Thanks to beppegoodoldrebel)
   - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
-  - Possibly fixed: unlocked equipment in Campaign CO-OP (CHECK IF FIXED!) (Thanks to beppegoodoldrebel)
-  - Documentation (.md files) have been cleaned up.
-  - You can no longer take limb damage when in god mode (cheat)
+  - Documentation (*.md) has been cleaned up.
+  - You can no longer take limb damage when in god mode.
+
+### Weapon Changes
+
+All changes in this section are credited to Kevin Foley unless otherwise mentioned:
+
+**Assault Rifles: G36K**
+
+  - Removed holographic sights options as they're anachronistic.
+  - New inventory thumbnail.
+  - Fixed the rate of fire and tweaked other stats.
+  - Reskinned all variations to fit SWAT 4's aesthetic better.
+  - Fixed mesh smoothing groups on all variations.
+  - Reduced size of the front sights on all variations.
+  - *Suppressed configuration:*
+    - Fixed a bug where the wrong third person model was used
+    - Fixed reload sound effects.
+
+**Assault Rifles: M4A1**
+
+  - Removed holographic sights options as they're anachronistic.
+  - New inventory thumbnail.
+  - Reskinned all variations to fit SWAT 4's aesthetic better.
+  - Fixed smoothing group problems and other issues on all variations' meshes.
+  - Tweaked stats on all variations
+  - *Default configuration:*
+    - Fixed reload sound effects.
+    - Optimized the third person mesh.
+  - *Suppressed configuration:*
+    - Fixed reload sound effects.
+    - Optimized the third person mesh.
+  - *CQB configuration:*
+    - Fixed the wrong mesh being used.
+    - Fixed missing third person mesh.
+  - *CQB suppressed configuration:*
+    - Fixed the wrong mesh being used
+    - Fixed missing third person mesh.
+  - *Aimpoint configurations:*
+    - Improved sight look and feel with parallax effect
+
+**Assault Rifles: HK33**
+
+  - New inventory thumbnail.
+  - Added specular shader.
+  - Tweaked stats
+  - Fixed wrong flashlight lens flare position.
+
+**Assault Rifles: SG552 Commando**
+
+  - Added specular shader.
+  - Tweaked stats
+
+**Assault Rifles: AKS-74U**
+
+  - New inventory thumbnail with correct colors
+  - Fixed ironsight alignment
+  - Fixed hand placement
+  - Changed sound effects
+  - Fixed the rate of fire
+
+**Assault Rifles: M16**
+
+  - Fixed the rate of fire
+  - Tweaked stats in all configurations
+  - Added a right side to the mesh (so it is not invisible in iron sights)
+
+**Assault Rifles: FN FAL**
+
+  - New inventory thumbnail
+  - Completely reskinned to fit SWAT 4's aesthetic better
+  - Removed sight rail as it served no purpose
+  - Fixed VFX not always playing
+
+**Assault Rifles: FN SCAR-H CQC**
+
+  - Fixed inaccuracies with the model; it now reflects a SCAR-H instead of a SCAR-L
+  - New inventory thumbnail
+  - Fixed model issues on the rear sights
+  - Fixed sound effect problems
+  - Fixed weight and bulk to be accurate
+  - Greatly increased recoil
+  - Made each variant have its own stats instead of sharing stats with the base
+
+**Marksman Rifles: CR6720 (Colt Accurized Rifle)**
+
+  - New inventory thumbnail
+  - Reskinned
+  - Fixed smoothing group and other mesh issues
+
+**Submachine Guns: MP5A4**
+
+  - Removed holographic sight variant as it is anachronistic
+  - Reskinned all variations to fit SWAT 4's aesthetics better.
+  - Fixed smoothing groups on all variations.
+  - Improved rear sights on all variations
+  - Tweaked stats
+  - *Suppressed variation:*
+    - Slimmed the handguard
+    - New inventory thumbnail
+
+**Submachine Guns: Colt Model 635**
+
+  - Reskinned all variations to fit SWAT 4's aesethetics better.
+  - Fixed the rate of fire.
+  - Fixed smoothing groups and other mesh issues on all variations.
+  - Fixed iron sight alignment on all variations.
+  - Fixed hand placement on all variations.
+  - Tweaked stats on all variations
+  - New inventory thumbnail
+
+**Submachine Guns: UMP-45**
+
+  - Remove holographic sight variant as it is anachronistic
+  - Reskinned all variations to fit SWAT 4's aesthetics better.
+  - Fixed reload sound effects on all variations.
+  - Tweaked stats on all variations
+  - New inventory thumbnail
+  - Fixed magazine alignment during the reload animation
+
+**Submachine Guns: P90**
+
+  - Replaced the integrated sight with picatinny rail/iron sights
+  - New inventory thumbnail
+  - Fixed the rate of fire
+  - Tweaked the stats
+
+**Submachine Guns: Uzi**
+
+  - Added right side of the mesh
+
+**Submachine Guns: MP5SD6**
+
+  - Renamed to MP5SD5 (the correct name for this weapon)
+
+**Submachine Guns: MP5K Tactical SD**
+
+  - Tweaked stats
+  - Fixed a bug which caused issues when saving the inventory. (this was done by modotte)
+
+**Machine Pistols: MP5K SD**
+
+  - Added right side of the mesh
+  - Fixed smoothing groups
+  - Tweaked stats
+  - Fixed a bug which caused issues when saving the inventory. (this was done by modotte)
+
+**Machine Pistols: TEC-DC9**
+
+  - Added iron sights to the mesh and fixed iron sight alignment.
+
+**Shotguns: M870**
+
+  - All variations of this weapon use new first person hand animations and a new pose, along with a visible pistol grip added to the mesh in first person.
+  - Completely reskinned all variations of this weapon.
+  - Fixed ironsight alignment in all variations of this weapon.
+  - *Less Lethal variant:*
+    - Changed to match real world color (black-and-orange).
+    - New inventory thumbnail
+    - Added smoke and dynamic light VFX to match other weapons
+  - *Breaching variant:*
+    - Tweaked stats
+    - Removed the side saddle
+
+**Shotguns: M1Super90**
+
+  - Reverted to vanilla model; added right side to mesh and increased polycount
+  - Tweaked stats
+
+**Shotguns: M4Super90**
+
+  - Reverted to vanilla model; added right side to mesh and increased polycount
+  - Removed holographic sight variant as it is anachronistic
+  - Fixed the side saddle
+  - Tweaked stats
+
+**Shotguns: Nova Pump / Less Lethal Shotgun**
+
+  - Reverted to vanilla model; added right side to mesh and increased polycount
+  - Tweaked stats
+  - *Less Lethal Nova:*
+    - Added black-and-orange color scheme as selectable alternate skin
+
+**Pistols: P226**
+
+  - Added right side to mesh in all configurations
+  - Fixed ironsight alignment in all configurations
+  - Tweaked stats
+
+**Pistols: M1911**
+
+  - Fixed smoothing groups on the mesh
+  - Tweaked stats
+  - Added Kimber Custom II as selectable alternate skin (mesh by beppegoodoldrebel, skin by Kevin Foley)
+
+**Pistols: Glock 17**
+
+  - New animations and hand placement
+  - Fixed ironsight alignment (this was done by eezstreet)
+
+**Pistols: Glock 18**
+
+  - Created custom mesh
+  - New animations and hand placement
+  - Tweaked stats
+
+**Pistols: Glock 19**
+
+  - Fixed smoothing groups
+  - New animations and hand placement
+  - Tweaked stats
+
+**Pistols: XDM**
+
+  - Fixed mesh topology issues
+  - New animations and hand placement
+  - Fixed ironsight placement
+  - Reduced width of receiver
+  - Fixed issue where the ironsights would become misaligned after shooting
+  - Fixed the third person mesh
+
+**Light Machine Guns: M249**
+
+  - Rebalanced stats
+  - Fixed reload animation timing
+  - Fixed issue where the ironsights would become misaligned after shooting
 
 ## v7.1
 
