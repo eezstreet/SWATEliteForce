@@ -14,6 +14,13 @@ simulated event string GetMassiveAdTargetName()
 		return MassiveAdTargetName;
 }
 
+#else
+var string Unused1;
+var int Unused2;
+var Object Unused3;
+var bool Unused4;
+#endif
+
 defaultproperties
 {
 	bStatic = false // static objects cannot update textures, static must be false.
@@ -22,5 +29,3 @@ defaultproperties
 
 	bLogImpressionData = false
 }
-
-#endif

@@ -230,7 +230,7 @@ function Pawn GetClosestOfficerThatCanHit(Actor Target, optional bool bUsePathfi
 	{
 		Iter = pawns[i];
 
-		if (Iter.CanHit(Target))
+		if (Iter.CanHitTarget(Target))
 		{
 			if(bUsePathfindingDistance)
 			{

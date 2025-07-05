@@ -5733,6 +5733,12 @@ exec function ToggleFlashlight()
     SwatPawn(Pawn).ToggleDesiredFlashlightState();
 }
 
+// Toggle the player's NVG
+exec function ToggleNVG()
+{
+    SwatPawn(Pawn).ToggleDesiredNVGState();
+}
+
 // modifier to hold the next command was pressed
 exec function HoldCommand(bool bPressed)
 {

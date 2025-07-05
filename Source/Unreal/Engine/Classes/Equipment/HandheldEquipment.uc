@@ -1096,9 +1096,9 @@ simulated event GetPerfectFireStart(out vector outLocation, out rotator outDirec
     }
     else if (Instigator.IsA('SwatAI'))
     {
-      outLocation = Instigator.GetAimLocation(self);
-		    //outLocation  = Instigator.GetAimOrigin();
-		  outDirection = Instigator.GetAimRotation();
+        WeaponCoords = Pawn(Owner).GetBoneCoords('GripRHand', true);
+        outLocation = WeaponCoords.Origin;	
+        outDirection = Instigator.GetAimRotation();
     }
     else
 		assertWithDescription(false,
@@ -1423,13 +1423,13 @@ simulated function float GetIronSightAnimationProgress()
 }
 simulated function SetIronSightAnimationProgress(float value) { }
 
-simulated function array<vector> GetAnimationSplinePoints()
+simulated function vector GetHandsOffsetLastFrame()
 {
-	local array<vector> AnimationSplinePoints;
+	local vector Offset;
 
-	return AnimationSplinePoints;
+	return Offset;
 }
-simulated function AddAnimationSplinePoint(vector value) { }
+simulated function SetHandsOffsetLastFrame(vector value) { }
 
 event Destroyed()
 {

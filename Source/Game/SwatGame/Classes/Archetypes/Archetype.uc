@@ -68,6 +68,8 @@ private final function ArchetypeInstance NewInstance(IUseArchetype Spawned,
     assert(Instance != None);
     Instance.Owner = Actor(Spawned);
     assert(Instance.Owner != None);
+    Instance.Archetype = self;
+    assert(Instance.Archetype != None);
 
     InitializeInstance(Instance, CustomScenario, CustomScenarioAdvancedRosterIndex, CustomScenarioAdvancedArchetypeIndex);
 

@@ -3737,7 +3737,7 @@ simulated function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLoca
             SwatGamePlayerController(Controller).ClientSkeletalRegionHit(RegionHit, Damage);
 
         // Modify damage...s
-        if ( Damage > 0 )
+        if ( Damage > 0 && (Controller == None || !Controller.bGodMode) )
         {
             RegionInfo = SkeletalRegionInformation[RegionHit];
 

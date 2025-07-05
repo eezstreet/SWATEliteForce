@@ -24,6 +24,7 @@ var private CloseDoorGoal		CurrentCloseDoorGoal;
 var private MoveToDoorGoal		CurrentMoveToDoorGoal;
 var private AttackTargetGoal	AttackDoorGoal;
 var private AimAtTargetGoal		CurrentAimAtTargetGoal;
+var protected AttackTargetGoal			CurrentAttackTargetGoal;
 
 // domain data
 var private array<Door>			DoorsInRoom;
@@ -53,6 +54,9 @@ var config float				AimAtClosestDoorTime;
 var config float				MinTimeBeforeClosingDoor;
 var config float				MaxTimeBeforeClosingDoor;
 
+var config float                AggressiveAttackWhileMovingChance;
+var config float                AttackWhileMovingChance;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Cleanup
@@ -68,6 +72,12 @@ function cleanup()
 		{
 			FleePoint(BarricadePoint).UnclaimPoint();
 		}
+	}
+
+	if (CurrentAttackTargetGoal != None)
+	{
+		CurrentAttackTargetGoal.Release();
+		CurrentAttackTargetGoal = None;
 	}
 
 	if (CurrentAimAroundGoal != None)
@@ -363,7 +373,7 @@ latent function AimAtClosestDoor()
 
 //	log("ClosestDoor is: " $ ClosestDoor $ " Can hit ClosestDoor: " $ m_Pawn.CanHit(ClosestDoor));
 
-	if ((ClosestDoor != None) && m_Pawn.CanHit(ClosestDoor))
+	if ((ClosestDoor != None) && m_Pawn.CanHitTarget(ClosestDoor))
 	{
 		RemoveAimAroundGoal();
 
@@ -516,7 +526,7 @@ latent function ShootAtOpeningDoor()
 
 	EndShootingTime = Level.TimeSeconds + RandRange(MinShootingAtDoorsTime, MaxShootingAtDoorsTime);
 
-	while ((Level.TimeSeconds < EndShootingTime) && m_Pawn.CanHit(DoorOpening))
+	while ((Level.TimeSeconds < EndShootingTime) && m_Pawn.CanHitTarget(DoorOpening))
 	{
 		yield();
 	}
@@ -554,6 +564,31 @@ private latent function CloseOpenedDoor()
 	LockDoor(DoorOpening);
 }
 
+private function bool ShouldAttackWhileMoving()
+{
+	if (ISwatAI(m_Pawn).IsAggressive())
+	{
+		return FRand() < AggressiveAttackWhileMovingChance;
+	}
+	return FRand() < AttackWhileMovingChance;
+}
+
+private function AttackWhileMoving()
+{
+	local Pawn Enemy;
+
+	Enemy = ISwatEnemy(m_Pawn).GetEnemyCommanderAction().GetCurrentEnemy();
+	if(Enemy == None) {
+	    return;
+	}
+
+	CurrentAttackTargetGoal = new class'AttackTargetGoal'(weaponResource(), Enemy);
+    assert(CurrentAttackTargetGoal != None);
+	CurrentAttackTargetGoal.AddRef();
+
+	CurrentAttackTargetGoal.postGoal(self);
+}
+
 state Running
 {
 Begin:
@@ -581,13 +616,17 @@ Begin:
 
 	CreateDoorOpeningSensor();
 
+GetInPosition:
+	if (ShouldAttackWhileMoving())
+	{
+		AttackWhileMoving();
+	}
+    MoveToBarricadePoint();
+
 	if (bCanCloseDoors && DoesRoomHaveDoorsToCloseAndLock())
 	{
 		CloseAndLockDoorsInRoom();
 	}
-
-GetInPosition:
-    MoveToBarricadePoint();
 
 	useResources(class'AI_Resource'.const.RU_LEGS);
 
@@ -609,7 +648,7 @@ GetInPosition:
 	// wait for a door to start opening, if that ever happens
 	pause();
 
-	if (m_Pawn.CanHit(DoorOpening))
+	if (m_Pawn.CanHitTarget(DoorOpening))
 	{
 		RemoveAimAroundGoal();
 

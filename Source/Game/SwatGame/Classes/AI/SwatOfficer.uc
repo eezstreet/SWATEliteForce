@@ -181,8 +181,15 @@ function EnteredZone(ZoneInfo Zone)
     // don't toggle flashlight when dead/incapacitated
     if (IsConscious())
     {
-		// set our flashlight state to whatever the zone says
-		SetDesiredFlashlightState(Zone.bUseFlashlight);
+        // set our flashlight/NVG state to whatever the zone says
+        if (HasA('NVGogglesBase'))
+        {
+            SetDesiredNightvisionState(Zone.bUseFlashlight);
+        }
+		else
+        {
+            SetDesiredFlashlightState(Zone.bUseFlashlight);
+        }
 	}
 }
 

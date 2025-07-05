@@ -1990,17 +1990,17 @@ simulated private function Rotator GetCSBallLauncherAimRotation(vector TargetLoc
 	return PaintballAimRotation;
 }
 
-//simulated native function vector GetAimOrigin();
+simulated native function vector GetAimOrigin();
 //
 //This function is supposed to get the Aim Origin for the weapons so that pawns
 //can aim correctly. However, there is something wrong in it because it crashes
 //at times. And we can't check what Irrational did because it is native. So I'm
 //rewriting this to make it work.
 
-simulated function vector GetAimOrigin()
-{
-	return Location + EyePosition();
-}
+//simulated function vector GetAimOrigin()
+//{
+//	return Location + EyePosition();
+//}
 
 simulated function vector EyePosition()
 {
@@ -2057,10 +2057,15 @@ function SetAimUrgency(bool Fast)
 native event bool CanHitTargetAt(Actor Target, vector AILocation);
 
 //
-//native event bool CanHit(Actor Target);
+native event bool CanHit(Actor Target);
 //
 // Whatever Irrational did with this function, we don't know because it's native...
 // However, it's not correct because SWAT will very frequently not hit their target.
+
+event bool CanHitTarget(Actor Target)
+{
+	return FiredWeapon(GetActiveItem()) != None && CanHit(Target);
+}
 
 simulated function SEFDebugSensor()
 {
@@ -2123,10 +2128,12 @@ simulated function bool CanHitEx(Actor Target, optional bool IgnoreStaticMeshes)
 	return Value;
 }
 
+/*
 event bool CanHit(Actor Target)
 {
   return CanHitEx(Target, false);
 }
+*/
 
 function bool HasUsableWeapon()
 {
