@@ -24,6 +24,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Fixed beanbag shotguns applying both the ReactToBeingShot action and the Stung action, which lead to huge morale loss and a visual glitch. (thanks to kevinfoley)
   - Fixed a TSS bug where if a suspect was stung and then became compliant, they would randomly stand up and play an "aim gun at" animation. (thanks to kevinfoley)
   - Suspects/civilians who are killed while arrested no longer count towards "Failed to report downed" penalty.
+  - Suspects/civilians who are shot only decrement morale when reacting. This specifically fixes a problem where shotguns decreased morale with each pellet that hit the target.
   - SWAT will no longer automatically deploy taser weapons against suspects that can die from them. (This only really applied to drug flushers on FunTime Amusements)
   - SWAT will no longer pause moving/clearing to order civilians to comply.
   - SWAT will no longer prioritize uncompliant civilians over unthreatening suspects

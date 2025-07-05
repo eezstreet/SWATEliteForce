@@ -885,10 +885,6 @@ function OnSkeletalRegionHit(ESkeletalRegion RegionHit, vector HitLocation, vect
 		}
 
 		NotifyTookHit();
-
-		// Allow subclasses to decrement morale,
-		// but we don't start listening for compliance to avoid having players shooting a character in a leg to get him to comply
-		ChangeMorale(-GetShotMoraleModification(), "Shot", true);
 	}
 }
 

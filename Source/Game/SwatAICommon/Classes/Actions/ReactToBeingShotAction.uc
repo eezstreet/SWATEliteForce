@@ -410,9 +410,18 @@ latent function LatentPlayQuickHit(vector QuickHitLocation)
 	m_Pawn.FinishAnim(ISwatAI(m_Pawn).AnimGetQuickHitChannel());
 }
 
+function ChangeMorale()
+{
+	local CommanderAction CommanderAction;
+
+	CommanderAction = ISwatAI(m_Pawn).GetCommanderAction();
+	CommanderAction.ChangeMorale(-CommanderAction.GetShotMoraleModification(), "Shot", true);
+}
+
 state Running
 {
- Begin:	
+ Begin:
+	ChangeMorale();
 	TriggerInjuredSpeech();
 
 	if (ISwatAI(m_Pawn).ShouldPlayFullBodyHitAnimation())
