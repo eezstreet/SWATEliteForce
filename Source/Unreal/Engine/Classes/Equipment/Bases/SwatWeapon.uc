@@ -128,9 +128,10 @@ var() config bool bAlterThirdPersonMesh;
 var() config Mesh ThirdPersonMesh;
 var() config StaticMesh ThirdPersonStaticMesh;
 var() config array<Material> TPSkins; // Replacement skins for third-person mesh
-var() config bool bUsesRedDotSight; // If true, we'll enable the special reticle for this weapon. TODO: may eventually want an enum if we have other types of reflex sights.
+var() config bool bUsesRedDotSight; // If true, we'll enable the special reticle for this weapon.
+// TODO: add config variable here to configure what the red dot sight looks like (for holo sights, other reflex sights etc)
 
-var(Firing) config int MagazineSize;
+var(Firing) config int MagazineSize; // TODO: Remove the magazine size field from the 
 var(Firing) protected config float Choke "Mostly used for shotguns - specifies how spread apart bullets should be - applied after AimError";
 var(Firing) config WeaponAimAnimationType AimAnimation;
 var(Firing) config WeaponLowReadyAnimationType LowReadyAnimation;
@@ -157,9 +158,6 @@ var(AdvancedDescription) protected localized config string RateOfFire           
 
 var(Categorization) public config WeaponEquipClass WeaponCategory            "Which category this weapon belongs to in the GUI.";
 var(Categorization) public config WeaponEquipType AllowedSlots               "Which slots this weapon is allowed to be equipped in";
-
-// Whether this item ignores the "Disable Ironsights Zoom" property
-var(Zoom) config bool IgnoreZoomSetting;
 
 // New Damage Information
 var(Damage) protected config float Vc0         "Muzzle Velocity of the weapon";
@@ -188,6 +186,7 @@ var() public config float Bulk;
 var() public config bool PlayerUsable;
 var() public config bool PassableItem;	// can this item be passed from one player to another?
 
+// Placement within the first person view
 var config vector DefaultLocationOffset;
 var config Rotator DefaultRotationOffset;
 var config vector IronSightLocationOffset;
@@ -197,6 +196,10 @@ var config Rotator PlayerViewRotation;
 var config float ZoomedAimErrorModifier;
 var config float ViewInertia;
 var config float MaxInertiaOffset;
+var config bool bUseZoomFovModifier; // If true, we should use the FOV modifier instead of the raw amount
+var config float ZoomedFovModifier;
+// Whether this item ignores the "Disable Ironsights Zoom" property
+var(Zoom) config bool IgnoreZoomSetting;
 
 //a bit of a hack since we can't add vars to Hands.uc - K.F.
 var float IronSightAnimationProgress;	//denotes position of weapon, in linear range where 0 = held at hip and 1 = fully aiming down sight
@@ -357,8 +360,14 @@ simulated function UpdateAmmoDisplay()
   Ammo.UpdateHUD();
 }
 
-function bool ShouldIgnoreDisabledZoom() {
+function bool ShouldIgnoreDisabledZoom() 
+{
 	return IgnoreZoomSetting;
+}
+
+function bool ShouldUseZoomModifier()
+{
+  return bUseZoomFovModifier;
 }
 
 static function bool IsUsableByPlayer()

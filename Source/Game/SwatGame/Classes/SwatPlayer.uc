@@ -930,17 +930,30 @@ function ServerThrowLightstick( )
 
 simulated function OnActiveItemEquipped()
 {
+    local HandheldEquipment ActiveItem;
+    local PlayerController PlayerController;
+    local SwatWeapon SwatWeapon;
+    local float DesiredFOV;
+
     Super.OnActiveItemEquipped();
+
+    ActiveItem = GetActiveItem();
+    PlayerController = PlayerController(Controller);
+    SwatWeapon = SwatWeapon(ActiveItem);
 
     if ( Controller == Level.GetLocalPlayerController() )
     {
-		PlayerController(Controller).ZoomedFOV = PlayerController(Controller).BaseFOV;
+		PlayerController.ZoomedFOV = PlayerController.BaseFOV;
 
-		if(GetActiveItem().ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
+		if(ActiveItem.ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
 		{
-			if (GetActiveItem().ZoomedFOV > 0)
+            if (ActiveItem.ShouldUseZoomModifier() && SwatWeapon != None)
+            {
+                PlayerController.ZoomedFOV *= SwatWeapon.ZoomedFovModifier;
+            }
+			else if (ActiveItem.ZoomedFOV > 0)
 			{
-				PlayerController(Controller).ZoomedFOV = GetActiveItem().ZoomedFOV;
+				PlayerController.ZoomedFOV = ActiveItem.ZoomedFOV;
 			}
 		}
     }
