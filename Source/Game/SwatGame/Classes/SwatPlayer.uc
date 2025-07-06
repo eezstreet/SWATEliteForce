@@ -947,7 +947,7 @@ simulated function OnActiveItemEquipped()
 
 		if(ActiveItem.ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
 		{
-            if (ActiveItem.ShouldUseZoomModifier() && SwatWeapon != None)
+            if (SwatWeapon != None && SwatWeapon.bUseZoomFovModifier)
             {
                 PlayerController.ZoomedFOV *= SwatWeapon.ZoomedFovModifier;
             }

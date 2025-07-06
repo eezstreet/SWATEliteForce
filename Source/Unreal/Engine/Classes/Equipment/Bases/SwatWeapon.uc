@@ -365,11 +365,6 @@ function bool ShouldIgnoreDisabledZoom()
 	return IgnoreZoomSetting;
 }
 
-function bool ShouldUseZoomModifier()
-{
-  return bUseZoomFovModifier;
-}
-
 static function bool IsUsableByPlayer()
 {
 	return default.PlayerUsable;
