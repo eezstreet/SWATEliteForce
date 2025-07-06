@@ -250,7 +250,6 @@ enum ECommand
     Command_RestrainAll,  // Restrain all targets in the same room as target
     Command_SecureAll,    // Secure all evidence in the same room as target
     Command_DisableAll,   // Disable all targets in the same room
-    Command_ReportIn,
 
 	//
 	// v7
@@ -265,6 +264,7 @@ enum ECommand
 	Command_Request_Lightstick,
 	Command_Request_C2,
 	Command_TrapsAndMirror,
+    Command_ReportIn,
 
     Command_Static,
 };
