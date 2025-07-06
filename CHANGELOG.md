@@ -16,6 +16,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Added Kimber skin option to M1911. (thanks to beppegoodoldrebel and kevinfoley)
   - Added black-and-orange skin option to Less Lethal Nova. (thanks to kevinfoley)
   - Numerous other changes to weapons; see full list below.
+  - Added a new REPORT IN command to quickly assess who is alive on your team. (thanks to kevinfoley)
   - Restored the original vanilla behavior for determining if suspects/SWAT can hit their target. Fixes crashes and assorted issues with AI.
   - Suspects now fire upon doors much more reliably when barricading.
   - Suspects shoot faster and more consistently at SWAT and are more dangerous in general.
@@ -105,13 +106,14 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
   - Fixed the rate of fire
   - Tweaked stats in all configurations
   - Added a right side to the mesh (so it is not invisible in iron sights)
+    - *Suppressed variant:* Fixed a bad visual effect
 
 **Assault Rifles: FN FAL**
 
   - New inventory thumbnail
   - Completely reskinned to fit SWAT 4's aesthetic better
   - Removed sight rail as it served no purpose
-  - Fixed VFX not always playing
+  - Fixed visual effects not always playing
 
 **Assault Rifles: FN SCAR-H CQC**
 
@@ -237,7 +239,7 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
 **Pistols: Glock 17**
 
   - New animations and hand placement
-  - Fixed ironsight alignment (this was done by eezstreet)
+  - Fixed ironsight alignment
 
 **Pistols: Glock 18**
 
