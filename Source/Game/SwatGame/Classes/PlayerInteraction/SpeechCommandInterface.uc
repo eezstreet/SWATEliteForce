@@ -142,7 +142,6 @@ simulated function IssueTOCOrder()
 	local Actor Target;
 	local SwatAI TargetAI;
 	local array<IInterested_GameEvent_ReportableReportedToTOC> Interested;
-	local Procedure SwatProcedure;
 	local int i;
 	local name EffectEventName;
 	local bool IsReported;
