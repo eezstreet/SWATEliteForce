@@ -134,6 +134,7 @@ NOTES:
 			<PHRASE VALSTR="Command_Deploy_Wedge">Deploy ... +wedge</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Wedge">Use ... +wedge</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_Wedge">Place ... +wedge</PHRASE>
+			<PHRASE VALSTR="Command_Deploy_Wedge">Wedge ... door</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_BreachingShotgun">Deploy ... ?breaching +shotgun.</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_BreachingShotgun">Use ... ?breaching +shotgun.</PHRASE>
 			<PHRASE VALSTR="Command_Deploy_LessLethalShotgun">Deploy ... less lethal ...</PHRASE>
