@@ -112,9 +112,115 @@ function int GetNumSecureTargets()
 	return SquadSecureGoal(achievingGoal).GetNumSecureTargets();
 }
 
-function Actor GetSecureTarget(int SecureTargetIndex)
+function bool IsSuspect(Actor SuspectTarget)
 {
-	return SquadSecureGoal(achievingGoal).GetSecureTarget(SecureTargetIndex);
+	return ISwatEnemy(SuspectTarget) != None;
+}
+
+function bool IsCivilian(Actor CivilianTarget)
+{
+	return ISwatHostage(CivilianTarget) != None;
+}
+
+function bool IsDisableable(Actor DisableableTarget)
+{
+	return DisableableTarget.IsA('IDisableableByAI');
+}
+
+function bool IsEvidence(Actor SecureTarget)
+{
+	return SecureTarget.IsA('IEvidence');
+}
+
+function bool PickBestFromList(array<Actor> ActorList, out Actor BestActor)
+{
+	local int i, j;
+	local float BestLength, IterLength;
+	local Pawn IterOfficer;
+
+	if (ActorList.Length <= 0)
+	{	// no actors...
+		return false;
+	}
+
+	if (ActorList.Length == 1)
+	{	// only one actor in this list, this must be the best
+		BestActor = ActorList[0];
+		return true;
+	}
+
+	ValidateAvailableOfficers();
+	if (AvailableOfficers.Length == 0)
+	{	// no available officers to handle this?
+		return false;
+	}
+
+	for (i = 0; i < ActorList.Length; i++)
+	{
+		// On each actor, find the closest officer available and the distance
+		for (j = 0; j < AvailableOfficers.Length; j++)
+		{
+			IterOfficer = AvailableOfficers[j];
+			IterLength = IterOfficer.GetPathfindingDistanceToActor(ActorList[i], true);
+
+			if (BestActor == None || IterLength < BestLength)
+			{
+				BestActor = ActorList[i];
+				BestLength = IterLength;
+			}
+		}
+	}
+
+	return true;
+}
+
+function Actor GetNextSecureTarget()
+{
+	local array<Actor> SecureTargetsAvailable;
+	local array<Actor> SuspectsAvailable;
+	local array<Actor> CiviliansAvailable;
+	local array<Actor> DisableablesAvailable;
+	local array<Actor> EvidenceAvailable;
+	local SquadSecureGoal SecureGoal;
+	local int i;
+	local Actor BestActor;
+
+	SecureGoal = SquadSecureGoal(achievingGoal);
+	SecureGoal.ValidateSecureTargets();
+	SecureTargetsAvailable = SecureGoal.GetSecureTargets();
+
+	// Populate list of suspects, civilians, disableables, evidence
+	for (i = 0; i < SecureTargetsAvailable.Length; i++)
+	{
+		if (IsSuspect(SecureTargetsAvailable[i]))
+		{
+			SuspectsAvailable[SuspectsAvailable.Length] = SecureTargetsAvailable[i];
+		}
+		else if (IsCivilian(SecureTargetsAvailable[i]))
+		{
+			CiviliansAvailable[CiviliansAvailable.Length] = SecureTargetsAvailable[i];
+		}
+		else if (IsDisableable(SecureTargetsAvailable[i]))
+		{
+			DisableablesAvailable[DisableablesAvailable.Length] = SecureTargetsAvailable[i];
+		}
+		else if (IsEvidence(SecureTargetsAvailable[i]))
+		{
+			EvidenceAvailable[EvidenceAvailable.Length] = SecureTargetsAvailable[i];
+		}
+	}
+
+	// Pick from suspects available, but prioritize closest one
+	if (PickBestFromList(SuspectsAvailable, BestActor) ||
+		PickBestFromList(DisableablesAvailable, BestActor) ||
+		PickBestFromList(CiviliansAvailable, BestActor) ||
+		PickBestFromList(EvidenceAvailable, BestActor))
+	{
+		return BestActor;
+	}
+
+	// hm...
+	return None;
 }
 
 function RemoveSecureTarget(Actor SecureTarget)
@@ -510,9 +616,13 @@ latent function SecureCurrentTargets()
 	if (resource.pawn().logAI)
 		log("SecureCurrentTargets - GetNumSecureTargets():" $ GetNumSecureTargets() $ " AreAnyOfficersAvailable(): " $ AreAnyOfficersAvailable());
 
-	while((GetNumSecureTargets() > 0) && AreAnyOfficersAvailable())
+	while(AreAnyOfficersAvailable())
 	{
-		IterTarget = GetSecureTarget(0);
+		IterTarget = GetNextSecureTarget();
+		if (IterTarget == None)
+		{
+			break;
+		}
 
 		// only secure a target if it's not already being secured
 		if (! IsTargetBeingSecured(IterTarget))
@@ -521,13 +631,13 @@ latent function SecureCurrentTargets()
 			{
 				RestrainAndReportOnTarget(Pawn(IterTarget));
 			}
-			else if(IterTarget.IsA('IDisableableByAI'))
+			else if(IsDisableable(IterTarget))
 			{
 				DisableTarget(IterTarget);
 			}
 			else
 			{
-				assert(IterTarget.IsA('IEvidence'));
+				assert(IsEvidence(IterTarget));
 
 				SecureEvidence(IEvidence(IterTarget));
 			}

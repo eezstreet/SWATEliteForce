@@ -1877,62 +1877,10 @@ simulated function bool IsExpectedCommandSource(name CommandSource)
     return CommandSource == ExpectedCommandSource;
 }
 
-// Inserts a sorted actor for the clean sweep command
-simulated private function InsertSweepTarget(Actor Target, int HandleMethod, out array<Actor> SortedArray, out array<int> SortedHandleMethod)
-{
-    local float Distance;
-    local int i;
-    local Pawn FirstOfficer;
-    local float MaxSweepDistance;
-    local bool UseSweepFilter, SweepFilterExpires;
-    local SwatGameInfo SwatGameInfo;
-
-    SwatGameInfo = SwatGameInfo(Level.Game);
-
-    FirstOfficer = PendingCommandTeam.GetFirstOfficer();
-    if(FirstOfficer == None)
-    {   // No officers alive
-        return;
-    }
-
-    Distance = FirstOfficer.GetPathfindingDistanceToActor(Target);
-    MaxSweepDistance = class'CommonCommandSettings'.default.fMaxSweepDistance;
-    UseSweepFilter = class'CommonCommandSettings'.default.bUseSweepDistanceFilter;
-    SweepFilterExpires = class'CommonCommandSettings'.default.bSweepFilterExpires;
-
-    if(!SweepFilterExpires || !SwatGameInfo.Repo.GuiConfig.CurrentMission.IsMissionCompleted(SwatGameInfo.Repo.MissionObjectives))
-    {
-        if(UseSweepFilter && MaxSweepDistance < Distance)
-        {   // Too far away
-            return;
-        }
-    }
-
-
-    for(i = 0; i < SortedArray.Length; i++)
-    {
-        if(Distance < FirstOfficer.GetPathfindingDistanceToActor(Target))
-        {   // This object's distance is less than the current one (but more than the last one) - add it.
-            SortedArray.Insert(i, 1);
-            SortedArray[i] = Target;
-            SortedHandleMethod.Insert(i, 1);
-            SortedHandleMethod[i] = HandleMethod;
-            break;
-        }
-    }
-
-    if(i >= SortedArray.Length)
-    {   // It's the farthest away object, so add it to the end
-        SortedArray[SortedArray.Length] = Target;
-        SortedHandleMethod[SortedHandleMethod.Length] = HandleMethod;
-    }
-}
-
 // This handles all of the new, broad secure commands that are available in V6
 simulated function CleanSweepCommand(Pawn CommandGiver,
   vector PendingCommandOrigin, bool Restrain, bool Evidence, bool Disable)
 {
-    local array<int> SortedHandleMethod;
     local array<Actor> SortedHandleActor;
     local ICanBeArrested ArrestableActor;
     local IEvidence EvidenceActor;
@@ -1946,11 +1894,9 @@ simulated function CleanSweepCommand(Pawn CommandGiver,
         if(Restrain)
         {
             ArrestableActor = ICanBeArrested(A);
-            if(ArrestableActor != None) {
-                if(ArrestableActor.CanBeArrestedNow())
-                {
-                    InsertSweepTarget(A, 0, SortedHandleActor, SortedHandleMethod);
-                }
+            if(ArrestableActor != None && ArrestableActor.CanBeArrestedNow()) 
+            {
+                SortedHandleActor[SortedHandleActor.Length] = A;
             }
         }
         if(Evidence)
@@ -1958,36 +1904,23 @@ simulated function CleanSweepCommand(Pawn CommandGiver,
             EvidenceActor = IEvidence(A);
             if(EvidenceActor != None && EvidenceActor.CanBeUsedNow())
             {
-                InsertSweepTarget(A, 1, SortedHandleActor, SortedHandleMethod);
+                SortedHandleActor[SortedHandleActor.Length] = A;
             }
         }
         if(Disable)
         {
             DisableableActor = IDisableableByAI(A);
-            if(DisableableActor != None) {
-                if(DisableableActor.IsDisableableNow())
-                {
-                    InsertSweepTarget(A, 2, SortedHandleActor, SortedHandleMethod);
-                }
+            if(DisableableActor != None && DisableableActor.IsDisableableNow()) 
+            {
+                SortedHandleActor[SortedHandleActor.Length] = A;
             }
         }
     }
 
-    // Deal with each actor in the sorted order
+    // Deal with each actor
     for(i = 0; i < SortedHandleActor.Length; i++)
     {
-        switch(SortedHandleMethod[i])
-        {
-            case 0:
-                PendingCommandTeam.Restrain(CommandGiver, PendingCommandOrigin, Pawn(SortedHandleActor[i]));
-                break;
-            case 1:
-                PendingCommandTeam.SecureEvidence(CommandGiver, PendingCommandOrigin, SortedHandleActor[i]);
-                break;
-            case 2:
-                PendingCommandTeam.DisableTarget(CommandGiver, PendingCommandOrigin, SortedHandleActor[i]);
-                break;
-        }
+        PendingCommandTeam.Secure(CommandGiver, PendingCommandOrigin, SortedHandleActor[i]);
     }
 }
 

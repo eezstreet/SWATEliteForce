@@ -95,12 +95,9 @@ function int GetNumSecureTargets()
 	return SecureTargets.Length;
 }
 
-function Actor GetSecureTarget(int SecureTargetIndex)
+function array<Actor> GetSecureTargets()
 {
-	assert(SecureTargetIndex < SecureTargets.Length);
-	assert(SecureTargetIndex >= 0);
-
-	return SecureTargets[SecureTargetIndex];
+	return SecureTargets;
 }
 
 function RemoveSecureTarget(Actor SecureTarget)
@@ -143,7 +140,7 @@ function bool IsASecureTarget(Actor TestSecureTarget)
 }
 
 
-private function ValidateSecureTargets()
+function ValidateSecureTargets()
 {
 	local int i;
 	local Pawn RestrainTarget;
