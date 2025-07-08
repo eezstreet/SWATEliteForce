@@ -1336,6 +1336,31 @@ function bool HasEvidence()
 	return HeldEvidence != None;
 }
 
+simulated function EnteredZone(ZoneInfo Zone)
+{
+	Super.EnteredZone(Zone);
+
+//	log(Name $ " Entered Zone " $ Zone $ " Zone.bUseFlashlight: " $ Zone.bUseFlashlight);
+
+    // don't toggle flashlight when dead/incapacitated
+    if (IsConscious())
+    {
+		switch(Skill)
+		{
+			case EnemySkill_High:
+				if(FRand() <= 0.5) 
+					SetDesiredFlashlightState(Zone.bUseFlashlight);
+			    break;
+			case EnemySkill_Medium:
+				if(FRand() <= 0.75)
+					SetDesiredFlashlightState(Zone.bUseFlashlight);
+			    break;
+			case EnemySkill_Low:
+					SetDesiredFlashlightState(Zone.bUseFlashlight);
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 defaultproperties
 {
