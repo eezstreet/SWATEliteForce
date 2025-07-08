@@ -21,6 +21,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Suspects now fire upon doors much more reliably when barricading.
   - Suspects shoot faster and more consistently at SWAT and are more dangerous in general.
   - Suspects will now shoot at SWAT when moving to barricade.
+  - Search and Secure targets are now assigned by type (suspect/disableable/civilian/evidence, in that order) and then sorted by distance as opposed to being assigned randomly
   - Fixed a TSS bug where AIs (SWAT + suspects) used wrong angles when determining if they could take cover (specifically, if the cover involves leaning)
   - Fixed beanbag shotguns applying both the ReactToBeingShot action and the Stung action, which lead to huge morale loss and a visual glitch. (thanks to kevinfoley)
   - Fixed a TSS bug where if a suspect was stung and then became compliant, they would randomly stand up and play an "aim gun at" animation. (thanks to kevinfoley)
