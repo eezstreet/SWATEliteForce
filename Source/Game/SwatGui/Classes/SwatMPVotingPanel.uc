@@ -25,6 +25,8 @@ var(SWATGui) private EditInline Config GUIButton BackgroundRight;
 var(SWATGui) private EditInline Config GUIButton BackgroundCenter;
 
 var(SWATGui) private EditInline Config GUIButton LoadMapsButton;
+var(DEBUG) private Material NoScreenshotAvailableImage;
+var(SWATGui) private EditInline Config GUIImage  LevelScreenshot;
 
 var(DEBUG) private GUIList FullMapList;
 
@@ -51,8 +53,28 @@ function InitComponent(GUIComponent MyOwner)
 
 	VoteYesButton.OnClick = OnVoteYesClicked;
 	VoteNoButton.OnClick = OnVoteNoClicked;
+	MapList.OnChange=  OnSelectedMapsChanged;
 
   LoadMapsButton.OnClick = OnLoadMapsClicked;
+}
+
+function OnSelectedMapsChanged( GUIComponent Sender )
+{
+	local LevelSummary Summary;
+
+	Summary = LevelSummary( MapList.List.GetObject() );
+	if (Summary == None)
+		return;
+
+	if( Summary.Screenshot == None )
+	{
+        LevelScreenshot.Image = NoScreenshotAvailableImage;
+	}
+    else
+	{
+        LevelScreenshot.Image = Summary.Screenshot;
+		log("Setting screenshot to "$Summary.Screenshot);
+	}
 }
 
 private function LoadFullMapList()
@@ -292,7 +314,7 @@ private function InitialiseMapList()
         {
             if( Summary.SupportedModes[j] == EMPMode.MPM_COOP )
             {
-                MapList.List.AddElement( FullMapList.GetAtIndex(i) );
+                MapList.List.Add( FullMapList.GetItemAtIndex(i), Summary, Summary.Title );
                 break;
             }
         }

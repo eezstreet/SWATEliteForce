@@ -405,7 +405,6 @@ function SaveServerSettings()
     {
 		if(Settings.bIsQMM)
 		{	// Flipped for QMM purposes
-			log("Adding map to list: "$SelectedMaps.List.GetExtraAt(i));
 			SwatPlayerController(PlayerOwner()).ServerAddMap( Settings,
 				StripHTMLColors(SelectedMaps.List.GetExtraAt(i)),
 				PackPlusExtension(SelectedMaps.List.GetAt(i)) );
