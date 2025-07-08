@@ -187,6 +187,19 @@ function InternalOnClick(GUIComponent Sender)
 	}
 }
 
+// Param1 is the name of the scenario that we want to use
+event HandleParameters(string Param1, string Param2, optional int param3)
+{
+	local SwatMissionSelectionPanel MissionSelectPanel;
+
+	// If param1 is specified, then we use the specified scenario name
+	if (Len(Param1) != 0)
+	{
+		MissionSelectPanel = SwatMissionSelectionPanel(MyTabControl.MyTabs[1].TabPanel);
+		MissionSelectPanel.MyMissionSelectionBox.List.FindExtra( Param1 );
+	}
+}
+
 defaultproperties
 {
     OnShow=InternalOnShow

@@ -281,7 +281,7 @@ function PlayScenario( string ScenarioName, string PackName )
 	Controller.OpenMenu("SwatGui.SwatCustomMenu","SwatCustomMenu");
 
     //open Mission Setup menu
-	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
+	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu", ScenarioName);
 }
 
 

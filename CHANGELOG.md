@@ -41,8 +41,9 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Fixed an issue in CO-OP where you could ready up (and be over the weight limit) in situations where you shouldn't be able to. (Thanks to beppegoodoldrebel)
   - Added support for custom connection failure messages from the server (Thanks to beppe/SS/jankovalski)
   - Uncapped servermove framerate (thanks to beppegoodoldrebel)
-  - Documentation (*.md) has been cleaned up.
   - You can no longer take limb damage when in god mode.
+  - Clicking "PLAY" on a Quick Mission Maker mission in a campaign will now select the mission you had highlighted, instead of dumping you to the campaign.
+  - Documentation (*.md) has been cleaned up.
 
 ### Weapon Changes
 

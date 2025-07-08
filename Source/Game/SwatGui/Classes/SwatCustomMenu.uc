@@ -85,7 +85,7 @@ private function InternalOnClick(GUIComponent Sender)
 		case MyUseCustomButton:
             //set the pak for custom
 		    GC.SetCustomScenarioPackData( CustomScenarioPack, PackPlusExtension( MyCustomSelectionBox.Get() ), PackMinusExtension( MyCustomSelectionBox.Get() ), CustomScenarioCreatorData.ScenariosPath );
-			Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu"); 
+			Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu", ""); 
 			break;
 		case MyMainMenuButton:
             Controller.CloseMenu(); break;

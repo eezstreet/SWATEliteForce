@@ -451,7 +451,7 @@ private function GoToMissionSetup(Campaign TheCampaign)
 		GC.SetCustomScenarioPackData( None );
 		SwatGuiController(Controller).Repo.RoleChange( GAMEROLE_SP_Campaign );
 	}
-	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu");
+	Controller.OpenMenu("SwatGui.SwatMissionSetupMenu","SwatMissionSetupMenu", "");
 }
 
 private function CreateCampaign( string campName, int campPath, bool bPlayerPermadeath, bool bOfficerPermadeath, bool bHardcoreMode )

@@ -258,6 +258,11 @@ function string find(string Text, optional bool bExact, optional bool bDontSetIn
 	return List.Find(Text,bExact, bDontSetIndex);
 }
 
+function string FindExtra(string Text, optional bool bExact, optional bool bDontSetIndex, optional bool bDontRealign)
+{
+	return List.FindExtra(Text, bExact, bDontSetIndex, bDontRealign);
+}
+
 function int ItemCount()
 {
 	return List.ItemCount;

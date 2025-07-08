@@ -12,7 +12,7 @@ import enum eSwatGameRole from SwatGame.SwatGUIConfig;
 
 var(SWATGui) private EditInline Config GUILabel          MyCampaignNameLabel;
 var(SWATGui) private EditInline Config GUIScrollTextBox  MyMissionInfoBox;
-var(SWATGui) private EditInline Config GUIListBox        MyMissionSelectionBox;
+var(SWATGui) EditInline Config GUIListBox        MyMissionSelectionBox;
 var(SWATGui) private EditInline Config GUIComboBox       MyDifficultySelector;
 var(SWATGui) private EditInline Config GUILabel          MyDifficultyLabel;
 
