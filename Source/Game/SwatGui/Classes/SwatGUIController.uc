@@ -169,6 +169,10 @@ function OnStateChange( eSwatGameState oldState, eSwatGameState newState, option
 {
     local string CustomMissionLabel;
     local ServerSettings Settings;
+    local array<name> TargetMissions;
+    local array<string> TargetMissionsAsStrings;
+    local int i;
+
 log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
 //LogMenuStack();
 //LogStorageStack();
@@ -270,22 +274,38 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
 					Settings = ServerSettings(ViewportOwner.Actor.Level.CurrentServerSettings);
 					if(Settings.bIsQMM)
 					{
+                        TargetMissionsAsStrings = GuiConfig.GetCustomScenarioPack().ScenarioStrings;
+                        for (i = 0; i < TargetMissionsAsStrings.Length; i++)
+                        {
+                            TargetMissions[TargetMissions.Length] = name(TargetMissionsAsStrings[i]);
+                        }
+
 						CustomMissionLabel = GuiConfig.GetPakFriendlyName()$"_"$GuiConfig.GetScenarioName();
 						Campaign.MissionEnded(name(CustomMissionLabel),
 							GuiConfig.CurrentDifficulty,
 							!(GuiConfig.CurrentMission.IsMissionFailed()),
 							GetSwatGameInfo().LeadershipStatus(),
-							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement(),
+                            TargetMissions);
 					}
-					else
-					{
-						Campaign.MissionEnded(GetLevelInfo().Label,
+                    else
+                    {
+                        if (Campaign.CampaignPath == 0)
+                        {
+                            TargetMissions = class'SwatGame.SwatVanillaCareerPath'.default.Missions;
+                        }
+                        else if (Campaign.CampaignPath == 1)
+                        {
+                            TargetMissions = class'SwatGame.SwatSEFCareerPath'.default.Missions;
+                        }
+
+                        Campaign.MissionEnded(GetLevelInfo().Label,
 							GuiConfig.CurrentDifficulty,
 							!(GuiConfig.CurrentMission.IsMissionFailed()),
 							GetSwatGameInfo().LeadershipStatus(),
-							GuiConfig.CurrentMission.HasMetDifficultyRequirement());
-					}
-
+							GuiConfig.CurrentMission.HasMetDifficultyRequirement(),
+                            TargetMissions);
+                    }
 
 	                SwatPlayerController(ViewportOwner.Actor).ServerUpdateCampaignProgression(Settings, Campaign.CampaignPath, Campaign.GetAvailableIndex());
 
@@ -298,10 +318,27 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
             {
                 GuiConfig.CurrentMission.SetHasMetDifficultyRequirement( GetSwatGameInfo().LeadershipStatus() >= GuiConfig.DifficultyScoreRequirement[GuiConfig.CurrentDifficulty] );
 
+                if (GuiConfig.GetCustomScenarioPack() != None)
+                {
+                    TargetMissionsAsStrings = GuiConfig.GetCustomScenarioPack().ScenarioStrings;
+                    for (i = 0; i < TargetMissionsAsStrings.Length; i++)
+                    {
+                        TargetMissions[TargetMissions.Length] = name(TargetMissionsAsStrings[i]);
+                    }
+                }
+                else if (Campaign.CampaignPath == 0)
+                {
+                    TargetMissions = class'SwatGame.SwatVanillaCareerPath'.default.Missions;
+                }
+                else if (Campaign.CampaignPath == 1)
+                {
+                    TargetMissions = class'SwatGame.SwatSEFCareerPath'.default.Missions;
+                }
+
                 if( (GuiConfig.SwatGameRole == GAMEROLE_SP_Campaign &&
                     Campaign != None) || coopcampaign )
                 {
-                    Campaign.MissionEnded(GuiConfig.GetCurrentMissionName(), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );    //completed
+                    Campaign.MissionEnded(GuiConfig.GetCurrentMissionName(), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement(), TargetMissions );    //completed
                 }
                 else if( GuiConfig.SwatGameRole == GAMEROLE_SP_Custom )
                 {
@@ -310,7 +347,7 @@ log("[dkaplan] >>> OnStateChange of (SwatGUIController) "$self);
                     GuiConfig.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty,!(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus() );    //completed
 					if(Campaign != None)
 					{
-						Campaign.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty, !(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement() );
+						Campaign.MissionEnded(name(CustomMissionLabel), GuiConfig.CurrentDifficulty, !(GuiConfig.CurrentMission.IsMissionFailed()), GetSwatGameInfo().LeadershipStatus(), GuiConfig.CurrentMission.HasMetDifficultyRequirement(), TargetMissions );
 					}
                 }
 

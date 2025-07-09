@@ -68,9 +68,10 @@ final function SetHasPlayedCreditsOnCampaignCompletion()
     SaveConfig();
 }
 
-final function MissionEnded(name Mission, eDifficultyLevel difficulty, bool Completed, int Score, bool bMetDifficultyScoreRequirement)
+final function MissionEnded(name Mission, eDifficultyLevel difficulty, bool Completed, int Score, bool bMetDifficultyScoreRequirement, array<name> OriginalMissions)
 {
     local int index;
+    local int i;
 
 log("[dkaplan] Adding Mission result for mission: "$Mission);
     index = GetMissionIndex(Mission);
@@ -86,8 +87,24 @@ log("[dkaplan] Adding Mission result for mission: "$Mission);
     //add this mission result
     MissionResults[index].AddResult( difficulty, Completed, Score );
 
-    if( Completed && bMetDifficultyScoreRequirement && availableIndex == index )
-        availableIndex = index + 1;
+    if( Completed && bMetDifficultyScoreRequirement )
+    {
+        log("...checking original missions ("$OriginalMissions.Length$")");
+        for (i = 0; i < OriginalMissions.Length; i++)
+        {
+            log("mission ["$i$"] is "$OriginalMissions[i]$", mission is "$Mission);
+            if (OriginalMissions[i] == Mission)
+            {
+                if (availableIndex == i)
+                {
+                    availableIndex = i + 1;
+                }
+                break;
+            }
+        }
+    }
+    //if( Completed && bMetDifficultyScoreRequirement && availableIndex == index )
+    //    availableIndex = index + 1;
 
     SaveConfig();
 }
