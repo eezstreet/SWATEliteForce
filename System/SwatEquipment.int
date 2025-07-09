@@ -167,7 +167,7 @@ MagazineSizeString=20
 TotalAmmoString=10 magazines
 RateOfFire=700 RPM
 
-[MP5SSDSMG]
+[MP5SD5SMG]
 Description=The MP5SD5 is a variant of the MP5 equipped with an integrated suppressor and fixed stock. The MP5SD is very popular among covert-ops forces and is deployed in stealth operations around the globe. This weapon is chambered in 9x19mm Parabellum rounds.
 FriendlyName=MP5SD5
 ShortName=MP5SD5
@@ -423,7 +423,7 @@ Description=This 9mm submachine gun was designed by H&K, a world renowned German
 FriendlyName=MP5A4 with Holographic Sight
 ShortName=MP5A4 with Holographic Sight
 
-[UNUSEDSilencedMP5SMG]
+[MP5A4SDSMG]
 Description=This 9mm submachine gun was designed by H&K, a world renowned German manufacturer.  It is preferred by many para-military groups throughout the world for urban tactical engagements.  Firing either full metal jacket or jacketed hollow point 9x19mm ammunition it is versatile, but lacks the stopping power of an assault rifle.  Its key advantage is its compact design, which allows superior maneuverability in indoor situations.  This model is equipped with a fire mode selector allowing automatic, semi-automatic and three round burst firing modes.  It also sports an integrated sound and flash suppressor for when stealth is paramount.
 FriendlyName=Suppressed MP5A4
 ShortName=Sup. MP5A4

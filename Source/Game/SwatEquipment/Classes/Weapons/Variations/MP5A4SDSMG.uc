@@ -1,0 +1,1 @@
+class MP5A4SDSMG extends MP5SMG config(SwatEquipment);

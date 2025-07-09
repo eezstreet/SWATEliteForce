@@ -1,4 +1,4 @@
-class BadguySilencedMP5SMG extends SilencedMP5SMG;
+class BadguySilencedMP5SMG extends MP5A4SDSMG;
 
 defaultproperties
 {
