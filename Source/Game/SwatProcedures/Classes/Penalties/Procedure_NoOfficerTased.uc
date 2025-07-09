@@ -36,3 +36,8 @@ function int GetCurrentValue()
 {
     return PenaltyPerInfraction * numInfractions;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

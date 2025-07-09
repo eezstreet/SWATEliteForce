@@ -43,6 +43,7 @@ function string Status()
 
 //IProcedure implementation
 function int GetCurrentValue();
+function int GetPossible();
 
 //returns true iff the procedure's value is the highest possible
 function bool IsMaxed()

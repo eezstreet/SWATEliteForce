@@ -53,6 +53,12 @@ function int GetCurrentValue()
     return total;
 }
 
+function int GetPossible()
+{
+    return Bonus;
+}
+
+
 function int GetNumOfficers()
 {
     return GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' );
