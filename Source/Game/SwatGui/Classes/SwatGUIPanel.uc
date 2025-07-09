@@ -20,7 +20,25 @@ function InitComponent(GUIComponent MyOwner)
 event Show()
 {
     SetSplashCameraPosition();
+    UpdateAspectRatio();
     Super.Show();
+}
+
+// SEF: Maintain 4:3 aspect ratio for this panel. -Kevin
+private function UpdateAspectRatio()
+{
+    local float screenAspectRatio;
+    local float desiredAspectRatio;
+    local float horizontalScale;
+
+    Controller.GetGuiResolution();
+    screenAspectRatio = Controller.ResolutionX / Controller.ResolutionY;
+    desiredAspectRatio = 1024.0 / 768.0;
+    horizontalScale = desiredAspectRatio / screenAspectRatio;
+    if (horizontalScale > 1) horizontalScale = 1;
+
+    WinWidth = horizontalScale;
+    WinLeft = (1 - horizontalScale) / 2.0;
 }
 
 private final function SetSplashCameraPosition()
