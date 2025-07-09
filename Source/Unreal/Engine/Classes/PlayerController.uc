@@ -1236,6 +1236,8 @@ exec function SetZoom(bool Zoom, optional bool Instantly)
     }
 }
 
+function RecalculateZoomedFov(){}
+
 exec function FOV(float F)
 {
 	local float fFOV;
@@ -1244,6 +1246,7 @@ exec function FOV(float F)
 	{
 		fFOV = FClamp(F, 70, 120);
 		BaseFOV = fFOV;
+		RecalculateZoomedFov();
 	}
 }
 
@@ -1324,8 +1327,6 @@ function ResetFOV()
 	DesiredFOV = DefaultFOV;
 	FOVAngle = DefaultFOV;
 }
-
-function RecalculateZoomedFov();
 
 exec function FOV(float F)
 {
