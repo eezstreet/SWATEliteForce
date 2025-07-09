@@ -236,7 +236,7 @@ function RecalculateZoomedFov()
     Equipment = Pawn.GetActiveItem();
     SwatWeapon = SwatWeapon(Equipment);
 
-    if(ActiveItem.ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
+    if(Equipment.ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
     {
         if (SwatWeapon != None && SwatWeapon.bUseZoomFovModifier)
         {

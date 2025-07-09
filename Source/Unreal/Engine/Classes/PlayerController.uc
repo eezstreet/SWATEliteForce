@@ -1325,8 +1325,6 @@ function ResetFOV()
 	FOVAngle = DefaultFOV;
 }
 
-function RecalculateZoomedFov();
-
 exec function FOV(float F)
 {
 	if( (F >= 80.0) || (Level.Netmode==NM_Standalone) )
@@ -1339,6 +1337,8 @@ exec function FOV(float F)
 }
 
 #endif  //IG_SWAT   //tcohen: weapon zoom
+
+function RecalculateZoomedFov();
 
 exec function Mutate(string MutateString)
 {
