@@ -1325,12 +1325,15 @@ function ResetFOV()
 	FOVAngle = DefaultFOV;
 }
 
+function RecalculateZoomedFov();
+
 exec function FOV(float F)
 {
 	if( (F >= 80.0) || (Level.Netmode==NM_Standalone) )
 	{
 		DefaultFOV = FClamp(F, 1, 170);
 		DesiredFOV = DefaultFOV;
+		RecalculateZoomedFov();
 		SaveConfig();
 	}
 }

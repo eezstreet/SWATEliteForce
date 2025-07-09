@@ -943,19 +943,7 @@ simulated function OnActiveItemEquipped()
 
     if ( Controller == Level.GetLocalPlayerController() )
     {
-		PlayerController.ZoomedFOV = PlayerController.BaseFOV;
-
-		if(ActiveItem.ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
-		{
-            if (SwatWeapon != None && SwatWeapon.bUseZoomFovModifier)
-            {
-                PlayerController.ZoomedFOV *= SwatWeapon.ZoomedFovModifier;
-            }
-			else if (ActiveItem.ZoomedFOV > 0)
-			{
-				PlayerController.ZoomedFOV = ActiveItem.ZoomedFOV;
-			}
-		}
+        PlayerController.RecalculateZoomedFov();
     }
 }
 

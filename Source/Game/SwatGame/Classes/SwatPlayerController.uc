@@ -227,6 +227,28 @@ function bool ShouldHideCrosshairsDueToIronsights()
   return true;
 }
 
+function RecalculateZoomedFov()
+{
+    local HandheldEquipment Equipment;
+    local SwatWeapon SwatWeapon;
+
+    ZoomedFOV = BaseFOV;
+    Equipment = Pawn.GetActiveItem();
+    SwatWeapon = SwatWeapon(Equipment);
+
+    if(ActiveItem.ShouldIgnoreDisabledZoom() || SwatRepo(Level.GetRepo()).GuiConfig.ExtraIntOptions[4] <= 0)
+    {
+        if (SwatWeapon != None && SwatWeapon.bUseZoomFovModifier)
+        {
+            ZoomedFOV *= SwatWeapon.ZoomedFovModifier;
+        }
+        else if (Equipment.ZoomedFOV > 0)
+        {
+            zoomedFOV = Equipment.ZoomedFOV;
+        }
+    }
+}
+
 function bool GetIronsightsDisabled()
 {
   local SwatGuiConfig GC;
