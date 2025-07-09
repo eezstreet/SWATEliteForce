@@ -33,7 +33,9 @@ private function UpdateAspectRatio()
 
     Controller.GetGuiResolution();
     screenAspectRatio = Controller.ResolutionX / Controller.ResolutionY;
-    desiredAspectRatio = 1024.0 / 768.0;
+    // Setting desired aspect ratio to 1024 / 768 makes the UI slightly too wide.
+    // This is the correct value (measured by the aspect ratio of GUI images on loadout screen).
+    desiredAspectRatio = 915.0 / 768.0;
     horizontalScale = desiredAspectRatio / screenAspectRatio;
     if (horizontalScale > 1) horizontalScale = 1;
 
