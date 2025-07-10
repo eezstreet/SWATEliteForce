@@ -445,7 +445,19 @@ function OnComplianceIssued(Pawn ComplianceIssuer)
 			// if the percentage chance (1 - Frand()) is greater than the current morale, we will comply
 			// otherwise we do nothing
 			RandomChance = 1.0 - FRand();
-
+			
+			//if team is full and near pawn drop all the morale! 10mts approx
+			foreach m_pawn.VisibleCollidingActors( class'ISwatPawn', Off, 660.0  )
+			{
+				if (Off.isa('SwatPlayer') || Off.isa('SwatOfficer'))
+					totOff++;
+			}
+			
+			if (totOff > 4)
+			{
+				RandomChance = RandomChance + 0.6; //massive morale drop!
+			}			
+			
 			if (RandomChance >= GetCurrentMorale())
 			{
 				if (m_Pawn.logAI)
