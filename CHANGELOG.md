@@ -44,6 +44,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Fixed a long-standing issue where the campaign would not advance in some situations.
   - Rearranged ingame Voting screen; added map preview.
   - You can no longer take limb damage when in god mode.
+  - Changed "Type X" armor to say "Level X" to keep in-line with NIJ armor ratings. (thanks to kevinfoley)
   - Clicking "PLAY" on a Quick Mission Maker mission in a campaign will now select the mission you had highlighted, instead of dumping you to the campaign.
   - Documentation (*.md) has been cleaned up.
 
