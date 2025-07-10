@@ -197,6 +197,12 @@ Begin:
 		// create an initial reaction behavior
 		PlayInitialReaction();
 	}
+	
+	//let hostages comply at initial reaction at random chance
+	if ( !ISwatAICharacter(m_Pawn).IsInsane() )  
+		if (VSize2D(Officer.Location - m_pawn.location) < 500.0 )
+			if ( frand() > ISwatHostage(m_Pawn).GetHostageCommanderAction().GetCurrentMorale() )
+				ISwatHostage(m_Pawn).GetHostageCommanderAction().PostComplianceGoal();
 
     succeed();
 }
