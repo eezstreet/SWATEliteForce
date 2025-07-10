@@ -10,6 +10,7 @@ class SwatGUIPanel extends GUI.GUIPanel
 
 var(DynamicConfig) EditInline EditConst protected   SwatGUIConfig   GC "Config class for the GUI";
 var(SwatGUI)       Config               private     Name            CameraPositionLabel "When specified, will move the camera to the location specified by the given camera position when the panel is shown.";
+var(SwatGUIPanel)  Config                           bool            bAutoAspectRatio "Does this panel automatically use a 4:3 aspect ratio?";
 
 function InitComponent(GUIComponent MyOwner)
 {
@@ -20,7 +21,7 @@ function InitComponent(GUIComponent MyOwner)
 event Show()
 {
     SetSplashCameraPosition();
-    UpdateAspectRatio();
+    if (bAutoAspectRatio) UpdateAspectRatio();
     Super.Show();
 }
 
@@ -64,4 +65,5 @@ defaultproperties
 	WinWidth=1
 	WinHeight=1
 	bAcceptsInput=true
+    bAutoAspectRatio=true
 }

@@ -449,8 +449,22 @@ function PostApplySetting( String Setting )
 			// re-set res to recreate viewport with vsync settings
 		    LastResolution = PlayerOwner().ConsoleCommand( "GETCURRENTRES" );
 		    PlayerOwner().ConsoleCommand( "SETRES"@LastResolution );
+            UpdateMenuAspectRatio(); // SEF
 			break;
+        case "Resolution":
+            UpdateMenuAspectRatio(); // SEF
+            break;
 	}
+}
+
+// SEF
+function UpdateMenuAspectRatio()
+{
+    SwatGameSettingsMenu(Controller.TopPage()).UpdateAspectRatio();
+    // Force screen layout to refresh; otherwise, controls become misaligned.
+    // There may be a better way to do this, but this works. -Kevin
+    Hide();
+    Show();
 }
 
 /////////////////////////////////////////////////////////////////////////

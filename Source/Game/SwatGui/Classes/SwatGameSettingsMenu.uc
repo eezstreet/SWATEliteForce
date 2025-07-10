@@ -2,7 +2,7 @@
 //  Class:  SwatGui.SwatGameSettingsMenu
 //  Parent: SwatGUIPage
 //
-//  Menu to load map from entry screen.
+//  Menu for adjusting settings.
 // ====================================================================
 
 class SwatGameSettingsMenu extends SwatGUIPage
@@ -15,6 +15,32 @@ var(SWATGui) private EditInline Config GUITabControl		MyTabControl;
 
 var() config localized string MainMenuString;
 var() config localized string BackString;
+
+// SEF
+event Show()
+{
+    UpdateAspectRatio();
+    Super.Show();
+}
+
+// SEF: Maintain 4:3 aspect ratio for this menu. -Kevin
+function UpdateAspectRatio()
+{
+    local float screenAspectRatio;
+    local float desiredAspectRatio;
+    local float horizontalScale;
+
+    Controller.GetGuiResolution();
+    screenAspectRatio = float(Controller.ResolutionX) / float(Controller.ResolutionY);
+    // Setting desired aspect ratio to 1024 / 768 makes the UI slightly too wide.
+    // This is the correct value (measured by the aspect ratio of GUI images on loadout screen).
+    desiredAspectRatio = 915.0 / 768.0;
+    horizontalScale = desiredAspectRatio / screenAspectRatio;
+    if (horizontalScale > 1) horizontalScale = 1;
+
+    WinWidth = horizontalScale;
+    WinLeft = 0; // Because the render preview is on the right.
+}
 
 function InitComponent(GUIComponent MyOwner)
 {
