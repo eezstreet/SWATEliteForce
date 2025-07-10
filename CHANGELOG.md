@@ -225,6 +225,7 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
 **Shotguns: Nova Pump / Less Lethal Shotgun**
 
   - Fixed mesh to match actual magazine size
+  - New inventory thumbnails
   - Tweaked stats
   - *Less Lethal Nova:*
     - Added black-and-orange color scheme as selectable alternate skin
