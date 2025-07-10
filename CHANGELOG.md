@@ -224,7 +224,7 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
 
 **Shotguns: Nova Pump / Less Lethal Shotgun**
 
-  - Reverted to vanilla model; added right side to mesh and increased polycount
+  - Fixed mesh to match actual magazine size
   - Tweaked stats
   - *Less Lethal Nova:*
     - Added black-and-orange color scheme as selectable alternate skin
