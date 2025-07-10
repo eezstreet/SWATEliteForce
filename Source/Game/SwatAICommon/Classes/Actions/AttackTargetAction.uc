@@ -248,8 +248,13 @@ latent function AttackTarget(bool WaitForAiming)
 	{
 		CurrentWeapon.LatentReload();
 	}
-
-	AimAtActor(Target);
+	
+	//better non-lethal aim
+	if (!bHavePerfectAim)
+		AimAtActor(Target);
+	else
+		AimAtPoint(Pawn(Target).GetHeadLocation());
+	
 	ISwatAI(m_Pawn).LockAim();
 
 	// Interrupt anything the weapon is doing
