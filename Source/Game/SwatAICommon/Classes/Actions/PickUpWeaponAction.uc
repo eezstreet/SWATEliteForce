@@ -42,6 +42,7 @@ function cleanup()
 
     // Guarentee collision avoidance is back on
     m_Pawn.EnableCollisionAvoidance();
+	ISwatEnemy(m_Pawn).UnBecomeAThreat(true, 3.0);
 }
 
 //function IEvidence GetEvidenceTarget()
@@ -122,15 +123,17 @@ latent function PickUpWeapon()
 		else
 			AnimSpecialChannel = m_Pawn.AnimPlaySpecial('secureWeaponTable', 0.1);
 
+		// Reaching for a gun? He's a threat!
+		if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat())
+		{
+			ISwatEnemy(m_Pawn).BecomeAThreat();
+		}
 		m_Pawn.FinishAnim(AnimSpecialChannel);
 
 		m_Pawn.EnableCollisionAvoidance();
 
 		ISwatEnemy(m_Pawn).PickUpWeaponModel(WeaponModel);
-	if ((m_Pawn.IsA('SwatEnemy')) && ((!m_Pawn.IsA('SwatUndercover')) || (!m_Pawn.IsA('SwatGuard'))) && !ISwatEnemy(m_Pawn).IsAThreat())
-	{
-		ISwatEnemy(m_Pawn).BecomeAThreat();
-	}
+	
 	}
 }
 

@@ -87,8 +87,8 @@ function cleanup()
 
     // @HACK: See comments in ISwatAI::UnlockAim for more info.
     ISwatAI(m_pawn).UnlockAim();
-	ISwatAI(m_pawn).UnbecomeAThreat();
     ISwatAI(m_Pawn).UnsetUpperBodyAnimBehavior(kUBABCI_AttackTargetAction);
+	ISwatEnemy(m_Pawn).UnBecomeAThreat(true, 3.0f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
