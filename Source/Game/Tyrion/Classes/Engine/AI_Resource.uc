@@ -285,7 +285,7 @@ event resourceCheck( AI_Goal goal, optional AI_Action bestAction )
 		// old: if ( (bestAction.resourceUsage & bestAction.default.resourceUsage) != 0 )
 		if ( !multipleActionsCheck( bestAction ) )
 		{
-			if ( pawn().logTyrion )
+			//if ( pawn().logTyrion )
 				log( "resourceCheck: Interrupting" @ usedByAction.name @
 					"(pri" @ usedByAction.achievingGoal.priorityFn() $
 					") to achieve" @ goal.name @ "(pri" @ goal.priorityFn() $ ")" );

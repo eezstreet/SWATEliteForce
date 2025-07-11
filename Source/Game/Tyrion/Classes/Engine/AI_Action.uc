@@ -80,8 +80,12 @@ event instantFail( ACT_ErrorCodes errorCode, optional bool bRemoveGoal )
 
 	achievingGoal.markGoalAsFailed();
 
+	log ("1a.");
+
 	if (achievingGoal.parentAction != None )
 		achievingGoal.parentAction.goalNotAchievedCB( achievingGoal, self, errorCode );
+
+	log ("1b.");
 
 	achievingGoal.handleGoalFailure();
 
