@@ -30,6 +30,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - SWAT will no longer automatically deploy taser weapons against suspects that can die from them. (This only really applied to drug flushers on FunTime Amusements)
   - SWAT will no longer pause moving/clearing to order civilians to comply.
   - SWAT will no longer prioritize uncompliant civilians over unthreatening suspects
+  - SWAT have an easier time deploying tasers and pepper spray against close-up targets (thanks to beppegoodoldrebel)
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
   - Added separate keybind for NVGs and flashlights. (thanks to beppegoodoldrebel)
