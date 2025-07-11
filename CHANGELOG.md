@@ -16,6 +16,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Added Kimber skin option to M1911. (thanks to beppegoodoldrebel and kevinfoley)
   - Added black-and-orange skin option to Less Lethal Nova. (thanks to kevinfoley)
   - Numerous other changes to weapons; see full list below.
+  - Greatly improved aspect ratio on many ingame menus (thanks to kevinfoley)
   - Added a new REPORT IN command to quickly assess who is alive on your team. (thanks to kevinfoley)
   - Restored the original vanilla behavior for determining if suspects/SWAT can hit their target. Fixes crashes and assorted issues with AI.
   - Suspects now fire upon doors much more reliably when barricading.
@@ -47,6 +48,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - You can no longer take limb damage when in god mode.
   - Changed "Type X" armor to say "Level X" to keep in-line with NIJ armor ratings. (thanks to kevinfoley)
   - Clicking "PLAY" on a Quick Mission Maker mission in a campaign will now select the mission you had highlighted, instead of dumping you to the campaign.
+  - Cleaned up the logo on the main menu.
   - Documentation (*.md) has been cleaned up.
 
 ### Weapon Changes
