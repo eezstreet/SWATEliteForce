@@ -72,3 +72,8 @@ function int GetCurrentValue()
 
     return PenaltyPerHostage * IncapacitatedHostages.length;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

@@ -28,3 +28,8 @@ function OnSuspectEscaped(SwatPawn Who)
 	TriggerPenaltyMessage(Who);
 	GetGame().CampaignStats_TrackPenaltyIssued();
 }
+
+function int GetPossible()
+{
+	return 0;
+}

@@ -201,6 +201,11 @@ function int GetCurrentValue()
     return retVal;
 }
 
+function int GetPossible()
+{
+	return Bonus;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 //returns true iff the procedure's value is the highest possible

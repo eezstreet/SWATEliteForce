@@ -76,3 +76,8 @@ function int GetCurrentValue()
 
     return PenaltyPerEnemy * KilledEnemies.length;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

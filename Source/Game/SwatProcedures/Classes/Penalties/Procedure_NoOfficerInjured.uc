@@ -57,3 +57,8 @@ function int GetCurrentValue()
 
     return PenaltyPerOfficer * InjuredOfficers.length;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

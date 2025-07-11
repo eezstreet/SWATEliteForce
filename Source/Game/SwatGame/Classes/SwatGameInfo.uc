@@ -281,6 +281,7 @@ final function UpdateScoring()
         {
             SGRI.ProcedureCalculations[i] = Repo.Procedures.Procedures[i].Status();
             SGRI.ProcedureValue[i] = Repo.Procedures.Procedures[i].GetCurrentValue();
+            SGRI.ProcedurePossible[i] = Repo.Procedures.Procedures[i].GetPossible();
         }
     }
 
