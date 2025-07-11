@@ -2,7 +2,7 @@
 //  Class:  SwatGui.SwatSettingsPanel
 //  Parent: SwatGUIPage
 //
-//  Menu to load map from entry screen.
+//  Base class for panels on the Settings menu.
 // ====================================================================
 
 class SwatSettingsPanel extends SwatGUIPanel
