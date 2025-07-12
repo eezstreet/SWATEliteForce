@@ -76,6 +76,8 @@ function cleanup()
 		DistanceToOfficersSensor.deactivateSensor(self);
 		DistanceToOfficersSensor = None;
 	}
+
+	ISwatEnemy(m_Pawn).UnBecomeAThreat(true, 3.0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

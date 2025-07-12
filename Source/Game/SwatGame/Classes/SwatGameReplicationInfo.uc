@@ -53,6 +53,7 @@ var ObjectiveStatus ObjectiveStatus[MAX_OBJECTIVES];
 const MAX_PROCEDURES = 30;
 var String ProcedureCalculations[MAX_PROCEDURES];
 var int ProcedureValue[MAX_PROCEDURES];
+var int ProcedurePossible[MAX_PROCEDURES];
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -1941,22 +1941,19 @@ simulated function Rotator GetAimRotation()
 	}
     else if (CurrentWeaponTarget != None)
     {
-		if (FiredWeapon(ActiveItem).bAimAtHead && !FiredWeapon(ActiveItem).isa('Taser'))
+		TargetLocation = CurrentWeaponTarget.GetFireLocation(ActiveItem);
+
+		if (CurrentWeaponTarget.IsA('SwatPawn'))
 		{
-			if (CurrentWeaponTarget.isa('SwatPawn'))
-				TargetLocation = Pawn(CurrentWeaponTarget).GetHeadLocation();
-			else
-				TargetLocation = CurrentWeaponTarget.GetFireLocation(ActiveItem);
-		}
-		else if (FiredWeapon(ActiveItem).isa('Taser') )
-		{
-			if (CurrentWeaponTarget.isa('SwatPawn'))
+			if (FiredWeapon(ActiveItem).IsA('Taser') )
+			{
 				TargetLocation = Pawn(CurrentWeaponTarget).GetChestLocation();
-			else
-				TargetLocation = CurrentWeaponTarget.GetFireLocation(ActiveItem);
+			}
+			else if (FiredWeapon(ActiveItem).bAimAtHead)
+			{
+				TargetLocation = Pawn(CurrentWeaponTarget).GetHeadLocation();
+			}
 		}
-		else
-			TargetLocation = CurrentWeaponTarget.GetFireLocation(ActiveItem);
     }
     else
     {

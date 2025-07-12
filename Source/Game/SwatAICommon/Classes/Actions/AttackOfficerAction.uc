@@ -87,6 +87,8 @@ function cleanup()
 		CurrentAttackTargetGoal.Release();
 		CurrentAttackTargetGoal = None;
 	}
+
+	ISwatEnemy(m_Pawn).UnBecomeAThreat(true, 3.0f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

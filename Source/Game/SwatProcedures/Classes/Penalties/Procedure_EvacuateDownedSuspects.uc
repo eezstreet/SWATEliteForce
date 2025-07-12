@@ -102,3 +102,8 @@ function int GetCurrentValue()
 
     return PenaltyPerDownedSuspect * ReportableDownedSuspects;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

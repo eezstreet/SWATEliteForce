@@ -43,3 +43,8 @@ function int GetCurrentValue()
 {
   NumTrapsTriggered = 0
 }*/
+
+function int GetPossible()
+{
+	return 0;
+}

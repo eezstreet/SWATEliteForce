@@ -93,3 +93,8 @@ function int GetCurrentValue()
 
     return PenaltyPerEnemy * IncapacitatedEnemies.length;
 }
+
+function int GetPossible()
+{
+	return 0;
+}

@@ -15,7 +15,8 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Added MAC-10 machine pistol as a selectable weapon for SWAT in All Missions, Quick Mission Maker and Multiplayer. (thanks to kevinfoley)
   - Added Kimber skin option to M1911. (thanks to beppegoodoldrebel and kevinfoley)
   - Added black-and-orange skin option to Less Lethal Nova. (thanks to kevinfoley)
-  - Numerous other changes to weapons; see full list below.
+  - Numerous other changes to equipment; see full list below.
+  - Greatly improved aspect ratio on many ingame menus (thanks to kevinfoley)
   - Added a new REPORT IN command to quickly assess who is alive on your team. (thanks to kevinfoley)
   - Restored the original vanilla behavior for determining if suspects/SWAT can hit their target. Fixes crashes and assorted issues with AI.
   - Suspects now fire upon doors much more reliably when barricading.
@@ -30,6 +31,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - SWAT will no longer automatically deploy taser weapons against suspects that can die from them. (This only really applied to drug flushers on FunTime Amusements)
   - SWAT will no longer pause moving/clearing to order civilians to comply.
   - SWAT will no longer prioritize uncompliant civilians over unthreatening suspects
+  - SWAT have an easier time deploying tasers and pepper spray against close-up targets (thanks to beppegoodoldrebel)
   - Greatly improved Weapon Inertia (thanks to kevinfoley)
   - Greatly improved the transition animation for Aim Down Sights (thanks to kevinfoley)
   - Added separate keybind for NVGs and flashlights. (thanks to beppegoodoldrebel)
@@ -46,9 +48,10 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - You can no longer take limb damage when in god mode.
   - Changed "Type X" armor to say "Level X" to keep in-line with NIJ armor ratings. (thanks to kevinfoley)
   - Clicking "PLAY" on a Quick Mission Maker mission in a campaign will now select the mission you had highlighted, instead of dumping you to the campaign.
+  - Cleaned up the logo on the main menu.
   - Documentation (*.md) has been cleaned up.
 
-### Weapon Changes
+### Equipment Changes
 
 All changes in this section are credited to Kevin Foley unless otherwise mentioned:
 
@@ -225,6 +228,7 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
 **Shotguns: Nova Pump / Less Lethal Shotgun**
 
   - Fixed mesh to match actual magazine size
+  - New inventory thumbnails
   - Tweaked stats
   - *Less Lethal Nova:*
     - Added black-and-orange color scheme as selectable alternate skin
@@ -272,6 +276,28 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
   - Rebalanced stats
   - Fixed reload animation timing
   - Fixed issue where the ironsights would become misaligned after shooting
+
+**Helmets: Riot Helmet**
+
+  - Fixed position on head
+  - Increased contrast of visor to make it more visible
+  - Added specular mask
+  - Fixed green color hue
+
+**Helmets: Kevlar Helmet with Goggles**
+
+  - Added specular mask
+  - Fixed green color hue
+
+**Helmets: S10 Helmet**
+
+  - Improved mesh and corrected smoothing groups
+  - Added specular mask
+
+**Helmets: Pro-Tec**
+
+  - Improved mesh and corrected smoothing groups
+  - Added specular mask
 
 ## v7.1
 

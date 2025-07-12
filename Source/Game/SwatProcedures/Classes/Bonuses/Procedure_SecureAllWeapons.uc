@@ -65,6 +65,11 @@ function int GetCurrentValue()
     return retVal;
 }
 
+function int GetPossible()
+{
+	return Bonus;
+}
+
 private function int GetNumUnSecuredWeapons()
 {
     local IEvidence Evidence;

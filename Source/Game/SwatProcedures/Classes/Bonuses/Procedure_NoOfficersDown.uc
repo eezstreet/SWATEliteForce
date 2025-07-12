@@ -46,18 +46,32 @@ function int GetCurrentValue()
     local int total;
     local int NumOfficers;
 
-    NumOfficers = GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' );
+    NumOfficers = GetNumOfficers();
     Modifier = float(NumOfficers-DownedOfficers.length)/float(NumOfficers);
     total = int(float(Bonus)*Modifier);
 
     return total;
 }
 
+function int GetPossible()
+{
+    return Bonus;
+}
+
+
+function int GetNumOfficers()
+{
+    return GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' );
+}
+
 ///////////////////////////////////////
 
 function string Status()
 {
-    return DownedOfficers.length
+    local int NumOfficers;
+    NumOfficers = GetNumOfficers();
+
+    return (NumOfficers - DownedOfficers.length)
         $"/"$( GetNumActors( class'SwatPlayer' ) + GetNumActors( class'SwatOfficer' ) );
 }
 

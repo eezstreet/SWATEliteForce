@@ -127,6 +127,8 @@ function cleanup()
 	{
 		m_Pawn.ShouldCrouch(false);
 	}
+
+	ISwatEnemy(m_Pawn).UnBecomeAThreat(true, 3.0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
