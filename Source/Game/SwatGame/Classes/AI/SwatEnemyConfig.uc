@@ -29,6 +29,13 @@ var config float            MediumSkillMinTimeBeforeShooting;
 var config float            MediumSkillMaxTimeBeforeShooting;
 var config float            HighSkillMinTimeBeforeShooting;
 var config float            HighSkillMaxTimeBeforeShooting;
+//SP only time before shoot
+var config float            LowSkillMinTimeBeforeShootingSP;
+var config float            LowSkillMaxTimeBeforeShootingSP;
+var config float            MediumSkillMinTimeBeforeShootingSP;
+var config float            MediumSkillMaxTimeBeforeShootingSP;
+var config float            HighSkillMinTimeBeforeShootingSP;
+var config float            HighSkillMaxTimeBeforeShootingSP;
 
 defaultproperties
 {
@@ -38,4 +45,11 @@ defaultproperties
     MediumSkillMaxTimeBeforeShooting = 1.3
     HighSkillMinTimeBeforeShooting = 0.6
     HighSkillMaxTimeBeforeShooting = 1.0
+	
+	LowSkillMinTimeBeforeShootingSP = 0.6
+	LowSkillMaxTimeBeforeShootingSP = 1.0
+	MediumSkillMinTimeBeforeShootingSP = 0.6
+	MediumSkillMaxTimeBeforeShootingSP = 0.8
+	HighSkillMinTimeBeforeShootingSP = 0.4
+	HighSkillMaxTimeBeforeShootingSP = 0.6
 }
