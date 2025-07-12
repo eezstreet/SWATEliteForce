@@ -15,7 +15,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Added MAC-10 machine pistol as a selectable weapon for SWAT in All Missions, Quick Mission Maker and Multiplayer. (thanks to kevinfoley)
   - Added Kimber skin option to M1911. (thanks to beppegoodoldrebel and kevinfoley)
   - Added black-and-orange skin option to Less Lethal Nova. (thanks to kevinfoley)
-  - Numerous other changes to weapons; see full list below.
+  - Numerous other changes to equipment; see full list below.
   - Greatly improved aspect ratio on many ingame menus (thanks to kevinfoley)
   - Added a new REPORT IN command to quickly assess who is alive on your team. (thanks to kevinfoley)
   - Restored the original vanilla behavior for determining if suspects/SWAT can hit their target. Fixes crashes and assorted issues with AI.
@@ -51,7 +51,7 @@ The bulk of this update is a large AI update and major changes to the weapons to
   - Cleaned up the logo on the main menu.
   - Documentation (*.md) has been cleaned up.
 
-### Weapon Changes
+### Equipment Changes
 
 All changes in this section are credited to Kevin Foley unless otherwise mentioned:
 
@@ -276,6 +276,28 @@ All changes in this section are credited to Kevin Foley unless otherwise mention
   - Rebalanced stats
   - Fixed reload animation timing
   - Fixed issue where the ironsights would become misaligned after shooting
+
+**Helmets: Riot Helmet**
+
+  - Fixed position on head
+  - Increased contrast of visor to make it more visible
+  - Added specular mask
+  - Fixed green color hue
+
+**Helmets: Kevlar Helmet with Goggles**
+
+  - Added specular mask
+  - Fixed green color hue
+
+**Helmets: S10 Helmet**
+
+  - Improved mesh and corrected smoothing groups
+  - Added specular mask
+
+**Helmets: Pro-Tec**
+
+  - Improved mesh and corrected smoothing groups
+  - Added specular mask
 
 ## v7.1
 
