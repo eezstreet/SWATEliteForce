@@ -30,12 +30,35 @@ var config float            MediumSkillMaxTimeBeforeShooting;
 var config float            HighSkillMinTimeBeforeShooting;
 var config float            HighSkillMaxTimeBeforeShooting;
 
+//SP only time before shoot
+var config float            LowSkillMinTimeBeforeShootingSP;
+var config float            LowSkillMaxTimeBeforeShootingSP;
+var config float            MediumSkillMinTimeBeforeShootingSP;
+var config float            MediumSkillMaxTimeBeforeShootingSP;
+var config float            HighSkillMinTimeBeforeShootingSP;
+var config float            HighSkillMaxTimeBeforeShootingSP;
+
 defaultproperties
 {
+	/* OLD SEF VALUES
     LowSkillMinTimeBeforeShooting = 1.0
     LowSkillMaxTimeBeforeShooting = 1.7
     MediumSkillMinTimeBeforeShooting = 0.9
     MediumSkillMaxTimeBeforeShooting = 1.3
     HighSkillMinTimeBeforeShooting = 0.6
     HighSkillMaxTimeBeforeShooting = 1.0
+	*/
+LowSkillMinTimeBeforeShooting = 0.8
+LowSkillMaxTimeBeforeShooting = 1.0
+MediumSkillMinTimeBeforeShooting = 0.6
+MediumSkillMaxTimeBeforeShooting = 0.8
+HighSkillMinTimeBeforeShooting = 0.4
+HighSkillMaxTimeBeforeShooting = 0.8
+
+LowSkillMinTimeBeforeShootingSP = 0.6
+LowSkillMaxTimeBeforeShootingSP = 1.0
+MediumSkillMinTimeBeforeShootingSP = 0.6
+MediumSkillMaxTimeBeforeShootingSP = 0.8
+HighSkillMinTimeBeforeShootingSP = 0.4
+HighSkillMaxTimeBeforeShootingSP = 0.6
 }

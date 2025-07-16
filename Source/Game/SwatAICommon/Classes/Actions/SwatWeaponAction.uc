@@ -186,11 +186,49 @@ final latent function LatentAimAtActor(Actor Target, optional float MaxWaitTime)
     // only aim at if if we can
 	local float CurrentTime;
 	local float StartTime;
+	local float fdot;
+	local vector TargetDirection , ViewDirectionNoZ;
 
 	StartTime = Level.TimeSeconds;
 
     if (ISwatAI(m_Pawn).AnimCanAimAtDesiredActor(Target) && HasWeaponEquipped())
     {
+		// added here so server can spread information on suspect intentions before even aiming.
+		if( m_pawn.isa('SwatEnemy') || m_pawn.isa('SwatOfficer') )
+		{
+			UpdateThreatToTarget(Target);
+			yield();
+		}
+		
+		if ( ( target.isa('SwatPawn') || target.isa('SwatPlayer') ) && !m_pawn.GetActiveItem().isa('Pepperspray') )
+		{
+			
+			//add time to avoid quickscope shooting
+			TargetDirection = Normal( m_pawn.location - target.location);
+			ViewDirectionNoZ = vector(m_pawn.Rotation);
+			fDot =  ViewDirectionNoZ Dot TargetDirection;
+			//log (m_pawn.name $ " attacking " $ target.name $ " fdot is: " $ fdot );
+			
+			if ( m_pawn.isa('SwatEnemy') )
+			{
+				if ( fdot > 0.707 )
+				{
+					//log ( m_pawn.name $ " quick scope added time on target 0.8" );
+					MaxWaitTime = MaxWaitTime + 0.8;
+				}
+				else if ( fdot > 0.0 && fdot <= 0.707 )
+				{
+					//log ( m_pawn.name $ " quick scope added time on target 0.4" );
+					MaxWaitTime = MaxWaitTime + 0.6;
+				}
+				else if ( fdot > -0.707 && fdot <= 0.0 )
+				{
+					//log ( m_pawn.name $ " quick scope added time on target 0.2" );
+					MaxWaitTime = MaxWaitTime + 0.4;
+				}
+			}
+		}
+		
         ISwatAI(m_pawn).AimAtActor(Target);
 
         // wait until we aim at what we want to
