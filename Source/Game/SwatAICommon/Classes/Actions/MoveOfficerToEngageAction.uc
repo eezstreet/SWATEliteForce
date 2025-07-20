@@ -23,8 +23,10 @@ var private NavigationPoint		PointToEngageFrom;
 var private	name				RoomNameToEngageFrom;
 
 // time between trying finding a point to engage from
-const kMinSleepTimeBetweenFindEngagePointTests = 1.0;
-const kMaxSleepTimeBetweenFindEngagePointTests = 3.0;
+//const kMinSleepTimeBetweenFindEngagePointTests = 1.0; ->old value
+//const kMaxSleepTimeBetweenFindEngagePointTests = 3.0; ->old value
+const kMinSleepTimeBetweenFindEngagePointTests = 0.2;
+const kMaxSleepTimeBetweenFindEngagePointTests = 0.5;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
