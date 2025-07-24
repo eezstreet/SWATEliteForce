@@ -77,7 +77,6 @@ var(Ricochet) config float RicochetMinimumMomentum "Minimum momentum required to
 
 // Advanced ballstics for Elite Force
 var(AdvancedBallistics) config AmmoType BulletClass "What ammo type I am?";
-var int BulletType "Internal measure to know the BulletClass";
 var(AdvancedBallistics) config PenetrationLevel ArmorPenetration "What level of armor can I go through?";
 var int PenetrationType "Internal measure to know the BulletClass";
 
@@ -130,165 +129,12 @@ simulated function float GetRicochetMomentumModifier() {
 simulated function float GetDrag() {
   return Drag;
 }
-simulated function int GetAmmoType() 
- {
-   return BulletClass;
- }
- 
+
 simulated function int GetPenetrationLevel() 
  {
    return ArmorPenetration;
  }
- 
-simulated function int GetBulletType() 
- {			
- switch(BulletClass) 
- {					
- case AmmoType_9mmAP:
- 	BulletType = 1;
- 	break;
- case AmmoType_9mmFMJ:
- 	BulletType = 2;
- 	break;
- case AmmoType_9mmJSP:
- 	BulletType = 3;
- 	break;
- case AmmoType_9mmJHP:
- 	BulletType = 4;
- 	break;				
- case AmmoType_45AP:
- 	BulletType = 5;
- 	break;
- case AmmoType_45FMJ:
- 	BulletType = 6;
- 	break;
- case AmmoType_45JSP:
- 	BulletType = 7;
- 	break;
- case AmmoType_45JHP:
- 	BulletType = 8;
- 	break;				
- case AmmoType_357AP:
- 	BulletType = 9;
- 	break;
- case AmmoType_357FMJ:
- 	BulletType = 10;
- 	break;
- case AmmoType_357JSP:
- 	BulletType = 11;
- 	break;
- case AmmoType_357JHP:
- 	BulletType = 12;
- 	break;				
- case AmmoType_57AP:
- 	BulletType = 13;
- 	break;
- case AmmoType_57FMJ:
- 	BulletType = 14;
- 	break;
- case AmmoType_57JSP:
- 	BulletType = 15;
- 	break;
- case AmmoType_57JHP:
- 	BulletType = 16;
- 	break;				
- case AmmoType_50AP:
- 	BulletType = 17;
- 	break;
- case AmmoType_50FMJ:
- 	BulletType = 18;
- 	break;
- case AmmoType_50JSP:
- 	BulletType = 19;
- 	break;
- case AmmoType_50JHP:
- 	BulletType = 20;
- 	break;			
- case AmmoType_32AP:
- 	BulletType = 21;
- 	break;
- case AmmoType_32FMJ:
- 	BulletType = 22;
- 	break;
- case AmmoType_32JSP:
- 	BulletType = 23;
- 	break;
- case AmmoType_32JHP:
- 	BulletType = 24;
- 	break;			
- case AmmoType_223AP:
- 	BulletType = 25;
- 	break;
- case AmmoType_223FMJ:
- 	BulletType = 26;
- 	break;
- case AmmoType_223JSP:
- 	BulletType = 27;
- 	break;
- case AmmoType_223JHP:
- 	BulletType = 28;
- 	break;			
- case AmmoType_762AP:
- 	BulletType = 29;
- 	break;
- case AmmoType_762FMJ:
- 	BulletType = 30;
- 	break;
- case AmmoType_762JSP:
- 	BulletType = 31;
- 	break;
- case AmmoType_762JHP:
- 	BulletType = 32;
- 	break;			
- case AmmoType_308AP:
- 	BulletType = 33;
- 	break;
- case AmmoType_308FMJ:
- 	BulletType = 34;
- 	break;
- case AmmoType_308JSP:
- 	BulletType = 35;
- 	break;
- case AmmoType_308JHP:
- 	BulletType = 36;
- 	break;			
- case AmmoType_545AP:
- 	BulletType = 37;
- 	break;
- case AmmoType_545FMJ:
- 	BulletType = 38;
- 	break;
- case AmmoType_545JSP:
- 	BulletType = 39;
- 	break;
- case AmmoType_545JHP:
- 	BulletType = 40;
- 	break;			
- case AmmoType_ArmorPiercing:
- 	BulletType = 41;
- 	break;
- case AmmoType_FullMetalJacket:
- 	BulletType = 42;
- 	break;
- case AmmoType_JacketedSoftPoint:
- 	BulletType = 43;
- 	break;
- case AmmoType_JacketedHollowPoint:
- 	BulletType = 44;
- 	break;
- case AmmoType_Buckshot:
- 	BulletType = 45;
- 	break;
- case AmmoType_Special:
- 	BulletType = 46;
- 	break;
- default:
- 	BulletType = 42;
- }
- 
-  return BulletType;
- }
- 
+  
 simulated function int GetPenetrationType() 
 {			
  switch(ArmorPenetration) 

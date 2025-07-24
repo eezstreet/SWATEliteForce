@@ -513,27 +513,9 @@ simulated function ApplyAimError(out rotator FireDirection)
 
 native function ApplyRandomOffsetToRotation(rotator OriginalRotation, float OffsetHalfAngleRadians, out rotator NewRotation);
 
-// Handles bullet fracture
-// TODO
-/*
-simulated function bool HandleBallisticImpact(
-    Actor Victim,
-    vector HitLocation,
-    vector HitNormal,
-    vector NormalizedBulletDirection,
-    Material HitMaterial,
-    ESkeletalRegion HitRegion,
-    out float Momentum,
-    out float KillEnergy,
-    out int BulletType,
-    vector ExitLocation,
-    vector ExitNormal,
-    Material ExitMaterial
-    )*/
-
 // Handles bullet ricochet.
 // For right now, all this does is fire the bullet in a perfect mirror.
-simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, float KillEnergy, int BulletType, int BounceCount)
+simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector HitNormal, vector BulletDirection, Material HitMaterial, float Momentum, int BounceCount)
 {
   local vector MirroredAngle, EndTrace;
   local vector NewHitLocation, NewHitNormal, NewExitLocation, NewExitNormal;
@@ -545,7 +527,6 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
   BounceCount = BounceCount + 1;
   MirroredAngle = BulletDirection - 2 * (BulletDirection dot Normal(HitNormal)) * Normal(HitNormal);
   Momentum *= Ammo.GetRicochetMomentumModifier();
-  KillEnergy = 0;
   EndTrace = HitLocation + MirroredAngle * Range;
 
   // Play an effect when it hits the first surface
@@ -596,10 +577,10 @@ simulated function DoBulletRicochet(Actor Victim, vector HitLocation, vector Hit
 
       if(Ammo.CanRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount)) {
         // the bullet ricocheted from the material
-        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, KillEnergy, BulletType, BounceCount);
+        DoBulletRicochet(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial, Momentum, BounceCount);
         break;
       } else if(!HandleBallisticImpact(NewVictim, NewHitLocation, NewHitNormal, Normal(NewHitLocation - NewHitNormal), NewHitMaterial,
-                  NewHitRegion, Momentum, KillEnergy, BulletType, NewExitLocation, NewExitNormal, NewExitMaterial)) {
+                  NewHitRegion, Momentum, NewExitLocation, NewExitNormal, NewExitMaterial)) {
         // the bullet embedded itself into the material
         break;
       }
@@ -623,14 +604,9 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
 	local actor Victim;
     local Material HitMaterial, ExitMaterial; //material on object that was hit
     local float Momentum;
-    local float KillEnergy;
-    local int BulletType;
     local ESkeletalRegion HitRegion;
 
     Momentum = MuzzleVelocity * Ammo.Mass;
-    BulletType = Ammo.GetBulletType();
-	//This is redefined somewhere else
-    KillEnergy = 0;
 
     Ammo.BallisticsLog("BallisticFire(): Weapon "$name
         $", shot by "$Owner.name
@@ -677,10 +653,10 @@ simulated function BallisticFire(vector StartTrace, vector EndTrace)
         if (Ammo.CanRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0))
 		{
           // the bullet ricocheted
-          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, KillEnergy, BulletType, 0);
+          DoBulletRicochet(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, Momentum, 0);
           break;
         }
-        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, KillEnergy, BulletType, ExitLocation, ExitNormal, ExitMaterial))
+        else if (!HandleBallisticImpact(Victim, HitLocation, HitNormal, Normal(HitLocation - StartTrace), HitMaterial, HitRegion, Momentum, ExitLocation, ExitNormal, ExitMaterial))
             break; // the bullet embedded itself in the target
 
         // the bullet passed through the target
@@ -717,8 +693,6 @@ simulated function bool HandleBallisticImpact(
     Material HitMaterial,
     ESkeletalRegion HitRegion,
     out float Momentum,
-    out float KillEnergy,
-    out int BulletType,
     vector ExitLocation,
     vector ExitNormal,
     Material ExitMaterial
@@ -731,17 +705,11 @@ simulated function bool HandleBallisticImpact(
     local int Damage;
     local SkeletalRegionInformation SkeletalRegionInformation;
     local ProtectiveEquipment Protection;
-    local int ArmorLevel;
-    local int BulletLevel;
     local float DamageModifier, ExternalDamageModifier;
     local float LimbInjuryAimErrorPenalty;
     local IHaveSkeletalRegions SkelVictim;
     local Pawn  PawnVictim;
 	local PlayerController OwnerPC;
-
-    BulletType = Ammo.GetBulletType();
-    ArmorLevel = Protection.GetProtectionType();
-    BulletLevel = Ammo.GetPenetrationType();
 
     // You shouldn't be able to hit hidden actors that block zero-extent
     // traces (i.e., projectors, blocking volumes). However, the 'Victim'
@@ -810,11 +778,7 @@ simulated function bool HandleBallisticImpact(
                                 HitLocation,
                                 HitNormal,
                                 NormalizedBulletDirection,
-                                Momentum,
-                                KillEnergy,
-                                BulletType,
-								ArmorLevel,
-								BulletLevel))
+                                Momentum))
                         return false;   //blocked by ProtectiveEquipment
                 }
             }
@@ -1048,11 +1012,7 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     vector HitLocation,
     vector HitNormal,
     vector NormalizedBulletDirection,
-    out float Momentum,
-    out float KillEnergy,
-    out int BulletType,
-    int ArmorLevel,
-    int BulletLevel)
+    out float Momentum)
 {
     local bool PenetratesProtection;
     local vector MomentumVector;
@@ -1060,9 +1020,6 @@ simulated function bool HandleProtectiveEquipmentBallisticImpact(
     local float MomentumLostToProtection;
     local Object.Range DamageModifierRange;
     local float DamageModifier, ExternalDamageModifier;
-
-    ArmorLevel = Protection.GetProtectionType();
-    BulletLevel = Ammo.GetPenetrationType();
 
     //the bullet will penetrate the protection unles it loses all of its momentum to the protection
     PenetratesProtection = (Protection.GetMtP() < Momentum);
