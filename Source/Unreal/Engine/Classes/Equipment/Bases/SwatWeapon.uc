@@ -652,6 +652,11 @@ simulated function bool HandleBallisticImpact(
     //consider adding internal damage
     if (!PenetratesVictim)
         Damage += Ammo.InternalDamage;
+	else
+	{
+		if (Victim.isa('SwatPawn') || Victim.isa('SwatPlayer') )
+			 Damage +=  ( Ammo.InternalDamage /2 );
+	}
 
     //apply any external damage modifiers (maintained by the Repo)
     ExternalDamageModifier = Level.GetRepo().GetExternalDamageModifier( Owner, Victim );
