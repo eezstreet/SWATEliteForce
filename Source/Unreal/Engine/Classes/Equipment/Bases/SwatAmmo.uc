@@ -140,7 +140,6 @@ simulated function int GetPenetrationLevel()
    return ArmorPenetration;
  }
  
-// SEF: Why does this function exist? Why don't we just pass the AmmoType? -Kevin
 simulated function int GetBulletType() 
  {			
  switch(BulletClass) 
