@@ -1,0 +1,1 @@
+class USP40sdHG extends USP40HG config(SwatEquipment);

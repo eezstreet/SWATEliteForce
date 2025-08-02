@@ -37,6 +37,32 @@ MagazineSizeString=13
 TotalAmmoString=10 magazines
 RateOfFire=400 RPM
 
+[USP40HG]
+Description=The Heckler & Koch USP is a semi-automatic pistol manufactured in Germany but popular with many law enforcement agencies in the United States. The USP has a metal slide and polymer receiver, and incorporates an effective recoil-dampening system. This version is a USP Tactical chambered in .40 S&W. The barrel is threaded to accept a suppressor.
+FriendlyName=USP Tactical
+ShortName=USP40
+Manufacturer=Heckler & Koch
+Caliber=.40
+CountryOfOrigin=Germany
+ProductionStart=1993
+FireModes=Semi-Automatic
+MagazineSizeString=13
+TotalAmmoString=10 magazines
+RateOfFire=400 RPM
+
+[USP40sdHG]
+Description=The Heckler & Koch USP is a semi-automatic pistol manufactured in Germany but popular with many law enforcement agencies in the United States. The USP has a metal slide and polymer receiver, and incorporates an effective recoil-dampening system. This version is a USP Tactical chambered in .40 S&W. The barrel is threaded to accept a suppressor.
+FriendlyName=USP Tactical
+ShortName=USP40
+Manufacturer=Heckler & Koch
+Caliber=.40
+CountryOfOrigin=Germany
+ProductionStart=1993
+FireModes=Semi-Automatic
+MagazineSizeString=13
+TotalAmmoString=10 magazines
+RateOfFire=400 RPM
+
 [BrowningHPHG]
 Description=The Browning Hi-Power is one of the most widely used pistols in history, having seen service in World War II, the Korean War, and more than a dozen other conflicts. The Browning Hi-Power started design by John Browning in 1914, but didn't see production until 1935, when it was finished by FN Herstal. The name alludes to its impressive 13-round magazine, which at the time, was double the standard pistol magazine-size. This variant in particular is chambered in 9x19mm Parabellum.
 FriendlyName=Browning Hi-Power
@@ -910,10 +936,6 @@ GivenName=Lightstick
 [IngramHG]
 Description=Ingram Handgun
 FriendlyName=MAC-10 Machine Pistol
-
-[USP40HG]
-Description=SLP40 Handgun
-FriendlyName=SLP 40
 
 [ScorpionHG]
 Description=Skorpion Machine Pistol
