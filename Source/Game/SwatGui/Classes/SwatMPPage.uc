@@ -729,10 +729,6 @@ function SendServerInfoToBack()
     BringToBack( MyServerInfoBox );
 }
 
-function OnProfileButton(GUIComponent Sender)
-{
-	Controller.OpenMenu( "SwatGui.SwatGamespyProfilePopup", "SwatGamespyProfilePopup" );
-}
 
 ////////////////////////////////////////////////////////////////////////
 // Page Defaults

@@ -1401,24 +1401,6 @@ Hint=click to view multiplayer new features
 Caption=GENERAL
 Hint=click here to see general new features
 
-[SwatGamespyProfilePopup_SavePasswordLabel]
-Caption=Save Password
-
-[SwatGamespyProfilePopup_Done]
-Caption=DONE
-
-[SwatGamespyProfilePopup_LoginCreate]
-Caption=LOGIN/CREATE
-
-[SwatGamespyProfilePopup_PasswordLabel]
-Caption=Password
-
-[SwatGamespyProfilePopup_EmailLabel]
-Caption=E-mail Address
-
-[SwatGamespyProfilePopup_UsernameLabel]
-Caption=User Name
-
 [SwatConnectionFailureMenu_OKButton]
 Caption=OK
 
@@ -2401,10 +2383,6 @@ Caption=9mm FMJ
 [SwatMPLoadoutPanel_Pocket_PrimaryWeapon_Label]
 Caption=9mm SMG
 
-[SwatMPPage_Profile]
-Caption=GAMESPY PROFILE
-Hint=Choose game settings.
-
 [SwatMPPage_LoadingLabel]
 Caption=LOADING
 
@@ -2537,10 +2515,6 @@ GameModeAndLevelString=%2                Mode: %1
 
 [SwatIntroMenu_WaitDialogueDoNotUse_CaptionLabel]
 Caption=Searching for available maps...
-
-[SwatServerSetupMenu_Profile]
-Caption=GAMESPY PROFILE
-Hint=Enter your GameSpy profile details, used for stat-tracking.
 
 [SwatServerSetupMenu_hosttitlelabel]
 Caption=HOST GAME

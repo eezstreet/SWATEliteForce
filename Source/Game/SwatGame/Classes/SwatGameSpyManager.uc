@@ -419,28 +419,7 @@ event int ShouldAdvertiseServerOnInternet()
     }
 }
 
-event EmailAlreadyTaken()
-{
-	OnProfileResult(GSR_BAD_EMAIL, 0);
 }
-
-event ProfileCreateResult(EGameSpyResult result, int profileId)
-{
-	OnProfileResult(result, profileID);
-}
-
-event ProfileCheckResult(EGameSpyResult result, int profileId)
-{
-	OnProfileResult(result, profileID);
-}
-
-event UserConnectionResult(EGameSpyResult result, int profileId, string UniqueNick)
-{
-	Super.UserConnectionResult(result, profileID, UniqueNick);
-	OnProfileResult(result, profileID);
-}
-
-delegate OnProfileResult(EGameSpyResult result, int profileId);
 
 defaultproperties
 {
