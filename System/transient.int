@@ -5101,7 +5101,7 @@ BriefingText=("Get ready, men, this is a tough one.  Our target Lawrence Fairfax
 LocationInfoText=("25 Glendive Lane","|This house is a 2 bedroom, 1 bath, split level residence.  Many of the houses in this neighborhood are of this same type.  Our layout is based on neighboring houses of the same style and should be accurate for level 1.  The basement level of these houses are usually customized and may or may not be finished.  Information is speculative regarding the basement.||Sierra One is covering a bedroom on Side Two, Level 1. Highground is watching the entrances.")
 HostageName=("Melinda Kline","Gladys Fairfax")
 HostageVitals=("Sex: Female|Descent: Caucasian|Height: 5' 5''|Weight: 125|Hair: Black|Eyes: Brown|DOB: 02/04/1988|Age: 20","Sex: Female|Descent: Caucasian|Height: 5' 3''|Weight: 165|Hair: Grey|Eyes: Brown|DOB: 05/29/1940|Age: 68")
-HostageDescription=("Melinda Kline is a second year law student at City College.  She was reported missing 18 Oct; last known sighting was after her last class let out at 19:45 on 17 Oct.  Her disappearence is both unexplained and out of character, according to friends and family.","Gladys Fairfax is the owner on record of 25 Glendive Lane.  She receives a disability pension from Social Security and is in generally bad health.")
+HostageDescription=("Melinda Kline is a second year law student at City College.  She was reported missing 18 Oct; last known sighting was after her last class let out at 19:45 on 17 Oct.  Her disappearance is both unexplained and out of character, according to friends and family.","Gladys Fairfax is the owner on record of 25 Glendive Lane.  She receives a disability pension from Social Security and is in generally bad health.")
 SuspectName=("Lawrence Fairfax")
 SuspectVitals=("Sex: Male|Descent: Caucasian|Height: 5'10''|Weight: approx. 200|Hair: Black|Eyes: Brown|DOB: 7/20/1980|Age: 28")
 SuspectDescription=("Currently employed as a temporary carpenter at a City College construction site. Appears to be a social recluse; only known living relative is his mother, Gladys Fairfax.   ")
@@ -5109,8 +5109,8 @@ EntryOptionTitle=("Side 3, Level 1","Side 2, Level 0")
 EntryDescription=("Backyard access to rear door.","Driveway entrance into the garage.")
 TimeLinePlot=(0,55,94,98,100)
 TimeLineTime=("18 Oct","20:20","04:00","04:30","04:43")
-TimeLineShortDescription=("APB: Melinda Kline","Body found","DNA identification","SWAT Arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Melinda Kline reported missing by her housemate, Angela Karey. Last known sighting was after her last class let out at 19:45 on 17 Oct.  Friends report no known travel plans."," - Rachel Polson's remains found by Emmet Duran, a construction worker."," - Forensic team identifies DNA under Polson's fingertips as belonging to Lawrence Fairfax."," - SWAT Arrives. Containment perimeter set up. No high ground established."," - Decision made to go tactical. Entry team assembled.")
+TimeLineShortDescription=("APB: Melinda Kline","Body found","DNA identification","SWAT arrives","Tactical entry begun")
+TimeLineLongDescription=(" - Melinda Kline reported missing by her housemate, Angela Karey. Last known sighting was after her last class let out at 19:45 on 17 Oct.  Friends report no known travel plans."," - Rachel Polson's remains found by Emmet Duran, a construction worker."," - Forensic team identifies DNA under Polson's fingertips as belonging to Lawrence Fairfax."," - SWAT arrives. Containment perimeter set up. No high ground established."," - Decision made to go tactical. Entry team assembled.")
 LoadingText=25 Glendive Lane, Fairfax Residence
 
 [SP-FoodWall]
@@ -5129,7 +5129,7 @@ EntryOptionTitle=("Side 1, Level 1")
 EntryDescription=("Corner of alley")
 TimeLinePlot=(0,80,86,100)
 TimeLineTime=("23 Sept","19:42","19:55","20:24")
-TimeLineShortDescription=("Warrant issued","Suspect spotted","SWAT arrives","Tactical Entry")
+TimeLineShortDescription=("Warrant issued","Suspect spotted","SWAT arrives","Tactical entry")
 TimeLineLongDescription=(" - Food Wall placed under surveillance."," - Alex Jimenez is observed entering Food Wall Restaurant by Detective Carl Sheary. Sheary then notifies TCC."," - SWAT arrives on scene. High ground and Containment teams put in place."," - Decision is made to go tactical. Entry team is assembled.")
 LoadingText=1572 Norman St., Food Wall Restaurant
 
@@ -5150,7 +5150,7 @@ EntryOptionTitle=("Side 2 Level 1 ")
 EntryDescription=("Side Entrance")
 TimeLinePlot=(0,33,66,100)
 TimeLineTime=("06:15","06:30","06:45","07:15")
-TimeLineShortDescription=("911 Call","SWAT Arrives","CNT contacts suspects","Tactical entry begun")
+TimeLineShortDescription=("911 call","SWAT arrives","CNT contacts suspects","Tactical entry begun")
 TimeLineLongDescription=(" - 911 call by customer, reporting a gunman and a potential hostage situation at the Qwik Fuel. Dispatch notifies emergency services. SWAT notified."," - SWAT arrives on scene. High ground established; containment perimeter confirmed."," - CNT (Crisis Negotiation Team) confirms presence of three hostages and at least 3 armed suspects. Entry team assembled."," - Shots fired. Decision made to go tactical.")
 LoadingText=3721 Pitkin Ave., Qwik Fuel
 
@@ -5172,7 +5172,7 @@ EntryOptionTitle=("Side 3, Level 1 ","Side 4, Level 2 ")
 EntryDescription=("Service Entrance","Fire Escape Door")
 TimeLinePlot=(0,20,100)
 TimeLineTime=("16:26 ","16:33 ","16:51")
-TimeLineShortDescription=("911 Call","First units arrive","Tactical entry begun")
+TimeLineShortDescription=("911 call","First units arrive","Tactical entry begun")
 TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol Units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
 LoadingText=1401 Gower St., FunTime Amusement Arcade
 
@@ -5193,7 +5193,7 @@ EntryOptionTitle=("Side 1, Level 0","Roof")
 EntryDescription=("Parking Area North Entrance","Roof Access Door")
 TimeLinePlot=(0,2,4,9,14,19,27,73,87,100)
 TimeLineTime=("01:19","01:23","01:27","01:35","01:42","01:50","02:02","03:10","03:30","03:45")
-TimeLineShortDescription=("911 Call","Multiple suspects seen","CP established","SWAT arrives","Surround & Call Out","CNT contacts","Demand: Allow escape","Demand: Kevlar vests","Threat to hostages","Tactical action taken")
+TimeLineShortDescription=("911 call","Multiple suspects seen","CP established","SWAT arrives","Surround & call out","CNT contacts","Demand: Allow escape","Demand: Kevlar vests","Threat to hostages","Tactical action taken")
 TimeLineLongDescription=(" - 911 reporting attempted auto theft at Victory Imports Auto Center.  32 Adam dispatched to investigate."," - 32 Adam reports multiple armed suspects."," - Patrol officers establish containment perimeter.  SWAT notified."," - SWAT arrives on site.  High ground and containment teams put in place."," - Suspects were ordered to leave the building.  No response."," - CNT makes contact with suspects by phone."," - Suspects demand to be allowed to go free by 0400."," - Suspects demand kevlar vests.  Request is denied."," - Suspects repeat demand to be freed by 0400.  Threaten hostage."," - Decision made to go tactical to ensure the safety of the hostage.  Entry team is assembled.")
 LoadingText=487 29th Ave., Victory Imports
 
@@ -5214,8 +5214,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
 EntryDescription=("Front Entrance","Delivery Entrance")
 TimeLinePlot=(0,18,35,100)
 TimeLineTime=("9:04","9:22","9:47","11:32")
-TimeLineShortDescription=("911 Call","First Units Arrive"," CNT Attempts Contact ","Shots Heard - Tactical entry begun")
-TimeLineLongDescription=(" - 911 emergency call received from post office guard."," - Patrol officers arrive and establish containment perimeter.  SWAT and CNT notified."," - CNT (Crisis Negotiation Team) attempts contact without response.","  - Shots fired. Decision made to go tactical.")
+TimeLineShortDescription=("911 call","First units arrive"," CNT attempts contact ","Shots heard - tactical entry begun")
+TimeLineLongDescription=(" - 911 emergency call received from post office guard."," - Patrol officers arrive and establish containment perimeter.  SWAT and CNT notified."," - CNT attempts contact without response.","  - Shots fired. Decision made to go tactical.")
 LoadingText=796 Newbury St., Our Sisters of Mercy
 
 [SP-ABomb]
@@ -5234,8 +5234,8 @@ EntryOptionTitle=("Side 2, Level 1","Side 1, Level 1")
 EntryDescription=("Service Entrance, off of side alley","Front Entrance")
 TimeLinePlot=(0,20,100)
 TimeLineTime=("23:27","23:30","23:42")
-TimeLineShortDescription=("Shots fired; 911 Calls","Perimeter established","SWAT arrives")
-TimeLineLongDescription=(" - First 911 calls logged reporting shooting at the club.  SWAT notified."," - Patrol Units arrive on scene and begin to set up a perimeter and perform first aid on initial victims.  Patrol radios for ambulances."," - SWAT arrives on scene.  Due to ongoing live fire, SWAT immediately goes tactical to neutralize the situation.")
+TimeLineShortDescription=("Shots fired; 911 calls","Perimeter established","SWAT arrives")
+TimeLineLongDescription=(" - First 911 calls logged reporting shooting at the club.  SWAT notified."," - Patrol units arrive on scene and begin to set up a perimeter and perform first aid on initial victims.  Patrol radios for ambulances."," - SWAT arrives on scene.  Due to ongoing live fire, SWAT immediately goes tactical to neutralize the situation.")
 LoadingText=1536 Adelaide Ave., The A-Bomb
 
 [SP-Casino]
@@ -5256,7 +5256,7 @@ EntryDescription=("Back door into the establishment.")
 TimeLinePlot=(0,42,71,88,98,100)
 TimeLineTime=("14:03","15:30","16:30","17:05","17:28","17:32")
 TimeLineShortDescription=("Walsh checks in","Walsh's wire signal lost","Walsh's Lieutenant briefed","Warrants issued","SWAT arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Detective Walsh checks in with his handler and notifies him that he will be entering the shop at 12:45."," - Walsh's wire suddenly goes to static with no clear indication of what the malfunction is."," - Lieutenant Collins is briefed of the situation and the missed call.  All officers involved believe Walsh has been made.  DA is notified."," - Arrest warrants are issued.  SWAT dispatched to scene."," - Containment perimeter and high ground established."," - Decision made to go tactical. Entry team assembled.")
+TimeLineLongDescription=(" - Detective Walsh checks in with his handler and notifies him that he will be entering the shop at 14:45."," - Walsh's wire suddenly goes to static with no clear indication of what the malfunction is."," - Lieutenant Collins is briefed of the situation and the missed call.  All officers involved believe Walsh has been made.  DA is notified."," - Arrest warrants are issued.  SWAT dispatched to scene."," - Containment perimeter and high ground established."," - Decision made to go tactical. Entry team assembled.")
 LoadingText=1092 Westfield Rd., Northside Vending and Amusements
 
 [SP-RedLibrary]
@@ -5276,8 +5276,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 4, Level 0")
 EntryDescription=("The reception area has a shielded side entrance.","Entrance through the parking garage, coming up from below the main offices.")
 TimeLinePlot=(0,9,11,13,17,24,57,98,100)
 TimeLineTime=("14:02","14:24","14:30","14:34","14:45","15:03","16:22","18:03","18:05")
-TimeLineShortDescription=("Gunmen sighted","SWAT Arrives","CNT contacts suspects","First demand issued","Hostages exchanged","Deadline passes","Hostages exchanged","Shots fired","Entry begun")
-TimeLineLongDescription=(" - Gunmen enter building."," - SWAT Arrives. Containment perimeter and high ground established."," - CNT makes first contact with suspects; no names given, no progress made."," - Demand for 5 million dollars and a helicopter made; deadline of 15:00."," - As a concession two hostages are exchanged for bulletproof vests."," - CNT convinces suspects that the first demand was unreasonable.  New demand for armored vehicle.  New deadline set at 18:00."," - In an effort to buy more time, CNT agrees to trade gas masks for the release of more hostages.  Suspects showing signs of fatigue and are becoming agitated."," - Suspect threatened hostage while on phone with CNT.  Civilian injuries are expected.  Phone went dead, gunfire continued.  Decision made to go tactical."," - Due to ongoing fire tactical entry begun.")
+TimeLineShortDescription=("Gunmen sighted","SWAT arrives","CNT contacts suspects","First demand issued","Hostages exchanged","Deadline passes","Hostages exchanged","Shots fired","Entry begun")
+TimeLineLongDescription=(" - Gunmen enter building."," - SWAT arrives. Containment perimeter and high ground established."," - CNT makes first contact with suspects; no names given, no progress made."," - Demand for 5 million dollars and a helicopter made; deadline of 15:00."," - As a concession two hostages are exchanged for bulletproof vests."," - CNT convinces suspects that the first demand was unreasonable.  New demand for armored vehicle.  New deadline set at 18:00."," - In an effort to buy more time, CNT agrees to trade gas masks for the release of more hostages.  Suspects showing signs of fatigue and are becoming agitated."," - Suspect threatened hostage while on phone with CNT.  Civilian injuries are expected.  Phone went dead, gunfire continued.  Decision made to go tactical."," - Due to ongoing fire tactical entry begun.")
 LoadingText=732 Gridley St., Red Library Inc.
 
 [SP-Backstage]
@@ -5297,8 +5297,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
 EntryDescription=("Main Entrance","Rear Loading Dock")
 TimeLinePlot=(0,15,30,50,60,100)
 TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
-TimeLineShortDescription=("Suspects Enter Auditorium","Patrol Cars Arrive","Perimeter Established"," CNT Arrive","Suspect Demands"," Shots Fired.")
-TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enter.")
+TimeLineShortDescription=("Suspects enter auditorium","Patrol cars arrive","Perimeter established"," CNT arrives","Suspect demands"," Shots fired")
+TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enters.")
 LoadingText=1801 Sellers St., The Sellers Street Auditorium
 
 [SP-JewelryHeist]
@@ -5317,8 +5317,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 2")
 EntryDescription=("Main Lobby Entry","Service Entrance")
 TimeLinePlot=(0,14,57,100)
 TimeLineTime=("16:57","16:59","17:05","17:11")
-TimeLineShortDescription=("Alarm triggers","SWAT notified","SWAT Arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Alarm triggered at DuPlessis Wholesale. Dispatch notified patrol."," - 911 Call comes in. Dispatch notified emergency services; SWAT notified."," - SWAT Arrives. Containment perimeter and high ground established."," - Decision made to go tactical.")
+TimeLineShortDescription=("Alarm triggers","SWAT notified","SWAT arrives","Tactical entry begun")
+TimeLineLongDescription=(" - Alarm triggered at DuPlessis Wholesale. Dispatch notified patrol."," - 911 call comes in. Dispatch notified emergency services; SWAT notified."," - SWAT arrives. Containment perimeter and high ground established."," - Decision made to go tactical.")
 LoadingText=1725 Broadway, DuPlessis Wholesale Diamonds
 
 [SP-Tenement]
@@ -5339,7 +5339,7 @@ EntryDescription=("Front door","Fire escape")
 TimeLinePlot=(0,6,10,100)
 TimeLineTime=("11:30","11:49","12:00","16:45")
 TimeLineShortDescription=("Warrant acquired","SWAT Arrives","Call out","Tactical entry begun")
-TimeLineLongDescription=(" - Warrant acquired for Andrew Taronne."," - SWAT Arrives. Containment perimeter and high ground established."," - Surround and call out.  No response."," - After hours with no response from inhabitants, the decision is made to go tactical. Entry team assembled.")
+TimeLineLongDescription=(" - Warrant acquired for Andrew Taronne."," - SWAT arrives. Containment perimeter and high ground established."," - Surround and call out.  No response."," - After hours with no response from inhabitants, the decision is made to go tactical. Entry team assembled.")
 LoadingText=2189 Carrols Rd., Taronne Tenement
 
 [SP-Office]
@@ -5359,8 +5359,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
 EntryDescription=("Main Entrance","Rear Entrance")
 TimeLinePlot=(0,10,30,20,70,100)
 TimeLineTime=("17:12","17:19","17:26","17:41","17:48","17:59")
-TimeLineShortDescription=("Suspects Enter Building."," Bomb Detonates.","Police Units Arrive.","Fire Crews Arrive.","Rescue Crew Fired Upon, SWAT Called.","Tactical entry begun")
-TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire Crews Arrive."," - Fire under control, rescue crew fired upon."," - SWAT officers make tactical entry ")
+TimeLineShortDescription=("Suspects enter building"," Bomb detonates","Police units arrive","Fire crews arrive","Rescue crew fired upon","Tactical entry begun")
+TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire crews arrive."," - Fire under control, rescue crew fired upon. SWAT called"," - SWAT officers make tactical entry ")
 LoadingText=2112 Geddy Ave., The Department of Agriculture
 
 [SP-Hospital]
@@ -5380,7 +5380,7 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
 EntryDescription=("Approach to main foyer","Access hallway from research wing")
 TimeLinePlot=(0,10,90,92,100)
 TimeLineTime=("22:20","22:33","00:20","00:23","00:34")
-TimeLineShortDescription=("Initial Attack","Hyun-Jun Park at hospital","Hospital attacked","SWAT dispatched","Tactical entry begun")
+TimeLineShortDescription=("Initial attack","Hyun-Jun Park at hospital","Hospital attacked","SWAT dispatched","Tactical entry begun")
 TimeLineLongDescription=(" - Initial attack on the diplomat and security personnel; Hyun-Jun Park injured, sent to St. Michael's Medical Center."," - Hyun-Jun Park admitted to the hospital."," - Gunmen attack the hospital; Alarm tripped."," - SWAT is sent to the scene instructed to follow rapid deployment tactics.  "," - SWAT arrives and immediately enters the building to bring order to chaos.")
 LoadingText=691 87th St., St. Michael's Medical Center
 
@@ -5421,8 +5421,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
 EntryDescription=("Front Door","Rear Alley")
 TimeLinePlot=(0,75,85,100)
 TimeLineTime=("15:00","18:17","18:41","19:08")
-TimeLineShortDescription=("Search Warrant Issued.","Perimeter Established.","SWAT Arrives","SWAT Enter")
-TimeLineLongDescription=(" - Search Warrant Issued."," - Perimeter established."," - SWAT arrives on scene and makes initial assessment. "," - SWAT officers make tactical entry ")
+TimeLineShortDescription=("Search warrant issued","Perimeter established","SWAT arrives","Tactical entry begun")
+TimeLineLongDescription=(" - Search warrant issued against 653 Tovanen St."," - First units arrive. High ground established; containment perimeter confirmed."," - SWAT arrives on scene and makes initial assessment. "," - SWAT officers make tactical entry.")
 LoadingText=653 Tovanen St., Stetchkov Drug Lab
 
 [SP-Subway]
@@ -5442,8 +5442,8 @@ EntryOptionTitle=("Side 1, Level 1","Side 3, Level 1")
 EntryDescription=("Fresnal Street Entrance ","Maxwell Street Entrance ")
 TimeLinePlot=(0,44,100)
 TimeLineTime=("17:04","17:16","17:33")
-TimeLineShortDescription=("911 Call"," First Units Arrive"," SWAT Enter")
-TimeLineLongDescription=(" - 911 Call received and SWAT notified"," - First units arrive and perimeter established and confirmed."," - SWAT goes tactical ")
+TimeLineShortDescription=("911 call","First units arrive","Tactical entry begun")
+TimeLineLongDescription=(" - 911 Call received and SWAT notified."," - First units arrive and perimeter established and confirmed."," - SWAT goes tactical.")
 LoadingText=Fresnal St. Station
 
 [SP-Warehouse]
@@ -5463,7 +5463,8 @@ EntryOptionTitle=("Side 4, Level 1","Side 1, Level 1")
 EntryDescription=("Main Entrance","Side Dock Entrance")
 TimeLinePlot=(0,80,90,100)
 TimeLineTime=("19:04","19:27","19:35","19:47")
-TimeLineLongDescription=(" - Arrest Warrant Issued."," - First units arrive."," - Perimeter established and confirmed."," - SWAT Entry.")
+TimeLineShortDescription=("Arrest warrant issued","First units arrive","Perimeter established","Tactical entry begun")
+TimeLineLongDescription=(" - Judge Rainer issues arrest warrant for Kiril Stetchkov."," - First units arrive on scene and makes initial assessment."," - SWAT arrives. Containment perimeter and high ground put in place."," - SWAT officers make tactical entry.")
 LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
 
 [SP-Hotel]
@@ -5484,7 +5485,7 @@ EntryDescription=("Entry from on top of the elevator car stopped on level 5.","S
 TimeLinePlot=(0,31,38,42,48,58,96,100)
 TimeLineTime=("12:30","14:17","14:40","14:53","15:12","15:47","17:57","18:12")
 TimeLineShortDescription=("Arranged meeting","Lost contact","Ransom demand","SWAT arrives","Additional demands","Additional demands","Negotiations fail","Tactical entry begun")
-TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - James Betincourt Sr., owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 milllion dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
+TimeLineLongDescription=(" - Arranged meeting: Betincourt and Adams meet at the hotel construction site."," - Kevin Halskey, Betincourt's chauffeur, attempts to contact Betincourt via cellphone and fails."," - James Betincourt Sr., owner and CEO of Betincourt Investments, contacted with a demand for 12 million dollars by midnight.  Failure to comply will result in the death of the hostages. Dispatch notified; emergency services notified.  SWAT responds."," - SWAT arrives. Containment perimeter and high ground put in place."," - CNT makes contact with the suspects.  Demand for 12 million dollars repeated, along with midnight deadline.  Additional 10 million dollars to be added to ransom for every hour after 21:00 it is late. CNT continues negotiations."," - Suspects make another demand, that their ''New American Manifesto'' be published in a national newspaper. CNT requests release of a hostage in exchange; suspects refuse."," - CNT reports that suspects appear to still be confident of getting their demands met.  CNT says that no further progress can be expected through negotiations."," - Decision made to go tactical. Entry team assembled.")
 LoadingText=1700 West 7th Ave., Old Granite Hotel
 
 [SP-DNA]
