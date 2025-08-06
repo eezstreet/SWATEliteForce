@@ -4766,7 +4766,7 @@ Caption=429 Adam, this is central BCC.  Adam, Boy, Truck unit 1 responding to 21
 Caption=240 Adam, this is central BCC. Multiple SWAT units responding to St. Michael's Medical Center for rapid deployment.
 
 [Arms_load]
-Caption="Adam, Boy, Truck 1 responding to staging at 1210 Canopy Road, high risk warrant service. "
+Caption=Adam, Boy, Truck 1 responding to CP at 1302 Blakestone Avenue, high risk warrant service. 
 
 [Hotel_load]
 Caption=Commander 20 Adam this is central BCC. Multiple SWAT units responding to CP at 1700 West 7th Avenue, hostage situation.
