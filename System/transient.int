@@ -5464,7 +5464,7 @@ EntryDescription=("Main Entrance","Side Dock Entrance")
 TimeLinePlot=(0,80,90,100)
 TimeLineTime=("19:04","19:27","19:35","19:47")
 TimeLineShortDescription=("Arrest warrant issued","First units arrive","Perimeter established","Tactical entry begun")
-TimeLineLongDescription=(" - Judge Rainer issues arrest warrant for Kiril Stetchkov."," - First units arrive on scene and makes initial assessment."," - SWAT arrives. Containment perimeter and high ground put in place."," - SWAT officers make tactical entry.")
+TimeLineLongDescription=(" - Judge Rainer issues arrest warrant for Kiril Stetchkov."," - First units arrive on scene and make initial threat assessment."," - SWAT arrives. Containment perimeter and high ground put in place."," - SWAT officers make tactical entry.")
 LoadingText=2770 Harrington Rd., The Stetchkov Warehouse
 
 [SP-Hotel]
