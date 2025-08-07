@@ -5130,7 +5130,7 @@ EntryDescription=("Corner of alley")
 TimeLinePlot=(0,80,86,100)
 TimeLineTime=("23 Sept","19:42","19:55","20:24")
 TimeLineShortDescription=("Warrant issued","Suspect spotted","SWAT arrives","Tactical entry")
-TimeLineLongDescription=(" - Food Wall placed under surveillance."," - Alex Jimenez is observed entering Food Wall Restaurant by Detective Carl Sheary. Sheary then notifies TCC."," - SWAT arrives on scene. High ground and Containment teams put in place."," - Decision is made to go tactical. Entry team is assembled.")
+TimeLineLongDescription=(" - Food Wall placed under surveillance."," - Alex Jimenez is observed entering Food Wall Restaurant by Detective Carl Sheary. Sheary then notifies TCC."," - SWAT arrives on scene. High ground and containment teams put in place."," - Decision is made to go tactical. Entry team is assembled.")
 LoadingText=1572 Norman St., Food Wall Restaurant
 
 [SP-ConvenienceStore]
@@ -5173,7 +5173,7 @@ EntryDescription=("Service Entrance","Fire Escape Door")
 TimeLinePlot=(0,20,100)
 TimeLineTime=("16:26 ","16:33 ","16:51")
 TimeLineShortDescription=("911 call","First units arrive","Tactical entry begun")
-TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol Units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
+TimeLineLongDescription=("- 911 call from owner of Funtime Amusements, reporting shots fired. Dispatch notifies emergency services. SWAT notified.","- Patrol units arrive on scene and begin to set up a perimeter.  Patrol radios for ambulances.","- SWAT arrives on scene and makes immediate tactical entry.")
 LoadingText=1401 Gower St., FunTime Amusement Arcade
 
 [SP-AutoGarage]
@@ -5298,7 +5298,7 @@ EntryDescription=("Main Entrance","Rear Loading Dock")
 TimeLinePlot=(0,15,30,50,60,100)
 TimeLineTime=("20:05","20:11","20:23","20:32","20:35","20:49")
 TimeLineShortDescription=("Suspects enter auditorium","Patrol cars arrive","Perimeter established"," CNT arrives","Suspect demands"," Shots fired")
-TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Perimeter Established"," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enters.")
+TimeLineLongDescription=(" - Suspects enter the auditorium. Civilians flee."," - First responding patrol cars arrive."," - Containment perimeter and high ground established."," - Negotiator arrives and attempts first contact."," - Suspects issue initial, conflicting demands."," - More shots heard from inside auditorium. SWAT enters.")
 LoadingText=1801 Sellers St., The Sellers Street Auditorium
 
 [SP-JewelryHeist]
@@ -5338,7 +5338,7 @@ EntryOptionTitle=("Side 1, Level 1","Side 2, Level 2")
 EntryDescription=("Front door","Fire escape")
 TimeLinePlot=(0,6,10,100)
 TimeLineTime=("11:30","11:49","12:00","16:45")
-TimeLineShortDescription=("Warrant acquired","SWAT Arrives","Call out","Tactical entry begun")
+TimeLineShortDescription=("Warrant acquired","SWAT arrives","Call out","Tactical entry begun")
 TimeLineLongDescription=(" - Warrant acquired for Andrew Taronne."," - SWAT arrives. Containment perimeter and high ground established."," - Surround and call out.  No response."," - After hours with no response from inhabitants, the decision is made to go tactical. Entry team assembled.")
 LoadingText=2189 Carrols Rd., Taronne Tenement
 
@@ -5360,7 +5360,7 @@ EntryDescription=("Main Entrance","Rear Entrance")
 TimeLinePlot=(0,10,30,20,70,100)
 TimeLineTime=("17:12","17:19","17:26","17:41","17:48","17:59")
 TimeLineShortDescription=("Suspects enter building"," Bomb detonates","Police units arrive","Fire crews arrive","Rescue crew fired upon","Tactical entry begun")
-TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrive."," - Fire crews arrive."," - Fire under control, rescue crew fired upon. SWAT called"," - SWAT officers make tactical entry ")
+TimeLineLongDescription=(" - A group of suspects armed with assault rifles and Improvised Explosive Devices enters building"," - One of the bombs detonates prematurely causing a fire on the lower floor."," - First police units arrived. Perimeter established"," - Fire crews arrived. Fire containment and search & rescue started."," - Fire under control, rescue crew fired upon. SWAT called."," - SWAT officers make tactical entry ")
 LoadingText=2112 Geddy Ave., The Department of Agriculture
 
 [SP-Hospital]
@@ -5422,7 +5422,7 @@ EntryDescription=("Front Door","Rear Alley")
 TimeLinePlot=(0,75,85,100)
 TimeLineTime=("15:00","18:17","18:41","19:08")
 TimeLineShortDescription=("Search warrant issued","Perimeter established","SWAT arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Search warrant issued against 653 Tovanen St."," - First units arrive. High ground established; containment perimeter confirmed."," - SWAT arrives on scene and makes initial assessment. "," - SWAT officers make tactical entry.")
+TimeLineLongDescription=(" - Search warrant issued for 653 Tovanen St."," - First units arrived. High ground established; containment perimeter confirmed."," - SWAT arrives on scene and makes initial assessment. "," - SWAT officers make tactical entry.")
 LoadingText=653 Tovanen St., Stetchkov Drug Lab
 
 [SP-Subway]
@@ -5443,7 +5443,7 @@ EntryDescription=("Fresnal Street Entrance ","Maxwell Street Entrance ")
 TimeLinePlot=(0,44,100)
 TimeLineTime=("17:04","17:16","17:33")
 TimeLineShortDescription=("911 call","First units arrive","Tactical entry begun")
-TimeLineLongDescription=(" - 911 Call received and SWAT notified."," - First units arrive and perimeter established and confirmed."," - SWAT goes tactical.")
+TimeLineLongDescription=(" - 911 Call received and SWAT notified."," - First units arrive. Perimeter established and confirmed."," - SWAT goes tactical.")
 LoadingText=Fresnal St. Station
 
 [SP-Warehouse]
@@ -5507,7 +5507,7 @@ EntryDescription=("Entry through the front doors and foyer.","Service Entrance."
 TimeLinePlot=(0,3,6,60,76,92,100)
 TimeLineTime=("20:12","20:19","20:28","22:43","23:27","00:12","00:45")
 TimeLineShortDescription=("Alarm wires cut","Cruiser arrives","SWAT arrives","Negotiations begun ","CNT IDs Trouffant","Suspects make demands","Tactical entry approved")
-TimeLineLongDescription=(" - The security system connection to University Police is lost.  Patrol car is dispatched to investigate."," - University Police arrive and investigate, finding wires cut.  Shots are fired at Police from inside the building.  Dispatch is notified.  SWAT is requested."," - Containment perimeter and high ground are established."," - CNT contacts suspects."," - CNT contacts suspects and is able to identify Jean Trouffant.  Army of Faith manifesto is read to CNT over the phone, confirming connection to the group."," - Suspects demand additional supplies including food and ammunition.  CNT agrees to food, but not to ammunition.  Suspects unsatisfied and verbally threaten hostages."," - Repeated attempts to contact Trouffant fail.  CNT believes that the hostages may be in danger based on the last contact.  CNT suggests that it is time for a tactical entry.")
+TimeLineLongDescription=(" - The security system connection to University Police is lost.  Patrol car is dispatched to investigate."," - University Police arrive and investigate, finding wires cut.  Shots are fired at police from inside the building.  Dispatch is notified.  SWAT is requested."," - Containment perimeter and high ground are established."," - CNT contacts suspects."," - CNT contacts suspects and is able to identify Jean Trouffant.  Army of Faith manifesto is read to CNT over the phone, confirming connection to the group."," - Suspects demand additional supplies including food and ammunition.  CNT agrees to food, but not to ammunition.  Suspects unsatisfied and verbally threaten hostages."," - Repeated attempts to contact Trouffant fail.  CNT believes that the hostages may be in danger based on the last contact.  CNT suggests that it is time for a tactical entry.")
 LoadingText=72 Mt. Threshold Ave., Mt. Threshold Research Center
 
 [Custom_Timed]
