@@ -5443,7 +5443,7 @@ EntryDescription=("Fresnal Street Entrance ","Maxwell Street Entrance ")
 TimeLinePlot=(0,44,100)
 TimeLineTime=("17:04","17:16","17:33")
 TimeLineShortDescription=("911 call","First units arrive","Tactical entry begun")
-TimeLineLongDescription=(" - 911 Call received and SWAT notified."," - First units arrive. Perimeter established and confirmed."," - SWAT goes tactical.")
+TimeLineLongDescription=(" - 911 call received and SWAT notified."," - First units arrive. Perimeter established and confirmed."," - SWAT goes tactical.")
 LoadingText=Fresnal St. Station
 
 [SP-Warehouse]
