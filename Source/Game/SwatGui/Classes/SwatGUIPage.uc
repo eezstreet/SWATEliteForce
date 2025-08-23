@@ -148,7 +148,7 @@ defaultproperties
 	bPersistent=true
 	bIsOverlay=false
 	StyleName="STY_DefaultMenu"
-	QuitPrompt="Quit to Windows?"
+	QuitPrompt="Quit SWAT4?"
 
 	//swat gui pages do not trigger normal effect events
 	bNeverTriggerEffectEvents=true
