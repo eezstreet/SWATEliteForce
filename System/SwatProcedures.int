@@ -1,32 +1,35 @@
 [Procedure_CompleteMission]
-Description=Mission completed
+Description=Mission completed (0-40 points)
 
 [Procedure_ArrestUnIncapacitatedSuspects]
-Description=Suspects arrested
+Description=Suspects arrested (0-20 points)
 
 [Procedure_ArrestIncapacitatedSuspects]
-Description=Suspects incapacitated
+Description=Suspects incapacitated (0-15 points)
 
 [Procedure_KillSuspects]
-Description=Suspects neutralized
+Description=Suspects neutralized (0-10 points)
 
 [Procedure_NoSuspectsNeutralized]
-Description=No suspects neutralized
+Description=No suspects neutralized (0-5 points)
 
 [Procedure_NoCiviliansInjured]
-Description=No civilians injured
+Description=No civilians injured (0-5 points)
+
+[Procedure_AllCiviliansUnharmed]
+Description=All civilians unharmed (0-10 points)
 
 [Procedure_NoOfficersDown]
-Description=No officers down
+Description=No officers down (0-10 points)
 
 [Procedure_PlayerUninjured]
-Description=Player uninjured
+Description=Player uninjured (0-5 points)
 
 [Procedure_ReportCharactersToTOC]
-Description=Report status to TOC
+Description=Report status to TOC (0-10 points)
 
 [Procedure_SecureAllWeapons]
-Description=All evidence secured
+Description=All evidence secured (0-5 points)
 
 [Procedure_EvacuateDownedOfficers]
 Description=Failed to report a downed officer
