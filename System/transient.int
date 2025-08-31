@@ -5110,7 +5110,7 @@ EntryDescription=("Backyard access to rear door.","Driveway entrance into the ga
 TimeLinePlot=(0,55,94,98,100)
 TimeLineTime=("18 Oct","20:20","04:00","04:30","04:43")
 TimeLineShortDescription=("APB: Melinda Kline","Body found","DNA identification","SWAT arrives","Tactical entry begun")
-TimeLineLongDescription=(" - Melinda Kline reported missing by her housemate, Angela Karey. Last known sighting was after her last class let out at 19:45 on 17 Oct.  Friends report no known travel plans."," - Rachel Polson's remains found by Emmet Duran, a construction worker."," - Forensic team identifies DNA under Polson's fingertips as belonging to Lawrence Fairfax."," - SWAT arrives. Containment perimeter set up. No high ground established."," - Decision made to go tactical. Entry team assembled.")
+TimeLineLongDescription=(" - Melinda Kline reported missing by her housemate, Angela Karey. Last known sighting was after her last class let out at 19:45 on 17 Oct.  Friends report no known travel plans."," - Rachel Polson's remains found by Emmet Duran, a construction worker."," - Forensic team identifies DNA under Polson's fingertips as belonging to Lawrence Fairfax."," - SWAT arrives. Containment perimeter set up. High ground established."," - Decision made to go tactical. Entry team assembled.")
 LoadingText=25 Glendive Lane, Fairfax Residence
 
 [SP-FoodWall]
