@@ -4468,7 +4468,7 @@ Text=[b] THE SELLERS STREET AUDITORIUM | HOSTAGE RESCUE | 1801 SELLERS ST | MARC
 Text=[b] OUR SISTERS OF MERCY HALFWAY HOUSE | BARRICADED SUSPECTS | 796 NEWBURY ST | DECEMBER 24 - 11:32 [\b]
 
 [ArcadeDispatch]
-Text=[b] FUNTIME AMUSEMENT ARCADE | BARRICADED SUSPECTS | 1401 GOWER STREET | NOVEMBER 30 - 16:50 [\b]
+Text=[b] FUNTIME AMUSEMENT ARCADE | RAPID DEPLOYMENT | 1401 GOWER STREET | NOVEMBER 30 - 16:50 [\b]
 
 [DNADispatch]
 Text=[b]MT. THRESHOLD RESEARCH CENTER|BARRICADED SUSPECTS / HOSTAGE RESCUE|72 MT. THRESHOLD AVENUE|JULY 22 - 00:45[\b]
@@ -4501,7 +4501,7 @@ Text=[b]VICTORY IMPORTS AUTO CENTER|BARRICADED SUSPECTS / HOSTAGE RESCUE|487 29T
 Text=[b]A-BOMB NIGHTCLUB|RAPID DEPLOYMENT|1536 ADELAIDE AVENUE|JANUARY 5 - 23:42[\b]
 
 [ConvenienceDispatch]
-Text=[b]QWIK FUEL CONVENIENCE STORE|BARRICADED SUSPECTS|3721 PITKIN AVENUE|NOVEMBER 18 - 07:15[\b]
+Text=[b]QWIK FUEL CONVENIENCE STORE|BARRICADED SUSPECTS / HOSTAGE RESCUE|3721 PITKIN AVENUE|NOVEMBER 18 - 07:15[\b]
 
 [FairfaxDispatch]
 Text=[b]FAIRFAX RESIDENCE|HIGH RISK WARRANT / HOSTAGE RESCUE|25 GLENDIVE LANE|OCTOBER 23 - 04:43[\b]
@@ -5137,7 +5137,7 @@ LoadingText=1572 Norman St., Food Wall Restaurant
 PrimarySpawnPoint=Side Entrance
 CampaignObjectiveEnemySpawn=("Alice Jenkins")
 CampaignObjectiveHostageSpawn=("Willis Fillinger","Heidi Rosenstein","Kim Dong Yin")
-MissionDescription=("Barricaded Suspects","3721 Pitkin Avenue","November 18 - 07:15")
+MissionDescription=("Barricaded Suspects / Hostage Rescue","3721 Pitkin Avenue","November 18 - 07:15")
 BriefingText=("We're looking at a barricade/hostage situation, with at least three hostages.  Dispatch received a 911 call at around 0600.  A commuter pulled in to get gas and pulled out again when she noticed an armed woman coming out the front door.  She called 911 on her cell phone.  The first officers on the scene observed multiple gunmen, number unclear, and at least one unarmed civilian inside.  When the gunmen threatened the civilian, they backed off and set up a perimeter.","|So far we have one likely ID: Alice Jenkins. She's been in rehab for oxycodone addiction.  Oxycodone is an opiate similar to heroin, equally addictive.  It's prescribed legally as a Schedule II drug, making it possible for any idiot with a falsely obtained prescription to turn dealer.  It sells for up to eighty dollars a pop on the street.","|Knowing Jenkins, this is probably a bungled robbery for drug money, possibly related to a rash of recent convenience store hits.  She and her cronies didn't intend to take any hostages, and they don't know what to do with them.   That makes them more dangerous, since we can't predict what they might do, and they've stopped talking to the negotiator.  Given their erratic behavior, at least some of the suspects may be high.  They are armed with handguns, and we have visual confirmation of three suspects so far.  There may be more. ","|As far as the hostages go, we believe there are three: Kim Dong Yin, Heidi Rosenstein, and Willis Fischer, employees at the station.  There might be additional customers, but it's unlikely.  Be extremely careful when you go in.    You will have high ground support at your two entry options.  Given the recent spate of gunfire, we can't wait any longer; it's time for a tactical solution.  Study the situation, gear up, and let's move.")
 LocationInfoText=("3721 Pitkin Avenue, Qwik Fuel","|The front entry opens to the store, but is too dangerous to access directly for entry. There appears to be an office behind the counter, which we believe leads to storage areas. There are two entrances that can be accessed from the entry location. There is a side door leading to the storage areas and the loading dock, as well as the back door on Side 3 as well.","|Sierra One is covering Side 1, Level 1, with a view of the front store area. Sierra Two is covering your approach on Side 3, Level 1, along the back door. Highground spotters are covering your approach in the alleyway.")
 HostageName=("Heidi Rosenstein","Willis Fischer","Kim Dong Yin")
@@ -5159,7 +5159,7 @@ PrimarySpawnPoint=Service Entrance
 SecondarySpawnPoint=Fire Escape Door
 CampaignObjectiveEnemySpawn=("Javier Arias")
 CampaignObjectiveHostageSpawn=("Oscar Bogard")
-MissionDescription=("Barricaded Suspects","1401 Gower Street","November 30 - 16:50")
+MissionDescription=("Rapid Deployment","1401 Gower Street","November 30 - 16:50")
 BriefingText=("Okay, listen up. We've got a shots fired situation. 911 received a call from the owner of the FunTime Amusement Arcade on Gower Street. Detectives from the 12th precinct tell us that the arcade is a known haunt for drug dealers. Witnesses say an argument broke out between Javier Arias, a local dealer and a group of unidentified men. It quickly escalated into violence when Arias' offsiders drew their guns. Looks like we could have a turf war on our hands.  ","|Most of the civilians fled as soon as the shooting started, but some may still be inside. This is a busy arcade at this time of the day, so check your targets. The police are also pretty unpopular in this neighborhood, so be prepared for resistance from any civilians you encounter.","|We've been unable to locate the owner, Oscar Bogard. He may still be trapped inside. His 911 call was cut off abruptly.","|We have to put a stop to the shooting, but this is also a chance to put away a lot of bad guys. To do that we need to gain as much evidence as we can. We don't want any of them to flush the drugs they're carrying, particularly Arias.","|Choose your equipment and get going.")
 LocationInfoText=("1401 Gower Street. FunTime Amusement Arcade","|Oscar Bogard has been running the arcade out of these premises for some twenty-odd years. The arcade takes up the front part of the ground floor and parts of the upper floor. Repair and storage are in back, along with Bogard's apartment. He could be holed up anywhere inside.","|Sierra One is covering the backyard on Side 3. Sierra Two is covering the pool room on Side 2, Level 2.")
 HostageName=("Name:Oscar Bogard")
