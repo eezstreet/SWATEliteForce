@@ -229,7 +229,7 @@ TotalAmmoString=50 shells
 RateOfFire=150 RPM
 
 [LessLethalM870SG]
-Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This particular variant fires beanbags, which can be used on uncooperative suspects or civilians. To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted green.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation. Sufficient distance should be kept between the operator and the intended target for the beanbag to slow down, otherwise it may produce a potentially life threatening injury such as broken bones.
+Description=The Remington Model 870 is a reliable and compact pump-action shotgun capable of dispatching even the toughest of criminals. It sees a variety of use among patrol and SWAT units, but is also used for sport shooting and hunting. This particular variant fires beanbags, which can be used on uncooperative suspects or civilians. To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted orange.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation. Sufficient distance should be kept between the operator and the intended target for the beanbag to slow down, otherwise it may produce a potentially life threatening injury such as broken bones.
 FriendlyName=Less Lethal M870
 ShortName=Less Lethal M870
 Manufacturer=Remington
@@ -584,7 +584,7 @@ FriendlyName=Suppressed M4A1 CQB with Holographic Sight
 ShortName=Sup. M4A1 CQB Holo
 
 [G36kMG]
-Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing.
+Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a fire mode selector with a 2-round burst as well as fully automatic and semi-automatic firing.
 FriendlyName=G36K
 ShortName=G36K
 Manufacturer=Heckler & Koch
@@ -597,22 +597,22 @@ TotalAmmoString=10 magazines
 RateOfFire=750 RPM
 
 [G36kHoloMG]
-Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing. This particular variant is equipped with a holographic sight for ease in aiming down the sights.
+Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a fire mode selector with a 2-round burst as well as fully automatic and semi-automatic firing. This particular variant is equipped with a holographic sight for ease in aiming down the sights.
 FriendlyName=G36K with Holographic Sights
 ShortName=G36K Holographic
 
 [G36ksdMG]
-Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount.
+Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a fire mode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount.
 FriendlyName=Suppressed G36K
 ShortName=Sup. G36K
 
 [G36ksdHoloMG]
-Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount, and a holographic sight for ease in aiming down the sights.
+Description=The H&K G36K is a lightweight compact assault rifle originally developed in the 1990s by H&K for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around carbine.  Firing a mid-sized 5.56x45mm rifle round, this weapon is equipped with a fire mode selector with a 2-round burst as well as fully automatic and semi-automatic firing and a suppressor for when stealth is paramount, and a holographic sight for ease in aiming down the sights.
 FriendlyName=Suppressed G36K Holographic
 ShortName=Sup. G36K Holo
 
 [UziSMG]
-Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel. It's a staple of many Hollywood gang movies.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice.
+Description=The Uzi is a compact and reliable submachine gun that was developed in the early fifties in Israel. It's a staple of many Hollywood gang movies.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice.
 FriendlyName=Suppressed Uzi
 ShortName=Sup. Uzi
 Manufacturer=Israel Military Industries (IMI)
@@ -625,7 +625,7 @@ TotalAmmoString=10 magazines
 RateOfFire=600 RPM
 
 [UziTSMG]
-Description=The Uzi is a compact and reliable sub-machinegun that was developed in the early fifties in Israel. It's a staple of many Hollywood gang movies.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice. Despite not being a weapon used by SWAT, this weapon has been given a flashlight for more tactical use in dark environments.
+Description=The Uzi is a compact and reliable submachine gun that was developed in the early fifties in Israel. It's a staple of many Hollywood gang movies.  It has a slow rate of fire and is very easy to control even when fired on full auto.  This model is equipped with a suppressor making it a more stealthy choice. Despite not being a weapon used by SWAT, this weapon has been given a flashlight for more tactical use in dark environments.
 
 [MAC10SMG]
 Description=The Military Armament Corporation Model 10, better known as the "MAC-10", is compact machine pistol with a high rate of fire. This version is chambered in .45 ACP. Sometimes described as a "bullet hose", the MAC-10 was built for concealability, not for accuracy. The iron sights are not adjustable, and recoil is considerable.
@@ -782,6 +782,11 @@ FireModes=Pump-Action
 TotalAmmoString=50 shells
 RateOfFire=100 RPM
 
+[LessLethalSGOrange]
+Description=The less lethal shotgun is a Benelli Nova, pump-action shotgun which is always loaded with less than lethal beanbag rounds.  It is most often used on an uncooperative suspect or civilian.  The specially designated less lethal shotgun is necessary to eliminate errors that can occur from individually loading lethal or less than lethal munitions into the same weapon.  To remind the operators that this particular weapon is only to be loaded with less than lethal ammunition, it has been painted orange.||The beanbag ammunition provides a powerful blunt force impact on the target.  This causes extreme pain and disorientation. Sufficient distance should be kept between the operator and the intended target for the beanbag to slow down, otherwise it may produce a potentially life threatening injury such as broken bones.
+FriendlyName=Less-Lethal Nova
+ShortName=Less-Lethal Nova
+
 [CSBallLauncher]
 Description=The Pepper-ball gun is based on technology originally designed for recreational paintball.  Compressed Carbon Dioxide ejects the ammunition at relatively high velocities.  The Pepper-ball gun allows officers to quickly deploy OC at specific targets, in more easily controlled quantities, and at significantly longer ranges than a grenade or standard pepper spray.  With the large ammunition hopper this weapon never needs to be reloaded under normal operating conditions.
 FriendlyName=Pepper-ball Gun
@@ -870,7 +875,7 @@ Description=Colt M1911 Handgun
 FriendlyName=M1911
 
 [BadguyG36kMG]
-Description=The GB36s Assault Rifle is a lightweight full sized assault rifle originally developed in the 1990s for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around assault rifle.  Firing a mid-sized 5.56mm rifle round, this weapon is equipped with a firemode selector with a 2-round burst as well as fully automatic firing.
+Description=The GB36s Assault Rifle is a lightweight full sized assault rifle originally developed in the 1990s for the German Bundeswehr.  It is now world renowned as an incredibly reliable all-around assault rifle.  Firing a mid-sized 5.56mm rifle round, this weapon is equipped with a fire mode selector with a 2-round burst as well as fully automatic firing.
 FriendlyName=GB36s Assault Rifle
 
 [BadGuySAWMG]
@@ -878,7 +883,7 @@ Description=This light support weapon is intended only for military operations; 
 FriendlyName=5.56mm Light Machine Gun
 
 [BadguyUMP45SMG]
-Description=The 45 caliber submachinegun is comparable to the 9mm SMG in almost every way.  Built largely of glass-fiber reinforced polymers, this lightweight sub-machine gun provides the same reliability as the 9mm model, but with the added punch of the larger .45 caliber round.  The heavy bullet provides superior penetration of armored targets with FMJ rounds compared to its 9mm brethren, despite having a lower muzzle velocity and slower cyclical rate of fire.  This model is equipped with a fire mode selector allowing semi-automatic and fully automatic firing modes.
+Description=The 45 caliber submachine gun is comparable to the 9mm SMG in almost every way.  Built largely of glass-fiber reinforced polymers, this lightweight sub-machine gun provides the same reliability as the 9mm model, but with the added punch of the larger .45 caliber round.  The heavy bullet provides superior penetration of armored targets with FMJ rounds compared to its 9mm brethren, despite having a lower muzzle velocity and slower cyclical rate of fire.  This model is equipped with a fire mode selector allowing semi-automatic and fully automatic firing modes.
 FriendlyName=.45 SMG
 
 [VIPColtM1911HG]
