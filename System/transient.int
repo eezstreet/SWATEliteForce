@@ -4492,7 +4492,7 @@ Text=[b]DUPLESSIS WHOLESALE DIAMOND CENTER|BARRICADED SUSPECTS|1725 BROADWAY|APR
 Text=[b]NORTHSIDE VENDING AND AMUSEMENTS|HIGH RISK WARRANT SERVICE|1092 WESTFIELD ROAD|JANUARY 25 - 17:32[\b]
 
 [RedLibraryDispatch]
-Text=[b]RED LIBRARY OFFICES|BARRICADED SUSPECTS / HOSTAGE RESCUE|732 GRIDLEY STREET|FEBRUARY 24 - 18:05[\b]
+Text=[b]RED LIBRARY OFFICES|BARRICADED SUSPECTS / HOSTAGE RESCUE|732 GRIDLEY STREET|FEBRUARY 21 - 18:05[\b]
 
 [AutoGarageDispatch]
 Text=[b]VICTORY IMPORTS AUTO CENTER|BARRICADED SUSPECTS / HOSTAGE RESCUE|487 29TH AVENUE|DECEMBER 12 - 03:45[\b]
@@ -5263,7 +5263,7 @@ LoadingText=1092 Westfield Rd., Northside Vending and Amusements
 PrimarySpawnPoint=Front Entrance
 SecondarySpawnPoint=Garage Entrance
 CampaignObjectiveHostageSpawn=("Warren Rooney")
-MissionDescription=("Barricaded Suspects / Hostage Rescue","732 Gridley Street","February 24 - 18:05")
+MissionDescription=("Barricaded Suspects / Hostage Rescue","732 Gridley Street","February 21 - 18:05")
 BriefingText=("Just after 1400 this afternoon, multiple gunmen stormed the offices at the Wainwright Mill Center building.  They shot their way through several of the businesses, until getting pinned down by patrol in one of the offices.","|This started with an attempted bank robbery at the Community Savings and Loan.  However, the suspects tripped the alarms early in their attempt, alerting both the bank's security and local police.  Instead of attempting to flee, they seem to have tried to continue to break into the bank, but were foiled by the vault security.","|When confronted by security, the suspects shot two of them, and then fled.  After a brief vehicle pursuit with patrol officers, the gunmen crashed into the offices at Wainwright Mill Center and took refuge in the Red Library office.  Patrol pulled back and established a perimeter. ","|Red Library is a software company, specializing in data storage.  Its employees often work on Saturdays, and so we suspect that that was the first unlocked office the gunmen found.  Unfortunately, that also means the office was occupied when they went in.","|Negotiators have been talking with them since about 1530.  Overall estimation is that while these guys are heavily armed, they don't really know what they are doing.  So far, the suspects have demanded an escape route and five million dollars, in exchange for their ''multiple prisoners''.  Negotiators have managed to get four hostages freed, in exchange for two gas masks and two armored vests.  The freed hostages can't give us an accurate count of employees, since no one knows how many employees were working today.  The recent spate of gunfire means it's time to go in and rescue the rest of the hostages. ")
 LocationInfoText=("732 Gridley Street, Red Library Inc.","|The long standoff allowed us to get the plans for the building.  Thanks to the released hostages, we have a pretty good idea for the layout of some of the cubicle dividers. ","|Sierra One is covering Side 2, Level 3; looks to be an employee break area.  Sierra Two is covering Side 4, Level 3. ")
 HostageName=("Warren Rooney")
